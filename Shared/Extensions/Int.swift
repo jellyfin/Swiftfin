@@ -27,7 +27,7 @@ extension FixedWidthInteger {
 }
 
 extension Int {
-    
+
     /// Format if the current value represents milliseconds
     var millisecondFormat: String {
         let isNegative = self < 0
@@ -41,7 +41,7 @@ extension Int {
             .appending("s")
             .prepending("-", if: isNegative)
     }
-    
+
     // Format if the current value represents seconds
     var secondFormat: String {
         let isNegative = self < 0

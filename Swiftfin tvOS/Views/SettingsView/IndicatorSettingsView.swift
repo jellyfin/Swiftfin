@@ -12,7 +12,7 @@ import SwiftUI
 // TODO: show a sample poster to model indicators
 
 struct IndicatorSettingsView: View {
-    
+
     @Default(.Customization.Indicators.showFavorited)
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
@@ -21,7 +21,7 @@ struct IndicatorSettingsView: View {
     private var showUnwatched
     @Default(.Customization.Indicators.showWatched)
     private var showWatched
-    
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -31,15 +31,15 @@ struct IndicatorSettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                
+
                 Section {
-                    
+
                     Toggle("Show Favorited", isOn: $showFavorited)
-                    
+
                     Toggle("Show Progress", isOn: $showProgress)
-                    
+
                     Toggle("Show Unwatched", isOn: $showUnwatched)
-                    
+
                     Toggle("Show Watched", isOn: $showWatched)
                 }
             }

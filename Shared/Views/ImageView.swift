@@ -28,7 +28,7 @@ struct ImageView: View {
 
     @State
     private var sources: [ImageSource]
-    
+
     private var image: (NukeUI.Image) -> any View
     private var placeholder: (() -> any View)?
     private var failure: () -> any View
@@ -116,7 +116,7 @@ extension ImageView {
 // MARK: Extensions
 
 extension ImageView {
-    
+
     func image(@ViewBuilder _ content: @escaping (NukeUI.Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
     }
@@ -137,16 +137,16 @@ extension ImageView {
 // MARK: Defaults
 
 extension ImageView {
-    
+
     struct DefaultFailureView: View {
 
         var body: some View {
             Color.secondarySystemFill
         }
     }
-    
+
     struct DefaultPlaceholderView: View {
-        
+
         var body: some View {
             Color.secondarySystemFill
                 .opacity(0.5)

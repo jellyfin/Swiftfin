@@ -31,7 +31,7 @@ extension HomeView {
                 router.route(to: \.item, item)
             }
             .trailing {
-                SeeAllPoster(type: recentlyAddedPosterType)
+                SeeAllPosterButton(type: recentlyAddedPosterType)
                     .onSelect {
                         router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
                     }

@@ -10,32 +10,32 @@ import SwiftUI
 import VLCUI
 
 extension VideoPlayer {
-    
+
     struct Overlay: View {
-        
+
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay
-        
+
         @EnvironmentObject
         private var proxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
-        
+
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?
         @State
         private var currentOverlayType: VideoPlayer.OverlayType = .main
-        
+
         @StateObject
         private var overlayTimer: TimerProxy = .init()
-        
+
         var body: some View {
             ZStack {
-                
+
                 MainOverlay()
                     .visible(currentOverlayType == .main)
-                
+
                 ConfirmCloseOverlay()
                     .visible(currentOverlayType == .confirmClose)
             }
@@ -56,7 +56,7 @@ extension VideoPlayer {
                 overlayTimer.start(5)
             }
             .onMenuPressed {
-                
+
                 overlayTimer.start(5)
                 confirmCloseWorkItem?.cancel()
 

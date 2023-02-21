@@ -6,11 +6,18 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-//
-// import Foundation
-// import SwiftUI
-//
+import Foundation
+import SwiftUI
+
+struct LiveTVProgramsView: View {
+
+    var body: some View {
+        Text("Implement")
+    }
+}
+
 // struct LiveTVProgramsView: View {
+//
 //    @EnvironmentObject
 //    private var programsRouter: LiveTVProgramsCoordinator.Router
 //    @StateObject

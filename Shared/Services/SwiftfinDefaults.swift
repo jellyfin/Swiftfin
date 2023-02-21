@@ -51,9 +51,9 @@ extension Defaults.Keys {
 
             static let useSeriesLandscapeBackdrop = Key<Bool>("useSeriesBackdrop", default: true, suite: .generalSuite)
         }
-        
+
         enum Indicators {
-            
+
             static let showFavorited: Key<Bool> = .init("showFavoritedIndicator", default: true, suite: .generalSuite)
             static let showProgress: Key<Bool> = .init("showProgressIndicator", default: true, suite: .generalSuite)
             static let showUnwatched: Key<Bool> = .init("showUnwatchedIndicator", default: true, suite: .generalSuite)
@@ -203,13 +203,12 @@ extension Defaults.Keys {
 #if DEBUG
 
 extension UserDefaults {
-    
+
     static let debugSuite = UserDefaults(suiteName: "swiftfinstore-debug-defaults")!
 }
 
 extension Defaults.Keys {
-    
+
     static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: true, suite: .debugSuite)
-    
 }
 #endif

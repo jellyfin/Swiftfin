@@ -65,7 +65,7 @@ struct AboutAppView: View {
                     .onSelect {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
-                
+
                 ChevronButton(title: "Settings")
                     .leadingView {
                         Image(systemName: "gearshape.fill")

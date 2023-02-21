@@ -140,7 +140,7 @@ extension PosterButton {
 }
 
 extension PosterButton {
-    
+
     // MARK: Default Content
 
     struct DefaultContentView: View {
@@ -199,11 +199,11 @@ extension PosterButton {
             }
         }
     }
-    
+
     // MARK: Default Overlay
-    
+
     struct DefaultOverlay: View {
-        
+
         @Default(.accentColor)
         private var accentColor
         @Default(.Customization.Indicators.showFavorited)
@@ -214,9 +214,9 @@ extension PosterButton {
         private var showUnwatched
         @Default(.Customization.Indicators.showWatched)
         private var showWatched
-        
+
         let state: PosterButtonType<Item>
-        
+
         var body: some View {
             if case let PosterButtonType.item(item) = state {
                 ZStack {
@@ -234,7 +234,7 @@ extension PosterButton {
                                     .visible(showUnwatched)
                             }
                         }
-                        
+
                         if item.userData?.isFavorite ?? false {
                             FavoriteIndicator(size: 25)
                                 .visible(showFavorited)

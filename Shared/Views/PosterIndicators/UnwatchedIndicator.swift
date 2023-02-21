@@ -10,13 +10,13 @@ import Defaults
 import SwiftUI
 
 struct UnwatchedIndicator: View {
-    
+
     let size: CGFloat
-    
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             Color.clear
-            
+
             Q3RightTriangle()
                 .frame(width: size, height: size)
         }
@@ -24,7 +24,7 @@ struct UnwatchedIndicator: View {
 }
 
 struct Q3RightTriangle: Shape {
-    
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
 

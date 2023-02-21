@@ -40,6 +40,7 @@ struct ServerButton: View {
 }
 
 extension ServerButton {
+
     init(server: SwiftfinStore.State.Server) {
         self.server = server
         self.onSelect = {}

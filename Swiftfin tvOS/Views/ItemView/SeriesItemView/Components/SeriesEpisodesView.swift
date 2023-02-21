@@ -14,7 +14,7 @@ struct SeriesEpisodeSelector: View {
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    
+
     @EnvironmentObject
     private var parentFocusGuide: FocusGuide
 
@@ -37,10 +37,10 @@ extension SeriesEpisodeSelector {
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        
+
         @EnvironmentObject
         private var focusGuide: FocusGuide
-        
+
         @FocusState
         private var focusedSeason: BaseItemDto?
 
@@ -102,11 +102,11 @@ extension SeriesEpisodeSelector {
         private var lastFocusedEpisodeID: String?
         @State
         private var wrappedScrollView: UIScrollView?
-        
+
         private var items: [BaseItemDto] {
             guard let selection = viewModel.menuSelection,
                   let items = viewModel.menuSections[selection] else { return [.noResults] }
-            return items.compactMap({ $0._item })
+            return items.compactMap(\._item)
         }
 
         var body: some View {

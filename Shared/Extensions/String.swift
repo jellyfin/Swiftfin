@@ -113,6 +113,6 @@ extension String {
 }
 
 extension CharacterSet {
-    
+
     static var objectReplacement: CharacterSet = .init(charactersIn: "\u{fffc}")
 }

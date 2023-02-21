@@ -12,7 +12,7 @@ import SwiftUI
 // TODO: show a sample poster to model indicators
 
 struct IndicatorSettingsView: View {
-    
+
     @Default(.Customization.Indicators.showFavorited)
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
@@ -21,17 +21,17 @@ struct IndicatorSettingsView: View {
     private var showUnwatched
     @Default(.Customization.Indicators.showWatched)
     private var showWatched
-    
+
     var body: some View {
         Form {
             Section {
-                
+
                 Toggle("Favorited", isOn: $showFavorited)
-                
+
                 Toggle("Progress", isOn: $showProgress)
-                
+
                 Toggle("Unwatched", isOn: $showUnwatched)
-                
+
                 Toggle("Watched", isOn: $showWatched)
             }
         }

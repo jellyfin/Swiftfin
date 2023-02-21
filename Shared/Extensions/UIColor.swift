@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIColor {
-    
+
     static let jellyfinPurple = UIColor(red: 172 / 255, green: 92 / 255, blue: 195 / 255, alpha: 1)
 
     var overlayColor: UIColor {

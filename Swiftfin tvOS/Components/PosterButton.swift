@@ -83,6 +83,7 @@ struct PosterButton<Item: Poster>: View {
 }
 
 extension PosterButton {
+
     init(item: Item, type: PosterType, singleImage: Bool = false) {
         self.init(
             item: item,
@@ -158,10 +159,10 @@ extension PosterButton {
             }
         }
     }
-    
+
     // TODO: Find better way for these indicators, see EpisodeCard
     struct DefaultOverlay: View {
-        
+
         @Default(.Customization.Indicators.showFavorited)
         private var showFavorited
         @Default(.Customization.Indicators.showProgress)
@@ -170,9 +171,9 @@ extension PosterButton {
         private var showUnwatched
         @Default(.Customization.Indicators.showWatched)
         private var showWatched
-        
+
         let item: Item
-        
+
         var body: some View {
             ZStack {
                 if let item = item as? BaseItemDto {
@@ -189,7 +190,7 @@ extension PosterButton {
                                 .visible(showUnwatched)
                         }
                     }
-                    
+
                     if item.userData?.isFavorite ?? false {
                         FavoriteIndicator(size: 45)
                             .visible(showFavorited)

@@ -11,13 +11,13 @@ import SwiftUI
 
 #if DEBUG
 struct DebugSettingsView: View {
-    
+
     @Default(.sendProgressReports)
     private var sendProgressReports
-    
+
     var body: some View {
         Form {
-            
+
             Toggle("Send Progress Reports", isOn: $sendProgressReports)
         }
     }

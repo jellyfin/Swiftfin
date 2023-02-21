@@ -8,8 +8,8 @@
 
 // Modification of https://github.com/zattoo/TvOSSlider
 
-import UIKit
 import SwiftUI
+import UIKit
 
 // TODO: Replace
 
@@ -157,19 +157,19 @@ final class UITVOSSlider: UIControl {
     }
 
     // MARK: - Initializers
-    
+
     private var onEditingChanged: (Bool) -> Void
     private var valueBinding: Binding<CGFloat>
-    
+
     init(
         value: Binding<CGFloat>,
         onEditingChanged: @escaping (Bool) -> Void
     ) {
         self.onEditingChanged = onEditingChanged
         self.valueBinding = value
-        
+
         super.init(frame: .zero)
-        
+
         setUpView()
     }
 
@@ -384,7 +384,7 @@ final class UITVOSSlider: UIControl {
 
     @objc
     private func panGestureWasTriggered(panGestureRecognizer: UIPanGestureRecognizer) {
-        
+
         guard !isVerticalGesture(panGestureRecognizer) else { return }
 
         let translation = Float(panGestureRecognizer.translation(in: self).x)
@@ -411,7 +411,7 @@ final class UITVOSSlider: UIControl {
 
             if abs(velocity) > fineTunningVelocityThreshold {
                 let direction: Float = velocity > 0 ? 1 : -1
-                deceleratingVelocity = abs(velocity) >  decelerationMaxVelocity ? decelerationMaxVelocity * direction : velocity
+                deceleratingVelocity = abs(velocity) > decelerationMaxVelocity ? decelerationMaxVelocity * direction : velocity
                 deceleratingTimer = Timer.scheduledTimer(
                     timeInterval: 0.01,
                     target: self,

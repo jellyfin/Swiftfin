@@ -15,11 +15,6 @@ struct InlineEnumToggle<ItemType: CaseIterable & Displayable & Hashable>: View {
 
     private let title: String
 
-    init(title: String, selection: Binding<ItemType>) {
-        self.title = title
-        self._selection = selection
-    }
-
     var body: some View {
         Button {
             guard let currentSelectionIndex = ItemType.allCases.firstIndex(of: selection) else { return }
@@ -39,5 +34,15 @@ struct InlineEnumToggle<ItemType: CaseIterable & Displayable & Hashable>: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+}
+
+extension InlineEnumToggle {
+
+    init(title: String, selection: Binding<ItemType>) {
+        self.init(
+            selection: selection,
+            title: title
+        )
     }
 }

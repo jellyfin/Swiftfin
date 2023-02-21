@@ -21,30 +21,48 @@ extension ItemView {
                     AttributeOutlineView(text: officialRating)
                 }
 
+                // TODO: Have stream indicate this instead?
                 if viewModel.item.isHD ?? false {
                     AttributeFillView(text: "HD")
                 }
 
-                if let selectedMediaSource = viewModel.selectedMediaSource {
-                    if let videoStream = selectedMediaSource.mediaStreams?.first(where: { $0.type == .video }),
-                       (videoStream.width ?? 0) > 3800
-                    {
+                if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+
+                    if mediaStreams.has4KVideo {
                         AttributeFillView(text: "4K")
                     }
 
-                    if let audioStreams = selectedMediaSource.mediaStreams?.filter({ $0.type == .audio }) {
-                        if audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
-                            AttributeFillView(text: "5.1")
-                        }
-
-                        if audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
-                            AttributeFillView(text: "7.1")
-                        }
+                    if mediaStreams.has51AudioChannelLayout {
+                        AttributeFillView(text: "5.1")
                     }
 
-                    if let _ = selectedMediaSource.mediaStreams?.filter({ $0.type == .subtitle }) {
+                    if mediaStreams.has71AudioChannelLayout {
+                        AttributeFillView(text: "7.1")
+                    }
+
+                    if mediaStreams.hasSubtitles {
                         AttributeOutlineView(text: "CC")
                     }
+
+//                    if let videoStream = selectedMediaSource.mediaStreams?.first(where: { $0.type == .video }),
+//                       (videoStream.width ?? 0) > 3800
+//                    {
+//                        AttributeFillView(text: "4K")
+//                    }
+//
+//                    if let audioStreams = selectedMediaSource.mediaStreams?.filter({ $0.type == .audio }) {
+//                        if audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
+//                            AttributeFillView(text: "5.1")
+//                        }
+//
+//                        if audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
+//                            AttributeFillView(text: "7.1")
+//                        }
+//                    }
+//
+//                    if selectedMediaSource.mediaStreams?.hasSubtitles ?? false {
+//                        AttributeOutlineView(text: "CC")
+//                    }
                 }
             }
             .foregroundColor(Color(UIColor.darkGray))

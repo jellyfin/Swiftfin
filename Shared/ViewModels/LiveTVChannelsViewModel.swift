@@ -68,7 +68,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         Task {
             let request = Paths.getGuideInfo
             guard let _ = try? await userSession.client.send(request) else { return }
-            
+
             await MainActor.run {
                 self.getChannels()
             }
@@ -86,10 +86,10 @@ final class LiveTVChannelsViewModel: ViewModel {
                 enableUserData: false,
                 enableFavoriteSorting: true
             )
-            
+
             let request = Paths.getLiveTvChannels(parameters: parameters)
             guard let response = try? await userSession.client.send(request) else { return }
-            
+
             await MainActor.run {
                 self.channels = response.value.items ?? []
                 self.getPrograms()
@@ -106,7 +106,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-        
+
         Task {
             let parameters = Paths.GetLiveTvProgramsParameters(
                 channelIDs: channelIds,
@@ -115,12 +115,12 @@ final class LiveTVChannelsViewModel: ViewModel {
                 minEndDate: minEndDate,
                 sortBy: ["StartDate"]
             )
-            
+
             let request = Paths.getLiveTvPrograms(parameters: parameters)
-            
+
             do {
                 let response = try await userSession.client.send(request)
-                
+
                 await MainActor.run {
                     self.programs = response.value.items ?? []
                     self.channelPrograms = self.processChannelPrograms()

@@ -14,7 +14,7 @@ import SwiftUI
 // TODO: Should episodes also respect some indicator settings?
 
 struct EpisodeCard: View {
-    
+
     @Injected(LogManager.service)
     private var logger
 

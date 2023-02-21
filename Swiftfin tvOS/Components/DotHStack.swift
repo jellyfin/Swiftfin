@@ -22,7 +22,7 @@ struct DotHStack: View {
 
                 Circle()
                     .frame(width: 5, height: 5)
-                    .padding(.horizontal)
+                    .padding(.horizontal, 10)
 
                 restItems[i]
             }

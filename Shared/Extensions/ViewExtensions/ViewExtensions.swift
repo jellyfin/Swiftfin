@@ -83,9 +83,9 @@ extension View {
 
     private func landscapePoster(width: CGFloat) -> some View {
         frame(width: width, height: width / 1.77)
-            #if !os(tvOS)
+        #if !os(tvOS)
             .cornerRadius(width / 30)
-            #endif
+        #endif
     }
 
     private func portraitPoster(height: CGFloat) -> some View {
@@ -183,12 +183,12 @@ extension View {
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
         modifier(BlurViewModifier(style: style))
     }
-    
+
     func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
         symbolRenderingMode(.palette)
             .foregroundStyle(accentColor.overlayColor, accentColor)
     }
-    
+
     @ViewBuilder
     func navigationBarHidden() -> some View {
         if #available(iOS 16, tvOS 16, *) {

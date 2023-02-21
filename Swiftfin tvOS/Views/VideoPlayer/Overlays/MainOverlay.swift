@@ -10,9 +10,9 @@ import Defaults
 import SwiftUI
 
 extension VideoPlayer {
-    
+
     struct MainOverlay: View {
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -22,20 +22,21 @@ extension VideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         @EnvironmentObject
         private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
-        
+
         var body: some View {
             VStack {
-                
+
                 Spacer()
-                
+
                 tvOSSliderView(value: $currentProgressHandler.scrubbedProgress)
                     .onEditingChanged { isEditing in
                         isScrubbing = isEditing
+
                         if isEditing {
                             overlayTimer.pause()
                         } else {

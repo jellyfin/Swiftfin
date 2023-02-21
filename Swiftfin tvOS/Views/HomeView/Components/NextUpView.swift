@@ -42,7 +42,7 @@ extension HomeView {
                 router.route(to: \.item, item)
             }
             .trailing {
-                SeeAllPoster(type: nextUpPosterType)
+                SeeAllPosterButton(type: nextUpPosterType)
                     .onSelect {
                         router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
                     }

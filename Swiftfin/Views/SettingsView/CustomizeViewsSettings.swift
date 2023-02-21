@@ -15,7 +15,7 @@ struct CustomizeViewsSettings: View {
     var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
-    
+
     @Default(.hapticFeedback)
     private var hapticFeedback
 
@@ -46,7 +46,7 @@ struct CustomizeViewsSettings: View {
     private var showFavorites
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
-    
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -65,14 +65,14 @@ struct CustomizeViewsSettings: View {
                         Text("Uses the primary image and hides the logo.")
                     }
                 }
-                
+
                 Toggle("Haptic Feedback", isOn: $hapticFeedback)
             }
-            
+
             Section {
-                
+
                 Toggle("Favorites", isOn: $showFavorites)
-                
+
                 Toggle("Random Image", isOn: $libraryRandomImage)
             } header: {
                 L10n.library.text
@@ -86,7 +86,7 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
-                
+
                 ChevronButton(title: "Indicators")
                     .onSelect {
                         router.route(to: \.indicatorSettings)

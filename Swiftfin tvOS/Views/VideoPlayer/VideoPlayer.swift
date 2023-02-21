@@ -11,7 +11,7 @@ import SwiftUI
 import VLCUI
 
 struct VideoPlayer: View {
-    
+
     enum OverlayType {
         case main
         case chapters
@@ -30,7 +30,7 @@ struct VideoPlayer: View {
     private var isPresentingOverlay: Bool = false
     @State
     private var isScrubbing: Bool = false
-    
+
     private var overlay: () -> any View
 
     @ViewBuilder
@@ -62,7 +62,7 @@ struct VideoPlayer: View {
                         }
                     }
                 }
-            
+
             overlay()
                 .eraseToAnyView()
                 .environmentObject(videoPlayerManager)
@@ -87,9 +87,9 @@ struct VideoPlayer: View {
 
     var body: some View {
         ZStack {
-            
+
             Color.black
-            
+
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
@@ -105,7 +105,7 @@ struct VideoPlayer: View {
 }
 
 extension VideoPlayer {
-    
+
     init(manager: VideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
@@ -113,7 +113,7 @@ extension VideoPlayer {
             overlay: { EmptyView() }
         )
     }
-    
+
     func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.overlay, with: content)
     }

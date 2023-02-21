@@ -13,7 +13,7 @@ struct ServerListView: View {
 
     @EnvironmentObject
     private var router: ServerListCoordinator.Router
-    
+
     @ObservedObject
     var viewModel: ServerListViewModel
 

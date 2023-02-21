@@ -16,7 +16,7 @@ extension SeriesItemView {
 
         @StateObject
         private var focusGuide = FocusGuide()
-        
+
         @ObservedObject
         var viewModel: SeriesItemViewModel
 

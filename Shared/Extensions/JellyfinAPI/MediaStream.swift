@@ -30,6 +30,18 @@ extension MediaStream {
         )
     }
 
+    var is4kVideo: Bool {
+        (width ?? 0) > 3800 && type == .video
+    }
+
+    var is51AudioChannelLayout: Bool {
+        channelLayout == "5.1"
+    }
+
+    var is71AudioChannelLayout: Bool {
+        channelLayout == "7.1"
+    }
+
     var size: String? {
         guard let height, let width else { return nil }
         return "\(width)x\(height)"
@@ -235,5 +247,21 @@ extension [MediaStream] {
         }
 
         return mediaStreams
+    }
+
+    var has4KVideo: Bool {
+        first(where: { $0.is4kVideo }) != nil
+    }
+
+    var has51AudioChannelLayout: Bool {
+        first(where: { $0.is51AudioChannelLayout }) != nil
+    }
+
+    var has71AudioChannelLayout: Bool {
+        first(where: { $0.is71AudioChannelLayout }) != nil
+    }
+
+    var hasSubtitles: Bool {
+        first(where: { $0.type == .subtitle }) != nil
     }
 }

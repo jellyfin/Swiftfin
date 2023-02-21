@@ -16,37 +16,35 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            HStack(spacing: 0) {
-//                if let officialRating = viewModel.item.officialRating {
-//                    AttributeOutlineView(text: officialRating)
-//                        .padding(.trailing)
-//                }
+            HStack(spacing: 25) {
 
-//                if let selectedPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-//                    if selectedPlayerViewModel.item.isHD ?? false {
-//                        AttributeFillView(text: "HD")
-//                            .padding(.trailing)
-//                    }
-//
-//                    if (selectedPlayerViewModel.videoStream.width ?? 0) > 3800 {
-//                        AttributeFillView(text: "4K")
-//                            .padding(.trailing)
-//                    }
-//
-//                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "5.1" }) {
-//                        AttributeFillView(text: "5.1")
-//                            .padding(.trailing)
-//                    }
-//
-//                    if selectedPlayerViewModel.audioStreams.contains(where: { $0.channelLayout == "7.1" }) {
-//                        AttributeFillView(text: "7.1")
-//                            .padding(.trailing)
-//                    }
-//
-//                    if !selectedPlayerViewModel.subtitleStreams.isEmpty {
-//                        AttributeOutlineView(text: "CC")
-//                    }
-//                }
+                if let officialRating = viewModel.item.officialRating {
+                    AttributeOutlineView(text: officialRating)
+                }
+
+                // TODO: Have stream indicate this instead?
+                if viewModel.item.isHD ?? false {
+                    AttributeFillView(text: "HD")
+                }
+
+                if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+
+                    if mediaStreams.has4KVideo {
+                        AttributeFillView(text: "4K")
+                    }
+
+                    if mediaStreams.has51AudioChannelLayout {
+                        AttributeFillView(text: "5.1")
+                    }
+
+                    if mediaStreams.has71AudioChannelLayout {
+                        AttributeFillView(text: "7.1")
+                    }
+
+                    if mediaStreams.hasSubtitles {
+                        AttributeOutlineView(text: "CC")
+                    }
+                }
             }
             .foregroundColor(Color(UIColor.darkGray))
         }

@@ -43,7 +43,7 @@ extension ChapterInfo {
 
         var subtitle: String?
         var showTitle: Bool = true
-        
+
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,

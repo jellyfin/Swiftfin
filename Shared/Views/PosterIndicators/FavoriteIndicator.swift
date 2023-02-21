@@ -9,13 +9,13 @@
 import SwiftUI
 
 struct FavoriteIndicator: View {
-    
+
     let size: CGFloat
-    
+
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             Color.clear
-            
+
             Image(systemName: "heart.circle.fill")
                 .resizable()
                 .frame(width: size, height: size)

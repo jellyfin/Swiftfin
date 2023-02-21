@@ -24,7 +24,7 @@ extension ItemView {
                 items: people.filter(\.isDisplayed).prefix(20).asArray
             )
             .trailing {
-                SeeAllPoster(type: .portrait)
+                SeeAllPosterButton(type: .portrait)
                     .onSelect {
                         router.route(to: \.castAndCrew, people)
                     }

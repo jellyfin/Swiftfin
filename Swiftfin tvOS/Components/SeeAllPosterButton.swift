@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct SeeAllPoster: View {
+struct SeeAllPosterButton: View {
 
     private let type: PosterType
     private var onSelect: () -> Void
@@ -35,10 +35,13 @@ struct SeeAllPoster: View {
     }
 }
 
-extension SeeAllPoster {
+extension SeeAllPosterButton {
+
     init(type: PosterType) {
-        self.type = type
-        self.onSelect = {}
+        self.init(
+            type: type,
+            onSelect: {}
+        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {

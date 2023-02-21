@@ -62,7 +62,7 @@ extension ItemView {
             }
             .navigationTitle(mediaSource.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationCloseButton() {
+            .navigationCloseButton {
                 router.dismissCoordinator()
             }
         }

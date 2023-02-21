@@ -66,7 +66,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             self.didPressMenuAction.action()
         }
     }
-    
+
     @objc
     private func didPressSelectSelector() {
         DispatchQueue.main.async {
@@ -126,7 +126,7 @@ extension View {
     func onMenuPressed(_ action: @escaping () -> Void) -> some View {
         preference(key: DidPressMenuPreferenceKey.self, value: ActionHolder(action: action))
     }
-    
+
     func onSelectPressed(_ action: @escaping () -> Void) -> some View {
         preference(key: DidPressSelectPreferenceKey.self, value: ActionHolder(action: action))
     }

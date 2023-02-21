@@ -24,10 +24,10 @@ enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
             return item.hashValue
         }
     }
-    
+
     var _item: Item? {
         switch self {
-        case .item(let item):
+        case let .item(item):
             return item
         default:
             return nil

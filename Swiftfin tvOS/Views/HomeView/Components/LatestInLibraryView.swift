@@ -26,7 +26,7 @@ extension HomeView {
                 items: viewModel.items.prefix(20).asArray
             )
             .trailing {
-                SeeAllPoster(type: .portrait)
+                SeeAllPosterButton(type: .portrait)
                     .onSelect {
                         router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                     }

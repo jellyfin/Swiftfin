@@ -73,7 +73,7 @@ extension SelectorView {
             type: type
         )
     }
-    
+
     init(selection: Binding<Item>, allItems: [Item]) {
         self.init(
             selection: .init(get: { [selection.wrappedValue] }, set: { selection.wrappedValue = $0[0] }),

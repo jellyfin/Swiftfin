@@ -9,9 +9,9 @@
 import SwiftUI
 
 struct WatchedIndicator: View {
-    
+
     let size: CGFloat
-    
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             Color.clear

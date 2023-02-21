@@ -37,7 +37,7 @@ struct CustomizeViewsSettings: View {
     private var libraryRandomImage
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
-    
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -61,7 +61,7 @@ struct CustomizeViewsSettings: View {
                 }
 
                 Section {
-                    
+
                     ChevronButton(title: "Indicators")
                         .onSelect {
                             router.route(to: \.indicatorSettings)

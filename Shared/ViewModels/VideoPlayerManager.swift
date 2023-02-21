@@ -163,7 +163,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStartReport() {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
@@ -197,7 +197,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStopReport() {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
@@ -220,7 +220,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendPauseReport() {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
@@ -246,7 +246,7 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendProgressReport() {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif

@@ -15,7 +15,7 @@ struct ActionButtonSelectorView: View {
 
     @Binding
     var selectedButtonsBinding: [VideoPlayerActionButton]
-    
+
     @Environment(\.editMode)
     private var editMode
 
@@ -38,9 +38,9 @@ struct ActionButtonSelectorView: View {
                         HStack {
                             Image(systemName: item.settingsSystemImage)
                             Text(item.displayTitle)
-                            
+
                             Spacer()
-                            
+
                             if !(editMode?.wrappedValue.isEditing ?? false) {
                                 Image(systemName: "minus.circle.fill")
                                     .foregroundColor(.red)
@@ -69,9 +69,9 @@ struct ActionButtonSelectorView: View {
                         HStack {
                             Image(systemName: item.settingsSystemImage)
                             Text(item.displayTitle)
-                            
+
                             Spacer()
-                            
+
                             if !(editMode?.wrappedValue.isEditing ?? false) {
                                 Image(systemName: "plus.circle.fill")
                                     .foregroundColor(.green)

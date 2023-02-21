@@ -221,7 +221,7 @@ extension BaseItemDto {
             return nil
         }
     }
-    
+
     // TODO: Don't use spoof objects as a placeholder or no results
 
     static var placeHolder: BaseItemDto {

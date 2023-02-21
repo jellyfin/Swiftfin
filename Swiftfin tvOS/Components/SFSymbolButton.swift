@@ -11,15 +11,9 @@ import UIKit
 
 struct SFSymbolButton: UIViewRepresentable {
 
-    let systemName: String
-    let action: () -> Void
+    private let action: () -> Void
     private let pointSize: CGFloat
-
-    init(systemName: String, pointSize: CGFloat = 24, action: @escaping () -> Void) {
-        self.systemName = systemName
-        self.action = action
-        self.pointSize = pointSize
-    }
+    private let systemName: String
 
     func makeUIView(context: Context) -> some UIButton {
         var configuration = UIButton.Configuration.plain()
@@ -43,11 +37,27 @@ struct SFSymbolButton: UIViewRepresentable {
 }
 
 extension SFSymbolButton: Hashable {
+
     static func == (lhs: SFSymbolButton, rhs: SFSymbolButton) -> Bool {
         lhs.systemName == rhs.systemName
     }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(systemName)
+    }
+}
+
+extension SFSymbolButton {
+
+    init(
+        systemName: String,
+        pointSize: CGFloat = 24,
+        action: @escaping () -> Void
+    ) {
+        self.init(
+            action: action,
+            pointSize: pointSize,
+            systemName: systemName
+        )
     }
 }

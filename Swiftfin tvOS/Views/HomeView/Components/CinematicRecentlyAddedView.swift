@@ -54,7 +54,7 @@ extension HomeView {
                     router.route(to: \.item, item)
                 }
                 .trailingContent {
-                    SeeAllPoster(type: .landscape)
+                    SeeAllPosterButton(type: .landscape)
                         .onSelect {
                             router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
                         }

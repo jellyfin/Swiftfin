@@ -28,11 +28,15 @@ extension ItemView {
                 items: items
             )
             .trailing {
-                SeeAllPoster(type: similarPosterType)
-                    .onSelect {
-                        let viewModel = StaticLibraryViewModel(items: items)
-                        router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
-                    }
+                if items.isEmpty {
+                    NonePosterButton(type: similarPosterType)
+                } else {
+                    SeeAllPosterButton(type: similarPosterType)
+                        .onSelect {
+                            let viewModel = StaticLibraryViewModel(items: items)
+                            router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
+                        }
+                }
             }
             .onSelect { item in
                 router.route(to: \.item, item)
