@@ -11,8 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// Manual tab bar hiding is necessary as SwiftUI does not detect
-// the underlying UICollectionView for handling
+// TODO: Figure out proper tab bar handling with the collection offset
 
 struct PagingLibraryView: View {
 
@@ -30,13 +29,9 @@ struct PagingLibraryView: View {
     private var viewModel: PagingLibraryViewModel
 
     @State
-    private var isShowingTabBar = true
-    @State
     private var presentBackground = false
     @State
     private var scrollViewOffset: CGPoint = .zero
-    @State
-    private var tabBarController: UITabBarController?
 
     @StateObject
     private var cinematicBackgroundViewModel: CinematicBackgroundView<BaseItemDto>.ViewModel = .init()
@@ -61,7 +56,7 @@ struct PagingLibraryView: View {
             )
         }
     }
-
+    
     var body: some View {
         ZStack {
             if cinematicBackground {
@@ -89,9 +84,6 @@ struct PagingLibraryView: View {
         }
         .id(libraryPosterType.hashValue)
         .id(showPosterLabels)
-        .introspectTabBarController { tabBarController in
-            self.tabBarController = tabBarController
-        }
         .onChange(of: focusedItem) { newValue in
             guard let newValue else {
                 withAnimation {
@@ -108,18 +100,6 @@ struct PagingLibraryView: View {
                 }
             }
         }
-        .onChange(of: scrollViewOffset) { newValue in
-            if newValue.y < 50 && !isShowingTabBar {
-                isShowingTabBar = true
-            } else if newValue.y > 50 && isShowingTabBar {
-                isShowingTabBar = false
-            }
-        }
-        .onChange(of: isShowingTabBar) { newValue in
-            UIView.animate(withDuration: 0.3) {
-                tabBarController?.tabBar.alpha = newValue ? 1 : 0
-            }
-        }
     }
 }
 
@@ -127,7 +107,8 @@ extension PagingLibraryView {
 
     init(viewModel: PagingLibraryViewModel) {
         self.init(
-            viewModel: viewModel, onSelect: { _ in }
+            viewModel: viewModel,
+            onSelect: { _ in }
         )
     }
 
