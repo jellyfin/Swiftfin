@@ -46,7 +46,18 @@ final class UserSignInViewModel: ViewModel {
             .trimmingCharacters(in: .objectReplacement)
 
         let response = try await client.signIn(username: username, password: password)
-        let user = try await createLocalUser(response: response)
+
+        let user: UserState
+
+        do {
+            user = try await createLocalUser(response: response)
+        } catch {
+            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+                user = existingUser
+            } else {
+                throw error
+            }
+        }
 
         Defaults[.lastServerUserID] = user.id
         Container.userSession.reset()
@@ -120,7 +131,18 @@ final class UserSignInViewModel: ViewModel {
     func signIn(quickConnectSecret: String) async throws {
         let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
         let response = try await client.send(quickConnectPath)
-        let user = try await createLocalUser(response: response.value)
+
+        let user: UserState
+
+        do {
+            user = try await createLocalUser(response: response.value)
+        } catch {
+            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+                user = existingUser
+            } else {
+                throw error
+            }
+        }
 
         Defaults[.lastServerUserID] = user.id
         Container.userSession.reset()

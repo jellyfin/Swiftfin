@@ -32,7 +32,7 @@ final class UserListCoordinator: NavigationCoordinatable {
     }
 
     func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
-        ServerDetailCoordinator(viewModel: .init())
+        ServerDetailCoordinator(viewModel: .init(server: server))
     }
 
     @ViewBuilder

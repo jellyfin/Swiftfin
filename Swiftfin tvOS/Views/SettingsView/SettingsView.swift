@@ -16,9 +16,6 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @Injected(Container.userSession)
-    private var userSession
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -39,16 +36,16 @@ struct SettingsView: View {
                     Button {} label: {
                         TextPairView(
                             leading: L10n.user,
-                            trailing: userSession.user.username
+                            trailing: viewModel.userSession.user.username
                         )
                     }
 
                     ChevronButton(
                         title: L10n.server,
-                        subtitle: userSession.server.name
+                        subtitle: viewModel.userSession.server.name
                     )
                     .onSelect {
-                        router.route(to: \.serverDetail)
+                        router.route(to: \.serverDetail, viewModel.userSession.server)
                     }
 
                     Button {

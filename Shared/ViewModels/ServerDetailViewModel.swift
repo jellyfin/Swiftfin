@@ -11,6 +11,12 @@ import JellyfinAPI
 
 class ServerDetailViewModel: ViewModel {
 
+    let server: ServerState
+
+    init(server: ServerState) {
+        self.server = server
+    }
+
     func setServerCurrentURI(uri: String) {
 //        SessionManager.main.setServerCurrentURI(server: server, uri: uri)
 //            .sink { c in

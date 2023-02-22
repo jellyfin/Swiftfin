@@ -56,7 +56,7 @@ struct PagingLibraryView: View {
             )
         }
     }
-    
+
     var body: some View {
         ZStack {
             if cinematicBackground {

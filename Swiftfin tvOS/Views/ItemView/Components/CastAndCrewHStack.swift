@@ -15,6 +15,7 @@ extension ItemView {
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
+
         let people: [BaseItemPerson]
 
         var body: some View {
@@ -24,10 +25,14 @@ extension ItemView {
                 items: people.filter(\.isDisplayed).prefix(20).asArray
             )
             .trailing {
-                SeeAllPosterButton(type: .portrait)
-                    .onSelect {
-                        router.route(to: \.castAndCrew, people)
-                    }
+                if people.isEmpty {
+                    NonePosterButton(type: .portrait)
+                } else {
+                    SeeAllPosterButton(type: .portrait)
+                        .onSelect {
+                            router.route(to: \.castAndCrew, people)
+                        }
+                }
             }
             .onSelect { person in
                 router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))

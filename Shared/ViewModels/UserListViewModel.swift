@@ -30,7 +30,6 @@ class UserListViewModel: ViewModel {
         self.server = server
         super.init()
 
-//        JellyfinAPIAPI.basePath = server.currentURI.absoluteString
 //        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
     }
 

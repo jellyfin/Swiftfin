@@ -18,6 +18,9 @@ struct UserSignInView: View {
         case password
     }
 
+    @FocusState
+    private var focusedField: FocusedField?
+
     @ObservedObject
     var viewModel: UserSignInViewModel
 
@@ -31,9 +34,6 @@ struct UserSignInView: View {
     private var signInTask: Task<Void, Never>?
     @State
     private var username: String = ""
-
-    @FocusState
-    private var focusedField: FocusedField?
 
     @ViewBuilder
     private var signInForm: some View {
@@ -176,8 +176,9 @@ struct UserSignInView: View {
 
     var body: some View {
         ZStack {
-//            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
-//                .ignoresSafeArea()
+
+            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
+                .ignoresSafeArea()
 
             Color.black
                 .opacity(0.9)
@@ -202,6 +203,16 @@ struct UserSignInView: View {
 //        }
         .fullScreenCover(isPresented: $isPresentingQuickConnect, onDismiss: nil) {
             quickConnect
+        }
+        .onAppear {
+            Task {
+                try? await viewModel.checkQuickConnect()
+                try? await viewModel.getPublicUsers()
+            }
+        }
+        .onDisappear {
+            viewModel.isLoading = false
+            viewModel.stopQuickConnectAuthCheck()
         }
     }
 }

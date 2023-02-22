@@ -29,6 +29,7 @@ extension ItemView.AboutView {
                         .lineLimit(2)
 
                     Spacer()
+                        .frame(maxWidth: .infinity)
 
                     TruncatedTextView(text: content)
                         .font(.subheadline)
@@ -48,5 +49,14 @@ extension ItemView.AboutView {
                 Text(content)
             }
         }
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ItemView.AboutView.InformationCard(
+            title: "Subtitles",
+            content: "Fre - Default - PGSSUB"
+        )
     }
 }

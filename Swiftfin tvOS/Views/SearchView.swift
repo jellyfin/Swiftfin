@@ -21,20 +21,6 @@ struct SearchView: View {
     private var searchText = ""
 
     @ViewBuilder
-    private var suggestionsView: some View {
-        VStack(spacing: 20) {
-            ForEach(viewModel.suggestions, id: \.id) { item in
-                Button {
-                    searchText = item.displayTitle
-                } label: {
-                    Text(item.displayTitle)
-                        .font(.body)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {

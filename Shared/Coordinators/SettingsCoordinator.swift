@@ -74,11 +74,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeLog() -> some View {
-        ConsoleView()
-    }
-
-    @ViewBuilder
     func makeNativePlayerSettings() -> some View {
         NativeVideoPlayerSettingsView()
     }
@@ -138,15 +133,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
-    @ViewBuilder
-    private func makeLog() -> some View {
-        ConsoleView()
-    }
-
-    func makeServerDetail() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
-                ServerDetailView(viewModel: .init())
+                ServerDetailView(viewModel: .init(server: server))
             }
         )
     }
@@ -155,6 +145,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
     }
     #endif
+
+    @ViewBuilder
+    func makeLog() -> some View {
+        ConsoleView()
+    }
 
     @ViewBuilder
     func makeStart() -> some View {

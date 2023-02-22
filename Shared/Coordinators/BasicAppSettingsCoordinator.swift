@@ -26,6 +26,11 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     var log = makeLog
     #endif
 
+    #if os(tvOS)
+    @Route(.modal)
+    var log = makeLog
+    #endif
+
     private let viewModel: SettingsViewModel
 
     init() {
@@ -42,12 +47,12 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     func makeAppIconSelector() -> some View {
         AppIconSelectorView(viewModel: viewModel)
     }
+    #endif
 
     @ViewBuilder
     func makeLog() -> some View {
         ConsoleView()
     }
-    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

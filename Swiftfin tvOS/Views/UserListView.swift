@@ -13,9 +13,6 @@ import SwiftUI
 
 struct UserListView: View {
 
-    @Injected(Container.userSession)
-    private var userSession
-
     @EnvironmentObject
     private var router: UserListCoordinator.Router
 
@@ -72,7 +69,7 @@ struct UserListView: View {
     var body: some View {
         ZStack {
 
-            ImageView(userSession.client.fullURL(with: Paths.getSplashscreen()))
+            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
                 .ignoresSafeArea()
 
             Color.black

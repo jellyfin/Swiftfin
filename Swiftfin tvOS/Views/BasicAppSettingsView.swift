@@ -22,35 +22,48 @@ struct BasicAppSettingsView: View {
     private var resetTapped: Bool = false
 
     var body: some View {
-        Form {
+        SplitFormWindowView()
+            .descriptionView {
+                Image("jellyfin-blob-blue")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
 
-            Section {
-                Button {} label: {
-                    HStack {
-                        L10n.version.text
-                        Spacer()
-                        Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
-                            .foregroundColor(.secondary)
+                Section {
+
+                    Button {} label: {
+                        TextPairView(
+                            leading: L10n.version,
+                            trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                        )
                     }
-                }
-            } header: {
-                L10n.about.text
-            }
 
-            Button {
-                resetTapped = true
-            } label: {
-                L10n.reset.text
+                    ChevronButton(title: "Logs")
+                        .onSelect {
+                            router.route(to: \.log)
+                        }
+                }
             }
-        }
-        .alert(L10n.reset, isPresented: $resetTapped, actions: {
-            Button(role: .destructive) {
-//                viewModel.resetAppSettings()
-                router.dismissCoordinator()
-            } label: {
-                L10n.reset.text
-            }
-        })
-        .navigationTitle(L10n.settings)
+            .withDescriptionTopPadding()
+            .navigationTitle(L10n.settings)
+
+//        Form {
+//
+//            Button {
+//                resetTapped = true
+//            } label: {
+//                L10n.reset.text
+//            }
+//        }
+//        .alert(L10n.reset, isPresented: $resetTapped, actions: {
+//            Button(role: .destructive) {
+        ////                viewModel.resetAppSettings()
+//                router.dismissCoordinator()
+//            } label: {
+//                L10n.reset.text
+//            }
+//        })
     }
 }

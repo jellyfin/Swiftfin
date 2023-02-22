@@ -2120,15 +2120,15 @@
 		E1549654296CA2EF00C4EF88 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
-				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
-				E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */,
-				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
-				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
-				E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */,
 				E154965B296CA2EF00C4EF88 /* DownloadManager.swift */,
-				E154965C296CA2EF00C4EF88 /* SessionManager.swift */,
+				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
+				E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */,
+				E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */,
+				E154965C296CA2EF00C4EF88 /* SessionManager.swift */,
+				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
+				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
+				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";

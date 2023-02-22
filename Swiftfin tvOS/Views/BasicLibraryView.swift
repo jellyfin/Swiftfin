@@ -40,14 +40,12 @@ struct BasicLibraryView: View {
     }
 
     var body: some View {
-        Group {
-            if viewModel.isLoading && viewModel.items.isEmpty {
-                loadingView
-            } else if viewModel.items.isEmpty {
-                noResultsView
-            } else {
-                libraryItemsView
-            }
+        if viewModel.isLoading && viewModel.items.isEmpty {
+            loadingView
+        } else if viewModel.items.isEmpty {
+            noResultsView
+        } else {
+            libraryItemsView
         }
     }
 }

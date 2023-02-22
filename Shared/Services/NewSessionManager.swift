@@ -61,6 +61,7 @@ final class BasicServerSession {
 }
 
 extension Container.Scope {
+
     static var basicServerSessionScope = Shared()
     static var userSessionScope = Cached()
 }

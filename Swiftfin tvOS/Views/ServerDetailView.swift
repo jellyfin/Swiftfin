@@ -23,25 +23,25 @@ struct ServerDetailView: View {
             }
             .contentView {
                 Section(header: L10n.serverDetails.text) {
-                    
+
                     TextPairView(
                         leading: L10n.name,
-                        trailing: viewModel.userSession.server.name
+                        trailing: viewModel.server.name
                     )
-                    
+
                     TextPairView(
                         leading: L10n.url,
-                        trailing: viewModel.userSession.server.currentURL.absoluteString
+                        trailing: viewModel.server.currentURL.absoluteString
                     )
-                    
+
                     TextPairView(
                         leading: L10n.version,
-                        trailing: viewModel.userSession.server.version
+                        trailing: viewModel.server.version
                     )
-                    
+
                     TextPairView(
                         leading: L10n.operatingSystem,
-                        trailing: viewModel.userSession.server.os
+                        trailing: viewModel.server.os
                     )
                 }
             }
