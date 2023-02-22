@@ -47,9 +47,9 @@ struct SettingsView: View {
                         title: L10n.server,
                         subtitle: userSession.server.name
                     )
-//                    .onSelect {
-//                        router.route(to: \.serverDetail)
-//                    }
+                    .onSelect {
+                        router.route(to: \.serverDetail)
+                    }
 
                     Button {
                         viewModel.signOut()

@@ -14,37 +14,38 @@ struct ServerDetailView: View {
     var viewModel: ServerDetailViewModel
 
     var body: some View {
-        Form {
-            Section(header: L10n.serverDetails.text) {
-                HStack {
-                    L10n.name.text
-                    Spacer()
-//                    Text(SessionManager.main.currentLogin.server.name)
-//                        .foregroundColor(.secondary)
-                }
-                .focusable()
-
-                HStack {
-                    L10n.url.text
-                    Spacer()
-//                    Text(SessionManager.main.currentLogin.server.currentURI)
-//                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    L10n.version.text
-                    Spacer()
-//                    Text(SessionManager.main.currentLogin.server.version)
-//                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    L10n.operatingSystem.text
-                    Spacer()
-//                    Text(SessionManager.main.currentLogin.server.os)
-//                        .foregroundColor(.secondary)
+        SplitFormWindowView()
+            .descriptionView {
+                Image(systemName: "server.rack")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+                Section(header: L10n.serverDetails.text) {
+                    
+                    TextPairView(
+                        leading: L10n.name,
+                        trailing: viewModel.userSession.server.name
+                    )
+                    
+                    TextPairView(
+                        leading: L10n.url,
+                        trailing: viewModel.userSession.server.currentURL.absoluteString
+                    )
+                    
+                    TextPairView(
+                        leading: L10n.version,
+                        trailing: viewModel.userSession.server.version
+                    )
+                    
+                    TextPairView(
+                        leading: L10n.operatingSystem,
+                        trailing: viewModel.userSession.server.os
+                    )
                 }
             }
-        }
+            .withDescriptionTopPadding()
+            .navigationTitle(L10n.server)
     }
 }
