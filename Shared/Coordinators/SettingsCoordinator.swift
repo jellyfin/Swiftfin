@@ -100,7 +100,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail() -> some View {
-        ServerDetailView(viewModel: .init())
+        ServerDetailView(viewModel: .init(server: .sample))
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {

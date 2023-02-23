@@ -267,6 +267,8 @@
 		E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328E2953B71000EE76AB /* DownloadTaskView.swift */; };
 		E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */; };
 		E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13332932953BAA100EE76AB /* DownloadTaskContentView.swift */; };
+		E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1356E0129A7309D00382563 /* SeparatorHStack.swift */; };
+		E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1356E0129A7309D00382563 /* SeparatorHStack.swift */; };
 		E1384944278036C70024FB48 /* VLCPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1384943278036C70024FB48 /* VLCPlayerViewController.swift */; };
 		E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */; };
 		E1388A43293F0AAD009721B1 /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */; };
@@ -951,6 +953,7 @@
 		E133328E2953B71000EE76AB /* DownloadTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskView.swift; sourceTree = "<group>"; };
 		E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskCoordinator.swift; sourceTree = "<group>"; };
 		E13332932953BAA100EE76AB /* DownloadTaskContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskContentView.swift; sourceTree = "<group>"; };
+		E1356E0129A7309D00382563 /* SeparatorHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorHStack.swift; sourceTree = "<group>"; };
 		E1384943278036C70024FB48 /* VLCPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VLCPlayerViewController.swift; sourceTree = "<group>"; };
 		E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingSwizzling.swift; sourceTree = "<group>"; };
 		E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferenceUIHostingController.swift; sourceTree = "<group>"; };
@@ -2480,6 +2483,7 @@
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
 				E1D84214292DEAFB00D1041A /* RotateContentView.swift */,
 				E1E1643D28BB074000323B0A /* SelectorView.swift */,
+				E1356E0129A7309D00382563 /* SeparatorHStack.swift */,
 				E1A1528928FD22F600600579 /* TextPairView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedTextView.swift */,
 				E1B5784028F8AFCB00D42911 /* Wrapped View.swift */,
@@ -3051,6 +3055,7 @@
 				E193D5502719430400900D82 /* ServerDetailView.swift in Sources */,
 				E12E30F1296383810022FAC9 /* SplitFormWindowView.swift in Sources */,
 				E1575E7B293E77B5001665B1 /* HTTPScheme.swift in Sources */,
+				E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */,
 				E1575E69293E77B5001665B1 /* SortBy.swift in Sources */,
 				E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
@@ -3493,6 +3498,7 @@
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
 				E13F05F328BC9016003499D2 /* LibraryView.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,
+				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
