@@ -10,7 +10,7 @@ import UIKit
 
 extension CGSize {
 
-    static func Circle(radius: CGFloat) -> CGSize {
-        CGSize(width: radius, height: radius)
+    static func Square(length: CGFloat) -> CGSize {
+        CGSize(width: length, height: length)
     }
 }

@@ -40,7 +40,7 @@ struct ImageView: View {
             placeholder()
                 .eraseToAnyView()
         } else if let blurHash = currentSource.blurHash {
-            BlurHashView(blurHash: blurHash, size: .Circle(radius: 16))
+            BlurHashView(blurHash: blurHash, size: .Square(length: 16))
         } else {
             DefaultPlaceholderView()
         }

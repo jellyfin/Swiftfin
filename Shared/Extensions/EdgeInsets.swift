@@ -10,11 +10,11 @@ import SwiftUI
 
 extension EdgeInsets {
 
-    func mutating(_ keyPath: WritableKeyPath<EdgeInsets, CGFloat>, to newValue: CGFloat) -> Self {
-        var copy = self
-        copy[keyPath: keyPath] = newValue
-        return copy
-    }
+//    func mutating(_ keyPath: WritableKeyPath<EdgeInsets, CGFloat>, to newValue: CGFloat) -> Self {
+//        var copy = self
+//        copy[keyPath: keyPath] = newValue
+//        return copy
+//    }
 }
 
 extension UIEdgeInsets {

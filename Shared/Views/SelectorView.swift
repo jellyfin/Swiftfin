@@ -11,6 +11,7 @@ import SwiftUI
 
 // TODO: Implement different behavior types, where selected/unselected
 //       items can appear in different sections
+
 struct SelectorView<Item: Displayable & Identifiable>: View {
 
     @Default(.accentColor)

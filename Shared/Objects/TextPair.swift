@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: better context naming than for "display" purposes
+
 struct TextPair: Displayable, Identifiable {
 
     let displayTitle: String

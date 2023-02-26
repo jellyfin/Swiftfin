@@ -197,4 +197,8 @@ extension View {
             navigationBarHidden(true)
         }
     }
+    
+    func asAttributeStyle(_ style: AttributeViewModifier.Style) -> some View {
+        modifier(AttributeViewModifier(style: style))
+    }
 }

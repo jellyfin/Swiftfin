@@ -15,11 +15,6 @@ enum HTTPScheme: String, CaseIterable, Displayable, Defaults.Serializable {
     case https
 
     var displayTitle: String {
-        switch self {
-        case .http:
-            return "http"
-        case .https:
-            return "https"
-        }
+        rawValue
     }
 }

@@ -19,30 +19,35 @@ extension ItemView {
             HStack(spacing: 25) {
 
                 if let officialRating = viewModel.item.officialRating {
-                    AttributeOutlineView(text: officialRating)
-                }
-
-                // TODO: Have stream indicate this instead?
-                if viewModel.item.isHD ?? false {
-                    AttributeFillView(text: "HD")
+                    Text(officialRating)
+                        .asAttributeStyle(.outline)
                 }
 
                 if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+                    
+                    if mediaStreams.hasHDVideo {
+                        Text("HD")
+                            .asAttributeStyle(.fill)
+                    }
 
                     if mediaStreams.has4KVideo {
-                        AttributeFillView(text: "4K")
+                        Text("4K")
+                            .asAttributeStyle(.fill)
                     }
 
                     if mediaStreams.has51AudioChannelLayout {
-                        AttributeFillView(text: "5.1")
+                        Text("5.1")
+                            .asAttributeStyle(.fill)
                     }
 
                     if mediaStreams.has71AudioChannelLayout {
-                        AttributeFillView(text: "7.1")
+                        Text("7.1")
+                            .asAttributeStyle(.fill)
                     }
 
                     if mediaStreams.hasSubtitles {
-                        AttributeOutlineView(text: "CC")
+                        Text("CC")
+                            .asAttributeStyle(.outline)
                     }
                 }
             }

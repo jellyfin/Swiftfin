@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: Replace with something that also won't scale the corner radius of
+//       the rounded progress bar
+
 struct ProgressBar: View {
 
     let progress: CGFloat
