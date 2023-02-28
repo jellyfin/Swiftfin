@@ -24,6 +24,9 @@ struct VideoPlayerSettingsView: View {
     @EnvironmentObject
     private var router: VideoPlayerSettingsCoordinator.Router
 
+    @State
+    private var isPresentingResumeOffsetStepper: Bool = false
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -34,7 +37,15 @@ struct VideoPlayerSettingsView: View {
             }
             .contentView {
 
-                Section {} footer: {
+                Section {
+                    ChevronButton(
+                        title: "Resume Offset",
+                        subtitle: resumeOffset.secondFormat
+                    )
+                    .onSelect {
+                        isPresentingResumeOffsetStepper = true
+                    }
+                } footer: {
                     Text("Resume content seconds before the recorded resume time")
                 }
 
@@ -48,5 +59,20 @@ struct VideoPlayerSettingsView: View {
                 }
             }
             .navigationTitle("Video Player")
+            .blurFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+                StepperView(
+                    title: "Resume Offset",
+                    description: "Resume content seconds before the recorded resume time",
+                    value: $resumeOffset,
+                    range: 0 ... 30,
+                    step: 1
+                )
+                .valueFormatter {
+                    $0.secondFormat
+                }
+                .onCloseSelected {
+                    isPresentingResumeOffsetStepper = false
+                }
+            }
     }
 }

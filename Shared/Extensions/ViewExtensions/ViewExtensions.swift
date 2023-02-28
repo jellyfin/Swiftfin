@@ -197,8 +197,30 @@ extension View {
             navigationBarHidden(true)
         }
     }
-    
+
     func asAttributeStyle(_ style: AttributeViewModifier.Style) -> some View {
         modifier(AttributeViewModifier(style: style))
+    }
+
+    func blurFullScreenCover(
+        isPresented: Binding<Bool>,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder content: @escaping () -> any View
+    ) -> some View {
+        fullScreenCover(isPresented: isPresented, onDismiss: onDismiss) {
+            ZStack {
+                BlurView()
+
+                content()
+                    .eraseToAnyView()
+            }
+            .ignoresSafeArea()
+        }
+    }
+
+    func inBasicNavigationCoordinatable() -> BasicNavigationViewCoordinator {
+        BasicNavigationViewCoordinator {
+            self
+        }
     }
 }

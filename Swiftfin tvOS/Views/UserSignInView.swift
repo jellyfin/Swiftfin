@@ -132,46 +132,45 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var quickConnect: some View {
-        ZStack {
+        VStack(alignment: .center) {
+            L10n.quickConnect.text
+                .font(.title3)
+                .fontWeight(.semibold)
 
-            BlurView()
-                .ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 20) {
+                L10n.quickConnectStep1.text
 
-            VStack(alignment: .center) {
-                L10n.quickConnect.text
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                L10n.quickConnectStep2.text
 
-                VStack(alignment: .leading, spacing: 20) {
-                    L10n.quickConnectStep1.text
+                L10n.quickConnectStep3.text
+            }
+            .padding(.vertical)
 
-                    L10n.quickConnectStep2.text
+            Text(viewModel.quickConnectCode ?? "------")
+                .tracking(10)
+                .font(.title)
+                .monospacedDigit()
+                .frame(maxWidth: .infinity)
 
-                    L10n.quickConnectStep3.text
+            Button {
+                isPresentingQuickConnect = false
+            } label: {
+                L10n.close.text
+                    .frame(width: 400, height: 75)
+            }
+            .buttonStyle(.plain)
+        }
+        .onAppear {
+            Task {
+                for await result in viewModel.startQuickConnect() {
+                    guard let secret = result.secret else { continue }
+                    try? await viewModel.signIn(quickConnectSecret: secret)
                 }
-                .padding(.vertical)
-
-                Text(viewModel.quickConnectCode ?? "------")
-                    .tracking(10)
-                    .font(.title)
-                    .monospacedDigit()
-                    .frame(maxWidth: .infinity)
-
-                Button {
-                    isPresentingQuickConnect = false
-                } label: {
-                    L10n.close.text
-                        .frame(width: 400, height: 75)
-                }
-                .buttonStyle(.plain)
             }
         }
-//        .onAppear {
-//            viewModel.startQuickConnect {}
-//        }
-//        .onDisappear {
-//            viewModel.stopQuickConnectAuthCheck()
-//        }
+        .onDisappear {
+            viewModel.stopQuickConnectAuthCheck()
+        }
     }
 
     var body: some View {
@@ -201,7 +200,7 @@ struct UserSignInView: View {
 //                dismissButton: .cancel()
 //            )
 //        }
-        .fullScreenCover(isPresented: $isPresentingQuickConnect, onDismiss: nil) {
+        .blurFullScreenCover(isPresented: $isPresentingQuickConnect) {
             quickConnect
         }
         .onAppear {

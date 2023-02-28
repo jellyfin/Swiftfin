@@ -8,7 +8,7 @@
 
 import Foundation
 
-// TODO: Remove
+// TODO: Replace with better mechanism
 
 enum PosterButtonType<Item: Poster>: Hashable, Identifiable {
 

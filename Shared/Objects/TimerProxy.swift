@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: Rename to something more generic, non-proxy
+
 class TimerProxy: ObservableObject {
 
     @Published

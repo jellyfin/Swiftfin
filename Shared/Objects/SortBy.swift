@@ -9,6 +9,8 @@
 import Foundation
 import JellyfinAPI
 
+// TODO: Move to jellyfin-api-swift
+
 enum SortBy: String, CaseIterable, Displayable {
 
     case premiereDate = "PremiereDate"

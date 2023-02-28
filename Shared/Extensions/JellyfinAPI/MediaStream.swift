@@ -41,7 +41,7 @@ extension MediaStream {
     var is71AudioChannelLayout: Bool {
         channelLayout == "7.1"
     }
-    
+
     var isHDVideo: Bool {
         (width ?? 0) > 1900 && type == .video
     }
@@ -264,7 +264,7 @@ extension [MediaStream] {
     var has71AudioChannelLayout: Bool {
         first(where: { $0.is71AudioChannelLayout }) != nil
     }
-    
+
     var hasHDVideo: Bool {
         first(where: { $0.isHDVideo }) != nil
     }

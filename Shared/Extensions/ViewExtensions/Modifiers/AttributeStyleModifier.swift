@@ -9,14 +9,14 @@
 import SwiftUI
 
 struct AttributeViewModifier: ViewModifier {
-    
+
     enum Style {
         case fill
         case outline
     }
-    
+
     let style: Style
-    
+
     func body(content: Content) -> some View {
         if style == .fill {
             content

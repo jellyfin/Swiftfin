@@ -86,7 +86,7 @@ extension ItemView {
                             .lineLimit(3)
 
                         HStack {
-                            
+
                             DotHStack {
                                 if let firstGenre = viewModel.item.genres?.first {
                                     firstGenre.text

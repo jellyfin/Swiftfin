@@ -13,15 +13,15 @@ import SwiftUI
 // TODO: better name
 
 struct CinematicBackgroundView<Item: Poster>: View {
-    
+
     @ObservedObject
     var viewModel: ViewModel
-    
+
     @StateObject
     private var proxy: RotateContentView.Proxy = .init()
-    
+
     var initialItem: Item?
-    
+
     var body: some View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { newItem in
@@ -36,7 +36,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
                 }
             }
     }
-    
+
     class ViewModel: ObservableObject {
 
         @Published

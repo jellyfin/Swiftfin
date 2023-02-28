@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct DotHStack: View {
-    
+
     @ViewBuilder
     var content: () -> any View
-    
+
     var body: some View {
         SeparatorHStack(content)
             .separator {

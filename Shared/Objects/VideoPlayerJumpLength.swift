@@ -16,6 +16,7 @@ enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayabl
     case fifteen = 15
     case thirty = 30
 
+    // TODO: formatter for locale?
     var displayTitle: String {
         "\(rawValue)s"
     }

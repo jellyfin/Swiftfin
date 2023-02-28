@@ -6,14 +6,11 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import Stinsen
 
-struct WrappedView: View {
+extension NavigationCoordinatable {
 
-    let content: () -> any View
-
-    var body: some View {
-        content()
-            .eraseToAnyView()
+    func inNavigationViewCoordinator() -> NavigationViewCoordinator<Self> {
+        NavigationViewCoordinator(self)
     }
 }

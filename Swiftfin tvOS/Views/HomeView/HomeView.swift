@@ -22,8 +22,10 @@ struct HomeView: View {
     var body: some View {
         Group {
             if let errorMessage = viewModel.errorMessage {
-                Text("Error: \(errorMessage)")
-//                ErrorView(viewModel: viewModel, errorMessage: errorMessage)
+                ErrorView(
+                    viewModel: viewModel,
+                    errorMessage: .init(message: errorMessage)
+                )
             } else if viewModel.isLoading {
                 ProgressView()
             } else {
