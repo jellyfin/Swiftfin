@@ -38,11 +38,24 @@ extension VideoPlayer {
 
                 ConfirmCloseOverlay()
                     .visible(currentOverlayType == .confirmClose)
+
+                SmallMenuOverlay()
+                    .visible(currentOverlayType == .smallMenu)
+
+                ChapterOverlay()
+                    .visible(currentOverlayType == .chapters)
             }
             .visible(isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: currentOverlayType)
             .environment(\.currentOverlayType, $currentOverlayType)
             .environmentObject(overlayTimer)
+            .onChange(of: currentOverlayType) { newValue in
+                if [.smallMenu, .chapters].contains(newValue) {
+                    overlayTimer.pause()
+                } else if isPresentingOverlay {
+                    overlayTimer.start(5)
+                }
+            }
             .onChange(of: overlayTimer.isActive) { isActive in
                 guard !isActive else { return }
 
@@ -63,6 +76,8 @@ extension VideoPlayer {
                 if isPresentingOverlay && currentOverlayType == .confirmClose {
                     proxy.stop()
                     router.dismissCoordinator()
+                } else if isPresentingOverlay && currentOverlayType == .smallMenu {
+                    currentOverlayType = .main
                 } else {
                     withAnimation {
                         currentOverlayType = .confirmClose

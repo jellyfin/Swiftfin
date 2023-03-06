@@ -48,7 +48,7 @@ extension SeriesEpisodeSelector {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(viewModel.menuSections.keys.sorted(by: { viewModel.menuSectionSort($0, $1) }), id: \.self) { season in
-                        Button {} label: {
+                        Button {
                             Text(season.displayTitle)
                                 .fontWeight(.semibold)
                                 .fixedSize()

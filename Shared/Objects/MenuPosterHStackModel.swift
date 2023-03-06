@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: Don't be specific to Poster, allow other types
+
 protocol MenuPosterHStackModel: ObservableObject {
     associatedtype Section: Hashable, Displayable
     associatedtype Item: Poster

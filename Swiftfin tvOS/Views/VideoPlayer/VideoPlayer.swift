@@ -13,9 +13,10 @@ import VLCUI
 struct VideoPlayer: View {
 
     enum OverlayType {
-        case main
         case chapters
         case confirmClose
+        case main
+        case smallMenu
     }
 
     @EnvironmentObject

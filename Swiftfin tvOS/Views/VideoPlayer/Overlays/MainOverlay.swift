@@ -33,21 +33,50 @@ extension VideoPlayer {
 
                 Spacer()
 
-                tvOSSliderView(value: $currentProgressHandler.scrubbedProgress)
-                    .onEditingChanged { isEditing in
-                        isScrubbing = isEditing
-
-                        if isEditing {
-                            overlayTimer.pause()
-                        } else {
-                            overlayTimer.start(5)
-                        }
+                VideoPlayer.Overlay.BottomBarView()
+                    .padding2()
+                    .padding2()
+                    .background {
+                        LinearGradient(
+                            stops: [
+                                .init(color: .clear, location: 0),
+                                .init(color: .black.opacity(0.8), location: 1),
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     }
-                    .visible(isScrubbing || isPresentingOverlay)
-                    .frame(height: 100)
-                    .padding()
             }
             .environmentObject(overlayTimer)
         }
     }
 }
+
+// struct VideoPlayerOverlay_Preview: PreviewProvider {
+//
+//    static var previews: some View {
+//        ZStack {
+//
+//            Color.red
+//
+//            VideoPlayer.MainOverlay()
+//                .environmentObject(VideoPlayerManager())
+//                .environmentObject(VideoPlayerViewModel(
+//                    playbackURL: URL(string: "http://apple.com")!,
+//                    item: .init(indexNumber: 1, name: "Interstellar", parentIndexNumber: 1, seriesName: "New Girl", type: .episode),
+//                    mediaSource: .init(),
+//                    playSessionID: "",
+//                    videoStreams: [],
+//                    audioStreams: [],
+//                    subtitleStreams: [],
+//                    selectedAudioStreamIndex: 1,
+//                    selectedSubtitleStreamIndex: 1,
+//                    chapters: [],
+//                    streamType: .direct)
+//                )
+//                .environmentObject(VideoPlayerManager.CurrentProgressHandler())
+//                .environmentObject(TimerProxy())
+//        }
+//        .ignoresSafeArea()
+//    }
+// }

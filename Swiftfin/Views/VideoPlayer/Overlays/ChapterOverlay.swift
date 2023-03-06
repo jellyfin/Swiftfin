@@ -40,6 +40,7 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             VStack {
+
                 Spacer()
                     .allowsHitTesting(false)
 

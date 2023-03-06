@@ -12,11 +12,6 @@ import VLCUI
 
 extension VideoPlayer.Overlay {
 
-    enum ActionButtons {}
-}
-
-extension VideoPlayer.Overlay {
-
     struct BarActionButtons: View {
 
         @Default(.VideoPlayer.barActionButtons)

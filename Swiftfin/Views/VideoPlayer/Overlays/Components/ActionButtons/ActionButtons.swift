@@ -6,11 +6,9 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import SwiftUI
+import Foundation
 
-extension UIEdgeInsets {
+extension VideoPlayer.Overlay {
 
-    var asEdgeInsets: EdgeInsets {
-        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
-    }
+    enum ActionButtons {}
 }

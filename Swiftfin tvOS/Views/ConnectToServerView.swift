@@ -137,10 +137,11 @@ struct ConnectToServerView: View {
                     .font(.title3)
                     .fontWeight(.semibold)
 
-                SFSymbolButton(systemName: "arrow.clockwise") {
-                    viewModel.discoverServers()
-                }
-                .frame(width: 30, height: 30)
+                SFSymbolButton(systemName: "arrow.clockwise")
+                    .onSelect {
+                        viewModel.discoverServers()
+                    }
+                    .frame(width: 30, height: 30)
 //                .disabled(viewModel.searching || viewModel.isLoading)
             }
 
