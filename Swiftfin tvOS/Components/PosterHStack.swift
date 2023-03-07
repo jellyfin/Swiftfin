@@ -19,7 +19,7 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var contextMenu: (Item) -> ContextMenu
     private var trailingContent: () -> TrailingContent
     private var onSelect: (Item) -> Void
-    private var onFocus: (Item) -> Void
+    private var onFocus: ((Item) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,7 +45,12 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                             .imageOverlay { imageOverlay(item) }
                             .contextMenu { contextMenu(item) }
                             .onSelect { onSelect(item) }
-                            .onFocus { onFocus(item) }
+                            .if(onFocus != nil) { posterButton in
+                                posterButton
+                                    .onFocus {
+                                        onFocus?(item)
+                                    }
+                            }
                     }
 
                     trailingContent()
@@ -92,7 +97,7 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in },
-            onFocus: { _ in }
+            onFocus: nil
         )
     }
 }

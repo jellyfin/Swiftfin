@@ -21,7 +21,7 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var imageOverlay: () -> ImageOverlay
     private var contextMenu: () -> ContextMenu
     private var onSelect: () -> Void
-    private var onFocus: () -> Void
+    private var onFocus: (() -> Void)?
     private var singleImage: Bool
 
     private var itemWidth: CGFloat {
@@ -59,16 +59,20 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                 contextMenu()
             })
             .posterShadow()
+            .if(onFocus != nil) { view in
+                view
+                    .focused($isFocused)
+                    .onChange(of: isFocused) { newValue in
+                        guard newValue else { return }
+                        onFocus?()
+                    }
+            }
             .focused($isFocused)
 
             content()
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
-        .onChange(of: isFocused) { newValue in
-            guard newValue else { return }
-            onFocus()
-        }
     }
 }
 
@@ -86,7 +90,7 @@ extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
             imageOverlay: { EmptyView() },
             contextMenu: { EmptyView() },
             onSelect: {},
-            onFocus: {},
+            onFocus: nil,
             singleImage: singleImage
         )
     }

@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Flight-School/AnyCodable",
       "state" : {
-        "revision" : "f9fda69a7b704d46fb5123005f2f7e43dbb8a0fa",
-        "version" : "0.6.5"
+        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
+        "version" : "0.6.7"
       }
     },
     {
@@ -66,10 +66,10 @@
     {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift",
+      "location" : "https://github.com/LePips/jellyfin-sdk-swift/",
       "state" : {
-        "branch" : "main",
-        "revision" : "9d6e46b94d2178116ee3546b03dfb67e19e3a93a"
+        "branch" : "temp-data",
+        "revision" : "e4ecfdff0210cc9474dfcf55d060963a291eea1c"
       }
     },
     {
