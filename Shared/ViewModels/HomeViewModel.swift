@@ -166,13 +166,9 @@ final class HomeViewModel: ViewModel {
                 itemID: item.id!
             )
             let _ = try await userSession.client.send(request)
-
-//            async let a = refreshResumeItems()
-
-//            await [try refreshResumeItems(), try refreshHasNextUp()]
-
-//            try await refreshResumeItems()
-//            try await refreshHasNextUp()
+            
+            refreshResumeItems()
+            refreshHasNextUp()
         }
     }
 
