@@ -42,41 +42,48 @@ extension SeriesEpisodesView {
         private var focusedSeason: BaseItemDto?
 
         var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(viewModel.sortedSeasons, id: \.self) { season in
-                        Button {} label: {
-                            Text(season.displayName)
-                                .fontWeight(.semibold)
-                                .fixedSize()
-                                .padding(.vertical, 10)
-                                .padding(.horizontal, 20)
-                                .if(viewModel.selectedSeason == season) { text in
-                                    text
-                                        .background(Color.white)
-                                        .foregroundColor(.black)
-                                }
+            ScrollViewReader { value in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(viewModel.sortedSeasons, id: \.self) { season in
+                            Button {} label: {
+                                Text(season.displayName)
+                                    .fontWeight(.semibold)
+                                    .fixedSize()
+                                    .padding(.vertical, 10)
+                                    .padding(.horizontal, 20)
+                                    .if(viewModel.selectedSeason == season) { text in
+                                        text
+                                            .background(Color.white)
+                                            .foregroundColor(.black)
+                                    }
+                            }
+                            .buttonStyle(.plain)
+                            .id(season)
+                            .focused($focusedSeason, equals: season)
                         }
-                        .buttonStyle(.plain)
-                        .id(season)
-                        .focused($focusedSeason, equals: season)
                     }
+                    .frame(height: 70)
+                    .padding(.horizontal, 50)
+                    .padding(.top)
+                    .padding(.bottom, 45)
                 }
                 .focusGuide(
                     focusGuide,
                     tag: "seasons",
-                    onContentFocus: { focusedSeason = viewModel.selectedSeason },
+                    onContentFocus: {
+                        focusedSeason = viewModel.selectedSeason
+                    },
                     top: "top",
                     bottom: "episodes"
                 )
-                .frame(height: 70)
-                .padding(.horizontal, 50)
-                .padding(.top)
-                .padding(.bottom, 45)
-            }
-            .onChange(of: focusedSeason) { season in
-                guard let season = season else { return }
-                viewModel.select(season: season)
+                .onChange(of: focusedSeason) { season in
+                    guard let season = season else { return }
+                    viewModel.select(season: season)
+                    withAnimation {
+                        value.scrollTo(season, anchor: .trailing)
+                    }
+                }
             }
         }
     }
@@ -99,8 +106,6 @@ extension SeriesEpisodesView {
         private var lastFocusedEpisodeID: String?
         @State
         private var currentEpisodes: [BaseItemDto] = []
-        @State
-        private var wrappedScrollView: UIScrollView?
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -144,13 +149,9 @@ extension SeriesEpisodesView {
                 onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
                 top: "seasons"
             )
-            .introspectScrollView { scrollView in
-                wrappedScrollView = scrollView
-            }
             .onChange(of: viewModel.selectedSeason) { _ in
                 currentEpisodes = viewModel.currentEpisodes ?? []
                 lastFocusedEpisodeID = currentEpisodes.first?.id
-                wrappedScrollView?.scrollToTop(animated: false)
             }
             .onChange(of: focusedEpisodeID) { episodeIndex in
                 guard let episodeIndex = episodeIndex else { return }
