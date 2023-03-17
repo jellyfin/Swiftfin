@@ -271,4 +271,12 @@ extension CinematicItemSelector {
         copy.onSelect = action
         return copy
     }
+
+    func selectFirstItem() -> Self {
+        guard let firstItem = items.first else { return self }
+        if viewModel.currentItem == nil {
+            viewModel.select(item: firstItem)
+        }
+        return self
+    }
 }

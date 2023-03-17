@@ -67,6 +67,7 @@ extension HomeView {
                 .onSelect { item in
                     router.route(to: \.item, item)
                 }
+                .selectFirstItem()
         }
     }
 }
