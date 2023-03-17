@@ -172,6 +172,34 @@ final class HomeViewModel: ViewModel {
         .store(in: &cancellables)
     }
 
+    func refreshResumeItems(completion: @escaping ([BaseItemDto]) -> Void) {
+        ItemsAPI.getResumeItems(
+            userId: SessionManager.main.currentLogin.user.id,
+            limit: 20,
+            fields: [
+                .primaryImageAspectRatio,
+                .seriesPrimaryImage,
+                .seasonUserData,
+                .overview,
+                .genres,
+                .people,
+                .chapters,
+            ],
+            enableUserData: true
+        )
+        .sink { sinkCompletion in
+            switch sinkCompletion {
+            case .finished: ()
+            case .failure:
+                completion([])
+                self.handleAPIRequestError(completion: sinkCompletion)
+            }
+        } receiveValue: { response in
+            completion(response.items ?? [])
+        }
+        .store(in: &cancellables)
+    }
+
     func removeItemFromResume(_ item: BaseItemDto) {
         guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
 

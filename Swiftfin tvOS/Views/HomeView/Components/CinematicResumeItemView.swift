@@ -17,6 +17,8 @@ extension HomeView {
         private var router: HomeCoordinator.Router
         @ObservedObject
         var viewModel: HomeViewModel
+        @State
+        var resumeItems: [BaseItemDto]
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
@@ -35,7 +37,7 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.resumeItems)
+            CinematicItemSelector(items: resumeItems)
                 .topContent { item in
                     ImageView(itemSelectorImageSource(for: item))
                         .resizingMode(.bottomLeft)
@@ -66,6 +68,13 @@ extension HomeView {
                 }
                 .onSelect { item in
                     router.route(to: \.item, item)
+                }
+                .onAppear {
+                    viewModel.refreshResumeItems { newItems in
+                        if resumeItems.count != newItems.count {
+                            resumeItems = newItems
+                        }
+                    }
                 }
         }
     }

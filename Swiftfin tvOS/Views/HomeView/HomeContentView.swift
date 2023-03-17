@@ -32,7 +32,7 @@ extension HomeView {
                             NextUpView(viewModel: .init())
                         }
                     } else {
-                        CinematicResumeView(viewModel: viewModel)
+                        CinematicResumeView(viewModel: viewModel, resumeItems: viewModel.resumeItems)
 
                         if viewModel.hasNextUp {
                             NextUpView(viewModel: .init())
