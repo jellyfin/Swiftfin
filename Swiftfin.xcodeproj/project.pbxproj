@@ -450,6 +450,7 @@
 		E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */; };
 		E17FB55928C125E900311DFE /* StudiosHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55828C125E900311DFE /* StudiosHStack.swift */; };
 		E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55A28C1266400311DFE /* GenresHStack.swift */; };
+		E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */; };
 		E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */; };
 		E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */; };
 		E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920928CEF23A00326F80 /* FocusGuide.swift */; };
@@ -578,6 +579,7 @@
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
 		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
 		E1B5F7AE29577CC7004B26CF /* VisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF3182952641300CC0294 /* VisibilityModifier.swift */; };
+		E1BA6FC529D25DBD007D98DC /* LandscapeItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */; };
 		E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
 		E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
 		E1BDF2E92951490400CC0294 /* ActionButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */; };
@@ -705,6 +707,7 @@
 		E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */; };
 		E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA891A289A302300176FEB /* iPadOSCollectionItemView.swift */; };
 		E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */; };
+		E1FBDB6629D0F336003DD5E2 /* KeyCommandAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FBDB6529D0F336003DD5E2 /* KeyCommandAction.swift */; };
 		E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD08726C35A0D007C8DCF /* NetworkError.swift */; };
 		E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FCD09526C47118007C8DCF /* ErrorMessage.swift */; };
@@ -1143,6 +1146,7 @@
 		E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentLogHandler.swift; sourceTree = "<group>"; };
 		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* Wrapped View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wrapped View.swift"; sourceTree = "<group>"; };
+		E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapeItemElement.swift; sourceTree = "<group>"; };
 		E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
 		E1BDF2EB2952290200CC0294 /* AspectFillActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectFillActionButton.swift; sourceTree = "<group>"; };
@@ -1246,6 +1250,7 @@
 		E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerJumpLength.swift; sourceTree = "<group>"; };
 		E1FA891A289A302300176FEB /* iPadOSCollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemView.swift; sourceTree = "<group>"; };
 		E1FA891D289A305D00176FEB /* iPadOSCollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iPadOSCollectionItemContentView.swift; sourceTree = "<group>"; };
+		E1FBDB6529D0F336003DD5E2 /* KeyCommandAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyCommandAction.swift; sourceTree = "<group>"; };
 		E1FCD08726C35A0D007C8DCF /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		E1FE69A628C29B720021BC93 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
@@ -1527,6 +1532,7 @@
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
+				E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
 				E10E842B29A589860064EA49 /* NonePosterButton.swift */,
 				E111D8F928D0400900400001 /* PagingLibraryView.swift */,
@@ -2617,6 +2623,7 @@
 		E1DD1127271E7D15005BE12F /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				E1FBDB6529D0F336003DD5E2 /* KeyCommandAction.swift */,
 				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
 			);
 			path = Objects;
@@ -2999,6 +3006,7 @@
 				E1E9EFEB28C7EA2C00CC1F8B /* UserDto.swift in Sources */,
 				E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */,
 				E1575EA6293E7D40001665B1 /* VideoPlayer.swift in Sources */,
+				E1BA6FC529D25DBD007D98DC /* LandscapeItemElement.swift in Sources */,
 				E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */,
 				E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */,
 				53CD2A40268A49C2002ABD4E /* ItemView.swift in Sources */,
@@ -3292,6 +3300,7 @@
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue.swift in Sources */,
 				E1BDF2F129524AB700CC0294 /* AutoPlayActionButton.swift in Sources */,
+				E1FBDB6629D0F336003DD5E2 /* KeyCommandAction.swift in Sources */,
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
@@ -3442,6 +3451,7 @@
 				E1D842912933F87500D1041A /* ItemFields.swift in Sources */,
 				E1BDF2F729524ECD00CC0294 /* PlaybackSpeedActionButton.swift in Sources */,
 				E113132F28BDB66A00930F75 /* NavBarDrawerModifier.swift in Sources */,
+				E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */,
 				C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */,
 				E129429328F2845000796AC6 /* SliderType.swift in Sources */,
 				E14A08CD28E68729004FC984 /* MenuPosterHStack.swift in Sources */,

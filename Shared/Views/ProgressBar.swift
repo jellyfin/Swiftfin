@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-// TODO: Replace with something that also won't scale the corner radius of
-//       the rounded progress bar
+// TODO: Replace scaling with size so that the Capsule corner radius
+//       is not affected
 
 struct ProgressBar: View {
 

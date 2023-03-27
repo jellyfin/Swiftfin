@@ -11,6 +11,7 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVTabCoordinator: TabCoordinatable {
+    
     var child = TabChild(startingItems: [
         \LiveTVTabCoordinator.programs,
         \LiveTVTabCoordinator.channels,

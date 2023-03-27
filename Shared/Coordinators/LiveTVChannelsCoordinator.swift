@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -18,31 +19,36 @@ final class LiveTVChannelsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.modal)
     var modalItem = makeModalItem
-//    @Route(.fullScreen)
-//    var videoPlayer = makeVideoPlayer
+    
+    #if os(tvOS)
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
+    #endif
 
     func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
         NavigationViewCoordinator(ItemCoordinator(item: item))
     }
-
-//    func makeVideoPlayer(viewModel: LegacyVideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
-//        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
-//    }
+    
+    #if os(tvOS)
+    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        BasicNavigationViewCoordinator {
+            Group {
+                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                    VideoPlayer(manager: manager)
+                        .overlay {
+                            VideoPlayer.Overlay()
+                        }
+                } else {
+                    NativeVideoPlayer(manager: manager)
+                }
+            }
+        }
+        .inNavigationViewCoordinator()
+    }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
         LiveTVChannelsView()
-    }
-}
-
-final class EmptyViewCoordinator: NavigationCoordinatable {
-    let stack = NavigationStack(initial: \EmptyViewCoordinator.start)
-
-    @Root
-    var start = makeStart
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        Text("Empty")
     }
 }

@@ -39,7 +39,7 @@ extension VideoPlayer {
                 VStack {
                     Overlay.TopBarView()
                         .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
                         .if(UIDevice.isIPad) { view in
@@ -64,7 +64,7 @@ extension VideoPlayer {
 
                     Overlay.BottomBarView()
                         .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, to: 0))
+                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
                         .if(UIDevice.isIPad) { view in

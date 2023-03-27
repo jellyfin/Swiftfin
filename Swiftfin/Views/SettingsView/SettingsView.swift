@@ -43,7 +43,7 @@ struct SettingsView: View {
 
                 ChevronButton(title: L10n.server, subtitle: userSession.server.name)
                     .onSelect {
-                        router.route(to: \.serverDetail)
+                        router.route(to: \.serverDetail, userSession.server)
                     }
 
                 ChevronButton(title: L10n.quickConnect)

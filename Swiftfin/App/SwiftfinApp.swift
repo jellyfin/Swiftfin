@@ -54,8 +54,6 @@ struct SwiftfinApp: App {
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
     }
 
-    // MARK: body
-
     var body: some Scene {
         WindowGroup {
             PreferenceUIHostingControllerView {

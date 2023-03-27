@@ -18,7 +18,7 @@ extension Equatable {
         Array(repeating: self, count: count)
     }
 
-    func mutating<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
+    func mutating<Value>(_ keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue
         return copy

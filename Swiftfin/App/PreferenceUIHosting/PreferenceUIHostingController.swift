@@ -9,8 +9,6 @@
 import SwiftUI
 import UIKit
 
-// MARK: PreferenceUIHostingController
-
 class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
@@ -46,7 +44,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     // MARK: Prefers Home Indicator Auto Hidden
 
-    public var _prefersHomeIndicatorAutoHidden = false {
+    var _prefersHomeIndicatorAutoHidden = false {
         didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
     }
 
@@ -56,7 +54,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     // MARK: Lock orientation
 
-    public var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
+    var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
         didSet {
             print("didset orientations: \(_orientations)")
             if #available(iOS 16.0, *) {
@@ -76,13 +74,13 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
         _orientations
     }
 
-    public var _viewPreference: UIUserInterfaceStyle = .unspecified {
+    var _viewPreference: UIUserInterfaceStyle = .unspecified {
         didSet {
             overrideUserInterfaceStyle = _viewPreference
         }
     }
 
-    public var _keyCommands: [KeyCommandAction] = []
+    var _keyCommands: [KeyCommandAction] = []
 
     override var keyCommands: [UIKeyCommand]? {
         let castedCommands: [UIKeyCommand] = _keyCommands.map { .init(
@@ -102,30 +100,6 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
         guard let action = _keyCommands.first(where: { $0.input == keyCommand.input }) else { return }
 
         action.action()
-    }
-}
-
-struct KeyCommandAction: Equatable {
-
-    static func == (lhs: KeyCommandAction, rhs: KeyCommandAction) -> Bool {
-        lhs.input == rhs.input
-    }
-
-    let title: String
-    let input: String
-    let modifierFlags: UIKeyModifierFlags
-    let action: () -> Void
-
-    init(
-        title: String,
-        input: String,
-        modifierFlags: UIKeyModifierFlags = [],
-        action: @escaping () -> Void
-    ) {
-        self.title = title
-        self.input = input
-        self.modifierFlags = modifierFlags
-        self.action = action
     }
 }
 

@@ -10,6 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct LiveTVProgramsView: View {
+    
     @EnvironmentObject
     private var programsRouter: LiveTVProgramsCoordinator.Router
     @StateObject

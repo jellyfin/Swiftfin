@@ -40,6 +40,8 @@ internal enum L10n {
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto Play")
   /// Back
   internal static let back = L10n.tr("Localizable", "back", fallback: "Back")
+  /// Blue
+  internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Cannot connect to host
@@ -130,6 +132,8 @@ internal enum L10n {
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Genres
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
+  /// Green
+  internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Home
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Information
@@ -230,6 +234,8 @@ internal enum L10n {
   internal static let oneUser = L10n.tr("Localizable", "oneUser", fallback: "1 user")
   /// Operating System
   internal static let operatingSystem = L10n.tr("Localizable", "operatingSystem", fallback: "Operating System")
+  /// Orange
+  internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Other User
@@ -270,6 +276,8 @@ internal enum L10n {
   internal static let pressDownForMenu = L10n.tr("Localizable", "pressDownForMenu", fallback: "Press Down for Menu")
   /// Previous Item
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous Item")
+  /// Primary
+  internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
   /// Programs
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
   /// Public Users
@@ -296,6 +304,8 @@ internal enum L10n {
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
+  /// Red
+  internal static let red = L10n.tr("Localizable", "red", fallback: "Red")
   /// Refresh
   internal static let refresh = L10n.tr("Localizable", "refresh", fallback: "Refresh")
   /// Regular
@@ -460,6 +470,8 @@ internal enum L10n {
   internal static let whosWatching = L10n.tr("Localizable", "WhosWatching", fallback: "Who's watching?")
   /// WIP
   internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
+  /// Yellow
+  internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Your Favorites
   internal static let yourFavorites = L10n.tr("Localizable", "yourFavorites", fallback: "Your Favorites")
 }

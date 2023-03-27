@@ -50,23 +50,22 @@ struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
                 child
 
                 if child.id != last {
-                    AnyView(separator())
+                    separator()
+                        .eraseToAnyView()
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func localHStack(@ViewBuilder content: @escaping () -> any View) -> some View {
+    private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
         #if os(tvOS)
         HStack(spacing: 0) {
             content()
-                .eraseToAnyView()
         }
         #else
         HStack {
             content()
-                .eraseToAnyView()
         }
         #endif
     }

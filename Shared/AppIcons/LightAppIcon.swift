@@ -20,15 +20,15 @@ enum LightAppIcon: String, AppIcon {
     var displayTitle: String {
         switch self {
         case .blue:
-            return "Blue"
+            return L10n.blue
         case .green:
-            return "Green"
+            return L10n.green
         case .orange:
-            return "Orange"
+            return L10n.orange
         case .red:
-            return "Red"
+            return L10n.red
         case .yellow:
-            return "Yellow"
+            return L10n.yellow
         case .jellyfin:
             return "Jellyfin"
         }

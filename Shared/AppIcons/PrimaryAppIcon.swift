@@ -15,7 +15,7 @@ enum PrimaryAppIcon: String, AppIcon {
     var displayTitle: String {
         switch self {
         case .primary:
-            return "Primary"
+            return L10n.primary
         }
     }
 

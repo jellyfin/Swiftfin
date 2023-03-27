@@ -35,7 +35,7 @@ struct ConnectToServerView: View {
     @State
     private var url = "http://"
 
-    private func connectToServer() {
+    private func connectToServer(at url: String) {
         let task = Task {
             isConnecting = true
             connectionError = nil
@@ -64,50 +64,49 @@ struct ConnectToServerView: View {
     @ViewBuilder
     private var connectForm: some View {
         VStack(alignment: .leading) {
-            Section {
-                TextField(L10n.serverURL, text: $url)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.URL)
+            
+            L10n.connectToJellyfinServer.text
+            
+            TextField(L10n.serverURL, text: $url)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+                .keyboardType(.URL)
 
-                if isConnecting {
-                    Button {
-                        connectionTask?.cancel()
-                        isConnecting = false
-                    } label: {
-                        L10n.cancel.text
-                            .foregroundColor(.red)
-                            .bold()
-                            .font(.callout)
-                            .frame(height: 75)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.card)
-                } else {
-                    Button {
-                        connectToServer()
-                    } label: {
-                        L10n.connect.text
-                            .bold()
-                            .font(.callout)
-                            .frame(height: 75)
-                            .frame(maxWidth: .infinity)
-                            .background {
-                                if isConnecting || url.isEmpty {
-                                    Color.secondary
-                                } else {
-                                    Color.jellyfinPurple
-                                }
-                            }
-                    }
-                    .disabled(isConnecting || url.isEmpty)
-                    .buttonStyle(.card)
+            if isConnecting {
+                Button {
+                    connectionTask?.cancel()
+                    isConnecting = false
+                } label: {
+                    L10n.cancel.text
+                        .foregroundColor(.red)
+                        .bold()
+                        .font(.callout)
+                        .frame(height: 75)
+                        .frame(maxWidth: .infinity)
                 }
-
-                Spacer()
-            } header: {
-                L10n.connectToJellyfinServer.text
+                .buttonStyle(.card)
+            } else {
+                Button {
+                    connectToServer(at: url)
+                } label: {
+                    L10n.connect.text
+                        .bold()
+                        .font(.callout)
+                        .frame(height: 75)
+                        .frame(maxWidth: .infinity)
+                        .background {
+                            if isConnecting || url.isEmpty {
+                                Color.secondary
+                            } else {
+                                Color.jellyfinPurple
+                            }
+                        }
+                }
+                .disabled(isConnecting || url.isEmpty)
+                .buttonStyle(.card)
             }
+
+            Spacer()
         }
     }
 
@@ -142,30 +141,28 @@ struct ConnectToServerView: View {
                         viewModel.discoverServers()
                     }
                     .frame(width: 30, height: 30)
-//                .disabled(viewModel.searching || viewModel.isLoading)
+                    .disabled(viewModel.isSearching || viewModel.isLoading)
             }
-
-//            if viewModel.searching {
-//                searchingDiscoverServers
-//                    .frame(maxHeight: .infinity)
-//            } else {
-//                if viewModel.discoveredServers.isEmpty {
-//                    noLocalServersFound
-//                        .frame(maxHeight: .infinity)
-//                } else {
-//                    ScrollView {
-//                        LazyVStack {
-//                            ForEach(viewModel.discoveredServers, id: \.self) { server in
-//                                ServerButton(server: server)
-//                                    .onSelect {
-//                                        viewModel.connectToServer(uri: server.currentURI)
-//                                    }
-//                            }
-//                        }
-//                        .padding()
-//                    }
-//                }
-//            }
+            
+            if viewModel.isSearching {
+                searchingDiscoverServers
+                    .frame(maxHeight: .infinity)
+            } else if viewModel.discoveredServers.isEmpty {
+                noLocalServersFound
+                    .frame(maxHeight: .infinity)
+            } else {
+                ScrollView {
+                    VStack {
+                        ForEach(viewModel.discoveredServers, id: \.id) { server in
+                            ServerButton(server: server)
+                                .onSelect {
+                                    connectToServer(at: server.currentURL.absoluteString)
+                                }
+                        }
+                    }
+                    .padding()
+                }
+            }
         }
     }
 

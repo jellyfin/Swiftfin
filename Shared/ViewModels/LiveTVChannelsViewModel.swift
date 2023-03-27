@@ -9,14 +9,6 @@
 import Factory
 import Foundation
 import JellyfinAPI
-import SwiftUICollection
-
-typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
-
-struct LiveTVChannelRowCell: Hashable {
-    let id = UUID()
-    let item: LiveTVChannelProgram
-}
 
 struct LiveTVChannelProgram: Hashable {
     let id = UUID()
@@ -28,20 +20,23 @@ struct LiveTVChannelProgram: Hashable {
 final class LiveTVChannelsViewModel: ViewModel {
 
     @Published
-    var channels = [BaseItemDto]()
+    var channels: [BaseItemDto] = []
     @Published
-    var channelPrograms = [LiveTVChannelProgram]() {
-        didSet {
-            rows = []
-            let rowChannels = channelPrograms.chunked(into: 4)
-            for (index, rowChans) in rowChannels.enumerated() {
-                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
-            }
-        }
-    }
+    var channelPrograms: [LiveTVChannelProgram] = []
+    
+//    @Published
+//    var channelPrograms = [LiveTVChannelProgram]() {
+//        didSet {
+//            rows = []
+//            let rowChannels = channelPrograms.chunked(into: 4)
+//            for (index, rowChans) in rowChannels.enumerated() {
+//                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
+//            }
+//        }
+//    }
 
-    @Published
-    var rows = [LiveTVChannelRow]()
+//    @Published
+//    var rows = [LiveTVChannelRow]()
 
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
