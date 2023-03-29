@@ -6,6 +6,8 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
@@ -18,8 +20,46 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    @ViewBuilder
+    #if os(tvOS)
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
+    #endif
+
+    #if os(tvOS)
+    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        BasicNavigationViewCoordinator {
+            Group {
+                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                    VideoPlayer(manager: manager)
+                        .overlay {
+                            VideoPlayer.Overlay()
+                        }
+                } else {
+                    NativeVideoPlayer(manager: manager)
+                }
+            }
+        }
+        .inNavigationViewCoordinator()
+    }
+    #endif
+
+//    @ViewBuilder
     func makeStart() -> some View {
-        LiveTVProgramsView()
+        let viewModel = LiveTVProgramsViewModel()
+        
+        let channels = (1..<20).map { _ in BaseItemDto.randomItem() }
+        
+        channels.forEach { channel in
+            viewModel.channels[channel.id!] = channel
+        }
+        
+        viewModel.recommendedItems = channels.randomSample(count: 5)
+        viewModel.seriesItems = channels.randomSample(count: 5)
+        viewModel.movieItems = channels.randomSample(count: 5)
+        viewModel.sportsItems = channels.randomSample(count: 5)
+        viewModel.kidsItems = channels.randomSample(count: 5)
+        viewModel.newsItems = channels.randomSample(count: 5)
+        
+        return LiveTVProgramsView(viewModel: viewModel)
     }
 }

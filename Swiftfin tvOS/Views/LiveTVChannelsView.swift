@@ -14,42 +14,42 @@ import SwiftUI
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
-    
+
     @EnvironmentObject
     private var router: LiveTVChannelsCoordinator.Router
-    
+
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
-    
+
     @ViewBuilder
     private var loadingView: some View {
         ProgressView()
     }
-    
+
     // TODO: add retry
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
     }
-    
+
     @ViewBuilder
     private var channelsView: some View {
         CollectionView(items: viewModel.channelPrograms) { _, channelProgram, _ in
             channelCell(for: channelProgram)
         }
         .layout { _, layoutEnvironment in
-                .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .fixedNumberOfColumns(4),
-                    itemSpacing: 8,
-                    lineSpacing: 16,
-                    itemSize: .estimated(400),
-                    sectionInsets: .zero
-                )
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .fixedNumberOfColumns(4),
+                itemSpacing: 8,
+                lineSpacing: 16,
+                itemSize: .estimated(400),
+                sectionInsets: .zero
+            )
         }
         .ignoresSafeArea()
     }
-    
+
     @ViewBuilder
     private func channelCell(for channelProgram: LiveTVChannelProgram) -> some View {
         let channel = channelProgram.channel

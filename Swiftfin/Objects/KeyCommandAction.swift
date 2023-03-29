@@ -30,7 +30,7 @@ struct KeyCommandAction {
 }
 
 extension KeyCommandAction: Equatable {
-    
+
     static func == (lhs: KeyCommandAction, rhs: KeyCommandAction) -> Bool {
         lhs.input == rhs.input
     }

@@ -13,22 +13,17 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVChannelsCoordinator: NavigationCoordinatable {
+
     let stack = NavigationStack(initial: \LiveTVChannelsCoordinator.start)
 
     @Root
     var start = makeStart
-    @Route(.modal)
-    var modalItem = makeModalItem
-    
+
     #if os(tvOS)
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
     #endif
 
-    func makeModalItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
-    }
-    
     #if os(tvOS)
     func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         BasicNavigationViewCoordinator {

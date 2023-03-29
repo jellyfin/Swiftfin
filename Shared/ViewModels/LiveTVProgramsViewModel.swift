@@ -24,12 +24,12 @@ final class LiveTVProgramsViewModel: ViewModel {
     @Published
     var newsItems = [BaseItemDto]()
 
-    private var channels = [String: BaseItemDto]()
+    var channels = [String: BaseItemDto]()
 
     override init() {
         super.init()
 
-        getChannels()
+//        getChannels()
     }
 
     func findChannel(id: String) -> BaseItemDto? {
@@ -48,14 +48,14 @@ final class LiveTVProgramsViewModel: ViewModel {
             )
             let request = Paths.getLiveTvChannels(parameters: parameters)
             let response = try await userSession.client.send(request)
-            
+
             guard let channels = response.value.items else { return }
-            
+
             for channel in channels {
                 guard let channelID = channel.id else { continue }
                 self.channels[channelID] = channel
             }
-            
+
             getRecommendedPrograms()
             getSeries()
             getMovies()
@@ -78,9 +78,9 @@ final class LiveTVProgramsViewModel: ViewModel {
             )
             let request = Paths.getRecommendedPrograms(parameters: parameters)
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.recommendedItems = items
             }
@@ -90,22 +90,22 @@ final class LiveTVProgramsViewModel: ViewModel {
     private func getSeries() {
         Task {
             let request = Paths.getPrograms(.init(
-                    enableImageTypes: [.primary, .thumb],
-                    enableTotalRecordCount: false,
-                    fields: [.channelInfo, .primaryImageAspectRatio],
-                    hasAired: false,
-                    isKids: false,
-                    isMovie: false,
-                    isNews: false,
-                    isSeries: true,
-                    isSports: false,
-                    limit: 9,
-                    userID: userSession.user.id
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: false,
+                isSeries: true,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
             ))
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.seriesItems = items
             }
@@ -115,22 +115,22 @@ final class LiveTVProgramsViewModel: ViewModel {
     private func getMovies() {
         Task {
             let request = Paths.getPrograms(.init(
-                    enableImageTypes: [.primary, .thumb],
-                    enableTotalRecordCount: false,
-                    fields: [.channelInfo, .primaryImageAspectRatio],
-                    hasAired: false,
-                    isKids: false,
-                    isMovie: true,
-                    isNews: false,
-                    isSeries: false,
-                    isSports: false,
-                    limit: 9,
-                    userID: userSession.user.id
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: true,
+                isNews: false,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
             ))
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.movieItems = items
             }
@@ -140,22 +140,22 @@ final class LiveTVProgramsViewModel: ViewModel {
     private func getSports() {
         Task {
             let request = Paths.getPrograms(.init(
-                    enableImageTypes: [.primary, .thumb],
-                    enableTotalRecordCount: false,
-                    fields: [.channelInfo, .primaryImageAspectRatio],
-                    hasAired: false,
-                    isKids: false,
-                    isMovie: false,
-                    isNews: false,
-                    isSeries: false,
-                    isSports: true,
-                    limit: 9,
-                    userID: userSession.user.id
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: false,
+                isSeries: false,
+                isSports: true,
+                limit: 9,
+                userID: userSession.user.id
             ))
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.sportsItems = items
             }
@@ -165,22 +165,22 @@ final class LiveTVProgramsViewModel: ViewModel {
     private func getKids() {
         Task {
             let request = Paths.getPrograms(.init(
-                    enableImageTypes: [.primary, .thumb],
-                    enableTotalRecordCount: false,
-                    fields: [.channelInfo, .primaryImageAspectRatio],
-                    hasAired: false,
-                    isKids: true,
-                    isMovie: false,
-                    isNews: false,
-                    isSeries: false,
-                    isSports: false,
-                    limit: 9,
-                    userID: userSession.user.id
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: true,
+                isMovie: false,
+                isNews: false,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
             ))
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.kidsItems = items
             }
@@ -190,22 +190,22 @@ final class LiveTVProgramsViewModel: ViewModel {
     private func getNews() {
         Task {
             let request = Paths.getPrograms(.init(
-                    enableImageTypes: [.primary, .thumb],
-                    enableTotalRecordCount: false,
-                    fields: [.channelInfo, .primaryImageAspectRatio],
-                    hasAired: false,
-                    isKids: false,
-                    isMovie: false,
-                    isNews: true,
-                    isSeries: false,
-                    isSports: false,
-                    limit: 9,
-                    userID: userSession.user.id
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: true,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
             ))
             let response = try await userSession.client.send(request)
-            
+
             guard let items = response.value.items else { return }
-            
+
             await MainActor.run {
                 self.seriesItems = items
             }

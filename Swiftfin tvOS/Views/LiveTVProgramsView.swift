@@ -6,17 +6,23 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import Foundation
 import SwiftUI
 
- struct LiveTVProgramsView: View {
+struct LiveTVProgramsView: View {
 
     @EnvironmentObject
-    private var programsRouter: LiveTVProgramsCoordinator.Router
+    private var router: LiveTVProgramsCoordinator.Router
+
     @StateObject
-    var viewModel = LiveTVProgramsViewModel()
+    var viewModel: LiveTVProgramsViewModel
 
     var body: some View {
+        CollectionView(rows: <#T##[CollectionSection<Hashable, Hashable>]#>, cell: <#T##(IndexPath, Hashable, CollectionViewProxy) -> View#>)
+        
+        
+        
         ScrollView {
             LazyVStack(alignment: .leading) {
                 if !viewModel.recommendedItems.isEmpty,
@@ -31,13 +37,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -59,13 +63,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -87,13 +89,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -115,13 +115,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -143,13 +141,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -171,13 +167,11 @@ import SwiftUI
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-//                                    if let chanId = item.channelId,
-//                                       let chan = viewModel.findChannel(id: chanId)
-//                                    {
-//                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-//                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-//                                        }
-//                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -189,5 +183,6 @@ import SwiftUI
                 }
             }
         }
+        .ignoresSafeArea()
     }
- }
+}

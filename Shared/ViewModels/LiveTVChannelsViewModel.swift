@@ -23,7 +23,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     var channels: [BaseItemDto] = []
     @Published
     var channelPrograms: [LiveTVChannelProgram] = []
-    
+
 //    @Published
 //    var channelPrograms = [LiveTVChannelProgram]() {
 //        didSet {

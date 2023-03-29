@@ -64,9 +64,9 @@ struct ConnectToServerView: View {
     @ViewBuilder
     private var connectForm: some View {
         VStack(alignment: .leading) {
-            
+
             L10n.connectToJellyfinServer.text
-            
+
             TextField(L10n.serverURL, text: $url)
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
@@ -143,7 +143,7 @@ struct ConnectToServerView: View {
                     .frame(width: 30, height: 30)
                     .disabled(viewModel.isSearching || viewModel.isLoading)
             }
-            
+
             if viewModel.isSearching {
                 searchingDiscoverServers
                     .frame(maxHeight: .infinity)

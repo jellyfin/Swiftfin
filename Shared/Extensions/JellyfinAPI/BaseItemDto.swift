@@ -232,6 +232,14 @@ extension BaseItemDto {
 //            indexNumber: 20
         )
     }
+    
+    static func randomItem() -> BaseItemDto {
+        .init(
+            id: UUID().uuidString,
+            name: "Lorem Ipsum",
+            overview: "Lorem ipsum dolor sit amet"
+        )
+    }
 
     static var noResults: BaseItemDto {
         .init(name: L10n.noResults)
