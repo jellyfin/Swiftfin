@@ -24,31 +24,31 @@ struct AppIconSelectorView: View {
                 }
             }
 
-            Section("Dark") {
+            Section(L10n.dark) {
                 ForEach(DarkAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }
 
-            Section("Light") {
+            Section(L10n.light) {
                 ForEach(LightAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }
 
-            Section("Inverted Dark") {
+            Section(L10n.invertedDark) {
                 ForEach(InvertedDarkAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }
 
-            Section("Inverted Light") {
+            Section(L10n.invertedLight) {
                 ForEach(InvertedLightAppIcon.allCases) { icon in
                     AppIconRow(viewModel: viewModel, icon: icon)
                 }
             }
         }
-        .navigationTitle("App Icon")
+        .navigationTitle(L10n.appIcon)
     }
 }
 

@@ -68,7 +68,7 @@ extension ItemView {
                             let mediaSources = viewModel.item.mediaSources
                         {
                             ForEach(mediaSources) { source in
-                                Card(title: "Media", subtitle: mediaSources.count > 1 ? source.displayTitle : nil)
+                                Card(title: L10n.media, subtitle: mediaSources.count > 1 ? source.displayTitle : nil)
                                     .content {
                                         if let mediaStreams = source.mediaStreams {
                                             VStack(alignment: .leading) {

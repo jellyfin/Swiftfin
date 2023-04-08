@@ -56,8 +56,8 @@ extension Defaults.Keys {
 
             static let showFavorited: Key<Bool> = .init("showFavoritedIndicator", default: true, suite: .generalSuite)
             static let showProgress: Key<Bool> = .init("showProgressIndicator", default: true, suite: .generalSuite)
-            static let showUnwatched: Key<Bool> = .init("showUnwatchedIndicator", default: true, suite: .generalSuite)
-            static let showWatched: Key<Bool> = .init("showWatchedIndicator", default: true, suite: .generalSuite)
+            static let showUnplayed: Key<Bool> = .init("showUnplayedIndicator", default: true, suite: .generalSuite)
+            static let showPlayed: Key<Bool> = .init("showPlayedIndicator", default: true, suite: .generalSuite)
         }
 
         enum Library {

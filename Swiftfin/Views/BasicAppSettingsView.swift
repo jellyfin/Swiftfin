@@ -47,7 +47,7 @@ struct BasicAppSettingsView: View {
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
 
-                ChevronButton(title: "App Icon")
+                ChevronButton(title: L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector)
                     }
@@ -56,9 +56,9 @@ struct BasicAppSettingsView: View {
             }
 
             Section {
-                ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
+                ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
             } footer: {
-                Text("Some views may need an app restart to update.")
+                L10n.accentColorDescription.text
             }
 
             ChevronButton(title: "Logs")

@@ -43,17 +43,6 @@ struct SFSymbolButton: UIViewRepresentable {
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 
-// extension SFSymbolButton: Hashable {
-//
-////    static func == (lhs: SFSymbolButton, rhs: SFSymbolButton) -> Bool {
-////        lhs.systemName == rhs.systemName
-////    }
-//
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(systemName)
-//    }
-// }
-
 extension SFSymbolButton {
 
     init(

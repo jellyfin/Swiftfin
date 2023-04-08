@@ -11,7 +11,7 @@ import SwiftUI
 extension Button where Label: View {
 
     /// Creates a Button with an empty action and a custom label.
-    init(@ViewBuilder label: @escaping () -> Label) {
+    init(role: ButtonRole? = nil, @ViewBuilder label: @escaping () -> Label) {
         self.init {} label: {
             label()
         }
@@ -21,8 +21,8 @@ extension Button where Label: View {
 extension Button where Label == Text {
 
     /// Creates a Button with an empty action and a plain text label.
-    init(_ title: String) {
-        self.init {
+    init(_ title: String, role: ButtonRole? = nil) {
+        self.init(role: role) {
             Text(title)
         }
     }

@@ -19,10 +19,6 @@ struct LiveTVProgramsView: View {
     var viewModel: LiveTVProgramsViewModel
 
     var body: some View {
-        CollectionView(rows: <#T##[CollectionSection<Hashable, Hashable>]#>, cell: <#T##(IndexPath, Hashable, CollectionViewProxy) -> View#>)
-        
-        
-        
         ScrollView {
             LazyVStack(alignment: .leading) {
                 if !viewModel.recommendedItems.isEmpty,
@@ -183,6 +179,7 @@ struct LiveTVProgramsView: View {
                 }
             }
         }
-        .ignoresSafeArea()
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.horizontal)
     }
 }

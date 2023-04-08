@@ -60,20 +60,20 @@ struct CustomizeViewsSettings: View {
 
                 if itemViewType == .cinematic {
                     Section {
-                        Toggle("Use Primary Image", isOn: $cinematicItemViewTypeUsePrimaryImage)
+                        Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
                     } footer: {
-                        Text("Uses the primary image and hides the logo.")
+                        L10n.usePrimaryImageDescription.text
                     }
                 }
 
-                Toggle("Haptic Feedback", isOn: $hapticFeedback)
+                Toggle(L10n.hapticFeedback, isOn: $hapticFeedback)
             }
 
             Section {
 
-                Toggle("Favorites", isOn: $showFavorites)
+                Toggle(L10n.favorites, isOn: $showFavorites)
 
-                Toggle("Random Image", isOn: $libraryRandomImage)
+                Toggle(L10n.randomImage, isOn: $libraryRandomImage)
             } header: {
                 L10n.library.text
             }
@@ -87,7 +87,7 @@ struct CustomizeViewsSettings: View {
 
             Section {
 
-                ChevronButton(title: "Indicators")
+                ChevronButton(title: L10n.indicators)
                     .onSelect {
                         router.route(to: \.indicatorSettings)
                     }
@@ -106,16 +106,14 @@ struct CustomizeViewsSettings: View {
 
                 EnumPicker(title: L10n.library, selection: $libraryGridPosterType)
             } header: {
-                // TODO: localize after organization
-                Text("Posters")
+                L10n.posters.text
             }
 
             Section {
-                Toggle("Series Backdrop", isOn: $useSeriesLandscapeBackdrop)
+                Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 // TODO: think of a better name
-                // TODO: localize after organization
-                Text("Episode Landscape Poster")
+                L10n.episodeLandscapePoster.text
             }
         }
         .navigationTitle(L10n.customize)

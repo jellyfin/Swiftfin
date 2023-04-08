@@ -148,9 +148,7 @@ struct ConnectToServerView: View {
             L10n.error,
             isPresented: $isPresentingConnectionError
         ) {
-            Button(role: .cancel) {} label: {
-                Text("Dismiss")
-            }
+            Button(L10n.dismiss, role: .cancel)
         } message: {
             Text(connectionError?.localizedDescription ?? .emptyDash)
         }
@@ -168,10 +166,8 @@ struct ConnectToServerView: View {
             } label: {
                 L10n.addURL.text
             }
-
-            Button(role: .cancel) {} label: {
-                Text("Dismiss")
-            }
+            
+            Button(L10n.dismiss, role: .cancel)
         } message: {
             if let duplicateServer {
                 L10n.serverAlreadyExistsPrompt(duplicateServer.server.name).text

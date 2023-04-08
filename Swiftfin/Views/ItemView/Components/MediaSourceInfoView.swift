@@ -24,7 +24,7 @@ extension ItemView {
                 if let videoStreams = mediaSource.videoStreams,
                    !videoStreams.isEmpty
                 {
-                    Section("Video") {
+                    Section(L10n.video) {
                         ForEach(videoStreams, id: \.self) { mediaStream in
                             ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                                 .onSelect {
@@ -37,7 +37,7 @@ extension ItemView {
                 if let audioStreams = mediaSource.audioStreams,
                    !audioStreams.isEmpty
                 {
-                    Section("Audio") {
+                    Section(L10n.audio) {
                         ForEach(audioStreams, id: \.self) { mediaStream in
                             ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                                 .onSelect {
@@ -50,7 +50,7 @@ extension ItemView {
                 if let subtitleStreams = mediaSource.subtitleStreams,
                    !subtitleStreams.isEmpty
                 {
-                    Section("Subtitle") {
+                    Section(L10n.subtitle) {
                         ForEach(subtitleStreams, id: \.self) { mediaStream in
                             ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                                 .onSelect {

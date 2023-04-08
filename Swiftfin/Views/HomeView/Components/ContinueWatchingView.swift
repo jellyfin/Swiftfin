@@ -30,13 +30,13 @@ extension HomeView {
                     Button {
                         viewModel.markItemPlayed(item)
                     } label: {
-                        Label("Played", systemImage: "checkmark.circle")
+                        Label(L10n.played, systemImage: "checkmark.circle")
                     }
 
                     Button(role: .destructive) {
                         viewModel.markItemUnplayed(item)
                     } label: {
-                        Label("Unplayed", systemImage: "minus.circle")
+                        Label(L10n.unplayed, systemImage: "minus.circle")
                     }
                 }
             }

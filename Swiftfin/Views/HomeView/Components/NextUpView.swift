@@ -48,7 +48,7 @@ extension HomeView {
                     Button {
                         viewModel.markPlayed(item: item)
                     } label: {
-                        Label("Played", systemImage: "checkmark.circle")
+                        Label(L10n.played, systemImage: "checkmark.circle")
                     }
                 }
             }

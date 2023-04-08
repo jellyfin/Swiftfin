@@ -17,9 +17,9 @@ struct IndicatorSettingsView: View {
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
-    @Default(.Customization.Indicators.showUnwatched)
+    @Default(.Customization.Indicators.showUnplayed)
     private var showUnwatched
-    @Default(.Customization.Indicators.showWatched)
+    @Default(.Customization.Indicators.showPlayed)
     private var showWatched
 
     var body: some View {

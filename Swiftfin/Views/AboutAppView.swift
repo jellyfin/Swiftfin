@@ -55,7 +55,7 @@ struct AboutAppView: View {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin")!)
                     }
 
-                ChevronButton(title: "Bugs and Features")
+                ChevronButton(title: L10n.bugsAndFeatures)
                     .leadingView {
                         Image(systemName: "plus.circle.fill")
                             .resizable()
@@ -66,7 +66,7 @@ struct AboutAppView: View {
                         UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
                     }
 
-                ChevronButton(title: "Settings")
+                ChevronButton(title: L10n.settings)
                     .leadingView {
                         Image(systemName: "gearshape.fill")
                             .resizable()
