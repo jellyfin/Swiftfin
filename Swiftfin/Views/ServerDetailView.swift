@@ -14,11 +14,11 @@ struct ServerDetailView: View {
     var viewModel: ServerDetailViewModel
 
     @State
-    private var currentServerURI: String = ""
-
+    private var currentServerURI: String
+    
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
-//        self.currentServerURI = viewModel.server.currentURI
+        self._currentServerURI = State(initialValue: viewModel.server.currentURL.absoluteString)
     }
 
     var body: some View {
@@ -32,6 +32,15 @@ struct ServerDetailView: View {
                 }
 
                 Picker(L10n.url, selection: $currentServerURI) {
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        Text(url.absoluteString)
+                            .tag(url)
+                            .foregroundColor(.secondary)
+                    }
+                    .onChange(of: currentServerURI) { newValue in
+                        
+                    }
+                    
 //                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
 //                        Text(uri).tag(uri)
 //                            .foregroundColor(.secondary)

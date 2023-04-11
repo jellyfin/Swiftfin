@@ -51,9 +51,7 @@ struct QuickConnectSettingsView: View {
             L10n.error,
             isPresented: $isPresentingError
         ) {
-            Button(role: .cancel) {} label: {
-                Text("Dismiss")
-            }
+            Button(L10n.dismiss, role: .cancel)
         } message: {
             Text(error?.localizedDescription ?? .emptyDash)
         }
@@ -61,9 +59,7 @@ struct QuickConnectSettingsView: View {
             L10n.quickConnect,
             isPresented: $isPresentingSuccess
         ) {
-            Button(role: .cancel) {} label: {
-                Text("Dismiss")
-            }
+            Button(L10n.dismiss, role: .cancel)
         } message: {
             L10n.quickConnectSuccessMessage.text
         }

@@ -123,9 +123,7 @@ struct UserSignInView: View {
             L10n.error,
             isPresented: $isPresentingSignInError
         ) {
-            Button(role: .cancel) {} label: {
-                Text("Dismiss")
-            }
+            Button(L10n.dismiss, role: .cancel)
         } message: {
             Text(signInError?.localizedDescription ?? .emptyDash)
         }

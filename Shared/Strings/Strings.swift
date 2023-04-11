@@ -140,6 +140,8 @@ internal enum L10n {
   internal static let existingUser = L10n.tr("Localizable", "existingUser", fallback: "Existing User")
   /// Experimental
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
+  /// Favorited
+  internal static let favorited = L10n.tr("Localizable", "favorited", fallback: "Favorited")
   /// Favorites
   internal static let favorites = L10n.tr("Localizable", "favorites", fallback: "Favorites")
   /// File
@@ -312,6 +314,8 @@ internal enum L10n {
   internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
   /// Programs
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
+  /// Progress
+  internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
   /// Public Users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public Users")
   /// Quick Connect

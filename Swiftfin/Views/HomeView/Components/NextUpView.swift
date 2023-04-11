@@ -24,11 +24,7 @@ extension HomeView {
         var viewModel: NextUpLibraryViewModel
 
         private var items: [PosterButtonType<BaseItemDto>] {
-//            if viewModel.isLoading {
-//                return PosterButtonType.loading.random(in: 3 ..< 8)
-//            } else {
             viewModel.items.prefix(20).asArray.map { .item($0) }
-//            }
         }
 
         var body: some View {

@@ -17,24 +17,24 @@ struct IndicatorSettingsView: View {
     private var showFavorited
     @Default(.Customization.Indicators.showProgress)
     private var showProgress
-    @Default(.Customization.Indicators.showUnwatched)
-    private var showUnwatched
-    @Default(.Customization.Indicators.showWatched)
-    private var showWatched
+    @Default(.Customization.Indicators.showUnplayed)
+    private var showUnplayed
+    @Default(.Customization.Indicators.showPlayed)
+    private var showPlayed
 
     var body: some View {
         Form {
             Section {
 
-                Toggle("Favorited", isOn: $showFavorited)
+                Toggle(L10n.favorited, isOn: $showFavorited)
 
-                Toggle("Progress", isOn: $showProgress)
+                Toggle(L10n.progress, isOn: $showProgress)
 
-                Toggle("Unwatched", isOn: $showUnwatched)
+                Toggle(L10n.unplayed, isOn: $showUnplayed)
 
-                Toggle("Watched", isOn: $showWatched)
+                Toggle(L10n.played, isOn: $showPlayed)
             }
         }
-        .navigationTitle("Indicators")
+        .navigationTitle(L10n.indicators)
     }
 }

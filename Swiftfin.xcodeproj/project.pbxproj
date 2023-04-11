@@ -573,6 +573,8 @@
 		E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490462967E2E500D3EDCE /* CoreStore.swift */; };
 		E1B5784128F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
+		E1B5861229E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
+		E1B5861329E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
 		E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A429577BB8004B26CF /* JellyfinAPI */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
@@ -1146,6 +1148,7 @@
 		E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentLogHandler.swift; sourceTree = "<group>"; };
 		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* Wrapped View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wrapped View.swift"; sourceTree = "<group>"; };
+		E1B5861129E32EEF00E45D6E /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapeItemElement.swift; sourceTree = "<group>"; };
 		E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
@@ -1819,6 +1822,7 @@
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
 				E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */,
 				E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */,
+				E1B5861129E32EEF00E45D6E /* Set.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
@@ -3177,6 +3181,7 @@
 				E1575E65293E77B5001665B1 /* VideoPlayerJumpLength.swift in Sources */,
 				E169C7B8296D2E8200AE25F9 /* SpecialFeaturesHStack.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
+				E1B5861329E32EEF00E45D6E /* Set.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
 				E113133B28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
@@ -3304,6 +3309,7 @@
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
+				E1B5861229E32EEF00E45D6E /* Set.swift in Sources */,
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */,

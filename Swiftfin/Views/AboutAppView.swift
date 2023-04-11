@@ -6,7 +6,6 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Files
 import SwiftUI
 
 struct AboutAppView: View {
@@ -52,7 +51,7 @@ struct AboutAppView: View {
                             .foregroundColor(.primary)
                     }
                     .onSelect {
-                        UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin")!)
+                        UIApplication.shared.open(.swiftfinGithub)
                     }
 
                 ChevronButton(title: L10n.bugsAndFeatures)
@@ -63,7 +62,7 @@ struct AboutAppView: View {
                             .foregroundColor(.primary)
                     }
                     .onSelect {
-                        UIApplication.shared.open(URL(string: "https://github.com/jellyfin/Swiftfin/issues")!)
+                        UIApplication.shared.open(.swiftfinGithubIssues)
                     }
 
                 ChevronButton(title: L10n.settings)

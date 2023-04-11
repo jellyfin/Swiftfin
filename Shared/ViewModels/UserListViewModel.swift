@@ -47,7 +47,9 @@ class UserListViewModel: ViewModel {
         )
         else { fatalError("No stored server associated with given state server?") }
 
-        users = storedServer.users.map(\.state).sorted(by: { $0.username < $1.username })
+        users = storedServer.users
+            .map(\.state)
+            .sorted(using: \.username)
     }
 
     func signIn(user: UserState) {
@@ -57,7 +59,6 @@ class UserListViewModel: ViewModel {
     }
 
     func remove(user: SwiftfinStore.State.User) {
-//        SessionManager.main.delete(user: user)
         fetchUsers()
     }
 }

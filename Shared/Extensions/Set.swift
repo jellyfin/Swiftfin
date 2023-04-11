@@ -8,17 +8,9 @@
 
 import Foundation
 
-extension Collection {
-
-    var asArray: [Element] {
-        Array(self)
-    }
+extension Set {
     
-    func sorted<Value: Comparable>(using keyPath: KeyPath<Element, Value>) -> [Element] {
+    func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key>) -> [Element] {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
-    }
-
-    subscript(safe index: Index) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }

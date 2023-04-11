@@ -168,9 +168,9 @@ extension PosterButton {
         @Default(.Customization.Indicators.showProgress)
         private var showProgress
         @Default(.Customization.Indicators.showUnplayed)
-        private var showUnwatched
+        private var showUnplayed
         @Default(.Customization.Indicators.showPlayed)
-        private var showWatched
+        private var showPlayed
 
         let item: Item
 
@@ -179,7 +179,7 @@ extension PosterButton {
                 if let item = item as? BaseItemDto {
                     if item.userData?.isPlayed ?? false {
                         WatchedIndicator(size: 45)
-                            .visible(showWatched)
+                            .visible(showPlayed)
                     } else {
                         if (item.userData?.playbackPositionTicks ?? 0) > 0 {
                             ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
@@ -187,7 +187,7 @@ extension PosterButton {
                         } else {
                             UnwatchedIndicator(size: 45)
                                 .foregroundColor(.jellyfinPurple)
-                                .visible(showUnwatched)
+                                .visible(showUnplayed)
                         }
                     }
 

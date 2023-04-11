@@ -15,7 +15,9 @@ import VLCUI
 
 // TODO: better online/offline handling
 // TODO: proper error catching
-// TODO: better solution for previous/next
+// TODO: better solution for previous/next/queuing
+// TODO: should view models handle progress reports instead, with a protocol
+//       for other types of media handling
 
 class VideoPlayerManager: ViewModel {
 

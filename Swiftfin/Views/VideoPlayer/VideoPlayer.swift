@@ -14,6 +14,7 @@ import SwiftUI
 import VLCUI
 
 // TODO: organize
+// TODO: localization necessary for toast text?
 
 struct VideoPlayer: View {
 
