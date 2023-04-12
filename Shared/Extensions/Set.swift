@@ -9,7 +9,7 @@
 import Foundation
 
 extension Set {
-    
+
     func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key>) -> [Element] {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }

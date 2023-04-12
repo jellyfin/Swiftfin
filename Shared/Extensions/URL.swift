@@ -21,9 +21,9 @@ extension URL {
     static var tmp: URL {
         URL(string: NSTemporaryDirectory())!
     }
-    
+
     static let swiftfinGithub: URL = URL(string: "https://github.com/jellyfin/Swiftfin")!
-    
+
     static let swiftfinGithubIssues: URL = URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
 
     func isDirectoryAndReachable() throws -> Bool {
@@ -63,7 +63,7 @@ extension URL {
 }
 
 extension URL: Identifiable {
-    
+
     public var id: String {
         absoluteString
     }

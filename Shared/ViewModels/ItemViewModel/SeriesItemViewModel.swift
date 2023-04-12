@@ -39,7 +39,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     override func playButtonText() -> String {
 
-        if item.unaired {
+        if item.isUnaired {
             return L10n.unaired
         }
 

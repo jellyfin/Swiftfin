@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/jellyfin-sdk-swift",
       "state" : {
-        "branch" : "apply-Hashable",
-        "revision" : "8d2ce22d7cc339145b1fe20e5b410f2883e59f30"
+        "revision" : "0878c236b5f15fea6b4034f88b698c2746349c9c",
+        "version" : "0.3.0"
       }
     },
     {
@@ -151,15 +151,6 @@
       "state" : {
         "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
         "version" : "0.1.4"
-      }
-    },
-    {
-      "identity" : "swiftuicollection",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/defagos/SwiftUICollection",
-      "state" : {
-        "branch" : "master",
-        "revision" : "5b9f14eb3ec5d48cec8b3e4462dcc554d4bff2a8"
       }
     },
     {

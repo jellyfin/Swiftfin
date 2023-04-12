@@ -15,7 +15,7 @@ struct ServerDetailView: View {
 
     @State
     private var currentServerURI: String
-    
+
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
         self._currentServerURI = State(initialValue: viewModel.server.currentURL.absoluteString)
@@ -37,10 +37,9 @@ struct ServerDetailView: View {
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
-                    .onChange(of: currentServerURI) { newValue in
-                        
+                    .onChange(of: currentServerURI) { _ in
                     }
-                    
+
 //                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
 //                        Text(uri).tag(uri)
 //                            .foregroundColor(.secondary)

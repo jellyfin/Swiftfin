@@ -9,20 +9,20 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: Move to jellyfin-api-swift
+// enum SpecialFeatureType: String, CaseIterable, Displayable {
+//
+//    case unknown = "Unknown"
+//    case clip = "Clip"
+//    case trailer = "Trailer"
+//    case behindTheScenes = "BehindTheScenes"
+//    case deletedScene = "DeletedScene"
+//    case interview = "Interview"
+//    case scene = "Scene"
+//    case sample = "Sample"
+//    case themeSong = "ThemeSong"
+//    case themeVideo = "ThemeVideo"
 
-enum SpecialFeatureType: String, CaseIterable, Displayable {
-
-    case unknown = "Unknown"
-    case clip = "Clip"
-    case trailer = "Trailer"
-    case behindTheScenes = "BehindTheScenes"
-    case deletedScene = "DeletedScene"
-    case interview = "Interview"
-    case scene = "Scene"
-    case sample = "Sample"
-    case themeSong = "ThemeSong"
-    case themeVideo = "ThemeVideo"
+extension SpecialFeatureType: Displayable {
 
     // TODO: localize
     var displayTitle: String {

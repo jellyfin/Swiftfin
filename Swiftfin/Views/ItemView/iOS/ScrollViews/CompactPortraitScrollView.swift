@@ -144,7 +144,7 @@ extension ItemView.CompactPosterScrollView {
                 // MARK: Details
 
                 DotHStack {
-                    if viewModel.item.unaired {
+                    if viewModel.item.isUnaired {
                         if let premiereDateLabel = viewModel.item.airDateLabel {
                             Text(premiereDateLabel)
                         }

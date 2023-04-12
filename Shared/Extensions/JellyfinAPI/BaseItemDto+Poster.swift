@@ -29,7 +29,7 @@ extension BaseItemDto: Poster {
         case .episode:
             return seasonEpisodeLocator
         case .video:
-            return specialFeatureType?.displayTitle
+            return extraType?.displayTitle
         default:
             return nil
         }

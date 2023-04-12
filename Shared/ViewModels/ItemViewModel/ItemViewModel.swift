@@ -103,7 +103,7 @@ class ItemViewModel: ViewModel {
     // TODO: remove and have views handle
     func playButtonText() -> String {
 
-        if item.unaired {
+        if item.isUnaired {
             return L10n.unaired
         }
 
@@ -146,7 +146,7 @@ class ItemViewModel: ViewModel {
             let response = try await userSession.client.send(request)
 
             await MainActor.run {
-                specialFeatures = response.value.filter { $0.specialFeatureType?.isVideo ?? false }
+                specialFeatures = response.value.filter { $0.extraType?.isVideo ?? false }
             }
         }
     }

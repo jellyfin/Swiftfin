@@ -23,11 +23,6 @@ extension BaseItemDto: LibraryParent {}
 
 extension BaseItemDto {
 
-    var specialFeatureType: SpecialFeatureType? {
-        guard let extraType = extraType else { return nil }
-        return SpecialFeatureType(rawValue: extraType)
-    }
-
     var episodeLocator: String? {
         guard let episodeNo = indexNumber else { return nil }
         return L10n.episodeNumber(episodeNo)
@@ -52,7 +47,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
 
-    // TODO: make computed var
+    // TODO: make computed var or function that takes allowed units
     func getItemRuntime() -> String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
@@ -128,7 +123,7 @@ extension BaseItemDto {
         locationType == .virtual
     }
 
-    var unaired: Bool {
+    var isUnaired: Bool {
         if let premierDate = premiereDate {
             return premierDate > Date()
         } else {
@@ -232,7 +227,7 @@ extension BaseItemDto {
 //            indexNumber: 20
         )
     }
-    
+
     static func randomItem() -> BaseItemDto {
         .init(
             id: UUID().uuidString,

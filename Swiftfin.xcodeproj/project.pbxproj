@@ -152,8 +152,6 @@
 		C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */; };
 		C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E52304272CE68800654268 /* LiveTVChannelItemElement.swift */; };
 		C400DB6D27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */; };
-		C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9B284EA6EA00CABC12 /* SwiftUICollection */; };
-		C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */ = {isa = PBXBuildFile; productRef = C409CE9D285044C800CABC12 /* SwiftUICollection */; };
 		C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
 		C45942C527F67DA400C54FE7 /* LiveTVCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45942C427F67DA400C54FE7 /* LiveTVCoordinator.swift */; };
 		C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07702725EB06003F4AD1 /* LiveTVProgramsCoordinator.swift */; };
@@ -1268,7 +1266,6 @@
 				E1575E56293E7650001665B1 /* VLCUI in Frameworks */,
 				E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
-				C409CE9C284EA6EA00CABC12 /* SwiftUICollection in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				E1DC981E296DD91900982F06 /* CollectionView in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
@@ -1329,7 +1326,6 @@
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
-				C409CE9E285044C800CABC12 /* SwiftUICollection in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				62400C4B287ED19600F6AD3D /* UDPBroadcast.xcframework in Frameworks */,
@@ -2724,7 +2720,6 @@
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
 				E1002B6A2793E36600E47059 /* Algorithms */,
-				C409CE9B284EA6EA00CABC12 /* SwiftUICollection */,
 				E13AF3B528A0C598009093AB /* Nuke */,
 				E13AF3B728A0C598009093AB /* NukeExtensions */,
 				E13AF3B928A0C598009093AB /* NukeUI */,
@@ -2768,7 +2763,6 @@
 				E13DD3D227168E65009D4DAF /* Defaults */,
 				E1002B672793CFBA00E47059 /* Algorithms */,
 				62666E3827E502CE00EC0ECD /* SwizzleSwift */,
-				C409CE9D285044C800CABC12 /* SwiftUICollection */,
 				E19E6E0428A0B958005C10C8 /* Nuke */,
 				E19E6E0628A0B958005C10C8 /* NukeUI */,
 				E19E6E0928A0BEFF005C10C8 /* BlurHashKit */,
@@ -2838,7 +2832,6 @@
 				E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */,
 				E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
 				62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */,
-				C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */,
 				E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */,
 				E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */,
 				E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */,
@@ -4005,14 +3998,6 @@
 				kind = branch;
 			};
 		};
-		C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/defagos/SwiftUICollection";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-algorithms.git";
@@ -4033,8 +4018,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/jellyfin-sdk-swift";
 			requirement = {
-				branch = "apply-Hashable";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
 			};
 		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
@@ -4152,16 +4137,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
-		};
-		C409CE9B284EA6EA00CABC12 /* SwiftUICollection */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
-			productName = SwiftUICollection;
-		};
-		C409CE9D285044C800CABC12 /* SwiftUICollection */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C409CE9A284EA6EA00CABC12 /* XCRemoteSwiftPackageReference "SwiftUICollection" */;
-			productName = SwiftUICollection;
 		};
 		E1002B672793CFBA00E47059 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;

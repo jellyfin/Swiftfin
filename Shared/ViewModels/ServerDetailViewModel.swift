@@ -19,9 +19,7 @@ class ServerDetailViewModel: ViewModel {
     }
 
     func setServerCurrentURI(uri: String) {
-        
-        
-        
+
 //        SessionManager.main.setServerCurrentURI(server: server, uri: uri)
 //            .sink { c in
 //                print(c)

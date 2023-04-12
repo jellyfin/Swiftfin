@@ -166,7 +166,7 @@ struct ConnectToServerView: View {
             } label: {
                 L10n.addURL.text
             }
-            
+
             Button(L10n.dismiss, role: .cancel)
         } message: {
             if let duplicateServer {

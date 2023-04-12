@@ -131,7 +131,7 @@ extension SeriesEpisodeSelector {
                         Color.clear
                             .frame(height: staticOverviewHeight)
 
-                        if episode.unaired {
+                        if episode.isUnaired {
                             Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
                         } else {
                             Text(episode.overview ?? L10n.noOverviewAvailable)
