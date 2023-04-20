@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/hmlongco/Factory",
       "state" : {
-        "revision" : "b92b5630e83d9c23fdea3356c66c4355cf67ffb3",
-        "version" : "1.3.6"
+        "revision" : "39ff6a675cd0272d833d184d35add0f8fddd63de",
+        "version" : "1.3.7"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "df6cfba3f49aa6777b8c1084cb7778899ca166d3",
-        "version" : "11.6.0"
+        "revision" : "33f7e93be5d4ec027d42af77a8ec4680d1862ad2",
+        "version" : "11.6.4"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "1b2edfb8eb9eaaefcba4335795b3d0ff092245ca",
-        "version" : "3.3.0"
+        "revision" : "36cb6f05affbf7840fa27cde1b65257f54fdc88c",
+        "version" : "3.5.7"
       }
     },
     {
@@ -96,7 +96,7 @@
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
         "branch" : "main",
-        "revision" : "0481406b088d3e7952c73cbd92f045e149f2b914"
+        "revision" : "3ca42eada318ad8ed9c3246f5e32c19413dae3ce"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "f2616860a41f9d9932da412a8978fec79c06fe24",
-        "version" : "0.1.4"
+        "revision" : "c18951c747ab62af7c15e17a81bd37d4fd5a9979",
+        "version" : "0.2.3"
       }
     },
     {
