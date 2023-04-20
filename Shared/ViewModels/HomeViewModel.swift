@@ -3,209 +3,189 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import ActivityIndicator
 import Combine
+import CoreStore
+import Factory
 import Foundation
 import JellyfinAPI
+import UIKit
 
 final class HomeViewModel: ViewModel {
 
     @Published
-    var resumeItems: [BaseItemDto] = []
+    var errorMessage: String?
     @Published
     var hasNextUp: Bool = false
     @Published
     var hasRecentlyAdded: Bool = false
     @Published
-    var librariesShowRecentlyAddedIDs: [String] = []
-    @Published
     var libraries: [BaseItemDto] = []
+    @Published
+    var resumeItems: [BaseItemDto] = []
 
     override init() {
         super.init()
-        refresh()
-
-        // Nov. 6, 2021
-        // This is a workaround since Stinsen doesn't have the ability to rebuild a root at the time of writing.
-        // See ServerDetailViewModel.swift for feature request issue
-        Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
-        Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
-    }
-
-    @objc
-    private func didSignIn() {
-        for cancellable in cancellables {
-            cancellable.cancel()
-        }
-
-        librariesShowRecentlyAddedIDs = []
-        libraries = []
-        resumeItems = []
 
         refresh()
-    }
-
-    @objc
-    private func didSignOut() {
-        for cancellable in cancellables {
-            cancellable.cancel()
-        }
-
-        cancellables.removeAll()
     }
 
     @objc
     func refresh() {
-        logger.debug("Refresh called.")
 
-        refreshLibrariesLatest()
-        refreshLatestAddedItems()
-        refreshResumeItems()
-        refreshNextUpItems()
+        hasNextUp = false
+        hasRecentlyAdded = false
+        libraries = []
+        resumeItems = []
+
+        Task {
+            logger.debug("Refreshing home screen")
+
+            await MainActor.run {
+                isLoading = true
+            }
+
+            refreshHasRecentlyAddedItems()
+            refreshResumeItems()
+            refreshHasNextUp()
+
+            do {
+                try await refreshLibrariesLatest()
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                    errorMessage = error.localizedDescription
+                }
+
+                return
+            }
+
+            await MainActor.run {
+                isLoading = false
+                errorMessage = nil
+            }
+        }
     }
 
     // MARK: Libraries Latest Items
 
-    private func refreshLibrariesLatest() {
-        UserViewsAPI.getUserViews(userId: SessionManager.main.currentLogin.user.id)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished: ()
-                case .failure:
-                    self.libraries = []
-                }
+    private func refreshLibrariesLatest() async throws {
+        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        let response = try await userSession.client.send(userViewsPath)
 
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
+        guard let allLibraries = response.value.items else {
+            await MainActor.run {
+                libraries = []
+            }
 
-                var newLibraries: [BaseItemDto] = []
+            return
+        }
 
-                response.items!.forEach { item in
-                    self.logger
-                        .debug("Retrieved user view: \(item.id!) (\(item.name ?? "nil")) with type \(item.collectionType ?? "nil")")
-                    if item.collectionType == "movies" || item.collectionType == "tvshows" {
-                        newLibraries.append(item)
-                    }
-                }
+        let excludedLibraryIDs = await getExcludedLibraries()
 
-                UserAPI.getCurrentUser()
-                    .trackActivity(self.loading)
-                    .sink(receiveCompletion: { completion in
-                        switch completion {
-                        case .finished: ()
-                        case .failure:
-                            self.libraries = []
-                            self.handleAPIRequestError(completion: completion)
-                        }
-                    }, receiveValue: { response in
-                        let excludeIDs = response.configuration?.latestItemsExcludes != nil ? response.configuration!
-                            .latestItemsExcludes! : []
+        let newLibraries = allLibraries
+            .filter { $0.collectionType == "movies" || $0.collectionType == "tvshows" }
+            .filter { library in
+                !excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
+            }
 
-                        for excludeID in excludeIDs {
-                            newLibraries.removeAll { library in
-                                library.id == excludeID
-                            }
-                        }
+        await MainActor.run {
+            libraries = newLibraries
+        }
+    }
 
-                        self.libraries = newLibraries
-                    })
-                    .store(in: &self.cancellables)
-            })
-            .store(in: &cancellables)
+    private func getExcludedLibraries() async -> [String] {
+        let currentUserPath = Paths.getCurrentUser
+        let response = try? await userSession.client.send(currentUserPath)
+
+        return response?.value.configuration?.latestItemsExcludes ?? []
     }
 
     // MARK: Recently Added Items
 
-    private func refreshLatestAddedItems() {
-        UserLibraryAPI.getLatestMedia(
-            userId: SessionManager.main.currentLogin.user.id,
-            includeItemTypes: [.movie, .series],
-            limit: 1
-        )
-        .sink { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.hasRecentlyAdded = false
-                self.handleAPIRequestError(completion: completion)
+    private func refreshHasRecentlyAddedItems() {
+        Task {
+            let parameters = Paths.GetLatestMediaParameters(
+                includeItemTypes: [.movie, .series],
+                limit: 1
+            )
+            let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                hasRecentlyAdded = !response.value.isEmpty
             }
-        } receiveValue: { items in
-            self.hasRecentlyAdded = items.count > 0
         }
-        .store(in: &cancellables)
     }
 
     // MARK: Resume Items
 
     private func refreshResumeItems() {
-        ItemsAPI.getResumeItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-                .chapters,
-            ],
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.resumeItems = []
-                self.handleAPIRequestError(completion: completion)
-            }
-        }, receiveValue: { response in
-            self.logger.debug("Retrieved \(String(response.items!.count)) resume items")
+        Task {
+            let resumeParameters = Paths.GetResumeItemsParameters(
+                limit: 20,
+                fields: ItemFields.minimumCases,
+                enableUserData: true,
+                includeItemTypes: [.movie, .episode]
+            )
 
-            self.resumeItems = response.items ?? []
-        })
-        .store(in: &cancellables)
+            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                resumeItems = items
+            }
+        }
     }
 
-    func removeItemFromResume(_ item: BaseItemDto) {
-        guard let itemID = item.id, resumeItems.contains(where: { $0.id == itemID }) else { return }
+    func markItemUnplayed(_ item: BaseItemDto) {
+        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
 
-        PlaystateAPI.markUnplayedItem(
-            userId: SessionManager.main.currentLogin.user.id,
-            itemId: item.id!
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { _ in
-            self.refreshResumeItems()
-            self.refreshNextUpItems()
-        })
-        .store(in: &cancellables)
+        Task {
+            let request = Paths.markUnplayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+            let _ = try await userSession.client.send(request)
+
+            refreshResumeItems()
+            refreshHasNextUp()
+        }
+    }
+
+    func markItemPlayed(_ item: BaseItemDto) {
+        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
+
+        Task {
+            let request = Paths.markPlayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+            let _ = try await userSession.client.send(request)
+
+            refreshResumeItems()
+            refreshHasNextUp()
+        }
     }
 
     // MARK: Next Up Items
 
-    private func refreshNextUpItems() {
-        TvShowsAPI.getNextUp(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { completion in
-            switch completion {
-            case .finished: ()
-            case .failure:
-                self.hasNextUp = false
-                self.handleAPIRequestError(completion: completion)
+    private func refreshHasNextUp() {
+        Task {
+            let parameters = Paths.GetNextUpParameters(
+                userID: userSession.user.id,
+                limit: 1
+            )
+            let request = Paths.getNextUp(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                hasNextUp = !(response.value.items?.isEmpty ?? true)
             }
-        }, receiveValue: { response in
-            self.hasNextUp = (response.items ?? []).count > 0
-        })
-        .store(in: &cancellables)
+        }
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -17,7 +17,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @Injected(LogManager.service)
     private var logger
 
-    var stack = Stinsen.NavigationStack<MainCoordinator>(initial: \MainCoordinator.mainTab)
+    var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
     var mainTab = makeMainTab
@@ -25,12 +25,15 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Root
     var liveTV = makeLiveTV
+//    @Route(.fullScreen)
+//    var videoPlayer = makeVideoPlayer
 
     init() {
-        if SessionManager.main.currentLogin != nil {
-            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+
+        if Container.userSession.callAsFunction().authenticated {
+            stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
-            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
+            stack = NavigationStack(initial: \MainCoordinator.serverList)
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -66,4 +69,8 @@ final class MainCoordinator: NavigationCoordinatable {
     func makeLiveTV() -> LiveTVTabCoordinator {
         LiveTVTabCoordinator()
     }
+
+//    func makeVideoPlayer(parameters: VideoPlayerCoordinator.Parameters) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+//        NavigationViewCoordinator(VideoPlayerCoordinator(parameters: parameters))
+//    }
 }

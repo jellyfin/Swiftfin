@@ -3,13 +3,14 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
 import Defaults
 import Factory
 import Foundation
+import JellyfinAPI
 import Nuke
 import Stinsen
 import SwiftUI
@@ -26,14 +27,17 @@ final class MainCoordinator: NavigationCoordinatable {
     var mainTab = makeMainTab
     @Root
     var serverList = makeServerList
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        if SessionManager.main.currentLogin != nil {
-            self.stack = NavigationStack(initial: \MainCoordinator.mainTab)
+
+        if Container.userSession.callAsFunction().authenticated {
+            stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
-            self.stack = NavigationStack(initial: \MainCoordinator.serverList)
+            stack = NavigationStack(initial: \MainCoordinator.serverList)
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -42,25 +46,11 @@ final class MainCoordinator: NavigationCoordinatable {
         WidgetCenter.shared.reloadAllTimelines()
         UIScrollView.appearance().keyboardDismissMode = .onDrag
 
-        // Back bar button item setup
-        let config = UIImage.SymbolConfiguration(paletteColors: [.white, .jellyfinPurple])
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-        barAppearance.tintColor = UIColor(Color.jellyfinPurple)
-
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
         Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
         Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
-
-        Defaults.publisher(.appAppearance)
-            .sink { _ in
-                JellyfinPlayerApp.setupAppearance()
-            }
-            .store(in: &cancellables)
     }
 
     @objc
@@ -91,12 +81,12 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didChangeServerCurrentURI(_ notification: Notification) {
-        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
-        else { fatalError("Need to have new current login state server") }
-        guard SessionManager.main.currentLogin != nil else { return }
-        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
-            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
-        }
+//        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
+//        else { fatalError("Need to have new current login state server") }
+//        guard SessionManager.main.currentLogin != nil else { return }
+//        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
+//            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
+//        }
     }
 
     func makeMainTab() -> MainTabCoordinator {
@@ -105,5 +95,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
         NavigationViewCoordinator(ServerListCoordinator())
+    }
+
+    func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
+        VideoPlayerCoordinator(manager: manager)
     }
 }

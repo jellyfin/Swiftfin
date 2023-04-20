@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -15,46 +15,76 @@ import UIKit
 class ItemViewModel: ViewModel {
 
     @Published
-    var item: BaseItemDto
-    @Published
-    var playButtonItem: BaseItemDto? {
-        didSet {
-            if let playButtonItem = playButtonItem {
-                refreshItemVideoPlayerViewModel(for: playButtonItem)
+    var item: BaseItemDto {
+        willSet {
+            switch item.type {
+            case .episode, .movie:
+                guard !item.isMissing else { return }
+                playButtonItem = newValue
+            default: ()
             }
         }
     }
 
     @Published
-    var similarItems: [BaseItemDto] = []
-    @Published
-    var isWatched = false
+    var playButtonItem: BaseItemDto? {
+        willSet {
+            if let newValue {
+                selectedMediaSource = newValue.mediaSources?.first
+            }
+        }
+    }
+
     @Published
     var isFavorited = false
     @Published
-    var selectedVideoPlayerViewModel: VideoPlayerViewModel?
+    var isPlayed = false
     @Published
-    var videoPlayerViewModels: [VideoPlayerViewModel] = []
+    var selectedMediaSource: MediaSourceInfo?
+    @Published
+    var similarItems: [BaseItemDto] = []
+    @Published
+    var specialFeatures: [BaseItemDto] = []
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
 
-        switch item.type {
-        case .episode, .movie:
-            if !item.missing && !item.unaired {
-                self.playButtonItem = item
-            }
-        default: ()
-        }
+        getFullItem()
 
         isFavorited = item.userData?.isFavorite ?? false
-        isWatched = item.userData?.played ?? false
+        isPlayed = item.userData?.isPlayed ?? false
 
         getSimilarItems()
-        refreshItemVideoPlayerViewModel(for: item)
+        getSpecialFeatures()
 
         Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+    }
+
+    private func getFullItem() {
+        Task {
+
+            await MainActor.run {
+                isLoading = true
+            }
+
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                fields: ItemFields.allCases,
+                enableUserData: true,
+                ids: [item.id!]
+            )
+
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let fullItem = response.value.items?.first else { return }
+
+            await MainActor.run {
+                self.item = fullItem
+                isLoading = false
+            }
+        }
     }
 
     @objc
@@ -70,31 +100,18 @@ class ItemViewModel: ViewModel {
         }
     }
 
-    func refreshItemVideoPlayerViewModel(for item: BaseItemDto) {
-        guard item.type == .episode || item.type == .movie,
-              !item.missing else { return }
-
-        item.createVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { viewModels in
-                self.videoPlayerViewModels = viewModels
-                self.selectedVideoPlayerViewModel = viewModels.first
-            }
-            .store(in: &cancellables)
-    }
-
+    // TODO: remove and have views handle
     func playButtonText() -> String {
 
-        if item.unaired {
+        if item.isUnaired {
             return L10n.unaired
         }
 
-        if item.missing {
+        if item.isMissing {
             return L10n.missing
         }
 
-        if let itemProgressString = item.progress {
+        if let itemProgressString = item.progressLabel {
             return itemProgressString
         }
 
@@ -102,67 +119,84 @@ class ItemViewModel: ViewModel {
     }
 
     func getSimilarItems() {
-        LibraryAPI.getSimilarItems(
-            itemId: item.id!,
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            fields: ItemFields.allCases
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.similarItems = response.items ?? []
-        })
-        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetSimilarItemsParameters(
+                userID: userSession.user.id,
+                limit: 20,
+                fields: ItemFields.minimumCases
+            )
+            let request = Paths.getSimilarItems(
+                itemID: item.id!,
+                parameters: parameters
+            )
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                similarItems = response.value.items ?? []
+            }
+        }
+    }
+
+    func getSpecialFeatures() {
+        Task {
+            let request = Paths.getSpecialFeatures(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                specialFeatures = response.value.filter { $0.extraType?.isVideo ?? false }
+            }
+        }
     }
 
     func toggleWatchState() {
-        let current = isWatched
-        isWatched.toggle()
-        let request: AnyPublisher<UserItemDataDto, Error>
+//        let current = isPlayed
+//        isPlayed.toggle()
+//        let request: AnyPublisher<UserItemDataDto, Error>
 
-        if current {
-            request = PlaystateAPI.markUnplayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-        } else {
-            request = PlaystateAPI.markPlayedItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-        }
+//        if current {
+//            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
+//        } else {
+//            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
+//        }
 
-        request
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure:
-                    self?.isWatched = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
+//        request
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                switch completion {
+//                case .failure:
+//                    self?.isPlayed = !current
+//                case .finished: ()
+//                }
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { _ in })
+//            .store(in: &cancellables)
     }
 
     func toggleFavoriteState() {
-        let current = isFavorited
-        isFavorited.toggle()
-        let request: AnyPublisher<UserItemDataDto, Error>
+//        let current = isFavorited
+//        isFavorited.toggle()
+//        let request: AnyPublisher<UserItemDataDto, Error>
 
-        if current {
-            request = UserLibraryAPI.unmarkFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-        } else {
-            request = UserLibraryAPI.markFavoriteItem(userId: SessionManager.main.currentLogin.user.id, itemId: item.id!)
-        }
+//        if current {
+//            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
+//        } else {
+//            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
+//        }
 
-        request
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case .failure:
-                    self?.isFavorited = !current
-                case .finished: ()
-                }
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { _ in })
-            .store(in: &cancellables)
+//        request
+//            .trackActivity(loading)
+//            .sink(receiveCompletion: { [weak self] completion in
+//                switch completion {
+//                case .failure:
+//                    self?.isFavorited = !current
+//                case .finished: ()
+//                }
+//                self?.handleAPIRequestError(completion: completion)
+//            }, receiveValue: { _ in })
+//            .store(in: &cancellables)
     }
 
     // Overridden by subclasses

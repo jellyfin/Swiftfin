@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -15,15 +15,13 @@ extension HomeView {
 
     struct ContentView: View {
 
-        @EnvironmentObject
-        private var homeRouter: HomeCoordinator.Router
+        @Default(.Customization.nextUpPosterType)
+        private var nextUpPosterType
+        @Default(.Customization.recentlyAddedPosterType)
+        private var recentlyAddedPosterType
+
         @ObservedObject
         var viewModel: HomeViewModel
-
-        @Default(.Customization.nextUpPosterType)
-        var nextUpPosterType
-        @Default(.Customization.recentlyAddedPosterType)
-        var recentlyAddedPosterType
 
         var body: some View {
             RefreshableScrollView {

@@ -3,24 +3,22 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import UIKit
 
-enum VideoPlayerJumpLength: Int32, CaseIterable, Defaults.Serializable {
-    case thirty = 30
-    case fifteen = 15
-    case ten = 10
+enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayable {
+
     case five = 5
+    case ten = 10
+    case fifteen = 15
+    case thirty = 30
 
-    var label: String {
-        L10n.jumpLengthSeconds("\(self.rawValue)")
-    }
-
-    var shortLabel: String {
-        "\(self.rawValue)s"
+    // TODO: formatter for locale?
+    var displayTitle: String {
+        "\(rawValue)s"
     }
 
     var forwardImageLabel: String {

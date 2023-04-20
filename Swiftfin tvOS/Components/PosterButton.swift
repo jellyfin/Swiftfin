@@ -3,12 +3,14 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import JellyfinAPI
 import SwiftUI
 
-struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View>: View {
+struct PosterButton<Item: Poster>: View {
 
     @FocusState
     private var isFocused: Bool
@@ -17,12 +19,15 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     private var type: PosterType
     private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
-    private var content: () -> Content
-    private var imageOverlay: () -> ImageOverlay
-    private var contextMenu: () -> ContextMenu
+    private var content: () -> any View
+    private var imageOverlay: () -> any View
+    private var contextMenu: () -> any View
     private var onSelect: () -> Void
-    private var onFocus: (() -> Void)?
     private var singleImage: Bool
+
+    // Setting the .focused() modifier causes significant performance issues.
+    // Only set if desiring focus changes
+    private var onFocusChanged: ((Bool) -> Void)?
 
     private var itemWidth: CGFloat {
         type.width * itemScale
@@ -38,160 +43,159 @@ struct PosterButton<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                     case .portrait:
                         ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
                             .failure {
-                                InitialFailureView(item.displayName.initials)
+                                InitialFailureView(item.displayTitle.initials)
                             }
                             .posterStyle(type: type, width: itemWidth)
                     case .landscape:
                         ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
                             .failure {
-                                InitialFailureView(item.displayName.initials)
+                                InitialFailureView(item.displayTitle.initials)
                             }
                             .posterStyle(type: type, width: itemWidth)
                     }
                 }
                 .overlay {
                     imageOverlay()
+                        .eraseToAnyView()
                         .posterStyle(type: type, width: itemWidth)
                 }
             }
             .buttonStyle(.card)
             .contextMenu(menuItems: {
                 contextMenu()
+                    .eraseToAnyView()
             })
             .posterShadow()
-            .if(onFocus != nil) { view in
+            .if(onFocusChanged != nil) { view in
                 view
                     .focused($isFocused)
                     .onChange(of: isFocused) { newValue in
-                        guard newValue else { return }
-                        onFocus?()
+                        onFocusChanged?(newValue)
                     }
             }
-            .focused($isFocused)
 
             content()
+                .eraseToAnyView()
                 .zIndex(-1)
         }
         .frame(width: itemWidth)
     }
 }
 
-extension PosterButton where Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView
-{
+extension PosterButton {
+
     init(item: Item, type: PosterType, singleImage: Bool = false) {
         self.init(
             item: item,
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { PosterButtonDefaultContentView(item: item) },
-            imageOverlay: { EmptyView() },
+            content: { DefaultContentView(item: item) },
+            imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {},
-            onFocus: nil,
-            singleImage: singleImage
+            singleImage: singleImage,
+            onFocusChanged: nil
         )
     }
 }
 
 extension PosterButton {
+
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
-        var copy = self
-        copy.horizontalAlignment = alignment
-        return copy
+        copy(modifying: \.horizontalAlignment, with: alignment)
     }
 
     func scaleItem(_ scale: CGFloat) -> Self {
-        var copy = self
-        copy.itemScale = scale
-        return copy
+        copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping () -> C) -> PosterButton<Item, C, ImageOverlay, ContextMenu> {
-        PosterButton<Item, C, ImageOverlay, ContextMenu>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping () -> O) -> PosterButton<Item, Content, O, ContextMenu> {
-        PosterButton<Item, Content, O, ContextMenu>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
     }
 
-    @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping () -> M) -> PosterButton<Item, Content, ImageOverlay, M> {
-        PosterButton<Item, Content, ImageOverlay, M>(
-            item: item,
-            type: type,
-            itemScale: itemScale,
-            horizontalAlignment: horizontalAlignment,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            onSelect: onSelect,
-            onFocus: onFocus,
-            singleImage: singleImage
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 
-    func onFocus(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onFocus = action
-        return copy
+    func onFocusChanged(_ action: @escaping (Bool) -> Void) -> Self {
+        copy(modifying: \.onFocusChanged, with: action)
     }
 }
 
 // MARK: default content view
 
-struct PosterButtonDefaultContentView<Item: Poster>: View {
+extension PosterButton {
 
-    let item: Item
+    struct DefaultContentView: View {
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            if item.showTitle {
-                Text(item.displayName)
-                    .font(.footnote)
-                    .fontWeight(.regular)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
+        let item: Item
+
+        var body: some View {
+            VStack(alignment: .leading) {
+                if item.showTitle {
+                    Text(item.displayTitle)
+                        .font(.footnote)
+                        .fontWeight(.regular)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                }
+
+                if let description = item.subtitle {
+                    Text(description)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
             }
+        }
+    }
 
-            if let description = item.subtitle {
-                Text(description)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
+    // TODO: Find better way for these indicators, see EpisodeCard
+    struct DefaultOverlay: View {
+
+        @Default(.Customization.Indicators.showFavorited)
+        private var showFavorited
+        @Default(.Customization.Indicators.showProgress)
+        private var showProgress
+        @Default(.Customization.Indicators.showUnplayed)
+        private var showUnplayed
+        @Default(.Customization.Indicators.showPlayed)
+        private var showPlayed
+
+        let item: Item
+
+        var body: some View {
+            ZStack {
+                if let item = item as? BaseItemDto {
+                    if item.userData?.isPlayed ?? false {
+                        WatchedIndicator(size: 45)
+                            .visible(showPlayed)
+                    } else {
+                        if (item.userData?.playbackPositionTicks ?? 0) > 0 {
+                            ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 10)
+                                .visible(showProgress)
+                        } else {
+                            UnwatchedIndicator(size: 45)
+                                .foregroundColor(.jellyfinPurple)
+                                .visible(showUnplayed)
+                        }
+                    }
+
+                    if item.userData?.isFavorite ?? false {
+                        FavoriteIndicator(size: 45)
+                            .visible(showFavorited)
+                    }
+                }
             }
         }
     }

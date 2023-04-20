@@ -3,17 +3,20 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import Foundation
 import SwiftUI
 
 struct LiveTVProgramsView: View {
+
     @EnvironmentObject
-    private var programsRouter: LiveTVProgramsCoordinator.Router
+    private var router: LiveTVProgramsCoordinator.Router
+
     @StateObject
-    var viewModel = LiveTVProgramsViewModel()
+    var viewModel: LiveTVProgramsViewModel
 
     var body: some View {
         ScrollView {
@@ -30,13 +33,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -58,13 +59,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -86,13 +85,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -114,13 +111,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -142,13 +137,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -170,13 +163,11 @@ struct LiveTVProgramsView: View {
                             Spacer().frame(width: 45)
                             ForEach(items, id: \.id) { item in
                                 Button {
-                                    if let chanId = item.channelId,
-                                       let chan = viewModel.findChannel(id: chanId)
-                                    {
-                                        self.viewModel.fetchVideoPlayerViewModel(item: chan) { playerViewModel in
-                                            self.programsRouter.route(to: \.videoPlayer, playerViewModel)
-                                        }
-                                    }
+                                    guard let channelID = item.channelID,
+                                          let channel = viewModel.findChannel(id: channelID),
+                                          let mediaSource = channel.mediaSources?.first else { return }
+
+                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -188,5 +179,7 @@ struct LiveTVProgramsView: View {
                 }
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.horizontal)
     }
 }

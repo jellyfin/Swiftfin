@@ -3,16 +3,18 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
+import JellyfinAPI
 import Nuke
 import NukeUI
 import SwiftUI
 import UIKit
 
 struct ImageSource: Hashable {
+
     let url: URL?
     let blurHash: String?
 
@@ -22,45 +24,25 @@ struct ImageSource: Hashable {
     }
 }
 
-struct DefaultFailureView: View {
-
-    var body: some View {
-        Color.secondary
-    }
-}
-
-struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: View {
+struct ImageView: View {
 
     @State
     private var sources: [ImageSource]
-    private var image: (NukeUI.Image) -> ImageType
-    private var placeholder: (() -> PlaceholderView)?
-    private var failure: () -> FailureView
-    private var resizingMode: ImageResizingMode
 
-    private init(
-        _ sources: [ImageSource],
-        resizingMode: ImageResizingMode,
-        @ViewBuilder image: @escaping (NukeUI.Image) -> ImageType,
-        placeHolder: (() -> PlaceholderView)?,
-        @ViewBuilder failureView: @escaping () -> FailureView
-    ) {
-        _sources = State(initialValue: sources)
-        self.resizingMode = resizingMode
-        self.image = image
-        self.placeholder = placeHolder
-        self.failure = failureView
-    }
+    private var image: (NukeUI.Image) -> any View
+    private var placeholder: (() -> any View)?
+    private var failure: () -> any View
+    private var resizingMode: ImageResizingMode
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
             placeholder()
+                .eraseToAnyView()
         } else if let blurHash = currentSource.blurHash {
-            BlurHashView(blurHash: blurHash, size: .Circle(radius: 16))
+            BlurHashView(blurHash: blurHash, size: .Square(length: 16))
         } else {
-            Color.secondarySystemFill
-                .opacity(0.5)
+            DefaultPlaceholderView()
         }
     }
 
@@ -71,58 +53,62 @@ struct ImageView<ImageType: View, PlaceholderView: View, FailureView: View>: Vie
                     _placeholder(currentSource)
                 } else if let _image = state.image {
                     image(_image.resizingMode(resizingMode))
+                        .eraseToAnyView()
                 } else if state.error != nil {
-                    failure().onAppear {
-                        sources.removeFirst()
-                    }
+                    failure()
+                        .eraseToAnyView()
+                        .onAppear {
+                            sources.removeFirstSafe()
+                        }
                 }
             }
             .pipeline(ImagePipeline(configuration: .withDataCache))
             .id(currentSource)
         } else {
             failure()
+                .eraseToAnyView()
         }
     }
 }
 
-extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyView, FailureView == DefaultFailureView {
+extension ImageView {
     init(_ source: ImageSource) {
         self.init(
-            [source],
-            resizingMode: .aspectFill,
+            sources: [source],
             image: { $0 },
-            placeHolder: nil,
-            failureView: { DefaultFailureView() }
+            placeholder: nil,
+            failure: { DefaultFailureView() },
+            resizingMode: .aspectFill
         )
     }
 
     init(_ sources: [ImageSource]) {
         self.init(
-            sources,
-            resizingMode: .aspectFill,
+            sources: sources,
             image: { $0 },
-            placeHolder: nil,
-            failureView: { DefaultFailureView() }
+            placeholder: nil,
+            failure: { DefaultFailureView() },
+            resizingMode: .aspectFill
         )
     }
 
     init(_ source: URL?) {
         self.init(
-            [ImageSource(url: source, blurHash: nil)],
-            resizingMode: .aspectFill,
+            sources: [ImageSource(url: source, blurHash: nil)],
             image: { $0 },
-            placeHolder: nil,
-            failureView: { DefaultFailureView() }
+            placeholder: nil,
+            failure: { DefaultFailureView() },
+            resizingMode: .aspectFill
         )
     }
 
     init(_ sources: [URL?]) {
         self.init(
-            sources.map { ImageSource(url: $0, blurHash: nil) },
-            resizingMode: .aspectFill,
+            sources: sources.map { ImageSource(url: $0, blurHash: nil) },
             image: { $0 },
-            placeHolder: nil,
-            failureView: { DefaultFailureView() }
+            placeholder: nil,
+            failure: { DefaultFailureView() },
+            resizingMode: .aspectFill
         )
     }
 }
@@ -130,47 +116,40 @@ extension ImageView where ImageType == NukeUI.Image, PlaceholderView == EmptyVie
 // MARK: Extensions
 
 extension ImageView {
-    @ViewBuilder
-    func image<I: View>(@ViewBuilder _ content: @escaping (NukeUI.Image) -> I) -> ImageView<I, PlaceholderView, FailureView> {
-        ImageView<I, PlaceholderView, FailureView>(
-            sources,
-            resizingMode: resizingMode,
-            image: content,
-            placeHolder: placeholder,
-            failureView: failure
-        )
+
+    func image(@ViewBuilder _ content: @escaping (NukeUI.Image) -> any View) -> Self {
+        copy(modifying: \.image, with: content)
     }
 
-    @ViewBuilder
-    func placeholder<P: View>(@ViewBuilder _ content: @escaping () -> P) -> ImageView<ImageType, P, FailureView> {
-        ImageView<ImageType, P, FailureView>(
-            sources,
-            resizingMode: resizingMode,
-            image: image,
-            placeHolder: content,
-            failureView: failure
-        )
+    func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.placeholder, with: content)
     }
 
-    @ViewBuilder
-    func failure<F: View>(@ViewBuilder _ content: @escaping () -> F) -> ImageView<ImageType, PlaceholderView, F> {
-        ImageView<ImageType, PlaceholderView, F>(
-            sources,
-            resizingMode: resizingMode,
-            image: image,
-            placeHolder: placeholder,
-            failureView: content
-        )
+    func failure(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.failure, with: content)
     }
 
-    @ViewBuilder
-    func resizingMode(_ resizingMode: ImageResizingMode) -> ImageView<ImageType, PlaceholderView, FailureView> {
-        ImageView<ImageType, PlaceholderView, FailureView>(
-            sources,
-            resizingMode: resizingMode,
-            image: image,
-            placeHolder: placeholder,
-            failureView: failure
-        )
+    func resizingMode(_ resizingMode: ImageResizingMode) -> Self {
+        copy(modifying: \.resizingMode, with: resizingMode)
+    }
+}
+
+// MARK: Defaults
+
+extension ImageView {
+
+    struct DefaultFailureView: View {
+
+        var body: some View {
+            Color.secondarySystemFill
+        }
+    }
+
+    struct DefaultPlaceholderView: View {
+
+        var body: some View {
+            Color.secondarySystemFill
+                .opacity(0.5)
+        }
     }
 }

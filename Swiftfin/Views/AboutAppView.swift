@@ -3,89 +3,79 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
 struct AboutAppView: View {
 
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
+    @ObservedObject
+    var viewModel: SettingsViewModel
+
     var body: some View {
         List {
             Section {
-                HStack {
-                    Spacer()
+                VStack(alignment: .center) {
 
-                    VStack(alignment: .center) {
-                        AppIcon()
-                            .cornerRadius(11)
-                            .frame(width: 150, height: 150)
+                    Image(uiImage: viewModel.currentAppIcon.iconPreview)
+                        .resizable()
+                        .frame(width: 150, height: 150)
+                        .cornerRadius(150 / 6.4)
+                        .shadow(radius: 5)
 
-                        // App name, not to be localized
-                        Text("Swiftfin")
-                            .fontWeight(.semibold)
-                            .font(.title2)
-                    }
-
-                    Spacer()
+                    // App name, not to be localized
+                    Text("Swiftfin")
+                        .fontWeight(.semibold)
+                        .font(.title2)
                 }
+                .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }
 
             Section {
 
-                HStack {
-                    L10n.about.text
-                    Spacer()
-                    Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
-                        .foregroundColor(.secondary)
-                }
+                TextPairView(
+                    leading: L10n.version,
+                    trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                )
 
-                HStack {
-                    Image("github-logo")
-                        .renderingMode(.template)
-                        .resizable()
-                        .frame(width: 20, height: 20)
-                        .foregroundColor(.primary)
-                    Link(
-                        L10n.sourceCode,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin")!
-                    )
-                    .foregroundColor(.primary)
+                ChevronButton(title: L10n.sourceCode)
+                    .leadingView {
+                        Image("logo.github")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        UIApplication.shared.open(.swiftfinGithub)
+                    }
 
-                    Spacer()
+                ChevronButton(title: L10n.bugsAndFeatures)
+                    .leadingView {
+                        Image(systemName: "plus.circle.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        UIApplication.shared.open(.swiftfinGithubIssues)
+                    }
 
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Link(
-                        L10n.requestFeature,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
-                    )
-                    .foregroundColor(.primary)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
-
-                HStack {
-                    Image(systemName: "xmark.circle.fill")
-                    Link(
-                        L10n.reportIssue,
-                        destination: URL(string: "https://github.com/jellyfin/Swiftfin/issues")!
-                    )
-                    .foregroundColor(.primary)
-
-                    Spacer()
-
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                }
+                ChevronButton(title: L10n.settings)
+                    .leadingView {
+                        Image(systemName: "gearshape.fill")
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                            .foregroundColor(.primary)
+                    }
+                    .onSelect {
+                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                        UIApplication.shared.open(url)
+                    }
             }
         }
     }

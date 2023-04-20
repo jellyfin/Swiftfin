@@ -3,23 +3,25 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
-struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
+struct PosterHStack<Item: Poster>: View {
 
     private var title: String?
     private var type: PosterType
     private var items: [Item]
     private var itemScale: CGFloat
-    private var content: (Item) -> Content
-    private var imageOverlay: (Item) -> ImageOverlay
-    private var contextMenu: (Item) -> ContextMenu
-    private var trailingContent: () -> TrailingContent
+    private var content: (Item) -> any View
+    private var imageOverlay: (Item) -> any View
+    private var contextMenu: (Item) -> any View
+    private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
-    private var onFocus: ((Item) -> Void)?
+
+    // See PosterButton for implementation reason
+    private var focusedItem: Binding<Item?>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -41,19 +43,19 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
                     ForEach(items, id: \.hashValue) { item in
                         PosterButton(item: item, type: type)
                             .scaleItem(itemScale)
-                            .content { content(item) }
-                            .imageOverlay { imageOverlay(item) }
-                            .contextMenu { contextMenu(item) }
+                            .content { content(item).eraseToAnyView() }
+                            .imageOverlay { imageOverlay(item).eraseToAnyView() }
+                            .contextMenu { contextMenu(item).eraseToAnyView() }
                             .onSelect { onSelect(item) }
-                            .if(onFocus != nil) { posterButton in
-                                posterButton
-                                    .onFocus {
-                                        onFocus?(item)
-                                    }
+                            .if(focusedItem != nil) { view in
+                                view.onFocusChanged { isFocused in
+                                    if isFocused { focusedItem?.wrappedValue = item }
+                                }
                             }
                     }
 
                     trailingContent()
+                        .eraseToAnyView()
                 }
                 .padding(50)
             }
@@ -77,11 +79,8 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     }
 }
 
-extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView,
-    TrailingContent == EmptyView
-{
+extension PosterHStack {
+
     init(
         title: String? = nil,
         type: PosterType,
@@ -92,100 +91,43 @@ extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
             type: type,
             items: items,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(item: $0) },
-            imageOverlay: { _ in EmptyView() },
+            content: { PosterButton.DefaultContentView(item: $0) },
+            imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in },
-            onFocus: nil
+            focusedItem: nil
         )
     }
 }
 
 extension PosterHStack {
+
     func scaleItems(_ scale: CGFloat) -> Self {
-        var copy = self
-        copy.itemScale = scale
-        return copy
+        copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
-    -> PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
-        PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            onFocus: onFocus
-        )
+    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
-    -> PosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
-        PosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            onFocus: onFocus
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
     }
 
-    @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
-    -> PosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
-        PosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            onFocus: onFocus
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
     }
 
-    @ViewBuilder
-    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
-    -> PosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
-        PosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect,
-            onFocus: onFocus
-        )
+    func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.trailingContent, with: content)
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 
-    func onFocus(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onFocus = action
-        return copy
+    func focusedItem(_ binding: Binding<Item?>) -> Self {
+        copy(modifying: \.focusedItem, with: binding)
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -31,15 +31,17 @@ final class FilterViewModel: ViewModel {
     }
 
     private func getQueryFilters() {
-        FilterAPI.getQueryFilters(
-            userId: SessionManager.main.currentLogin.user.id,
-            parentId: parent?.id
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] queryFilters in
-            self?.allFilters.genres = queryFilters.genres?.map(\.filter) ?? []
-        })
-        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetQueryFiltersParameters(
+                userID: userSession.user.id,
+                parentID: parent?.id
+            )
+            let request = Paths.getQueryFilters(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                allFilters.genres = response.value.genres?.map(\.filter) ?? []
+            }
+        }
     }
 }

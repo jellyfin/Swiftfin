@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -12,17 +12,18 @@ struct ServerDetailView: View {
 
     @ObservedObject
     var viewModel: ServerDetailViewModel
+
     @State
-    var currentServerURI: String
+    private var currentServerURI: String
 
     init(viewModel: ServerDetailViewModel) {
         self.viewModel = viewModel
-        self.currentServerURI = viewModel.server.currentURI
+        self._currentServerURI = State(initialValue: viewModel.server.currentURL.absoluteString)
     }
 
     var body: some View {
         Form {
-            Section(header: L10n.serverDetails.text) {
+            Section {
                 HStack {
                     L10n.name.text
                     Spacer()
@@ -31,11 +32,13 @@ struct ServerDetailView: View {
                 }
 
                 Picker(L10n.url, selection: $currentServerURI) {
-                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
-                        Text(uri).tag(uri)
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        Text(url.absoluteString)
+                            .tag(url)
                             .foregroundColor(.secondary)
-                    }.onChange(of: currentServerURI) { newValue in
-                        viewModel.setServerCurrentURI(uri: newValue)
+                    }
+                    .onChange(of: currentServerURI) { _ in
+                        // TODO: change server url
                     }
                 }
 
@@ -54,5 +57,7 @@ struct ServerDetailView: View {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(L10n.serverDetails.text)
     }
 }

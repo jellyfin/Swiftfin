@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -24,12 +24,12 @@ final class LiveTVProgramsViewModel: ViewModel {
     @Published
     var newsItems = [BaseItemDto]()
 
-    private var channels = [String: BaseItemDto]()
+    var channels = [String: BaseItemDto]()
 
     override init() {
         super.init()
 
-        getChannels()
+//        getChannels()
     }
 
     func findChannel(id: String) -> BaseItemDto? {
@@ -37,190 +37,178 @@ final class LiveTVProgramsViewModel: ViewModel {
     }
 
     private func getChannels() {
-        LiveTvAPI.getLiveTvChannels(
-            userId: SessionManager.main.currentLogin.user.id,
-            startIndex: 0,
-            limit: 1000,
-            enableImageTypes: [.primary],
-            enableUserData: false,
-            enableFavoriteSorting: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
-            guard let self = self else { return }
-            if let chans = response.items {
-                for chan in chans {
-                    if let chanId = chan.id {
-                        self.channels[chanId] = chan
-                    }
-                }
-                self.getRecommendedPrograms()
-                self.getSeries()
-                self.getMovies()
-                self.getSports()
-                self.getKids()
-                self.getNews()
+        Task {
+            let parameters = Paths.GetLiveTvChannelsParameters(
+                userID: userSession.user.id,
+                startIndex: 0,
+                limit: 1000,
+                enableImageTypes: [.primary],
+                enableUserData: false,
+                enableFavoriteSorting: true
+            )
+            let request = Paths.getLiveTvChannels(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let channels = response.value.items else { return }
+
+            for channel in channels {
+                guard let channelID = channel.id else { continue }
+                self.channels[channelID] = channel
             }
-        })
-        .store(in: &cancellables)
+
+            getRecommendedPrograms()
+            getSeries()
+            getMovies()
+            getSports()
+            getKids()
+            getNews()
+        }
     }
 
     private func getRecommendedPrograms() {
-        LiveTvAPI.getRecommendedPrograms(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 9,
-            isAiring: true,
-            imageTypeLimit: 1,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio],
-            enableTotalRecordCount: false
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.logger.debug("Received \(String(response.items?.count ?? 0)) Recommended Programs")
-            guard let self = self else { return }
-            self.recommendedItems = response.items ?? []
-        })
-        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetRecommendedProgramsParameters(
+                userID: userSession.user.id,
+                limit: 9,
+                isAiring: true,
+                imageTypeLimit: 1,
+                enableImageTypes: [.primary, .thumb],
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                enableTotalRecordCount: false
+            )
+            let request = Paths.getRecommendedPrograms(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                self.recommendedItems = items
+            }
+        }
     }
 
     private func getSeries() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: SessionManager.main.currentLogin.user.id,
-            hasAired: false,
-            isMovie: false,
-            isSeries: true,
-            isNews: false,
-            isKids: false,
-            isSports: false,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+        Task {
+            let request = Paths.getPrograms(.init(
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: false,
+                isSeries: true,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
+            ))
+            let response = try await userSession.client.send(request)
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Series Items")
-                guard let self = self else { return }
-                self.seriesItems = response.items ?? []
-            })
-            .store(in: &cancellables)
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                self.seriesItems = items
+            }
+        }
     }
 
     private func getMovies() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: SessionManager.main.currentLogin.user.id,
-            hasAired: false,
-            isMovie: true,
-            isSeries: false,
-            isNews: false,
-            isKids: false,
-            isSports: false,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+        Task {
+            let request = Paths.getPrograms(.init(
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: true,
+                isNews: false,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
+            ))
+            let response = try await userSession.client.send(request)
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Movie Items")
-                guard let self = self else { return }
-                self.movieItems = response.items ?? []
-            })
-            .store(in: &cancellables)
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                self.movieItems = items
+            }
+        }
     }
 
     private func getSports() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: SessionManager.main.currentLogin.user.id,
-            hasAired: false,
-            isSports: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+        Task {
+            let request = Paths.getPrograms(.init(
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: false,
+                isSeries: false,
+                isSports: true,
+                limit: 9,
+                userID: userSession.user.id
+            ))
+            let response = try await userSession.client.send(request)
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Sports Items")
-                guard let self = self else { return }
-                self.sportsItems = response.items ?? []
-            })
-            .store(in: &cancellables)
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                self.sportsItems = items
+            }
+        }
     }
 
     private func getKids() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: SessionManager.main.currentLogin.user.id,
-            hasAired: false,
-            isKids: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+        Task {
+            let request = Paths.getPrograms(.init(
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: true,
+                isMovie: false,
+                isNews: false,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
+            ))
+            let response = try await userSession.client.send(request)
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(String(response.items?.count ?? 0)) Kids Items")
-                guard let self = self else { return }
-                self.kidsItems = response.items ?? []
-            })
-            .store(in: &cancellables)
+            guard let items = response.value.items else { return }
+
+            await MainActor.run {
+                self.kidsItems = items
+            }
+        }
     }
 
     private func getNews() {
-        let getProgramsRequest = GetProgramsRequest(
-            userId: SessionManager.main.currentLogin.user.id,
-            hasAired: false,
-            isNews: true,
-            limit: 9,
-            enableTotalRecordCount: false,
-            enableImageTypes: [.primary, .thumb],
-            fields: [.channelInfo, .primaryImageAspectRatio]
-        )
+        Task {
+            let request = Paths.getPrograms(.init(
+                enableImageTypes: [.primary, .thumb],
+                enableTotalRecordCount: false,
+                fields: [.channelInfo, .primaryImageAspectRatio],
+                hasAired: false,
+                isKids: false,
+                isMovie: false,
+                isNews: true,
+                isSeries: false,
+                isSports: false,
+                limit: 9,
+                userID: userSession.user.id
+            ))
+            let response = try await userSession.client.send(request)
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(String(response.items?.count ?? 0)) News Items")
-                guard let self = self else { return }
-                self.newsItems = response.items ?? []
-            })
-            .store(in: &cancellables)
-    }
+            guard let items = response.value.items else { return }
 
-    func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel) -> Void) {
-        item.createLiveTVVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { videoPlayerViewModels in
-                if let viewModel = videoPlayerViewModels.first {
-                    completion(viewModel)
-                }
+            await MainActor.run {
+                self.seriesItems = items
             }
-            .store(in: &self.cancellables)
+        }
     }
 }

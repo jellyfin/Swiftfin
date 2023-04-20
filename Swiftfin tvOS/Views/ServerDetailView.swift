@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -14,37 +14,38 @@ struct ServerDetailView: View {
     var viewModel: ServerDetailViewModel
 
     var body: some View {
-        Form {
-            Section(header: L10n.serverDetails.text) {
-                HStack {
-                    L10n.name.text
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.server.name)
-                        .foregroundColor(.secondary)
-                }
-                .focusable()
+        SplitFormWindowView()
+            .descriptionView {
+                Image(systemName: "server.rack")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
+                Section(header: L10n.serverDetails.text) {
 
-                HStack {
-                    L10n.url.text
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.server.currentURI)
-                        .foregroundColor(.secondary)
-                }
+                    TextPairView(
+                        leading: L10n.name,
+                        trailing: viewModel.server.name
+                    )
 
-                HStack {
-                    L10n.version.text
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.server.version)
-                        .foregroundColor(.secondary)
-                }
+                    TextPairView(
+                        leading: L10n.url,
+                        trailing: viewModel.server.currentURL.absoluteString
+                    )
 
-                HStack {
-                    L10n.operatingSystem.text
-                    Spacer()
-                    Text(SessionManager.main.currentLogin.server.os)
-                        .foregroundColor(.secondary)
+                    TextPairView(
+                        leading: L10n.version,
+                        trailing: viewModel.server.version
+                    )
+
+                    TextPairView(
+                        leading: L10n.operatingSystem,
+                        trailing: viewModel.server.os
+                    )
                 }
             }
-        }
+            .withDescriptionTopPadding()
+            .navigationTitle(L10n.server)
     }
 }

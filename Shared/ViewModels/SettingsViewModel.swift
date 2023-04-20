@@ -3,48 +3,96 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Defaults
+import Factory
+import Files
 import Foundation
-import JellyfinAPI
-import Stinsen
-import SwiftUI
+import UIKit
 
 final class SettingsViewModel: ViewModel {
 
-    var bitrates: [Bitrates] = []
-    var langs: [TrackLanguage] = []
+    @Published
+    var currentAppIcon: any AppIcon = PrimaryAppIcon.primary
 
-    let server: SwiftfinStore.State.Server
-    let user: SwiftfinStore.State.User
+    override init() {
 
-    init(server: SwiftfinStore.State.Server, user: SwiftfinStore.State.User) {
-
-        self.server = server
-        self.user = user
-        super.init()
-
-        // Bitrates
-        let url = Bundle.main.url(forResource: "bitrates", withExtension: "json")!
-
-        do {
-            let jsonData = try Data(contentsOf: url, options: .mappedIfSafe)
-            do {
-                self.bitrates = try JSONDecoder().decode([Bitrates].self, from: jsonData)
-            } catch {
-                logger.error("Error converting processed JSON into Swift compatible schema.")
-            }
-        } catch {
-            logger.error("Error processing JSON file `bitrates.json`")
+        guard let iconName = UIApplication.shared.alternateIconName else {
+            currentAppIcon = PrimaryAppIcon.primary
+            super.init()
+            return
         }
 
-        // Track languages
-        self.langs = Locale.isoLanguageCodes.compactMap {
-            guard let name = Locale.current.localizedString(forLanguageCode: $0) else { return nil }
-            return TrackLanguage(name: name, isoCode: $0)
-        }.sorted(by: { $0.name < $1.name })
-        self.langs.insert(.auto, at: 0)
+        if let appicon = PrimaryAppIcon.createCase(iconName: iconName) {
+            currentAppIcon = appicon
+            super.init()
+            return
+        }
+
+        if let appicon = DarkAppIcon.createCase(iconName: iconName) {
+            currentAppIcon = appicon
+            super.init()
+            return
+        }
+
+        if let appicon = InvertedDarkAppIcon.createCase(iconName: iconName) {
+            currentAppIcon = appicon
+            super.init()
+            return
+        }
+
+        if let appicon = InvertedLightAppIcon.createCase(iconName: iconName) {
+            currentAppIcon = appicon
+            super.init()
+            return
+        }
+
+        if let appicon = LightAppIcon.createCase(iconName: iconName) {
+            currentAppIcon = appicon
+            super.init()
+            return
+        }
+
+        super.init()
+    }
+
+    func select(icon: any AppIcon) {
+        let previousAppIcon = currentAppIcon
+        currentAppIcon = icon
+
+        Task { @MainActor in
+
+            do {
+                if case PrimaryAppIcon.primary = icon {
+                    try await UIApplication.shared.setAlternateIconName(nil)
+                } else {
+                    try await UIApplication.shared.setAlternateIconName(icon.iconName)
+                }
+            } catch {
+                logger.error("Unable to update app icon to \(icon.iconName): \(error.localizedDescription)")
+                currentAppIcon = previousAppIcon
+            }
+        }
+    }
+
+    func signOut() {
+        Defaults[.lastServerUserID] = nil
+        Container.userSession.reset()
+        Notifications[.didSignOut].post()
+    }
+
+    func resetUserSettings() {
+        UserDefaults.generalSuite.removeAll()
+    }
+
+    func removeAllServers() {
+        guard let allServers = try? SwiftfinStore.dataStack.fetchAll(From<ServerModel>()) else { return }
+
+        try? SwiftfinStore.dataStack.perform { transaction in
+            transaction.delete(allServers)
+        }
     }
 }

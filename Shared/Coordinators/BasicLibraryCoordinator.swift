@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -24,10 +24,20 @@ final class BasicLibraryCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+
+    #if os(iOS)
     @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+    #endif
+
+    #if os(tvOS)
+    @Route(.modal)
+    var item = makeItem
+    @Route(.modal)
+    var library = makeLibrary
+    #endif
 
     private let parameters: Parameters
 
@@ -38,7 +48,7 @@ final class BasicLibraryCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         BasicLibraryView(viewModel: parameters.viewModel)
-        #if !os(tvOS)
+        #if os(iOS)
             .if(parameters.title != nil) { view in
                 view.navigationTitle(parameters.title ?? .emptyDash)
             }

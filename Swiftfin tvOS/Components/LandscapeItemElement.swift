@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -60,7 +60,7 @@ struct LandscapeItemElement: View {
                 .ignoresSafeArea()
                 .overlay(
                     ZStack {
-                        if item.userData?.played ?? false {
+                        if item.userData?.isPlayed ?? false {
                             Image(systemName: "circle.fill")
                                 .foregroundColor(.white)
                             Image(systemName: "checkmark.circle.fill")
@@ -81,7 +81,7 @@ struct LandscapeItemElement: View {
                             .frame(width: 445, height: 90)
                             .mask(CutOffShadow())
                         VStack(alignment: .leading) {
-                            Text("CONTINUE • \(item.progress ?? "")")
+                            Text("CONTINUE • \(item.progressLabel ?? "")")
                                 .font(.caption)
                                 .fontWeight(.medium)
                                 .offset(y: 5)

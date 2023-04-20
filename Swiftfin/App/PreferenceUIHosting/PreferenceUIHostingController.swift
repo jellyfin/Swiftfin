@@ -3,15 +3,14 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 import UIKit
 
-// MARK: PreferenceUIHostingController
-
 class PreferenceUIHostingController: UIHostingController<AnyView> {
+
     init<V: View>(@ViewBuilder wrappedView: @escaping () -> V) {
         let box = Box()
         super.init(rootView: AnyView(
@@ -22,6 +21,11 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
                     box.value?._orientations = $0
                 }.onPreferenceChange(ViewPreferenceKey.self) {
                     box.value?._viewPreference = $0
+                }.onPreferenceChange(KeyCommandsPreferenceKey.self) {
+                    box.value?._keyCommands = $0
+                }.onPreferenceChange(AddingKeyCommandPreferenceKey.self) {
+                    guard let newAction = $0 else { return }
+                    box.value?._keyCommands.append(newAction)
                 }
         ))
         box.value = self
@@ -40,7 +44,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     // MARK: Prefers Home Indicator Auto Hidden
 
-    public var _prefersHomeIndicatorAutoHidden = false {
+    var _prefersHomeIndicatorAutoHidden = false {
         didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
     }
 
@@ -50,13 +54,19 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     // MARK: Lock orientation
 
-    public var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
+    var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
         didSet {
-            if _orientations == .landscape {
-                let value = UIInterfaceOrientation.landscapeRight.rawValue
-                UIDevice.current.setValue(value, forKey: "orientation")
-                UIViewController.attemptRotationToDeviceOrientation()
+            print("didset orientations: \(_orientations)")
+            if #available(iOS 16.0, *) {
+//                setNeedsUpdateOfSupportedInterfaceOrientations()
+            } else {
+                // Fallback on earlier versions
             }
+//            if _orientations == .landscape {
+//                let value = UIInterfaceOrientation.landscapeRight.rawValue
+//                UIDevice.current.setValue(value, forKey: "orientation")
+//                UIViewController.attemptRotationToDeviceOrientation()
+//            }
         }
     }
 
@@ -64,37 +74,68 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
         _orientations
     }
 
-    public var _viewPreference: UIUserInterfaceStyle = .unspecified {
+    var _viewPreference: UIUserInterfaceStyle = .unspecified {
         didSet {
             overrideUserInterfaceStyle = _viewPreference
         }
+    }
+
+    var _keyCommands: [KeyCommandAction] = []
+
+    override var keyCommands: [UIKeyCommand]? {
+        let castedCommands: [UIKeyCommand] = _keyCommands.map { .init(
+            title: $0.title,
+            action: #selector(keyCommandHit),
+            input: $0.input,
+            modifierFlags: $0.modifierFlags
+        ) }
+
+        castedCommands.forEach { $0.wantsPriorityOverSystemBehavior = true }
+
+        return castedCommands
+    }
+
+    @objc
+    private func keyCommandHit(keyCommand: UIKeyCommand) {
+        guard let action = _keyCommands.first(where: { $0.input == keyCommand.input }) else { return }
+
+        action.action()
     }
 }
 
 // MARK: Preference Keys
 
-struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
-    typealias Value = Bool
+// TODO: look at namespacing?
 
-    static var defaultValue: Value = false
+struct AddingKeyCommandPreferenceKey: PreferenceKey {
 
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = nextValue() || value
-    }
-}
+    static var defaultValue: KeyCommandAction?
 
-struct ViewPreferenceKey: PreferenceKey {
-    typealias Value = UIUserInterfaceStyle
-
-    static var defaultValue: UIUserInterfaceStyle = .unspecified
-
-    static func reduce(value: inout UIUserInterfaceStyle, nextValue: () -> UIUserInterfaceStyle) {
+    static func reduce(value: inout KeyCommandAction?, nextValue: () -> KeyCommandAction?) {
         value = nextValue()
     }
 }
 
+struct KeyCommandsPreferenceKey: PreferenceKey {
+
+    static var defaultValue: [KeyCommandAction] = []
+
+    static func reduce(value: inout [KeyCommandAction], nextValue: () -> [KeyCommandAction]) {
+        value = nextValue()
+    }
+}
+
+struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
+
+    static var defaultValue: Bool = false
+
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue() || value
+    }
+}
+
 struct SupportedOrientationsPreferenceKey: PreferenceKey {
-    typealias Value = UIInterfaceOrientationMask
+
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
@@ -103,21 +144,44 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
     }
 }
 
+struct ViewPreferenceKey: PreferenceKey {
+
+    static var defaultValue: UIUserInterfaceStyle = .unspecified
+
+    static func reduce(value: inout UIUserInterfaceStyle, nextValue: () -> UIUserInterfaceStyle) {
+        value = nextValue()
+    }
+}
+
 // MARK: Preference Key View Extension
 
 extension View {
-    // Controls the application's preferred home indicator auto-hiding when this view is shown.
+
+    func keyCommands(_ commands: [KeyCommandAction]) -> some View {
+        preference(key: KeyCommandsPreferenceKey.self, value: commands)
+    }
+
+    func addingKeyCommand(
+        title: String,
+        input: String,
+        modifierFlags: UIKeyModifierFlags = [],
+        action: @escaping () -> Void
+    ) -> some View {
+        preference(
+            key: AddingKeyCommandPreferenceKey.self,
+            value: .init(title: title, input: input, modifierFlags: modifierFlags, action: action)
+        )
+    }
+
     func prefersHomeIndicatorAutoHidden(_ value: Bool) -> some View {
         preference(key: PrefersHomeIndicatorAutoHiddenPreferenceKey.self, value: value)
     }
 
     func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
-        // When rendered, export the requested orientations upward to Root
         preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
     }
 
     func overrideViewPreference(_ viewPreference: UIUserInterfaceStyle) -> some View {
-        // When rendered, export the requested orientations upward to Root
         preference(key: ViewPreferenceKey.self, value: viewPreference)
     }
 }

@@ -6,7 +6,7 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary dependencies with Xcode 13:
+Fork the Swiftfin repo and install the necessary dependencies with Xcode 14:
 
 ```bash
 # install Carthage, SwiftFormat, and SwiftGen with homebrew
@@ -16,55 +16,60 @@ $ brew install carthage swiftformat swiftgen
 $ carthage update --use-xcframeworks
 ```
 
-If you run into a build error with Swift Packages because some have not finished installing, you may need to close and reopen Xcode to finish installing the last packages.
+In the event that all of the Swift Packages cannot be installed, clean the Swift Packages cache or close and reopen Xcode to restart the process.
 
 ## Git Flow
 
 Swiftfin follows the same Pull Request Guidelines as outlined in the [Jellyfin Pull Request Guidelines](https://jellyfin.org/docs/general/contributing/development.html#pull-request-guidelines).
 
-If your Pull Request relates to an Issue, mention the issue correctly in your PR description.
+If a Pull Request relates to an Issue, mention the issue correctly in the PR description.
 
-[SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. You can run `swiftformat .` in the project directory or install SwiftFormat's Xcode extension.
+[SwiftFormat](https://github.com/nicklockwood/SwiftFormat) is our linter. `swiftformat .` can be run in the project directory or install SwiftFormat's Xcode extension.
 
 The following must pass in order for a PR to be merged:
 - automated `iOS` and `tvOS` builds must succeed
 - developer account cannot be attached
-- SwiftFormat linting check must pass. If this does not pass after you have linted, you may need to update your local `swiftformat`
+- SwiftFormat linting check must pass. If this does not pass, you may need to update your version of `swiftformat`
 - new strings that are not part of an experimental feature must be localized
-- correct label(s) are attached, if applicable
+- label(s) are attached, if applicable
 
-Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes. If you think that no labels are required, that is acceptable.
+Labeling PRs with `enhancement`, `bug`, or `crash` will allow the PR to be tracked in GitHub's [automatically generated release notes](https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes). Small fixes (like minor UI adjustments) or non-user facing issues (like developer project clean up) can also have the `ignore-for-release` label because they may not be important to include in the release notes.
 
 ### Documentation
 Documentation for advanced or complex features and other implementation reasoning is encouraged so that future developers may have insights and a better understand of the application. `// MARK:` comments are encouraged for organization, maintainability, and ease of navigation in Xcode's Minimap.
 
 ## Architecture
 
-Swiftfin is developed using SwiftUI with some UIKit components where deemed necessary, as SwiftUI is still in relatively early development and limiting. Swiftfin consists of both the iOS and tvOS Jellyfin clients with a shared underlying structure where each client has their own respective views. Due to this architecture, working on both clients at once may be necessary.
+Swiftfin is developed using SwiftUI. The iOS and tvOS Jellyfin clients share the same backend with each client containing their respective views. Due to this architecture, working on both clients at once may be necessary.
 
-Playback is done with [VLCKit](https://code.videolan.org/videolan/VLCKit) for its great codec support. Becoming familiar with VLCKit will be necessary for video playback development or relating features.
+Playback is done with [VLCKit](https://code.videolan.org/videolan/VLCKit) for its great codec support. Becoming familiar with VLCKit will be necessary for video playback development and debugging.
 
 ## Design
 
-While there are no design guidelines for UI/UX features, Swiftfin has the goal to use native SwiftUI/UIKit components while adhering to a Jellyfin theme. If your feature creates new UI/UX components, you are welcome to introduce a general design that may receive feedback during the PR process or may be re-designed later on.
+While there are no design guidelines for UI/UX features, Swiftfin has the goal to use native SwiftUI/UIKit components while adhering to a Jellyfin theme. If a feature creates new UI/UX components, it may receive feedback during the PR process or may be re-designed later on.
 
 User customizable UI/UX features are welcome and intended, however not all customization may be accepted for code maintainability and to also establish a distinct Swiftfin design. Taking inspiration, but not always copying, from other applications is encouraged.
 
+## App Icons
+
+Ideas for new icons and minor tweaks to existing icons can be presented however may not be accepted. Overall, app icons must follow these rules:
+
+- Must feature the Jellyfin logo.
+- Must be for general usage (i.e: holiday, hacker theme). Ideas for individual preferences or logos will not be accepted.
+- Must be unique. (i.e: cannot have two blue icons just with different gradients)
+
 ## New Features
 
-If you would like to develop a new feature or `Developer` issue, create an issue with a description of the feature so that a discussion can be made for its possibility, whether it belongs in Swiftfin, and finally its general implementation. Leave a comment when you start work on an approved feature so that duplicate work among developers doesn't conflict.
+If you would like to develop a new feature, create a Feature Request to discuss the feature's possibility and implementation. Leave a comment when you start working to prevent conflicts. If the implementation of a feature is large or complex, creating a Draft PR is acceptable to surface progress and to receive feedback.
 
 ## Other Code Work
 
-Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time. Just leave a comment when you start work on a bug fix or `Developer` issue.
+Other code work like bug fixes, issues with `Developer` tags, localizations, and accessibility efforts are welcome to be picked up at any time.
 
-If you notice undesirable behavior or would like to make a UI/UX tweak, create an issue or ask in the iOS Matrix/Discord channel and a discussion will be made.
-
-If you have a question about any existing implementations, ask the iOS Matrix/Discord channel for developer insights.
+If you notice undesirable behavior, would like to make a UI/UX tweak, or have a question about implementations, create an issue or ask in the iOS Matrix/Discord channel for insights.
 
 ## Intended Behaviors Due to Technical Limitations
 
 The following behaviors are intended due to current technical limitations with VLCKit:
 
-- Pausing playback when app is backgrounded as VLCKit pauses video output at the same time
 - Audio delay when starting playback and un-pausing, may be fixed in VLCKit v4

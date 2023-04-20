@@ -3,32 +3,39 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove client passing and mirror how other images are made
+
 struct UserProfileButton: View {
 
-    let user: UserDto
-    private var action: () -> Void
+    private let client: JellyfinClient
+    private let user: UserDto
+    private var onSelect: () -> Void
 
-    init(user: UserDto) {
+    // TODO: Why both?
+    init(user: UserDto, client: JellyfinClient) {
+        self.client = client
         self.user = user
-        self.action = {}
+        self.onSelect = {}
     }
 
-    init(user: SwiftfinStore.State.User) {
-        self.init(user: .init(name: user.username, id: user.id))
+    init(user: UserState, client: JellyfinClient) {
+        self.client = client
+        self.user = .init(id: user.id, name: user.username)
+        self.onSelect = {}
     }
 
     var body: some View {
         VStack(alignment: .center) {
             Button {
-                action()
+                onSelect()
             } label: {
-                ImageView(user.profileImageSource(maxWidth: 120, maxHeight: 120))
+                ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
                     .failure {
                         ZStack {
                             Color.secondarySystemFill
@@ -49,9 +56,8 @@ struct UserProfileButton: View {
 }
 
 extension UserProfileButton {
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.action = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
     }
 }

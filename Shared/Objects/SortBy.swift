@@ -3,20 +3,23 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
 import JellyfinAPI
 
-public enum SortBy: String, Codable, CaseIterable {
+// TODO: Move to jellyfin-api-swift
+
+enum SortBy: String, CaseIterable, Displayable {
+
     case premiereDate = "PremiereDate"
     case name = "SortName"
     case dateAdded = "DateCreated"
     case random = "Random"
 
     // TODO: Localize
-    var localized: String {
+    var displayTitle: String {
         switch self {
         case .premiereDate:
             return "Premiere date"
@@ -30,6 +33,6 @@ public enum SortBy: String, Codable, CaseIterable {
     }
 
     var filter: ItemFilters.Filter {
-        .init(displayName: localized, filterName: rawValue)
+        .init(displayTitle: displayTitle, filterName: rawValue)
     }
 }

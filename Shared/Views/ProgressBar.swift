@@ -3,10 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
+
+// TODO: Replace scaling with size so that the Capsule corner radius
+//       is not affected
 
 struct ProgressBar: View {
 
@@ -19,7 +22,6 @@ struct ProgressBar: View {
                 .opacity(0.2)
 
             Capsule()
-                .foregroundColor(.jellyfinPurple)
                 .scaleEffect(x: progress, y: 1, anchor: .leading)
         }
         .frame(maxWidth: .infinity)

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -11,22 +11,17 @@ import UIKit
 
 struct SFSymbolButton: UIViewRepresentable {
 
-    let systemName: String
-    let action: () -> Void
+    private var onSelect: () -> Void
     private let pointSize: CGFloat
-
-    init(systemName: String, pointSize: CGFloat = 24, action: @escaping () -> Void) {
-        self.systemName = systemName
-        self.action = action
-        self.pointSize = pointSize
-    }
+    private let systemName: String
+    private let systemNameFocused: String?
 
     func makeUIView(context: Context) -> some UIButton {
         var configuration = UIButton.Configuration.plain()
         configuration.cornerStyle = .capsule
 
         let buttonAction = UIAction(title: "") { _ in
-            self.action()
+            self.onSelect()
         }
 
         let button = UIButton(configuration: configuration, primaryAction: buttonAction)
@@ -36,18 +31,34 @@ struct SFSymbolButton: UIViewRepresentable {
 
         button.setImage(symbolImage, for: .normal)
 
+        if let systemNameFocused {
+            let focusedSymbolImage = UIImage(systemName: systemNameFocused, withConfiguration: symbolImageConfig)
+
+            button.setImage(focusedSymbolImage, for: .focused)
+        }
+
         return button
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 }
 
-extension SFSymbolButton: Hashable {
-    static func == (lhs: SFSymbolButton, rhs: SFSymbolButton) -> Bool {
-        lhs.systemName == rhs.systemName
+extension SFSymbolButton {
+
+    init(
+        systemName: String,
+        systemNameFocused: String? = nil,
+        pointSize: CGFloat = 32
+    ) {
+        self.init(
+            onSelect: {},
+            pointSize: pointSize,
+            systemName: systemName,
+            systemNameFocused: systemNameFocused
+        )
     }
 
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(systemName)
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

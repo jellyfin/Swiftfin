@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -45,10 +45,19 @@ final class SearchViewModel: ViewModel {
         getSuggestions()
 
         searchTextSubject
-            .handleEvents(receiveOutput: { _ in self.cancelPreviousSearch() })
-            .filter { !$0.isEmpty }
-            .debounce(for: 0.25, scheduler: DispatchQueue.main)
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { newSearch in
+
+                if newSearch.isEmpty {
+                    self.movies = []
+                    self.collections = []
+                    self.series = []
+                    self.episodes = []
+                    self.people = []
+
+                    return
+                }
+
                 self._search(with: newSearch, filters: self.filterViewModel.currentFilters)
             }
             .store(in: &cancellables)
@@ -58,10 +67,6 @@ final class SearchViewModel: ViewModel {
                 self._search(with: self.searchTextSubject.value, filters: newFilters)
             }
             .store(in: &cancellables)
-    }
-
-    private func cancelPreviousSearch() {
-        searchCancellables.forEach { $0.cancel() }
     }
 
     func search(with query: String) {
@@ -83,31 +88,32 @@ final class SearchViewModel: ViewModel {
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
     ) {
         let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName)
+        let sortBy = filters.sortBy.map(\.filterName)
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 20,
-            recursive: true,
-            searchTerm: query,
-            sortOrder: sortOrder,
-            fields: ItemFields.allCases,
-            includeItemTypes: [itemType],
-            filters: itemFilters,
-            sortBy: sortBy,
-            enableUserData: true,
-            genreIds: genreIDs,
-            enableImages: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?[keyPath: keyPath] = response.items ?? []
-        })
-        .store(in: &searchCancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 20,
+                isRecursive: true,
+                searchTerm: query,
+                sortOrder: sortOrder,
+                fields: ItemFields.allCases,
+                includeItemTypes: [itemType],
+                filters: itemFilters,
+                sortBy: sortBy,
+                enableUserData: true,
+                genreIDs: genreIDs,
+                enableImages: true
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                self[keyPath: keyPath] = response.value.items ?? []
+            }
+        }
     }
 
     private func getPeople(for query: String?, with filters: ItemFilters) {
@@ -116,35 +122,38 @@ final class SearchViewModel: ViewModel {
             return
         }
 
-        PersonsAPI.getPersons(
-            limit: 20,
-            searchTerm: query
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.people = response.items ?? []
-        })
-        .store(in: &searchCancellables)
+        Task {
+            let parameters = Paths.GetPersonsParameters(
+                limit: 20,
+                searchTerm: query
+            )
+            let request = Paths.getPersons(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                people = response.value.items ?? []
+            }
+        }
     }
 
     private func getSuggestions() {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 10,
-            recursive: true,
-            includeItemTypes: [.movie, .series],
-            sortBy: ["IsFavoriteOrLiked", "Random"],
-            imageTypeLimit: 0,
-            enableTotalRecordCount: false,
-            enableImages: false
-        )
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.suggestions = response.items ?? []
-        })
-        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 10,
+                isRecursive: true,
+                includeItemTypes: [.movie, .series],
+                sortBy: ["IsFavoriteOrLiked", "Random"],
+                imageTypeLimit: 0,
+                enableTotalRecordCount: false,
+                enableImages: false
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                suggestions = response.value.items ?? []
+            }
+        }
     }
 }

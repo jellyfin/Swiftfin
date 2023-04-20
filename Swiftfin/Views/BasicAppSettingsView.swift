@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -12,104 +12,84 @@ import SwiftUI
 
 struct BasicAppSettingsView: View {
 
-    @EnvironmentObject
-    private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-    @ObservedObject
-    var viewModel: BasicAppSettingsViewModel
-    @State
-    var resetUserSettingsTapped: Bool = false
-    @State
-    var resetAppSettingsTapped: Bool = false
-    @State
-    var removeAllUsersTapped: Bool = false
-
+    @Default(.accentColor)
+    private var accentColor
     @Default(.appAppearance)
-    var appAppearance
-    @Default(.defaultHTTPScheme)
-    var defaultHTTPScheme
+    private var appAppearance
+
+    @EnvironmentObject
+    private var router: BasicAppSettingsCoordinator.Router
+
+    @ObservedObject
+    var viewModel: SettingsViewModel
+
+    @State
+    private var resetUserSettingsSelected: Bool = false
+    @State
+    private var resetAppSettingsSelected: Bool = false
+    @State
+    private var removeAllServersSelected: Bool = false
 
     var body: some View {
         Form {
 
-            Button {
-                basicAppSettingsRouter.route(to: \.about)
-            } label: {
-                HStack {
-                    L10n.about.text
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
+            ChevronButton(title: L10n.about)
+                .onSelect {
+                    router.route(to: \.about)
                 }
-            }
 
             Section {
-                Picker(L10n.appearance, selection: $appAppearance) {
-                    ForEach(self.viewModel.appearances, id: \.self) { appearance in
-                        Text(appearance.localizedName).tag(appearance.rawValue)
+                EnumPicker(title: L10n.appearance, selection: $appAppearance)
+
+                ChevronButton(title: L10n.appIcon)
+                    .onSelect {
+                        router.route(to: \.appIconSelector)
                     }
-                }
             } header: {
                 L10n.accessibility.text
             }
 
             Section {
-                Picker(L10n.defaultScheme, selection: $defaultHTTPScheme) {
-                    ForEach(HTTPScheme.allCases, id: \.self) { scheme in
-                        Text("\(scheme.rawValue)")
-                    }
+                ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+            } footer: {
+                L10n.accentColorDescription.text
+            }
+
+            ChevronButton(title: "Logs")
+                .onSelect {
+                    router.route(to: \.log)
                 }
-            } header: {
-                L10n.networking.text
-            }
 
-            Button {
-                resetUserSettingsTapped = true
-            } label: {
-                L10n.resetUserSettings.text
-            }
+            Section {
+                Button {
+                    resetUserSettingsSelected = true
+                } label: {
+                    L10n.resetUserSettings.text
+                }
 
-            Button {
-                resetAppSettingsTapped = true
-            } label: {
-                L10n.resetAppSettings.text
-            }
-
-            Button {
-                removeAllUsersTapped = true
-            } label: {
-                L10n.removeAllUsers.text
+                Button {
+                    removeAllServersSelected = true
+                } label: {
+                    Text("Remove All Servers")
+                }
             }
         }
-        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsTapped, actions: {
-            Button(role: .destructive) {
+        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
+            Button(L10n.reset, role: .destructive) {
                 viewModel.resetUserSettings()
-            } label: {
-                L10n.reset.text
             }
-        })
-        .alert(L10n.resetAppSettings, isPresented: $resetAppSettingsTapped, actions: {
-            Button(role: .destructive) {
-                viewModel.resetAppSettings()
-            } label: {
-                L10n.reset.text
+        } message: {
+            Text("Reset all settings back to defaults.")
+        }
+        .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+            Button(L10n.reset, role: .destructive) {
+                viewModel.removeAllServers()
             }
-        })
-        .alert(L10n.removeAllUsers, isPresented: $removeAllUsersTapped, actions: {
-            Button(role: .destructive) {
-                viewModel.removeAllUsers()
-            } label: {
-                L10n.reset.text
-            }
-        })
-        .navigationBarTitle(L10n.settings, displayMode: .inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    basicAppSettingsRouter.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        }
+        .navigationBarTitle(L10n.settings)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

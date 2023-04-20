@@ -3,29 +3,23 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
 import JellyfinAPI
 
-struct ErrorMessage: Identifiable {
+struct ErrorMessage: Hashable, Identifiable {
 
-    let code: Int
-    let title: String
+    let code: Int?
     let message: String
 
-    // Chosen value such that if an error has this code, don't show the code to the UI
-    // This was chosen because of its unlikelyhood to ever be used
-    static let noShowErrorCode = -69420
-
-    var id: String {
-        "\(code)\(title)\(message)"
+    var id: Int {
+        hashValue
     }
 
-    init(code: Int, title: String, message: String) {
+    init(message: String, code: Int? = nil) {
         self.code = code
-        self.title = title
         self.message = message
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -22,17 +22,18 @@ final class CollectionItemViewModel: ItemViewModel {
     }
 
     private func getCollectionItems() {
-        ItemsAPI.getItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            parentId: item.id,
-            fields: ItemFields.allCases
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            self?.collectionItems = response.items ?? []
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                parentID: item.id,
+                fields: ItemFields.allCases
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                collectionItems = response.value.items ?? []
+            }
         }
-        .store(in: &cancellables)
     }
 }

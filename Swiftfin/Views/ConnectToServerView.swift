@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -12,125 +12,173 @@ import SwiftUI
 
 struct ConnectToServerView: View {
 
+    @EnvironmentObject
+    private var router: ConnectToServerCoodinator.Router
+
     @ObservedObject
     var viewModel: ConnectToServerViewModel
-    @State
-    var uri = ""
 
-    @Default(.defaultHTTPScheme)
-    var defaultHTTPScheme
+    @State
+    private var connectionError: Error?
+    @State
+    private var connectionTask: Task<Void, Never>?
+    @State
+    private var duplicateServer: (server: ServerState, url: URL)?
+    @State
+    private var isConnecting: Bool = false
+    @State
+    private var isPresentingConnectionError: Bool = false
+    @State
+    private var isPresentingDuplicateServerAlert: Bool = false
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var url = "http://"
+
+    private func connectToServer() {
+        let task = Task {
+            isConnecting = true
+            connectionError = nil
+
+            do {
+                let serverConnection = try await viewModel.connectToServer(url: url)
+
+                if viewModel.isDuplicate(server: serverConnection.server) {
+                    duplicateServer = serverConnection
+                    isPresentingDuplicateServerAlert = true
+                } else {
+                    try viewModel.save(server: serverConnection.server)
+                    router.route(to: \.userSignIn, serverConnection.server)
+                }
+            } catch {
+                connectionError = error
+                isPresentingConnectionError = true
+            }
+
+            isConnecting = false
+        }
+
+        connectionTask = task
+    }
+
+    @ViewBuilder
+    private var connectSection: some View {
+        Section {
+            TextField(L10n.serverURL, text: $url)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+                .keyboardType(.URL)
+
+            if isConnecting {
+                Button(role: .destructive) {
+                    connectionTask?.cancel()
+                    isConnecting = false
+                } label: {
+                    L10n.cancel.text
+                }
+            } else {
+                Button {
+                    connectToServer()
+                } label: {
+                    L10n.connect.text
+                }
+                .disabled(URL(string: url) == nil || isConnecting)
+            }
+        } header: {
+            L10n.connectToJellyfinServer.text
+        }
+    }
+
+    @ViewBuilder
+    private var publicServerSection: some View {
+        Section {
+            if viewModel.isSearching {
+                L10n.searchingDots.text
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            } else {
+                if viewModel.discoveredServers.isEmpty {
+                    L10n.noLocalServersFound.text
+                        .font(.callout)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity)
+                } else {
+                    ForEach(viewModel.discoveredServers, id: \.id) { server in
+                        Button {
+                            url = server.currentURL.absoluteString
+                            connectToServer()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(server.name)
+                                    .font(.title3)
+
+                                Text(server.currentURL.absoluteString)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .disabled(isConnecting)
+                    }
+                }
+            }
+        } header: {
+            HStack {
+                L10n.localServers.text
+                Spacer()
+
+                Button {
+                    viewModel.discoverServers()
+                } label: {
+                    Image(systemName: "arrow.clockwise.circle.fill")
+                }
+                .disabled(viewModel.isSearching || isConnecting)
+            }
+        }
+        .headerProminence(.increased)
+    }
 
     var body: some View {
         List {
-            Section {
-                TextField(L10n.serverURL, text: $uri)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.URL)
-                    .onAppear {
-                        if uri == "" {
-                            uri = "\(defaultHTTPScheme.rawValue)://"
-                        }
-                    }
 
-                if viewModel.isLoading {
-                    Button(role: .destructive) {
-                        viewModel.cancelConnection()
-                    } label: {
-                        L10n.cancel.text
-                    }
-                } else {
-                    Button {
-                        viewModel.connectToServer(uri: uri)
-                    } label: {
-                        HStack {
-                            L10n.connect.text
+            connectSection
 
-                            Spacer()
-
-                            if viewModel.isLoading {
-                                ProgressView()
-                            }
-                        }
-                    }
-                    .disabled(uri.isEmpty || viewModel.isLoading)
-                }
-            } header: {
-                L10n.connectToJellyfinServer.text
+            publicServerSection
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingConnectionError
+        ) {
+            Button(L10n.dismiss, role: .cancel)
+        } message: {
+            Text(connectionError?.localizedDescription ?? .emptyDash)
+        }
+        .alert(
+            L10n.existingServer,
+            isPresented: $isPresentingDuplicateServerAlert
+        ) {
+            Button {
+                guard let duplicateServer else { return }
+                viewModel.add(
+                    url: duplicateServer.url,
+                    server: duplicateServer.server
+                )
+                router.dismissCoordinator()
+            } label: {
+                L10n.addURL.text
             }
 
-            Section {
-                if viewModel.searching {
-                    HStack(alignment: .center, spacing: 5) {
-                        Spacer()
-                        L10n.searchingDots.text
-                            .foregroundColor(.secondary)
-                        Spacer()
-                    }
-                } else {
-                    if viewModel.discoveredServers.isEmpty {
-                        HStack(alignment: .center) {
-                            Spacer()
-                            L10n.noLocalServersFound.text
-                                .font(.callout)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                        }
-                    } else {
-                        ForEach(viewModel.discoveredServers, id: \.id) { server in
-                            Button {
-                                uri = server.currentURI
-                                viewModel.connectToServer(uri: server.currentURI)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(server.name)
-                                        .font(.title3)
-                                    Text(server.currentURI)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .disabled(viewModel.isLoading)
-                        }
-                    }
-                }
-            } header: {
-                HStack {
-                    L10n.localServers.text
-                    Spacer()
-
-                    Button {
-                        viewModel.discoverServers()
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle.fill")
-                    }
-                    .disabled(viewModel.searching || viewModel.isLoading)
-                }
+            Button(L10n.dismiss, role: .cancel)
+        } message: {
+            if let duplicateServer {
+                L10n.serverAlreadyExistsPrompt(duplicateServer.server.name).text
             }
-            .headerProminence(.increased)
-        }
-        .alert(item: $viewModel.errorMessage) { _ in
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                dismissButton: .cancel()
-            )
-        }
-        .alert(item: $viewModel.addServerURIPayload) { _ in
-            Alert(
-                title: L10n.existingServer.text,
-                message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? "").text,
-                primaryButton: .default(L10n.addURL.text, action: {
-                    viewModel.addURIToServer(addServerURIPayload: viewModel.backAddServerURIPayload!)
-                }),
-                secondaryButton: .cancel()
-            )
         }
         .navigationTitle(L10n.connect)
         .onAppear {
             viewModel.discoverServers()
-            AppURLHandler.shared.appURLState = .allowedInLogin
         }
-        .navigationBarBackButtonHidden(viewModel.isLoading)
+        .onDisappear {
+            isConnecting = false
+        }
     }
 }

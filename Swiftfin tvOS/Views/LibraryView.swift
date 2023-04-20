@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -15,6 +15,7 @@ struct LibraryView: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
+
     @ObservedObject
     var viewModel: LibraryViewModel
 
@@ -23,6 +24,7 @@ struct LibraryView: View {
         ProgressView()
     }
 
+    // TODO: add retry
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
@@ -52,14 +54,12 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        Group {
-            if viewModel.isLoading && viewModel.items.isEmpty {
-                loadingView
-            } else if viewModel.items.isEmpty {
-                noResultsView
-            } else {
-                libraryItemsView
-            }
+        if viewModel.isLoading && viewModel.items.isEmpty {
+            loadingView
+        } else if viewModel.items.isEmpty {
+            noResultsView
+        } else {
+            libraryItemsView
         }
     }
 }

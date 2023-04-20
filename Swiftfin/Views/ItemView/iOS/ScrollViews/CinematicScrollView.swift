@@ -3,24 +3,30 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
+import Defaults
 import SwiftUI
 
 extension ItemView {
 
     struct CinematicScrollView<Content: View>: View {
 
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
+
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
+        @ObservedObject
+        var viewModel: ItemViewModel
+
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var blurHashBottomEdgeColor: Color = .secondarySystemFill
-        @ObservedObject
-        var viewModel: ItemViewModel
 
         let content: () -> Content
 
@@ -28,25 +34,28 @@ extension ItemView {
             let start = UIScreen.main.bounds.height * 0.5
             let end = UIScreen.main.bounds.height * 0.65
             let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-                .frame(height: UIScreen.main.bounds.height * 0.6)
-                .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
-                .onAppear {
-                    if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
-                        let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
-                        blurHashBottomEdgeColor = Color(
-                            red: Double(bottomRGB.0),
-                            green: Double(bottomRGB.1),
-                            blue: Double(bottomRGB.2)
-                        )
-                    }
+            ImageView(viewModel.item.imageSource(
+                cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
+                maxWidth: UIScreen.main.bounds.width
+            ))
+            .frame(height: UIScreen.main.bounds.height * 0.6)
+            .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+            .onAppear {
+                if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
+                    let bottomRGB = BlurHash(string: headerBlurHash)!.averageLinearRGB
+                    blurHashBottomEdgeColor = Color(
+                        red: Double(bottomRGB.0),
+                        green: Double(bottomRGB.1),
+                        blue: Double(bottomRGB.2)
+                    )
                 }
+            }
         }
 
         var body: some View {
@@ -94,10 +103,17 @@ extension ItemView {
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.6,
+                height: UIScreen.main.bounds.height * 0.8,
                 multiplier: 0.3
             ) {
                 headerView
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
             }
         }
     }
@@ -107,8 +123,11 @@ extension ItemView.CinematicScrollView {
 
     struct OverlayView: View {
 
+        @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+        private var cinematicItemViewTypeUsePrimaryImage
+
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -116,20 +135,25 @@ extension ItemView.CinematicScrollView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center, spacing: 10) {
-                    ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-                        .resizingMode(.aspectFit)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(viewModel.item.displayName)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                        }
-                        .frame(height: 100)
-                        .frame(maxWidth: .infinity)
+                    if !cinematicItemViewTypeUsePrimaryImage {
+                        ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
+                            .resizingMode(.aspectFit)
+                            .placeholder {
+                                EmptyView()
+                            }
+                            .failure {
+                                Text(viewModel.item.displayTitle)
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.white)
+                            }
+                            .frame(height: 100)
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Spacer()
+                            .frame(height: 50)
+                    }
 
                     DotHStack {
                         if let firstGenre = viewModel.item.genres?.first {
@@ -159,25 +183,10 @@ extension ItemView.CinematicScrollView {
                 }
                 .frame(maxWidth: .infinity)
 
-                if let firstTagline = viewModel.item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(.white)
-                }
-
-                if let itemOverview = viewModel.item.overview {
-                    TruncatedTextView(text: itemOverview) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .font(.footnote)
-                    .lineLimit(4)
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
+                    .taglineLineLimit(2)
                     .foregroundColor(.white)
-                    .fixedSize(horizontal: false, vertical: true)
-                }
 
                 ItemView.AttributesHStack(viewModel: viewModel)
             }

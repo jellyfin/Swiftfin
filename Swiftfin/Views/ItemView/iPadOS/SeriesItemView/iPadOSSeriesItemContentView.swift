@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -14,7 +14,8 @@ extension iPadOSSeriesItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
@@ -23,7 +24,7 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Episodes
 
-                SeriesEpisodesView(viewModel: viewModel)
+                SeriesEpisodeSelector(viewModel: viewModel)
 
                 // MARK: Genres
 
@@ -54,10 +55,7 @@ extension iPadOSSeriesItemView {
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
-                    PosterHStack(title: L10n.recommended, type: .portrait, items: viewModel.similarItems)
-                        .onSelect { item in
-                            itemRouter.route(to: \.item, item)
-                        }
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
                     Divider()
                 }

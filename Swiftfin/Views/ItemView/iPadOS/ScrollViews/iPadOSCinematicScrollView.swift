@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -13,11 +13,13 @@ extension ItemView {
     struct iPadOSCinematicScrollView<Content: View>: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @State
-        private var scrollViewOffset: CGFloat = 0
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
+
+        @State
+        private var scrollViewOffset: CGFloat = 0
 
         let content: () -> Content
 
@@ -25,7 +27,7 @@ extension ItemView {
             let start = UIScreen.main.bounds.height * 0.45
             let end = UIScreen.main.bounds.height * 0.65
             let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
 
@@ -90,6 +92,13 @@ extension ItemView {
             ) {
                 headerView
             }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
+            }
         }
     }
 }
@@ -99,7 +108,8 @@ extension ItemView.iPadOSCinematicScrollView {
     struct OverlayView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 
@@ -114,8 +124,11 @@ extension ItemView.iPadOSCinematicScrollView {
                         maxHeight: 150
                     ))
                     .resizingMode(.bottomLeft)
+                    .placeholder {
+                        EmptyView()
+                    }
                     .failure {
-                        Text(viewModel.item.displayName)
+                        Text(viewModel.item.displayTitle)
                             .font(.largeTitle)
                             .fontWeight(.semibold)
                             .lineLimit(2)
@@ -123,11 +136,10 @@ extension ItemView.iPadOSCinematicScrollView {
                             .foregroundColor(.white)
                     }
 
-                    TruncatedTextView(text: viewModel.item.overview ?? L10n.noOverviewAvailable) {
-                        itemRouter.route(to: \.itemOverview, viewModel.item)
-                    }
-                    .lineLimit(3)
-                    .foregroundColor(.white)
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(3)
+                        .taglineLineLimit(1)
+                        .foregroundColor(.white)
 
                     HStack(spacing: 30) {
                         ItemView.AttributesHStack(viewModel: viewModel)

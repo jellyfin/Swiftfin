@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -12,19 +12,14 @@ import Stinsen
 import SwiftUI
 
 final class LiveTVCoordinator: NavigationCoordinatable {
+
     let stack = NavigationStack(initial: \LiveTVCoordinator.start)
 
     @Root
     var start = makeStart
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
 
     @ViewBuilder
     func makeStart() -> some View {
         LiveTVChannelsView()
-    }
-
-    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<LiveTVVideoPlayerCoordinator> {
-        NavigationViewCoordinator(LiveTVVideoPlayerCoordinator(viewModel: viewModel))
     }
 }

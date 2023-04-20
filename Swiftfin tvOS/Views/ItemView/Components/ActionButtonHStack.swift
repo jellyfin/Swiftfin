@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -21,9 +21,9 @@ extension ItemView {
                     viewModel.toggleWatchState()
                 } label: {
                     Group {
-                        if viewModel.isWatched {
+                        if viewModel.isPlayed {
                             Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.jellyfinPurple)
+                                .accentSymbolRendering(accentColor: .white)
                         } else {
                             Image(systemName: "checkmark.circle")
                         }
@@ -39,10 +39,11 @@ extension ItemView {
                 } label: {
                     Group {
                         if viewModel.isFavorited {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(.red)
+                            Image(systemName: "heart.circle.fill")
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(.white, .pink)
                         } else {
-                            Image(systemName: "heart")
+                            Image(systemName: "heart.circle")
                         }
                     }
                     .font(.title3)

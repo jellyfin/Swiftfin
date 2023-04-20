@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -12,7 +12,8 @@ import SwiftUI
 struct UserListView: View {
 
     @EnvironmentObject
-    private var userListRouter: UserListCoordinator.Router
+    private var router: UserListCoordinator.Router
+
     @ObservedObject
     var viewModel: UserListViewModel
 
@@ -23,7 +24,7 @@ struct UserListView: View {
                 .multilineTextAlignment(.center)
 
             PrimaryButton(title: L10n.signIn) {
-                userListRouter.route(to: \.userSignIn, viewModel.server)
+                router.route(to: \.userSignIn, viewModel.server)
             }
             .frame(maxWidth: 300)
             .frame(height: 50)
@@ -33,7 +34,7 @@ struct UserListView: View {
     @ViewBuilder
     private var gridView: some View {
         CollectionView(items: viewModel.users) { _, user, _ in
-            UserProfileButton(user: user)
+            UserProfileButton(user: user, client: viewModel.client)
                 .onSelect {
                     viewModel.signIn(user: user)
                 }
@@ -69,14 +70,14 @@ struct UserListView: View {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if !viewModel.users.isEmpty {
                     Button {
-                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                        router.route(to: \.userSignIn, viewModel.server)
                     } label: {
                         Image(systemName: "person.crop.circle.fill.badge.plus")
                     }
                 }
 
                 Button {
-                    userListRouter.route(to: \.serverDetail, viewModel.server)
+                    router.route(to: \.serverDetail, viewModel.server)
                 } label: {
                     Image(systemName: "info.circle.fill")
                 }

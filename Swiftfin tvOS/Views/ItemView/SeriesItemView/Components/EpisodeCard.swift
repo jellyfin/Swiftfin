@@ -3,43 +3,34 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
+import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Should episodes also respect some indicator settings?
+
 struct EpisodeCard: View {
+
+    @Injected(LogManager.service)
+    private var logger
 
     @EnvironmentObject
     private var router: ItemCoordinator.Router
-    @State
-    private var cancellables = Set<AnyCancellable>()
 
     let episode: BaseItemDto
 
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
-            Button {
-                // TODO: Figure out ad-hoc video player view model creation
-                episode.createVideoPlayerViewModel()
-                    .sink(receiveCompletion: { _ in }) { viewModels in
-                        guard !viewModels.isEmpty else { return }
-                        self.router.route(to: \.videoPlayer, viewModels[0])
-                    }
-                    .store(in: &cancellables)
-            } label: {
-                ImageView(
-                    episode.imageSource(.primary, maxWidth: 600)
-                )
-                .failure {
-                    InitialFailureView(episode.title.initials)
-                }
-                .frame(width: 550, height: 308)
-            }
-            .buttonStyle(.card)
-
+        PosterButton(
+            item: episode,
+            type: .landscape,
+            singleImage: true
+        )
+        .scaleItem(1.57)
+        .content {
             Button {
                 router.route(to: \.item, episode)
             } label: {
@@ -55,11 +46,11 @@ struct EpisodeCard: View {
                             .foregroundColor(.secondary)
                     }
 
-                    Text(episode.displayName)
+                    Text(episode.displayTitle)
                         .font(.footnote)
                         .padding(.bottom, 1)
 
-                    if episode.unaired {
+                    if episode.isUnaired {
                         Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
                             .font(.caption)
                             .lineLimit(1)
@@ -74,12 +65,34 @@ struct EpisodeCard: View {
                     L10n.seeMore.text
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(Color(UIColor.systemCyan))
+                        .foregroundColor(.jellyfinPurple)
                 }
                 .frame(width: 510, height: 220)
                 .padding()
             }
             .buttonStyle(.card)
+        }
+        .imageOverlay {
+            ZStack {
+                if episode.userData?.isPlayed ?? false {
+                    WatchedIndicator(size: 45)
+                } else {
+                    if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
+                        LandscapePosterProgressBar(
+                            title: episode.progressLabel ?? L10n.continue,
+                            progress: (episode.userData?.playedPercentage ?? 0) / 100
+                        )
+                        .padding()
+                    }
+                }
+            }
+        }
+        .onSelect {
+            guard let mediaSource = episode.mediaSources?.first else {
+                logger.error("No media source attached to episode", metadata: ["episode title": .string(episode.displayTitle)])
+                return
+            }
+            router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
         }
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 // lol can someone buy me a coffee this took forever :|
@@ -43,8 +43,8 @@ class DeviceProfileBuilder {
         self.bitrate = bitrate
     }
 
-    public func buildProfile() -> ClientCapabilitiesDeviceProfile {
-        let segmentContainer = Defaults[.Experimental.usefmp4Hls] ? "mp4" : "ts"
+    public func buildProfile() -> DeviceProfile {
+        let segmentContainer = "mp4"
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
         let musicStreamingTranscodingBitrate = bitrate
@@ -52,23 +52,23 @@ class DeviceProfileBuilder {
         // Build direct play profiles
         var directPlayProfiles: [DirectPlayProfile] = []
         directPlayProfiles =
-            [DirectPlayProfile(container: "mov,mp4,mkv,webm", audioCodec: "aac,mp3,wav", videoCodec: "h264,mpeg4,vp9", type: .video)]
+            [DirectPlayProfile(audioCodec: "aac,mp3,wav", container: "mov,mp4,mkv,webm", type: .video, videoCodec: "h264,mpeg4,vp9")]
 
         // Device supports Dolby Digital (AC3, EAC3)
         if supportsFeature(minimumSupported: .A8X) {
             if supportsFeature(minimumSupported: .A9) {
                 directPlayProfiles = [DirectPlayProfile(
-                    container: "mov,mp4,mkv,webm",
                     audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                    videoCodec: "hevc,h264,hev1,mpeg4,vp9",
-                    type: .video
+                    container: "mov,mp4,mkv,webm",
+                    type: .video,
+                    videoCodec: "hevc,h264,hev1,mpeg4,vp9"
                 )] // HEVC/H.264 with Dolby Digital
             } else {
                 directPlayProfiles = [DirectPlayProfile(
-                    container: "mov,mp4,mkv,webm",
                     audioCodec: "ac3,eac3,aac,mp3,wav,opus",
-                    videoCodec: "h264,mpeg4,vp9",
-                    type: .video
+                    container: "mov,mp4,mkv,webm",
+                    type: .video,
+                    videoCodec: "h264,mpeg4,vp9"
                 )] // H.264 with Dolby Digital
             }
         }
@@ -76,52 +76,52 @@ class DeviceProfileBuilder {
         // Device supports Dolby Vision?
         if supportsFeature(minimumSupported: .A10X) {
             directPlayProfiles = [DirectPlayProfile(
-                container: "mov,mp4,mkv,webm",
                 audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                videoCodec: "dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9",
-                type: .video
+                container: "mov,mp4,mkv,webm",
+                type: .video,
+                videoCodec: "dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9"
             )] // H.264/HEVC with Dolby Digital - No Atmos - Vision
         }
 
         // Device supports Dolby Atmos?
         if supportsFeature(minimumSupported: .A12) {
             directPlayProfiles = [DirectPlayProfile(
-                container: "mov,mp4,mkv,webm",
                 audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus",
-                videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9",
-                type: .video
+                container: "mov,mp4,mkv,webm",
+                type: .video,
+                videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9"
             )] // H.264/HEVC with Dolby Digital & Atmos - Vision
         }
 
         // Build transcoding profiles
         var transcodingProfiles: [TranscodingProfile] = []
-        transcodingProfiles = [TranscodingProfile(container: "ts", type: .video, videoCodec: "h264,mpeg4", audioCodec: "aac,mp3,wav")]
+        transcodingProfiles = [TranscodingProfile(audioCodec: "aac,mp3,wav", container: "ts", type: .video, videoCodec: "h264,mpeg4")]
 
         // Device supports Dolby Digital (AC3, EAC3)
         if supportsFeature(minimumSupported: .A8X) {
             if supportsFeature(minimumSupported: .A9) {
                 transcodingProfiles = [TranscodingProfile(
-                    container: segmentContainer,
-                    type: .video,
-                    videoCodec: "h264,hevc,mpeg4",
                     audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus",
-                    _protocol: "hls",
+                    isBreakOnNonKeyFrames: true,
+                    container: segmentContainer,
                     context: .streaming,
                     maxAudioChannels: "6",
                     minSegments: 2,
-                    breakOnNonKeyFrames: true
+                    protocol: "hls",
+                    type: .video,
+                    videoCodec: "h264,hevc,mpeg4"
                 )]
             } else {
                 transcodingProfiles = [TranscodingProfile(
-                    container: segmentContainer,
-                    type: .video,
-                    videoCodec: "h264,mpeg4",
                     audioCodec: "aac,mp3,wav,eac3,ac3,opus",
-                    _protocol: "hls",
+                    isBreakOnNonKeyFrames: true,
+                    container: segmentContainer,
                     context: .streaming,
                     maxAudioChannels: "6",
                     minSegments: 2,
-                    breakOnNonKeyFrames: true
+                    protocol: "hls",
+                    type: .video,
+                    videoCodec: "h264,mpeg4"
                 )]
             }
         }
@@ -129,42 +129,77 @@ class DeviceProfileBuilder {
         // Device supports FLAC?
         if supportsFeature(minimumSupported: .A10X) {
             transcodingProfiles = [TranscodingProfile(
-                container: segmentContainer,
-                type: .video,
-                videoCodec: "hevc,h264,mpeg4",
                 audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                _protocol: "hls",
+                isBreakOnNonKeyFrames: true,
+                container: segmentContainer,
                 context: .streaming,
                 maxAudioChannels: "6",
                 minSegments: 2,
-                breakOnNonKeyFrames: true
+                protocol: "hls",
+                type: .video,
+                videoCodec: "hevc,h264,mpeg4"
             )]
         }
 
         var codecProfiles: [CodecProfile] = []
 
         let h264CodecConditions: [ProfileCondition] = [
-            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
             ProfileCondition(
                 condition: .equalsAny,
+                isRequired: false,
                 property: .videoProfile,
-                value: "high|main|baseline|constrained baseline",
-                isRequired: false
+                value: "high|main|baseline|constrained baseline"
             ),
-            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "80", isRequired: false),
-            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "80"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
         ]
         let hevcCodecConditions: [ProfileCondition] = [
-            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
-            ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|main 10", isRequired: false),
-            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "175", isRequired: false),
-            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
+            ProfileCondition(
+                condition: .equalsAny,
+                isRequired: false,
+                property: .videoProfile,
+                value: "high|main|main 10"
+            ),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "175"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
         ]
 
-        codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
+        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
 
         if supportsFeature(minimumSupported: .A9) {
-            codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions, codec: "hevc"))
+            codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))
         }
 
         var subtitleProfiles: [SubtitleProfile] = []
@@ -184,21 +219,19 @@ class DeviceProfileBuilder {
         subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
         subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
 
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
+        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
 
-        let profile = ClientCapabilitiesDeviceProfile(
-            maxStreamingBitrate: maxStreamingBitrate,
-            maxStaticBitrate: maxStaticBitrate,
-            musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
-            directPlayProfiles: directPlayProfiles,
-            transcodingProfiles: transcodingProfiles,
-            containerProfiles: [],
+        return .init(
             codecProfiles: codecProfiles,
+            containerProfiles: [],
+            directPlayProfiles: directPlayProfiles,
+            maxStaticBitrate: maxStaticBitrate,
+            maxStreamingBitrate: maxStreamingBitrate,
+            musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
             responseProfiles: responseProfiles,
-            subtitleProfiles: subtitleProfiles
+            subtitleProfiles: subtitleProfiles,
+            transcodingProfiles: transcodingProfiles
         )
-
-        return profile
     }
 
     private func supportsFeature(minimumSupported: CPUModel) -> Bool {
@@ -243,8 +276,8 @@ class DeviceProfileBuilder {
         uname(&systemInfo)
         let machineMirror = Mirror(reflecting: systemInfo.machine)
         let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
+            guard let subtitle = element.value as? Int8, subtitle != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(subtitle)))
         }
         #endif
 

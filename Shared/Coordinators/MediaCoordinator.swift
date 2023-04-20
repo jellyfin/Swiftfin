@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -24,6 +24,8 @@ final class MediaCoordinator: NavigationCoordinatable {
     var library = makeLibrary
     @Route(.push)
     var liveTV = makeLiveTV
+    @Route(.push)
+    var downloads = makeDownloads
     #endif
 
     #if os(tvOS)
@@ -38,6 +40,10 @@ final class MediaCoordinator: NavigationCoordinatable {
 
     func makeLiveTV() -> LiveTVCoordinator {
         LiveTVCoordinator()
+    }
+
+    func makeDownloads() -> DownloadListCoordinator {
+        DownloadListCoordinator()
     }
     #endif
 

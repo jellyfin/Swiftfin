@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -14,8 +14,6 @@ extension MovieItemView {
 
     struct ContentView: View {
 
-        @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
         @ObservedObject
         var viewModel: MovieItemViewModel
 
@@ -48,6 +46,14 @@ extension MovieItemView {
                     Divider()
                 }
 
+                // MARK: Special Features
+
+                if !viewModel.specialFeatures.isEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+
+                    Divider()
+                }
+
                 // MARK: Similar
 
                 if !viewModel.similarItems.isEmpty {
@@ -57,11 +63,6 @@ extension MovieItemView {
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
-
-                if let informationItems = viewModel.item.createInformationItems(), !informationItems.isEmpty {
-                    ListDetailsView(title: L10n.information, items: informationItems)
-                        .padding(.horizontal)
-                }
             }
         }
     }

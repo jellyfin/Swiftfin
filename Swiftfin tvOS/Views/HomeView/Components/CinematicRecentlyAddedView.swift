@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -15,6 +15,7 @@ extension HomeView {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemTypeLibraryViewModel
 
@@ -43,7 +44,7 @@ extension HomeView {
                             EmptyView()
                         }
                         .failure {
-                            Text(item.displayName)
+                            Text(item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                         }
@@ -53,7 +54,7 @@ extension HomeView {
                     router.route(to: \.item, item)
                 }
                 .trailingContent {
-                    SeeAllPoster(type: .landscape)
+                    SeeAllPosterButton(type: .landscape)
                         .onSelect {
                             router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
                         }

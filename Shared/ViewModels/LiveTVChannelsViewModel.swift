@@ -3,20 +3,12 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
 import Foundation
 import JellyfinAPI
-import SwiftUICollection
-
-typealias LiveTVChannelRow = CollectionRow<Int, LiveTVChannelRowCell>
-
-struct LiveTVChannelRowCell: Hashable {
-    let id = UUID()
-    let item: LiveTVChannelProgram
-}
 
 struct LiveTVChannelProgram: Hashable {
     let id = UUID()
@@ -28,20 +20,23 @@ struct LiveTVChannelProgram: Hashable {
 final class LiveTVChannelsViewModel: ViewModel {
 
     @Published
-    var channels = [BaseItemDto]()
+    var channels: [BaseItemDto] = []
     @Published
-    var channelPrograms = [LiveTVChannelProgram]() {
-        didSet {
-            rows = []
-            let rowChannels = channelPrograms.chunked(into: 4)
-            for (index, rowChans) in rowChannels.enumerated() {
-                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
-            }
-        }
-    }
+    var channelPrograms: [LiveTVChannelProgram] = []
 
-    @Published
-    var rows = [LiveTVChannelRow]()
+//    @Published
+//    var channelPrograms = [LiveTVChannelProgram]() {
+//        didSet {
+//            rows = []
+//            let rowChannels = channelPrograms.chunked(into: 4)
+//            for (index, rowChans) in rowChannels.enumerated() {
+//                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
+//            }
+//        }
+//    }
+
+//    @Published
+//    var rows = [LiveTVChannelRow]()
 
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
@@ -65,43 +60,41 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getGuideInfo() {
-        LiveTvAPI.getGuideInfo()
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] _ in
-                self?.logger.debug("Received Guide Info")
-                guard let self = self else { return }
+        Task {
+            let request = Paths.getGuideInfo
+            guard let _ = try? await userSession.client.send(request) else { return }
+
+            await MainActor.run {
                 self.getChannels()
-            })
-            .store(in: &cancellables)
+            }
+        }
     }
 
     func getChannels() {
-        LiveTvAPI.getLiveTvChannels(
-            userId: SessionManager.main.currentLogin.user.id,
-            startIndex: 0,
-            limit: 1000,
-            enableImageTypes: [.primary],
-            enableUserData: false,
-            enableFavoriteSorting: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            self?.logger.debug("Received \(response.items?.count ?? 0) Channels")
-            guard let self = self else { return }
-            self.channels = response.items ?? []
-            self.getPrograms()
-        })
-        .store(in: &cancellables)
+        Task {
+            let parameters = Paths.GetLiveTvChannelsParameters(
+                userID: userSession.user.id,
+                startIndex: 0,
+                limit: 100,
+                enableImageTypes: [.primary],
+                fields: ItemFields.minimumCases,
+                enableUserData: false,
+                enableFavoriteSorting: true
+            )
+
+            let request = Paths.getLiveTvChannels(parameters: parameters)
+            guard let response = try? await userSession.client.send(request) else { return }
+
+            await MainActor.run {
+                self.channels = response.value.items ?? []
+                self.getPrograms()
+            }
+        }
     }
 
     private func getPrograms() {
-        // http://192.168.1.50:8096/LiveTv/Programs
         guard !channels.isEmpty else {
-            logger.debug("Cannot get programs, channels list empty. ")
+            logger.debug("Cannot get programs, channels list empty.")
             return
         }
         let channelIds = channels.compactMap(\.id)
@@ -109,30 +102,28 @@ final class LiveTVChannelsViewModel: ViewModel {
         let minEndDate = Date.now.addComponentsToDate(hours: -1)
         let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
 
-        let getProgramsRequest = GetProgramsRequest(
-            channelIds: channelIds,
-            userId: SessionManager.main.currentLogin.user.id,
-            maxStartDate: maxStartDate,
-            minEndDate: minEndDate,
-            sortBy: ["StartDate"],
-            enableImages: true,
-            enableTotalRecordCount: false,
-            imageTypeLimit: 1,
-            enableImageTypes: [.primary],
-            enableUserData: false
-        )
+        Task {
+            let parameters = Paths.GetLiveTvProgramsParameters(
+                channelIDs: channelIds,
+                userID: userSession.user.id,
+                maxStartDate: maxStartDate,
+                minEndDate: minEndDate,
+                sortBy: ["StartDate"]
+            )
 
-        LiveTvAPI.getPrograms(getProgramsRequest: getProgramsRequest)
-            .trackActivity(loading)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.handleAPIRequestError(completion: completion)
-            }, receiveValue: { [weak self] response in
-                self?.logger.debug("Received \(response.items?.count ?? 0) Programs")
-                guard let self = self else { return }
-                self.programs = response.items ?? []
-                self.channelPrograms = self.processChannelPrograms()
-            })
-            .store(in: &cancellables)
+            let request = Paths.getLiveTvPrograms(parameters: parameters)
+
+            do {
+                let response = try await userSession.client.send(request)
+
+                await MainActor.run {
+                    self.programs = response.value.items ?? []
+                    self.channelPrograms = self.processChannelPrograms()
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
     }
 
     private func processChannelPrograms() -> [LiveTVChannelProgram] {
@@ -140,7 +131,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         let now = Date()
         for channel in self.channels {
             let prgs = self.programs.filter { item in
-                item.channelId == channel.id
+                item.channelID == channel.id
             }
             DispatchQueue.main.async {
                 self.channelProgramsList[channel] = prgs
@@ -194,18 +185,6 @@ final class LiveTVChannelsViewModel: ViewModel {
 
     func stopScheduleCheckTimer() {
         timer?.invalidate()
-    }
-
-    func fetchVideoPlayerViewModel(item: BaseItemDto, completion: @escaping (VideoPlayerViewModel) -> Void) {
-        item.createLiveTVVideoPlayerViewModel()
-            .sink { completion in
-                self.handleAPIRequestError(completion: completion)
-            } receiveValue: { videoPlayerViewModels in
-                if let viewModel = videoPlayerViewModels.first {
-                    completion(viewModel)
-                }
-            }
-            .store(in: &self.cancellables)
     }
 }
 

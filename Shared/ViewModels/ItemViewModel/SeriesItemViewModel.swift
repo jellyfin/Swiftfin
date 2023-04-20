@@ -3,22 +3,27 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 
-final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
+final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     @Published
-    var seasonsEpisodes: [BaseItemDto: [BaseItemDto]] = [:]
+    var menuSelection: BaseItemDto?
     @Published
-    var selectedSeason: BaseItemDto?
+    var menuSections: [BaseItemDto: [PosterButtonType<BaseItemDto>]]
+    var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
+        self.menuSections = [:]
+        self.menuSectionSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
+
         super.init(item: item)
 
         getSeasons()
@@ -34,11 +39,11 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
 
     override func playButtonText() -> String {
 
-        if item.unaired {
+        if item.isUnaired {
             return L10n.unaired
         }
 
-        if item.missing {
+        if item.isMissing {
             return L10n.missing
         }
 
@@ -49,90 +54,126 @@ final class SeriesItemViewModel: ItemViewModel, EpisodesRowManager {
     }
 
     private func getNextUp() {
-        logger.debug("Getting next up for show \(self.item.id!) (\(self.item.name!))")
-        TvShowsAPI.getNextUp(
-            userId: SessionManager.main.currentLogin.user.id,
-            seriesId: self.item.id!,
-            enableUserData: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            if let nextUpItem = response.items?.first, !nextUpItem.unaired, !nextUpItem.missing {
-                self?.playButtonItem = nextUpItem
+        Task {
+            let parameters = Paths.GetNextUpParameters(
+                userID: userSession.user.id,
+                fields: ItemFields.minimumCases,
+                seriesID: item.id,
+                enableUserData: true
+            )
+            let request = Paths.getNextUp(parameters: parameters)
+            let response = try await userSession.client.send(request)
 
-                if let seasonID = nextUpItem.seasonId {
-                    self?.select(seasonID: seasonID)
-                }
-            }
-        })
-        .store(in: &cancellables)
-    }
-
-    private func getResumeItem() {
-        ItemsAPI.getResumeItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1,
-            parentId: item.id
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                self?.playButtonItem = firstItem
-
-                if let seasonID = firstItem.seasonId {
-                    self?.select(seasonID: seasonID)
+            if let item = response.value.items?.first, !item.isMissing {
+                await MainActor.run {
+                    self.playButtonItem = item
                 }
             }
         }
-        .store(in: &cancellables)
+    }
+
+    private func getResumeItem() {
+        Task {
+            let parameters = Paths.GetResumeItemsParameters(
+                limit: 1,
+                parentID: item.id,
+                fields: ItemFields.minimumCases
+            )
+            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            if let item = response.value.items?.first {
+                await MainActor.run {
+                    self.playButtonItem = item
+                }
+            }
+        }
     }
 
     private func getFirstAvailableItem() {
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 2,
-            recursive: true,
-            sortOrder: [.ascending],
-            parentId: item.id,
-            includeItemTypes: [.episode]
-        )
-        .trackActivity(loading)
-        .sink { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        } receiveValue: { [weak self] response in
-            if let firstItem = response.items?.first {
-                if self?.playButtonItem == nil {
-                    // If other calls finish after this, it will be overwritten
-                    self?.playButtonItem = firstItem
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 1,
+                isRecursive: true,
+                sortOrder: [.ascending],
+                parentID: item.id,
+                fields: ItemFields.minimumCases,
+                includeItemTypes: [.episode]
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
 
-                    if let seasonID = firstItem.seasonId {
-                        self?.select(seasonID: seasonID)
+            if let item = response.value.items?.first {
+                if self.playButtonItem == nil {
+                    await MainActor.run {
+                        self.playButtonItem = item
                     }
                 }
             }
         }
-        .store(in: &cancellables)
     }
 
-    func getRunYears() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
+    func select(section: BaseItemDto) {
+        self.menuSelection = section
 
-        var startYear: String?
-        var endYear: String?
-
-        if item.premiereDate != nil {
-            startYear = dateFormatter.string(from: item.premiereDate!)
+        if let existingItems = menuSections[section] {
+            if existingItems.allSatisfy({ $0 == .loading }) {
+                getEpisodesForSeason(section)
+            } else if existingItems.allSatisfy({ $0 == .noResult }) {
+                menuSections[section] = PosterButtonType.loading.random(in: 3 ..< 8)
+                getEpisodesForSeason(section)
+            }
+        } else {
+            getEpisodesForSeason(section)
         }
+    }
 
-        if item.endDate != nil {
-            endYear = dateFormatter.string(from: item.endDate!)
+    private func getSeasons() {
+        Task {
+            let parameters = Paths.GetSeasonsParameters(
+                userID: userSession.user.id,
+                isMissing: Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
+            )
+            let request = Paths.getSeasons(seriesID: item.id!, parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let seasons = response.value.items else { return }
+
+            await MainActor.run {
+                seasons.forEach { season in
+                    self.menuSections[season] = PosterButtonType.loading.random(in: 3 ..< 8)
+                }
+            }
+
+            if let firstSeason = seasons.first {
+                self.getEpisodesForSeason(firstSeason)
+                await MainActor.run {
+                    self.menuSelection = firstSeason
+                }
+            }
         }
+    }
 
-        return "\(startYear ?? L10n.unknown) - \(endYear ?? L10n.present)"
+    private func getEpisodesForSeason(_ season: BaseItemDto) {
+        Task {
+            let parameters = Paths.GetEpisodesParameters(
+                userID: userSession.user.id,
+                fields: ItemFields.minimumCases,
+                seasonID: season.id!,
+                isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false,
+                enableUserData: true
+            )
+            let request = Paths.getEpisodes(seriesID: item.id!, parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            await MainActor.run {
+                if let items = response.value.items {
+                    self.menuSections[season] = items.map { .item($0) }
+                } else {
+                    self.menuSections[season] = [.noResult]
+                }
+            }
+        }
     }
 }

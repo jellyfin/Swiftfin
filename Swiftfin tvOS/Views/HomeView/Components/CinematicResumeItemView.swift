@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -15,6 +15,7 @@ extension HomeView {
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
+
         @ObservedObject
         var viewModel: HomeViewModel
 
@@ -43,7 +44,7 @@ extension HomeView {
                             EmptyView()
                         }
                         .failure {
-                            Text(item.displayName)
+                            Text(item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                         }
@@ -60,7 +61,7 @@ extension HomeView {
                 }
                 .itemImageOverlay { item in
                     LandscapePosterProgressBar(
-                        title: item.progress ?? L10n.continue,
+                        title: item.progressLabel ?? L10n.continue,
                         progress: (item.userData?.playedPercentage ?? 0) / 100
                     )
                 }
