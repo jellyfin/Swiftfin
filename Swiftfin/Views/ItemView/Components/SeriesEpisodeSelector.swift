@@ -58,7 +58,7 @@ extension SeriesEpisodeSelector {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                            .foregroundColor(.white)
+                            .accentSymbolRendering(accentColor: .white)
                             .padding()
                     }
                 }
