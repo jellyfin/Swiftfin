@@ -47,13 +47,13 @@ extension URL {
             guard let urls = FileManager.default.enumerator(at: self, includingPropertiesForKeys: nil)?.allObjects as? [URL]
             else { return nil }
             return try urls.lazy.reduce(0) {
-                (try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize ?? 0) + $0
+                try ($1.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize ?? 0) + $0
             }
         }
 
         return try FileManager.default.contentsOfDirectory(at: self, includingPropertiesForKeys: nil).lazy.reduce(0) {
-            (
-                try $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
+            try (
+                $1.resourceValues(forKeys: [.totalFileAllocatedSizeKey])
                     .totalFileAllocatedSize ?? 0
             ) + $0
         }
