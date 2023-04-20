@@ -15,6 +15,7 @@ import VLCUI
 
 // TODO: organize
 // TODO: localization necessary for toast text?
+// TODO: entire gesture layer should be separate
 
 struct VideoPlayer: View {
 
@@ -57,6 +58,8 @@ struct VideoPlayer: View {
     private var longPressGesture
     @Default(.VideoPlayer.Gesture.multiTapGesture)
     private var multiTapGesture
+    @Default(.VideoPlayer.Gesture.doubleTouchGesture)
+    private var doubleTouchGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
     @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
@@ -143,6 +146,7 @@ struct VideoPlayer: View {
                         .onLongPress(minimumDuration: 2, handleLongPress)
                         .onPinch(handlePinchGesture)
                         .onTap(samePointPadding: 10, samePointTimeout: 0.7, handleTapGesture)
+                        .onDoubleTouch(handleDoubleTouchGesture)
                         .onVerticalPan {
                             if $1.x <= 0.5 {
                                 handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
@@ -332,7 +336,7 @@ extension VideoPlayer {
     }
 
     private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
-        if isGestureLocked {
+        guard !isGestureLocked else {
             updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             return
         }
@@ -353,6 +357,24 @@ extension VideoPlayer {
             withAnimation(.linear(duration: 0.1)) {
                 isPresentingOverlay = !isPresentingOverlay
             }
+        }
+    }
+
+    private func handleDoubleTouchGesture(unitPoint: UnitPoint, taps: Int) {
+        guard !isGestureLocked else {
+            updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
+            return
+        }
+
+        switch doubleTouchGesture {
+        case .none:
+            return
+        case .aspectFill: ()
+//            aspectFillAction(state: state, unitPoint: unitPoint, scale: <#T##CGFloat#>)
+        case .gestureLock:
+            guard !isPresentingOverlay else { return }
+            isGestureLocked.toggle()
+        case .pausePlay: ()
         }
     }
 }

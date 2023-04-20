@@ -23,7 +23,7 @@ struct ServerDetailView: View {
 
     var body: some View {
         Form {
-            Section(header: L10n.serverDetails.text) {
+            Section {
                 HStack {
                     L10n.name.text
                     Spacer()
@@ -38,14 +38,8 @@ struct ServerDetailView: View {
                             .foregroundColor(.secondary)
                     }
                     .onChange(of: currentServerURI) { _ in
+                        // TODO: change server url
                     }
-
-//                    ForEach(viewModel.server.uris.sorted(), id: \.self) { uri in
-//                        Text(uri).tag(uri)
-//                            .foregroundColor(.secondary)
-//                    }.onChange(of: currentServerURI) { newValue in
-//                        viewModel.setServerCurrentURI(uri: newValue)
-//                    }
                 }
 
                 HStack {
@@ -63,5 +57,7 @@ struct ServerDetailView: View {
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(L10n.serverDetails.text)
     }
 }

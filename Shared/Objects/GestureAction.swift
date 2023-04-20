@@ -43,6 +43,27 @@ enum MultiTapAction: String, GestureAction {
     }
 }
 
+enum DoubleTouchAction: String, GestureAction {
+
+    case none
+    case aspectFill
+    case gestureLock
+    case pausePlay
+
+    var displayTitle: String {
+        switch self {
+        case .none:
+            return L10n.none
+        case .aspectFill:
+            return "Aspect Fill"
+        case .gestureLock:
+            return "Gesture Lock"
+        case .pausePlay:
+            return "Pause/Play"
+        }
+    }
+}
+
 enum PanAction: String, GestureAction {
 
     case none

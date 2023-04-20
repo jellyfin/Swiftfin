@@ -26,7 +26,7 @@ struct ExperimentalSettingsView: View {
 
                 Toggle("Force Direct Play", isOn: $forceDirectPlay)
 
-                Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
+//                Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
             }
 
             Section {

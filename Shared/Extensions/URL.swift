@@ -8,6 +8,13 @@
 
 import Foundation
 
+extension URL: Identifiable {
+
+    public var id: String {
+        absoluteString
+    }
+}
+
 extension URL {
 
     static var documents: URL {
@@ -59,12 +66,5 @@ extension URL {
         } catch {
             return -1
         }
-    }
-}
-
-extension URL: Identifiable {
-
-    public var id: String {
-        absoluteString
     }
 }

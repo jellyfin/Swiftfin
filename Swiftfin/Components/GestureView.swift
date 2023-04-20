@@ -29,6 +29,7 @@ struct GestureView: UIViewRepresentable {
     private var onLongPress: ((UnitPoint) -> Void)?
     private var onPinch: PinchGestureHandler?
     private var onTap: TapGestureHandler?
+    private var onDoubleTouch: TapGestureHandler?
     private var onVerticalPan: PanGestureHandler?
 
     private var longPressMinimumDuration: TimeInterval
@@ -45,6 +46,7 @@ struct GestureView: UIViewRepresentable {
             onLongPress: onLongPress,
             onPinch: onPinch,
             onTap: onTap,
+            onDoubleTouch: onDoubleTouch,
             onVerticalPan: onVerticalPan,
             longPressMinimumDuration: longPressMinimumDuration,
             samePointPadding: samePointPadding,
@@ -101,6 +103,10 @@ extension GestureView {
             .copy(modifying: \.onTap, with: action)
     }
 
+    func onDoubleTouch(_ action: @escaping TapGestureHandler) -> Self {
+        copy(modifying: \.onDoubleTouch, with: action)
+    }
+
     func onLongPress(minimumDuration: TimeInterval, _ action: @escaping (UnitPoint) -> Void) -> Self {
         copy(modifying: \.longPressMinimumDuration, with: minimumDuration)
             .copy(modifying: \.onLongPress, with: action)
@@ -118,6 +124,7 @@ class UIGestureView: UIView {
     private let onLongPress: ((UnitPoint) -> Void)?
     private let onPinch: PinchGestureHandler?
     private let onTap: TapGestureHandler?
+    private let onDoubleTouch: TapGestureHandler?
     private let onVerticalPan: PanGestureHandler?
 
     private let longPressMinimumDuration: TimeInterval
@@ -141,6 +148,7 @@ class UIGestureView: UIView {
         onLongPress: ((UnitPoint) -> Void)?,
         onPinch: PinchGestureHandler?,
         onTap: TapGestureHandler?,
+        onDoubleTouch: TapGestureHandler?,
         onVerticalPan: PanGestureHandler?,
         longPressMinimumDuration: TimeInterval,
         samePointPadding: CGFloat,
@@ -154,6 +162,7 @@ class UIGestureView: UIView {
         self.onLongPress = onLongPress
         self.onPinch = onPinch
         self.onTap = onTap
+        self.onDoubleTouch = onDoubleTouch
         self.onVerticalPan = onVerticalPan
         self.longPressMinimumDuration = longPressMinimumDuration
         self.samePointPadding = samePointPadding
@@ -165,6 +174,8 @@ class UIGestureView: UIView {
 
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
+        let doubleTouchGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
+        doubleTouchGesture.numberOfTouchesRequired = 2
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
         let verticalPanGesture = PanDirectionGestureRecognizer(
@@ -180,6 +191,7 @@ class UIGestureView: UIView {
 
         addGestureRecognizer(pinchGesture)
         addGestureRecognizer(tapGesture)
+        addGestureRecognizer(doubleTouchGesture)
         addGestureRecognizer(longPressGesture)
         addGestureRecognizer(verticalPanGesture)
         addGestureRecognizer(horizontalPanGesture)
@@ -272,6 +284,14 @@ class UIGestureView: UIView {
     }
 
     @objc
+    private func didPerformDoubleTouch(_ gestureRecognizer: UITapGestureRecognizer) {
+        guard let onDoubleTouch else { return }
+        let unitPoint = gestureRecognizer.unitPoint(in: self)
+
+        onDoubleTouch(unitPoint, 1)
+    }
+
+    @objc
     private func didPerformVerticalPan(_ gestureRecognizer: PanDirectionGestureRecognizer) {
         guard let onVerticalPan else { return }
         let translation = gestureRecognizer.translation(in: self).y
@@ -296,14 +316,5 @@ class UIGestureView: UIView {
         multiTapWorkItem = task
 
         DispatchQueue.main.asyncAfter(deadline: .now() + samePointTimeout, execute: task)
-    }
-}
-
-// TODO: move to extensions
-extension UIGestureRecognizer {
-
-    func unitPoint(in view: UIView) -> UnitPoint {
-        let location = location(in: view)
-        return .init(x: location.x / view.frame.width, y: location.y / view.frame.height)
     }
 }

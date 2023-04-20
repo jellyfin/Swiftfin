@@ -60,7 +60,6 @@ struct SearchView: View {
                 }
 
                 if !viewModel.people.isEmpty {
-                    // TODO: Localize after organization
                     itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
             }

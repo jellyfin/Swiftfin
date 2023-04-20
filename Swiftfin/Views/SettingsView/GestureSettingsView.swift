@@ -19,6 +19,8 @@ struct GestureSettingsView: View {
     private var longPressGesture
     @Default(.VideoPlayer.Gesture.multiTapGesture)
     private var multiTapGesture
+    @Default(.VideoPlayer.Gesture.doubleTouchGesture)
+    private var doubleTouchGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
     private var pinchGesture
     @Default(.VideoPlayer.Gesture.verticalPanGestureLeft)
@@ -40,6 +42,8 @@ struct GestureSettingsView: View {
                 EnumPicker(title: "Long Press", selection: $longPressGesture)
 
                 EnumPicker(title: "Multi Tap", selection: $multiTapGesture)
+
+                EnumPicker(title: "Double Touch", selection: $doubleTouchGesture)
 
                 EnumPicker(title: "Pinch", selection: $pinchGesture)
 

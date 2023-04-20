@@ -50,7 +50,7 @@ struct EpisodeCard: View {
                         .font(.footnote)
                         .padding(.bottom, 1)
 
-                    if episode.unaired {
+                    if episode.isUnaired {
                         Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
                             .font(.caption)
                             .lineLimit(1)

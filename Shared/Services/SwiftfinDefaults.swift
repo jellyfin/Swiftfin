@@ -119,6 +119,11 @@ extension Defaults.Keys {
                 suite: .generalSuite
             )
             static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayerMultiTapGesture", default: .none, suite: .generalSuite)
+            static let doubleTouchGesture: Key<DoubleTouchAction> = .init(
+                "videoPlayerDoubleTouchGesture",
+                default: .none,
+                suite: .generalSuite
+            )
             static let pinchGesture: Key<PinchAction> = .init("videoPlayerSwipeGesture", default: .aspectFill, suite: .generalSuite)
             static let verticalPanGestureLeft: Key<PanAction> = .init(
                 "videoPlayerVerticalPanGestureLeft",
@@ -183,7 +188,7 @@ extension Defaults.Keys {
 
         static let downloads: Key<Bool> = .init("experimentalDownloads", default: false, suite: .generalSuite)
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
-            "experimental.syncSubtitleState",
+            "experimentalSyncSubtitleState",
             default: false,
             suite: .generalSuite
         )

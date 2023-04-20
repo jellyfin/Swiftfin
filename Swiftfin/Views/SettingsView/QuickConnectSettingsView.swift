@@ -25,7 +25,7 @@ struct QuickConnectSettingsView: View {
 
     var body: some View {
         Form {
-            Section(header: L10n.quickConnect.text) {
+            Section {
                 TextField(L10n.quickConnectCode, text: $code)
                     .keyboardType(.numberPad)
                     .disabled(viewModel.isLoading)
@@ -47,6 +47,7 @@ struct QuickConnectSettingsView: View {
                 }
             }
         }
+        .navigationTitle(L10n.quickConnect.text)
         .alert(
             L10n.error,
             isPresented: $isPresentingError

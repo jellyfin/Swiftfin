@@ -19,7 +19,9 @@ struct BasicAppSettingsView: View {
     var viewModel: SettingsViewModel
 
     @State
-    private var resetTapped: Bool = false
+    private var resetUserSettingsSelected: Bool = false
+    @State
+    private var removeAllServersSelected: Bool = false
 
     var body: some View {
         SplitFormWindowView()
@@ -33,7 +35,7 @@ struct BasicAppSettingsView: View {
 
                 Section {
 
-                    Button {} label: {
+                    Button {
                         TextPairView(
                             leading: L10n.version,
                             trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
@@ -45,25 +47,35 @@ struct BasicAppSettingsView: View {
                             router.route(to: \.log)
                         }
                 }
+
+                Section {
+
+                    Button {
+                        resetUserSettingsSelected = true
+                    } label: {
+                        L10n.resetUserSettings.text
+                    }
+
+                    Button {
+                        removeAllServersSelected = true
+                    } label: {
+                        Text("Remove All Servers")
+                    }
+                }
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.settings)
-
-//        Form {
-//
-//            Button {
-//                resetTapped = true
-//            } label: {
-//                L10n.reset.text
-//            }
-//        }
-//        .alert(L10n.reset, isPresented: $resetTapped, actions: {
-//            Button(role: .destructive) {
-        ////                viewModel.resetAppSettings()
-//                router.dismissCoordinator()
-//            } label: {
-//                L10n.reset.text
-//            }
-//        })
+            .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
+                Button(L10n.reset, role: .destructive) {
+                    viewModel.resetUserSettings()
+                }
+            } message: {
+                Text("Reset all settings back to defaults.")
+            }
+            .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+                Button(L10n.reset, role: .destructive) {
+                    viewModel.removeAllServers()
+                }
+            }
     }
 }

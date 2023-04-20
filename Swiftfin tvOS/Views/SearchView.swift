@@ -29,8 +29,7 @@ struct SearchView: View {
                 }
 
                 if !viewModel.collections.isEmpty {
-                    // TODO: Localize after organization
-                    itemsSection(title: "Collections", keyPath: \.collections)
+                    itemsSection(title: L10n.collections, keyPath: \.collections)
                 }
 
                 if !viewModel.series.isEmpty {
@@ -42,8 +41,7 @@ struct SearchView: View {
                 }
 
                 if !viewModel.people.isEmpty {
-                    // TODO: Localize after organization
-                    itemsSection(title: "People", keyPath: \.people)
+                    itemsSection(title: L10n.people, keyPath: \.people)
                 }
             }
         }

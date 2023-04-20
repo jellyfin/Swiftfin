@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Defaults
 import Factory
 import Files
@@ -81,5 +82,17 @@ final class SettingsViewModel: ViewModel {
         Defaults[.lastServerUserID] = nil
         Container.userSession.reset()
         Notifications[.didSignOut].post()
+    }
+
+    func resetUserSettings() {
+        UserDefaults.generalSuite.removeAll()
+    }
+
+    func removeAllServers() {
+        guard let allServers = try? SwiftfinStore.dataStack.fetchAll(From<ServerModel>()) else { return }
+
+        try? SwiftfinStore.dataStack.perform { transaction in
+            transaction.delete(allServers)
+        }
     }
 }

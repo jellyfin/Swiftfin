@@ -76,20 +76,20 @@ struct ServerListView: View {
             .navigationTitle(L10n.servers)
             .if(!viewModel.servers.isEmpty) { view in
                 view.toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        Button {
-                            router.route(to: \.connectToServer)
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                        .contextMenu {
-                            Button {
-                                router.route(to: \.basicAppSettings)
-                            } label: {
-                                L10n.settings.text
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        SFSymbolButton(systemName: "plus.circle.fill")
+                            .onSelect {
+                                router.route(to: \.connectToServer)
                             }
-                        }
                     }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    SFSymbolButton(systemName: "gearshape.fill")
+                        .onSelect {
+                            router.route(to: \.basicAppSettings)
+                        }
                 }
             }
             .alert(item: $longPressedServer) { server in

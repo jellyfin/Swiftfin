@@ -41,7 +41,7 @@ final class HomeViewModel: ViewModel {
         resumeItems = []
 
         Task {
-            logger.debug("Refreshing")
+            logger.debug("Refreshing home screen")
 
             await MainActor.run {
                 isLoading = true

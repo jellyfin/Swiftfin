@@ -24,25 +24,19 @@ struct BasicAppSettingsView: View {
     var viewModel: SettingsViewModel
 
     @State
-    private var resetUserSettingsTapped: Bool = false
+    private var resetUserSettingsSelected: Bool = false
     @State
-    private var resetAppSettingsTapped: Bool = false
+    private var resetAppSettingsSelected: Bool = false
     @State
-    private var removeAllUsersTapped: Bool = false
+    private var removeAllServersSelected: Bool = false
 
     var body: some View {
         Form {
 
-            Button {
-                router.route(to: \.about)
-            } label: {
-                HStack {
-                    L10n.about.text
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
+            ChevronButton(title: L10n.about)
+                .onSelect {
+                    router.route(to: \.about)
                 }
-            }
 
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
@@ -66,45 +60,32 @@ struct BasicAppSettingsView: View {
                     router.route(to: \.log)
                 }
 
-            Button {
-                resetUserSettingsTapped = true
-            } label: {
-                L10n.resetUserSettings.text
-            }
+            Section {
+                Button {
+                    resetUserSettingsSelected = true
+                } label: {
+                    L10n.resetUserSettings.text
+                }
 
-            Button {
-                resetAppSettingsTapped = true
-            } label: {
-                L10n.resetAppSettings.text
-            }
-
-            Button {
-                removeAllUsersTapped = true
-            } label: {
-                L10n.removeAllUsers.text
+                Button {
+                    removeAllServersSelected = true
+                } label: {
+                    Text("Remove All Servers")
+                }
             }
         }
-        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsTapped, actions: {
-            Button(role: .destructive) {
-//                viewModel.resetUserSettings()
-            } label: {
-                L10n.reset.text
+        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
+            Button(L10n.reset, role: .destructive) {
+                viewModel.resetUserSettings()
             }
-        })
-        .alert(L10n.resetAppSettings, isPresented: $resetAppSettingsTapped, actions: {
-            Button(role: .destructive) {
-//                viewModel.resetAppSettings()
-            } label: {
-                L10n.reset.text
+        } message: {
+            Text("Reset all settings back to defaults.")
+        }
+        .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+            Button(L10n.reset, role: .destructive) {
+                viewModel.removeAllServers()
             }
-        })
-        .alert(L10n.removeAllUsers, isPresented: $removeAllUsersTapped, actions: {
-            Button(role: .destructive) {
-//                viewModel.removeAllUsers()
-            } label: {
-                L10n.reset.text
-            }
-        })
+        }
         .navigationBarTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
         .navigationCloseButton {
