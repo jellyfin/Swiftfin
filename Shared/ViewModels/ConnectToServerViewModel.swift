@@ -30,6 +30,7 @@ final class ConnectToServerViewModel: ViewModel {
 
     func connectToServer(url: String) async throws -> (server: ServerState, url: URL) {
 
+        #if os(iOS)
         // shhhh
         // TODO: remove
         if let data = url.data(using: .utf8) {
@@ -39,11 +40,11 @@ final class ConnectToServerViewModel: ViewModel {
             let urlHash = digest.compactMap { String(format: "%02x", $0) }.joined()
             if urlHash == "7499aced43869b27f505701e4edc737f0cc346add1240d4ba86fbfa251e0fc35" {
                 Defaults[.Experimental.downloads] = true
-                #if os(iOS)
+
                 await UIDevice.feedback(.success)
-                #endif
             }
         }
+        #endif
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)

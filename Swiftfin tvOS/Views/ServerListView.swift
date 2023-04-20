@@ -84,14 +84,14 @@ struct ServerListView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    SFSymbolButton(systemName: "gearshape.fill")
-                        .onSelect {
-                            router.route(to: \.basicAppSettings)
-                        }
-                }
-            }
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    SFSymbolButton(systemName: "gearshape.fill")
+//                        .onSelect {
+//                            router.route(to: \.basicAppSettings)
+//                        }
+//                }
+//            }
             .alert(item: $longPressedServer) { server in
                 Alert(
                     title: Text(server.name),
