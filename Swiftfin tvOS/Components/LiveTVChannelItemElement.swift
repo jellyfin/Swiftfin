@@ -92,12 +92,11 @@ struct LiveTVChannelItemElement: View {
                     programLabel(
                         timeText: currentProgramText.timeDisplay,
                         titleText: currentProgramText.title,
-                        color: Color("TextHighlightColor"),
+                        color: Color.primary,
                         font: Font.system(size: 20, weight: .bold, design: .default)
                     )
-                    if !nextProgramsText.isEmpty,
-                       let nextItem = nextProgramsText[0]
-                    {
+                    if !nextProgramsText.isEmpty {
+                        let nextItem = nextProgramsText[0]
                         programLabel(
                             timeText: nextItem.timeDisplay,
                             titleText: nextItem.title,
@@ -105,9 +104,8 @@ struct LiveTVChannelItemElement: View {
                             font: Font.system(size: 20, design: .default)
                         )
                     }
-                    if nextProgramsText.count > 1,
-                       let nextItem2 = nextProgramsText[1]
-                    {
+                    if nextProgramsText.count > 1 {
+                        let nextItem2 = nextProgramsText[1]
                         programLabel(
                             timeText: nextItem2.timeDisplay,
                             titleText: nextItem2.title,
@@ -141,6 +139,7 @@ struct LiveTVChannelItemElement: View {
                 }
             }
         }
+        .frame(minWidth: 400, minHeight: 400)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(isFocused ? Color.blue : Color.clear, lineWidth: 4)
@@ -174,6 +173,21 @@ struct LiveTVChannelItemElement: View {
                 .lineLimit(2)
                 .foregroundColor(color)
                 .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct LiveTVChannelItemElement_Preview: PreviewProvider {
+    static var previews: some View {
+        HStack {
+            LiveTVChannelItemElement(
+                channel: BaseItemDto(name: "Test TV Chan", number: "12"),
+                currentProgramText: LiveTVChannelViewProgram(timeDisplay: "11:30", title: "Program Title 1"),
+                nextProgramsText: [
+                    LiveTVChannelViewProgram(timeDisplay: "12:00", title: "Next Program Title"),
+                    LiveTVChannelViewProgram(timeDisplay: "12:30", title: "Third title")
+                ],
+                onSelect: { _ in })
         }
     }
 }
