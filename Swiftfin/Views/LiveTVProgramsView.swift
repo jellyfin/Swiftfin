@@ -19,9 +19,8 @@ struct LiveTVProgramsView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
-                if !viewModel.recommendedItems.isEmpty,
-                   let items = viewModel.recommendedItems
-                {
+                if !viewModel.recommendedItems.isEmpty {
+                    let items = viewModel.recommendedItems
                     PosterHStack(title: "On Now", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
@@ -33,9 +32,8 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.seriesItems.isEmpty,
-                   let items = viewModel.seriesItems
-                {
+                if !viewModel.seriesItems.isEmpty {
+                    let items = viewModel.seriesItems
                     PosterHStack(title: "Shows", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
@@ -47,9 +45,8 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.movieItems.isEmpty,
-                   let items = viewModel.movieItems
-                {
+                if !viewModel.movieItems.isEmpty {
+                    let items = viewModel.movieItems
                     PosterHStack(title: "Movies", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
@@ -61,9 +58,8 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.sportsItems.isEmpty,
-                   let items = viewModel.sportsItems
-                {
+                if !viewModel.sportsItems.isEmpty {
+                    let items = viewModel.sportsItems
                     PosterHStack(title: "Sports", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
@@ -75,9 +71,8 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.kidsItems.isEmpty,
-                   let items = viewModel.kidsItems
-                {
+                if !viewModel.kidsItems.isEmpty {
+                    let items = viewModel.kidsItems
                     PosterHStack(title: "Kids", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
@@ -89,9 +84,8 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.newsItems.isEmpty,
-                   let items = viewModel.newsItems
-                {
+                if !viewModel.newsItems.isEmpty {
+                    let items = viewModel.newsItems
                     PosterHStack(title: "News", type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,

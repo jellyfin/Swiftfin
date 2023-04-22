@@ -21,9 +21,8 @@ struct LiveTVProgramsView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
-                if !viewModel.recommendedItems.isEmpty,
-                   let items = viewModel.recommendedItems
-                {
+                if !viewModel.recommendedItems.isEmpty {
+                    let items = viewModel.recommendedItems
                     Text("On Now")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -47,9 +46,8 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.seriesItems.isEmpty,
-                   let items = viewModel.seriesItems
-                {
+                if !viewModel.seriesItems.isEmpty {
+                    let items = viewModel.seriesItems
                     Text("Shows")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -73,9 +71,8 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.movieItems.isEmpty,
-                   let items = viewModel.movieItems
-                {
+                if !viewModel.movieItems.isEmpty {
+                    let items = viewModel.movieItems
                     Text("Movies")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -99,9 +96,8 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.sportsItems.isEmpty,
-                   let items = viewModel.sportsItems
-                {
+                if !viewModel.sportsItems.isEmpty {
+                    let items = viewModel.sportsItems
                     Text("Sports")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -125,9 +121,8 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.kidsItems.isEmpty,
-                   let items = viewModel.kidsItems
-                {
+                if !viewModel.kidsItems.isEmpty {
+                    let items = viewModel.kidsItems
                     Text("Kids")
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -151,9 +146,8 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.newsItems.isEmpty,
-                   let items = viewModel.newsItems
-                {
+                if !viewModel.newsItems.isEmpty {
+                    let items = viewModel.newsItems
                     Text("News")
                         .font(.headline)
                         .fontWeight(.semibold)
