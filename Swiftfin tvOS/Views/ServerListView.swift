@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -13,6 +13,7 @@ struct ServerListView: View {
 
     @EnvironmentObject
     private var router: ServerListCoordinator.Router
+
     @ObservedObject
     var viewModel: ServerListViewModel
 
@@ -75,22 +76,22 @@ struct ServerListView: View {
             .navigationTitle(L10n.servers)
             .if(!viewModel.servers.isEmpty) { view in
                 view.toolbar {
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        Button {
-                            router.route(to: \.connectToServer)
-                        } label: {
-                            Image(systemName: "plus.circle.fill")
-                        }
-                        .contextMenu {
-                            Button {
-                                router.route(to: \.basicAppSettings)
-                            } label: {
-                                L10n.settings.text
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        SFSymbolButton(systemName: "plus.circle.fill")
+                            .onSelect {
+                                router.route(to: \.connectToServer)
                             }
-                        }
                     }
                 }
             }
+//            .toolbar {
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    SFSymbolButton(systemName: "gearshape.fill")
+//                        .onSelect {
+//                            router.route(to: \.basicAppSettings)
+//                        }
+//                }
+//            }
             .alert(item: $longPressedServer) { server in
                 Alert(
                     title: Text(server.name),

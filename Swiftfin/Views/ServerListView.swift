@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -12,7 +12,8 @@ import SwiftUI
 struct ServerListView: View {
 
     @EnvironmentObject
-    private var serverListRouter: ServerListCoordinator.Router
+    private var router: ServerListCoordinator.Router
+
     @ObservedObject
     var viewModel: ServerListViewModel
 
@@ -21,7 +22,7 @@ struct ServerListView: View {
             LazyVStack {
                 ForEach(viewModel.servers, id: \.id) { server in
                     Button {
-                        serverListRouter.route(to: \.userList, server)
+                        router.route(to: \.userList, server)
                     } label: {
                         ZStack(alignment: Alignment.leading) {
                             Rectangle()
@@ -38,7 +39,7 @@ struct ServerListView: View {
                                         .font(.title2)
                                         .foregroundColor(.primary)
 
-                                    Text(server.currentURI)
+                                    Text(server.currentURL.absoluteString)
                                         .font(.footnote)
                                         .disabled(true)
                                         .foregroundColor(.secondary)
@@ -47,10 +48,11 @@ struct ServerListView: View {
                                         .font(.footnote)
                                         .foregroundColor(.primary)
                                 }
-                            }.padding()
+                            }
+                            .padding()
                         }
-                        .padding()
                     }
+                    .padding()
                     .contextMenu {
                         Button(role: .destructive) {
                             viewModel.remove(server: server)
@@ -69,8 +71,8 @@ struct ServerListView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.connect.stringValue) {
-                serverListRouter.route(to: \.connectToServer)
+            PrimaryButton(title: L10n.connect) {
+                router.route(to: \.connectToServer)
             }
             .frame(maxWidth: 300)
             .frame(height: 50)
@@ -89,20 +91,19 @@ struct ServerListView: View {
 
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if viewModel.servers.isEmpty {
-            EmptyView()
-        } else {
+        if !viewModel.servers.isEmpty {
             Button {
-                serverListRouter.route(to: \.connectToServer)
+                router.route(to: \.connectToServer)
             } label: {
                 Image(systemName: "plus.circle.fill")
             }
         }
     }
 
+    @ViewBuilder
     private var leadingToolbarContent: some View {
         Button {
-            serverListRouter.route(to: \.basicAppSettings)
+            router.route(to: \.basicAppSettings)
         } label: {
             Image(systemName: "gearshape.fill")
                 .accessibilityLabel(L10n.settings)
@@ -117,11 +118,11 @@ struct ServerListView: View {
                     trailingToolbarContent
                 }
             }
-            .toolbar(content: {
+            .toolbar {
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     leadingToolbarContent
                 }
-            })
+            }
             .onAppear {
                 viewModel.fetchServers()
             }

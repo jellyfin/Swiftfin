@@ -3,57 +3,38 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
 import SwiftUI
 
-struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu: View, TrailingContent: View>: View {
+// TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
 
-    private var title: String
+struct PosterHStack<Item: Poster>: View {
+
+    private var header: () -> any View
+    private var title: String?
     private var type: PosterType
-    private var items: [Item]
+    private var items: [PosterButtonType<Item>]
+    private var singleImage: Bool
     private var itemScale: CGFloat
-    private var content: (Item) -> Content
-    private var imageOverlay: (Item) -> ImageOverlay
-    private var contextMenu: (Item) -> ContextMenu
-    private var trailingContent: () -> TrailingContent
+    private var content: (PosterButtonType<Item>) -> any View
+    private var imageOverlay: (PosterButtonType<Item>) -> any View
+    private var contextMenu: (PosterButtonType<Item>) -> any View
+    private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
-
-    private init(
-        title: String,
-        type: PosterType,
-        items: [Item],
-        itemScale: CGFloat,
-        @ViewBuilder content: @escaping (Item) -> Content,
-        @ViewBuilder imageOverlay: @escaping (Item) -> ImageOverlay,
-        @ViewBuilder contextMenu: @escaping (Item) -> ContextMenu,
-        @ViewBuilder trailingContent: @escaping () -> TrailingContent,
-        onSelect: @escaping (Item) -> Void
-    ) {
-        self.title = title
-        self.type = type
-        self.items = items
-        self.itemScale = itemScale
-        self.content = content
-        self.imageOverlay = imageOverlay
-        self.contextMenu = contextMenu
-        self.trailingContent = trailingContent
-        self.onSelect = onSelect
-    }
 
     var body: some View {
         VStack(alignment: .leading) {
+
             HStack {
-                Text(title)
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .accessibility(addTraits: [.isHeader])
+                header()
+                    .eraseToAnyView()
 
                 Spacer()
 
                 trailingContent()
+                    .eraseToAnyView()
             }
             .padding(.horizontal)
             .if(UIDevice.isIPad) { view in
@@ -62,13 +43,22 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 15) {
-                    ForEach(items, id: \.hashValue) { item in
-                        PosterButton(item: item, type: type)
-                            .scaleItem(itemScale)
-                            .content { content(item) }
-                            .imageOverlay { imageOverlay(item) }
-                            .contextMenu { contextMenu(item) }
-                            .onSelect { onSelect(item) }
+                    ForEach(items, id: \.id) { item in
+                        PosterButton(
+                            state: item,
+                            type: type,
+                            singleImage: singleImage
+                        )
+                        .scaleItem(itemScale)
+                        .content { content($0).eraseToAnyView() }
+                        .imageOverlay { imageOverlay($0).eraseToAnyView() }
+                        .contextMenu { contextMenu($0).eraseToAnyView() }
+                        .onSelect {
+                            if case let PosterButtonType.item(item) = item {
+                                onSelect(item)
+                            }
+                        }
+                        .transition(.slide)
                     }
                 }
                 .padding(.horizontal)
@@ -80,105 +70,115 @@ struct PosterHStack<Item: Poster, Content: View, ImageOverlay: View, ContextMenu
     }
 }
 
-extension PosterHStack where Content == PosterButtonDefaultContentView<Item>,
-    ImageOverlay == EmptyView,
-    ContextMenu == EmptyView,
-    TrailingContent == EmptyView
-{
+extension PosterHStack {
+
+    // TODO: Remove
     init(
         title: String,
         type: PosterType,
-        items: [Item]
+        items: [Item],
+        singleImage: Bool = false
     ) {
         self.init(
+            header: { DefaultHeader(title: title) },
             title: title,
             type: type,
-            items: items,
+            items: items.map { PosterButtonType.item($0) },
+            singleImage: singleImage,
             itemScale: 1,
-            content: { PosterButtonDefaultContentView(item: $0) },
-            imageOverlay: { _ in EmptyView() },
+            content: { PosterButton.DefaultContentView(state: $0) },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
             onSelect: { _ in }
         )
     }
-}
 
-extension PosterHStack {
+    init(
+        title: String,
+        type: PosterType,
+        items: [PosterButtonType<Item>],
+        singleImage: Bool = false
+    ) {
+        self.init(
+            header: { DefaultHeader(title: title) },
+            title: title,
+            type: type,
+            items: items,
+            singleImage: singleImage,
+            itemScale: 1,
+            content: { PosterButton.DefaultContentView(state: $0) },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
+            contextMenu: { _ in EmptyView() },
+            trailingContent: { EmptyView() },
+            onSelect: { _ in }
+        )
+    }
+
+    init(
+        type: PosterType,
+        items: [PosterButtonType<Item>],
+        singleImage: Bool = false
+    ) {
+        self.init(
+            header: { DefaultHeader(title: nil) },
+            title: nil,
+            type: type,
+            items: items,
+            singleImage: singleImage,
+            itemScale: 1,
+            content: { PosterButton.DefaultContentView(state: $0) },
+            imageOverlay: { PosterButton.DefaultOverlay(state: $0) },
+            contextMenu: { _ in EmptyView() },
+            trailingContent: { EmptyView() },
+            onSelect: { _ in }
+        )
+    }
+
+    func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
+        copy(modifying: \.header, with: header)
+    }
 
     func scaleItems(_ scale: CGFloat) -> Self {
-        var copy = self
-        copy.itemScale = scale
-        return copy
+        copy(modifying: \.itemScale, with: scale)
     }
 
-    @ViewBuilder
-    func content<C: View>(@ViewBuilder _ content: @escaping (Item) -> C)
-    -> PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent> {
-        PosterHStack<Item, C, ImageOverlay, ContextMenu, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.content, with: content)
     }
 
-    @ViewBuilder
-    func imageOverlay<O: View>(@ViewBuilder _ imageOverlay: @escaping (Item) -> O)
-    -> PosterHStack<Item, Content, O, ContextMenu, TrailingContent> {
-        PosterHStack<Item, Content, O, ContextMenu, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.imageOverlay, with: content)
     }
 
-    @ViewBuilder
-    func contextMenu<M: View>(@ViewBuilder _ contextMenu: @escaping (Item) -> M)
-    -> PosterHStack<Item, Content, ImageOverlay, M, TrailingContent> {
-        PosterHStack<Item, Content, ImageOverlay, M, TrailingContent>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+        copy(modifying: \.contextMenu, with: content)
     }
 
-    @ViewBuilder
-    func trailing<T: View>(@ViewBuilder _ trailingContent: @escaping () -> T)
-    -> PosterHStack<Item, Content, ImageOverlay, ContextMenu, T> {
-        PosterHStack<Item, Content, ImageOverlay, ContextMenu, T>(
-            title: title,
-            type: type,
-            items: items,
-            itemScale: itemScale,
-            content: content,
-            imageOverlay: imageOverlay,
-            contextMenu: contextMenu,
-            trailingContent: trailingContent,
-            onSelect: onSelect
-        )
+    func trailing(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.trailingContent, with: content)
     }
 
     func onSelect(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onSelect, with: action)
+    }
+}
+
+// MARK: Default Header
+
+extension PosterHStack {
+
+    struct DefaultHeader: View {
+
+        let title: String?
+
+        var body: some View {
+            if let title {
+                Text(title)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
+            }
+        }
     }
 }

@@ -3,22 +3,33 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
+
+        @ObservedObject
+        private var downloadManager: DownloadManager
         @ObservedObject
         private var viewModel: ItemViewModel
+
         private let equalSpacing: Bool
 
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
+
+            self.downloadManager = Container.downloadManager.callAsFunction()
         }
 
         var body: some View {
@@ -27,7 +38,7 @@ extension ItemView {
                     UIDevice.impact(.light)
                     viewModel.toggleWatchState()
                 } label: {
-                    if viewModel.isWatched {
+                    if viewModel.isPlayed {
                         Image(systemName: "checkmark.circle.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(
@@ -60,27 +71,44 @@ extension ItemView {
                     view.frame(maxWidth: .infinity)
                 }
 
-                if viewModel.videoPlayerViewModels.count > 1 {
+                if let playButtonItem = viewModel.playButtonItem,
+                   let mediaSources = playButtonItem.mediaSources,
+                   mediaSources.count > 1
+                {
                     Menu {
-                        ForEach(viewModel.videoPlayerViewModels, id: \.versionName) { viewModelOption in
+                        ForEach(mediaSources, id: \.hashValue) { mediaSource in
                             Button {
-                                viewModel.selectedVideoPlayerViewModel = viewModelOption
+                                viewModel.selectedMediaSource = mediaSource
                             } label: {
-                                if viewModelOption.versionName == viewModel.selectedVideoPlayerViewModel?.versionName {
-                                    Label(viewModelOption.versionName ?? L10n.noTitle, systemImage: "checkmark")
+                                if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
+                                    Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
                                 } else {
-                                    Text(viewModelOption.versionName ?? L10n.noTitle)
+                                    Text(mediaSource.displayTitle)
                                 }
                             }
                         }
                     } label: {
-                        HStack(spacing: 5) {
-                            Image(systemName: "list.dash")
-                        }
+                        Image(systemName: "list.dash")
                     }
+                    .buttonStyle(.plain)
                     .if(equalSpacing) { view in
                         view.frame(maxWidth: .infinity)
                     }
+                }
+
+                if viewModel.item.type == .movie ||
+                    viewModel.item.type == .episode,
+                    Defaults[.Experimental.downloads]
+                {
+                    DownloadTaskButton(item: viewModel.item)
+                        .onSelect { task in
+                            router.route(to: \.downloadTask, task)
+                        }
+                        .buttonStyle(.plain)
+                        .frame(width: 25, height: 25)
+                        .if(equalSpacing) { view in
+                            view.frame(maxWidth: .infinity)
+                        }
                 }
             }
         }

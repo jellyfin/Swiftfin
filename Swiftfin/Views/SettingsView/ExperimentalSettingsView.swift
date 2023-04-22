@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -12,18 +12,16 @@ import SwiftUI
 struct ExperimentalSettingsView: View {
 
     @Default(.Experimental.forceDirectPlay)
-    var forceDirectPlay
+    private var forceDirectPlay
     @Default(.Experimental.syncSubtitleStateWithAdjacent)
-    var syncSubtitleStateWithAdjacent
+    private var syncSubtitleStateWithAdjacent
     @Default(.Experimental.nativePlayer)
-    var nativePlayer
+    private var nativePlayer
 
     @Default(.Experimental.liveTVAlphaEnabled)
-    var liveTVAlphaEnabled
+    private var liveTVAlphaEnabled
     @Default(.Experimental.liveTVForceDirectPlay)
-    var liveTVForceDirectPlay
-    @Default(.Experimental.liveTVNativePlayer)
-    var liveTVNativePlayer
+    private var liveTVForceDirectPlay
 
     var body: some View {
         Form {
@@ -31,12 +29,9 @@ struct ExperimentalSettingsView: View {
 
                 Toggle("Force Direct Play", isOn: $forceDirectPlay)
 
-                Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
-
                 Toggle("Native Player", isOn: $nativePlayer)
 
-            } header: {
-                L10n.experimental.text
+//                Toggle("Sync Subtitles with Adjacent Episodes", isOn: $syncSubtitleStateWithAdjacent)
             }
 
             Section {
@@ -45,11 +40,10 @@ struct ExperimentalSettingsView: View {
 
                 Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
 
-                Toggle("Live TV Native Player", isOn: $liveTVNativePlayer)
-
             } header: {
                 Text("Live TV")
             }
         }
+        .navigationTitle(L10n.experimental)
     }
 }

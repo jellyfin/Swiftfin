@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -17,11 +17,16 @@ final class SearchCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+    #if os(tvOS)
     @Route(.modal)
+    var item = makeItem
+    @Route(.modal)
+    var library = makeLibrary
+    #else
+    @Route(.push)
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
-    #if !os(tvOS)
     @Route(.modal)
     var filter = makeFilter
     #endif

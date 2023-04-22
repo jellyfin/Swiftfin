@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -13,25 +13,12 @@ struct SearchView: View {
 
     @EnvironmentObject
     private var router: SearchCoordinator.Router
+
     @ObservedObject
     var viewModel: SearchViewModel
 
     @State
     private var searchText = ""
-
-    @ViewBuilder
-    private var suggestionsView: some View {
-        VStack(spacing: 20) {
-            ForEach(viewModel.suggestions, id: \.id) { item in
-                Button {
-                    searchText = item.displayName
-                } label: {
-                    Text(item.displayName)
-                        .font(.body)
-                }
-            }
-        }
-    }
 
     @ViewBuilder
     private var resultsView: some View {
@@ -42,8 +29,7 @@ struct SearchView: View {
                 }
 
                 if !viewModel.collections.isEmpty {
-                    // TODO: Localize after organization
-                    itemsSection(title: "Collections", keyPath: \.collections)
+                    itemsSection(title: L10n.collections, keyPath: \.collections)
                 }
 
                 if !viewModel.series.isEmpty {
@@ -55,8 +41,7 @@ struct SearchView: View {
                 }
 
                 if !viewModel.people.isEmpty {
-                    // TODO: Localize after organization
-                    itemsSection(title: "People", keyPath: \.people)
+                    itemsSection(title: L10n.people, keyPath: \.people)
                 }
             }
         }

@@ -3,123 +3,90 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionView
 import Foundation
 import JellyfinAPI
 import SwiftUI
-import SwiftUICollection
 
 typealias LiveTVChannelViewProgram = (timeDisplay: String, title: String)
 
 struct LiveTVChannelsView: View {
+
     @EnvironmentObject
     private var router: LiveTVChannelsCoordinator.Router
+
     @StateObject
     var viewModel = LiveTVChannelsViewModel()
 
-    var body: some View {
-        if viewModel.isLoading == true {
-            ProgressView()
-        } else if !viewModel.rows.isEmpty {
-            CollectionView(rows: viewModel.rows) { _, _ in
-                createGridLayout()
-            } cell: { indexPath, cell in
-                makeCellView(indexPath: indexPath, cell: cell)
-            } supplementaryView: { _, indexPath in
-                EmptyView()
-                    .accessibilityIdentifier("\(indexPath.section).\(indexPath.row)")
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea()
-            .onAppear {
-                viewModel.startScheduleCheckTimer()
-            }
-            .onDisappear {
-                viewModel.stopScheduleCheckTimer()
-            }
-        } else {
-            VStack {
-                Text("No results.")
-                Button {
-                    viewModel.getChannels()
-                } label: {
-                    Text("Reload")
-                }
-            }
-        }
+    @ViewBuilder
+    private var loadingView: some View {
+        ProgressView()
+    }
+
+    // TODO: add retry
+    @ViewBuilder
+    private var noResultsView: some View {
+        L10n.noResults.text
     }
 
     @ViewBuilder
-    func makeCellView(indexPath: IndexPath, cell: LiveTVChannelRowCell) -> some View {
-        let item = cell.item
-        let channel = item.channel
-        let currentProgramDisplayText = item.currentProgram?
+    private var channelsView: some View {
+        CollectionView(items: viewModel.channelPrograms) { _, channelProgram, _ in
+            channelCell(for: channelProgram)
+        }
+        .layout { _, layoutEnvironment in
+            .grid(
+                layoutEnvironment: layoutEnvironment,
+                layoutMode: .fixedNumberOfColumns(4),
+                itemSpacing: 8,
+                lineSpacing: 16,
+                itemSize: .estimated(400),
+                sectionInsets: .zero
+            )
+        }
+        .ignoresSafeArea()
+    }
+
+    @ViewBuilder
+    private func channelCell(for channelProgram: LiveTVChannelProgram) -> some View {
+        let channel = channelProgram.channel
+        let currentProgramDisplayText = channelProgram.currentProgram?
             .programDisplayText(timeFormatter: viewModel.timeFormatter) ?? LiveTVChannelViewProgram(timeDisplay: "", title: "")
-        let nextItems = item.programs.filter { program in
+        let nextItems = channelProgram.programs.filter { program in
             guard let start = program.startDate else {
                 return false
             }
-            guard let currentStart = item.currentProgram?.startDate else {
+            guard let currentStart = channelProgram.currentProgram?.startDate else {
                 return false
             }
             return start > currentStart
         }
+
         LiveTVChannelItemElement(
             channel: channel,
-            currentProgram: item.currentProgram,
+            currentProgram: channelProgram.currentProgram,
             currentProgramText: currentProgramDisplayText,
-            nextProgramsText: nextProgramsDisplayText(nextItems: nextItems, timeFormatter: viewModel.timeFormatter),
-            onSelect: { loadingAction in
-                loadingAction(true)
-                self.viewModel.fetchVideoPlayerViewModel(item: channel) { playerViewModel in
-                    self.router.route(to: \.videoPlayer, playerViewModel)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        loadingAction(false)
-                    }
-                }
+            nextProgramsText: nextProgramsDisplayText(
+                nextItems: nextItems,
+                timeFormatter: viewModel.timeFormatter
+            ),
+            onSelect: { _ in
+                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
             }
         )
     }
 
-    private func createGridLayout() -> NSCollectionLayoutSection {
-        // I don't know why tvOS has a margin on the sides of a collection view
-        // But it does, even with contentInset = .zero and ignoreSafeArea.
-        let sideMargin = CGFloat(30)
-        let itemWidth = (UIScreen.main.bounds.width / 4) - (sideMargin * 2)
-        let itemSize = NSCollectionLayoutSize(
-            widthDimension: .absolute(itemWidth),
-            heightDimension: .absolute(itemWidth)
-        )
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        item.edgeSpacing = .init(
-            leading: .fixed(8),
-            top: .fixed(8),
-            trailing: .fixed(8),
-            bottom: .fixed(8)
-        )
-
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(itemWidth)
-        )
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
-        group.edgeSpacing = .init(
-            leading: .fixed(0),
-            top: .fixed(16),
-            trailing: .fixed(0),
-            bottom: .fixed(16)
-        )
-        group.contentInsets = .zero
-
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = .zero
-
-        return section
+    var body: some View {
+        if viewModel.isLoading && viewModel.channels.isEmpty {
+            loadingView
+        } else if viewModel.channels.isEmpty {
+            noResultsView
+        } else {
+            channelsView
+        }
     }
 
     private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {

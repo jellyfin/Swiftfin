@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -27,8 +27,18 @@ final class ItemCoordinator: NavigationCoordinatable {
     var castAndCrew = makeCastAndCrew
     @Route(.modal)
     var itemOverview = makeItemOverview
+
+    #if os(iOS)
+    @Route(.modal)
+    var mediaSourceInfo = makeMediaSourceInfo
+    @Route(.modal)
+    var downloadTask = makeDownloadTask
+    #endif
+
+    #if os(tvOS)
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
+    #endif
 
     let itemDto: BaseItemDto
 
@@ -56,9 +66,21 @@ final class ItemCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
     }
 
-    func makeVideoPlayer(viewModel: VideoPlayerViewModel) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(viewModel: viewModel))
+    #if os(iOS)
+    func makeMediaSourceInfo(mediaSourceInfo: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
+        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
     }
+
+    func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
+        NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
+    }
+    #endif
+
+    #if os(tvOS)
+    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
+    }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

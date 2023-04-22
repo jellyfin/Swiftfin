@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -13,10 +13,15 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
     var itemViewType
+    @Default(.Customization.CinematicItemViewType.usePrimaryImage)
+    private var cinematicItemViewTypeUsePrimaryImage
 
-    @Default(.shouldShowMissingSeasons)
+    @Default(.hapticFeedback)
+    private var hapticFeedback
+
+    @Default(.Customization.shouldShowMissingSeasons)
     var shouldShowMissingSeasons
-    @Default(.shouldShowMissingEpisodes)
+    @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
     @Default(.Customization.showPosterLabels)
@@ -37,17 +42,40 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
 
+    @Default(.Customization.Library.showFavorites)
+    private var showFavorites
+    @Default(.Customization.Library.randomImage)
+    private var libraryRandomImage
+
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
     var body: some View {
         List {
-            Section {
-                Picker(L10n.items, selection: $itemViewType) {
-                    ForEach(ItemViewType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
+
+            if UIDevice.isPhone {
+                Section {
+                    EnumPicker(title: L10n.items, selection: $itemViewType)
+                }
+
+                if itemViewType == .cinematic {
+                    Section {
+                        Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
+                    } footer: {
+                        L10n.usePrimaryImageDescription.text
                     }
                 }
 
+                Toggle(L10n.hapticFeedback, isOn: $hapticFeedback)
+            }
+
+            Section {
+
+                Toggle(L10n.favorites, isOn: $showFavorites)
+
+                Toggle(L10n.randomImage, isOn: $libraryRandomImage)
             } header: {
-                EmptyView()
+                L10n.library.text
             }
 
             Section {
@@ -59,54 +87,33 @@ struct CustomizeViewsSettings: View {
 
             Section {
 
+                ChevronButton(title: L10n.indicators)
+                    .onSelect {
+                        router.route(to: \.indicatorSettings)
+                    }
+
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                Picker(L10n.nextUp, selection: $nextUpPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.next, selection: $nextUpPosterType)
 
-                Picker(L10n.recentlyAdded, selection: $recentlyAddedPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                Picker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                Picker(L10n.recommended, selection: $similarPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.recommended, selection: $similarPosterType)
 
-                Picker(L10n.search, selection: $searchPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.search, selection: $searchPosterType)
 
-                Picker(L10n.library, selection: $libraryGridPosterType) {
-                    ForEach(PosterType.allCases, id: \.self) { type in
-                        Text(type.localizedName).tag(type.rawValue)
-                    }
-                }
+                EnumPicker(title: L10n.library, selection: $libraryGridPosterType)
             } header: {
-                // TODO: localize after organization
-                Text("Posters")
+                L10n.posters.text
             }
 
             Section {
-                Toggle("Series Backdrop", isOn: $useSeriesLandscapeBackdrop)
+                Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
             } header: {
                 // TODO: think of a better name
-                // TODO: localize after organization
-                Text("Episode Landscape Poster")
+                L10n.episodeLandscapePoster.text
             }
         }
         .navigationTitle(L10n.customize)

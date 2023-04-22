@@ -3,145 +3,193 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
+import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
-import Stinsen
+import Pulse
 
 final class UserSignInViewModel: ViewModel {
 
-    @RouterObject
-    private var router: UserSignInCoordinator.Router?
+    @Published
+    private(set) var publicUsers: [UserDto] = []
+    @Published
+    private(set) var quickConnectCode: String?
+    @Published
+    private(set) var quickConnectEnabled = false
 
-    @Published
-    var publicUsers: [UserDto] = []
-    @Published
-    var quickConnectCode: String?
-    @Published
-    var quickConnectEnabled = false
-
+    let client: JellyfinClient
     let server: SwiftfinStore.State.Server
+
+    private var quickConnectTask: Task<Void, Never>?
     private var quickConnectTimer: RepeatingTimer?
     private var quickConnectSecret: String?
 
-    init(server: SwiftfinStore.State.Server) {
+    init(server: ServerState) {
+        self.client = JellyfinClient(
+            configuration: .swiftfinConfiguration(url: server.currentURL),
+            sessionDelegate: URLSessionProxyDelegate()
+        )
         self.server = server
         super.init()
-
-        JellyfinAPIAPI.basePath = server.currentURI
-        checkQuickConnect()
-        getPublicUsers()
     }
 
-    var alertTitle: String {
-        var message: String = ""
-        if errorMessage?.code != ErrorMessage.noShowErrorCode {
-            message.append(contentsOf: "\(errorMessage?.code ?? ErrorMessage.noShowErrorCode)\n")
-        }
-        message.append(contentsOf: "\(errorMessage?.title ?? L10n.unknownError)")
-        return message
-    }
-
-    func signIn(username: String, password: String) {
-        logger.debug("Attempting to login to server at \"\(server.currentURI)\"", tag: "login")
+    func signIn(username: String, password: String) async throws {
 
         let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
         let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
-        SessionManager.main.signInUser(server: server, username: username, password: password)
-            .trackActivity(loading)
-            .sink { completion in
-                self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-            } receiveValue: { _ in
-            }
-            .store(in: &cancellables)
-    }
+        let response = try await client.signIn(username: username, password: password)
 
-    func cancelSignIn() {
-        for cancellable in cancellables {
-            cancellable.cancel()
+        let user: UserState
+
+        do {
+            user = try await createLocalUser(response: response)
+        } catch {
+            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+                user = existingUser
+            } else {
+                throw error
+            }
         }
 
-        self.isLoading = false
+        Defaults[.lastServerUserID] = user.id
+        Container.userSession.reset()
+        Notifications[.didSignIn].post()
     }
 
-    func getPublicUsers() {
-        UserAPI.getPublicUsers()
-            .trackActivity(loading)
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-            }, receiveValue: { response in
-                self.publicUsers = response
-            })
-            .store(in: &cancellables)
+    func getPublicUsers() async throws {
+        let publicUsersPath = Paths.getPublicUsers
+        let response = try await client.send(publicUsersPath)
+
+        await MainActor.run {
+            publicUsers = response.value
+        }
     }
 
-    func checkQuickConnect() {
-        QuickConnectAPI.getEnabled()
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { enabled in
-                self.quickConnectEnabled = enabled
-            })
-            .store(in: &cancellables)
+    func checkQuickConnect() async throws {
+        let quickConnectEnabledPath = Paths.getEnabled
+        let response = try await client.send(quickConnectEnabledPath)
+        let decoder = JSONDecoder()
+        let isEnabled = try? decoder.decode(Bool.self, from: response.value)
+
+        await MainActor.run {
+            quickConnectEnabled = isEnabled ?? false
+        }
     }
 
-    func startQuickConnect(_ onSuccess: @escaping () -> Void) {
-        QuickConnectAPI.initiate()
-            .sink(receiveCompletion: { completion in
-                self.handleAPIRequestError(completion: completion)
-            }, receiveValue: { response in
+    func startQuickConnect() -> AsyncStream<QuickConnectResult> {
+        Task {
 
-                self.quickConnectSecret = response.secret
-                self.quickConnectCode = response.code
-                self.logger.debug("QuickConnect code: \(response.code ?? .emptyDash)")
+            let initiatePath = Paths.initiate
+            let response = try? await client.send(initiatePath)
 
-                self.quickConnectTimer = RepeatingTimer(interval: 5) {
-                    self.checkAuthStatus(onSuccess)
-                }
+            guard let response else { return }
 
-                self.quickConnectTimer?.start()
-            })
-            .store(in: &cancellables)
+            await MainActor.run {
+                quickConnectSecret = response.value.secret
+                quickConnectCode = response.value.code
+            }
+        }
+
+        return .init { continuation in
+
+            checkAuthStatus(continuation: continuation)
+        }
     }
 
-    @objc
-    private func checkAuthStatus(_ onSuccess: @escaping () -> Void) {
-        guard let quickConnectSecret = quickConnectSecret else { return }
+    private func checkAuthStatus(continuation: AsyncStream<QuickConnectResult>.Continuation) {
 
-        QuickConnectAPI.connect(secret: quickConnectSecret)
-            .sink(receiveCompletion: { _ in
-                // Prefer not to handle error handling like normal as
-                // this is a repeated call
-            }, receiveValue: { value in
-                guard let authenticated = value.authenticated, authenticated else {
-                    self.logger.debug("QuickConnect not authenticated yet")
-                    return
-                }
+        let task = Task {
+            guard let quickConnectSecret else { return }
+            let connectPath = Paths.connect(secret: quickConnectSecret)
+            let response = try? await client.send(connectPath)
 
-                self.stopQuickConnectAuthCheck()
-                onSuccess()
+            if let responseValue = response?.value, responseValue.isAuthenticated ?? false {
+                continuation.yield(responseValue)
+                return
+            }
 
-                SessionManager.main.signInUser(server: self.server, quickConnectSecret: quickConnectSecret)
-                    .trackActivity(self.loading)
-                    .sink { completion in
-                        self.handleAPIRequestError(displayMessage: L10n.unableToConnectServer, completion: completion)
-                    } receiveValue: { _ in
-                    }
-                    .store(in: &self.cancellables)
-            })
-            .store(in: &cancellables)
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+
+            checkAuthStatus(continuation: continuation)
+        }
+
+        self.quickConnectTask = task
     }
 
     func stopQuickConnectAuthCheck() {
-        DispatchQueue.main.async {
-            self.quickConnectTimer?.stop()
-            self.quickConnectTimer = nil
+        self.quickConnectTask?.cancel()
+    }
+
+    func signIn(quickConnectSecret: String) async throws {
+        let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
+        let response = try await client.send(quickConnectPath)
+
+        let user: UserState
+
+        do {
+            user = try await createLocalUser(response: response.value)
+        } catch {
+            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+                user = existingUser
+            } else {
+                throw error
+            }
         }
+
+        Defaults[.lastServerUserID] = user.id
+        Container.userSession.reset()
+        Notifications[.didSignIn].post()
+    }
+
+    @MainActor
+    private func createLocalUser(response: AuthenticationResult) async throws -> UserState {
+        guard let accessToken = response.accessToken,
+              let username = response.user?.name,
+              let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
+
+        if let existingUser = try? SwiftfinStore.dataStack.fetchOne(
+            From<UserModel>(),
+            [Where<UserModel>(
+                "id == %@",
+                id
+            )]
+        ) {
+            throw SwiftfinStore.Error.existingUser(existingUser.state)
+        }
+
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+            From<SwiftfinStore.Models.StoredServer>(),
+            [
+                Where<SwiftfinStore.Models.StoredServer>(
+                    "id == %@",
+                    server.id
+                ),
+            ]
+        )
+        else { fatalError("No stored server associated with given state server?") }
+
+        let user = try SwiftfinStore.dataStack.perform { transaction in
+            let newUser = transaction.create(Into<UserModel>())
+
+            newUser.accessToken = accessToken
+            newUser.appleTVID = ""
+            newUser.id = id
+            newUser.username = username
+
+            let editServer = transaction.edit(storedServer)!
+            editServer.users.insert(newUser)
+
+            return newUser.state
+        }
+
+        return user
     }
 }

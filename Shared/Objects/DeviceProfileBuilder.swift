@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -16,7 +16,8 @@ class DeviceProfileBuilder {
         self.bitrate = bitrate
     }
 
-    public func buildProfile() -> ClientCapabilitiesDeviceProfile {
+    public func buildProfile() -> DeviceProfile {
+        let segmentContainer = "mp4"
         let maxStreamingBitrate = bitrate
         let maxStaticBitrate = bitrate
         let musicStreamingTranscodingBitrate = bitrate
@@ -76,12 +77,12 @@ class DeviceProfileBuilder {
                     type: .video,
                     videoCodec: "hevc,h264,mpeg4",
                     audioCodec: "flac,alac,aac,eac3,ac3,opus",
-                    _protocol: "hls",
+                    protocol: "hls",
                     context: .streaming,
                     maxAudioChannels: "8",
                     minSegments: 2,
-                    breakOnNonKeyFrames: true
-                ),
+                    isBreakOnNonKeyFrames: true
+                )
             ]
 
             // Create subtitle profiles
@@ -119,11 +120,11 @@ class DeviceProfileBuilder {
                 type: .video,
                 videoCodec: "hevc,h264,av1,vp9,vc1,mpeg4,h263,mpeg2video,mpeg1video,mjpeg", // vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1 not supported in mp4
                 audioCodec: "flac,alac,aac,eac3,ac3,dts,opus,vorbis,mp3,mp2,mp1", // no PCM,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
-                _protocol: "hls",
+                protocol: "hls",
+                isBreakOnNonKeyFrames: true,
                 context: .streaming,
                 maxAudioChannels: "8",
-                minSegments: 2,
-                breakOnNonKeyFrames: true
+                minSegments: 2
             )]
 
             // Create subtitle profiles
@@ -174,42 +175,75 @@ class DeviceProfileBuilder {
 
         // For now, assume native and VLCKit support same codec conditions:
         let h264CodecConditions: [ProfileCondition] = [
-            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
             ProfileCondition(
                 condition: .equalsAny,
+                isRequired: false,
                 property: .videoProfile,
-                value: "high|main|baseline|constrained baseline",
-                isRequired: false
+                value: "high|main|baseline|constrained baseline"
             ),
-            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "80", isRequired: false),
-            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "80"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
         ]
 
-        codecProfiles.append(CodecProfile(type: .video, applyConditions: h264CodecConditions, codec: "h264"))
+        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
 
         let hevcCodecConditions: [ProfileCondition] = [
-            ProfileCondition(condition: .notEquals, property: .isAnamorphic, value: "true", isRequired: false),
-            ProfileCondition(condition: .equalsAny, property: .videoProfile, value: "high|main|main 10", isRequired: false),
-            ProfileCondition(condition: .lessThanEqual, property: .videoLevel, value: "175", isRequired: false),
-            ProfileCondition(condition: .notEquals, property: .isInterlaced, value: "true", isRequired: false),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isAnamorphic,
+                value: "true"
+            ),
+            ProfileCondition(
+                condition: .equalsAny,
+                isRequired: false,
+                property: .videoProfile,
+                value: "high|main|main 10"
+            ),
+            ProfileCondition(
+                condition: .lessThanEqual,
+                isRequired: false,
+                property: .videoLevel,
+                value: "175"
+            ),
+            ProfileCondition(
+                condition: .notEquals,
+                isRequired: false,
+                property: .isInterlaced,
+                value: "true"
+            ),
         ]
 
-        codecProfiles.append(CodecProfile(type: .video, applyConditions: hevcCodecConditions, codec: "hevc"))
+        codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))
 
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", type: .video, mimeType: "video/mp4")]
+        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
 
-        let profile = ClientCapabilitiesDeviceProfile(
-            maxStreamingBitrate: maxStreamingBitrate,
-            maxStaticBitrate: maxStaticBitrate,
-            musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
-            directPlayProfiles: directPlayProfiles,
-            transcodingProfiles: transcodingProfiles,
-            containerProfiles: [],
+        return .init(
             codecProfiles: codecProfiles,
+            containerProfiles: [],
+            directPlayProfiles: directPlayProfiles,
+            maxStaticBitrate: maxStaticBitrate,
+            maxStreamingBitrate: maxStreamingBitrate,
+            musicStreamingTranscodingBitrate: musicStreamingTranscodingBitrate,
             responseProfiles: responseProfiles,
-            subtitleProfiles: subtitleProfiles
+            subtitleProfiles: subtitleProfiles,
+            transcodingProfiles: transcodingProfiles
         )
-
-        return profile
     }
 }

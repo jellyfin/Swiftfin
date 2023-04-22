@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -21,7 +21,7 @@ extension EpisodeItemView {
         var body: some View {
             VStack(spacing: 0) {
 
-                Self.EpisodeCinematicHeaderView(viewModel: viewModel)
+                EpisodeCinematicHeaderView(viewModel: viewModel)
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
@@ -70,7 +70,7 @@ extension EpisodeItemView.ContentView {
         }
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @FocusState
         private var focusedLayer: CinematicHeaderFocusLayer?
         @ObservedObject
@@ -94,7 +94,7 @@ extension EpisodeItemView.ContentView {
                                 .foregroundColor(.secondary)
                         }
 
-                        Text(viewModel.item.displayName)
+                        Text(viewModel.item.displayTitle)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .lineLimit(1)
@@ -104,7 +104,7 @@ extension EpisodeItemView.ContentView {
                         if let overview = viewModel.item.overview {
                             Text(overview)
                                 .font(.subheadline)
-                                .lineLimit(4)
+                                .lineLimit(3)
                         } else {
                             L10n.noOverviewAvailable.text
                         }

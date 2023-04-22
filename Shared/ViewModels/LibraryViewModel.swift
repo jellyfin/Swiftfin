@@ -3,11 +3,12 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
 import Defaults
+import Factory
 import JellyfinAPI
 import SwiftUI
 import UIKit
@@ -102,49 +103,42 @@ final class LibraryViewModel: PagingLibraryViewModel {
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        ItemsAPI.getItemsByUserId(
-            userId: SessionManager.main.currentLogin.user.id,
-            excludeItemIds: excludedIDs,
-            startIndex: currentPage * pageItemSize,
-            limit: pageItemSize,
-            recursive: recursive,
-            sortOrder: sortOrder,
-            parentId: libraryID,
-            fields: ItemFields.allCases,
-            includeItemTypes: includeItemTypes,
-            filters: itemFilters,
-            sortBy: sortBy,
-            enableUserData: true,
-            personIds: personIDs,
-            studioIds: studioIDs,
-            genreIds: genreIDs,
-            enableImages: true
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard !(response.items?.isEmpty ?? false) else {
-                self?.hasNextPage = false
+        Task {
+            await MainActor.run {
+                self.isLoading = true
+            }
+
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                excludeItemIDs: excludedIDs,
+                startIndex: currentPage * pageItemSize,
+                limit: pageItemSize,
+                isRecursive: recursive,
+                sortOrder: sortOrder,
+                parentID: libraryID,
+                fields: ItemFields.allCases,
+                includeItemTypes: includeItemTypes,
+                filters: itemFilters,
+                sortBy: sortBy,
+                enableUserData: true,
+                personIDs: personIDs,
+                studioIDs: studioIDs,
+                genreIDs: genreIDs,
+                enableImages: true
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            guard let items = response.value.items, !items.isEmpty else {
+                self.hasNextPage = false
                 return
             }
 
-            let items: [BaseItemDto]
-
-            // There is a bug either with the request construction or the server when using
-            // "Random" sort which causes duplicate items to be sent even though we send the
-            // excluded ids. This causes shorter item additions when using "Random" over
-            // consecutive calls. Investigation needs to be done to find the root of the problem.
-            // Only filter for "Random" as an optimization.
-            if filters.sortBy.first == SortBy.random.filter {
-                items = response.items?.filter { !(self?.items.contains($0) ?? true) } ?? []
-            } else {
-                items = response.items ?? []
+            await MainActor.run {
+                self.isLoading = false
+                self.items.append(contentsOf: items)
             }
-
-            self?.items.append(contentsOf: items)
-        })
-        .store(in: &cancellables)
+        }
     }
 
     override func _requestNextPage() {

@@ -1,0 +1,62 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+//
+
+import Combine
+import JellyfinAPI
+import SwiftUI
+
+// TODO: better name
+
+struct CinematicBackgroundView<Item: Poster>: View {
+
+    @ObservedObject
+    var viewModel: ViewModel
+
+    @StateObject
+    private var proxy: RotateContentView.Proxy = .init()
+
+    var initialItem: Item?
+
+    var body: some View {
+        RotateContentView(proxy: proxy)
+            .onChange(of: viewModel.currentItem) { newItem in
+                proxy.update {
+                    ImageView(newItem?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: false) ?? [])
+                        .placeholder {
+                            Color.clear
+                        }
+                        .failure {
+                            Color.clear
+                        }
+                }
+            }
+    }
+
+    class ViewModel: ObservableObject {
+
+        @Published
+        var currentItem: Item?
+
+        private var cancellables = Set<AnyCancellable>()
+        private var currentItemSubject = CurrentValueSubject<Item?, Never>(nil)
+
+        init() {
+            currentItemSubject
+                .debounce(for: 0.5, scheduler: DispatchQueue.main)
+                .sink { newItem in
+                    self.currentItem = newItem
+                }
+                .store(in: &cancellables)
+        }
+
+        func select(item: Item) {
+            guard currentItem != item else { return }
+            currentItemSubject.send(item)
+        }
+    }
+}

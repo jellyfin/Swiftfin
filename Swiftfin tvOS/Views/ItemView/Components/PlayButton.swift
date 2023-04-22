@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -15,19 +15,22 @@ extension ItemView {
 
         @Injected(LogManager.service)
         private var logger
+
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
+
         @FocusState
-        var isFocused: Bool
+        private var isFocused: Bool
 
         var body: some View {
             Button {
-                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
+                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
                 } else {
-                    logger.error("Attempted to play item but no playback information available")
+                    logger.error("No media source available")
                 }
             } label: {
                 HStack(spacing: 15) {
@@ -51,24 +54,24 @@ extension ItemView {
             }
             .focused($isFocused)
             .buttonStyle(.card)
-            .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button {
-                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                        } else {
-                            logger.error("Attempted to play item but no playback information available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                    }
-
-                    Button(role: .cancel) {} label: {
-                        L10n.cancel.text
-                    }
-                }
-            }
+//            .contextMenu {
+//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+//                    Button {
+//                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
+//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+//                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+//                        } else {
+//                            logger.error("Attempted to play item but no playback information available")
+//                        }
+//                    } label: {
+//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+//                    }
+//
+//                    Button(role: .cancel) {} label: {
+//                        L10n.cancel.text
+//                    }
+//                }
+//            }
         }
     }
 }

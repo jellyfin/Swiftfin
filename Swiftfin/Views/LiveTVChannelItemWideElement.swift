@@ -3,13 +3,14 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
 import SwiftUI
 
 struct LiveTVChannelItemWideElement: View {
+
     @FocusState
     private var focused: Bool
     @State
@@ -104,14 +105,12 @@ struct LiveTVChannelItemWideElement: View {
                             titleText: currentProgramText.title,
                             color: Color("TextHighlightColor")
                         )
-                        if !nextProgramsText.isEmpty,
-                           let nextItem = nextProgramsText[0]
-                        {
+                        if !nextProgramsText.isEmpty {
+                            let nextItem = nextProgramsText[0]
                             programLabel(timeText: nextItem.timeDisplay, titleText: nextItem.title, color: Color.gray)
                         }
-                        if nextProgramsText.count > 1,
-                           let nextItem2 = nextProgramsText[1]
-                        {
+                        if nextProgramsText.count > 1 {
+                            let nextItem2 = nextProgramsText[1]
                             programLabel(timeText: nextItem2.timeDisplay, titleText: nextItem2.title, color: Color.gray)
                         }
                         Spacer()

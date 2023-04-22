@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -14,13 +14,15 @@ extension ItemView {
     struct CompactPosterScrollView<Content: View>: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
+        @ObservedObject
+        var viewModel: ItemViewModel
+
         @State
         private var scrollViewOffset: CGFloat = 0
         @State
         private var blurHashBottomEdgeColor: Color = .secondarySystemFill
-        @ObservedObject
-        var viewModel: ItemViewModel
 
         let content: () -> Content
 
@@ -28,7 +30,7 @@ extension ItemView {
             let start = UIScreen.main.bounds.height * 0.20
             let end = UIScreen.main.bounds.height * 0.4
             let diff = end - start
-            let opacity = min(max((scrollViewOffset - start) / diff, 0), 1)
+            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
         }
 
@@ -41,60 +43,43 @@ extension ItemView {
 
         var body: some View {
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    Color.clear
-                        .frame(height: UIScreen.main.bounds.height * 0.15)
+                VStack(alignment: .leading, spacing: 0) {
 
-                    OverlayView(scrollViewOffset: $scrollViewOffset, viewModel: viewModel)
-                        .padding(.horizontal)
-                        .padding(.bottom)
-                        .background {
-                            BlurView(style: .systemThinMaterialDark)
-                                .mask {
-                                    LinearGradient(
-                                        stops: [
-                                            .init(color: .white.opacity(0), location: 0.2),
-                                            .init(color: .white.opacity(0.5), location: 0.3),
-                                            .init(color: .white, location: 0.55),
-                                        ],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                }
-                        }
-                        .overlay {
-                            Color.systemBackground
-                                .opacity(topOpacity)
-                        }
+                    VStack {
+                        Spacer()
 
-                    VStack(alignment: .leading, spacing: 10) {
-                        if let firstTagline = viewModel.item.taglines?.first {
-                            Text(firstTagline)
-                                .font(.body)
-                                .fontWeight(.semibold)
-                                .multilineTextAlignment(.leading)
-                                .lineLimit(2)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-
-                        if let itemOverview = viewModel.item.overview {
-                            TruncatedTextView(text: itemOverview) {
-                                itemRouter.route(to: \.itemOverview, viewModel.item)
+                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .background {
+                                BlurView(style: .systemThinMaterialDark)
+                                    .mask {
+                                        LinearGradient(
+                                            stops: [
+                                                .init(color: .white.opacity(0), location: 0.2),
+                                                .init(color: .white.opacity(0.5), location: 0.3),
+                                                .init(color: .white, location: 0.55),
+                                            ],
+                                            startPoint: .top,
+                                            endPoint: .bottom
+                                        )
+                                    }
                             }
-                            .font(.footnote)
-                            .lineLimit(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                        }
+                            .overlay {
+                                Color.systemBackground
+                                    .opacity(topOpacity)
+                            }
                     }
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.systemBackground)
-                    .foregroundColor(.white)
+                    .frame(height: UIScreen.main.bounds.height * 0.45)
+
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(4)
+                        .taglineLineLimit(2)
+                        .padding(.top)
+                        .padding(.horizontal)
 
                     content()
                         .padding(.vertical)
-                        .background(Color.systemBackground)
                 }
             }
             .edgesIgnoringSafeArea(.top)
@@ -106,10 +91,17 @@ extension ItemView {
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.35,
+                height: UIScreen.main.bounds.height * 0.45,
                 multiplier: 0.8
             ) {
                 headerView
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
             }
             .onAppear {
                 if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
@@ -130,11 +122,13 @@ extension ItemView.CompactPosterScrollView {
     struct OverlayView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
-        @Binding
-        var scrollViewOffset: CGFloat
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
+
+        @Binding
+        var scrollViewOffset: CGFloat
 
         @ViewBuilder
         private var rightShelfView: some View {
@@ -142,7 +136,7 @@ extension ItemView.CompactPosterScrollView {
 
                 // MARK: Name
 
-                Text(viewModel.item.displayName)
+                Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
@@ -150,7 +144,7 @@ extension ItemView.CompactPosterScrollView {
                 // MARK: Details
 
                 DotHStack {
-                    if viewModel.item.unaired {
+                    if viewModel.item.isUnaired {
                         if let premiereDateLabel = viewModel.item.airDateLabel {
                             Text(premiereDateLabel)
                         }

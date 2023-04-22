@@ -3,17 +3,19 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct UserListView: View {
 
     @EnvironmentObject
-    private var userListRouter: UserListCoordinator.Router
+    private var router: UserListCoordinator.Router
+
     @ObservedObject
     var viewModel: UserListViewModel
 
@@ -52,7 +54,7 @@ struct UserListView: View {
                 .font(.body)
 
             Button {
-                userListRouter.route(to: \.userSignIn, viewModel.server)
+                router.route(to: \.userSignIn, viewModel.server)
             } label: {
                 L10n.signIn.text
                     .bold()
@@ -66,7 +68,8 @@ struct UserListView: View {
 
     var body: some View {
         ZStack {
-            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+
+            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
                 .ignoresSafeArea()
 
             Color.black
@@ -85,14 +88,13 @@ struct UserListView: View {
             view.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
-                        userListRouter.route(to: \.userSignIn, viewModel.server)
+                        router.route(to: \.userSignIn, viewModel.server)
                     } label: {
                         Image(systemName: "person.crop.circle.fill.badge.plus")
                     }
                 }
             }
         }
-
         .alert(item: $longPressedUser) { user in
             Alert(
                 title: Text(user.username),

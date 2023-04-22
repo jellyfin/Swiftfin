@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -18,17 +18,22 @@ struct UserSignInView: View {
         case password
     }
 
+    @FocusState
+    private var focusedField: FocusedField?
+
     @ObservedObject
     var viewModel: UserSignInViewModel
+
     @State
-    private var username: String = ""
+    private var isPresentingQuickConnect: Bool = false
     @State
     private var password: String = ""
     @State
-    private var presentQuickConnect: Bool = false
-
-    @FocusState
-    private var focusedField: FocusedField?
+    private var signInError: Error?
+    @State
+    private var signInTask: Task<Void, Never>?
+    @State
+    private var username: String = ""
 
     @ViewBuilder
     private var signInForm: some View {
@@ -45,7 +50,19 @@ struct UserSignInView: View {
                     .focused($focusedField, equals: .password)
 
                 Button {
-                    viewModel.signIn(username: username, password: password)
+                    let task = Task {
+                        viewModel.isLoading = true
+
+                        do {
+                            try await viewModel.signIn(username: username, password: password)
+                        } catch {
+                            signInError = error
+                        }
+
+                        viewModel.isLoading = false
+                    }
+
+                    signInTask = task
                 } label: {
                     HStack {
                         if viewModel.isLoading {
@@ -61,17 +78,17 @@ struct UserSignInView: View {
                     .background(viewModel.isLoading || username.isEmpty ? .secondary : Color.jellyfinPurple)
                 }
                 .disabled(viewModel.isLoading || username.isEmpty)
-                .buttonStyle(.plain)
+                .buttonStyle(.card)
 
                 Button {
-                    presentQuickConnect = true
+                    isPresentingQuickConnect = true
                 } label: {
                     L10n.quickConnect.text
                         .frame(height: 75)
                         .frame(maxWidth: .infinity)
-                        .background(Color.secondary)
+                        .background(Color.jellyfinPurple)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.card)
             } header: {
                 L10n.signInToServer(viewModel.server.name).text
             }
@@ -115,42 +132,41 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var quickConnect: some View {
-        ZStack {
+        VStack(alignment: .center) {
+            L10n.quickConnect.text
+                .font(.title3)
+                .fontWeight(.semibold)
 
-            BlurView()
-                .ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 20) {
+                L10n.quickConnectStep1.text
 
-            VStack(alignment: .center) {
-                L10n.quickConnect.text
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                L10n.quickConnectStep2.text
 
-                VStack(alignment: .leading, spacing: 20) {
-                    L10n.quickConnectStep1.text
-
-                    L10n.quickConnectStep2.text
-
-                    L10n.quickConnectStep3.text
-                }
-                .padding(.vertical)
-
-                Text(viewModel.quickConnectCode ?? "------")
-                    .tracking(10)
-                    .font(.title)
-                    .monospacedDigit()
-                    .frame(maxWidth: .infinity)
-
-                Button {
-                    presentQuickConnect = false
-                } label: {
-                    L10n.close.text
-                        .frame(width: 400, height: 75)
-                }
-                .buttonStyle(.plain)
+                L10n.quickConnectStep3.text
             }
+            .padding(.vertical)
+
+            Text(viewModel.quickConnectCode ?? "------")
+                .tracking(10)
+                .font(.title)
+                .monospacedDigit()
+                .frame(maxWidth: .infinity)
+
+            Button {
+                isPresentingQuickConnect = false
+            } label: {
+                L10n.close.text
+                    .frame(width: 400, height: 75)
+            }
+            .buttonStyle(.plain)
         }
         .onAppear {
-            viewModel.startQuickConnect {}
+            Task {
+                for await result in viewModel.startQuickConnect() {
+                    guard let secret = result.secret else { continue }
+                    try? await viewModel.signIn(quickConnectSecret: secret)
+                }
+            }
         }
         .onDisappear {
             viewModel.stopQuickConnectAuthCheck()
@@ -159,7 +175,8 @@ struct UserSignInView: View {
 
     var body: some View {
         ZStack {
-            ImageView(ImageAPI.getSplashscreenWithRequestBuilder().url)
+
+            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
                 .ignoresSafeArea()
 
             Color.black
@@ -176,15 +193,25 @@ struct UserSignInView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .navigationTitle(L10n.signIn)
-        .alert(item: $viewModel.errorMessage) { _ in
-            Alert(
-                title: Text(viewModel.alertTitle),
-                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-                dismissButton: .cancel()
-            )
-        }
-        .fullScreenCover(isPresented: $presentQuickConnect, onDismiss: nil) {
+//        .alert(item: $viewModel.errorMessage) { _ in
+//            Alert(
+//                title: Text(viewModel.alertTitle),
+//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
+//                dismissButton: .cancel()
+//            )
+//        }
+        .blurFullScreenCover(isPresented: $isPresentingQuickConnect) {
             quickConnect
+        }
+        .onAppear {
+            Task {
+                try? await viewModel.checkQuickConnect()
+                try? await viewModel.getPublicUsers()
+            }
+        }
+        .onDisappear {
+            viewModel.isLoading = false
+            viewModel.stopQuickConnectAuthCheck()
         }
     }
 }

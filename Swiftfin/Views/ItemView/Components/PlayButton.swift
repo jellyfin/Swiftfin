@@ -3,9 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import SwiftUI
 
@@ -13,50 +14,56 @@ extension ItemView {
 
     struct PlayButton: View {
 
+        @Default(.accentColor)
+        private var accentColor
+
         @Injected(LogManager.service)
         private var logger
+
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var mainRouter: MainCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 
         var body: some View {
             Button {
-                if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                    itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
+                if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
+                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
                 } else {
-                    logger.error("Attempted to play item but no playback information available")
+                    logger.error("No media source available")
                 }
             } label: {
                 ZStack {
                     Rectangle()
-                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : Color.jellyfinPurple)
+                        .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondarySystemFill) : accentColor)
                         .cornerRadius(10)
 
                     HStack {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
+
                         Text(viewModel.playButtonText())
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
-                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.white)
+                    .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }
             }
-            .contextMenu {
-                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
-                    Button {
-                        if let selectedVideoPlayerViewModel = viewModel.selectedVideoPlayerViewModel {
-                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
-                            itemRouter.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
-                        } else {
-                            logger.error("Attempted to play item but no playback information available")
-                        }
-                    } label: {
-                        Label(L10n.playFromBeginning, systemImage: "gobackward")
-                    }
-                }
-            }
+//            .contextMenu {
+//                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
+//                    Button {
+//                        if let selectedVideoPlayerViewModel = viewModel.legacyselectedVideoPlayerViewModel {
+//                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
+//                            router.route(to: \.legacyVideoPlayer, selectedVideoPlayerViewModel)
+//                        } else {
+//                            logger.error("Attempted to play item but no playback information available")
+//                        }
+//                    } label: {
+//                        Label(L10n.playFromBeginning, systemImage: "gobackward")
+//                    }
+//                }
+//            }
         }
     }
 }

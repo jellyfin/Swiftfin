@@ -3,20 +3,21 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import UIKit.UIGestureRecognizerSubclass
-
-enum PanDirection {
-    case vertical
-    case horizontal
-}
+import UIKit
 
 class PanDirectionGestureRecognizer: UIPanGestureRecognizer {
-    let direction: PanDirection
 
-    init(direction: PanDirection, target: AnyObject, action: Selector) {
+    enum Direction {
+        case vertical
+        case horizontal
+    }
+
+    private let direction: Direction
+
+    init(direction: Direction, target: AnyObject, action: Selector) {
         self.direction = direction
         super.init(target: target, action: action)
     }

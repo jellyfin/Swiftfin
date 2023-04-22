@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -22,50 +22,24 @@ final class EpisodeItemViewModel: ItemViewModel {
         getSeriesItem()
     }
 
-    override func updateItem() {
-        ItemsAPI.getItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1,
-            fields: [
-                .primaryImageAspectRatio,
-                .seriesPrimaryImage,
-                .seasonUserData,
-                .overview,
-                .genres,
-                .people,
-                .chapters,
-            ],
-            enableUserData: true,
-            ids: [item.id ?? ""]
-        )
-        .sink { completion in
-            self.handleAPIRequestError(completion: completion)
-        } receiveValue: { response in
-            if let item = response.items?.first {
-                self.item = item
-                self.playButtonItem = item
-            }
-        }
-        .store(in: &cancellables)
-    }
+    override func updateItem() {}
 
     private func getSeriesItem() {
-        guard let seriesID = item.seriesId else { return }
+        guard let seriesID = item.seriesID else { return }
+        Task {
+            let parameters = Paths.GetItemsParameters(
+                userID: userSession.user.id,
+                limit: 1,
+                fields: ItemFields.allCases,
+                enableUserData: true,
+                ids: [seriesID]
+            )
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
 
-        ItemsAPI.getItems(
-            userId: SessionManager.main.currentLogin.user.id,
-            limit: 1,
-            fields: ItemFields.allCases,
-            enableUserData: true,
-            ids: [seriesID]
-        )
-        .trackActivity(loading)
-        .sink(receiveCompletion: { [weak self] completion in
-            self?.handleAPIRequestError(completion: completion)
-        }, receiveValue: { [weak self] response in
-            guard let firstItem = response.items?.first else { return }
-            self?.seriesItem = firstItem
-        })
-        .store(in: &cancellables)
+            await MainActor.run {
+                seriesItem = response.value.items?.first
+            }
+        }
     }
 }

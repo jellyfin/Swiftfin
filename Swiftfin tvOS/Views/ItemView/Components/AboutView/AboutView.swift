@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -35,7 +35,7 @@ extension ItemView {
                         .posterStyle(type: .portrait, width: 270)
 
                         InformationCard(
-                            title: viewModel.item.displayName,
+                            title: viewModel.item.displayTitle,
                             content: viewModel.item.overview ?? L10n.noOverviewAvailable
                         )
 

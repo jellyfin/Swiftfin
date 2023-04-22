@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -26,6 +26,10 @@ extension MovieItemView {
                     .padding(.bottom, 50)
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+
+                if !viewModel.specialFeatures.isEmpty {
+                    ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
+                }
 
                 ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 

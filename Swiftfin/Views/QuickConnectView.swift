@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -12,6 +12,7 @@ struct QuickConnectView: View {
 
     @EnvironmentObject
     private var router: QuickConnectCoordinator.Router
+
     @ObservedObject
     var viewModel: UserSignInViewModel
 
@@ -35,21 +36,19 @@ struct QuickConnectView: View {
         .padding(.horizontal)
         .navigationTitle(L10n.quickConnect)
         .onAppear {
-            viewModel.startQuickConnect {
-                self.router.dismissCoordinator()
+            Task {
+                for await result in viewModel.startQuickConnect() {
+                    guard let secret = result.secret else { continue }
+                    try? await viewModel.signIn(quickConnectSecret: secret)
+                    router.dismissCoordinator()
+                }
             }
         }
         .onDisappear {
             viewModel.stopQuickConnectAuthCheck()
         }
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    router.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

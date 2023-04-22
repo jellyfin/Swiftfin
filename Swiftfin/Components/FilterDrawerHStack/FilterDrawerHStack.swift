@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -80,9 +80,7 @@ extension FilterDrawerHStack {
         self.onSelect = { _ in }
     }
 
-    func onSelect(_ onSelect: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = onSelect
-        return copy
+    func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

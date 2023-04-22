@@ -3,9 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension CollectionItemView {
@@ -13,9 +14,18 @@ extension CollectionItemView {
     struct ContentView: View {
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: CollectionItemViewModel
+
+        private var items: [PosterButtonType<BaseItemDto>] {
+            if viewModel.isLoading {
+                return PosterButtonType.loading.random(in: 3 ..< 8)
+            } else {
+                return viewModel.collectionItems.map { .item($0) }
+            }
+        }
 
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
@@ -38,11 +48,13 @@ extension CollectionItemView {
 
                 // MARK: Items
 
-                if !viewModel.collectionItems.isEmpty {
-                    PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
-                        .onSelect { item in
-                            itemRouter.route(to: \.item, item)
-                        }
+                PosterHStack(
+                    title: L10n.items,
+                    type: .portrait,
+                    items: items
+                )
+                .onSelect { item in
+                    router.route(to: \.item, item)
                 }
             }
         }

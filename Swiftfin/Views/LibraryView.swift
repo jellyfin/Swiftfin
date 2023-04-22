@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import CollectionView
@@ -13,13 +13,14 @@ import SwiftUI
 
 struct LibraryView: View {
 
-    @EnvironmentObject
-    private var router: LibraryCoordinator.Router
-    @ObservedObject
-    var viewModel: LibraryViewModel
-
     @Default(.Customization.Library.viewType)
     private var libraryViewType
+
+    @EnvironmentObject
+    private var router: LibraryCoordinator.Router
+
+    @ObservedObject
+    var viewModel: LibraryViewModel
 
     @ViewBuilder
     private var loadingView: some View {
@@ -64,7 +65,7 @@ struct LibraryView: View {
                 libraryItemsView
             }
         }
-        .navigationTitle(viewModel.parent?.displayName ?? "")
+        .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .navBarDrawer {
             ScrollView(.horizontal, showsIndicators: false) {

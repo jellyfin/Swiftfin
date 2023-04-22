@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -12,24 +12,19 @@ import SwiftUI
 struct ItemOverviewView: View {
 
     @EnvironmentObject
-    private var itemOverviewRouter: ItemOverviewCoordinator.Router
+    private var router: ItemOverviewCoordinator.Router
+
     let item: BaseItemDto
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            Text(item.overview ?? "")
-                .font(.body)
+            ItemView.OverviewView(item: item)
                 .padding()
         }
-        .navigationBarTitle(L10n.overview, displayMode: .inline)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                Button {
-                    itemOverviewRouter.dismissCoordinator()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                }
-            }
+        .navigationTitle(L10n.overview)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationCloseButton {
+            router.dismissCoordinator()
         }
     }
 }

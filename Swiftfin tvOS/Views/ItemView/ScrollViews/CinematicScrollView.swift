@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -45,7 +45,7 @@ extension ItemView {
         }
 
         @EnvironmentObject
-        private var itemRouter: ItemCoordinator.Router
+        private var router: ItemCoordinator.Router
         @ObservedObject
         var viewModel: ItemViewModel
         @FocusState
@@ -72,7 +72,7 @@ extension ItemView {
                             EmptyView()
                         }
                         .failure {
-                            Text(viewModel.item.displayName)
+                            Text(viewModel.item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                                 .lineLimit(2)
@@ -86,6 +86,7 @@ extension ItemView {
                             .lineLimit(3)
 
                         HStack {
+
                             DotHStack {
                                 if let firstGenre = viewModel.item.genres?.first {
                                     firstGenre.text

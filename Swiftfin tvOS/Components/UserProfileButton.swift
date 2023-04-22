@@ -3,13 +3,17 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct UserProfileButton: View {
+
+    @Injected(Container.userSession)
+    private var userSession
 
     @FocusState
     private var isFocused: Bool
@@ -22,8 +26,8 @@ struct UserProfileButton: View {
         self.action = {}
     }
 
-    init(user: SwiftfinStore.State.User) {
-        self.init(user: .init(name: user.username, id: user.id))
+    init(user: UserState) {
+        self.init(user: .init(id: user.id, name: user.username))
     }
 
     var body: some View {
@@ -31,7 +35,7 @@ struct UserProfileButton: View {
             Button {
                 action()
             } label: {
-                ImageView(user.profileImageSource(maxWidth: 250, maxHeight: 250))
+                ImageView(user.profileImageSource(client: userSession.client, maxWidth: 250, maxHeight: 250))
                     .failure {
                         Image(systemName: "person.fill")
                             .resizable()
@@ -49,9 +53,8 @@ struct UserProfileButton: View {
 }
 
 extension UserProfileButton {
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.action = action
-        return copy
+        copy(modifying: \.action, with: action)
     }
 }

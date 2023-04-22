@@ -3,33 +3,33 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
 import Foundation
 import UDPBroadcast
 
-public class ServerDiscovery {
+class ServerDiscovery {
 
     @Injected(LogManager.service)
     private var logger
 
-    public struct ServerLookupResponse: Codable, Hashable, Identifiable {
+    struct ServerLookupResponse: Codable, Hashable, Identifiable {
 
-        public func hash(into hasher: inout Hasher) {
+        func hash(into hasher: inout Hasher) {
             hasher.combine(id)
         }
 
         private let address: String
-        public let id: String
-        public let name: String
+        let id: String
+        let name: String
 
-        public var url: URL {
+        var url: URL {
             URL(string: self.address)!
         }
 
-        public var host: String {
+        var host: String {
             let components = URLComponents(string: self.address)
             if let host = components?.host {
                 return host
@@ -37,7 +37,7 @@ public class ServerDiscovery {
             return self.address
         }
 
-        public var port: Int {
+        var port: Int {
             let components = URLComponents(string: self.address)
             if let port = components?.port {
                 return port
@@ -56,12 +56,12 @@ public class ServerDiscovery {
 
     init() {}
 
-    public func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
+    func locateServer(completion: @escaping (ServerLookupResponse?) -> Void) {
 
         func receiveHandler(_ ipAddress: String, _ port: Int, _ data: Data) {
             do {
                 let response = try JSONDecoder().decode(ServerLookupResponse.self, from: data)
-                logger.debug("Received JellyfinServer from \"\(response.name)\"", tag: "ServerDiscovery")
+                logger.debug("Received JellyfinServer from \"\(response.name)\"")
                 completion(response)
             } catch {
                 completion(nil)
@@ -69,15 +69,15 @@ public class ServerDiscovery {
         }
 
         func errorHandler(error: UDPBroadcastConnection.ConnectionError) {
-            logger.error("Error handling response: \(error.localizedDescription)", tag: "ServerDiscovery")
+            logger.error("Error handling response: \(error.localizedDescription)")
         }
 
         do {
             self.connection = try! UDPBroadcastConnection(port: 7359, handler: receiveHandler, errorHandler: errorHandler)
             try self.connection?.sendBroadcast("Who is JellyfinServer?")
-            logger.debug("Discovery broadcast sent", tag: "ServerDiscovery")
+            logger.debug("Discovery broadcast sent")
         } catch {
-            logger.error("Error sending discovery broadcast", tag: "ServerDiscovery")
+            logger.error("Error sending discovery broadcast")
         }
     }
 }

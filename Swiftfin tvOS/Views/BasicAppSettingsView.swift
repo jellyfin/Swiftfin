@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2022 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -13,56 +13,69 @@ import SwiftUI
 struct BasicAppSettingsView: View {
 
     @EnvironmentObject
-    private var basicAppSettingsRouter: BasicAppSettingsCoordinator.Router
-    @ObservedObject
-    var viewModel: BasicAppSettingsViewModel
-    @State
-    var resetTapped: Bool = false
+    private var router: BasicAppSettingsCoordinator.Router
 
-    @Default(.appAppearance)
-    var appAppearance
+    @ObservedObject
+    var viewModel: SettingsViewModel
+
+    @State
+    private var resetUserSettingsSelected: Bool = false
+    @State
+    private var removeAllServersSelected: Bool = false
 
     var body: some View {
-        Form {
+        SplitFormWindowView()
+            .descriptionView {
+                Image("jellyfin-blob-blue")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
+            }
+            .contentView {
 
-            Section {
-                Button {} label: {
-                    HStack {
-                        L10n.version.text
-                        Spacer()
-                        Text("\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))")
-                            .foregroundColor(.secondary)
+                Section {
+
+                    Button {
+                        TextPairView(
+                            leading: L10n.version,
+                            trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+                        )
+                    }
+
+                    ChevronButton(title: "Logs")
+                        .onSelect {
+                            router.route(to: \.log)
+                        }
+                }
+
+                Section {
+
+                    Button {
+                        resetUserSettingsSelected = true
+                    } label: {
+                        L10n.resetUserSettings.text
+                    }
+
+                    Button {
+                        removeAllServersSelected = true
+                    } label: {
+                        Text("Remove All Servers")
                     }
                 }
-            } header: {
-                L10n.about.text
             }
-
-            // TODO: Implement once design is theme appearance friendly
-            //			Section {
-            //				Picker(L10n.appearance, selection: $appAppearance) {
-            //					ForEach(self.viewModel.appearances, id: \.self) { appearance in
-            //						Text(appearance.localizedName).tag(appearance.rawValue)
-            //					}
-            //				}
-            //			} header: {
-            //				L10n.accessibility.text
-            //			}
-
-            Button {
-                resetTapped = true
-            } label: {
-                L10n.reset.text
+            .withDescriptionTopPadding()
+            .navigationTitle(L10n.settings)
+            .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
+                Button(L10n.reset, role: .destructive) {
+                    viewModel.resetUserSettings()
+                }
+            } message: {
+                Text("Reset all settings back to defaults.")
             }
-        }
-        .alert(L10n.reset, isPresented: $resetTapped, actions: {
-            Button(role: .destructive) {
-                viewModel.resetAppSettings()
-                basicAppSettingsRouter.dismissCoordinator()
-            } label: {
-                L10n.reset.text
+            .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+                Button(L10n.reset, role: .destructive) {
+                    viewModel.removeAllServers()
+                }
             }
-        })
-        .navigationTitle(L10n.settings)
     }
 }
