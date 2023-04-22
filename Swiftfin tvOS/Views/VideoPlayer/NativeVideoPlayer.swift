@@ -66,7 +66,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         self.videoPlayerManager = manager
 
         super.init(nibName: nil, bundle: nil)
-        
+
         let newPlayer: AVPlayer
 
         if manager.currentViewModel.streamType == .direct {

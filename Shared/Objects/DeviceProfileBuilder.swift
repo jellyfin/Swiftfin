@@ -29,7 +29,8 @@ class DeviceProfileBuilder {
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin { // VLCKit
             // Build direct play profiles
             directPlayProfiles = [
-                // Just make one profile because if VLCKit can't decode it in a certain container, ffmpeg probably can't decode it for transcode either
+                // Just make one profile because if VLCKit can't decode it in a certain container, ffmpeg probably can't decode it for
+                // transcode either
                 DirectPlayProfile(
                     // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can VLCKit
                     // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
@@ -43,7 +44,8 @@ class DeviceProfileBuilder {
             // 1) TrueHD/mlp audio
             // 2) When server forces transcode for bitrate reasons
             transcodingProfiles = [TranscodingProfile(
-                audioCodec: "flac,alac,aac,eac3,ac3,dts,opus,vorbis,mp3,mp2,mp1", // no PCM,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
+                audioCodec: "flac,alac,aac,eac3,ac3,dts,opus,vorbis,mp3,mp2,mp1",
+                // no PCM,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
                 isBreakOnNonKeyFrames: true,
                 container: "mp4",
                 context: .streaming,
@@ -51,7 +53,8 @@ class DeviceProfileBuilder {
                 minSegments: 2,
                 protocol: "hls",
                 type: .video,
-                videoCodec: "hevc,h264,av1,vp9,vc1,mpeg4,h263,mpeg2video,mpeg1video,mjpeg" // vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1 not supported in mp4
+                videoCodec: "hevc,h264,av1,vp9,vc1,mpeg4,h263,mpeg2video,mpeg1video,mjpeg" // vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1
+                // not supported in mp4
             )]
 
             // Create subtitle profiles
@@ -65,7 +68,8 @@ class DeviceProfileBuilder {
                 SubtitleProfile(format: "mov_text", method: .embed), // MPEG-4 Timed Text
                 SubtitleProfile(format: "ttml", method: .embed),
                 SubtitleProfile(format: "text", method: .embed), // txt
-                SubtitleProfile(format: "dvbsub", method: .embed), // dvb_subtitle normalized to dvbsub; burned in during transcode regardless?
+                SubtitleProfile(format: "dvbsub", method: .embed),
+                // dvb_subtitle normalized to dvbsub; burned in during transcode regardless?
                 SubtitleProfile(format: "libzvbi_teletextdec", method: .embed), // dvb_teletext
                 SubtitleProfile(format: "xsub", method: .embed),
                 SubtitleProfile(format: "vplayer", method: .embed),
@@ -87,7 +91,8 @@ class DeviceProfileBuilder {
                 SubtitleProfile(format: "text", method: .external), // txt
                 SubtitleProfile(format: "dvbsub", method: .external), // dvb_subtitle normalized to dvbsub
                 SubtitleProfile(format: "libzvbi_teletextdec", method: .external), // dvb_teletext
-                SubtitleProfile(format: "dvdsub", method: .external), // *dvd* normalized to dvdsub; includes sub/idx I think; microdvd case?
+                SubtitleProfile(format: "dvdsub", method: .external),
+                // *dvd* normalized to dvdsub; includes sub/idx I think; microdvd case?
                 SubtitleProfile(format: "xsub", method: .external),
                 SubtitleProfile(format: "vplayer", method: .external),
                 SubtitleProfile(format: "subviewer", method: .external),
@@ -153,7 +158,7 @@ class DeviceProfileBuilder {
                     protocol: "hls",
                     type: .video,
                     videoCodec: "hevc,h264,mpeg4"
-                )
+                ),
             ]
 
             // Create subtitle profiles
