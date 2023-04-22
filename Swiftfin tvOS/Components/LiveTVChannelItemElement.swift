@@ -185,9 +185,10 @@ struct LiveTVChannelItemElement_Preview: PreviewProvider {
                 currentProgramText: LiveTVChannelViewProgram(timeDisplay: "11:30", title: "Program Title 1"),
                 nextProgramsText: [
                     LiveTVChannelViewProgram(timeDisplay: "12:00", title: "Next Program Title"),
-                    LiveTVChannelViewProgram(timeDisplay: "12:30", title: "Third title")
+                    LiveTVChannelViewProgram(timeDisplay: "12:30", title: "Third title"),
                 ],
-                onSelect: { _ in })
+                onSelect: { _ in }
+            )
         }
     }
 }

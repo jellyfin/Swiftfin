@@ -19,8 +19,7 @@ struct LiveTVProgramsView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
-                if !viewModel.recommendedItems.isEmpty
-                {
+                if !viewModel.recommendedItems.isEmpty {
                     let items = viewModel.recommendedItems
                     PosterHStack(title: "On Now", type: .portrait, items: items)
 //                        .onSelect { item in
