@@ -176,19 +176,3 @@ struct LiveTVChannelItemElement: View {
         }
     }
 }
-
-struct LiveTVChannelItemElement_Preview: PreviewProvider {
-    static var previews: some View {
-        HStack {
-            LiveTVChannelItemElement(
-                channel: BaseItemDto(name: "Test TV Chan", number: "12"),
-                currentProgramText: LiveTVChannelViewProgram(timeDisplay: "11:30", title: "Program Title 1"),
-                nextProgramsText: [
-                    LiveTVChannelViewProgram(timeDisplay: "12:00", title: "Next Program Title"),
-                    LiveTVChannelViewProgram(timeDisplay: "12:30", title: "Third title"),
-                ],
-                onSelect: { _ in }
-            )
-        }
-    }
-}
