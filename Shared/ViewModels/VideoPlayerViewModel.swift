@@ -30,14 +30,13 @@ class VideoPlayerViewModel: ViewModel {
 
     var hlsPlaybackURL: URL {
 
-        let segmentContainer = Defaults[.VideoPlayer.Native.fMP4Container] ? "mp4" : "ts"
         let userSession = Container.userSession.callAsFunction()
 
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,
             playSessionID: playSessionID,
-            segmentContainer: segmentContainer,
+            segmentContainer: "mp4",
             minSegments: 2,
             mediaSourceID: mediaSource.id!,
             deviceID: UIDevice.vendorUUIDString,
@@ -46,7 +45,7 @@ class VideoPlayerViewModel: ViewModel {
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
             requireAvc: false,
-            transcodingMaxAudioChannels: 6,
+            transcodingMaxAudioChannels: 8,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
