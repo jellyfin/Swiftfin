@@ -67,13 +67,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer
-
-        if manager.currentViewModel.streamType == .direct {
-            newPlayer = .init(url: manager.currentViewModel.playbackURL)
-        } else { // .transcode, .hls
-            newPlayer = .init(url: manager.currentViewModel.hlsPlaybackURL)
-        }
+        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.playbackURL)
 
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
