@@ -50,7 +50,7 @@ struct SwiftfinApp: App {
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
 
-        // Don't let the tab bar disappear when a new view is pushed
+        // Sometimes the tab bar won't appear properly on push, always have material background
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
     }
 

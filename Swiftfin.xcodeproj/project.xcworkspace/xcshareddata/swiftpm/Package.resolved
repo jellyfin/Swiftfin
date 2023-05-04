@@ -163,6 +163,15 @@
       }
     },
     {
+      "identity" : "udpbroadcastconnection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
+      "state" : {
+        "revision" : "2e8b55bc79c5352d779058f30bdb3214fee385b5",
+        "version" : "5.0.4"
+      }
+    },
+    {
       "identity" : "urlqueryencoder",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CreateAPI/URLQueryEncoder",

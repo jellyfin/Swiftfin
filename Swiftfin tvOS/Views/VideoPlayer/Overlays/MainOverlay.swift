@@ -51,32 +51,3 @@ extension VideoPlayer {
         }
     }
 }
-
-// struct VideoPlayerOverlay_Preview: PreviewProvider {
-//
-//    static var previews: some View {
-//        ZStack {
-//
-//            Color.red
-//
-//            VideoPlayer.MainOverlay()
-//                .environmentObject(VideoPlayerManager())
-//                .environmentObject(VideoPlayerViewModel(
-//                    playbackURL: URL(string: "http://apple.com")!,
-//                    item: .init(indexNumber: 1, name: "Interstellar", parentIndexNumber: 1, seriesName: "New Girl", type: .episode),
-//                    mediaSource: .init(),
-//                    playSessionID: "",
-//                    videoStreams: [],
-//                    audioStreams: [],
-//                    subtitleStreams: [],
-//                    selectedAudioStreamIndex: 1,
-//                    selectedSubtitleStreamIndex: 1,
-//                    chapters: [],
-//                    streamType: .direct)
-//                )
-//                .environmentObject(VideoPlayerManager.CurrentProgressHandler())
-//                .environmentObject(TimerProxy())
-//        }
-//        .ignoresSafeArea()
-//    }
-// }
