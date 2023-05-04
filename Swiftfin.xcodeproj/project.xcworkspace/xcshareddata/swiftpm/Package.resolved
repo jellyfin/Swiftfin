@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
       "state" : {
-        "revision" : "2e8b55bc79c5352d779058f30bdb3214fee385b5",
-        "version" : "5.0.4"
+        "revision" : "3680f532c00d18a168bb8da7b9f8f82fcd89180d",
+        "version" : "5.0.5"
       }
     },
     {
