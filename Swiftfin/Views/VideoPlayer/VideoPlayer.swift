@@ -254,7 +254,7 @@ extension VideoPlayer {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager,
-            overlay: { EmptyView() }
+            overlay: { VideoPlayer.Overlay() }
         )
     }
 
