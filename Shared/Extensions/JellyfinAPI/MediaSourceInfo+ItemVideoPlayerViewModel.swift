@@ -17,10 +17,12 @@ extension MediaSourceInfo {
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
         let userSession = Container.userSession.callAsFunction()
-        let playbackURL: URL
+        let playbackURL: URL?
         let streamType: StreamType
 
-        if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
+            playbackURL = URL(string: path)
+            streamType = .strm
+        } else if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
             guard let fullTranscodeURL = URL(string: "".appending(transcodingURL))
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
@@ -48,7 +50,7 @@ extension MediaSourceInfo {
         let subtitleStreams = mediaStreams?.filter { $0.type == .subtitle } ?? []
 
         return .init(
-            playbackURL: playbackURL,
+            playbackURL: playbackURL!,
             item: item,
             mediaSource: self,
             playSessionID: playSessionID,
