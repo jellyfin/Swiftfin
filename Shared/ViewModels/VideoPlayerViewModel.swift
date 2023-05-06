@@ -45,6 +45,7 @@ class VideoPlayerViewModel: ViewModel {
                 .compactMap(\.codec)
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
+            subtitleMethod: SubtitleDeliveryMethod.hls,
             requireAvc: false,
             transcodingMaxAudioChannels: 6,
             videoCodec: videoStreams
