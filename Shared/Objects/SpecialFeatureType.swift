@@ -9,19 +9,6 @@
 import Foundation
 import JellyfinAPI
 
-// enum SpecialFeatureType: String, CaseIterable, Displayable {
-//
-//    case unknown = "Unknown"
-//    case clip = "Clip"
-//    case trailer = "Trailer"
-//    case behindTheScenes = "BehindTheScenes"
-//    case deletedScene = "DeletedScene"
-//    case interview = "Interview"
-//    case scene = "Scene"
-//    case sample = "Sample"
-//    case themeSong = "ThemeSong"
-//    case themeVideo = "ThemeVideo"
-
 extension SpecialFeatureType: Displayable {
 
     // TODO: localize
