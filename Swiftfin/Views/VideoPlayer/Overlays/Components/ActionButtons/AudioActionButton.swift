@@ -37,6 +37,9 @@ extension VideoPlayer.Overlay.ActionButtons {
                         }
                     }
                 }
+                .onAppear {
+                    videoPlayerManager.audioTrackIndex = viewModel.selectedAudioStreamIndex
+                }
             } label: {
                 content(videoPlayerManager.audioTrackIndex != -1)
                     .eraseToAnyView()

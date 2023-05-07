@@ -188,13 +188,7 @@ class VideoPlayerManager: ViewModel {
             let request = Paths.reportPlaybackStart(startInfo)
             let _ = try await userSession.client.send(request)
 
-            let progressTask = DispatchWorkItem {
-                self.sendProgressReport()
-            }
-
-            currentProgressWorkItem = progressTask
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: progressTask)
+            self.sendProgressReport()
         }
     }
 
