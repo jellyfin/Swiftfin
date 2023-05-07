@@ -13,6 +13,7 @@ enum StreamType: Displayable {
     case direct
     case transcode
     case hls
+    case strm
 
     var displayTitle: String {
         switch self {
@@ -22,6 +23,8 @@ enum StreamType: Displayable {
             return "Transcode"
         case .hls:
             return "HLS"
+        case .strm:
+            return "STRM"
         }
     }
 }

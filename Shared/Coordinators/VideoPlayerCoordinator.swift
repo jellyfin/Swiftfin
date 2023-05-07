@@ -33,9 +33,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     VideoPlayer(manager: self.videoPlayerManager)
-                        .overlay {
-                            VideoPlayer.Overlay()
-                        }
                 } else {
                     NativeVideoPlayer(manager: self.videoPlayerManager)
                 }

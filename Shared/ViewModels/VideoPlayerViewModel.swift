@@ -34,7 +34,7 @@ class VideoPlayerViewModel: ViewModel {
         let userSession = Container.userSession.callAsFunction()
 
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
-            isStatic: true,
+            isStatic: streamType == .strm ? false : true,
             tag: mediaSource.eTag,
             playSessionID: playSessionID,
             segmentContainer: segmentContainer,
@@ -45,6 +45,7 @@ class VideoPlayerViewModel: ViewModel {
                 .compactMap(\.codec)
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
+            subtitleMethod: SubtitleDeliveryMethod.hls,
             requireAvc: false,
             transcodingMaxAudioChannels: 6,
             videoCodec: videoStreams
@@ -60,6 +61,8 @@ class VideoPlayerViewModel: ViewModel {
 
         let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
             .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
+        
+        print(hlsStreamComponents.url!)
 
         return hlsStreamComponents.url!
     }
