@@ -249,7 +249,7 @@ extension VideoPlayer {
     init(manager: VideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
-            videoPlayerManager: manager   
+            videoPlayerManager: manager
         )
     }
 }
