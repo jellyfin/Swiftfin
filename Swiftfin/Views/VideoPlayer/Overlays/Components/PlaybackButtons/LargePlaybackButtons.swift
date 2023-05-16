@@ -40,6 +40,7 @@ extension VideoPlayer.Overlay {
                     .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
+            .buttonStyle(ScalingButtonStyle(scale: 0.9))
         }
 
         @ViewBuilder
@@ -66,9 +67,11 @@ extension VideoPlayer.Overlay {
                 }
                 .font(.system(size: 56, weight: .bold, design: .default))
                 .padding()
+                .transition(.opacity)
                 .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
+            .buttonStyle(ScalingButtonStyle(scale: 0.9))
         }
 
         @ViewBuilder
@@ -83,6 +86,7 @@ extension VideoPlayer.Overlay {
                     .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
+            .buttonStyle(ScalingButtonStyle(scale: 0.9))
         }
 
         var body: some View {
