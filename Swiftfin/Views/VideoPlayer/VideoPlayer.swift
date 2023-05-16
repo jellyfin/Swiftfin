@@ -101,7 +101,6 @@ struct VideoPlayer: View {
 
     private let gestureStateHandler: GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
-    private var overlay: () -> any View
 
     @ViewBuilder
     private var playerView: some View {
@@ -155,19 +154,16 @@ struct VideoPlayer: View {
                             }
                         }
 
-                    Group {
-                        overlay()
-                            .eraseToAnyView()
-                    }
-                    .environmentObject(splitContentViewProxy)
-                    .environmentObject(videoPlayerManager)
-                    .environmentObject(videoPlayerManager.currentProgressHandler)
-                    .environmentObject(videoPlayerManager.currentViewModel!)
-                    .environmentObject(videoPlayerManager.proxy)
-                    .environment(\.aspectFilled, $isAspectFilled)
-                    .environment(\.isPresentingOverlay, $isPresentingOverlay)
-                    .environment(\.isScrubbing, $isScrubbing)
-                    .environment(\.playbackSpeed, $playbackSpeed)
+                    VideoPlayer.Overlay()
+                        .environmentObject(splitContentViewProxy)
+                        .environmentObject(videoPlayerManager)
+                        .environmentObject(videoPlayerManager.currentProgressHandler)
+                        .environmentObject(videoPlayerManager.currentViewModel!)
+                        .environmentObject(videoPlayerManager.proxy)
+                        .environment(\.aspectFilled, $isAspectFilled)
+                        .environment(\.isPresentingOverlay, $isPresentingOverlay)
+                        .environment(\.isScrubbing, $isScrubbing)
+                        .environment(\.playbackSpeed, $playbackSpeed)
                 }
             }
             .splitContent {
@@ -253,13 +249,8 @@ extension VideoPlayer {
     init(manager: VideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
-            videoPlayerManager: manager,
-            overlay: { EmptyView() }
+            videoPlayerManager: manager
         )
-    }
-
-    func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.overlay, with: content)
     }
 }
 
