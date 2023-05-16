@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   pull_request:
     types:
+      - opened
       - synchronize
       - ready_for_review
     branches: [ main ]
@@ -46,9 +47,13 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
       
-      - name: xcodebuild!
-        run: |
-          xcodebuild build -project "Swiftfin.xcodeproj" \
-          -scheme "${{ matrix.scheme }}" \
-          CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
+      - name: Build
+        uses: nick-fields/retry@v2
+        with:
+          max_attempts: 3
+          retry_on: error
+          command: |
+            xcodebuild build -project "Swiftfin.xcodeproj" \
+            -scheme "${{ matrix.scheme }}" \
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
       
