@@ -205,6 +205,7 @@ struct VideoPlayer: View {
                 playerView
             } else {
                 LoadingView()
+                    .transition(.opacity)
             }
         }
         .navigationBarHidden(true)

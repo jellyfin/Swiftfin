@@ -36,6 +36,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "xmark")
                             .padding()
                     }
+                    .buttonStyle(ScalingButtonStyle(scale: 0.8))
 
                     Text(viewModel.item.displayTitle)
                         .font(.title3)
@@ -48,6 +49,7 @@ extension VideoPlayer.Overlay {
                     Spacer()
 
                     VideoPlayer.Overlay.BarActionButtons()
+                        .buttonStyle(ScalingButtonStyle(scale: 0.8))
                 }
                 .font(.system(size: 24))
                 .tint(Color.white)

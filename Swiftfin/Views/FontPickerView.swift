@@ -30,7 +30,7 @@ struct FontPickerView: View {
         )
         .label { fontFamily in
             Text(fontFamily)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .font(.custom(fontFamily, size: 18))
         }
         .onChange(of: updateSelection) { newValue in
