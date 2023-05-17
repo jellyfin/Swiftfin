@@ -39,7 +39,7 @@ struct SelectorView<Item: Displayable & Identifiable>: View {
 
                     Spacer()
 
-                    if selection.contains { $0.id == item.id } {
+                    if selection.contains(where: { $0.id == item.id }) {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)

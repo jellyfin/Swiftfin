@@ -32,8 +32,6 @@ struct VideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
 
-    private var overlay: () -> any View
-
     @ViewBuilder
     private var playerView: some View {
         ZStack {
@@ -64,7 +62,7 @@ struct VideoPlayer: View {
                     }
                 }
 
-            overlay()
+            VideoPlayer.Overlay()
                 .eraseToAnyView()
                 .environmentObject(videoPlayerManager)
                 .environmentObject(videoPlayerManager.currentProgressHandler)
@@ -110,12 +108,7 @@ extension VideoPlayer {
     init(manager: VideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
-            videoPlayerManager: manager,
-            overlay: { EmptyView() }
+            videoPlayerManager: manager
         )
-    }
-
-    func overlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.overlay, with: content)
     }
 }

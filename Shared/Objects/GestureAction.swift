@@ -9,7 +9,8 @@
 import Defaults
 import Foundation
 
-// TODO: look at optional values for defaults to remove .none
+// Optional values aren't yet supported in Defaults
+// https://github.com/sindresorhus/Defaults/issues/54
 
 protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable {}
 

@@ -51,12 +51,3 @@ extension ItemView.AboutView {
         }
     }
 }
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ItemView.AboutView.InformationCard(
-            title: "Subtitles",
-            content: "Fre - Default - PGSSUB"
-        )
-    }
-}
