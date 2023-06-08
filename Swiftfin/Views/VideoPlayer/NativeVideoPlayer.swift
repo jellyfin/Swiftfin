@@ -72,7 +72,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
-        
+
         // enable pip
         allowsPictureInPicturePlayback = true
 
