@@ -43,55 +43,15 @@ extension ItemView {
                         .posterStyle(type: .portrait, width: 130)
                         .accessibilityIgnoresInvertColors()
 
-                        Card(title: viewModel.item.displayTitle)
-                            .content {
-                                if let overview = viewModel.item.overview {
-                                    TruncatedTextView(text: overview)
-                                        .lineLimit(4)
-                                        .font(.footnote)
-                                        .seeMoreAction {
-                                            router.route(to: \.itemOverview, viewModel.item)
-                                        }
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    L10n.noOverviewAvailable.text
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .onSelect {
-                                router.route(to: \.itemOverview, viewModel.item)
-                            }
-
-                        if viewModel.item.type == .episode ||
-                            viewModel.item.type == .movie,
-                            let mediaSources = viewModel.item.mediaSources
-                        {
+                        OverviewCard(item: viewModel.item)
+                        
+                        if let mediaSources = viewModel.item.mediaSources {
                             ForEach(mediaSources) { source in
-                                Card(title: L10n.media, subtitle: mediaSources.count > 1 ? source.displayTitle : nil)
-                                    .content {
-                                        if let mediaStreams = source.mediaStreams {
-                                            VStack(alignment: .leading) {
-                                                ForEach(mediaStreams.prefix(4), id: \.index) { mediaStream in
-                                                    Text(mediaStream.displayTitle ?? .emptyDash)
-                                                        .lineLimit(1)
-                                                        .font(.footnote)
-                                                        .foregroundColor(.secondary)
-                                                }
-
-                                                if mediaStreams.count > 4 {
-                                                    L10n.seeMore.text
-                                                        .font(.footnote)
-                                                        .foregroundColor(accentColor)
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .onSelect {
-                                        router.route(to: \.mediaSourceInfo, source)
-                                    }
+                                MediaSourcesCard(subtitle: mediaSources.count > 1 ? source.displayTitle : nil, source: source)
                             }
                         }
+                        
+                        RatingsCard(item: viewModel.item)
                     }
                     .padding(.horizontal)
                     .if(UIDevice.isIPad) { view in

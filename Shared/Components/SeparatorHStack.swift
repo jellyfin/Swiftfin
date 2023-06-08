@@ -17,7 +17,8 @@ struct SeparatorHStack: View {
 
     var body: some View {
         _VariadicView.Tree(SeparatorHStackLayout(separator: separator)) {
-            AnyView(content())
+            content()
+                .eraseToAnyView()
         }
     }
 }

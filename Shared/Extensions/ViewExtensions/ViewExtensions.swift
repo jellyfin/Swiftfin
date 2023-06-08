@@ -217,10 +217,4 @@ extension View {
             .ignoresSafeArea()
         }
     }
-
-    func inBasicNavigationCoordinatable() -> BasicNavigationViewCoordinator {
-        BasicNavigationViewCoordinator {
-            self
-        }
-    }
 }

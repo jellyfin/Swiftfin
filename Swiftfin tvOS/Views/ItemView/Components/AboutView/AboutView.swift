@@ -16,46 +16,97 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
 
                 L10n.about.text
-                    .font(.title3)
+                    .font(.title2)
                     .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
                     .padding(.leading, 50)
 
                 ScrollView(.horizontal) {
-                    HStack(spacing: 30) {
-                        ImageView(
-                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item
-                                .imageSource(.primary, maxWidth: 300)
-                        )
-                        .failure {
-                            InitialFailureView(viewModel.item.title.initials)
-                        }
-                        .posterStyle(type: .portrait, width: 270)
-
-                        InformationCard(
-                            title: viewModel.item.displayTitle,
-                            content: viewModel.item.overview ?? L10n.noOverviewAvailable
-                        )
-
-                        if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
-                            InformationCard(
-                                title: L10n.subtitles,
-                                content: subtitleStreams.compactMap(\.displayTitle).joined(separator: ", ")
-                            )
-                        }
-
-                        if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
-                            InformationCard(title: L10n.audio, content: audioStreams.compactMap(\.displayTitle).joined(separator: ", "))
+                    HStack(alignment: .top, spacing: 30) {
+                        PosterButton(item: viewModel.item, type: .portrait)
+                            .content {
+                                EmptyView()
+                            }
+                            .imageOverlay {
+                                EmptyView()
+                            }
+                            .scaleItem(1.35)
+                        
+                        OverviewCard(item: viewModel.item)
+                        
+//                        if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
+//                            MediaSourcesCard(title: L10n.subtitles, mediaSources: subtitleStreams)
+//                        }
+//
+//                        if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
+//                            MediaSourcesCard(title: L10n.audio, mediaSources: audioStreams)
+//                        }
+                        
+                        if viewModel.item.hasRatings {
+                            RatingsCard(item: viewModel.item)
                         }
                     }
-                    .padding(.horizontal, 50)
-                    .padding(.top)
-                    .padding(.bottom, 100)
+                    .padding(50)
                 }
             }
             .focusSection()
         }
+    }
+}
+
+extension ItemView.AboutView {
+    
+    struct Card: View {
+
+//        private var alertContent: () -> any View
+        private var content: () -> any View
+        private var onSelect: () -> Void
+        private let title: String
+        private let subtitle: String?
+
+        var body: some View {
+            Button {
+                onSelect()
+            } label: {
+                VStack(alignment: .leading) {
+                    Text(title)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .lineLimit(2)
+
+                    Spacer()
+                        .frame(maxWidth: .infinity)
+                    
+                    content()
+                        .eraseToAnyView()
+                }
+                .padding2()
+                .frame(width: 700, height: 405)
+            }
+            .buttonStyle(.card)
+        }
+    }
+}
+
+extension ItemView.AboutView.Card {
+    
+    init(title: String, subtitle: String? = nil) {
+        self.init(
+            content: { EmptyView() },
+            onSelect: {},
+            title: title,
+            subtitle: subtitle
+        )
+    }
+
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.content, with: content)
+    }
+
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -23,11 +23,12 @@ struct UserListView: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.signIn) {
-                router.route(to: \.userSignIn, viewModel.server)
-            }
-            .frame(maxWidth: 300)
-            .frame(height: 50)
+            PrimaryButton(title: L10n.signIn)
+                .onSelect {
+                    router.route(to: \.userSignIn, viewModel.server)
+                }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
         }
     }
 

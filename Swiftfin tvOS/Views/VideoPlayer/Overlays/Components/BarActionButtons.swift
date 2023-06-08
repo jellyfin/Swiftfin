@@ -46,6 +46,11 @@ extension VideoPlayer.Overlay {
                 ActionButtons.PlayPreviousItem()
             }
         }
+        
+        @ViewBuilder
+        private var subtitleButton: some View {
+            ActionButtons.SubtitleButton()
+        }
 
         @ViewBuilder
         private var menuItemButton: some View {
@@ -68,6 +73,8 @@ extension VideoPlayer.Overlay {
                 autoPlayButton
 
                 chaptersButton
+                
+                subtitleButton
 
                 menuItemButton
             }

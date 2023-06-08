@@ -264,6 +264,8 @@ internal enum L10n {
   internal static let operatingSystem = L10n.tr("Localizable", "operatingSystem", fallback: "Operating System")
   /// Orange
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
+  /// Order
+  internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Other User
@@ -448,6 +450,8 @@ internal enum L10n {
   internal static let smaller = L10n.tr("Localizable", "smaller", fallback: "Smaller")
   /// Smallest
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
+  /// Sort
+  internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
   /// Sort by
   internal static let sortBy = L10n.tr("Localizable", "sortBy", fallback: "Sort by")
   /// Source Code
