@@ -44,13 +44,13 @@ extension ItemView {
                         .accessibilityIgnoresInvertColors()
 
                         OverviewCard(item: viewModel.item)
-                        
+
                         if let mediaSources = viewModel.item.mediaSources {
                             ForEach(mediaSources) { source in
                                 MediaSourcesCard(subtitle: mediaSources.count > 1 ? source.displayTitle : nil, source: source)
                             }
                         }
-                        
+
                         RatingsCard(item: viewModel.item)
                     }
                     .padding(.horizontal)

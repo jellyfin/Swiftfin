@@ -13,7 +13,7 @@ struct FilterDrawerHStack: View {
 
     @ObservedObject
     private var viewModel: FilterViewModel
-    
+
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
@@ -74,7 +74,7 @@ struct FilterDrawerHStack: View {
 }
 
 extension FilterDrawerHStack {
-    
+
     init(viewModel: FilterViewModel) {
         self.init(
             viewModel: viewModel,

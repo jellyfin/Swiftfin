@@ -61,7 +61,7 @@ struct LibraryItemRow: View {
 }
 
 extension LibraryItemRow {
-    
+
     init(item: BaseItemDto) {
         self.init(
             item: item,

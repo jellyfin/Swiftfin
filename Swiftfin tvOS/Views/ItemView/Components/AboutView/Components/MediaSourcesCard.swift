@@ -10,18 +10,17 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct MediaSourcesCard: View {
-        
+
         let subtitle: String?
         let source: MediaSourceInfo
-        
+
         var body: some View {
-            
             Text("")
 //            Card(title: title)
 //                .cardContent {
-//                    TruncatedTextView(text: mediaSources.compactMap(\.displayTitle).joined(separator: ", "))
+//                    TruncatedText(text: mediaSources.compactMap(\.displayTitle).joined(separator: ", "))
 //                        .font(.subheadline)
 //                        .lineLimit(4)
 //                }

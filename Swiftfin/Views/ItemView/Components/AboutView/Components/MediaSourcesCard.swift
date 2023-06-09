@@ -11,18 +11,18 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct MediaSourcesCard: View {
-        
+
         @Default(.accentColor)
         private var accentColor
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        
+
         let subtitle: String?
         let source: MediaSourceInfo
-        
+
         var body: some View {
             Card(title: L10n.media, subtitle: subtitle)
                 .content {

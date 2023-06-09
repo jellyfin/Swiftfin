@@ -37,14 +37,14 @@ struct PrimaryButton: View {
 }
 
 extension PrimaryButton {
-    
+
     init(title: String) {
         self.init(
             title: title,
             onSelect: {}
         )
     }
-    
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }

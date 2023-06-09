@@ -25,11 +25,11 @@ extension Array {
     func appending(_ contents: [Element]) -> [Element] {
         self + contents
     }
-    
+
     func count(where predicate: (Element) throws -> Bool) rethrows -> Int {
         try filter(predicate).count
     }
-    
+
     func oneSatisfies(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         try first(where: predicate) != nil
     }

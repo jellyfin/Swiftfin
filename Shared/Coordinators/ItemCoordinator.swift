@@ -70,7 +70,7 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     #if os(iOS)
     func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
-        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
+        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: source))
     }
 
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
@@ -84,7 +84,7 @@ final class ItemCoordinator: NavigationCoordinatable {
             Text("")
         }
     }
-    
+
     func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
         NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
     }

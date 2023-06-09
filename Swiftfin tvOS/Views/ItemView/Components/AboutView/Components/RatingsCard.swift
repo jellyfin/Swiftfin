@@ -10,11 +10,11 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct RatingsCard: View {
-        
+
         let item: BaseItemDto
-        
+
         @ViewBuilder
         private var ratings: some View {
             HStack {
@@ -29,23 +29,23 @@ extension ItemView.AboutView {
                         }
                         .symbolRenderingMode(.multicolor)
                         .foregroundStyle(.green, .red)
-                        
+
                         Text("\(criticRating, specifier: "%.0f")")
                     }
                 }
-                
+
                 if let communityRating = item.communityRating {
                     VStack {
                         Image(systemName: "star.fill")
                             .symbolRenderingMode(.multicolor)
                             .foregroundStyle(.yellow)
-                        
+
                         Text("\(communityRating, specifier: "%.1f")")
                     }
                 }
             }
         }
-        
+
         var body: some View {
             Card(title: "Ratings")
 //                .cardContent {

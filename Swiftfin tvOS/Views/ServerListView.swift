@@ -70,7 +70,7 @@ struct ServerListView: View {
             listView
         }
     }
-    
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
@@ -79,7 +79,7 @@ struct ServerListView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 400)
-                    
+
                     Button {
                         router.route(to: \.connectToServer)
                     } label: {
@@ -96,9 +96,7 @@ struct ServerListView: View {
                     }
                 }
             }
-            .contentView {
-                
-            }
+            .contentView {}
     }
 
 //    var body: some View {
@@ -114,14 +112,14 @@ struct ServerListView: View {
 //                    }
 //                }
 //            }
-////            .toolbar {
-////                ToolbarItem(placement: .navigationBarLeading) {
-////                    SFSymbolButton(systemName: "gearshape.fill")
-////                        .onSelect {
-////                            router.route(to: \.basicAppSettings)
-////                        }
-////                }
-////            }
+    ////            .toolbar {
+    ////                ToolbarItem(placement: .navigationBarLeading) {
+    ////                    SFSymbolButton(systemName: "gearshape.fill")
+    ////                        .onSelect {
+    ////                            router.route(to: \.basicAppSettings)
+    ////                        }
+    ////                }
+    ////            }
 //            .alert(item: $longPressedServer) { server in
 //                Alert(
 //                    title: Text(server.name),

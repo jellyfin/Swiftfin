@@ -10,15 +10,22 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct OverviewCard: View {
-        
+
         let item: BaseItemDto
-        
+
         var body: some View {
             Card(title: item.displayTitle)
+                .content {
+                    TruncatedText(item.overview ?? L10n.noOverviewAvailable)
+                        .font(.subheadline)
+                        .lineLimit(4)
+                }
+                .onSelect {}
+
 //                .cardContent {
-//                    TruncatedTextView(text: item.overview ?? L10n.noOverviewAvailable)
+//                    TruncatedText(text: item.overview ?? L10n.noOverviewAvailable)
 //                        .font(.subheadline)
 //                        .lineLimit(4)
 //                }

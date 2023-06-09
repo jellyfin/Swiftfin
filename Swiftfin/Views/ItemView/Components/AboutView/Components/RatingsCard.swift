@@ -10,14 +10,14 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct RatingsCard: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        
+
         let item: BaseItemDto
-        
+
         var body: some View {
             Card(title: "Ratings")
                 .content {
@@ -36,18 +36,18 @@ extension ItemView.AboutView {
                                     }
                                 }
                                 .font(.largeTitle)
-                                
+
                                 Text("\(criticRating, specifier: "%.0f")")
                             }
                         }
-                        
+
                         if let communityRating = item.communityRating {
                             VStack {
                                 Image(systemName: "star.fill")
                                     .symbolRenderingMode(.multicolor)
                                     .foregroundStyle(.yellow)
                                     .font(.largeTitle)
-                                
+
                                 Text("\(communityRating, specifier: "%.1f")")
                             }
                         }

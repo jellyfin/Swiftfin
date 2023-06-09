@@ -34,9 +34,9 @@ extension ItemView {
                                 EmptyView()
                             }
                             .scaleItem(1.35)
-                        
+
                         OverviewCard(item: viewModel.item)
-                        
+
 //                        if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
 //                            MediaSourcesCard(title: L10n.subtitles, mediaSources: subtitleStreams)
 //                        }
@@ -44,7 +44,7 @@ extension ItemView {
 //                        if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
 //                            MediaSourcesCard(title: L10n.audio, mediaSources: audioStreams)
 //                        }
-                        
+
                         if viewModel.item.hasRatings {
                             RatingsCard(item: viewModel.item)
                         }
@@ -58,10 +58,9 @@ extension ItemView {
 }
 
 extension ItemView.AboutView {
-    
+
     struct Card: View {
 
-//        private var alertContent: () -> any View
         private var content: () -> any View
         private var onSelect: () -> Void
         private let title: String
@@ -79,7 +78,7 @@ extension ItemView.AboutView {
 
                     Spacer()
                         .frame(maxWidth: .infinity)
-                    
+
                     content()
                         .eraseToAnyView()
                 }
@@ -92,7 +91,7 @@ extension ItemView.AboutView {
 }
 
 extension ItemView.AboutView.Card {
-    
+
     init(title: String, subtitle: String? = nil) {
         self.init(
             content: { EmptyView() },

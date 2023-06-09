@@ -10,24 +10,24 @@ import JellyfinAPI
 import SwiftUI
 
 extension ItemView.AboutView {
-    
+
     struct OverviewCard: View {
-        
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
-        
+
         let item: BaseItemDto
-        
+
         var body: some View {
             Card(title: item.displayTitle)
                 .content {
                     if let overview = item.overview {
-                        TruncatedTextView(text: overview)
-                            .lineLimit(4)
-                            .font(.footnote)
+                        TruncatedText(overview)
                             .seeMoreAction {
                                 router.route(to: \.itemOverview, item)
                             }
+                            .lineLimit(4)
+                            .font(.footnote)
                             .foregroundColor(.secondary)
                     } else {
                         L10n.noOverviewAvailable.text
