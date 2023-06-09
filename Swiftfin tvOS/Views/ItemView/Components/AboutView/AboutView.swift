@@ -37,13 +37,11 @@ extension ItemView {
 
                         OverviewCard(item: viewModel.item)
 
-//                        if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
-//                            MediaSourcesCard(title: L10n.subtitles, mediaSources: subtitleStreams)
-//                        }
-//
-//                        if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
-//                            MediaSourcesCard(title: L10n.audio, mediaSources: audioStreams)
-//                        }
+                        if let mediaSources = viewModel.item.mediaSources {
+                            ForEach(mediaSources) { source in
+                                MediaSourcesCard(subtitle: mediaSources.count > 1 ? source.displayTitle : nil, source: source)
+                            }
+                        }
 
                         if viewModel.item.hasRatings {
                             RatingsCard(item: viewModel.item)
@@ -54,58 +52,5 @@ extension ItemView {
             }
             .focusSection()
         }
-    }
-}
-
-extension ItemView.AboutView {
-
-    struct Card: View {
-
-        private var content: () -> any View
-        private var onSelect: () -> Void
-        private let title: String
-        private let subtitle: String?
-
-        var body: some View {
-            Button {
-                onSelect()
-            } label: {
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-
-                    Spacer()
-                        .frame(maxWidth: .infinity)
-
-                    content()
-                        .eraseToAnyView()
-                }
-                .padding2()
-                .frame(width: 700, height: 405)
-            }
-            .buttonStyle(.card)
-        }
-    }
-}
-
-extension ItemView.AboutView.Card {
-
-    init(title: String, subtitle: String? = nil) {
-        self.init(
-            content: { EmptyView() },
-            onSelect: {},
-            title: title,
-            subtitle: subtitle
-        )
-    }
-
-    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.content, with: content)
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -28,12 +28,9 @@ extension ItemView.AboutView {
                 .content {
                     if let mediaStreams = source.mediaStreams {
                         VStack(alignment: .leading) {
-                            ForEach(mediaStreams.prefix(4), id: \.index) { mediaStream in
-                                Text(mediaStream.displayTitle ?? .emptyDash)
-                                    .lineLimit(1)
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                            }
+                            Text(mediaStreams.compactMap(\.displayTitle).prefix(4).joined(separator: "\n"))
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
 
                             if mediaStreams.count > 4 {
                                 L10n.seeMore.text

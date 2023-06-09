@@ -13,24 +13,30 @@ extension ItemView.AboutView {
 
     struct MediaSourcesCard: View {
 
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
+
         let subtitle: String?
         let source: MediaSourceInfo
 
         var body: some View {
-            Text("")
-//            Card(title: title)
-//                .cardContent {
-//                    TruncatedText(text: mediaSources.compactMap(\.displayTitle).joined(separator: ", "))
-//                        .font(.subheadline)
-//                        .lineLimit(4)
-//                }
-//                .alertContent {
-//                    VStack {
-//                        ForEach(mediaSources.compactMap(\.displayTitle)) { sourceTitle in
-//                            Text(sourceTitle)
-//                        }
-//                    }
-//                }
+            Card(title: L10n.media, subtitle: subtitle)
+                .content {
+                    if let mediaStreams = source.mediaStreams {
+                        VStack(alignment: .leading) {
+                            Text(mediaStreams.compactMap(\.displayTitle).prefix(4).joined(separator: "\n"))
+                                .font(.footnote)
+
+                            if mediaStreams.count > 4 {
+                                L10n.seeMore.text
+                                    .font(.footnote)
+                            }
+                        }
+                    }
+                }
+                .onSelect {
+                    router.route(to: \.mediaSourceInfo, source)
+                }
         }
     }
 }

@@ -13,6 +13,9 @@ extension ItemView.AboutView {
 
     struct OverviewCard: View {
 
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
+
         let item: BaseItemDto
 
         var body: some View {
@@ -22,16 +25,9 @@ extension ItemView.AboutView {
                         .font(.subheadline)
                         .lineLimit(4)
                 }
-                .onSelect {}
-
-//                .cardContent {
-//                    TruncatedText(text: item.overview ?? L10n.noOverviewAvailable)
-//                        .font(.subheadline)
-//                        .lineLimit(4)
-//                }
-//                .alertContent {
-//                    Text(item.overview ?? L10n.noOverviewAvailable)
-//                }
+                .onSelect {
+                    router.route(to: \.itemOverview, item)
+                }
         }
     }
 }

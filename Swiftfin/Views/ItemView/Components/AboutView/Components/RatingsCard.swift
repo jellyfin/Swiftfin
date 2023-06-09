@@ -19,9 +19,9 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: "Ratings")
+            Card(title: L10n.ratings)
                 .content {
-                    HStack {
+                    HStack(alignment: .bottom, spacing: 20) {
                         if let criticRating = item.criticRating {
                             VStack {
                                 Group {

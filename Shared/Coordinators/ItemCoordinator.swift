@@ -25,8 +25,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var library = makeLibrary
     @Route(.push)
     var castAndCrew = makeCastAndCrew
-    @Route(.modal)
-    var itemOverview = makeItemOverview
+//    @Route(.modal)
+//    var itemOverview = makeItemOverview
 
     #if os(iOS)
     @Route(.modal)
@@ -37,12 +37,14 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
     @Route(.fullScreen)
+    var itemOverview = makeItemOverview
+    @Route(.fullScreen)
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
     #endif
 
-    let itemDto: BaseItemDto
+    private let itemDto: BaseItemDto
 
     init(item: BaseItemDto) {
         self.itemDto = item
@@ -64,27 +66,23 @@ final class ItemCoordinator: NavigationCoordinatable {
         CastAndCrewLibraryCoordinator(people: people)
     }
 
-    func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
-        NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
+    func makeItemOverview(item: BaseItemDto) -> BasicNavigationViewCoordinator {
+        BasicNavigationViewCoordinator {
+            ItemOverviewView(item: item)
+        }
     }
 
-    #if os(iOS)
     func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
         NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: source))
     }
 
+    #if os(iOS)
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }
     #endif
 
     #if os(tvOS)
-    func makeMediaSourceInfo(source: MediaSourceInfo) -> BasicNavigationViewCoordinator {
-        BasicNavigationViewCoordinator {
-            Text("")
-        }
-    }
-
     func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
         NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
     }

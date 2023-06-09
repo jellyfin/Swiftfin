@@ -177,11 +177,12 @@ extension View {
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
-//        modifier(VisibilityModifier(isVisible: isVisible))
     }
 
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
-        modifier(BlurViewModifier(style: style))
+        overlay {
+            BlurView(style: style)
+        }
     }
 
     func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {

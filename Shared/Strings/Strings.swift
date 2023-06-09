@@ -340,6 +340,8 @@ internal enum L10n {
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random Image")
   /// Rated
   internal static let rated = L10n.tr("Localizable", "rated", fallback: "Rated")
+  /// Ratings
+  internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
   /// Recently Added
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
   /// Recommended
