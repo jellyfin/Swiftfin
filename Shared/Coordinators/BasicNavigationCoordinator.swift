@@ -9,6 +9,8 @@
 import Stinsen
 import SwiftUI
 
+// TODO: just have this coordinator wrap the content itself in a NavigationViewCoordinator instead
+
 /// Basic coordinator to wrap a view for the purpose of being wrapped in a NavigationViewCoordinator
 final class BasicNavigationViewCoordinator: NavigationCoordinatable {
 

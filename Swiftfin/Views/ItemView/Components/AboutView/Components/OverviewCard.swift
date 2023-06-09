@@ -28,7 +28,6 @@ extension ItemView.AboutView {
                             }
                             .lineLimit(4)
                             .font(.footnote)
-                            .foregroundColor(.secondary)
                     } else {
                         L10n.noOverviewAvailable.text
                             .font(.footnote)

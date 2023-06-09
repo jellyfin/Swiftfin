@@ -30,7 +30,6 @@ extension ItemView.AboutView {
                         VStack(alignment: .leading) {
                             Text(mediaStreams.compactMap(\.displayTitle).prefix(4).joined(separator: "\n"))
                                 .font(.footnote)
-                                .foregroundColor(.secondary)
 
                             if mediaStreams.count > 4 {
                                 L10n.seeMore.text

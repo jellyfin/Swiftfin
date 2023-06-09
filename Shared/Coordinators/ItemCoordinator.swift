@@ -25,10 +25,10 @@ final class ItemCoordinator: NavigationCoordinatable {
     var library = makeLibrary
     @Route(.push)
     var castAndCrew = makeCastAndCrew
-//    @Route(.modal)
-//    var itemOverview = makeItemOverview
 
     #if os(iOS)
+    @Route(.modal)
+    var itemOverview = makeItemOverview
     @Route(.modal)
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.modal)
@@ -66,10 +66,10 @@ final class ItemCoordinator: NavigationCoordinatable {
         CastAndCrewLibraryCoordinator(people: people)
     }
 
-    func makeItemOverview(item: BaseItemDto) -> BasicNavigationViewCoordinator {
-        BasicNavigationViewCoordinator {
+    func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(BasicNavigationViewCoordinator {
             ItemOverviewView(item: item)
-        }
+        })
     }
 
     func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
