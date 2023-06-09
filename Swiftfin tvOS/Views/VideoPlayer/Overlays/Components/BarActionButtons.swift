@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: add subtitles button
+
 extension VideoPlayer.Overlay {
 
     struct BarActionButtons: View {
@@ -48,11 +50,6 @@ extension VideoPlayer.Overlay {
         }
 
         @ViewBuilder
-        private var subtitleButton: some View {
-            ActionButtons.SubtitleButton()
-        }
-
-        @ViewBuilder
         private var menuItemButton: some View {
             SFSymbolButton(
                 systemName: "ellipsis.circle",
@@ -73,8 +70,6 @@ extension VideoPlayer.Overlay {
                 autoPlayButton
 
                 chaptersButton
-
-                subtitleButton
 
                 menuItemButton
             }
