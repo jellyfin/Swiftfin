@@ -32,7 +32,7 @@ extension ItemView {
                 }
 
                 if let itemOverview = item.overview {
-                    TruncatedTextView(text: itemOverview)
+                    TruncatedText(itemOverview)
                         .seeMoreAction {
                             router.route(to: \.itemOverview, item)
                         }

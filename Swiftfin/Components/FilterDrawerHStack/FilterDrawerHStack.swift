@@ -12,7 +12,8 @@ import SwiftUI
 struct FilterDrawerHStack: View {
 
     @ObservedObject
-    var viewModel: FilterViewModel
+    private var viewModel: FilterViewModel
+
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
@@ -49,22 +50,20 @@ struct FilterDrawerHStack: View {
                     ))
                 }
 
-            // TODO: Localize
-            FilterDrawerButton(title: "Order", activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
+            FilterDrawerButton(title: L10n.order, activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
                 .onSelect {
                     onSelect(.init(
-                        title: "Order",
+                        title: L10n.order,
                         viewModel: viewModel,
                         filter: \.sortOrder,
                         selectorType: .single
                     ))
                 }
 
-            // TODO: Localize
-            FilterDrawerButton(title: "Sort", activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
+            FilterDrawerButton(title: L10n.sort, activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
                 .onSelect {
                     onSelect(.init(
-                        title: "Sort",
+                        title: L10n.sort,
                         viewModel: viewModel,
                         filter: \.sortBy,
                         selectorType: .single
@@ -75,9 +74,12 @@ struct FilterDrawerHStack: View {
 }
 
 extension FilterDrawerHStack {
+
     init(viewModel: FilterViewModel) {
-        self.viewModel = viewModel
-        self.onSelect = { _ in }
+        self.init(
+            viewModel: viewModel,
+            onSelect: { _ in }
+        )
     }
 
     func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {

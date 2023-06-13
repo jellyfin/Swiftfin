@@ -12,7 +12,7 @@ import SwiftUI
 struct ItemOverviewView: View {
 
     @EnvironmentObject
-    private var router: ItemOverviewCoordinator.Router
+    private var router: BasicNavigationViewCoordinator.Router
 
     let item: BaseItemDto
 
