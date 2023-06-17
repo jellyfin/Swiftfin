@@ -3009,7 +3009,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"swiftgen\"\n";
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, download it from https://github.com/SwiftGen/SwiftGen\"\n  return 1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
