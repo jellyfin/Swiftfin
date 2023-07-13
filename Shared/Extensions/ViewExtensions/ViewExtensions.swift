@@ -19,14 +19,14 @@ extension View {
         AnyView(self)
     }
 
-    func inverseMask<M: View>(_ mask: M) -> some View {
-        // exchange foreground and background
-        let inversed = mask
-            .foregroundColor(.black) // hide foreground
-            .background(Color.white) // let the background stand out
-            .compositingGroup()
-            .luminanceToAlpha()
-        return self.mask(inversed)
+    func inverseMask(alignment: Alignment = .center, _ content: @escaping () -> some View) -> some View {
+        mask(alignment: alignment) {
+            content()
+                .foregroundColor(.black)
+                .background(.white)
+                .compositingGroup()
+                .luminanceToAlpha()
+        }
     }
 
     // From: https://www.avanderlee.com/swiftui/conditional-view-modifier/
@@ -177,11 +177,12 @@ extension View {
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
-//        modifier(VisibilityModifier(isVisible: isVisible))
     }
 
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
-        modifier(BlurViewModifier(style: style))
+        overlay {
+            BlurView(style: style)
+        }
     }
 
     func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
@@ -215,12 +216,6 @@ extension View {
                     .eraseToAnyView()
             }
             .ignoresSafeArea()
-        }
-    }
-
-    func inBasicNavigationCoordinatable() -> BasicNavigationViewCoordinator {
-        BasicNavigationViewCoordinator {
-            self
         }
     }
 }

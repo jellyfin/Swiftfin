@@ -26,11 +26,11 @@ struct AttributeViewModifier: ViewModifier {
                 .background {
                     Color(UIColor.lightGray)
                         .cornerRadius(2)
-                        .inverseMask(
+                        .inverseMask {
                             content
                                 .font(.caption.weight(.semibold))
                                 .padding(EdgeInsets(top: 1, leading: 4, bottom: 1, trailing: 4))
-                        )
+                        }
                 }
         } else {
             content

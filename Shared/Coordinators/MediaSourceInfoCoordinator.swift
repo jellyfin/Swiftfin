@@ -16,8 +16,11 @@ final class MediaSourceInfoCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+
+    #if os(iOS)
     @Route(.push)
     var mediaStreamInfo = makeMediaStreamInfo
+    #endif
 
     private let mediaSourceInfo: MediaSourceInfo
 
@@ -25,13 +28,15 @@ final class MediaSourceInfoCoordinator: NavigationCoordinatable {
         self.mediaSourceInfo = mediaSourceInfo
     }
 
+    #if os(iOS)
     @ViewBuilder
     func makeMediaStreamInfo(mediaStream: MediaStream) -> some View {
         MediaStreamInfoView(mediaStream: mediaStream)
     }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
-        ItemView.MediaSourceInfoView(mediaSource: mediaSourceInfo)
+        MediaSourceInfoView(source: mediaSourceInfo)
     }
 }

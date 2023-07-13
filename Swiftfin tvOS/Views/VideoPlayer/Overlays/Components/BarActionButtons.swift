@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: add subtitles button
+
 extension VideoPlayer.Overlay {
 
     struct BarActionButtons: View {

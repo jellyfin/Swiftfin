@@ -151,6 +151,15 @@ extension BaseItemDto {
         return dateFormatter.string(from: premiereDate)
     }
 
+    var hasExternalLinks: Bool {
+        guard let externalURLs else { return false }
+        return !externalURLs.isEmpty
+    }
+
+    var hasRatings: Bool {
+        [criticRating, communityRating].oneSatisfies { $0 != nil }
+    }
+
     // MARK: Chapter Images
 
     var fullChapterInfo: [ChapterInfo.FullInfo] {

@@ -15,16 +15,11 @@ struct PrimaryButton: View {
     private var accentColor
 
     private let title: String
-    private let action: () -> Void
-
-    init(title: String, _ action: @escaping () -> Void) {
-        self.title = title
-        self.action = action
-    }
+    private var onSelect: () -> Void
 
     var body: some View {
         Button {
-            action()
+            onSelect()
         } label: {
             ZStack {
                 Rectangle()
@@ -38,5 +33,19 @@ struct PrimaryButton: View {
                     .bold()
             }
         }
+    }
+}
+
+extension PrimaryButton {
+
+    init(title: String) {
+        self.init(
+            title: title,
+            onSelect: {}
+        )
+    }
+
+    func onSelect(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -61,9 +61,12 @@ struct LibraryItemRow: View {
 }
 
 extension LibraryItemRow {
+
     init(item: BaseItemDto) {
-        self.item = item
-        self.onSelect = {}
+        self.init(
+            item: item,
+            onSelect: {}
+        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {

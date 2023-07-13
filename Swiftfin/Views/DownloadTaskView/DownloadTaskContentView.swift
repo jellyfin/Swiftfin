@@ -48,11 +48,12 @@ extension DownloadTaskView {
                     // TODO: Break into subview
                     switch downloadTask.state {
                     case .ready, .cancelled:
-                        PrimaryButton(title: "Download") {
-                            downloadManager.download(task: downloadTask)
-                        }
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
+                        PrimaryButton(title: "Download")
+                            .onSelect {
+                                downloadManager.download(task: downloadTask)
+                            }
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
                     case let .downloading(progress):
                         HStack {
                             CircularProgressView(progress: progress)
@@ -74,27 +75,29 @@ extension DownloadTaskView {
                         .padding(.horizontal)
                     case let .error(error):
                         VStack {
-                            PrimaryButton(title: "Retry") {
-                                downloadManager.download(task: downloadTask)
-                            }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+                            PrimaryButton(title: "Retry")
+                                .onSelect {
+                                    downloadManager.download(task: downloadTask)
+                                }
+                                .frame(maxWidth: 300)
+                                .frame(height: 50)
 
                             Text("Error: \(error.localizedDescription)")
                                 .padding(.horizontal)
                         }
                     case .complete:
-                        PrimaryButton(title: "Play") {
-                            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                router.dismissCoordinator {
-                                    mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
+                        PrimaryButton(title: "Play")
+                            .onSelect {
+                                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                                    router.dismissCoordinator {
+                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
+                                    }
+                                } else {
+                                    isPresentingVideoPlayerTypeError = true
                                 }
-                            } else {
-                                isPresentingVideoPlayerTypeError = true
                             }
-                        }
-                        .frame(maxWidth: 300)
-                        .frame(height: 50)
+                            .frame(maxWidth: 300)
+                            .frame(height: 50)
                     }
                 }
 

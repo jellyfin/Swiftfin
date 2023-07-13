@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: if no context menu defined, don't add context menu
+
 struct PosterButton<Item: Poster>: View {
 
     @FocusState

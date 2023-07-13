@@ -72,35 +72,63 @@ struct ServerListView: View {
     }
 
     var body: some View {
-        innerBody
-            .navigationTitle(L10n.servers)
-            .if(!viewModel.servers.isEmpty) { view in
-                view.toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        SFSymbolButton(systemName: "plus.circle.fill")
-                            .onSelect {
-                                router.route(to: \.connectToServer)
-                            }
+        SplitFormWindowView()
+            .descriptionView {
+                VStack {
+                    Image("jellyfin-blob-blue")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 400)
+
+                    Button {
+                        router.route(to: \.connectToServer)
+                    } label: {
+                        Button {
+                            router.route(to: \.connectToServer)
+                        } label: {
+                            L10n.connect.text
+                                .bold()
+                                .font(.callout)
+                                .frame(width: 400, height: 75)
+                                .background(Color.jellyfinPurple)
+                        }
+                        .buttonStyle(.card)
                     }
                 }
             }
-//            .toolbar {
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    SFSymbolButton(systemName: "gearshape.fill")
-//                        .onSelect {
-//                            router.route(to: \.basicAppSettings)
-//                        }
+            .contentView {}
+    }
+
+//    var body: some View {
+//        innerBody
+//            .navigationTitle(L10n.servers)
+//            .if(!viewModel.servers.isEmpty) { view in
+//                view.toolbar {
+//                    ToolbarItem(placement: .navigationBarTrailing) {
+//                        SFSymbolButton(systemName: "plus.circle.fill")
+//                            .onSelect {
+//                                router.route(to: \.connectToServer)
+//                            }
+//                    }
 //                }
 //            }
-            .alert(item: $longPressedServer) { server in
-                Alert(
-                    title: Text(server.name),
-                    primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(server: server) }),
-                    secondaryButton: .cancel()
-                )
-            }
-            .onAppear {
-                viewModel.fetchServers()
-            }
-    }
+    ////            .toolbar {
+    ////                ToolbarItem(placement: .navigationBarLeading) {
+    ////                    SFSymbolButton(systemName: "gearshape.fill")
+    ////                        .onSelect {
+    ////                            router.route(to: \.basicAppSettings)
+    ////                        }
+    ////                }
+    ////            }
+//            .alert(item: $longPressedServer) { server in
+//                Alert(
+//                    title: Text(server.name),
+//                    primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(server: server) }),
+//                    secondaryButton: .cancel()
+//                )
+//            }
+//            .onAppear {
+//                viewModel.fetchServers()
+//            }
+//    }
 }

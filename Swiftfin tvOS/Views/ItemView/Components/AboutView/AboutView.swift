@@ -16,43 +16,38 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
 
                 L10n.about.text
-                    .font(.title3)
+                    .font(.title2)
                     .fontWeight(.semibold)
+                    .accessibility(addTraits: [.isHeader])
                     .padding(.leading, 50)
 
                 ScrollView(.horizontal) {
-                    HStack(spacing: 30) {
-                        ImageView(
-                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel.item
-                                .imageSource(.primary, maxWidth: 300)
-                        )
-                        .failure {
-                            InitialFailureView(viewModel.item.title.initials)
-                        }
-                        .posterStyle(type: .portrait, width: 270)
+                    HStack(alignment: .top, spacing: 30) {
+                        PosterButton(item: viewModel.item, type: .portrait)
+                            .content {
+                                EmptyView()
+                            }
+                            .imageOverlay {
+                                EmptyView()
+                            }
+                            .scaleItem(1.35)
 
-                        InformationCard(
-                            title: viewModel.item.displayTitle,
-                            content: viewModel.item.overview ?? L10n.noOverviewAvailable
-                        )
+                        OverviewCard(item: viewModel.item)
 
-                        if let subtitleStreams = viewModel.playButtonItem?.subtitleStreams, !subtitleStreams.isEmpty {
-                            InformationCard(
-                                title: L10n.subtitles,
-                                content: subtitleStreams.compactMap(\.displayTitle).joined(separator: ", ")
-                            )
+                        if let mediaSources = viewModel.item.mediaSources {
+                            ForEach(mediaSources) { source in
+                                MediaSourcesCard(subtitle: mediaSources.count > 1 ? source.displayTitle : nil, source: source)
+                            }
                         }
 
-                        if let audioStreams = viewModel.playButtonItem?.audioStreams, !audioStreams.isEmpty {
-                            InformationCard(title: L10n.audio, content: audioStreams.compactMap(\.displayTitle).joined(separator: ", "))
+                        if viewModel.item.hasRatings {
+                            RatingsCard(item: viewModel.item)
                         }
                     }
-                    .padding(.horizontal, 50)
-                    .padding(.top)
-                    .padding(.bottom, 100)
+                    .padding(50)
                 }
             }
             .focusSection()

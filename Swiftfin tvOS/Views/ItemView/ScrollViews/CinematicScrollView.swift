@@ -81,6 +81,14 @@ extension ItemView {
                         }
                         .padding(.bottom)
 
+                        if let tagline = viewModel.item.taglines?.first {
+                            Text(tagline)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .multilineTextAlignment(.leading)
+                                .lineLimit(1)
+                        }
+
                         Text(viewModel.item.overview ?? L10n.noOverviewAvailable)
                             .font(.subheadline)
                             .lineLimit(3)

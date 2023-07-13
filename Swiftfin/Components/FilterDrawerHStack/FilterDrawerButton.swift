@@ -68,6 +68,7 @@ extension FilterDrawerHStack {
 }
 
 extension FilterDrawerHStack.FilterDrawerButton {
+
     init(title: String, activated: Bool) {
         self.init(
             systemName: nil,

@@ -25,10 +25,10 @@ final class ItemCoordinator: NavigationCoordinatable {
     var library = makeLibrary
     @Route(.push)
     var castAndCrew = makeCastAndCrew
-    @Route(.modal)
-    var itemOverview = makeItemOverview
 
     #if os(iOS)
+    @Route(.modal)
+    var itemOverview = makeItemOverview
     @Route(.modal)
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.modal)
@@ -37,10 +37,14 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
     @Route(.fullScreen)
+    var itemOverview = makeItemOverview
+    @Route(.fullScreen)
+    var mediaSourceInfo = makeMediaSourceInfo
+    @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
     #endif
 
-    let itemDto: BaseItemDto
+    private let itemDto: BaseItemDto
 
     init(item: BaseItemDto) {
         self.itemDto = item
@@ -62,15 +66,17 @@ final class ItemCoordinator: NavigationCoordinatable {
         CastAndCrewLibraryCoordinator(people: people)
     }
 
-    func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<ItemOverviewCoordinator> {
-        NavigationViewCoordinator(ItemOverviewCoordinator(item: itemDto))
+    func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(BasicNavigationViewCoordinator {
+            ItemOverviewView(item: item)
+        })
+    }
+
+    func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
+        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: source))
     }
 
     #if os(iOS)
-    func makeMediaSourceInfo(mediaSourceInfo: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {
-        NavigationViewCoordinator(MediaSourceInfoCoordinator(mediaSourceInfo: mediaSourceInfo))
-    }
-
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }

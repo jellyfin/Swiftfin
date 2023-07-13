@@ -38,11 +38,12 @@ extension HomeView {
                     .frame(minWidth: 50, maxWidth: 240)
                     .multilineTextAlignment(.center)
 
-                PrimaryButton(title: L10n.retry) {
-                    viewModel.refresh()
-                }
-                .frame(maxWidth: 300)
-                .frame(height: 50)
+                PrimaryButton(title: L10n.retry)
+                    .onSelect {
+                        viewModel.refresh()
+                    }
+                    .frame(maxWidth: 300)
+                    .frame(height: 50)
             }
             .offset(y: -50)
         }
