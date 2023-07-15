@@ -53,7 +53,11 @@ extension EpisodesRowManager {
                 self.seasonsEpisodes[season] = []
             }
 
-            self.selectedSeason = seasons.first
+            if let firstSeason = seasons.first {
+                self.selectedSeason = firstSeason
+                self.getEpisodesForSeason(firstSeason)
+            }
+
         }
         .store(in: &cancellables)
     }
