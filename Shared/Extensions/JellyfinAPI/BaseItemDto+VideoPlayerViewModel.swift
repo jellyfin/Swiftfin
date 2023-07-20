@@ -53,16 +53,19 @@ extension BaseItemDto {
             guard let matchingMediaSource else {
                 throw JellyfinAPIError("Matching media source not in playback info")
             }
-            
-            return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!, liveTVChannel: liveTVChannel)
+
+            return try matchingMediaSource.videoPlayerViewModel(
+                with: self,
+                playSessionID: response.value.playSessionID!,
+                liveTVChannel: liveTVChannel
+            )
         } else {
             guard let matchingMediaSource = response.value.mediaSources?
                 .first(where: { $0.id == mediaSource.id })
             else {
                 throw JellyfinAPIError("Matching media source not in playback info")
-                
             }
-            
+
             return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
         }
     }
