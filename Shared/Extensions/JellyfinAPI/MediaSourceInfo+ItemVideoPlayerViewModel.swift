@@ -14,13 +14,13 @@ import UIKit
 
 extension MediaSourceInfo {
 
-    func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
+    func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String, liveTVChannel: Bool = false) throws -> VideoPlayerViewModel {
 
         let userSession = Container.userSession.callAsFunction()
         let playbackURL: URL
         let streamType: StreamType
 
-        if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
+        if let transcodingURL, liveTVChannel ? !Defaults[.Experimental.liveTVForceDirectPlay] : !Defaults[.Experimental.forceDirectPlay] {
             guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL

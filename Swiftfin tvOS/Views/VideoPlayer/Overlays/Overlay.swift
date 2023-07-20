@@ -33,17 +33,17 @@ extension VideoPlayer {
         var body: some View {
             ZStack {
 
-                MainOverlay()
-                    .visible(currentOverlayType == .main)
-
-                ConfirmCloseOverlay()
-                    .visible(currentOverlayType == .confirmClose)
-
-                SmallMenuOverlay()
-                    .visible(currentOverlayType == .smallMenu)
-
-                ChapterOverlay()
-                    .visible(currentOverlayType == .chapters)
+//                MainOverlay()
+//                    .visible(currentOverlayType == .main)
+//
+//                ConfirmCloseOverlay()
+//                    .visible(currentOverlayType == .confirmClose)
+//
+//                SmallMenuOverlay()
+//                    .visible(currentOverlayType == .smallMenu)
+//
+//                ChapterOverlay()
+//                    .visible(currentOverlayType == .chapters)
             }
             .visible(isPresentingOverlay)
             .animation(.linear(duration: 0.1), value: currentOverlayType)

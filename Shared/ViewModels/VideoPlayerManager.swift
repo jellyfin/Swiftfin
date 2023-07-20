@@ -284,11 +284,11 @@ class VideoPlayerManager: ViewModel {
 // TODO: move to own file
 class OnlineVideoPlayerManager: VideoPlayerManager {
 
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo, liveTVChannel: Bool = false) {
         super.init()
 
         Task {
-            let viewModel = try await item.videoPlayerViewModel(with: mediaSource)
+            let viewModel = try await item.videoPlayerViewModel(with: mediaSource, liveTVChannel: liveTVChannel)
 
             await MainActor.run {
                 self.currentViewModel = viewModel

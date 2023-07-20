@@ -73,8 +73,10 @@ struct VideoPlayer: View {
         }
         .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
             DispatchQueue.main.async {
-                videoPlayerManager.currentProgressHandler
-                    .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+                if !newValue.isNaN && !newValue.isInfinite {
+                    videoPlayerManager.currentProgressHandler
+                        .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+                }
             }
         }
     }

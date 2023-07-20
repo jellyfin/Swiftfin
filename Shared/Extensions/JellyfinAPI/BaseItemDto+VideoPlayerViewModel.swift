@@ -15,7 +15,7 @@ import SwiftUI
 
 extension BaseItemDto {
 
-    func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
+    func videoPlayerViewModel(with mediaSource: MediaSourceInfo, liveTVChannel: Bool = false) async throws -> VideoPlayerViewModel {
 
         let builder = DeviceProfileBuilder()
         // TODO: fix bitrate settings
@@ -39,10 +39,31 @@ extension BaseItemDto {
 
         let response = try await userSession.client.send(request)
 
-        guard let matchingMediaSource = response.value.mediaSources?
-            .first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id })
-        else { throw JellyfinAPIError("Matching media source not in playback info") }
-
-        return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
+        if liveTVChannel {
+            var matchingMediaSource: MediaSourceInfo? = nil
+            if let responseMediaSources = response.value.mediaSources {
+                for responseMediaSource in responseMediaSources {
+                    if let openToken = responseMediaSource.openToken, let mediaSourceId = mediaSource.id {
+                        if openToken.contains(mediaSourceId) {
+                            matchingMediaSource = responseMediaSource
+                        }
+                    }
+                }
+            }
+            guard let matchingMediaSource else {
+                throw JellyfinAPIError("Matching media source not in playback info")
+            }
+            
+            return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!, liveTVChannel: liveTVChannel)
+        } else {
+            guard let matchingMediaSource = response.value.mediaSources?
+                .first(where: { $0.id == mediaSource.id })
+            else {
+                throw JellyfinAPIError("Matching media source not in playback info")
+                
+            }
+            
+            return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
+        }
     }
 }
