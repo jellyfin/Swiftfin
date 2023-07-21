@@ -61,7 +61,7 @@ extension BaseItemDto {
             )
         } else {
             guard let matchingMediaSource = response.value.mediaSources?
-                .first(where: { $0.id == mediaSource.id })
+                .first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id })
             else {
                 throw JellyfinAPIError("Matching media source not in playback info")
             }
