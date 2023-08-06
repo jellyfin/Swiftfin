@@ -10,8 +10,6 @@ import CollectionView
 import Defaults
 import JellyfinAPI
 import SwiftUI
-import OrderedCollections
-
 
 struct LibraryView: View {
 
@@ -89,13 +87,13 @@ struct LibraryView: View {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
-                LibraryViewShuffle(viewModel: viewModel)
+                LibraryViewShuffle()
                     .onSelect {
                         let unwatchedItems = viewModel.items.filter {
                             guard let data = $0.userData else {
                                 return false
                             }
-                            return !(data.isPlayed ?? false)
+                            return !(data.isPlayed ?? true)
                         }
                         if let randomItem = unwatchedItems.randomElement() {
                             baseItemOnSelect(randomItem)

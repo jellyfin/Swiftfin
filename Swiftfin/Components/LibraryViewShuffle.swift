@@ -7,17 +7,13 @@
 //
 
 import Defaults
-import SwiftUI
 import JellyfinAPI
+import SwiftUI
 
 struct LibraryViewShuffle: View {
-    
-    @ObservedObject
-    var viewModel: PagingLibraryViewModel
-    
+
     private var onSelect: () -> Void
 
-    
     var body: some View {
         Button {
             onSelect()
@@ -28,12 +24,12 @@ struct LibraryViewShuffle: View {
 }
 
 extension LibraryViewShuffle {
-    init(viewModel: PagingLibraryViewModel) {
+    init() {
         self.init(
-            viewModel: viewModel,
             onSelect: {}
         )
     }
+
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
