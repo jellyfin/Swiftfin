@@ -74,9 +74,12 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
+                guard let mediaSource = channel.mediaSources?.first else {
+                    return
+                }
                 router.route(
                     to: \.videoPlayer,
-                    OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!, liveTVChannel: true)
+                    LiveVideoPlayerManager(item: channel, mediaSource: mediaSource)
                 )
             }
         )
