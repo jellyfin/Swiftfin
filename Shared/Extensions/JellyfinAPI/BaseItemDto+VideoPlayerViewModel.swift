@@ -47,31 +47,31 @@ extension BaseItemDto {
 
         return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
     }
-    
+
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
-        
+
         let builder = DeviceProfileBuilder()
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
         let profile = builder.buildProfile()
-        
+
         let userSession = Container.userSession.callAsFunction()
-        
+
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
             maxStreamingBitrate: tempOverkillBitrate
         )
-        
+
         let request = Paths.getPostedPlaybackInfo(
             itemID: self.id!,
             parameters: playbackInfoParameters,
             playbackInfo
         )
-        
+
         let response = try await userSession.client.send(request)
-        
+
         var matchingMediaSource: MediaSourceInfo? = nil
         if let responseMediaSources = response.value.mediaSources {
             for responseMediaSource in responseMediaSources {
@@ -85,7 +85,7 @@ extension BaseItemDto {
         guard let matchingMediaSource else {
             throw JellyfinAPIError("Matching media source not in playback info")
         }
-        
+
         return try matchingMediaSource.liveVideoPlayerViewModel(
             with: self,
             playSessionID: response.value.playSessionID!

@@ -10,13 +10,13 @@ import Foundation
 import JellyfinAPI
 
 class LiveVideoPlayerManager: VideoPlayerManager {
-    
+
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
         super.init()
-        
+
         Task {
             let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource)
-            
+
             await MainActor.run {
                 self.currentViewModel = viewModel
             }
