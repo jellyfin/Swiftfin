@@ -72,7 +72,7 @@ extension BaseItemDto {
 
         let response = try await userSession.client.send(request)
 
-        var matchingMediaSource: MediaSourceInfo? = nil
+        var matchingMediaSource: MediaSourceInfo?
         if let responseMediaSources = response.value.mediaSources {
             for responseMediaSource in responseMediaSources {
                 if let openToken = responseMediaSource.openToken, let mediaSourceId = mediaSource.id {
