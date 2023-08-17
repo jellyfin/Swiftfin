@@ -81,6 +81,10 @@ extension BaseItemDto {
                     }
                 }
             }
+            if matchingMediaSource == nil && !responseMediaSources.isEmpty {
+                // Didn't find a match, but maybe we can just grab the first item in the response
+                matchingMediaSource = responseMediaSources.first
+            }
         }
         guard let matchingMediaSource else {
             throw JellyfinAPIError("Matching media source not in playback info")
