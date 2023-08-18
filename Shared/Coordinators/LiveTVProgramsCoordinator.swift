@@ -26,8 +26,8 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
+    func makeVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
     }
     #endif
 

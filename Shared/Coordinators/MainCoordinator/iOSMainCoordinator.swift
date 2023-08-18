@@ -29,6 +29,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
+    @Route(.fullScreen)
+    var liveVideoPlayer = makeLiveVideoPlayer
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -99,5 +101,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
         VideoPlayerCoordinator(manager: manager)
+    }
+    
+    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
+        LiveVideoPlayerCoordinator(manager: manager)
     }
 }

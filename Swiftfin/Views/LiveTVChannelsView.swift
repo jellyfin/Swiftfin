@@ -50,7 +50,7 @@ struct LiveTVChannelsView: View {
                 guard let mediaSource = channel.mediaSources?.first else {
                     return
                 }
-                mainRouter.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                mainRouter.route(to: \.liveVideoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
             }
         )
     }

@@ -78,7 +78,7 @@ struct LiveTVChannelsView: View {
                     return
                 }
                 router.route(
-                    to: \.videoPlayer,
+                    to: \.liveVideoPlayer,
                     LiveVideoPlayerManager(item: channel, mediaSource: mediaSource)
                 )
             }
