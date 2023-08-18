@@ -10,9 +10,9 @@ import Defaults
 import SwiftUI
 
 extension LiveVideoPlayer {
-    
+
     struct LiveMainOverlay: View {
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -22,17 +22,17 @@ extension LiveVideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         @EnvironmentObject
         private var currentProgressHandler: LiveVideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: TimerProxy
-        
+
         var body: some View {
             VStack {
-                
+
                 Spacer()
-                
+
                 Overlay.LiveBottomBarView()
                     .padding2()
                     .padding2()

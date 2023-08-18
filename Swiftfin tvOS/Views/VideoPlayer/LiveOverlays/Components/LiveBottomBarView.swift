@@ -10,9 +10,9 @@ import Defaults
 import SwiftUI
 
 extension LiveVideoPlayer.Overlay {
-    
+
     struct LiveBottomBarView: View {
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -22,7 +22,7 @@ extension LiveVideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         @EnvironmentObject
         private var currentProgressHandler: LiveVideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
@@ -31,10 +31,10 @@ extension LiveVideoPlayer.Overlay {
         private var videoPlayerManager: LiveVideoPlayerManager
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
-        
+
         @FocusState
         private var isBarFocused: Bool
-        
+
         @ViewBuilder
         private var playbackStateView: some View {
 //            if videoPlayerManager.state == .playing {
@@ -45,13 +45,14 @@ extension LiveVideoPlayer.Overlay {
 //                ProgressView()
 //            }
             // videoPLayerManager access is giving an error here:
-            // Fatal error: No ObservableObject of type LiveVideoPlayerManager found. A View.environmentObject(_:) for LiveVideoPlayerManager may be missing as an ancestor of this view.
+            // Fatal error: No ObservableObject of type LiveVideoPlayerManager found. A View.environmentObject(_:) for
+            // LiveVideoPlayerManager may be missing as an ancestor of this view.
             EmptyView()
         }
-        
+
         var body: some View {
             VStack(alignment: .VideoPlayerTitleAlignmentGuide, spacing: 10) {
-                
+
                 if let subtitle = viewModel.item.subtitle {
                     Text(subtitle)
                         .font(.subheadline)
@@ -60,25 +61,25 @@ extension LiveVideoPlayer.Overlay {
                             dimensions[.leading]
                         }
                 }
-                
+
                 HStack {
-                    
+
                     Text(viewModel.item.displayTitle)
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
                             dimensions[.leading]
                         }
-                    
+
                     Spacer()
-                    
+
                     VideoPlayer.Overlay.BarActionButtons()
                 }
-                
+
                 tvOSSliderView(value: $currentProgressHandler.scrubbedProgress)
                     .onEditingChanged { isEditing in
                         isScrubbing = isEditing
-                        
+
                         if isEditing {
                             overlayTimer.pause()
                         } else {
@@ -88,18 +89,18 @@ extension LiveVideoPlayer.Overlay {
                     .focused($isBarFocused)
                     .frame(height: 60)
                 //                    .visible(isScrubbing || isPresentingOverlay)
-                
+
                 HStack(spacing: 15) {
-                    
+
                     Text(currentProgressHandler.scrubbedSeconds.timeLabel)
                         .monospacedDigit()
                         .foregroundColor(.white)
-                    
+
                     playbackStateView
                         .frame(maxWidth: 40, maxHeight: 40)
-                    
+
                     Spacer()
-                    
+
                     Text((viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
                         .monospacedDigit()
                         .foregroundColor(.white)

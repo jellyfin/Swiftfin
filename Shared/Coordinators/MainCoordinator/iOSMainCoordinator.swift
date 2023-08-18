@@ -102,7 +102,7 @@ final class MainCoordinator: NavigationCoordinatable {
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
         VideoPlayerCoordinator(manager: manager)
     }
-    
+
     func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
         LiveVideoPlayerCoordinator(manager: manager)
     }

@@ -26,7 +26,7 @@ struct LiveVideoPlayer: View {
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
-	
+
     @State
     private var isPresentingOverlay: Bool = false
     @State

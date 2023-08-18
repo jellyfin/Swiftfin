@@ -10,12 +10,12 @@ import Defaults
 import SwiftUI
 
 extension LiveVideoPlayer {
-    
+
     struct LiveMainOverlay: View {
-        
+
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-        
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -27,13 +27,13 @@ extension LiveVideoPlayer {
         private var isScrubbing: Bool
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
-        
+
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
-        
+
         @StateObject
         private var overlayTimer: TimerProxy = .init()
-        
+
         var body: some View {
             ZStack {
                 VStack {
@@ -61,7 +61,7 @@ extension LiveVideoPlayer {
 
                     Spacer()
                         .allowsHitTesting(false)
-                    
+
                     Overlay.LiveBottomBarView()
                         .if(UIDevice.hasNotch) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
@@ -91,7 +91,7 @@ extension LiveVideoPlayer {
                         }
                         .visible(isScrubbing || isPresentingOverlay)
                 }
-                
+
                 if playbackButtonType == .large {
                     VideoPlayer.Overlay.LargePlaybackButtons()
                         .visible(!isScrubbing && isPresentingOverlay)
@@ -117,7 +117,7 @@ extension LiveVideoPlayer {
             }
             .onChange(of: overlayTimer.isActive) { newValue in
                 guard !newValue, !isScrubbing else { return }
-                
+
                 withAnimation(.linear(duration: 0.3)) {
                     isPresentingOverlay = false
                 }

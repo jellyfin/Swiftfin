@@ -9,19 +9,19 @@
 import SwiftUI
 
 extension LiveVideoPlayer {
-    
+
     struct Overlay: View {
-        
+
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay
-        
+
         @State
         private var currentOverlayType: VideoPlayer.OverlayType = .main
-        
+
         var body: some View {
             ZStack {
-                
+
                 LiveMainOverlay()
                     .visible(currentOverlayType == .main)
             }
