@@ -87,25 +87,19 @@ struct LibraryView: View {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
-                LibraryViewShuffle()
-                    .onSelect {
-                        let unwatchedItems = viewModel.items.filter {
-                            guard let data = $0.userData else {
-                                return false
-                            }
-                            return !(data.isPlayed ?? true)
+                Menu {
+                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                    RandomItemButton()
+                        .onSelect {
+                            viewModel.getRandomItemFromLibrary(completion: { response in
+                                if let item = response.value.items?.first {
+                                    router.route(to: \.item, item)
+                                }
+                            })
                         }
-                        if let randomItem = unwatchedItems.randomElement() {
-                            baseItemOnSelect(randomItem)
-                        }
-                    }
-            }
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if viewModel.isLoading && !viewModel.items.isEmpty {
-                    ProgressView()
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
-
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
             }
         }
     }

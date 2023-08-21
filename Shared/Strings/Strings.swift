@@ -156,6 +156,8 @@ internal enum L10n {
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
   /// Green
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
+  /// Grid
+  internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
   /// Haptic Feedback
   internal static let hapticFeedback = L10n.tr("Localizable", "hapticFeedback", fallback: "Haptic Feedback")
   /// Home
@@ -198,6 +200,8 @@ internal enum L10n {
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
   /// Live TV
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
+  /// List
+  internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Loading
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
   /// Local Servers
@@ -340,6 +344,8 @@ internal enum L10n {
   internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "3. Enter the following code:")
   /// Authorizing Quick Connect successful. Please continue on your other device.
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
+  /// Random
+  internal static let random = L10n.tr("Localizable", "random", fallback: "Random")
   /// Random Image
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random Image")
   /// Rated

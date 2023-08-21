@@ -8,6 +8,7 @@
 
 import Defaults
 import Foundation
+import Get
 import JellyfinAPI
 import OrderedCollections
 import UIKit
@@ -26,6 +27,32 @@ class PagingLibraryViewModel: ViewModel {
     var pageItemSize: Int {
         let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
         return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
+    }
+
+    public func getRandomItemFromLibrary(completion: @escaping (Response<BaseItemDtoQueryResult>) -> Void) {
+
+        var parameters = _getDefaultParams()
+        parameters?.limit = 1
+        parameters?.sortBy = [SortBy.random.rawValue]
+
+        Task {
+            await MainActor.run {
+                self.isLoading = true
+            }
+
+            let request = Paths.getItems(parameters: parameters)
+            let response = try await userSession.client.send(request)
+
+            completion(response)
+
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
+    }
+
+    func _getDefaultParams() -> Paths.GetItemsParameters? {
+        Paths.GetItemsParameters()
     }
 
     func refresh() {

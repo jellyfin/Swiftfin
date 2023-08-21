@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct LibraryViewShuffle: View {
+struct RandomItemButton: View {
 
     private var onSelect: () -> Void
 
@@ -18,12 +18,12 @@ struct LibraryViewShuffle: View {
         Button {
             onSelect()
         } label: {
-            Image(systemName: "shuffle")
+            Label(L10n.random, systemImage: "dice.fill")
         }
     }
 }
 
-extension LibraryViewShuffle {
+extension RandomItemButton {
     init() {
         self.init(
             onSelect: {}

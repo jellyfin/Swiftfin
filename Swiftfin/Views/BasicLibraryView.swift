@@ -58,8 +58,19 @@ struct BasicLibraryView: View {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
-
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                Menu {
+                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                    RandomItemButton()
+                        .onSelect {
+                            viewModel.getRandomItemFromLibrary(completion: { response in
+                                if let item = response.value.items?.first {
+                                    router.route(to: \.item, item)
+                                }
+                            })
+                        }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
             }
         }
     }

@@ -25,9 +25,9 @@ struct LibraryViewTypeToggle: View {
         } label: {
             switch libraryViewType {
             case .grid:
-                Image(systemName: "list.dash")
+                Label(L10n.list, systemImage: "list.dash")
             case .list:
-                Image(systemName: "square.grid.2x2")
+                Label(L10n.grid, systemImage: "square.grid.2x2")
             }
         }
     }
