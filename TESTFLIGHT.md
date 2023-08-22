@@ -4,10 +4,13 @@ The TestFlight instance of Swiftfin is used to test new features and fix bugs be
 
 ## ⚡️ Download
 
-<a href="https://testflight.apple.com/join/WiN0G62Q">
+There is currently no public TestFlight build available.
+**Last Update: 2023-08-22**
+
+<!--<a href="https://testflight.apple.com/join/WiN0G62Q">
   <img height=75 alt="Get the beta on TestFlight" src="./Resources/Get_the_beta_on_Testflight.svg"/>
 </a>
 
 **For Apple TV (without an iOS/iPadOS device)**
 
-If you have an Apple TV and do not own an iOS device, please use this [Google Form](https://forms.gle/U5CczbfQzm8MbpJX9) to get an invitation code.
+If you have an Apple TV and do not own an iOS device, please use this [Google Form](https://forms.gle/) to get an invitation code.-->
