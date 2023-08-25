@@ -10,9 +10,12 @@ import Foundation
 import JellyfinAPI
 
 class LiveVideoPlayerManager: VideoPlayerManager {
+    
+    @Published var program: LiveTVChannelProgram?
 
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-        super.init()
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: LiveTVChannelProgram? = nil) {
+        self.program = program
+        super.init()        
 
         Task {
             let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource)

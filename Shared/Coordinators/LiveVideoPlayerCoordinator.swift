@@ -19,9 +19,9 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let videoPlayerManager: VideoPlayerManager
+    let videoPlayerManager: LiveVideoPlayerManager
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.videoPlayerManager = manager
     }
 

@@ -79,7 +79,7 @@ struct LiveTVChannelsView: View {
                 }
                 router.route(
                     to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel, mediaSource: mediaSource)
+                    LiveVideoPlayerManager(item: channel, mediaSource: mediaSource, program: channelProgram)
                 )
             }
         )
@@ -104,7 +104,7 @@ struct LiveTVChannelsView: View {
     }
 }
 
-private extension BaseItemDto {
+extension BaseItemDto {
     func programDisplayText(timeFormatter: DateFormatter) -> LiveTVChannelViewProgram {
         var timeText = ""
         if let start = self.startDate {

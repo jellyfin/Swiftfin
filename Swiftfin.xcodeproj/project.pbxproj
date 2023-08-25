@@ -156,6 +156,7 @@
 		C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BE07872728448B003F4AD1 /* LiveTVChannelsCoordinator.swift */; };
 		C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45C36532A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift */; };
 		C45C36552A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C45C36532A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift */; };
+		C46008742A97DFF2002B1C7A /* LiveLoadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46008732A97DFF2002B1C7A /* LiveLoadingOverlay.swift */; };
 		C46DD8D22A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8D12A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift */; };
 		C46DD8D32A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8D12A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift */; };
 		C46DD8D72A8DC2990046A504 /* LiveVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8D42A8DC2980046A504 /* LiveVideoPlayer.swift */; };
@@ -913,6 +914,7 @@
 		C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTypeLibraryViewModel.swift; sourceTree = "<group>"; };
 		C45942C427F67DA400C54FE7 /* LiveTVCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVCoordinator.swift; sourceTree = "<group>"; };
 		C45C36532A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveVideoPlayerManager.swift; sourceTree = "<group>"; };
+		C46008732A97DFF2002B1C7A /* LiveLoadingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveLoadingOverlay.swift; sourceTree = "<group>"; };
 		C46DD8D12A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveVideoPlayerCoordinator.swift; sourceTree = "<group>"; };
 		C46DD8D42A8DC2980046A504 /* LiveVideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveVideoPlayer.swift; sourceTree = "<group>"; };
 		C46DD8D52A8DC2980046A504 /* LiveNativeVideoPlayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveNativeVideoPlayer.swift; sourceTree = "<group>"; };
@@ -1964,6 +1966,7 @@
 			children = (
 				C46DD8ED2A8FB4C60046A504 /* Components */,
 				C46DD8E92A8FB45C0046A504 /* LiveOverlay.swift */,
+				C46008732A97DFF2002B1C7A /* LiveLoadingOverlay.swift */,
 				C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */,
 			);
 			path = LiveOverlays;
@@ -3286,6 +3289,7 @@
 				E1575E9B293E7B1E001665B1 /* EnvironmentValue.swift in Sources */,
 				E133328929538D8D00EE76AB /* Files.swift in Sources */,
 				E154967A296CB4B000C4EF88 /* VideoPlayerSettingsView.swift in Sources */,
+				C46008742A97DFF2002B1C7A /* LiveLoadingOverlay.swift in Sources */,
 				E1575EA0293E7B1E001665B1 /* CGPoint.swift in Sources */,
 				E1C926132887565C002A7A66 /* SeriesEpisodeSelector.swift in Sources */,
 				E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */,
