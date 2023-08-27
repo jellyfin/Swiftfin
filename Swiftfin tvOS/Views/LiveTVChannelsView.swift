@@ -47,6 +47,11 @@ struct LiveTVChannelsView: View {
                 sectionInsets: .zero
             )
         }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPage()
+            }
+        }
         .ignoresSafeArea()
     }
 
@@ -86,9 +91,9 @@ struct LiveTVChannelsView: View {
     }
 
     var body: some View {
-        if viewModel.isLoading && viewModel.channels.isEmpty {
+        if viewModel.isLoading && viewModel.channelPrograms.isEmpty {
             loadingView
-        } else if viewModel.channels.isEmpty {
+        } else if viewModel.channelPrograms.isEmpty {
             noResultsView
         } else {
             channelsView
