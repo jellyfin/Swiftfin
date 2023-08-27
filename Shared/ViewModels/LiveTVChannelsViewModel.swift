@@ -25,7 +25,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     @Published
     var channelPrograms: [LiveTVChannelProgram] = []
     private var timer: Timer?
-    
+
     var currentPage = 0
     var hasNextPage = true
     private let pageSize = 100
@@ -45,38 +45,36 @@ final class LiveTVChannelsViewModel: ViewModel {
     deinit {
 //        stopScheduleCheckTimer()
     }
-    
+
     func refresh() {
         currentPage = 0
         hasNextPage = true
         channels = []
         channelPrograms = []
     }
-    
+
     func requestNextPage() {
         guard hasNextPage else { return }
         currentPage += 1
         requestItems(replaceCurrentItems: false)
     }
-    
+
     private func requestItems(replaceCurrentItems: Bool = false) {
-        
+
         if replaceCurrentItems {
             self.channelPrograms = []
         }
-   
+
         Task {
             let newChannelPrograms = try await getChannelPrograms()
-            
+
             await MainActor.run {
                 self.isLoading = false
                 self.channelPrograms.append(contentsOf: newChannelPrograms)
             }
         }
-        
-        return
     }
-    
+
     private func getChannelPrograms() async throws -> [LiveTVChannelProgram] {
         let guideInfoResponse = try await getGuideInfo()
         let channelsResponse = try await getChannels()
@@ -91,21 +89,21 @@ final class LiveTVChannelsViewModel: ViewModel {
             let prgs = programs.filter { item in
                 item.channelID == channel.id
             }
-            
+
             var currentPrg: BaseItemDto?
             for prg in prgs {
                 if let startDate = prg.startDate,
                    let endDate = prg.endDate,
                    now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
-                    now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
+                   now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
                 {
                     currentPrg = prg
                 }
             }
-            
+
             newChannelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
         }
-        
+
         return newChannelPrograms
     }
 

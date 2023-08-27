@@ -28,7 +28,7 @@ final class LiveTVTabCoordinator: TabCoordinatable {
     func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
         NavigationViewCoordinator(LiveTVChannelsCoordinator())
     }
-    
+
     @ViewBuilder
     func makeChannelsTab(isActive: Bool) -> some View {
         HStack {
@@ -36,7 +36,7 @@ final class LiveTVTabCoordinator: TabCoordinatable {
             L10n.channels.text
         }
     }
-    
+
     func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
         NavigationViewCoordinator(LiveTVProgramsCoordinator())
     }

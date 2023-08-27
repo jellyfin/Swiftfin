@@ -10,13 +10,15 @@ import Foundation
 import JellyfinAPI
 
 class LiveVideoPlayerManager: VideoPlayerManager {
-    
-    @Published var program: LiveTVChannelProgram?
-    @Published var dateFormatter = DateFormatter()
+
+    @Published
+    var program: LiveTVChannelProgram?
+    @Published
+    var dateFormatter = DateFormatter()
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: LiveTVChannelProgram? = nil) {
         self.program = program
-        super.init()        
+        super.init()
 
         Task {
             let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource)
