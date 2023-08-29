@@ -62,4 +62,10 @@ extension View {
             }
         }
     }
+    
+    /// Runs arbitrary code before returning a modified view. Taken from:
+    /// https://blog.overdesigned.net/posts/2020-09-23-swiftui-availability/
+    func modify<T: View>(@ViewBuilder _ modifier: (Self) -> T) -> some View {
+        return modifier(self)
+    }
 }

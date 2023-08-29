@@ -242,6 +242,14 @@ struct VideoPlayer: View {
             audioOffset = 0
             subtitleOffset = 0
         }
+        .modify {
+//            Fixes #582
+            if #available(iOS 16.0, *) {
+                $0.persistentSystemOverlays(.hidden)
+            } else {
+                $0
+            }
+        }
     }
 }
 
