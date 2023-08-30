@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnEstropia/CoreStore.git",
       "state" : {
-        "revision" : "25593754913d228777f14634bc6f493dbeb4e9fb",
-        "version" : "9.0.0"
+        "revision" : "118bb685fcf2bbcfd5702fea07ec105cdc8cb43d",
+        "version" : "9.1.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sindresorhus/Defaults",
       "state" : {
-        "revision" : "d71bfd8ffbf944ef08eacbca5fb96d6f69bf7696",
-        "version" : "7.1.0"
+        "revision" : "0f5a23fcbd83eb72f6d405aa85bbfacaffb99b03",
+        "version" : "7.2.0"
       }
     },
     {
@@ -59,17 +59,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Get",
       "state" : {
-        "revision" : "a7dd8e0233d4041330591445de21b7e5d4c953c6",
-        "version" : "1.0.4"
+        "revision" : "12830cc64f31789ae6f4352d2d51d03a25fc3741",
+        "version" : "2.1.6"
       }
     },
     {
       "identity" : "jellyfin-sdk-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/jellyfin-sdk-swift",
+      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "0878c236b5f15fea6b4034f88b698c2746349c9c",
-        "version" : "0.3.0"
+        "revision" : "ecc338b4ac0a817df36e087799d7077252489ccc",
+        "version" : "0.3.2"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "36cb6f05affbf7840fa27cde1b65257f54fdc88c",
-        "version" : "3.5.7"
+        "revision" : "e080339a24f5a47461378e5fe02ba3f2ef0a2cfa",
+        "version" : "4.0.3"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/PulseLogHandler",
       "state" : {
-        "branch" : "main",
-        "revision" : "3ca42eada318ad8ed9c3246f5e32c19413dae3ce"
+        "revision" : "7280e980b71a1267099e7751a900fd1e67b7f4bb",
+        "version" : "4.0.1"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "32e8d724467f8fe623624570367e3d50c5638e46",
-        "version" : "1.5.2"
+        "revision" : "532d8b529501fb73a2455b179e0bbb6d49b652ed",
+        "version" : "1.5.3"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "c18951c747ab62af7c15e17a81bd37d4fd5a9979",
-        "version" : "0.2.3"
+        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a",
+        "version" : "0.12.0"
       }
     },
     {
