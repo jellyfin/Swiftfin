@@ -20,6 +20,9 @@ struct LiveNativeVideoPlayer: View {
     @ObservedObject
     private var videoPlayerManager: VideoPlayerManager
 
+    @State
+    private var isPresentingOverlay: Bool = false
+
     init(manager: VideoPlayerManager) {
         self.videoPlayerManager = manager
     }
@@ -31,11 +34,18 @@ struct LiveNativeVideoPlayer: View {
 
     var body: some View {
         Group {
-            if let _ = videoPlayerManager.currentViewModel {
-                playerView
-            } else {
-//                VideoPlayer.LoadingView()
-                Text("Loading")
+            ZStack {
+                if let _ = videoPlayerManager.currentViewModel {
+                    playerView
+                } else {
+                    Text("Loading")
+                }
+
+                LiveVideoPlayer.LoadingOverlay()
+                    .eraseToAnyView()
+                    .environmentObject(videoPlayerManager)
+                    .environmentObject(videoPlayerManager.proxy)
+                    .environment(\.isPresentingOverlay, $isPresentingOverlay)
             }
         }
         .navigationBarHidden(true)
