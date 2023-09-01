@@ -240,7 +240,6 @@
 		E12A9EF829499E0100731C3A /* JellyfinClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12A9EF729499E0100731C3A /* JellyfinClient.swift */; };
 		E12A9EF929499E0100731C3A /* JellyfinClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12A9EF729499E0100731C3A /* JellyfinClient.swift */; };
 		E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E15210532946DF1B00375CC2 /* Pulse */; };
-		E12B930D2948369F00CE0BD9 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E12B930C2948369F00CE0BD9 /* JellyfinAPI */; };
 		E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
 		E12CC1AF28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */; };
 		E12CC1B128D1008F00678D5D /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1B028D1008F00678D5D /* NextUpView.swift */; };
@@ -314,6 +313,8 @@
 		E148128B28C15526003B8787 /* SortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128A28C15526003B8787 /* SortBy.swift */; };
 		E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */; };
 		E14A08CD28E68729004FC984 /* MenuPosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CC28E68729004FC984 /* MenuPosterHStack.swift */; };
+		E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6852A9FF62A001586C6 /* JellyfinAPI */; };
+		E14CB6882A9FF71F001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6872A9FF71F001586C6 /* JellyfinAPI */; };
 		E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E15210552946DF1B00375CC2 /* PulseLogHandler */; };
 		E15210582946DF1B00375CC2 /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E15210572946DF1B00375CC2 /* PulseUI */; };
 		E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */; };
@@ -580,7 +581,6 @@
 		E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5861229E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
 		E1B5861329E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
-		E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A429577BB8004B26CF /* JellyfinAPI */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
@@ -1278,7 +1278,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1575E56293E7650001665B1 /* VLCUI in Frameworks */,
-				E1B5F7A529577BB8004B26CF /* JellyfinAPI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				E1DC981E296DD91900982F06 /* CollectionView in Frameworks */,
@@ -1312,6 +1311,7 @@
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
+				E14CB6882A9FF71F001586C6 /* JellyfinAPI in Frameworks */,
 				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1343,6 +1343,7 @@
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
 				E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
+				E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
@@ -1355,7 +1356,6 @@
 				E1DC9821296DDBE600982F06 /* CollectionView in Frameworks */,
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
 				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
-				E12B930D2948369F00CE0BD9 /* JellyfinAPI in Frameworks */,
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
@@ -2790,13 +2790,13 @@
 				E1575E55293E7650001665B1 /* VLCUI */,
 				E1575E57293E7685001665B1 /* Files */,
 				E1388A45293F0ABA009721B1 /* SwizzleSwift */,
-				E1B5F7A429577BB8004B26CF /* JellyfinAPI */,
 				E1B5F7A629577BCE004B26CF /* Pulse */,
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
 				E1DC981D296DD91900982F06 /* CollectionView */,
 				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
+				E14CB6872A9FF71F001586C6 /* JellyfinAPI */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2835,11 +2835,11 @@
 				E15210532946DF1B00375CC2 /* Pulse */,
 				E15210552946DF1B00375CC2 /* PulseLogHandler */,
 				E15210572946DF1B00375CC2 /* PulseUI */,
-				E12B930C2948369F00CE0BD9 /* JellyfinAPI */,
 				E19DDEC62948EF9900954E10 /* OrderedCollections */,
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
 				E1DC9820296DDBE600982F06 /* CollectionView */,
 				E1FAD1C52A0375BA007F5521 /* UDPBroadcast */,
+				E14CB6852A9FF62A001586C6 /* JellyfinAPI */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2903,11 +2903,11 @@
 				E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */,
 				E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */,
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
-				E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
 				E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */,
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
+				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4088,14 +4088,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/jellyfin-sdk-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.0;
-			};
-		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
@@ -4112,12 +4104,20 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.1;
+			};
+		};
 		E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/Pulse";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
+				minimumVersion = 4.0.0;
 			};
 		};
 		E1575E3A293C6B15001665B1 /* XCRemoteSwiftPackageReference "Files" */ = {
@@ -4172,8 +4172,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kean/PulseLogHandler";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
 			};
 		};
 		E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */ = {
@@ -4250,11 +4250,6 @@
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
 		};
-		E12B930C2948369F00CE0BD9 /* JellyfinAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
-			productName = JellyfinAPI;
-		};
 		E1388A45293F0ABA009721B1 /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
@@ -4294,6 +4289,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E14CB6852A9FF62A001586C6 /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
+		};
+		E14CB6872A9FF71F001586C6 /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
 		};
 		E15210532946DF1B00375CC2 /* Pulse */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4364,11 +4369,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
 			productName = BlurHashKit;
-		};
-		E1B5F7A429577BB8004B26CF /* JellyfinAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E12B930B2948329D00CE0BD9 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
-			productName = JellyfinAPI;
 		};
 		E1B5F7A629577BCE004B26CF /* Pulse */ = {
 			isa = XCSwiftPackageProductDependency;

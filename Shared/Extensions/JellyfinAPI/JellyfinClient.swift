@@ -13,7 +13,7 @@ import JellyfinAPI
 extension JellyfinClient {
 
     func fullURL<T>(with request: Request<T>) -> URL {
-        let fullPath = configuration.url.appendingPathComponent(request.url)
+        let fullPath = configuration.url.appendingPathComponent(request.url?.path ?? "")
 
         var components = URLComponents(string: fullPath.absoluteString)!
         components.queryItems = request.query?.map { URLQueryItem(name: $0.0, value: $0.1) } ?? []
