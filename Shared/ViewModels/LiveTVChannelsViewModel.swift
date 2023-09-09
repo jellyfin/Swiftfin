@@ -61,7 +61,7 @@ final class LiveTVChannelsViewModel: ViewModel {
 
     func requestNextPage() {
         guard hasNextPage else { return }
-        
+
         currentPage += 1
         requestItems(replaceCurrentItems: false)
     }
@@ -176,7 +176,7 @@ final class LiveTVChannelsViewModel: ViewModel {
         timer = Timer(fire: nextMinute, interval: 60, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.logger.debug("LiveTVChannels schedule check...")
-            
+
             Task {
                 await MainActor.run {
                     let channelProgramsCopy = self.channelPrograms
@@ -188,13 +188,18 @@ final class LiveTVChannelsViewModel: ViewModel {
                             if let startDate = prg.startDate,
                                let endDate = prg.endDate,
                                now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
-                                now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
+                               now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
                             {
                                 currentPrg = prg
                             }
                         }
-                        
-                        refreshedChannelPrograms.append(LiveTVChannelProgram(channel: channelProgram.channel, currentProgram: currentPrg, programs: channelProgram.programs))
+
+                        refreshedChannelPrograms
+                            .append(LiveTVChannelProgram(
+                                channel: channelProgram.channel,
+                                currentProgram: currentPrg,
+                                programs: channelProgram.programs
+                            ))
                     }
                     self.channelPrograms = refreshedChannelPrograms
                 }

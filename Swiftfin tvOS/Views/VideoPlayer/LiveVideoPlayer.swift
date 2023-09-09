@@ -92,7 +92,7 @@ struct LiveVideoPlayer: View {
                 Text("Retrieving media information")
                 ProgressView()
             }
-            
+
             LiveVideoPlayer.LoadingOverlay()
                 .eraseToAnyView()
                 .environmentObject(videoPlayerManager)

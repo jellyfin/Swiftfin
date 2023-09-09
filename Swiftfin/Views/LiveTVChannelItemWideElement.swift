@@ -70,13 +70,13 @@ struct LiveTVChannelItemWideElement: View {
                             .frame(width: 56, height: 56)
 
                         if loading {
-                            
+
                             ProgressView()
                         }
                     }
                     .padding(.top, 4)
                     .padding(.leading, 4)
-                    
+
                     VStack(alignment: .leading) {
                         Text(channel.number != nil ? "\(channel.number ?? "") " : "")
                             .font(.body)
@@ -89,7 +89,7 @@ struct LiveTVChannelItemWideElement: View {
                 }
                 .frame(alignment: .leading)
                 .opacity(loading ? 0.5 : 1.0)
-                
+
                 VStack(alignment: .leading, spacing: 0) {
                     Text("\(channel.name ?? "")")
                         .font(.body)
@@ -97,10 +97,10 @@ struct LiveTVChannelItemWideElement: View {
                         .lineLimit(1)
                         .foregroundColor(Color.jellyfinPurple)
                         .frame(alignment: .leading)
-                    
+
                     progressBar()
                         .padding(.top, 4)
-                    
+
                     HStack {
                         Text(currentProgramText.timeDisplay)
                             .font(.footnote)
@@ -108,7 +108,7 @@ struct LiveTVChannelItemWideElement: View {
                             .lineLimit(1)
                             .foregroundColor(Color("TextHighlightColor"))
                             .frame(width: 38, alignment: .leading)
-                        
+
                         Text(currentProgramText.title)
                             .font(.footnote)
                             .bold()
@@ -116,7 +116,7 @@ struct LiveTVChannelItemWideElement: View {
                             .foregroundColor(Color("TextHighlightColor"))
                     }
                     .padding(.top, 4)
-                    
+
                     if !nextProgramsText.isEmpty {
                         let nextItem = nextProgramsText[0]
                         programLabel(timeText: nextItem.timeDisplay, titleText: nextItem.title, color: Color.gray)
@@ -125,11 +125,11 @@ struct LiveTVChannelItemWideElement: View {
                         let nextItem2 = nextProgramsText[1]
                         programLabel(timeText: nextItem2.timeDisplay, titleText: nextItem2.title, color: Color.gray)
                     }
-                    
+
                     Spacer()
                 }
                 .padding(8)
-                
+
                 Spacer()
             }
         }
@@ -139,9 +139,8 @@ struct LiveTVChannelItemWideElement: View {
                 loading = loadingState
             }
         }
-        
     }
-    
+
     @ViewBuilder
     func progressBar() -> some View {
         VStack(alignment: .center) {
