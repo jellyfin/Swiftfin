@@ -18,12 +18,12 @@ struct LiveNativeVideoPlayer: View {
     private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
     @State
     private var isPresentingOverlay: Bool = false
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.videoPlayerManager = manager
     }
 
@@ -50,6 +50,9 @@ struct LiveNativeVideoPlayer: View {
         }
         .navigationBarHidden(true)
         .ignoresSafeArea()
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+        }
     }
 }
 

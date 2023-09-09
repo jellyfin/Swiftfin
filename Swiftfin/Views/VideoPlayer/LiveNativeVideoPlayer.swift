@@ -18,9 +18,9 @@ struct LiveNativeVideoPlayer: View {
     private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.videoPlayerManager = manager
     }
 
@@ -40,12 +40,15 @@ struct LiveNativeVideoPlayer: View {
         .navigationBarHidden()
         .statusBarHidden()
         .ignoresSafeArea()
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+        }
     }
 }
 
 struct LiveNativeVideoPlayerView: UIViewControllerRepresentable {
 
-    let videoPlayerManager: VideoPlayerManager
+    let videoPlayerManager: LiveVideoPlayerManager
 
     func makeUIViewController(context: Context) -> UILiveNativeVideoPlayerViewController {
         UILiveNativeVideoPlayerViewController(manager: videoPlayerManager)
@@ -56,12 +59,12 @@ struct LiveNativeVideoPlayerView: UIViewControllerRepresentable {
 
 class UILiveNativeVideoPlayerViewController: AVPlayerViewController {
 
-    let videoPlayerManager: VideoPlayerManager
+    let videoPlayerManager: LiveVideoPlayerManager
 
     private var rateObserver: NSKeyValueObservation!
     private var timeObserverToken: Any!
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
 
         self.videoPlayerManager = manager
 

@@ -93,7 +93,7 @@ extension LiveVideoPlayer {
                 }
 
                 if playbackButtonType == .large {
-                    VideoPlayer.Overlay.LargePlaybackButtons()
+                    LiveVideoPlayer.Overlay.LiveLargePlaybackButtons()
                         .visible(!isScrubbing && isPresentingOverlay)
                 }
             }

@@ -53,6 +53,15 @@ struct LiveTVChannelsView: View {
             }
         }
         .ignoresSafeArea()
+        .onAppear {
+            viewModel.startScheduleCheckTimer()
+        }
+        .onDisappear {
+            viewModel.stopScheduleCheckTimer()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.livePlayerDismissed)) { _ in
+            viewModel.startScheduleCheckTimer()
+        }
     }
 
     @ViewBuilder
@@ -82,6 +91,7 @@ struct LiveTVChannelsView: View {
                 guard let mediaSource = channel.mediaSources?.first else {
                     return
                 }
+                viewModel.stopScheduleCheckTimer()
                 router.route(
                     to: \.liveVideoPlayer,
                     LiveVideoPlayerManager(item: channel, mediaSource: mediaSource, program: channelProgram)

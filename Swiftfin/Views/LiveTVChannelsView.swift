@@ -50,6 +50,7 @@ struct LiveTVChannelsView: View {
                 guard let mediaSource = channel.mediaSources?.first else {
                     return
                 }
+                viewModel.stopScheduleCheckTimer()
                 mainRouter.route(to: \.liveVideoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
             }
         )
@@ -67,11 +68,16 @@ struct LiveTVChannelsView: View {
             .layout { _, layoutEnvironment in
                 .grid(
                     layoutEnvironment: layoutEnvironment,
-                    layoutMode: .adaptive(withMinItemSize: 250),
+                    layoutMode: .adaptive(withMinItemSize: 300),
                     itemSpacing: 16,
-                    lineSpacing: 4,
-                    itemSize: .fractionalWidth(1 / 3)
+                    lineSpacing: 16,
+                    itemSize: .absolute(100)
                 )
+            }
+            .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
+                if !viewModel.isLoading && edge == .bottom {
+                    viewModel.requestNextPage()
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .ignoresSafeArea()
@@ -81,11 +87,15 @@ struct LiveTVChannelsView: View {
             .onDisappear {
                 viewModel.stopScheduleCheckTimer()
             }
+            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.livePlayerDismissed)) { _ in
+                viewModel.startScheduleCheckTimer()
+            }
         } else {
             VStack {
                 Text("No results.")
                 Button {
-                    viewModel.getChannels()
+                    viewModel.refresh()
+                    viewModel.requestNextPage()
                 } label: {
                     Text("Reload")
                 }

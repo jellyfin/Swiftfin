@@ -18,10 +18,16 @@ struct LiveTVChannelProgram: Hashable {
     let programs: [BaseItemDto]
 }
 
+extension Notification.Name {
+    static let livePlayerDismissed = Notification.Name("livePlayerDismissed")
+}
+
 final class LiveTVChannelsViewModel: ViewModel {
 
     @Published
     var channels: [BaseItemDto] = []
+    @Published
+    var programs: [BaseItemDto] = []
     @Published
     var channelPrograms: [LiveTVChannelProgram] = []
     private var timer: Timer?
@@ -38,30 +44,36 @@ final class LiveTVChannelsViewModel: ViewModel {
 
     override init() {
         super.init()
-//        startScheduleCheckTimer()
         requestItems(replaceCurrentItems: true)
     }
 
     deinit {
-//        stopScheduleCheckTimer()
+        stopScheduleCheckTimer()
     }
 
     func refresh() {
         currentPage = 0
         hasNextPage = true
         channels = []
+        programs = []
         channelPrograms = []
     }
 
     func requestNextPage() {
         guard hasNextPage else { return }
+        
         currentPage += 1
         requestItems(replaceCurrentItems: false)
     }
 
     private func requestItems(replaceCurrentItems: Bool = false) {
-
         if replaceCurrentItems {
+            // Only set isLoading on a replace / full load
+            // Otherwise fetching next page will reset the scroll position
+            // as the CollectionView is removed and redrawn after loading state is toggled
+            isLoading = true
+            self.channels = []
+            self.programs = []
             self.channelPrograms = []
         }
 
@@ -76,13 +88,16 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getChannelPrograms() async throws -> [LiveTVChannelProgram] {
-        let guideInfoResponse = try await getGuideInfo()
+        let _ = try await getGuideInfo()
         let channelsResponse = try await getChannels()
         guard let channels = channelsResponse.value.items, !channels.isEmpty else {
             return []
         }
         let programsResponse = try await getPrograms(channelIds: channels.compactMap(\.id))
-        let programs = programsResponse.value.items ?? []
+        let fetchedPrograms = programsResponse.value.items ?? []
+        await MainActor.run {
+            self.programs.append(contentsOf: fetchedPrograms)
+        }
         var newChannelPrograms = [LiveTVChannelProgram]()
         let now = Date()
         for channel in channels {
@@ -143,36 +158,52 @@ final class LiveTVChannelsViewModel: ViewModel {
         return try await userSession.client.send(request)
     }
 
-    // Will revisit this next
-//    func startScheduleCheckTimer() {
-//        let date = Date()
-//        let calendar = Calendar.current
-//        var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
-//
-//        // Run on 10th min of every hour
-//        guard let minute = components.minute else { return }
-//        components.second = 0
-//        components.minute = minute + (10 - (minute % 10))
-//
-//        guard let nextMinute = calendar.date(from: components) else { return }
-//
-//        if let existingTimer = timer {
-//            existingTimer.invalidate()
-//        }
-//        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] _ in
-//            guard let self = self else { return }
-//            self.logger.debug("LiveTVChannels schedule check...")
-//            DispatchQueue.global(qos: .background).async {
-//                let newChanPrgs = self.processChannelPrograms()
-//                DispatchQueue.main.async {
-//                    self.channelPrograms = newChanPrgs
-//                }
-//            }
-//        }
-//        if let timer = timer {
-//            RunLoop.main.add(timer, forMode: .default)
-//        }
-//    }
+    func startScheduleCheckTimer() {
+        let date = Date()
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
+
+        // Run every minute
+        guard let minute = components.minute else { return }
+        components.second = 0
+        components.minute = minute + (1 - (minute % 1))
+
+        guard let nextMinute = calendar.date(from: components) else { return }
+
+        if let existingTimer = timer {
+            existingTimer.invalidate()
+        }
+        timer = Timer(fire: nextMinute, interval: 60, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.logger.debug("LiveTVChannels schedule check...")
+            
+            Task {
+                await MainActor.run {
+                    let channelProgramsCopy = self.channelPrograms
+                    var refreshedChannelPrograms: [LiveTVChannelProgram] = []
+                    for channelProgram in channelProgramsCopy {
+                        var currentPrg: BaseItemDto?
+                        let now = Date()
+                        for prg in channelProgram.programs {
+                            if let startDate = prg.startDate,
+                               let endDate = prg.endDate,
+                               now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
+                                now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
+                            {
+                                currentPrg = prg
+                            }
+                        }
+                        
+                        refreshedChannelPrograms.append(LiveTVChannelProgram(channel: channelProgram.channel, currentProgram: currentPrg, programs: channelProgram.programs))
+                    }
+                    self.channelPrograms = refreshedChannelPrograms
+                }
+            }
+        }
+        if let timer = timer {
+            RunLoop.main.add(timer, forMode: .default)
+        }
+    }
 
     func stopScheduleCheckTimer() {
         timer?.invalidate()

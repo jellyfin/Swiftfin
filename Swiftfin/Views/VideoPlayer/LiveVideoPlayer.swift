@@ -56,7 +56,7 @@ struct LiveVideoPlayer: View {
     @StateObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
     @State
     private var audioOffset: Int = 0
@@ -173,6 +173,9 @@ struct LiveVideoPlayer: View {
                 videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
+            .onDisappear {
+                NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+            }
     }
 
     var body: some View {
@@ -222,12 +225,15 @@ struct LiveVideoPlayer: View {
             audioOffset = 0
             subtitleOffset = 0
         }
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+        }
     }
 }
 
 extension LiveVideoPlayer {
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager
