@@ -97,6 +97,13 @@ struct SettingsView: View {
                     .onSelect {
                         router.route(to: \.experimentalSettings)
                     }
+
+                #if DEBUG
+                ChevronButton(title: L10n.debug)
+                    .onSelect {
+                        router.route(to: \.debugSettings)
+                    }
+                #endif
             } header: {
                 L10n.accessibility.text
             }

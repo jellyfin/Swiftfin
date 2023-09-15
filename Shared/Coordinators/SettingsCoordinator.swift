@@ -32,6 +32,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
+    var debugSettings = makeDebugSettings
+    @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
@@ -86,6 +88,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeCustomizeViewsSettings() -> some View {
         CustomizeViewsSettings()
+    }
+
+    @ViewBuilder
+    func makeDebugSettings() -> some View {
+        DebugSettingsView()
     }
 
     @ViewBuilder

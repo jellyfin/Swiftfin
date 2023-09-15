@@ -108,6 +108,8 @@ internal enum L10n {
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
   /// Dark
   internal static let dark = L10n.tr("Localizable", "dark", fallback: "Dark")
+  /// Debug
+  internal static let debug = L10n.tr("Localizable", "debug", fallback: "Debug")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delivery
