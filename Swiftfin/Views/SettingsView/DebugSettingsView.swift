@@ -20,6 +20,7 @@ struct DebugSettingsView: View {
 
             Toggle("Send Progress Reports", isOn: $sendProgressReports)
         }
+        .navigationTitle("Debug")
     }
 }
 #endif

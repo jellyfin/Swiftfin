@@ -39,6 +39,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
+
+    #if DEBUG
+    @Route(.push)
+    var debugSettings = makeDebugSettings
+    #endif
     #endif
 
     #if os(tvOS)
@@ -102,6 +107,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeServerDetail(server: ServerState) -> some View {
         ServerDetailView(viewModel: .init(server: server))
     }
+
+    #if DEBUG
+    @ViewBuilder
+    func makeDebugSettings() -> some View {
+        DebugSettingsView()
+    }
+    #endif
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
