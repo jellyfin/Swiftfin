@@ -214,6 +214,6 @@ extension UserDefaults {
 
 extension Defaults.Keys {
 
-    static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: false, suite: .debugSuite)
+    static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: true, suite: .debugSuite)
 }
 #endif
