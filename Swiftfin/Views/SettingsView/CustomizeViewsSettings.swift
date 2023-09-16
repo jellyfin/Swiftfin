@@ -24,6 +24,15 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
+    @Default(.Customization.Filters.showGenres)
+    var showGenres
+    @Default(.Customization.Filters.showFilters)
+    var showFilters
+    @Default(.Customization.Filters.showOrder)
+    var showOrder
+    @Default(.Customization.Filters.showSort)
+    var showSort
+    
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
     @Default(.Customization.nextUpPosterType)
@@ -85,6 +94,15 @@ struct CustomizeViewsSettings: View {
                 L10n.missingItems.text
             }
 
+            Section {
+                Toggle(L10n.genres, isOn: $showGenres)
+                Toggle(L10n.filters, isOn: $showFilters)
+                Toggle(L10n.order, isOn: $showOrder)
+                Toggle(L10n.sort, isOn: $showSort)
+            } header: {
+                L10n.filters.text
+            }
+            
             Section {
 
                 ChevronButton(title: L10n.indicators)
