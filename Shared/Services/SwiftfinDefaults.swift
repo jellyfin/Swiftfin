@@ -72,6 +72,14 @@ extension Defaults.Keys {
             static let showFavorites: Key<Bool> = .init("libraryShowFavorites", default: true, suite: .generalSuite)
             static let viewType = Key<LibraryViewType>("libraryViewType", default: .grid, suite: .generalSuite)
         }
+
+        enum Filters {
+
+            static let showGenres: Key<Bool> = .init("showGenres", default: true, suite: .generalSuite)
+            static let showFilters: Key<Bool> = .init("showFilters", default: true, suite: .generalSuite)
+            static let showOrder: Key<Bool> = .init("showOrder", default: true, suite: .generalSuite)
+            static let showSort: Key<Bool> = .init("showSort", default: true, suite: .generalSuite)
+        }
     }
 
     enum VideoPlayer {
