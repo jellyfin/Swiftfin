@@ -30,7 +30,7 @@ struct FilterDrawerHStack: View {
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
-        if filterShowOrder || filterShowOrder || filterShowOrder || filterShowOrder {
+        if filterShowGenres || filterShowFilters || filterShowOrder || filterShowSort {
             HStack {
                 if viewModel.currentFilters.hasFilters {
                     Menu {
@@ -80,7 +80,7 @@ struct FilterDrawerHStack: View {
                         }
                 }
     
-                if filterShowOrder {
+                if filterShowSort {
                     FilterDrawerButton(title: L10n.sort, activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
                         .onSelect {
                             onSelect(.init(
