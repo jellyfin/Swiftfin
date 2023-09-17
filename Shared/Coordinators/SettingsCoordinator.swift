@@ -40,6 +40,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
 
+    @Route(.push)
+    var filterDrawerButtonSelector = makefilterDrawerButtonSelector
+    
     #if DEBUG
     @Route(.push)
     var debugSettings = makeDebugSettings
@@ -118,6 +121,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
+    
+    func makefilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerActionButton]>) -> some View {
+        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+    }
+        
     #endif
 
     #if os(tvOS)

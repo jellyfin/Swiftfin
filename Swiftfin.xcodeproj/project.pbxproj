@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
+		4E5E48DD2AB58F39003F1B48 /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48DC2AB58F39003F1B48 /* FilterDrawerButtonSelectorView.swift */; };
+		4E5E48DF2AB58FFB003F1B48 /* FilterDrawerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48DE2AB58FFA003F1B48 /* FilterDrawerActionButton.swift */; };
+		4E5E48E02AB58FFB003F1B48 /* FilterDrawerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48DE2AB58FFA003F1B48 /* FilterDrawerActionButton.swift */; };
+		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
+		4E5E48E62AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
@@ -622,7 +627,6 @@
 		E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */; };
 		E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */; };
-		E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */; };
 		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
 		E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */; };
 		E1D3043228D175CE00587289 /* StaticLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043128D175CE00587289 /* StaticLibraryViewModel.swift */; };
@@ -771,6 +775,9 @@
 
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
+		4E5E48DC2AB58F39003F1B48 /* FilterDrawerButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FilterDrawerButtonSelectorView.swift; path = ../../../../../../../../../Documents/FilterDrawerButtonSelectorView.swift; sourceTree = "<group>"; };
+		4E5E48DE2AB58FFA003F1B48 /* FilterDrawerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterDrawerActionButton.swift; sourceTree = "<group>"; };
+		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlainNavigationLinkButton.swift; sourceTree = "<group>"; };
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
@@ -1193,7 +1200,6 @@
 		E1CCF12D28ABF989006CAC9E /* PosterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterType.swift; sourceTree = "<group>"; };
 		E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
 		E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectOrientationModifier.swift; sourceTree = "<group>"; };
-		E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterTrack.swift; sourceTree = "<group>"; };
 		E1D3043128D175CE00587289 /* StaticLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticLibraryViewModel.swift; sourceTree = "<group>"; };
@@ -1375,6 +1381,22 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E5E48DA2AB58ED7003F1B48 /* FilterDrawerSettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				4E5E48DB2AB58F06003F1B48 /* Components */,
+			);
+			path = FilterDrawerSettingsView;
+			sourceTree = "<group>";
+		};
+		4E5E48DB2AB58F06003F1B48 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E5E48DC2AB58F39003F1B48 /* FilterDrawerButtonSelectorView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1531,6 +1553,7 @@
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 				E15756352936856700976E1F /* VideoPlayerType.swift */,
+				4E5E48DE2AB58FFA003F1B48 /* FilterDrawerActionButton.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -2694,7 +2717,7 @@
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				E1CEFBF427914C7700F60429 /* CustomizeViewsSettings.swift */,
+				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
 				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */,
@@ -2702,6 +2725,7 @@
 				E15756332936851D00976E1F /* NativeVideoPlayerSettingsView.swift */,
 				6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+				4E5E48DA2AB58ED7003F1B48 /* FilterDrawerSettingsView */,
 				E1BDF2E7295148F400CC0294 /* VideoPlayerSettingsView */,
 			);
 			path = SettingsView;
@@ -3159,6 +3183,7 @@
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				E1DA656A28E78B5900592A73 /* SpecialFeaturesViewModel.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
+				4E5E48E62AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
@@ -3246,6 +3271,7 @@
 				E1B5861329E32EEF00E45D6E /* Set.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
+				4E5E48E02AB58FFB003F1B48 /* FilterDrawerActionButton.swift in Sources */,
 				E113133B28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
 				E1575E70293E77B5001665B1 /* TextPair.swift in Sources */,
 				E1575E79293E77B5001665B1 /* DeviceProfileBuilder.swift in Sources */,
@@ -3315,6 +3341,7 @@
 				E1C812C5277A90B200918266 /* URLComponents.swift in Sources */,
 				E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
+				4E5E48DD2AB58F39003F1B48 /* FilterDrawerButtonSelectorView.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */,
 				62E632DC267D2E130063E547 /* SearchViewModel.swift in Sources */,
@@ -3405,7 +3432,6 @@
 				E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */,
 				E18ACA922A15A32F00BB4F35 /* (null) in Sources */,
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
-				E1CEFBF527914C7700F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E15756322935642A00976E1F /* Float.swift in Sources */,
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
@@ -3417,6 +3443,7 @@
 				E1DA656928E78B5900592A73 /* SpecialFeaturesViewModel.swift in Sources */,
 				E12CC1B928D11A1D00678D5D /* BasicLibraryView.swift in Sources */,
 				E1B5784128F8AFCB00D42911 /* Wrapped View.swift in Sources */,
+				4E5E48DF2AB58FFB003F1B48 /* FilterDrawerActionButton.swift in Sources */,
 				E1921B7428E61914003A5238 /* SpecialFeatureHStack.swift in Sources */,
 				C45942D027F69C2400C54FE7 /* LiveTVChannelsCoordinator.swift in Sources */,
 				E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */,
@@ -3568,6 +3595,7 @@
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
+				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E19F6C5D28F5189300C5197E /* MediaStreamInfoView.swift in Sources */,
 				E1D8429329340B8300D1041A /* Utilities.swift in Sources */,
 				E18CE0B428A22EDA0092E7F1 /* RepeatingTimer.swift in Sources */,

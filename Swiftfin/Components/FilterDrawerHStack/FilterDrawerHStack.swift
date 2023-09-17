@@ -12,17 +12,8 @@ import SwiftUI
 
 struct FilterDrawerHStack: View {
 
-    @Default(.Customization.Filters.showGenres)
-    private var filterShowGenres
-
-    @Default(.Customization.Filters.showFilters)
-    private var filterShowFilters
-
-    @Default(.Customization.Filters.showOrder)
-    private var filterShowOrder
-
-    @Default(.Customization.Filters.showSort)
-    private var filterShowSort
+    @Default(.Customization.Filters.filterDrawerButtons)
+    private var filterActiveDrawerButtons
     
     @ObservedObject
     private var viewModel: FilterViewModel
@@ -30,67 +21,29 @@ struct FilterDrawerHStack: View {
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
-        if filterShowGenres || filterShowFilters || filterShowOrder || filterShowSort {
-            HStack {
-                if viewModel.currentFilters.hasFilters {
-                    Menu {
-                        Button(role: .destructive) {
-                            viewModel.currentFilters = .init()
-                        } label: {
-                            L10n.reset.text
-                        }
+        HStack {
+            if !filterActiveDrawerButtons.isEmpty && viewModel.currentFilters.hasFilters {
+                Menu {
+                    Button(role: .destructive) {
+                        viewModel.currentFilters = .init()
                     } label: {
-                        FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill", activated: true)
+                        L10n.reset.text
                     }
+                } label: {
+                    FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill", activated: true)
                 }
-    
-                if filterShowGenres {
-                    FilterDrawerButton(title: L10n.genres, activated: viewModel.currentFilters.genres != [])
-                        .onSelect {
-                            onSelect(.init(
-                                title: L10n.genres,
-                                viewModel: viewModel,
-                                filter: \.genres,
-                                selectorType: .multi
-                            ))
-                        }
-                }
-    
-                if filterShowFilters {
-                    FilterDrawerButton(title: L10n.filters, activated: viewModel.currentFilters.filters != [])
-                        .onSelect {
-                            onSelect(.init(
-                                title: L10n.filters,
-                                viewModel: viewModel,
-                                filter: \.filters,
-                                selectorType: .multi
-                            ))
-                        }
-                }
-    
-                if filterShowOrder {
-                    FilterDrawerButton(title: L10n.order, activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
-                        .onSelect {
-                            onSelect(.init(
-                                title: L10n.order,
-                                viewModel: viewModel,
-                                filter: \.sortOrder,
-                                selectorType: .single
-                            ))
-                        }
-                }
-    
-                if filterShowSort {
-                    FilterDrawerButton(title: L10n.sort, activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
-                        .onSelect {
-                            onSelect(.init(
-                                title: L10n.sort,
-                                viewModel: viewModel,
-                                filter: \.sortBy,
-                                selectorType: .single
-                            ))
-                        }
-                }
+            }
+            ForEach(filterActiveDrawerButtons, id: \.self) { button in
+                FilterDrawerButton(title: button.displayTitle, activated: getFilterProperty(
+                    from: viewModel.currentFilters, propertyName: button.settingsItemsFilterProperty) != button.settingsItemsFilterInactive)
+                    .onSelect {
+                        onSelect(.init(
+                            title: button.displayTitle,
+                            viewModel: viewModel,
+                            filter: button.settingsFilter,
+                            selectorType: button.settingsSelectorType
+                        ))
+                    }
             }
         }
     }
@@ -107,5 +60,20 @@ extension FilterDrawerHStack {
 
     func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
+    }
+    
+    // Finds the Filters/Genres/SortBy/Etc Property from the the ItemsFilter & 
+    func getFilterProperty<T>(from object: T, propertyName: String) -> [ItemFilters.Filter] {
+        let mirror = Mirror(reflecting: object)
+        
+        for child in mirror.children {
+            if let label = child.label, label == propertyName {
+                if let filterProperties = child.value as? [ItemFilters.Filter] {
+                    return filterProperties
+                }
+            }
+        }
+        
+        return []
     }
 }

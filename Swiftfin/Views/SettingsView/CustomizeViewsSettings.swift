@@ -24,14 +24,8 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
-    @Default(.Customization.Filters.showGenres)
-    var showGenres
-    @Default(.Customization.Filters.showFilters)
-    var showFilters
-    @Default(.Customization.Filters.showOrder)
-    var showOrder
-    @Default(.Customization.Filters.showSort)
-    var showSort
+    @Default(.Customization.Filters.filterDrawerButtons)
+    var filterDrawerButtons
     
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
@@ -83,6 +77,12 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.favorites, isOn: $showFavorites)
 
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+                
+                ChevronButton(title: L10n.filters)
+                .onSelect {
+                        router.route(to: \.filterDrawerButtonSelector, $filterDrawerButtons)
+                    }
+                
             } header: {
                 L10n.library.text
             }
@@ -92,15 +92,6 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
             } header: {
                 L10n.missingItems.text
-            }
-
-            Section {
-                Toggle(L10n.genres, isOn: $showGenres)
-                Toggle(L10n.filters, isOn: $showFilters)
-                Toggle(L10n.order, isOn: $showOrder)
-                Toggle(L10n.sort, isOn: $showSort)
-            } header: {
-                L10n.filters.text
             }
             
             Section {
