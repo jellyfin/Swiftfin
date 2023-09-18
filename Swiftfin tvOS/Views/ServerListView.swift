@@ -83,17 +83,13 @@ struct ServerListView: View {
                     Button {
                         router.route(to: \.connectToServer)
                     } label: {
-                        Button {
-                            router.route(to: \.connectToServer)
-                        } label: {
-                            L10n.connect.text
-                                .bold()
-                                .font(.callout)
-                                .frame(width: 400, height: 75)
-                                .background(Color.jellyfinPurple)
-                        }
-                        .buttonStyle(.card)
+                        L10n.connect.text
+                            .bold()
+                            .font(.callout)
+                            .frame(width: 400, height: 75)
+                            .background(Color.jellyfinPurple)
                     }
+                    .buttonStyle(.card)
                 }
             }
             .contentView {}
