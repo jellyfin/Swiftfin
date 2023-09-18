@@ -117,7 +117,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
-    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerActionButton]>) -> some View {
+    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButton]>) -> some View {
         FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
     }
     

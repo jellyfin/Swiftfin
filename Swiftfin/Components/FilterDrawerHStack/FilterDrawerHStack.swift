@@ -11,12 +11,11 @@ import Defaults
 import SwiftUI
 
 struct FilterDrawerHStack: View {
-
-    @Default(.Customization.Filters.filterDrawerButtons)
-    private var filterActiveDrawerButtons
     
     @ObservedObject
     private var viewModel: FilterViewModel
+    
+    private var filterDrawerType: FilterDrawerType
 
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
@@ -33,7 +32,7 @@ struct FilterDrawerHStack: View {
                     FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill", activated: true)
                 }
             }
-            ForEach(filterActiveDrawerButtons, id: \.self) { button in
+            ForEach(filterDrawerType.settingsDefaults, id: \.self) { button in
                 FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(viewModel: viewModel))
                     .onSelect {
                         onSelect(.init(
@@ -50,9 +49,10 @@ struct FilterDrawerHStack: View {
 
 extension FilterDrawerHStack {
 
-    init(viewModel: FilterViewModel) {
+    init(viewModel: FilterViewModel, filterDrawerType: FilterDrawerType) {
         self.init(
             viewModel: viewModel,
+            filterDrawerType: filterDrawerType,
             onSelect: { _ in }
         )
     }

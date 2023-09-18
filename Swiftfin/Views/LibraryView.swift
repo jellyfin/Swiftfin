@@ -16,7 +16,7 @@ struct LibraryView: View {
     @Default(.Customization.Library.viewType)
     private var libraryViewType
 
-    @Default(.Customization.Filters.filterDrawerButtons)
+    @Default(.Customization.Filters.libraryFilterDrawerButtons)
     private var filterDrawerButtons
     
     @EnvironmentObject
@@ -73,7 +73,7 @@ struct LibraryView: View {
         .navBarDrawer {
             if !filterDrawerButtons.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                    FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerType: FilterDrawerType.library)
                         .onSelect { filterCoordinatorParameters in
                             router.route(to: \.filter, filterCoordinatorParameters)
                         }

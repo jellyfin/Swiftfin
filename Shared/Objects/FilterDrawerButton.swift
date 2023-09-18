@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum FilterDrawerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
+enum FilterDrawerButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
     case filters
     case genres
@@ -78,12 +78,19 @@ enum FilterDrawerActionButton: String, CaseIterable, Defaults.Serializable, Disp
             return viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter]
         case .sort:
             return viewModel.currentFilters.sortBy != [SortBy.name.filter]
-        default:
-            return false
         }
     }
     
-    static var defaultFilterDrawerButtons: [FilterDrawerActionButton] {
+    static var defaultLibraryFilterDrawerButtons: [FilterDrawerButton] {
+        [
+            .filters,
+            .genres,
+            .order,
+            .sort,
+        ]
+    }
+    
+    static var defaultSearchFilterDrawerButtons: [FilterDrawerButton] {
         [
             .filters,
             .genres,
