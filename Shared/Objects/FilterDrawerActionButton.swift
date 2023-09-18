@@ -68,17 +68,18 @@ enum FilterDrawerActionButton: String, CaseIterable, Defaults.Serializable, Disp
         }
     }
     
-    // Set this to the default value / empty value to set the Filter to "Inactive"
-    var settingsItemsFilterInactive: [ItemFilters.Filter] {
+    func isItemsFilterActive(viewModel: FilterViewModel) -> Bool {
         switch self {
         case .filters:
-             return []
+            return viewModel.currentFilters.filters != []
         case .genres:
-            return []
+            return viewModel.currentFilters.genres != []
         case .order:
-            return [APISortOrder.ascending.filter]
+            return viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter]
         case .sort:
-            return [SortBy.name.filter]
+            return viewModel.currentFilters.sortBy != [SortBy.name.filter]
+        default:
+            return false
         }
     }
     

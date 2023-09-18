@@ -16,6 +16,9 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
+    @Default(.Customization.Filters.filterDrawerButtons)
+    private var filterDrawerButtons
+    
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
@@ -106,13 +109,15 @@ struct SearchView: View {
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
         .navBarDrawer {
-            ScrollView(.horizontal, showsIndicators: false) {
-                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
-                    .onSelect { filterCoordinatorParameters in
-                        router.route(to: \.filter, filterCoordinatorParameters)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 1)
+            if !filterDrawerButtons.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                        .onSelect { filterCoordinatorParameters in
+                            router.route(to: \.filter, filterCoordinatorParameters)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 1)
+                }
             }
         }
         .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: L10n.search)

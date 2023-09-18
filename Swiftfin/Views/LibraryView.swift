@@ -16,6 +16,9 @@ struct LibraryView: View {
     @Default(.Customization.Library.viewType)
     private var libraryViewType
 
+    @Default(.Customization.Filters.filterDrawerButtons)
+    private var filterDrawerButtons
+    
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
@@ -68,13 +71,15 @@ struct LibraryView: View {
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .navBarDrawer {
-            ScrollView(.horizontal, showsIndicators: false) {
-                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
-                    .onSelect { filterCoordinatorParameters in
-                        router.route(to: \.filter, filterCoordinatorParameters)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 1)
+            if !filterDrawerButtons.isEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    FilterDrawerHStack(viewModel: viewModel.filterViewModel)
+                        .onSelect { filterCoordinatorParameters in
+                            router.route(to: \.filter, filterCoordinatorParameters)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 1)
+                }
             }
         }
         .toolbar {

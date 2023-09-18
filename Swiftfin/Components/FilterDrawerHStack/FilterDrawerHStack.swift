@@ -22,7 +22,7 @@ struct FilterDrawerHStack: View {
 
     var body: some View {
         HStack {
-            if !filterActiveDrawerButtons.isEmpty && viewModel.currentFilters.hasFilters {
+            if viewModel.currentFilters.hasFilters {
                 Menu {
                     Button(role: .destructive) {
                         viewModel.currentFilters = .init()
@@ -34,8 +34,7 @@ struct FilterDrawerHStack: View {
                 }
             }
             ForEach(filterActiveDrawerButtons, id: \.self) { button in
-                FilterDrawerButton(title: button.displayTitle, activated: getFilterProperty(
-                    from: viewModel.currentFilters, propertyName: button.settingsItemsFilterProperty) != button.settingsItemsFilterInactive)
+                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(viewModel: viewModel))
                     .onSelect {
                         onSelect(.init(
                             title: button.displayTitle,
@@ -60,20 +59,5 @@ extension FilterDrawerHStack {
 
     func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
-    }
-    
-    // Finds the Filters/Genres/SortBy/Etc Property from the the ItemsFilter & 
-    func getFilterProperty<T>(from object: T, propertyName: String) -> [ItemFilters.Filter] {
-        let mirror = Mirror(reflecting: object)
-        
-        for child in mirror.children {
-            if let label = child.label, label == propertyName {
-                if let filterProperties = child.value as? [ItemFilters.Filter] {
-                    return filterProperties
-                }
-            }
-        }
-        
-        return []
     }
 }
