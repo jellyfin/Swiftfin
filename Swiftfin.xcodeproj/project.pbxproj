@@ -13,7 +13,7 @@
 		4E5E48E62AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
-		4EB939662AB909A600E30FF1 /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB939652AB909A600E30FF1 /* FilterDrawerButtonSelectorView.swift */; };
+		4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
 		531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
@@ -777,7 +777,7 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerSelection.swift; sourceTree = "<group>"; };
-		4EB939652AB909A600E30FF1 /* FilterDrawerButtonSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerButtonSelectorView.swift; sourceTree = "<group>"; };
+		4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerButtonSelectorView.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlainNavigationLinkButton.swift; sourceTree = "<group>"; };
 		53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceProfileBuilder.swift; sourceTree = "<group>"; };
@@ -1381,18 +1381,18 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
-		4E5E48DA2AB58ED7003F1B48 /* FilterDrawerSettingsView */ = {
+		4EAA35B82AB9694000D840DD /* FilterDrawerSettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				4E5E48DB2AB58F06003F1B48 /* Components */,
+				4EAA35B92AB9694D00D840DD /* Components */,
 			);
 			path = FilterDrawerSettingsView;
 			sourceTree = "<group>";
 		};
-		4E5E48DB2AB58F06003F1B48 /* Components */ = {
+		4EAA35B92AB9694D00D840DD /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4EB939652AB909A600E30FF1 /* FilterDrawerButtonSelectorView.swift */,
+				4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2717,6 +2717,7 @@
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
+				4EAA35B82AB9694000D840DD /* FilterDrawerSettingsView */,
 				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
 				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
@@ -2725,7 +2726,6 @@
 				E15756332936851D00976E1F /* NativeVideoPlayerSettingsView.swift */,
 				6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */,
 				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
-				4E5E48DA2AB58ED7003F1B48 /* FilterDrawerSettingsView */,
 				E1BDF2E7295148F400CC0294 /* VideoPlayerSettingsView */,
 			);
 			path = SettingsView;
@@ -3460,7 +3460,7 @@
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */,
-				4EB939662AB909A600E30FF1 /* FilterDrawerButtonSelectorView.swift in Sources */,
+				4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */,
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E1DA656C28E78C1700592A73 /* MenuPosterHStackModel.swift in Sources */,
