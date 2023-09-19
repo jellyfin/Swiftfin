@@ -17,7 +17,7 @@ struct LibraryView: View {
     private var libraryViewType
 
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
-    private var filterDrawerButtons
+    private var filterDrawerButtonSelection
     
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
@@ -70,10 +70,10 @@ struct LibraryView: View {
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .navBarDrawer {
-            if !filterDrawerButtons.isEmpty {
+        .if (!filterDrawerButtonSelection.isEmpty) { view in
+            view.navBarDrawer {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerType: FilterDrawerType.library)
+                    FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
                         .onSelect { filterCoordinatorParameters in
                             router.route(to: \.filter, filterCoordinatorParameters)
                         }

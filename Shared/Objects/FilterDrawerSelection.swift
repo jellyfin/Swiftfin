@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum FilterDrawerButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
+enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
     case filters
     case genres
@@ -33,7 +33,7 @@ enum FilterDrawerButton: String, CaseIterable, Defaults.Serializable, Displayabl
         rawValue
     }
 
-    var settingsFilter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]> {
+    var itemFilter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]> {
         switch self {
         case .filters:
             return \.filters
@@ -46,7 +46,7 @@ enum FilterDrawerButton: String, CaseIterable, Defaults.Serializable, Displayabl
         }
     }
     
-    var settingsSelectorType: SelectorType {
+    var selectorType: SelectorType {
         switch self {
         case .filters, .genres:
             return .multi
@@ -55,42 +55,34 @@ enum FilterDrawerButton: String, CaseIterable, Defaults.Serializable, Displayabl
         }
     }
     
-    var settingsItemsFilterProperty: String {
+    
+    var itemFilterDefault: [ItemFilters.Filter] {
         switch self {
         case .filters:
-             return "filters"
+            return []
         case .genres:
-            return "genres"
+            return []
         case .order:
-            return "sortOrder"
+            return [APISortOrder.ascending.filter]
         case .sort:
-            return "sortBy"
+            return [SortBy.name.filter]
         }
     }
     
-    func isItemsFilterActive(viewModel: FilterViewModel) -> Bool {
+    func isItemsFilterActive(activeFilters: ItemFilters) -> Bool {
         switch self {
         case .filters:
-            return viewModel.currentFilters.filters != []
+            return activeFilters.filters != self.itemFilterDefault
         case .genres:
-            return viewModel.currentFilters.genres != []
+            return activeFilters.genres != self.itemFilterDefault
         case .order:
-            return viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter]
+            return activeFilters.sortOrder != self.itemFilterDefault
         case .sort:
-            return viewModel.currentFilters.sortBy != [SortBy.name.filter]
+            return activeFilters.sortBy != self.itemFilterDefault
         }
     }
     
-    static var defaultLibraryFilterDrawerButtons: [FilterDrawerButton] {
-        [
-            .filters,
-            .genres,
-            .order,
-            .sort,
-        ]
-    }
-    
-    static var defaultSearchFilterDrawerButtons: [FilterDrawerButton] {
+    static var defaultFilterDrawerButtons: [FilterDrawerButtonSelection] {
         [
             .filters,
             .genres,

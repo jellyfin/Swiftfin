@@ -14,9 +14,7 @@ struct FilterDrawerHStack: View {
     
     @ObservedObject
     private var viewModel: FilterViewModel
-    
-    private var filterDrawerType: FilterDrawerType
-
+    private var filterDrawerButtonSelection: [FilterDrawerButtonSelection]
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
@@ -32,14 +30,14 @@ struct FilterDrawerHStack: View {
                     FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill", activated: true)
                 }
             }
-            ForEach(filterDrawerType.settingsDefaults, id: \.self) { button in
-                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(viewModel: viewModel))
+            ForEach(filterDrawerButtonSelection, id: \.self) { button in
+                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(activeFilters: viewModel.currentFilters))
                     .onSelect {
                         onSelect(.init(
                             title: button.displayTitle,
                             viewModel: viewModel,
-                            filter: button.settingsFilter,
-                            selectorType: button.settingsSelectorType
+                            filter: button.itemFilter,
+                            selectorType: button.selectorType
                         ))
                     }
             }
@@ -49,10 +47,10 @@ struct FilterDrawerHStack: View {
 
 extension FilterDrawerHStack {
 
-    init(viewModel: FilterViewModel, filterDrawerType: FilterDrawerType) {
+    init(viewModel: FilterViewModel, filterDrawerButtonSelection: [FilterDrawerButtonSelection]) {
         self.init(
             viewModel: viewModel,
-            filterDrawerType: filterDrawerType,
+            filterDrawerButtonSelection: filterDrawerButtonSelection,
             onSelect: { _ in }
         )
     }
