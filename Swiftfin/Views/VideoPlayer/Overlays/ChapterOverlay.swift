@@ -65,8 +65,7 @@ extension VideoPlayer.Overlay {
                             .foregroundColor(accentColor)
                     }
                 }
-                .padding(.leading, safeAreaInsets.leading)
-                .padding(.trailing, safeAreaInsets.trailing)
+                .padding(.horizontal)
 
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -115,8 +114,6 @@ extension VideoPlayer.Overlay {
                                 }
                             }
                         }
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
                         .padding(.bottom)
                     }
                     .onChange(of: currentOverlayType) { newValue in
@@ -142,6 +139,8 @@ extension VideoPlayer.Overlay {
                 )
                 .allowsHitTesting(false)
             }
+            .padding(.leading, safeAreaInsets.leading)
+            .padding(.trailing, safeAreaInsets.trailing)
         }
     }
 }

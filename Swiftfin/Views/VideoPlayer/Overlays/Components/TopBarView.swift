@@ -36,6 +36,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "xmark")
                             .padding()
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(ScalingButtonStyle(scale: 0.8))
 
                     Text(viewModel.item.displayTitle)

@@ -38,6 +38,7 @@ extension VideoPlayer.Overlay.ActionButtons {
                     UIView.animate(withDuration: 0.2) {
                         videoPlayerProxy.aspectFill(1)
                     }
+
                 }
             } label: {
                 content(aspectFilled).eraseToAnyView()
