@@ -28,7 +28,7 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
             return L10n.sort
         }
     }
-    
+
     var id: String {
         rawValue
     }
@@ -45,7 +45,7 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
             return \.sortBy
         }
     }
-    
+
     var selectorType: SelectorType {
         switch self {
         case .filters, .genres:
@@ -54,8 +54,7 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
             return .single
         }
     }
-    
-    
+
     var itemFilterDefault: [ItemFilters.Filter] {
         switch self {
         case .filters:
@@ -68,7 +67,7 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
             return [SortBy.name.filter]
         }
     }
-    
+
     func isItemsFilterActive(activeFilters: ItemFilters) -> Bool {
         switch self {
         case .filters:
@@ -81,7 +80,7 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
             return activeFilters.sortBy != self.itemFilterDefault
         }
     }
-    
+
     static var defaultFilterDrawerButtons: [FilterDrawerButtonSelection] {
         [
             .filters,

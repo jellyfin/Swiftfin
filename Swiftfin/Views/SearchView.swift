@@ -18,7 +18,7 @@ struct SearchView: View {
 
     @Default(.Customization.Filters.searchFilterDrawerButtons)
     private var filterDrawerButtonSelection
-    
+
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
@@ -108,7 +108,7 @@ struct SearchView: View {
         }
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
-        .if (!filterDrawerButtonSelection.isEmpty) { view in
+        .if(!filterDrawerButtonSelection.isEmpty) { view in
             view.navBarDrawer {
                 ScrollView(.horizontal, showsIndicators: false) {
                     FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)

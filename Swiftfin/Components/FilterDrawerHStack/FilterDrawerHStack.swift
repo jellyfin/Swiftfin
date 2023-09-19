@@ -6,12 +6,12 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct FilterDrawerHStack: View {
-    
+
     @ObservedObject
     private var viewModel: FilterViewModel
     private var filterDrawerButtonSelection: [FilterDrawerButtonSelection]
@@ -32,14 +32,14 @@ struct FilterDrawerHStack: View {
             }
             ForEach(filterDrawerButtonSelection, id: \.self) { button in
                 FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(activeFilters: viewModel.currentFilters))
-                    .onSelect {
-                        onSelect(.init(
-                            title: button.displayTitle,
-                            viewModel: viewModel,
-                            filter: button.itemFilter,
-                            selectorType: button.selectorType
-                        ))
-                    }
+                .onSelect {
+                    onSelect(.init(
+                        title: button.displayTitle,
+                        viewModel: viewModel,
+                        filter: button.itemFilter,
+                        selectorType: button.selectorType
+                    ))
+                }
             }
         }
     }

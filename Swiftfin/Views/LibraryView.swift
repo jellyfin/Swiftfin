@@ -70,7 +70,7 @@ struct LibraryView: View {
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .if (!filterDrawerButtonSelection.isEmpty) { view in
+        .if(!filterDrawerButtonSelection.isEmpty) { view in
             view.navBarDrawer {
                 ScrollView(.horizontal, showsIndicators: false) {
                     FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)

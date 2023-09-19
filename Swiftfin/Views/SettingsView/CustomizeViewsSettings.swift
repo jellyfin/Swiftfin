@@ -23,12 +23,12 @@ struct CustomizeViewsSettings: View {
     var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
-    
+
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     var libraryFilterDrawerButtons
     @Default(.Customization.Filters.searchFilterDrawerButtons)
     var searchFilterDrawerButtons
-    
+
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
     @Default(.Customization.nextUpPosterType)
@@ -84,17 +84,17 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
-                
+
                 ChevronButton(title: L10n.library)
                 .onSelect {
-                    router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
+                router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
                 }
-                
+
                 ChevronButton(title: L10n.search)
                 .onSelect {
-                    router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
+                router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
                 }
-                
+
             } header: {
                 L10n.filters.text
             }
@@ -105,7 +105,7 @@ struct CustomizeViewsSettings: View {
             } header: {
                 L10n.missingItems.text
             }
-            
+
             Section {
 
                 ChevronButton(title: L10n.indicators)
