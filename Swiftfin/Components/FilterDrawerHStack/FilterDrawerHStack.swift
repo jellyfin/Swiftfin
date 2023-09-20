@@ -31,7 +31,9 @@ struct FilterDrawerHStack: View {
                 }
             }
             ForEach(filterDrawerButtonSelection, id: \.self) { button in
-                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(activeFilters: viewModel.currentFilters))
+                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(
+                    activeFilters: viewModel.currentFilters
+                ))
                 .onSelect {
                     onSelect(.init(
                         title: button.displayTitle,

@@ -10,7 +10,6 @@
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
-		4E5E48E62AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */; };
@@ -3183,7 +3182,6 @@
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				E1DA656A28E78B5900592A73 /* SpecialFeaturesViewModel.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
-				4E5E48E62AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,

@@ -18,7 +18,7 @@ struct LibraryView: View {
 
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     private var filterDrawerButtonSelection
-    
+
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 

@@ -78,7 +78,7 @@ struct CustomizeViewsSettings: View {
 
                 Toggle(L10n.favorites, isOn: $showFavorites)
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-                
+
             } header: {
                 L10n.library.text
             }
@@ -86,14 +86,14 @@ struct CustomizeViewsSettings: View {
             Section {
 
                 ChevronButton(title: L10n.library)
-                .onSelect {
-                router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
-                }
+                    .onSelect {
+                        router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
+                    }
 
                 ChevronButton(title: L10n.search)
-                .onSelect {
-                router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
-                }
+                    .onSelect {
+                        router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
+                    }
 
             } header: {
                 L10n.filters.text
