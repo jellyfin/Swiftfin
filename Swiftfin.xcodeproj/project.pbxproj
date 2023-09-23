@@ -733,7 +733,7 @@
 		5302F8322658B74800647A2E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = ";
+			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
 			);
