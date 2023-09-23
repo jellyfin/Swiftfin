@@ -733,7 +733,7 @@
 		5302F8322658B74800647A2E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
-			dstPath = "";
+			dstPath = ";
 			dstSubfolderSpec = 7;
 			files = (
 			);
@@ -3996,7 +3996,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4034,7 +4034,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.jellyfin.swiftfin";
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
