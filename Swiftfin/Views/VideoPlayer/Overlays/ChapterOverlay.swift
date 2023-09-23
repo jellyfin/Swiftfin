@@ -65,7 +65,8 @@ extension VideoPlayer.Overlay {
                             .foregroundColor(accentColor)
                     }
                 }
-                .padding(.horizontal)
+                .padding(.leading, UIDevice.isIPad ? nil : safeAreaInsets.leading)
+                .padding(.trailing, UIDevice.isIPad ? nil : safeAreaInsets.trailing)
 
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -114,6 +115,8 @@ extension VideoPlayer.Overlay {
                                 }
                             }
                         }
+                        .padding(.leading, safeAreaInsets.leading)
+                        .padding(.trailing, safeAreaInsets.trailing)
                         .padding(.bottom)
                     }
                     .onChange(of: currentOverlayType) { newValue in
@@ -139,8 +142,6 @@ extension VideoPlayer.Overlay {
                 )
                 .allowsHitTesting(false)
             }
-            .padding(.leading, safeAreaInsets.leading)
-            .padding(.trailing, safeAreaInsets.trailing)
         }
     }
 }
