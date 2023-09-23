@@ -1,0 +1,194 @@
+{
+  "pins" : [
+    {
+      "identity" : "blurhashkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/BlurHashKit",
+      "state" : {
+        "revision" : "c0bd7423398de68cbeb3f99bff70f79c38bf36ab",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "collectionview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionView",
+      "state" : {
+        "branch" : "main",
+        "revision" : "70a44bd1a8864f88213be69613554a9d5a8fb779"
+      }
+    },
+    {
+      "identity" : "corestore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnEstropia/CoreStore.git",
+      "state" : {
+        "revision" : "118bb685fcf2bbcfd5702fea07ec105cdc8cb43d",
+        "version" : "9.1.0"
+      }
+    },
+    {
+      "identity" : "defaults",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sindresorhus/Defaults",
+      "state" : {
+        "revision" : "0f5a23fcbd83eb72f6d405aa85bbfacaffb99b03",
+        "version" : "7.2.0"
+      }
+    },
+    {
+      "identity" : "factory",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hmlongco/Factory",
+      "state" : {
+        "revision" : "39ff6a675cd0272d833d184d35add0f8fddd63de",
+        "version" : "1.3.7"
+      }
+    },
+    {
+      "identity" : "files",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/JohnSundell/Files",
+      "state" : {
+        "revision" : "d273b5b7025d386feef79ef6bad7de762e106eaf",
+        "version" : "4.2.0"
+      }
+    },
+    {
+      "identity" : "get",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Get",
+      "state" : {
+        "revision" : "12830cc64f31789ae6f4352d2d51d03a25fc3741",
+        "version" : "2.1.6"
+      }
+    },
+    {
+      "identity" : "jellyfin-sdk-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
+      "state" : {
+        "revision" : "ecc338b4ac0a817df36e087799d7077252489ccc",
+        "version" : "0.3.2"
+      }
+    },
+    {
+      "identity" : "nuke",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Nuke",
+      "state" : {
+        "revision" : "33f7e93be5d4ec027d42af77a8ec4680d1862ad2",
+        "version" : "11.6.4"
+      }
+    },
+    {
+      "identity" : "pulse",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/Pulse",
+      "state" : {
+        "revision" : "e080339a24f5a47461378e5fe02ba3f2ef0a2cfa",
+        "version" : "4.0.3"
+      }
+    },
+    {
+      "identity" : "pulseloghandler",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kean/PulseLogHandler",
+      "state" : {
+        "revision" : "7280e980b71a1267099e7751a900fd1e67b7f4bb",
+        "version" : "4.0.1"
+      }
+    },
+    {
+      "identity" : "stinsen",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rundfunk47/stinsen",
+      "state" : {
+        "branch" : "master",
+        "revision" : "6dda57096e16020342b36ebea86dc4bdf6783426"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms.git",
+      "state" : {
+        "revision" : "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-collections.git",
+      "state" : {
+        "revision" : "937e904258d22af6e447a0b72c0bc67583ef64a2",
+        "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "swift-log",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-log.git",
+      "state" : {
+        "revision" : "532d8b529501fb73a2455b179e0bbb6d49b652ed",
+        "version" : "1.5.3"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swiftui-introspect",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/siteline/SwiftUI-Introspect",
+      "state" : {
+        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a",
+        "version" : "0.12.0"
+      }
+    },
+    {
+      "identity" : "swizzleswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarioIannotta/SwizzleSwift",
+      "state" : {
+        "revision" : "337dd5f158182620b2bb53c6847f8874a0117b2f",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "udpbroadcastconnection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gunterhager/UDPBroadcastConnection",
+      "state" : {
+        "revision" : "3680f532c00d18a168bb8da7b9f8f82fcd89180d",
+        "version" : "5.0.5"
+      }
+    },
+    {
+      "identity" : "urlqueryencoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/CreateAPI/URLQueryEncoder",
+      "state" : {
+        "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
+        "version" : "0.2.1"
+      }
+    },
+    {
+      "identity" : "vlcui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/VLCUI",
+      "state" : {
+        "branch" : "main",
+        "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
+      }
+    }
+  ],
+  "version" : 2
+}

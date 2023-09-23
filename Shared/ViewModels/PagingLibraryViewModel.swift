@@ -45,9 +45,8 @@ class PagingLibraryViewModel: ViewModel {
         await MainActor.run {
             self.isLoading = false
         }
-        
+
         return response.value
-        
     }
 
     func _getDefaultParams() -> Paths.GetItemsParameters? {
