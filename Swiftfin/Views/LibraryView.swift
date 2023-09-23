@@ -10,6 +10,8 @@ import CollectionView
 import Defaults
 import JellyfinAPI
 import SwiftUI
+import OrderedCollections
+
 
 struct LibraryView: View {
 
@@ -84,7 +86,23 @@ struct LibraryView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-
+                if viewModel.isLoading && !viewModel.items.isEmpty {
+                    ProgressView()
+                }
+                LibraryViewShuffle(viewModel: viewModel)
+                    .onSelect {
+                        let unwatchedItems = viewModel.items.filter {
+                            guard let data = $0.userData else {
+                                return false
+                            }
+                            return !(data.isPlayed ?? false)
+                        }
+                        if let randomItem = unwatchedItems.randomElement() {
+                            baseItemOnSelect(randomItem)
+                        }
+                    }
+            }
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
