@@ -95,8 +95,7 @@
 "settings" = "Settings";
 "cancel" = "Cancel";
 "connectToJellyfinServer" = "Connect to a Jellyfin server";
-"connectToJellyfinServerStart" = "Connect to a Jellyfin server to get 
-started";
+"connectToJellyfinServerStart" = "Connect to a Jellyfin server to get started";
 "searchingDots" = "Searching…";
 "noLocalServersFound" = "No local servers found";
 "continue" = "Continue";
@@ -111,6 +110,8 @@ started";
 "information" = "Information";
 "media" = "Media";
 "favorites" = "Favorites";
+"liveTV" = "Live TV";
+"downloads" = "Downloads";
 "serverDetails" = "Server Details";
 "name" = "Name";
 "url" = "URL";
@@ -132,8 +133,7 @@ started";
 "jumpBackwardLength" = "Jump Backward Length";
 "jumpGesturesEnabled" = "Jump Gestures Enabled";
 "systemControlGesturesEnabled" = "System Control Gestures Enabled";
-"playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture 
-Enabled";
+"playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
 "seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
 "resume5SecondOffset" = "Resume 5 Second Offset";
 "showPosterLabels" = "Show Poster Labels";
@@ -212,14 +212,10 @@ Enabled";
 "quickConnectCode" = "Quick Connect code";
 "authorize" = "Authorize";
 "quickConnectInvalidError" = "Invalid Quick Connect code";
-"quickConnectSuccessMessage" = "Authorizing Quick Connect successful. 
-Please continue on your other device.";
-"showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom 
-Overlay";
-"quickConnectStep1" = "1. Open the Jellyfin app on your phone or web 
-browser and sign in with your account";
-"quickConnectStep2" = "2. Open the user menu and go to the Quick Connect 
-page";
+"quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
+"showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
+"quickConnectStep1" = "1. Open the Jellyfin app on your phone or web browser and sign in with your account";
+"quickConnectStep2" = "2. Open the user menu and go to the Quick Connect page";
 "quickConnectStep3" = "3. Enter the following code:";
 "quickConnectNotEnabled" = "Note: Quick Connect not enabled";
 "episodeNumber" = "Episode %1$@";
@@ -237,8 +233,7 @@ page";
 "invertedLight" = "Inverted Light";
 "appIcon" = "App Icon";
 "accentColor" = "Accent Color";
-"accentColorDescription" = "Some views may need an app restart to 
-update.";
+"accentColorDescription" = "Some views may need an app restart to update.";
 "dismiss" = "Dismiss";
 "played" = "Played";
 "unplayed" = "Unplayed";
@@ -251,8 +246,7 @@ update.";
 "collections" = "Collections";
 "people" = "People";
 "usePrimaryImage" = "Use Primary Image";
-"usePrimaryImageDescription" = "Uses the primary image and hides the 
-logo.";
+"usePrimaryImageDescription" = "Uses the primary image and hides the logo.";
 "hapticFeedback" = "Haptic Feedback";
 "indicators" = "Indicators";
 "posters" = "Posters";

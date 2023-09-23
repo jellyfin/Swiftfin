@@ -12,11 +12,16 @@ import SwiftUI
 
 struct RandomItemButton: View {
 
-    private var onSelect: () -> Void
+    @ObservedObject
+    private var viewModel: PagingLibraryViewModel
+    private var onSelect: (BaseItemDtoQueryResult) -> Void
 
     var body: some View {
         Button {
-            onSelect()
+            Task {
+                let response = try await viewModel.getRandomItemFromLibrary()
+                onSelect(response)
+            }
         } label: {
             Label(L10n.random, systemImage: "dice.fill")
         }
@@ -24,13 +29,14 @@ struct RandomItemButton: View {
 }
 
 extension RandomItemButton {
-    init() {
+    init(viewModel: PagingLibraryViewModel) {
         self.init(
-            onSelect: {}
+            viewModel: viewModel,
+            onSelect: { _ in }
         )
     }
 
-    func onSelect(_ action: @escaping () -> Void) -> Self {
+    func onSelect(_ action: @escaping (BaseItemDtoQueryResult) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }
