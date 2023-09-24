@@ -65,8 +65,11 @@ extension VideoPlayer.Overlay {
                             .foregroundColor(accentColor)
                     }
                 }
-                .padding(.leading, UIDevice.isIPad ? nil : safeAreaInsets.leading)
-                .padding(.trailing, UIDevice.isIPad ? nil : safeAreaInsets.trailing)
+                .padding(.leading, safeAreaInsets.leading)
+                .padding(.trailing, safeAreaInsets.trailing)
+                .if(UIDevice.isIPad) { view in
+                    view.padding(.horizontal)
+                }
 
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -118,6 +121,9 @@ extension VideoPlayer.Overlay {
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
                         .padding(.bottom)
+                        .if (UIDevice.isIPad) { view in
+                            view.padding(.horizontal)
+                        }
                     }
                     .onChange(of: currentOverlayType) { newValue in
                         guard newValue == .chapters else { return }
