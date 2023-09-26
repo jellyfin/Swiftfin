@@ -51,7 +51,10 @@ extension VideoPlayer {
                         videoPlayerManager.subtitleTrackIndex = mediaStream.index ?? -1
                         videoPlayerManager.proxy.setSubtitleTrack(.absolute(mediaStream.index ?? -1))
                     } label: {
-                        Label(mediaStream.displayTitle ?? L10n.noTitle, systemImage: videoPlayerManager.subtitleTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle")
+                        Label(
+                            mediaStream.displayTitle ?? L10n.noTitle,
+                            systemImage: videoPlayerManager.subtitleTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
+                        )
                     }
                 }
             }
@@ -65,7 +68,7 @@ extension VideoPlayer {
                 top: "sections"
             )
         }
-        
+
         @ViewBuilder
         private var audioMenu: some View {
             HStack {
@@ -74,7 +77,10 @@ extension VideoPlayer {
                         videoPlayerManager.audioTrackIndex = mediaStream.index ?? -1
                         videoPlayerManager.proxy.setAudioTrack(.absolute(mediaStream.index ?? -1))
                     } label: {
-                        Label(mediaStream.displayTitle ?? L10n.noTitle, systemImage: videoPlayerManager.audioTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle")
+                        Label(
+                            mediaStream.displayTitle ?? L10n.noTitle,
+                            systemImage: videoPlayerManager.audioTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
+                        )
                     }
                 }
             }
@@ -88,7 +94,7 @@ extension VideoPlayer {
                 top: "sections"
             )
         }
-        
+
         @ViewBuilder
         private var playbackSpeedMenu: some View {
             HStack {
@@ -97,7 +103,10 @@ extension VideoPlayer {
                         videoPlayerManager.playbackSpeed = speed
                         videoPlayerManager.proxy.setRate(.absolute(Float(speed.rawValue)))
                     } label: {
-                        Label(speed.displayTitle , systemImage: speed == videoPlayerManager.playbackSpeed ? "checkmark.circle.fill" : "circle")
+                        Label(
+                            speed.displayTitle,
+                            systemImage: speed == videoPlayerManager.playbackSpeed ? "checkmark.circle.fill" : "circle"
+                        )
                     }
                 }
             }
