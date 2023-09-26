@@ -38,7 +38,7 @@ extension VideoPlayer {
         private var focusedSection: MenuSection?
 
         @State
-        private var lastFocusedSection: MenuSection?
+        private var lastFocusedSection: MenuSection = .subtitles
 
         @StateObject
         private var focusGuide: FocusGuide = .init()
@@ -170,10 +170,6 @@ extension VideoPlayer {
                         audioMenu
                     case .playbackSpeed:
                         playbackSpeedMenu
-                    default:
-                        Button {
-                            Text("None")
-                        }
                     }
                 }
             }
@@ -198,7 +194,7 @@ extension VideoPlayer {
 
             let section: MenuSection
             let focused: FocusState<MenuSection?>.Binding
-            let lastFocused: Binding<MenuSection?>
+            let lastFocused: Binding<MenuSection>
 
             var body: some View {
                 Button {
