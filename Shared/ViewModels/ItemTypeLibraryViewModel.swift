@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import Get
 import JellyfinAPI
 
 final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
@@ -35,25 +36,8 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
             hasNextPage = true
         }
 
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-
         Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                startIndex: currentPage * pageItemSize,
-                limit: pageItemSize,
-                isRecursive: true,
-                sortOrder: sortOrder,
-                fields: ItemFields.allCases,
-                includeItemTypes: itemTypes,
-                filters: itemFilters,
-                sortBy: sortBy,
-                enableUserData: true,
-                genreIDs: genreIDs
-            )
+            var parameters = self._getDefaultParams()
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
 
@@ -66,6 +50,30 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
                 self.items.append(contentsOf: items)
             }
         }
+    }
+
+    override func _getDefaultParams() -> Paths.GetItemsParameters? {
+        let filters = filterViewModel.currentFilters
+        let genreIDs = filters.genres.compactMap(\.id)
+        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
+        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+
+        let parameters = Paths.GetItemsParameters(
+            userID: userSession.user.id,
+            startIndex: currentPage * pageItemSize,
+            limit: pageItemSize,
+            isRecursive: true,
+            sortOrder: sortOrder,
+            fields: ItemFields.allCases,
+            includeItemTypes: itemTypes,
+            filters: itemFilters,
+            sortBy: sortBy,
+            enableUserData: true,
+            genreIDs: genreIDs
+        )
+
+        return parameters
     }
 
     override func _requestNextPage() {
