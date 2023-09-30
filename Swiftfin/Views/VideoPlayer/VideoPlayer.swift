@@ -130,9 +130,8 @@ struct VideoPlayer: View {
                                 {
                                     videoPlayerManager.selectNextViewModel()
                                 } else {
-                                    router.dismissCoordinator {
-                                        AppDelegate.changeOrientation(.portrait)
-                                    }
+                                    AppDelegate.leavePlaybackOrientation()
+                                    router.dismissCoordinator()
                                 }
                             }
                         }

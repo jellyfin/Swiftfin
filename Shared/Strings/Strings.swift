@@ -120,6 +120,8 @@ internal enum L10n {
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
   /// Display order
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
+  /// Downloads
+  internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Empty Next Up
@@ -194,6 +196,8 @@ internal enum L10n {
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// Light
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
+  /// Live TV
+  internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Loading
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
   /// Local Servers

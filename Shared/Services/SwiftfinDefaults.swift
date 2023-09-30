@@ -72,6 +72,19 @@ extension Defaults.Keys {
             static let showFavorites: Key<Bool> = .init("libraryShowFavorites", default: true, suite: .generalSuite)
             static let viewType = Key<LibraryViewType>("libraryViewType", default: .grid, suite: .generalSuite)
         }
+
+        enum Filters {
+            static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
+                "defaultLibraryFilterDrawerButtons",
+                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+                suite: .generalSuite
+            )
+            static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
+                "defaultSearchFilterDrawerButtons",
+                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+                suite: .generalSuite
+            )
+        }
     }
 
     enum VideoPlayer {
@@ -214,6 +227,6 @@ extension UserDefaults {
 
 extension Defaults.Keys {
 
-    static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: false, suite: .debugSuite)
+    static let sendProgressReports: Key<Bool> = .init("sendProgressReports", default: true, suite: .debugSuite)
 }
 #endif

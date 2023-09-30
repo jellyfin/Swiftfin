@@ -155,7 +155,7 @@ class DownloadTask: NSObject, ObservableObject {
         }
 
         guard let response = try? await userSession.client.download(
-            for: .init(url: imageURL.absoluteString).withResponse(URL.self),
+            for: .init(url: imageURL).withResponse(URL.self),
             delegate: self
         ) else { return }
 
@@ -178,7 +178,7 @@ class DownloadTask: NSObject, ObservableObject {
         }
 
         guard let response = try? await userSession.client.download(
-            for: .init(url: imageURL.absoluteString).withResponse(URL.self),
+            for: .init(url: imageURL).withResponse(URL.self),
             delegate: self
         ) else { return }
 

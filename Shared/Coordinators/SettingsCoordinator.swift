@@ -34,11 +34,18 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
+    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
+    @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
+
+    #if DEBUG
+    @Route(.push)
+    var debugSettings = makeDebugSettings
+    #endif
     #endif
 
     #if os(tvOS)
@@ -103,9 +110,21 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ServerDetailView(viewModel: .init(server: server))
     }
 
+    #if DEBUG
+    @ViewBuilder
+    func makeDebugSettings() -> some View {
+        DebugSettingsView()
+    }
+    #endif
+
+    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
+        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+    }
+
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
+
     #endif
 
     #if os(tvOS)
