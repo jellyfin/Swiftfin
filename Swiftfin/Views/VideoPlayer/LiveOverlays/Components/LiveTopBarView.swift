@@ -29,9 +29,7 @@ extension LiveVideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
-                        router.dismissCoordinator {
-                            AppDelegate.changeOrientation(.portrait)
-                        }
+                        router.dismissCoordinator { }
                     } label: {
                         Image(systemName: "xmark")
                             .padding()

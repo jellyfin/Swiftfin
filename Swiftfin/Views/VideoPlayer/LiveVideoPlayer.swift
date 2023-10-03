@@ -107,9 +107,7 @@ struct LiveVideoPlayer: View {
                                 {
                                     videoPlayerManager.selectNextViewModel()
                                 } else {
-                                    router.dismissCoordinator {
-                                        AppDelegate.changeOrientation(.portrait)
-                                    }
+                                    router.dismissCoordinator { }
                                 }
                             }
                         }
