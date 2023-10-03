@@ -29,7 +29,7 @@ extension LiveVideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
-                        router.dismissCoordinator { }
+                        router.dismissCoordinator {}
                     } label: {
                         Image(systemName: "xmark")
                             .padding()
