@@ -727,6 +727,8 @@
 		E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
+		E43918662AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
+		E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1277,6 +1279,7 @@
 		E1FCD09526C47118007C8DCF /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		E1FE69A628C29B720021BC93 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
+		E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseChangeModifier.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2244,6 +2247,7 @@
 				E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */,
 				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
 				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
+				E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -3173,6 +3177,7 @@
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				C4BE078C272844AF003F4AD1 /* LiveTVChannelsView.swift in Sources */,
 				E148128928C154BF003B8787 /* ItemFilter.swift in Sources */,
+				E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */,
 				E154966F296CA2EF00C4EF88 /* LogManager.swift in Sources */,
 				E1575E75293E77B5001665B1 /* LibraryViewType.swift in Sources */,
 				E193D53427193F7F00900D82 /* HomeCoordinator.swift in Sources */,
@@ -3513,6 +3518,7 @@
 				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */,
+				E43918662AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */,
 				E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */,
 				E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,

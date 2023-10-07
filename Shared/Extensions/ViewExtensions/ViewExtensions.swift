@@ -218,4 +218,8 @@ extension View {
             .ignoresSafeArea()
         }
     }
+
+    func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
+        modifier(ScenePhaseChangeModifier(phase: phase, action: action))
+    }
 }
