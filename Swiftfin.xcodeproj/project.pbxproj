@@ -366,7 +366,6 @@
 		E1575E6A293E77B5001665B1 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */; };
 		E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
-		E1575E6D293E77B5001665B1 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E1575E6E293E77B5001665B1 /* SpecialFeatureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */; };
 		E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* GestureAction.swift */; };
 		E1575E70293E77B5001665B1 /* TextPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528428FD191A00600579 /* TextPair.swift */; };
@@ -440,7 +439,6 @@
 		E174120F29AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */; };
 		E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */; };
 		E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */; };
-		E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
@@ -1064,7 +1062,6 @@
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
 		E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatable.swift; sourceTree = "<group>"; };
 		E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSettingsView.swift; sourceTree = "<group>"; };
-		E17665D828E80F0F00130507 /* PosterButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButtonType.swift; sourceTree = "<group>"; };
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
@@ -1538,7 +1535,6 @@
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1937A60288F32DB00CB80AA /* Poster.swift */,
-				E17665D828E80F0F00130507 /* PosterButtonType.swift */,
 				E1CCF12D28ABF989006CAC9E /* PosterType.swift */,
 				E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
@@ -3299,7 +3295,6 @@
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
 				E1575E7C293E77B5001665B1 /* TimerProxy.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
-				E1575E6D293E77B5001665B1 /* PosterButtonType.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				C4BE077A2726EE82003F4AD1 /* LiveTVTabCoordinator.swift in Sources */,
@@ -3362,7 +3357,6 @@
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				E18ACA8B2A14301800BB4F35 /* ScalingButtonStyle.swift in Sources */,
-				E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				E154966E296CA2EF00C4EF88 /* LogManager.swift in Sources */,

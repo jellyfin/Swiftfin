@@ -68,10 +68,16 @@ struct PagingLibraryView: View {
                 }
         }
         .layout { _, layoutEnvironment in
-            .grid(
+            
+//            layoutEnvironment.container.effectiveContentSize.width
+            
+            return .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout,
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+                layoutMode: .fixedNumberOfColumns(3),
+                itemSpacing: 10,
+                lineSpacing: 10,
+                itemSize: .fractionalWidth(1/3),
+                sectionInsets: .init(top: 10, leading: 10, bottom: 10, trailing: 10)
             )
         }
         .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
@@ -109,5 +115,38 @@ extension PagingLibraryView {
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
+    }
+}
+
+class UILibraryCollectionView: UICollectionView {
+    
+    private func createPortraiGridLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(100),
+                                             heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                               heightDimension: .fractionalHeight(0.3))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
+                                                         subitems: [item])
+
+        let section = NSCollectionLayoutSection(group: group)
+
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        
+//        let b = UICollectionViewCompositionalLayout(
+//            sectionProvider: <#T##UICollectionViewCompositionalLayoutSectionProvider##UICollectionViewCompositionalLayoutSectionProvider##(Int, NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection?#>,
+//            configuration: .init().
+//        )
+        
+        return layout
+    }
+    
+    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
+        super.init(frame: .zero, collectionViewLayout: layout)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
