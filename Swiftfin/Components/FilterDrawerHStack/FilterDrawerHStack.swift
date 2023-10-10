@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -13,7 +14,7 @@ struct FilterDrawerHStack: View {
 
     @ObservedObject
     private var viewModel: FilterViewModel
-
+    private var filterDrawerButtonSelection: [FilterDrawerButtonSelection]
     private var onSelect: (FilterCoordinator.Parameters) -> Void
 
     var body: some View {
@@ -29,55 +30,29 @@ struct FilterDrawerHStack: View {
                     FilterDrawerButton(systemName: "line.3.horizontal.decrease.circle.fill", activated: true)
                 }
             }
-
-            FilterDrawerButton(title: L10n.genres, activated: viewModel.currentFilters.genres != [])
+            ForEach(filterDrawerButtonSelection, id: \.self) { button in
+                FilterDrawerButton(title: button.displayTitle, activated: button.isItemsFilterActive(
+                    activeFilters: viewModel.currentFilters
+                ))
                 .onSelect {
                     onSelect(.init(
-                        title: L10n.genres,
+                        title: button.displayTitle,
                         viewModel: viewModel,
-                        filter: \.genres,
-                        selectorType: .multi
+                        filter: button.itemFilter,
+                        selectorType: button.selectorType
                     ))
                 }
-
-            FilterDrawerButton(title: L10n.filters, activated: viewModel.currentFilters.filters != [])
-                .onSelect {
-                    onSelect(.init(
-                        title: L10n.filters,
-                        viewModel: viewModel,
-                        filter: \.filters,
-                        selectorType: .multi
-                    ))
-                }
-
-            FilterDrawerButton(title: L10n.order, activated: viewModel.currentFilters.sortOrder != [APISortOrder.ascending.filter])
-                .onSelect {
-                    onSelect(.init(
-                        title: L10n.order,
-                        viewModel: viewModel,
-                        filter: \.sortOrder,
-                        selectorType: .single
-                    ))
-                }
-
-            FilterDrawerButton(title: L10n.sort, activated: viewModel.currentFilters.sortBy != [SortBy.name.filter])
-                .onSelect {
-                    onSelect(.init(
-                        title: L10n.sort,
-                        viewModel: viewModel,
-                        filter: \.sortBy,
-                        selectorType: .single
-                    ))
-                }
+            }
         }
     }
 }
 
 extension FilterDrawerHStack {
 
-    init(viewModel: FilterViewModel) {
+    init(viewModel: FilterViewModel, filterDrawerButtonSelection: [FilterDrawerButtonSelection]) {
         self.init(
             viewModel: viewModel,
+            filterDrawerButtonSelection: filterDrawerButtonSelection,
             onSelect: { _ in }
         )
     }

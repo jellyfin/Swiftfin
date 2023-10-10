@@ -116,6 +116,15 @@ struct SettingsView: View {
                 .onSelect {
                     router.route(to: \.log)
                 }
+
+            #if DEBUG
+
+            ChevronButton(title: "Debug")
+                .onSelect {
+                    router.route(to: \.debugSettings)
+                }
+
+            #endif
         }
         .navigationBarTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)

@@ -29,13 +29,13 @@ extension VideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
-                        router.dismissCoordinator {
-                            AppDelegate.changeOrientation(.portrait)
-                        }
+                        AppDelegate.leavePlaybackOrientation()
+                        router.dismissCoordinator()
                     } label: {
                         Image(systemName: "xmark")
                             .padding()
                     }
+                    .contentShape(Rectangle())
                     .buttonStyle(ScalingButtonStyle(scale: 0.8))
 
                     Text(viewModel.item.displayTitle)

@@ -18,7 +18,7 @@ final class MediaViewModel: ViewModel {
     var libraryItems: [MediaItemViewModel] {
         libraries.map { .init(item: $0) }
             .prepending(
-                .init(item: .init(collectionType: "liveTV", name: "LiveTV")),
+                .init(item: .init(collectionType: "liveTV", name: L10n.liveTV)),
                 if: Defaults[.Experimental.liveTVAlphaEnabled]
             )
             .prepending(
@@ -26,7 +26,7 @@ final class MediaViewModel: ViewModel {
                 if: Defaults[.Customization.Library.showFavorites]
             )
             .prepending(
-                .init(item: .init(collectionType: "downloads", name: "Downloads")),
+                .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
                 if: Defaults[.Experimental.downloads]
             )
     }

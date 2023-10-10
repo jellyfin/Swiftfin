@@ -41,9 +41,9 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         }
         .ignoresSafeArea()
         .hideSystemOverlays()
-//        .onAppear {
-//            AppDelegate.changeOrientation(.landscape)
-//        }
+        .onAppear {
+            AppDelegate.enterPlaybackOrientation()
+        }
 
         #else
 

@@ -16,6 +16,9 @@ struct LibraryView: View {
     @Default(.Customization.Library.viewType)
     private var libraryViewType
 
+    @Default(.Customization.Filters.libraryFilterDrawerButtons)
+    private var filterDrawerButtonSelection
+
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
@@ -67,24 +70,34 @@ struct LibraryView: View {
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
-        .navBarDrawer {
-            ScrollView(.horizontal, showsIndicators: false) {
-                FilterDrawerHStack(viewModel: viewModel.filterViewModel)
-                    .onSelect { filterCoordinatorParameters in
-                        router.route(to: \.filter, filterCoordinatorParameters)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 1)
+        .if(!filterDrawerButtonSelection.isEmpty) { view in
+            view.navBarDrawer {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
+                        .onSelect { filterCoordinatorParameters in
+                            router.route(to: \.filter, filterCoordinatorParameters)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 1)
+                }
             }
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
-
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                Menu {
+                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                    RandomItemButton(viewModel: viewModel)
+                        .onSelect { response in
+                            if let item = response.items?.first {
+                                router.route(to: \.item, item)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
             }
         }
     }
