@@ -189,10 +189,10 @@ extension VideoPlayer {
                 .focused(focused, equals: section)
             }
         }
-        
+
         struct MenuStyle: ViewModifier {
             var focusGuide: FocusGuide
-            
+
             func body(content: Content) -> some View {
                 content
                     .frame(height: 80)
