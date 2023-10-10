@@ -58,15 +58,7 @@ extension VideoPlayer {
                     }
                 }
             }
-            .frame(height: 80)
-            .padding(.horizontal, 50)
-            .padding(.top)
-            .padding(.bottom, 45)
-            .focusGuide(
-                focusGuide,
-                tag: "contents",
-                top: "sections"
-            )
+            .modifier(MenuStyle(focusGuide: focusGuide))
         }
 
         @ViewBuilder
@@ -84,15 +76,7 @@ extension VideoPlayer {
                     }
                 }
             }
-            .frame(height: 80)
-            .padding(.horizontal, 50)
-            .padding(.top)
-            .padding(.bottom, 45)
-            .focusGuide(
-                focusGuide,
-                tag: "contents",
-                top: "sections"
-            )
+            .modifier(MenuStyle(focusGuide: focusGuide))
         }
 
         @ViewBuilder
@@ -110,15 +94,7 @@ extension VideoPlayer {
                     }
                 }
             }
-            .frame(height: 80)
-            .padding(.horizontal, 50)
-            .padding(.top)
-            .padding(.bottom, 45)
-            .focusGuide(
-                focusGuide,
-                tag: "contents",
-                top: "sections"
-            )
+            .modifier(MenuStyle(focusGuide: focusGuide))
         }
 
         var body: some View {
@@ -211,6 +187,23 @@ extension VideoPlayer {
                 .buttonStyle(.plain)
                 .background(.clear)
                 .focused(focused, equals: section)
+            }
+        }
+        
+        struct MenuStyle: ViewModifier {
+            var focusGuide: FocusGuide
+            
+            func body(content: Content) -> some View {
+                content
+                    .frame(height: 80)
+                    .padding(.horizontal, 50)
+                    .padding(.top)
+                    .padding(.bottom, 45)
+                    .focusGuide(
+                        focusGuide,
+                        tag: "contents",
+                        top: "sections"
+                    )
             }
         }
     }

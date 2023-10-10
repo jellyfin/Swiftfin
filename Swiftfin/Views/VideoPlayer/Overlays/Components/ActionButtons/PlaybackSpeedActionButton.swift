@@ -36,10 +36,6 @@ extension VideoPlayer.Overlay.ActionButtons {
                         }
                     }
                 }
-
-                if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(videoPlayerManager.playbackSpeed.rawValue) }) {
-                    Label(String(format: "%.2f", videoPlayerManager.playbackSpeed.rawValue).appending("x"), systemImage: "checkmark")
-                }
             } label: {
                 content().eraseToAnyView()
             }
