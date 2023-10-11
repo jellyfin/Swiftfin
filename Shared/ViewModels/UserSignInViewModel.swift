@@ -25,9 +25,26 @@ final class UserSignInViewModel: ViewModel {
     let client: JellyfinClient
     let server: SwiftfinStore.State.Server
 
-    private var quickConnectTask: Task<Void, Never>?
-    private var quickConnectTimer: RepeatingTimer?
+    private var quickConnectMonitorTask: Task<Void, Never>?
+    // We want to enforce that only one monitoring task runs at a time, done by this ID.
+    // While cancelling a task is preferable to assigning IDs, cancelling has proven
+    // unreliable and unpredictable.
+    private var quickConnectMonitorTaskID: UUID?
+    // We want to signal to the monitor task when we're ready to poll for authentication.
+    // Without this, we may encounter a race condition where the monitor expects
+    // the secret before it's been fetched, and exits prematurely.
+    private var quickConnectStatus: QuickConnectStatus = .neutral
+    // If, for whatever reason, the monitor task isn't stopped correctly, we don't want
+    // to let it silently run forever.
+    private let quickConnectMaxRetries = 200
     private var quickConnectSecret: String?
+
+    enum QuickConnectStatus {
+        case neutral
+        case fetchingSecret
+        case fetchingSecretFailed
+        case awaitingAuthentication
+    }
 
     init(server: ServerState) {
         self.client = JellyfinClient(
@@ -85,47 +102,70 @@ final class UserSignInViewModel: ViewModel {
     }
 
     func startQuickConnect() -> AsyncStream<QuickConnectResult> {
+        quickConnectStatus = .fetchingSecret
+
         Task {
 
             let initiatePath = Paths.initiate
             let response = try? await client.send(initiatePath)
 
-            guard let response else { return }
+            guard let response else {
+                // TODO: Handle this directly or surface the error
+                quickConnectStatus = .fetchingSecretFailed
+                return
+            }
 
             await MainActor.run {
                 quickConnectSecret = response.value.secret
                 quickConnectCode = response.value.code
+                quickConnectStatus = .awaitingAuthentication
             }
         }
 
+        let taskID = UUID()
+        quickConnectMonitorTaskID = taskID
+
         return .init { continuation in
 
-            checkAuthStatus(continuation: continuation)
+            checkAuthStatus(continuation: continuation, id: taskID)
         }
     }
 
-    private func checkAuthStatus(continuation: AsyncStream<QuickConnectResult>.Continuation) {
-
+    private func checkAuthStatus(continuation: AsyncStream<QuickConnectResult>.Continuation, id: UUID, tries: Int = 0) {
         let task = Task {
-            guard let quickConnectSecret else { return }
+            // Don't race into failure while we're fetching the secret.
+            while quickConnectStatus == .fetchingSecret {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+            }
+
+            guard let quickConnectSecret, quickConnectStatus == .awaitingAuthentication, quickConnectMonitorTaskID == id else { return }
+
+            if tries > quickConnectMaxRetries {
+                logger.warning("Hit max retries while using quick connect, did `checkAuthStatus` keep running after signing in?")
+                stopQuickConnectAuthCheck()
+                return
+            }
+
             let connectPath = Paths.connect(secret: quickConnectSecret)
             let response = try? await client.send(connectPath)
 
             if let responseValue = response?.value, responseValue.isAuthenticated ?? false {
                 continuation.yield(responseValue)
+                quickConnectStatus = .neutral
+                stopQuickConnectAuthCheck()
                 return
             }
 
             try? await Task.sleep(nanoseconds: 5_000_000_000)
 
-            checkAuthStatus(continuation: continuation)
+            checkAuthStatus(continuation: continuation, id: id, tries: tries + 1)
         }
 
-        self.quickConnectTask = task
+        self.quickConnectMonitorTask = task
     }
 
     func stopQuickConnectAuthCheck() {
-        self.quickConnectTask?.cancel()
+        self.quickConnectMonitorTaskID = nil
     }
 
     func signIn(quickConnectSecret: String) async throws {
