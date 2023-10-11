@@ -172,7 +172,7 @@ class VideoPlayerManager: ViewModel {
 
         currentProgressWorkItem?.cancel()
 
-        print("sent start report")
+        logger.trace("sent start report")
 
         Task {
             let startInfo = PlaybackStartInfo(
@@ -204,7 +204,7 @@ class VideoPlayerManager: ViewModel {
         guard Defaults[.sendProgressReports] else { return }
         #endif
 
-        print("sent stop report")
+        logger.trace("sent stop report")
 
         currentProgressWorkItem?.cancel()
 
@@ -227,7 +227,7 @@ class VideoPlayerManager: ViewModel {
         guard Defaults[.sendProgressReports] else { return }
         #endif
 
-        print("sent pause report")
+        logger.trace("sent pause report")
 
         currentProgressWorkItem?.cancel()
 
