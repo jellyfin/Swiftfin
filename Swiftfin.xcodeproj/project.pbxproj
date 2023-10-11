@@ -2836,7 +2836,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
-				6286F09E271C093000C40ED5 /* R.swift */,
+				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
+				BD0BA2282AD64BB200306A8D /* Run Swiftformat */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -3003,7 +3004,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6286F09E271C093000C40ED5 /* R.swift */ = {
+		6286F09E271C093000C40ED5 /* Run Swiftgen.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -3013,7 +3014,7 @@
 			);
 			inputPaths = (
 			);
-			name = R.swift;
+			name = "Run Swiftgen.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -3040,6 +3041,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
+		};
+		BD0BA2282AD64BB200306A8D /* Run Swiftformat */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Swiftformat";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\" \n\nif [ \"$ACTION\" == \"build\" ]; then\n  if which swiftformat >/dev/null; then\n    swiftformat .\n  else\n    echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
