@@ -195,15 +195,15 @@ extension VideoPlayer {
 
             func body(content: Content) -> some View {
                 content
-                    .frame(height: 80)
-                    .padding(.horizontal, 50)
-                    .padding(.top)
-                    .padding(.bottom, 45)
                     .focusGuide(
                         focusGuide,
                         tag: "contents",
                         top: "sections"
                     )
+                    .frame(height: 80)
+                    .padding(.horizontal, 50)
+                    .padding(.top)
+                    .padding(.bottom, 45)
             }
         }
     }
