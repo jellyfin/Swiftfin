@@ -14,6 +14,9 @@ import SwiftUI
 
 struct NativeVideoPlayer: View {
 
+    @Environment(\.scenePhase)
+    var scenePhase
+
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
