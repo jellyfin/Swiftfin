@@ -30,7 +30,7 @@ extension VideoPlayer.Overlay {
                 HStack {
                     Image(systemName: "gearshape.fill")
 
-                    Text("Advanced")
+                    Text(L10n.advanced)
                 }
             }
         }
@@ -45,7 +45,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
 
-                    Text("Aspect Fill")
+                    Text(L10n.aspectFill)
                 }
             }
         }
@@ -113,7 +113,7 @@ extension VideoPlayer.Overlay {
                     HStack {
                         Image(systemName: "chevron.right.circle")
 
-                        Text("Play Next Item")
+                        Text(L10n.playNextItem)
                     }
                 }
             }
@@ -126,7 +126,7 @@ extension VideoPlayer.Overlay {
                     HStack {
                         Image(systemName: "chevron.left.circle")
 
-                        Text("Play Previous Item")
+                        Text(L10n.playPreviousItem)
                     }
                 }
             }

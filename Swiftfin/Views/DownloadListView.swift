@@ -20,7 +20,7 @@ struct DownloadListView: View {
                 DownloadTaskRow(downloadTask: item)
             }
         }
-        .navigationTitle("Downloads")
+        .navigationTitle(L10n.downloads)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

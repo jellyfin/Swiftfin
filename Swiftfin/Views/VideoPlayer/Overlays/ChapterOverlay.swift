@@ -60,7 +60,7 @@ extension VideoPlayer.Overlay {
                             }
                         }
                     } label: {
-                        Text("Current")
+                        Text(L10n.current)
                             .font(.title2)
                             .foregroundColor(accentColor)
                     }

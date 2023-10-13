@@ -11,6 +11,6 @@ import SwiftUI
 
 struct LiveTVHomeView: View {
     var body: some View {
-        Text("Coming Soon")
+        Text(L10n.comingSoon)
     }
 }

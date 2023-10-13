@@ -21,7 +21,7 @@ struct LiveTVProgramsView: View {
             LazyVStack(alignment: .leading) {
                 if !viewModel.recommendedItems.isEmpty {
                     let items = viewModel.recommendedItems
-                    PosterHStack(title: "On Now", type: .portrait, items: items)
+                    PosterHStack(title: L10n.onNow, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
@@ -34,7 +34,7 @@ struct LiveTVProgramsView: View {
                 }
                 if !viewModel.seriesItems.isEmpty {
                     let items = viewModel.seriesItems
-                    PosterHStack(title: "Shows", type: .portrait, items: items)
+                    PosterHStack(title: L10n.tvShows, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
@@ -47,7 +47,7 @@ struct LiveTVProgramsView: View {
                 }
                 if !viewModel.movieItems.isEmpty {
                     let items = viewModel.movieItems
-                    PosterHStack(title: "Movies", type: .portrait, items: items)
+                    PosterHStack(title: L10n.movies, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
@@ -60,7 +60,7 @@ struct LiveTVProgramsView: View {
                 }
                 if !viewModel.sportsItems.isEmpty {
                     let items = viewModel.sportsItems
-                    PosterHStack(title: "Sports", type: .portrait, items: items)
+                    PosterHStack(title: L10n.sports, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
@@ -73,7 +73,7 @@ struct LiveTVProgramsView: View {
                 }
                 if !viewModel.kidsItems.isEmpty {
                     let items = viewModel.kidsItems
-                    PosterHStack(title: "Kids", type: .portrait, items: items)
+                    PosterHStack(title: L10n.kids, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
@@ -86,7 +86,7 @@ struct LiveTVProgramsView: View {
                 }
                 if !viewModel.newsItems.isEmpty {
                     let items = viewModel.newsItems
-                    PosterHStack(title: "News", type: .portrait, items: items)
+                    PosterHStack(title: L10n.news, type: .portrait, items: items)
 //                        .onSelect { item in
 //                            if let chanId = item.channelId,
 //                               let chan = viewModel.findChannel(id: chanId)
