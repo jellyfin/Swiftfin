@@ -27,7 +27,7 @@ struct PagingLibraryView: View {
         if libraryGridPosterType == .landscape && UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: libraryGridPosterType.width + (UIDevice.isIPad ? 10 : 0))
+            return .adaptive(withMinItemSize: libraryGridPosterType.width + 10)
         }
     }
 
