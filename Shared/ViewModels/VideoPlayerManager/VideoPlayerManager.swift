@@ -40,6 +40,8 @@ class VideoPlayerManager: ViewModel {
     var state: VLCVideoPlayer.State = .opening
     @Published
     var subtitleTrackIndex: Int = -1
+    @Published
+    var playbackSpeed: PlaybackSpeed = PlaybackSpeed.one
 
     // MARK: ViewModel
 
