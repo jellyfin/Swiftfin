@@ -9,6 +9,7 @@
 import Combine
 import Defaults
 import Factory
+import Get
 import JellyfinAPI
 import SwiftUI
 import UIKit
@@ -65,67 +66,21 @@ final class LibraryViewModel: PagingLibraryViewModel {
             self.hasNextPage = true
         }
 
-        var libraryID: String?
-        var personIDs: [String]?
-        var studioIDs: [String]?
-
-        if let parent = parent {
-            switch type {
-            case .library, .folders:
-                libraryID = parent.id
-            case .person:
-                personIDs = [parent].compactMap(\.id)
-            case .studio:
-                studioIDs = [parent].compactMap(\.id)
-            }
-        }
-
-        var recursive = true
-        let includeItemTypes: [BaseItemKind]
-
-        if filters.filters.contains(ItemFilter.isFavorite.filter) {
-            includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
-        } else if type == .folders {
-            recursive = false
-            includeItemTypes = [.movie, .boxSet, .series, .folder, .collectionFolder]
-        } else {
-            includeItemTypes = [.movie, .boxSet, .series]
-        }
-
-        var excludedIDs: [String]?
+        var parameters = _getDefaultParams()
+        parameters?.limit = pageItemSize
+        parameters?.startIndex = currentPage * pageItemSize
+        parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
 
         if filters.sortBy.first == SortBy.random.filter {
-            excludedIDs = items.compactMap(\.id)
+            parameters?.excludeItemIDs = items.compactMap(\.id)
         }
-
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
         Task {
             await MainActor.run {
                 self.isLoading = true
             }
 
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                excludeItemIDs: excludedIDs,
-                startIndex: currentPage * pageItemSize,
-                limit: pageItemSize,
-                isRecursive: recursive,
-                sortOrder: sortOrder,
-                parentID: libraryID,
-                fields: ItemFields.allCases,
-                includeItemTypes: includeItemTypes,
-                filters: itemFilters,
-                sortBy: sortBy,
-                enableUserData: true,
-                personIDs: personIDs,
-                studioIDs: studioIDs,
-                genreIDs: genreIDs,
-                enableImages: true
-            )
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
 
@@ -143,5 +98,54 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
     override func _requestNextPage() {
         requestItems(with: filterViewModel.currentFilters)
+    }
+
+    override func _getDefaultParams() -> Paths.GetItemsParameters? {
+
+        let filters = filterViewModel.currentFilters
+        var libraryID: String?
+        var personIDs: [String]?
+        var studioIDs: [String]?
+        let includeItemTypes: [BaseItemKind]
+        var recursive = true
+
+        if let parent = parent {
+            switch type {
+            case .library, .folders:
+                libraryID = parent.id
+            case .person:
+                personIDs = [parent].compactMap(\.id)
+            case .studio:
+                studioIDs = [parent].compactMap(\.id)
+            }
+        }
+
+        if filters.filters.contains(ItemFilter.isFavorite.filter) {
+            includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
+        } else if type == .folders {
+            recursive = false
+            includeItemTypes = [.movie, .boxSet, .series, .folder, .collectionFolder]
+        } else {
+            includeItemTypes = [.movie, .boxSet, .series]
+        }
+
+        let genreIDs = filters.genres.compactMap(\.id)
+        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+
+        let parameters = Paths.GetItemsParameters(
+            userID: userSession.user.id,
+            isRecursive: recursive,
+            parentID: libraryID,
+            fields: ItemFields.allCases,
+            includeItemTypes: includeItemTypes,
+            filters: itemFilters,
+            enableUserData: true,
+            personIDs: personIDs,
+            studioIDs: studioIDs,
+            genreIDs: genreIDs,
+            enableImages: true
+        )
+
+        return parameters
     }
 }

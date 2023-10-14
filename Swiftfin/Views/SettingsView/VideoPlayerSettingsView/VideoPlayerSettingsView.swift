@@ -54,6 +54,11 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Overlay.timestampType)
     private var timestampType
 
+    @Default(.VideoPlayer.Transition.pauseOnBackground)
+    private var pauseOnBackground
+    @Default(.VideoPlayer.Transition.playOnActive)
+    private var playOnActive
+
     @EnvironmentObject
     private var router: VideoPlayerSettingsCoordinator.Router
 
@@ -148,6 +153,12 @@ struct VideoPlayerSettingsView: View {
                 EnumPicker(title: "Timestamp Type", selection: $timestampType)
 
                 EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
+            }
+
+            Section("Transition") {
+
+                Toggle("Pause on background", isOn: $pauseOnBackground)
+                Toggle("Play on active", isOn: $playOnActive)
             }
         }
         .navigationTitle("Video Player")

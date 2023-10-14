@@ -84,12 +84,20 @@ struct LibraryView: View {
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
-
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                Menu {
+                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                    RandomItemButton(viewModel: viewModel)
+                        .onSelect { response in
+                            if let item = response.items?.first {
+                                router.route(to: \.item, item)
+                            }
+                        }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
             }
         }
     }
