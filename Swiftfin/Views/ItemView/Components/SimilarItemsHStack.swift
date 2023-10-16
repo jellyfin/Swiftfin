@@ -26,7 +26,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: items.map { .item($0) }
+                items: items
             )
             .trailing {
                 SeeAllButton()

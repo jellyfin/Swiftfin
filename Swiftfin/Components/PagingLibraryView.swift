@@ -27,7 +27,7 @@ struct PagingLibraryView: View {
         if libraryGridPosterType == .landscape && UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: libraryGridPosterType.width + (UIDevice.isIPad ? 10 : 0))
+            return .adaptive(withMinItemSize: 200 + (UIDevice.isIPad ? 10 : 0))
         }
     }
 
@@ -61,7 +61,7 @@ struct PagingLibraryView: View {
     @ViewBuilder
     private var libraryGridView: some View {
         CollectionView(items: viewModel.items.elements) { _, item, _ in
-            PosterButton(state: .item(item), type: libraryGridPosterType)
+            PosterButton(item: item, type: libraryGridPosterType)
                 .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
                 .onSelect {
                     onSelect(item)

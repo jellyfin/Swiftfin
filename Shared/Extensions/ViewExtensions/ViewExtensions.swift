@@ -54,25 +54,23 @@ extension View {
     // TODO: Centralize math
     // TODO: Move poster stuff to own file
     // TODO: Figure out proper handling of corner radius for tvOS buttons
-    func posterStyle(type: PosterType, width: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(width: width)
-            case .landscape:
-                self.landscapePoster(width: width)
-            }
+    @ViewBuilder
+    func posterStyle(type: PosterType, width: CGFloat = 500) -> some View {
+        switch type {
+        case .portrait:
+            self.portraitPoster(width: width)
+        case .landscape:
+            self.landscapePoster(width: width)
         }
     }
 
+    @ViewBuilder
     func posterStyle(type: PosterType, height: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(height: height)
-            case .landscape:
-                self.landscapePoster(height: height)
-            }
+        switch type {
+        case .portrait:
+            self.portraitPoster(height: height)
+        case .landscape:
+            self.landscapePoster(height: height)
         }
     }
 
@@ -174,6 +172,7 @@ extension View {
         }
     }
 
+    // TODO: rename isVisible
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)

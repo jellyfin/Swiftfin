@@ -26,7 +26,6 @@ extension ItemView {
                     .filter(\.isDisplayed)
                     .prefix(20)
                     .asArray
-                    .map { .item($0) }
             )
             .trailing {
                 SeeAllButton()

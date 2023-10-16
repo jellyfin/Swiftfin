@@ -24,7 +24,7 @@ struct MediaView: View {
         if UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: PosterType.landscape.width)
+            return .adaptive(withMinItemSize: 100)
         }
     }
 
@@ -78,7 +78,8 @@ extension MediaView {
         private var onSelect: () -> Void
 
         private var itemWidth: CGFloat {
-            PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
+//            PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
+            200
         }
 
         var body: some View {

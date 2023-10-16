@@ -19,14 +19,6 @@ extension CollectionItemView {
         @ObservedObject
         var viewModel: CollectionItemViewModel
 
-        private var items: [PosterButtonType<BaseItemDto>] {
-            if viewModel.isLoading {
-                return PosterButtonType.loading.random(in: 3 ..< 8)
-            } else {
-                return viewModel.collectionItems.map { .item($0) }
-            }
-        }
-
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
@@ -51,7 +43,7 @@ extension CollectionItemView {
                 PosterHStack(
                     title: L10n.items,
                     type: .portrait,
-                    items: items
+                    items: viewModel.collectionItems
                 )
                 .onSelect { item in
                     router.route(to: \.item, item)

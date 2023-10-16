@@ -10,13 +10,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Look at something better for accomadating loading/noResults/other types
-
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
@@ -24,20 +21,16 @@ struct PosterButton<Item: Poster>: View {
     private var onSelect: () -> Void
     private var singleImage: Bool
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
-    }
-
     @ViewBuilder
     private var loadingPoster: some View {
         Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
+            .posterStyle(type: type)
     }
 
     @ViewBuilder
     private var noResultsPoster: some View {
         Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
+            .posterStyle(type: type)
     }
 
     @ViewBuilder
@@ -93,7 +86,6 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            itemScale: 1,
             horizontalAlignment: .leading,
             content: { DefaultContentView(item: $0) },
             imageOverlay: { DefaultOverlay(item: $0) },
@@ -105,10 +97,6 @@ extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

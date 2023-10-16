@@ -52,13 +52,13 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
 
     private var items: [Model.Item] {
         guard let selection = manager.menuSelection,
-              let items = manager.menuSections[selection] else { return [.noResult] }
+              let items = manager.menuSections[selection] else { return [] }
         return items
     }
 
     var body: some View {
         PosterHStack(
-            title: <#String#>, type: type,
+            type: type,
             items: items,
             singleImage: singleImage
         )

@@ -26,10 +26,10 @@ struct SeriesEpisodeSelector: View {
         )
         .scaleItems(1.2)
         .imageOverlay { type in
-            EpisodeOverlay(type: type)
+            EpisodeOverlay(episode: type)
         }
         .content { type in
-            EpisodeContent(type: type)
+            EpisodeContent(episode: type)
         }
         .onSelect { item in
             guard let mediaSource = item.mediaSources?.first else { return }
@@ -42,28 +42,24 @@ extension SeriesEpisodeSelector {
 
     struct EpisodeOverlay: View {
 
-        let type: PosterButtonType<BaseItemDto>
+        let episode: BaseItemDto
 
         var body: some View {
-            if case let PosterButtonType.item(episode) = type {
-                if let progressLabel = episode.progressLabel {
-                    LandscapePosterProgressBar(
-                        title: progressLabel,
-                        progress: (episode.userData?.playedPercentage ?? 0) / 100
-                    )
-                } else if episode.userData?.isPlayed ?? false {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.clear
+            if let progressLabel = episode.progressLabel {
+                LandscapePosterProgressBar(
+                    title: progressLabel,
+                    progress: (episode.userData?.playedPercentage ?? 0) / 100
+                )
+            } else if episode.userData?.isPlayed ?? false {
+                ZStack(alignment: .bottomTrailing) {
+                    Color.clear
 
-                        Image(systemName: "checkmark.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                            .accentSymbolRendering(accentColor: .white)
-                            .padding()
-                    }
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
+                        .accentSymbolRendering(accentColor: .white)
+                        .padding()
                 }
-            } else {
-                EmptyView()
             }
         }
     }
@@ -78,71 +74,43 @@ extension SeriesEpisodeSelector {
         @ScaledMetric
         private var staticOverviewHeight: CGFloat = 50
 
-        let type: PosterButtonType<BaseItemDto>
+        let episode: BaseItemDto
 
         @ViewBuilder
         private var subHeader: some View {
-            Group {
-                switch type {
-                case .loading:
-                    String(repeating: "a", count: 5).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    String.emptyDash.text
-                case let .item(episode):
-                    Text(episode.episodeLocator ?? L10n.unknown)
-                }
-            }
-            .font(.footnote)
-            .foregroundColor(.secondary)
+            Text(episode.episodeLocator ?? L10n.unknown)
+                .font(.footnote)
+                .foregroundColor(.secondary)
         }
 
         @ViewBuilder
         private var header: some View {
-            Group {
-                switch type {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 8 ..< 18)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noResults.text
-                case let .item(episode):
-                    Text(episode.displayTitle)
-                }
-            }
-            .font(.body)
-            .foregroundColor(.primary)
-            .padding(.bottom, 1)
-            .lineLimit(2)
-            .multilineTextAlignment(.leading)
+            Text(episode.displayTitle)
+                .font(.body)
+                .foregroundColor(.primary)
+                .padding(.bottom, 1)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
         }
 
         @ViewBuilder
         private var content: some View {
             Group {
-                switch type {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 50 ..< 100)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noOverviewAvailable.text
-                case let .item(episode):
-                    ZStack(alignment: .topLeading) {
-                        Color.clear
-                            .frame(height: staticOverviewHeight)
+                ZStack(alignment: .topLeading) {
+                    Color.clear
+                        .frame(height: staticOverviewHeight)
 
-                        if episode.isUnaired {
-                            Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-                        } else {
-                            Text(episode.overview ?? L10n.noOverviewAvailable)
-                        }
+                    if episode.isUnaired {
+                        Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+                    } else {
+                        Text(episode.overview ?? L10n.noOverviewAvailable)
                     }
-
-                    L10n.seeMore.text
-                        .font(.footnote)
-                        .fontWeight(.medium)
-                        .foregroundColor(accentColor)
                 }
+
+                L10n.seeMore.text
+                    .font(.footnote)
+                    .fontWeight(.medium)
+                    .foregroundColor(accentColor)
             }
             .font(.caption.weight(.light))
             .foregroundColor(.secondary)
@@ -152,9 +120,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             Button {
-                if case let PosterButtonType.item(item) = type {
-                    router.route(to: \.item, item)
-                }
+                router.route(to: \.item, episode)
             } label: {
                 VStack(alignment: .leading) {
                     subHeader
