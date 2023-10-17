@@ -112,7 +112,7 @@ extension MediaView {
                         }
                     }
                 }
-                .posterStyle(type: .landscape, width: itemWidth)
+//                .posterStyle(type: .landscape, width: itemWidth)
             }
         }
     }

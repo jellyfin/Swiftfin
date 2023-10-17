@@ -22,27 +22,15 @@ struct PosterButton<Item: Poster>: View {
     private var singleImage: Bool
 
     @ViewBuilder
-    private var loadingPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type)
-    }
-
-    @ViewBuilder
-    private var noResultsPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type)
-    }
-
-    @ViewBuilder
     private func poster(from item: any Poster) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+            ImageView(item.portraitPosterImageSource(maxWidth: 500))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
@@ -59,20 +47,19 @@ struct PosterButton<Item: Poster>: View {
                     .overlay {
                         imageOverlay(item)
                             .eraseToAnyView()
-                            .posterStyle(type: type, width: itemWidth)
+//                            .posterStyle(type: type, width: 500)
                     }
             }
             .contextMenu(menuItems: {
                 contextMenu(item)
                     .eraseToAnyView()
             })
-            .posterStyle(type: type, width: itemWidth)
+//            .posterStyle(type: type, width: 500)
             .posterShadow()
 
             content(item)
                 .eraseToAnyView()
         }
-        .frame(width: itemWidth)
     }
 }
 

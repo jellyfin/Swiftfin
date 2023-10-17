@@ -23,7 +23,7 @@ struct LibraryItemRow: View {
         } label: {
             HStack(alignment: .bottom) {
                 ImageView(item.portraitPosterImageSource(maxWidth: 60))
-                    .posterStyle(type: .portrait, width: 60)
+//                    .posterStyle(type: .portrait, width: 60)
                     .posterShadow()
 
                 VStack(alignment: .leading) {

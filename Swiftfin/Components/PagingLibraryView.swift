@@ -62,7 +62,7 @@ struct PagingLibraryView: View {
     private var libraryGridView: some View {
         CollectionView(items: viewModel.items.elements) { _, item, _ in
             PosterButton(item: item, type: libraryGridPosterType)
-                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
+//                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
                 .onSelect {
                     onSelect(item)
                 }
@@ -115,38 +115,5 @@ extension PagingLibraryView {
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
-    }
-}
-
-class UILibraryCollectionView: UICollectionView {
-    
-    private func createPortraiGridLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(100),
-                                             heightDimension: .fractionalHeight(1.0))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .fractionalHeight(0.3))
-        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize,
-                                                         subitems: [item])
-
-        let section = NSCollectionLayoutSection(group: group)
-
-        let layout = UICollectionViewCompositionalLayout(section: section)
-        
-//        let b = UICollectionViewCompositionalLayout(
-//            sectionProvider: <#T##UICollectionViewCompositionalLayoutSectionProvider##UICollectionViewCompositionalLayoutSectionProvider##(Int, NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection?#>,
-//            configuration: .init().
-//        )
-        
-        return layout
-    }
-    
-    override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
-        super.init(frame: .zero, collectionViewLayout: layout)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
