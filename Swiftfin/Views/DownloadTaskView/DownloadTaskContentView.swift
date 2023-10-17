@@ -116,7 +116,7 @@ extension DownloadTaskView {
                     Text(L10n.dismiss)
                 }
             } message: {
-                Text(L10n.downlodsOnlyPlayableInSwiftfin)
+                Text("Downloaded items are only playable through the Swiftfin video player.")
             }
         }
     }

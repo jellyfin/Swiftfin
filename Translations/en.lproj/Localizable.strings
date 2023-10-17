@@ -121,7 +121,6 @@
 "favorites" = "Favorites";
 "liveTV" = "Live TV";
 "downloads" = "Downloads";
-"downlodsOnlyPlayableInSwiftfin" = "Downloaded items are only playable through the Swiftfin video player.";
 "serverDetails" = "Server Details";
 "name" = "Name";
 "url" = "URL";

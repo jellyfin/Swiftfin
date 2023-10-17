@@ -140,8 +140,6 @@ internal enum L10n {
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
-  /// Downloaded items are only playable through the Swiftfin video player.
-  internal static let downlodsOnlyPlayableInSwiftfin = L10n.tr("Localizable", "downlodsOnlyPlayableInSwiftfin", fallback: "Downloaded items are only playable through the Swiftfin video player.")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Empty Next Up
