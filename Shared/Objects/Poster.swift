@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: find way to remove special `single` handling
+// TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
 protocol Poster: Displayable, Hashable {
 
     var subtitle: String? { get }
@@ -15,11 +17,4 @@ protocol Poster: Displayable, Hashable {
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
-}
-
-extension Poster {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(displayTitle)
-        hasher.combine(subtitle)
-    }
 }

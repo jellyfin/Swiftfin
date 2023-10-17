@@ -47,6 +47,7 @@ struct PosterButton<Item: Poster>: View {
                     .overlay {
                         imageOverlay(item)
                             .eraseToAnyView()
+                            .posterStyle(type)
 //                            .posterStyle(type: type, width: 500)
                     }
             }
@@ -54,6 +55,7 @@ struct PosterButton<Item: Poster>: View {
                 contextMenu(item)
                     .eraseToAnyView()
             })
+            .posterStyle(type)
 //            .posterStyle(type: type, width: 500)
             .posterShadow()
 
