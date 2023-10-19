@@ -65,7 +65,7 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(title: "Gestures")
+            ChevronButton(title: L10n.gestures)
                 .onSelect {
                     router.route(to: \.gestureSettings)
                 }
@@ -77,7 +77,7 @@ struct VideoPlayerSettingsView: View {
             Section {
 
                 BasicStepper(
-                    title: "Resume Offset",
+                    title: L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
                     step: 1
@@ -86,40 +86,40 @@ struct VideoPlayerSettingsView: View {
                     $0.secondFormat
                 }
             } footer: {
-                Text("Resume content seconds before the recorded resume time")
+                Text(L10n.resumeOffsetDescription)
             }
 
-            Section("Buttons") {
+            Section(L10n.buttons) {
 
-                EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
+                EnumPicker(title: L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
                         Image(systemName: "goforward")
-                        Text("Jump")
+                        Text(L10n.jump)
                     }
                 }
 
-                ChevronButton(title: "Bar Buttons")
+                ChevronButton(title: L10n.barButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $barActionButtons)
                     }
 
-                ChevronButton(title: "Menu Buttons")
+                ChevronButton(title: L10n.menuButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $menuActionButtons)
                     }
             }
 
-            Section("Slider") {
+            Section(L10n.slider) {
 
-                Toggle("Chapter Slider", isOn: $chapterSlider)
+                Toggle(L10n.chapterSlider, isOn: $chapterSlider)
 
                 ColorPicker(selection: $sliderColor, supportsOpacity: false) {
-                    Text("Slider Color")
+                    Text(L10n.sliderColor)
                 }
 
-                EnumPicker(title: "Slider Type", selection: $sliderType)
+                EnumPicker(title: L10n.sliderType, selection: $sliderType)
             }
 
             Section {
@@ -137,31 +137,31 @@ struct VideoPlayerSettingsView: View {
                 )
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text("Subtitle Color")
+                    Text(L10n.subtitleColor)
                 }
             } header: {
-                Text("Subtitle")
+                Text(L10n.subtitle)
             } footer: {
                 // TODO: better wording
                 Text("Settings only affect some subtitle types")
             }
 
-            Section("Timestamp") {
+            Section(L10n.timestamp) {
 
-                Toggle("Scrub Current Time", isOn: $showCurrentTimeWhileScrubbing)
+                Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
-                EnumPicker(title: "Timestamp Type", selection: $timestampType)
+                EnumPicker(title: L10n.timestampType, selection: $timestampType)
 
-                EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
+                EnumPicker(title: L10n.trailingValue, selection: $trailingTimestampType)
             }
 
-            Section("Transition") {
+            Section(L10n.transition) {
 
-                Toggle("Pause on background", isOn: $pauseOnBackground)
-                Toggle("Play on active", isOn: $playOnActive)
+                Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
+                Toggle(L10n.playOnActive, isOn: $playOnActive)
             }
         }
-        .navigationTitle("Video Player")
+        .navigationTitle(L10n.videoPlayer)
         .onChange(of: barActionButtons) { newValue in
             autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
         }

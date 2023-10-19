@@ -8,6 +8,7 @@
 "cast" = "CAST";
 "changeServer" = "Change Server";
 "closedCaptions" = "Closed Captions";
+"comingSoon" = "Coming soon";
 "connect" = "Connect";
 "connectManually" = "Connect Manually";
 "connectToJellyfin" = "Connect to Jellyfin";
@@ -39,8 +40,10 @@
 "password" = "Password";
 "playNext" = "Play Next";
 "play" = "Play";
+"playback" = "Playback";
 "playbackSettings" = "Playback settings";
 "playbackSpeed" = "Playback Speed";
+"reload" = "Reload";
 "reset" = "Reset";
 "seasonAndEpisode" = "S%1$@:E%2$@";
 "search" = "Search";
@@ -77,6 +80,10 @@
 /* Represents the light theme setting */
 "light" = "Light";
 
+"advanced" = "Advanced";
+"aspectFill" = "Aspect Fill";
+"enabled" = "Enabled";
+"disabled" = "Disabled";
 "existingServer" = "Existing Server";
 "existingUser" = "Existing User";
 "serverAlreadyConnected" = "Server %s is already connected";
@@ -90,8 +97,10 @@
 "defaultScheme" = "Default Scheme";
 "networking" = "Networking";
 "resetUserSettings" = "Reset User Settings";
+"resetAllSettings" = "Reset all settings back to defaults.";
 "resetAppSettings" = "Reset App Settings";
 "removeAllUsers" = "Remove All Users";
+"removeAllServers" = "Remove All Servers";
 "settings" = "Settings";
 "cancel" = "Cancel";
 "connectToJellyfinServer" = "Connect to a Jellyfin server";
@@ -128,16 +137,24 @@
 "overlayType" = "Overlay Type";
 "user" = "User";
 "server" = "Server";
+"nativePlayer" = "Native Player";
 "videoPlayer" = "Video Player";
+"videoPlayerType" = "Video Player Type";
+"gestures" = "Gestures";
 "jumpForwardLength" = "Jump Forward Length";
 "jumpBackwardLength" = "Jump Backward Length";
 "jumpGesturesEnabled" = "Jump Gestures Enabled";
 "systemControlGesturesEnabled" = "System Control Gestures Enabled";
 "playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
 "seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
+"audioOffset" = "Audio Offset";
+"subtitleOffset" = "Subtitle Offset";
+"resumeOffset" = "Resume Offset";
+"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
 "resume5SecondOffset" = "Resume 5 Second Offset";
 "showPosterLabels" = "Show Poster Labels";
 "showCastAndCrew" = "Show Cast & Crew";
+"subtitleColor" = "Subtitle Color";
 "subtitleSize" = "Subtitle Size";
 "subtitleFont" = "Subtitle Font";
 "signInGetStarted" = "Sign in to get started";
@@ -193,6 +210,7 @@
 "customize" = "Customize";
 "tooManyRedirects" = "Too Many Redirects";
 "chapters" = "Chapters";
+"current" = "Current";
 "currentPosition" = "Current Position";
 "remainingTime" = "Remaining Time";
 "sourceCode" = "Source Code";
@@ -262,3 +280,28 @@
 "random" = "Random";
 "grid" = "Grid";
 "list" = "List";
+"logs" = "Logs";
+
+"onNow" = "On Now";
+"sports" = "Sports";
+"kids" = "Kids";
+"news" = "News";
+
+"buttons" = "Buttons";
+"playbackButtons" = "Playback Buttons";
+"barButtons" = "Bar Buttons";
+"menuButtons" = "Menu Buttons";
+"jump" = "Jump";
+"slider" = "Slider";
+"chapterSlider" = "Chapter Slider";
+"sliderColor" = "Slider Color";
+"sliderType" = "Slider Type";
+"timestamp" = "Timestamp";
+"scrubCurrentTime" = "Scrub Current Time";
+"timestampType" = "Timestamp Type";
+"trailingValue" = "Trailing Value";
+"transition" = "Transition";
+"pauseOnBackground" = "Pause on background";
+"playOnActive" = "Play on active";
+
+"retrievingMediaInformation" = "Retrieving media information";
