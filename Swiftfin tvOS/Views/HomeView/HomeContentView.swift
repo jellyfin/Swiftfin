@@ -24,7 +24,7 @@ extension HomeView {
 
                     if viewModel.resumeItems.isEmpty {
                         CinematicRecentlyAddedView(viewModel: .init(
-                            itemTypes: [.movie, .series],
+                            itemTypes: [.movie, .episode],
                             filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
                         ))
 
@@ -40,7 +40,7 @@ extension HomeView {
 
                         if viewModel.hasRecentlyAdded {
                             RecentlyAddedView(viewModel: .init(
-                                itemTypes: [.movie, .series],
+                                itemTypes: [.movie, .episode],
                                 filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
                             ))
                         }
