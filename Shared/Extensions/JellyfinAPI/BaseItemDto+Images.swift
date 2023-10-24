@@ -19,7 +19,7 @@ extension BaseItemDto {
         _ type: ImageType,
         maxWidth: Int? = nil,
         maxHeight: Int? = nil
-    ) -> URL {
+    ) -> URL? {
         _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
     }
 
@@ -27,7 +27,7 @@ extension BaseItemDto {
         _ type: ImageType,
         maxWidth: CGFloat? = nil,
         maxHeight: CGFloat? = nil
-    ) -> URL {
+    ) -> URL? {
         _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: id ?? "")
     }
 
@@ -52,11 +52,11 @@ extension BaseItemDto {
 
     // MARK: Series Images
 
-    func seriesImageURL(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> URL {
+    func seriesImageURL(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> URL? {
         _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesID ?? "")
     }
 
-    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL {
+    func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL? {
         _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: seriesID ?? "")
     }
 
@@ -80,11 +80,13 @@ extension BaseItemDto {
         maxWidth: Int?,
         maxHeight: Int?,
         itemID: String
-    ) -> URL {
+    ) -> URL? {
+        guard let imageTags = imageTags else { return nil }
+        
         // TODO: See if the scaling is actually right so that it isn't so big
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
-        let tag = imageTags?[type.rawValue]
+        let tag = imageTags[type.rawValue]
 
         let client = Container.userSession.callAsFunction().client
         let parameters = Paths.GetItemImageParameters(
