@@ -49,7 +49,7 @@ struct PosterButton<Item: Poster>: View {
                             }
                             .posterStyle(type: type, width: itemWidth)
                     case .landscape:
-                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage, prioritizeBackdrop: false))
                             .failure {
                                 InitialFailureView(item.displayTitle.initials)
                             }

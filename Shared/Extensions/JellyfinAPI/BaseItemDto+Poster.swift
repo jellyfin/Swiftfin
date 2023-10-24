@@ -53,21 +53,34 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false, prioritizeBackdrop: Bool = false) -> [ImageSource] {
         switch type {
         case .episode:
             if single || !Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 return [imageSource(.primary, maxWidth: maxWidth)]
-            } else {
+            } else if prioritizeBackdrop {
                 return [
-                    seriesImageSource(.thumb, maxWidth: maxWidth),
                     seriesImageSource(.backdrop, maxWidth: maxWidth),
+                    seriesImageSource(.thumb, maxWidth: maxWidth),
                     imageSource(.primary, maxWidth: maxWidth),
                 ]
             }
+
+            return [
+                seriesImageSource(.thumb, maxWidth: maxWidth),
+                seriesImageSource(.backdrop, maxWidth: maxWidth),
+                imageSource(.primary, maxWidth: maxWidth),
+            ]
         case .video:
             return [imageSource(.primary, maxWidth: maxWidth)]
         default:
+            if prioritizeBackdrop {
+                return [
+                    imageSource(.backdrop, maxWidth: maxWidth),
+                    imageSource(.thumb, maxWidth: maxWidth),
+                ]
+            }
+
             return [
                 imageSource(.thumb, maxWidth: maxWidth),
                 imageSource(.backdrop, maxWidth: maxWidth),
