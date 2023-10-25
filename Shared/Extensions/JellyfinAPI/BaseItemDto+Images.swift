@@ -86,7 +86,8 @@ extension BaseItemDto {
         // TODO: See if the scaling is actually right so that it isn't so big
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
-        let tag = imageTags[type.rawValue]
+
+        guard let tag = imageTags[type.rawValue] else { return nil }
 
         let client = Container.userSession.callAsFunction().client
         let parameters = Paths.GetItemImageParameters(
