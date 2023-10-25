@@ -24,7 +24,6 @@ extension HomeView {
                 type: .landscape,
                 items: viewModel.resumeItems
             )
-            .scaleItems(1.5)
             .contextMenu { item in
                 Button {
                     viewModel.markItemPlayed(item)
@@ -47,6 +46,7 @@ extension HomeView {
             .onSelect { item in
                 router.route(to: \.item, item)
             }
+            .environment(\.landscapePosterSize, .init(width: 300, height: .zero))
         }
     }
 }

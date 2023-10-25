@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: Look at name spacing
+// TODO: Consistent naming: ...Key
 
 struct AudioOffset: EnvironmentKey {
     static let defaultValue: Binding<Int> = .constant(0)
@@ -26,8 +27,17 @@ struct IsScrubbing: EnvironmentKey {
     static let defaultValue: Binding<Bool> = .constant(false)
 }
 
+struct LandscapePosterSizeKey: EnvironmentKey {
+    static let defaultValue: CGSize = .init(width: 200, height: .zero)
+}
+
 struct PlaybackSpeedKey: EnvironmentKey {
     static let defaultValue: Binding<Float> = .constant(1)
+}
+
+// TODO: should split into Portrait/Landscape poster button sizes?
+struct PortraitPosterSizeKey: EnvironmentKey {
+    static let defaultValue: CGSize = .init(width: 100, height: .zero)
 }
 
 struct SafeAreaInsetsKey: EnvironmentKey {
@@ -70,10 +80,20 @@ extension EnvironmentValues {
         get { self[IsScrubbing.self] }
         set { self[IsScrubbing.self] = newValue }
     }
+    
+    var landscapePosterSize: CGSize {
+        get { self[LandscapePosterSizeKey.self] }
+        set { self[LandscapePosterSizeKey.self] = newValue }
+    }
 
     var playbackSpeed: Binding<Float> {
         get { self[PlaybackSpeedKey.self] }
         set { self[PlaybackSpeedKey.self] = newValue }
+    }
+    
+    var portraitPosterSize: CGSize {
+        get { self[PortraitPosterSizeKey.self] }
+        set { self[PortraitPosterSizeKey.self] = newValue }
     }
 
     var safeAreaInsets: EdgeInsets {

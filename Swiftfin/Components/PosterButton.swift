@@ -10,11 +10,17 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: builder methods shouldn't take the item
+
 struct PosterButton<Item: Poster>: View {
+    
+    @Environment(\.landscapePosterSize)
+    private var landscapePosterSize
+    @Environment(\.portraitPosterSize)
+    private var portraitPosterSize
 
     private var item: Item
     private var type: PosterType
-    private var horizontalAlignment: HorizontalAlignment
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -25,12 +31,12 @@ struct PosterButton<Item: Poster>: View {
     private func poster(from item: any Poster) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: 500))
+            ImageView(item.portraitPosterImageSource(maxWidth: portraitPosterSize.width))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: landscapePosterSize.width, single: singleImage))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
@@ -38,7 +44,7 @@ struct PosterButton<Item: Poster>: View {
     }
 
     var body: some View {
-        VStack(alignment: horizontalAlignment) {
+        VStack(alignment: .leading) {
 
             Button {
                 onSelect()
@@ -48,7 +54,6 @@ struct PosterButton<Item: Poster>: View {
                         imageOverlay(item)
                             .eraseToAnyView()
                             .posterStyle(type)
-//                            .posterStyle(type: type, width: 500)
                     }
             }
             .contextMenu(menuItems: {
@@ -56,12 +61,12 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterStyle(type)
-//            .posterStyle(type: type, width: 500)
             .posterShadow()
 
             content(item)
                 .eraseToAnyView()
         }
+        .frame(width: type == .portrait ? portraitPosterSize.width : landscapePosterSize.width)
     }
 }
 
@@ -75,17 +80,12 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            horizontalAlignment: .leading,
             content: { DefaultContentView(item: $0) },
             imageOverlay: { DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
-    }
-
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
-        copy(modifying: \.horizontalAlignment, with: alignment)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

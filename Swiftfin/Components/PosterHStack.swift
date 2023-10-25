@@ -17,7 +17,6 @@ struct PosterHStack<Item: Poster>: View {
     private var type: PosterType
     private var items: [Item]
     private var singleImage: Bool
-    private var itemScale: CGFloat
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -49,7 +48,6 @@ struct PosterHStack<Item: Poster>: View {
                             type: type,
                             singleImage: singleImage
                         )
-//                        .scaleItem(itemScale)
                         .content { content($0).eraseToAnyView() }
                         .imageOverlay { imageOverlay($0).eraseToAnyView() }
                         .contextMenu { contextMenu($0).eraseToAnyView() }
@@ -79,7 +77,6 @@ extension PosterHStack {
             type: type,
             items: items,
             singleImage: singleImage,
-            itemScale: 1,
             content: { PosterButton.DefaultContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
@@ -99,7 +96,6 @@ extension PosterHStack {
             type: type,
             items: items,
             singleImage: singleImage,
-            itemScale: 1,
             content: { PosterButton.DefaultContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
@@ -110,10 +106,6 @@ extension PosterHStack {
 
     func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
-    }
-
-    func scaleItems(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

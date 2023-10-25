@@ -65,7 +65,6 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
         .header {
             selectorMenu
         }
-        .scaleItems(itemScale)
         .content(content)
         .imageOverlay(imageOverlay)
         .contextMenu(contextMenu)
@@ -96,10 +95,6 @@ extension MenuPosterHStack {
 }
 
 extension MenuPosterHStack {
-
-    func scaleItems(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
-    }
 
     func content(@ViewBuilder _ content: @escaping (Model.Item) -> any View) -> Self {
         copy(modifying: \.content, with: content)

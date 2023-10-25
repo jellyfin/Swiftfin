@@ -22,12 +22,6 @@ struct RatioCornerRadiusModifier: ViewModifier {
             .cornerRadius(cornerRadius, corners: corners)
             .onSizeChanged { newSize in
                 cornerRadius = newSize[keyPath: side] * ratio
-//                switch side {
-//                case .width:
-//                    cornerRadius = newSize.width * ratio
-//                case .height:
-//                    cornerRadius = newSize.height * ratio
-//                }
             }
     }
 }
