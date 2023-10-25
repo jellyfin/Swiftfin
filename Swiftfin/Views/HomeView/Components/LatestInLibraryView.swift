@@ -21,7 +21,7 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: LibraryViewModel
+        var viewModel: LatestInLibraryViewModel
 
         private var items: [BaseItemDto] {
             viewModel.items.prefix(20).asArray
@@ -29,14 +29,20 @@ extension HomeView {
 
         var body: some View {
             PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                title: L10n.latestWithString(viewModel.parent.displayTitle),
                 type: latestInLibraryPosterType,
                 items: items
             )
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                        router.route(
+                            to: \.basicLibrary,
+                            .init(
+                                title: L10n.latestWithString(viewModel.parent.displayTitle),
+                                viewModel: viewModel
+                            )
+                        )
                     }
             }
             .onSelect { item in

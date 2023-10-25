@@ -44,7 +44,7 @@ extension HomeView {
                     }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
-                        LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
+                        LatestInLibraryView(viewModel: .init(parent: library))
                     }
                 }
                 .padding(.bottom, 50)
