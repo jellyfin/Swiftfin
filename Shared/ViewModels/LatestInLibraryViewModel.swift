@@ -11,12 +11,12 @@ import Foundation
 import JellyfinAPI
 
 final class LatestInLibraryViewModel: PagingLibraryViewModel {
-    
+
     let parent: LibraryParent
 
     init(parent: LibraryParent) {
         self.parent = parent
-        
+
         super.init()
 
         _requestNextPage()
@@ -37,7 +37,7 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel {
             )
             let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
             let response = try await userSession.client.send(request)
-            
+
             let items = response.value
             if items.isEmpty {
                 hasNextPage = false
@@ -49,6 +49,10 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel {
                 self.items.append(contentsOf: items)
             }
         }
+    }
+
+    override public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {
+        BaseItemDtoQueryResult(items: items.elements)
     }
 
     func markPlayed(item: BaseItemDto) {
