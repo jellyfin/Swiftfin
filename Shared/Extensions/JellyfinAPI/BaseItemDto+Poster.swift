@@ -87,4 +87,12 @@ extension BaseItemDto: Poster {
             ]
         }
     }
+
+    func cinematicPosterImageSources() -> [ImageSource] {
+        [
+            seriesImageSource(.backdrop, maxWidth: UIScreen.main.bounds.width),
+            seriesImageSource(.thumb, maxWidth: UIScreen.main.bounds.width),
+            imageSource(.primary, maxWidth: UIScreen.main.bounds.width),
+        ]
+    }
 }

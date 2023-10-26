@@ -14,7 +14,8 @@ protocol Poster: Displayable, Hashable {
     var showTitle: Bool { get }
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool, prioritizeBackdrop: Bool) -> [ImageSource]
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
+    func cinematicPosterImageSources() -> [ImageSource]
 }
 
 extension Poster {

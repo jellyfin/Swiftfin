@@ -49,4 +49,8 @@ extension BaseItemPerson: Poster {
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool, prioritizeBackdrop: Bool) -> [ImageSource] {
         []
     }
+
+    func cinematicPosterImageSources() -> [ImageSource] {
+        []
+    }
 }
