@@ -58,7 +58,7 @@ extension ChapterInfo {
             .init()
         }
 
-        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool, prioritizeBackdrop: Bool) -> [ImageSource] {
+        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
             [imageSource]
         }
 
