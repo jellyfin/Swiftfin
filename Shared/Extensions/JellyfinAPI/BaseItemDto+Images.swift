@@ -81,13 +81,15 @@ extension BaseItemDto {
         maxHeight: Int?,
         itemID: String
     ) -> URL? {
-        guard let imageTags = imageTags else { return nil }
 
         // TODO: See if the scaling is actually right so that it isn't so big
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
+        let tag = getImageTag(for: type)
 
-        guard let tag = imageTags[type.rawValue] else { return nil }
+        if tag == nil && type != .backdrop {
+            return nil
+        }
 
         let client = Container.userSession.callAsFunction().client
         let parameters = Paths.GetItemImageParameters(
