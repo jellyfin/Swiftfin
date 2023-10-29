@@ -105,6 +105,17 @@ extension BaseItemDto {
         return client.fullURL(with: request)
     }
 
+    private func getImageTag(for type: ImageType) -> String? {
+        switch type {
+        case .backdrop:
+            return backdropImageTags?.first
+        case .screenshot:
+            return screenshotImageTags?.first
+        default:
+            return imageTags?[type.rawValue]
+        }
+    }
+
     fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
         let blurHash = blurHash(type)
