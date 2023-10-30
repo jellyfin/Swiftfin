@@ -13,10 +13,6 @@ extension VideoPlayer.Overlay.ActionButtons {
 
     struct PlaybackSpeedMenu: View {
 
-        @Environment(\.playbackSpeed)
-        @Binding
-        private var playbackSpeed
-
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
@@ -30,19 +26,15 @@ extension VideoPlayer.Overlay.ActionButtons {
             Menu {
                 ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
                     Button {
-                        playbackSpeed = Float(speed.rawValue)
+                        videoPlayerManager.playbackSpeed = speed
                         videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
                     } label: {
-                        if Float(speed.rawValue) == playbackSpeed {
+                        if speed == videoPlayerManager.playbackSpeed {
                             Label(speed.displayTitle, systemImage: "checkmark")
                         } else {
                             Text(speed.displayTitle)
                         }
                     }
-                }
-
-                if !PlaybackSpeed.allCases.map(\.rawValue).contains(where: { $0 == Double(playbackSpeed) }) {
-                    Label(String(format: "%.2f", playbackSpeed).appending("x"), systemImage: "checkmark")
                 }
             } label: {
                 content().eraseToAnyView()

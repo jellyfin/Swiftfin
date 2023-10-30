@@ -28,7 +28,6 @@ extension VideoPlayer.Overlay.ActionButtons {
                 overlayTimer.start(5)
             }
             .frame(maxWidth: 30, maxHeight: 30)
-            .id(autoPlayEnabled)
         }
     }
 }

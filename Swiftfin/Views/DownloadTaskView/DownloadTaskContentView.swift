@@ -75,7 +75,7 @@ extension DownloadTaskView {
                         .padding(.horizontal)
                     case let .error(error):
                         VStack {
-                            PrimaryButton(title: "Retry")
+                            PrimaryButton(title: L10n.retry)
                                 .onSelect {
                                     downloadManager.download(task: downloadTask)
                                 }
@@ -86,7 +86,7 @@ extension DownloadTaskView {
                                 .padding(.horizontal)
                         }
                     case .complete:
-                        PrimaryButton(title: "Play")
+                        PrimaryButton(title: L10n.play)
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                                     router.dismissCoordinator {
@@ -113,7 +113,7 @@ extension DownloadTaskView {
                 Button {
                     isPresentingVideoPlayerTypeError = false
                 } label: {
-                    Text("Dismiss")
+                    Text(L10n.dismiss)
                 }
             } message: {
                 Text("Downloaded items are only playable through the Swiftfin video player.")

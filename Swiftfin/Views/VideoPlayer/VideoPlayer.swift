@@ -24,6 +24,9 @@ struct VideoPlayer: View {
         case chapters
     }
 
+    @Environment(\.scenePhase)
+    private var scenePhase
+
     class GestureStateHandler {
 
         var beganPanWithOverlay: Bool = false
@@ -240,6 +243,16 @@ struct VideoPlayer: View {
             isAspectFilled = false
             audioOffset = 0
             subtitleOffset = 0
+        }
+        .onScenePhase(.active) {
+            if Defaults[.VideoPlayer.Transition.playOnActive] {
+                videoPlayerManager.proxy.play()
+            }
+        }
+        .onScenePhase(.background) {
+            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                videoPlayerManager.proxy.pause()
+            }
         }
     }
 }

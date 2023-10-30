@@ -44,7 +44,7 @@ jobs:
       - name: Cache Swift packages
         uses: actions/cache@v3
         with:
-          path: .build
+          path: PackageCache
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
       
@@ -57,5 +57,6 @@ jobs:
           command: |
             xcodebuild build -project "Swiftfin.xcodeproj" \
             -scheme "${{ matrix.scheme }}" \
+            -clonedSourcePackagesDirPath PackageCache \
             CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
       

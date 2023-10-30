@@ -55,7 +55,7 @@ struct BasicAppSettingsView: View {
                 L10n.accentColorDescription.text
             }
 
-            ChevronButton(title: "Logs")
+            ChevronButton(title: L10n.logs)
                 .onSelect {
                     router.route(to: \.log)
                 }
@@ -70,7 +70,7 @@ struct BasicAppSettingsView: View {
                 Button {
                     removeAllServersSelected = true
                 } label: {
-                    Text("Remove All Servers")
+                    Text(L10n.removeAllServers)
                 }
             }
         }
@@ -79,9 +79,9 @@ struct BasicAppSettingsView: View {
                 viewModel.resetUserSettings()
             }
         } message: {
-            Text("Reset all settings back to defaults.")
+            Text(L10n.resetAllSettings)
         }
-        .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+        .alert(L10n.removeAllServers, isPresented: $removeAllServersSelected) {
             Button(L10n.reset, role: .destructive) {
                 viewModel.removeAllServers()
             }

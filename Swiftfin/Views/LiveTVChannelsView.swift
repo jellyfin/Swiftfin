@@ -80,11 +80,11 @@ struct LiveTVChannelsView: View {
             }
         } else {
             VStack {
-                Text("No results.")
+                Text(L10n.noResults)
                 Button {
                     viewModel.getChannels()
                 } label: {
-                    Text("Reload")
+                    Text(L10n.reload)
                 }
             }
         }

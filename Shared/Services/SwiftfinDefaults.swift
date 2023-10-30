@@ -194,6 +194,11 @@ extension Defaults.Keys {
             )
             static let subtitleSize: Key<Int> = .init("subtitleSize", default: 16, suite: .generalSuite)
         }
+
+        enum Transition {
+            static let pauseOnBackground: Key<Bool> = .init("pauseOnBackground", default: false, suite: .generalSuite)
+            static let playOnActive: Key<Bool> = .init("playOnActive", default: false, suite: .generalSuite)
+        }
     }
 
     // Experimental settings

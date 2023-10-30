@@ -19,6 +19,9 @@ struct VideoPlayer: View {
         case smallMenu
     }
 
+    @Environment(\.scenePhase)
+    private var scenePhase
+
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
@@ -99,6 +102,16 @@ struct VideoPlayer: View {
         .onChange(of: isScrubbing) { newValue in
             guard !newValue else { return }
             videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+        }
+        .onScenePhase(.active) {
+            if Defaults[.VideoPlayer.Transition.playOnActive] {
+                videoPlayerManager.proxy.play()
+            }
+        }
+        .onScenePhase(.background) {
+            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+                videoPlayerManager.proxy.pause()
+            }
         }
     }
 }
