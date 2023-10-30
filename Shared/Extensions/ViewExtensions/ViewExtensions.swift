@@ -50,7 +50,7 @@ extension View {
         }
     }
 
-    // TODO: Don't apply corner radius on tvOS because it handles itself, add new modifier for setting corner radius of poster type
+    // TODO: Don't apply corner radius on tvOS because buttons handle themselves, add new modifier for setting corner radius of poster type
     @ViewBuilder
     func posterStyle(_ type: PosterType) -> some View {
         switch type {
