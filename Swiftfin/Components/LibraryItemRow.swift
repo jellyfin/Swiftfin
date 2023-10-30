@@ -17,13 +17,15 @@ struct LibraryItemRow: View {
     private let item: BaseItemDto
     private var onSelect: () -> Void
 
+    private let posterWidth: CGFloat = 60
+
     var body: some View {
         Button {
             onSelect()
         } label: {
             HStack(alignment: .bottom) {
-                ImageView(item.portraitPosterImageSource(maxWidth: 60))
-                    .posterStyle(type: .portrait, width: 60)
+                ImageView(item.portraitPosterImageSource(maxWidth: posterWidth))
+                    .posterStyle(type: .portrait, width: posterWidth)
                     .posterShadow()
 
                 VStack(alignment: .leading) {
