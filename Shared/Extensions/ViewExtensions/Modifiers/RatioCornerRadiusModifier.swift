@@ -9,14 +9,14 @@
 import SwiftUI
 
 struct RatioCornerRadiusModifier: ViewModifier {
-    
+
     @State
     private var cornerRadius: CGFloat = 0
-    
+
     let corners: UIRectCorner
     let ratio: CGFloat
     let side: KeyPath<CGSize, CGFloat>
-    
+
     func body(content: Content) -> some View {
         content
             .cornerRadius(cornerRadius, corners: corners)

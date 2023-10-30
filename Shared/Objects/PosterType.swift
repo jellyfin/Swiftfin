@@ -13,7 +13,7 @@ enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case portrait
     case landscape
-    
+
     var width: CGFloat {
         switch self {
         case .portrait:

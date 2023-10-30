@@ -49,7 +49,7 @@ extension View {
             transformElse(self)
         }
     }
-    
+
     @ViewBuilder
     func posterStyle(_ type: PosterType) -> some View {
         switch type {
@@ -67,11 +67,11 @@ extension View {
     func padding2(_ edges: Edge.Set = .all) -> some View {
         padding(edges).padding(edges)
     }
-    
+
     /// Applies the default system padding a number of times with a multiplier
     func padding(multiplier: Int, _ edges: Edge.Set = .all) -> some View {
         precondition(multiplier > 0, "Multiplier must be > 0")
-        
+
         return modifier(PaddingMultiplierModifier(edges: edges, multiplier: multiplier))
     }
 
@@ -99,7 +99,7 @@ extension View {
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
-    
+
     /// Apply a corner radius as a ratio of a side of the view's size
     func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
         modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))

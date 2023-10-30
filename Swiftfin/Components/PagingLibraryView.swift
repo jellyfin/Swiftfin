@@ -70,7 +70,7 @@ struct PagingLibraryView: View {
                 }
         }
         .layout { _, layoutEnvironment in
-            return .grid(
+            .grid(
                 layoutEnvironment: layoutEnvironment,
                 layoutMode: gridLayout,
                 sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)

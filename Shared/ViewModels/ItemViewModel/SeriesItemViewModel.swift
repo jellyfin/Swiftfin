@@ -116,7 +116,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     func select(section: BaseItemDto) {
         self.menuSelection = section
-        
+
         if !menuSections.keys.contains(section) {
             getEpisodesForSeason(section)
         }

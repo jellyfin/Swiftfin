@@ -96,7 +96,7 @@ extension MenuPosterHStack {
 }
 
 extension MenuPosterHStack {
-    
+
     func scaleItems(_ scale: CGFloat) -> Self {
         copy(modifying: \.itemScale, with: scale)
     }

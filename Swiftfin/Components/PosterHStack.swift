@@ -111,7 +111,7 @@ extension PosterHStack {
     func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
     }
-    
+
     func scaleItems(_ scale: CGFloat) -> Self {
         copy(modifying: \.itemScale, with: scale)
     }

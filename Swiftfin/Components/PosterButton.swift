@@ -22,7 +22,7 @@ struct PosterButton<Item: Poster>: View {
     private var contextMenu: (Item) -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
-    
+
     private var itemWidth: CGFloat {
         type.width * itemScale
     }
@@ -89,7 +89,7 @@ extension PosterButton {
             singleImage: singleImage
         )
     }
-    
+
     func scaleItem(_ scale: CGFloat) -> Self {
         copy(modifying: \.itemScale, with: scale)
     }

@@ -174,7 +174,7 @@ extension ItemView.CompactPosterScrollView {
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
 //                        .posterStyle(type: .portrait, width: 130)
-                        .accessibilityIgnoresInvertColors()
+                            .accessibilityIgnoresInvertColors()
 
                     rightShelfView
                         .padding(.bottom)

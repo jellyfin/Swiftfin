@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct PaddingMultiplierModifier: ViewModifier {
-    
+
     let edges: Edge.Set
     let multiplier: Int
-    
+
     func body(content: Content) -> some View {
         content
             .if(multiplier > 0) { view in
