@@ -24,6 +24,7 @@ struct SeriesEpisodeSelector: View {
             manager: viewModel,
             singleImage: true
         )
+        .scaleItems(1.2)
         .imageOverlay { type in
             EpisodeOverlay(episode: type)
         }

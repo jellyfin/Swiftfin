@@ -13,6 +13,15 @@ enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case portrait
     case landscape
+    
+    var width: CGFloat {
+        switch self {
+        case .portrait:
+            return Width.portrait
+        case .landscape:
+            return Width.landscape
+        }
+    }
 
     // TODO: localize
     var displayTitle: String {

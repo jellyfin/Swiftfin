@@ -27,7 +27,7 @@ struct PagingLibraryView: View {
         if libraryGridPosterType == .landscape && UIDevice.isPhone {
             return .fixedNumberOfColumns(2)
         } else {
-            return .adaptive(withMinItemSize: 200 + (UIDevice.isIPad ? 10 : 0))
+            return .adaptive(withMinItemSize: libraryGridPosterType.width + (UIDevice.isIPad ? 10 : 0))
         }
     }
 
@@ -62,22 +62,16 @@ struct PagingLibraryView: View {
     private var libraryGridView: some View {
         CollectionView(items: viewModel.items.elements) { _, item, _ in
             PosterButton(item: item, type: libraryGridPosterType)
-//                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
+                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : 1)
                 .onSelect {
                     onSelect(item)
                 }
         }
         .layout { _, layoutEnvironment in
-            
-//            layoutEnvironment.container.effectiveContentSize.width
-            
             return .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(3),
-                itemSpacing: 10,
-                lineSpacing: 10,
-                itemSize: .fractionalWidth(1/3),
-                sectionInsets: .init(top: 10, leading: 10, bottom: 10, trailing: 10)
+                layoutMode: gridLayout,
+                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
             )
         }
         .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in

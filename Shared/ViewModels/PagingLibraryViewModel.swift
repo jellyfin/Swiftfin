@@ -25,9 +25,8 @@ class PagingLibraryViewModel: ViewModel {
     var hasNextPage = true
 
     var pageItemSize: Int {
-//        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-//        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
-        return 3
+        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
     }
 
     public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {

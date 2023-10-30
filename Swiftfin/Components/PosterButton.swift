@@ -13,30 +13,30 @@ import SwiftUI
 // TODO: builder methods shouldn't take the item
 
 struct PosterButton<Item: Poster>: View {
-    
-    @Environment(\.landscapePosterSize)
-    private var landscapePosterSize
-    @Environment(\.portraitPosterSize)
-    private var portraitPosterSize
 
     private var item: Item
     private var type: PosterType
+    private var itemScale: CGFloat
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
+    
+    private var itemWidth: CGFloat {
+        type.width * itemScale
+    }
 
     @ViewBuilder
     private func poster(from item: any Poster) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: portraitPosterSize.width))
+            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: landscapePosterSize.width, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
@@ -61,12 +61,13 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterStyle(type)
+            .frame(width: itemWidth)
             .posterShadow()
 
             content(item)
                 .eraseToAnyView()
         }
-        .frame(width: type == .portrait ? portraitPosterSize.width : landscapePosterSize.width)
+        .frame(width: itemWidth)
     }
 }
 
@@ -80,12 +81,17 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
+            itemScale: 1,
             content: { DefaultContentView(item: $0) },
             imageOverlay: { DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
+    }
+    
+    func scaleItem(_ scale: CGFloat) -> Self {
+        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
