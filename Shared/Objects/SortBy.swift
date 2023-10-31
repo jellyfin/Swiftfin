@@ -33,6 +33,6 @@ enum SortBy: String, CaseIterable, Displayable {
     }
 
     var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, filterName: rawValue)
+        .init(displayTitle: displayTitle, id: rawValue, filterName: rawValue)
     }
 }
