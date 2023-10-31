@@ -23,4 +23,8 @@ extension Poster {
         hasher.combine(displayTitle)
         hasher.combine(subtitle)
     }
+
+    func cinematicPosterImageSources() -> [ImageSource] {
+        []
+    }
 }
