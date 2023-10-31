@@ -15,11 +15,16 @@ protocol Poster: Displayable, Hashable {
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
+    func cinematicPosterImageSources() -> [ImageSource]
 }
 
 extension Poster {
     func hash(into hasher: inout Hasher) {
         hasher.combine(displayTitle)
         hasher.combine(subtitle)
+    }
+
+    func cinematicPosterImageSources() -> [ImageSource] {
+        []
     }
 }
