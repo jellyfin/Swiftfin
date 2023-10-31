@@ -170,29 +170,29 @@ extension BaseItemDto {
             .appending(runTimeSeconds + 1)
             .adjacentPairs()
             .map { $0 ..< $1 }
-        
+
         return zip(chapters, ranges)
             .enumerated()
             .map { i, zip in
-                
+
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
                     quality: 90,
                     imageIndex: i
                 )
-                
+
                 let request = Paths.getItemImage(
                     itemID: id ?? "",
                     imageType: ImageType.chapter.rawValue,
                     parameters: parameters
                 )
-                
+
                 let imageURL = Container
                     .userSession
                     .callAsFunction()
                     .client
                     .fullURL(with: request)
-                
+
                 return .init(
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
