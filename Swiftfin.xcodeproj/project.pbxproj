@@ -269,6 +269,10 @@
 		E12E30F329638B140022FAC9 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F229638B140022FAC9 /* ChevronButton.swift */; };
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
 		E12F038C28F8B0B100976CC3 /* EdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */; };
+		E13316FE2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
+		E13316FF2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
+		E13317012ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */; };
+		E13317022ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */; };
 		E133328829538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
 		E133328929538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
 		E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328C2953AE4B00EE76AB /* CircularProgressView.swift */; };
@@ -370,7 +374,6 @@
 		E1575E6A293E77B5001665B1 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */; };
 		E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E129429228F2845000796AC6 /* SliderType.swift */; };
-		E1575E6D293E77B5001665B1 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E1575E6E293E77B5001665B1 /* SpecialFeatureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */; };
 		E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* GestureAction.swift */; };
 		E1575E70293E77B5001665B1 /* TextPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528428FD191A00600579 /* TextPair.swift */; };
@@ -444,7 +447,6 @@
 		E174120F29AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */; };
 		E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */; };
 		E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */; };
-		E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17665D828E80F0F00130507 /* PosterButtonType.swift */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
@@ -988,6 +990,8 @@
 		E12E30F229638B140022FAC9 /* ChevronButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronButton.swift; sourceTree = "<group>"; };
 		E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPickerView.swift; sourceTree = "<group>"; };
 		E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsets.swift; sourceTree = "<group>"; };
+		E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioCornerRadiusModifier.swift; sourceTree = "<group>"; };
+		E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingMultiplierModifier.swift; sourceTree = "<group>"; };
 		E133328729538D8D00EE76AB /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		E133328C2953AE4B00EE76AB /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		E133328E2953B71000EE76AB /* DownloadTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskView.swift; sourceTree = "<group>"; };
@@ -1072,7 +1076,6 @@
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
 		E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatable.swift; sourceTree = "<group>"; };
 		E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSettingsView.swift; sourceTree = "<group>"; };
-		E17665D828E80F0F00130507 /* PosterButtonType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterButtonType.swift; sourceTree = "<group>"; };
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
@@ -1547,7 +1550,6 @@
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
 				E1937A60288F32DB00CB80AA /* Poster.swift */,
-				E17665D828E80F0F00130507 /* PosterButtonType.swift */,
 				E1CCF12D28ABF989006CAC9E /* PosterType.swift */,
 				E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
@@ -2262,6 +2264,8 @@
 				E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */,
 				E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */,
 				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
+				E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */,
+				E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */,
 				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
 				E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */,
 			);
@@ -3193,6 +3197,7 @@
 				E10E842A29A587110064EA49 /* LoadingView.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				C4BE078C272844AF003F4AD1 /* LiveTVChannelsView.swift in Sources */,
+				E13316FF2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */,
 				E148128928C154BF003B8787 /* ItemFilter.swift in Sources */,
 				E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */,
 				E154966F296CA2EF00C4EF88 /* LogManager.swift in Sources */,
@@ -3305,6 +3310,7 @@
 				535870632669D21600D05A09 /* SwiftfinApp.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
+				E13317022ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
 				E187A60329AB28F0008387E6 /* RotateContentView.swift in Sources */,
 				E1575E94293E7B1E001665B1 /* VerticalAlignment.swift in Sources */,
@@ -3322,7 +3328,6 @@
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
 				E1575E7C293E77B5001665B1 /* TimerProxy.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
-				E1575E6D293E77B5001665B1 /* PosterButtonType.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				C4BE077A2726EE82003F4AD1 /* LiveTVTabCoordinator.swift in Sources */,
@@ -3368,6 +3373,7 @@
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */,
+				E13316FE2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */,
 				62E632DC267D2E130063E547 /* SearchViewModel.swift in Sources */,
 				E1A1528A28FD22F600600579 /* TextPairView.swift in Sources */,
 				E1BDF2E92951490400CC0294 /* ActionButtonSelectorView.swift in Sources */,
@@ -3385,7 +3391,6 @@
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				E18ACA8B2A14301800BB4F35 /* ScalingButtonStyle.swift in Sources */,
-				E17665D928E80F0F00130507 /* PosterButtonType.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				E154966E296CA2EF00C4EF88 /* LogManager.swift in Sources */,
@@ -3518,6 +3523,7 @@
 				E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */,
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
+				E13317012ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				E148128B28C15526003B8787 /* SortBy.swift in Sources */,

@@ -46,7 +46,7 @@ struct CastAndCrewLibraryView: View {
     @ViewBuilder
     private var libraryGridView: some View {
         CollectionView(items: people) { _, person, _ in
-            PosterButton(state: .item(person), type: .portrait)
+            PosterButton(item: person, type: .portrait)
                 .onSelect {
                     router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
                 }
@@ -54,7 +54,7 @@ struct CastAndCrewLibraryView: View {
         .layout { _, layoutEnvironment in
             .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: PosterType.portrait.width + (UIDevice.isIPad ? 10 : 0)),
+                layoutMode: .adaptive(withMinItemSize: 150 + (UIDevice.isIPad ? 10 : 0)),
                 sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
             )
         }

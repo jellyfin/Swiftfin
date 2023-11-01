@@ -50,55 +50,30 @@ extension View {
         }
     }
 
-    // TODO: Simplify plethora of calls
-    // TODO: Centralize math
-    // TODO: Move poster stuff to own file
-    // TODO: Figure out proper handling of corner radius for tvOS buttons
-    func posterStyle(type: PosterType, width: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(width: width)
-            case .landscape:
-                self.landscapePoster(width: width)
-            }
+    // TODO: Don't apply corner radius on tvOS because buttons handle themselves, add new modifier for setting corner radius of poster type
+    @ViewBuilder
+    func posterStyle(_ type: PosterType) -> some View {
+        switch type {
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: .fit)
+                .cornerRadius(ratio: 0.0375, of: \.width)
+        case .landscape:
+            aspectRatio(1.77, contentMode: .fit)
+                .cornerRadius(ratio: 1 / 30, of: \.width)
         }
     }
 
-    func posterStyle(type: PosterType, height: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(height: height)
-            case .landscape:
-                self.landscapePoster(height: height)
-            }
-        }
-    }
-
-    private func portraitPoster(width: CGFloat) -> some View {
-        frame(width: width, height: width * 1.5)
-            .cornerRadius((width * 1.5) / 40)
-    }
-
-    private func landscapePoster(width: CGFloat) -> some View {
-        frame(width: width, height: width / 1.77)
-        #if !os(tvOS)
-            .cornerRadius(width / 30)
-        #endif
-    }
-
-    private func portraitPoster(height: CGFloat) -> some View {
-        portraitPoster(width: height / 1.5)
-    }
-
-    private func landscapePoster(height: CGFloat) -> some View {
-        landscapePoster(width: height * 1.77)
-    }
-
+    // TODO: switch to padding(multiplier: 2)
     @inlinable
     func padding2(_ edges: Edge.Set = .all) -> some View {
         padding(edges).padding(edges)
+    }
+
+    /// Applies the default system padding a number of times with a multiplier
+    func padding(multiplier: Int, _ edges: Edge.Set = .all) -> some View {
+        precondition(multiplier > 0, "Multiplier must be > 0")
+
+        return modifier(PaddingMultiplierModifier(edges: edges, multiplier: multiplier))
     }
 
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
@@ -124,6 +99,11 @@ extension View {
 
     func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+
+    /// Apply a corner radius as a ratio of a side of the view's size
+    func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
+        modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
     }
 
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
@@ -174,6 +154,7 @@ extension View {
         }
     }
 
+    // TODO: rename isVisible
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)

@@ -17,7 +17,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     @Published
     var menuSelection: BaseItemDto?
     @Published
-    var menuSections: [BaseItemDto: [PosterButtonType<BaseItemDto>]]
+    var menuSections: [BaseItemDto: [BaseItemDto]]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
@@ -117,14 +117,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if let existingItems = menuSections[section] {
-            if existingItems.allSatisfy({ $0 == .loading }) {
-                getEpisodesForSeason(section)
-            } else if existingItems.allSatisfy({ $0 == .noResult }) {
-                menuSections[section] = PosterButtonType.loading.random(in: 3 ..< 8)
-                getEpisodesForSeason(section)
-            }
-        } else {
+        if !menuSections.keys.contains(section) {
             getEpisodesForSeason(section)
         }
     }
@@ -139,12 +132,6 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let response = try await userSession.client.send(request)
 
             guard let seasons = response.value.items else { return }
-
-            await MainActor.run {
-                seasons.forEach { season in
-                    self.menuSections[season] = PosterButtonType.loading.random(in: 3 ..< 8)
-                }
-            }
 
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
@@ -169,9 +156,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
             await MainActor.run {
                 if let items = response.value.items {
-                    self.menuSections[season] = items.map { .item($0) }
-                } else {
-                    self.menuSections[season] = [.noResult]
+                    self.menuSections[season] = items
                 }
             }
         }

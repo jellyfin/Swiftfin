@@ -44,7 +44,7 @@ extension DownloadListView {
                             Color.secondary
                                 .opacity(0.8)
                         }
-                        .posterStyle(type: .portrait, width: 60)
+//                        .posterStyle(type: .portrait, width: 60)
                         .posterShadow()
 
                     VStack(alignment: .leading) {

@@ -10,17 +10,16 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Look at something better for accomadating loading/noResults/other types
+// TODO: builder methods shouldn't take the item
 
 struct PosterButton<Item: Poster>: View {
 
-    private var state: PosterButtonType<Item>
+    private var item: Item
     private var type: PosterType
     private var itemScale: CGFloat
-    private var horizontalAlignment: HorizontalAlignment
-    private var content: (PosterButtonType<Item>) -> any View
-    private var imageOverlay: (PosterButtonType<Item>) -> any View
-    private var contextMenu: (PosterButtonType<Item>) -> any View
+    private var content: (Item) -> any View
+    private var imageOverlay: (Item) -> any View
+    private var contextMenu: (Item) -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
 
@@ -29,65 +28,43 @@ struct PosterButton<Item: Poster>: View {
     }
 
     @ViewBuilder
-    private var loadingPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
-    }
-
-    @ViewBuilder
-    private var noResultsPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
-    }
-
-    @ViewBuilder
     private func poster(from item: any Poster) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                    .failure {
-                        InitialFailureView(item.displayTitle.initials)
-                    }
-            case .landscape:
-                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                    .failure {
-                        InitialFailureView(item.displayTitle.initials)
-                    }
-            }
+        switch type {
+        case .portrait:
+            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+                .failure {
+                    InitialFailureView(item.displayTitle.initials)
+                }
+        case .landscape:
+            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+                .failure {
+                    InitialFailureView(item.displayTitle.initials)
+                }
         }
     }
 
     var body: some View {
-        VStack(alignment: horizontalAlignment) {
+        VStack(alignment: .leading) {
 
             Button {
                 onSelect()
             } label: {
-                Group {
-                    switch state {
-                    case .loading:
-                        loadingPoster
-                    case .noResult:
-                        noResultsPoster
-                    case let .item(item):
-                        poster(from: item)
+                poster(from: item)
+                    .overlay {
+                        imageOverlay(item)
+                            .eraseToAnyView()
+                            .posterStyle(type)
                     }
-                }
-                .overlay {
-                    imageOverlay(state)
-                        .eraseToAnyView()
-                        .posterStyle(type: type, width: itemWidth)
-                }
             }
             .contextMenu(menuItems: {
-                contextMenu(state)
+                contextMenu(item)
                     .eraseToAnyView()
             })
-            .posterStyle(type: type, width: itemWidth)
+            .posterStyle(type)
+            .frame(width: itemWidth)
             .posterShadow()
 
-            content(state)
+            content(item)
                 .eraseToAnyView()
         }
         .frame(width: itemWidth)
@@ -97,40 +74,35 @@ struct PosterButton<Item: Poster>: View {
 extension PosterButton {
 
     init(
-        state: PosterButtonType<Item>,
+        item: Item,
         type: PosterType,
         singleImage: Bool = false
     ) {
         self.init(
-            state: state,
+            item: item,
             type: type,
             itemScale: 1,
-            horizontalAlignment: .leading,
-            content: { DefaultContentView(state: $0) },
-            imageOverlay: { DefaultOverlay(state: $0) },
+            content: { DefaultContentView(item: $0) },
+            imageOverlay: { DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
     }
 
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
-        copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
     func scaleItem(_ scale: CGFloat) -> Self {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
@@ -145,50 +117,30 @@ extension PosterButton {
 
     struct DefaultContentView: View {
 
-        let state: PosterButtonType<Item>
+        let item: Item
 
         @ViewBuilder
         private var title: some View {
-            Group {
-                switch state {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 5 ..< 8)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noResults.text
-                case let .item(item):
-                    if item.showTitle {
-                        Text(item.displayTitle)
-                    } else {
-                        EmptyView()
-                    }
-                }
+            if item.showTitle {
+                Text(item.displayTitle)
+                    .font(.footnote.weight(.regular))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+            } else {
+                EmptyView()
             }
-            .font(.footnote.weight(.regular))
-            .foregroundColor(.primary)
-            .lineLimit(2)
         }
 
         @ViewBuilder
         private var subtitle: some View {
-            Group {
-                switch state {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 8 ..< 15)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noResults.text
-                case let .item(item):
-                    if let subtitle = item.subtitle {
-                        Text(subtitle)
-                    } else {
-                        EmptyView()
-                    }
-                }
+            if let subtitle = item.subtitle {
+                Text(subtitle)
+                    .font(.caption.weight(.medium))
+                    .foregroundColor(.secondary)
+                    .lineLimit(2)
+            } else {
+                EmptyView()
             }
-            .font(.caption.weight(.medium))
-            .foregroundColor(.secondary)
-            .lineLimit(2)
         }
 
         var body: some View {
@@ -215,30 +167,28 @@ extension PosterButton {
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
 
-        let state: PosterButtonType<Item>
+        let item: Item
 
         var body: some View {
-            if case let PosterButtonType.item(item) = state {
-                ZStack {
-                    if let item = item as? BaseItemDto {
-                        if item.userData?.isPlayed ?? false {
-                            WatchedIndicator(size: 25)
-                                .visible(showPlayed)
+            ZStack {
+                if let item = item as? BaseItemDto {
+                    if item.userData?.isPlayed ?? false {
+                        WatchedIndicator(size: 25)
+                            .visible(showPlayed)
+                    } else {
+                        if (item.userData?.playbackPositionTicks ?? 0) > 0 {
+                            ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
+                                .visible(showProgress)
                         } else {
-                            if (item.userData?.playbackPositionTicks ?? 0) > 0 {
-                                ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
-                                    .visible(showProgress)
-                            } else {
-                                UnwatchedIndicator(size: 25)
-                                    .foregroundColor(accentColor)
-                                    .visible(showUnplayed)
-                            }
+                            UnwatchedIndicator(size: 25)
+                                .foregroundColor(accentColor)
+                                .visible(showUnplayed)
                         }
+                    }
 
-                        if item.userData?.isFavorite ?? false {
-                            FavoriteIndicator(size: 25)
-                                .visible(showFavorited)
-                        }
+                    if item.userData?.isFavorite ?? false {
+                        FavoriteIndicator(size: 25)
+                            .visible(showFavorited)
                     }
                 }
             }

@@ -23,8 +23,8 @@ extension HomeView {
         @ObservedObject
         var viewModel: LibraryViewModel
 
-        private var items: [PosterButtonType<BaseItemDto>] {
-            viewModel.items.prefix(20).asArray.map { .item($0) }
+        private var items: [BaseItemDto] {
+            viewModel.items.prefix(20).asArray
         }
 
         var body: some View {

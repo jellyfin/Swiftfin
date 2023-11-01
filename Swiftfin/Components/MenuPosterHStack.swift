@@ -17,9 +17,9 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
     private let type: PosterType
     private var itemScale: CGFloat
     private let singleImage: Bool
-    private var content: (PosterButtonType<Model.Item>) -> any View
-    private var imageOverlay: (PosterButtonType<Model.Item>) -> any View
-    private var contextMenu: (PosterButtonType<Model.Item>) -> any View
+    private var content: (Model.Item) -> any View
+    private var imageOverlay: (Model.Item) -> any View
+    private var contextMenu: (Model.Item) -> any View
     private var onSelect: (Model.Item) -> Void
 
     @ViewBuilder
@@ -50,9 +50,9 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
         .fixedSize()
     }
 
-    private var items: [PosterButtonType<Model.Item>] {
+    private var items: [Model.Item] {
         guard let selection = manager.menuSelection,
-              let items = manager.menuSections[selection] else { return [.noResult] }
+              let items = manager.menuSections[selection] else { return [] }
         return items
     }
 
@@ -101,15 +101,15 @@ extension MenuPosterHStack {
         copy(modifying: \.itemScale, with: scale)
     }
 
-    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping (Model.Item) -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping (Model.Item) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Model.Item>) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping (Model.Item) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 

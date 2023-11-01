@@ -74,38 +74,34 @@ extension VideoPlayer.Overlay {
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(alignment: .top, spacing: 15) {
-                            ForEach(viewModel.chapters, id: \.hashValue) { chapter in
+                            ForEach(viewModel.chapters, id: \.self) { chapter in
                                 PosterButton(
-                                    state: .item(chapter),
+                                    item: chapter,
                                     type: .landscape
                                 )
-                                .imageOverlay { type in
-                                    if case let PosterButtonType.item(info) = type,
-                                       info.secondsRange.contains(currentProgressHandler.seconds)
-                                    {
+                                .imageOverlay { info in
+                                    if info.secondsRange.contains(currentProgressHandler.seconds) {
                                         RoundedRectangle(cornerRadius: 6)
                                             .stroke(accentColor, lineWidth: 8)
                                     }
                                 }
-                                .content { type in
-                                    if case let PosterButtonType.item(info) = type {
-                                        VStack(alignment: .leading, spacing: 5) {
-                                            Text(info.chapterInfo.displayTitle)
-                                                .font(.subheadline)
-                                                .fontWeight(.semibold)
-                                                .lineLimit(1)
-                                                .foregroundColor(.white)
+                                .content { info in
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(info.chapterInfo.displayTitle)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .lineLimit(1)
+                                            .foregroundColor(.white)
 
-                                            Text(info.chapterInfo.timestampLabel)
-                                                .font(.subheadline)
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(UIColor.systemBlue))
-                                                .padding(.vertical, 2)
-                                                .padding(.horizontal, 4)
-                                                .background {
-                                                    Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
-                                                }
-                                        }
+                                        Text(info.chapterInfo.timestampLabel)
+                                            .font(.subheadline)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(UIColor.systemBlue))
+                                            .padding(.vertical, 2)
+                                            .padding(.horizontal, 4)
+                                            .background {
+                                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
+                                            }
                                     }
                                 }
                                 .onSelect {

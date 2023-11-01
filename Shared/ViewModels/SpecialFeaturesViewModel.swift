@@ -14,10 +14,10 @@ class SpecialFeaturesViewModel: ViewModel, MenuPosterHStackModel {
     @Published
     var menuSelection: SpecialFeatureType?
     @Published
-    var menuSections: [SpecialFeatureType: [PosterButtonType<BaseItemDto>]]
+    var menuSections: [SpecialFeatureType: [BaseItemDto]]
     var menuSectionSort: (SpecialFeatureType, SpecialFeatureType) -> Bool
 
-    init(sections: [SpecialFeatureType: [PosterButtonType<BaseItemDto>]]) {
+    init(sections: [SpecialFeatureType: [BaseItemDto]]) {
         let comparator: (SpecialFeatureType, SpecialFeatureType) -> Bool = { i, j in i.rawValue < j.rawValue }
         self.menuSelection = Array(sections.keys).sorted(by: comparator).first!
         self.menuSections = sections

@@ -106,7 +106,7 @@ extension SeriesEpisodeSelector {
         private var items: [BaseItemDto] {
             guard let selection = viewModel.menuSelection,
                   let items = viewModel.menuSections[selection] else { return [.noResults] }
-            return items.compactMap(\._item)
+            return items
         }
 
         var body: some View {

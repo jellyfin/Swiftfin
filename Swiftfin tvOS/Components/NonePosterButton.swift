@@ -29,7 +29,8 @@ struct NonePosterButton: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                .posterStyle(type: type, width: type.width)
+                .posterStyle(type)
+                .frame(width: type.width)
             }
         }
         .buttonStyle(.card)
