@@ -165,36 +165,38 @@ extension BaseItemDto {
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
-        let ranges: [Range<Int>] = []
-            .appending(chapters.map(\.startTimeSeconds))
+        let ranges: [Range<Int>] = chapters
+            .map(\.startTimeSeconds)
             .appending(runTimeSeconds + 1)
             .adjacentPairs()
             .map { $0 ..< $1 }
 
-        return chapters
+        return zip(chapters, ranges)
             .enumerated()
-            .map { index, chapterInfo in
+            .map { i, zip in
 
-                let client = Container.userSession.callAsFunction().client
                 let parameters = Paths.GetItemImageParameters(
                     maxWidth: 500,
                     quality: 90,
-                    imageIndex: index
+                    imageIndex: i
                 )
+
                 let request = Paths.getItemImage(
                     itemID: id ?? "",
                     imageType: ImageType.chapter.rawValue,
                     parameters: parameters
                 )
 
-                let imageURL = client.fullURL(with: request)
+                let imageURL = Container
+                    .userSession
+                    .callAsFunction()
+                    .client
+                    .fullURL(with: request)
 
-                let range = ranges.first(where: { $0.first == chapterInfo.startTimeSeconds }) ?? startTimeSeconds ..< startTimeSeconds + 1
-
-                return ChapterInfo.FullInfo(
-                    chapterInfo: chapterInfo,
+                return .init(
+                    chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
-                    secondsRange: range
+                    secondsRange: zip.1
                 )
             }
     }
