@@ -9,14 +9,13 @@
 import SwiftUI
 
 struct QuickConnectView: View {
-
     @EnvironmentObject
     private var router: QuickConnectCoordinator.Router
 
     @ObservedObject
     var viewModel: UserSignInViewModel
 
-    var body: some View {
+    func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             L10n.quickConnectStep1.text
 
@@ -25,7 +24,7 @@ struct QuickConnectView: View {
             L10n.quickConnectStep3.text
                 .padding(.bottom)
 
-            Text(viewModel.quickConnectCode ?? "------")
+            Text(quickConnectCode)
                 .tracking(10)
                 .font(.largeTitle)
                 .monospacedDigit()
@@ -33,22 +32,51 @@ struct QuickConnectView: View {
 
             Spacer()
         }
-        .padding(.horizontal)
-        .navigationTitle(L10n.quickConnect)
-        .onAppear {
-            Task {
-                for await result in viewModel.startQuickConnect() {
-                    guard let secret = result.secret else { continue }
-                    try? await viewModel.signIn(quickConnectSecret: secret)
-                    router.dismissCoordinator()
+    }
+
+    var quickConnectFailed: some View {
+        Label {
+            Text("Failed to retrieve quick connect code")
+        } icon: {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundColor(.red)
+        }
+    }
+
+    var quickConnectLoading: some View {
+        ProgressView()
+    }
+
+    @ViewBuilder
+    var quickConnectBody: some View {
+        switch viewModel.quickConnectStatus {
+        case let .awaitingAuthentication(_, code):
+            quickConnectWaitingAuthentication(quickConnectCode: code)
+        case nil, .fetchingSecret:
+            quickConnectLoading
+        case .fetchingSecretFailed:
+            quickConnectFailed
+        }
+    }
+
+    var body: some View {
+        quickConnectBody
+            .padding(.horizontal)
+            .navigationTitle(L10n.quickConnect)
+            .onAppear {
+                Task {
+                    for await result in viewModel.startQuickConnect() {
+                        guard let secret = result.secret else { continue }
+                        try? await viewModel.signIn(quickConnectSecret: secret)
+                        router.dismissCoordinator()
+                    }
                 }
             }
-        }
-        .onDisappear {
-            viewModel.stopQuickConnectAuthCheck()
-        }
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
+            .onDisappear {
+                viewModel.stopQuickConnectAuthCheck()
+            }
+            .navigationCloseButton {
+                router.dismissCoordinator()
+            }
     }
 }

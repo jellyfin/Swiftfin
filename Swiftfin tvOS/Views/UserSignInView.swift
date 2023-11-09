@@ -12,7 +12,6 @@ import Stinsen
 import SwiftUI
 
 struct UserSignInView: View {
-
     enum FocusedField {
         case username
         case password
@@ -130,13 +129,8 @@ struct UserSignInView: View {
         }
     }
 
-    @ViewBuilder
-    private var quickConnect: some View {
-        VStack(alignment: .center) {
-            L10n.quickConnect.text
-                .font(.title3)
-                .fontWeight(.semibold)
-
+    func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
+        Group {
             VStack(alignment: .leading, spacing: 20) {
                 L10n.quickConnectStep1.text
 
@@ -146,11 +140,48 @@ struct UserSignInView: View {
             }
             .padding(.vertical)
 
-            Text(viewModel.quickConnectCode ?? "------")
+            Text(quickConnectCode)
                 .tracking(10)
                 .font(.title)
                 .monospacedDigit()
                 .frame(maxWidth: .infinity)
+        }
+    }
+
+    var quickConnectFailed: some View {
+        Label {
+            Text("Failed to retrieve quick connect code")
+        } icon: {
+            Image(systemName: "exclamationmark.circle.fill")
+                .foregroundColor(.red)
+        }
+    }
+
+    var quickConnectLoading: some View {
+        ProgressView()
+    }
+
+    @ViewBuilder
+    var quickConnectBody: some View {
+        switch viewModel.quickConnectStatus {
+        case let .awaitingAuthentication(_, code):
+            quickConnectWaitingAuthentication(quickConnectCode: code)
+        case nil, .fetchingSecret:
+            quickConnectLoading
+        case .fetchingSecretFailed:
+            quickConnectFailed
+        }
+    }
+
+    @ViewBuilder
+    private var quickConnect: some View {
+        VStack(alignment: .center) {
+            L10n.quickConnect.text
+                .font(.title3)
+                .fontWeight(.semibold)
+
+            quickConnectBody
+                .padding(.bottom)
 
             Button {
                 isPresentingQuickConnect = false
@@ -175,7 +206,6 @@ struct UserSignInView: View {
 
     var body: some View {
         ZStack {
-
             ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
                 .ignoresSafeArea()
 
