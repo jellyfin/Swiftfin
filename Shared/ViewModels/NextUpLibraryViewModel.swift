@@ -27,7 +27,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
             let parameters = Paths.GetNextUpParameters(
                 userID: userSession.user.id,
-                limit: pageItemSize,
+                limit: 100,
                 fields: ItemFields.minimumCases,
                 enableUserData: true
             )

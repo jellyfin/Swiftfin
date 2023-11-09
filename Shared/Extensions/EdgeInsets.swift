@@ -14,3 +14,10 @@ extension UIEdgeInsets {
         EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
     }
 }
+
+extension NSDirectionalEdgeInsets {
+    
+    init(constant: CGFloat) {
+        self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
+    }
+}

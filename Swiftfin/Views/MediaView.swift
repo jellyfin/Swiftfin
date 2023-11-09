@@ -20,14 +20,6 @@ struct MediaView: View {
     @ObservedObject
     var viewModel: MediaViewModel
 
-    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
-        if UIDevice.isPhone {
-            return .fixedNumberOfColumns(2)
-        } else {
-            return .adaptive(withMinItemSize: PosterType.landscape.width)
-        }
-    }
-
     var body: some View {
         CollectionView(items: viewModel.libraryItems) { _, viewModel, _ in
             LibraryCard(viewModel: viewModel)
@@ -47,11 +39,30 @@ struct MediaView: View {
                 }
         }
         .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout,
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
+            let perRow: CGFloat = 2
+            
+            let itemSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1 / perRow),
+                heightDimension: .estimated(50)
             )
+            let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+            let groupSize = NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .estimated(50)
+            )
+            
+            let group = NSCollectionLayoutGroup.horizontal(
+                layoutSize: groupSize,
+                subitems: [item]
+            )
+            group.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
+            group.interItemSpacing = NSCollectionLayoutSpacing.fixed(10)
+
+            let section = NSCollectionLayoutSection(group: group)
+            section.interGroupSpacing = 5
+            
+            return section
         }
         .configure { configuration in
             configuration.showsVerticalScrollIndicator = false
@@ -77,42 +88,33 @@ extension MediaView {
 
         private var onSelect: () -> Void
 
-        private var itemWidth: CGFloat {
-            PosterType.landscape.width * (UIDevice.isPhone ? 0.85 : 1)
-        }
-
         var body: some View {
             Button {
                 onSelect()
             } label: {
-                Group {
-                    if let imageSources = viewModel.imageSources {
-                        ImageView(imageSources)
-                    } else {
-                        ImageView(nil)
-                    }
-                }
-                .overlay {
-                    if Defaults[.Customization.Library.randomImage] ||
-                        viewModel.item.collectionType == "favorites" ||
-                        viewModel.item.collectionType == "downloads"
-                    {
-                        ZStack {
-                            Color.black
-                                .opacity(0.5)
+//                ImageView(viewModel.imageSources ?? [])
+                Color.blue
+                    .overlay {
+                        if Defaults[.Customization.Library.randomImage] ||
+                            viewModel.item.collectionType == "favorites" ||
+                            viewModel.item.collectionType == "downloads"
+                        {
+                            ZStack {
+                                Color.black
+                                    .opacity(0.5)
 
-                            Text(viewModel.item.displayTitle)
-                                .foregroundColor(.white)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                                .frame(alignment: .center)
+                                Text(viewModel.item.displayTitle)
+                                    .foregroundColor(.white)
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.center)
+                                    .frame(alignment: .center)
+                            }
                         }
                     }
-                }
-                .posterStyle(.landscape)
-                .frame(width: itemWidth)
+                    .posterStyle(.landscape)
+//                .frame(width: itemWidth)
             }
         }
     }

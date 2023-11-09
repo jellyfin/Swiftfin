@@ -22,8 +22,8 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel {
         Task {
             let parameters = Paths.GetItemsParameters(
                 userID: userSession.user.id,
-                startIndex: currentPage * pageItemSize,
-                limit: pageItemSize,
+                startIndex: currentPage * 100,
+                limit: 100,
                 isRecursive: true,
                 sortOrder: [.descending],
                 fields: ItemFields.allCases,

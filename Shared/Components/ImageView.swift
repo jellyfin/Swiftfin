@@ -29,20 +29,17 @@ struct ImageView: View {
     @State
     private var sources: [ImageSource]
 
-    private var image: (NukeUI.Image) -> any View
+    private var image: (Image) -> any View
     private var placeholder: (() -> any View)?
     private var failure: () -> any View
-    private var resizingMode: ImageResizingMode
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
             placeholder()
                 .eraseToAnyView()
-        } else if let blurHash = currentSource.blurHash {
-            BlurHashView(blurHash: blurHash, size: .Square(length: 16))
         } else {
-            DefaultPlaceholderView()
+            DefaultPlaceholderView(blurHash: currentSource.blurHash)
         }
     }
 
@@ -52,8 +49,8 @@ struct ImageView: View {
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
-                    image(_image.resizingMode(resizingMode))
-                        .eraseToAnyView()
+                    _image
+                        .resizable(resizingMode: .stretch)
                 } else if state.error != nil {
                     failure()
                         .eraseToAnyView()
@@ -62,8 +59,7 @@ struct ImageView: View {
                         }
                 }
             }
-            .pipeline(ImagePipeline(configuration: .withDataCache))
-            .id(currentSource)
+//            .pipeline(ImagePipeline(configuration: .withDataCache))
         } else {
             failure()
                 .eraseToAnyView()
@@ -72,13 +68,13 @@ struct ImageView: View {
 }
 
 extension ImageView {
+    
     init(_ source: ImageSource) {
         self.init(
             sources: [source],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -87,8 +83,7 @@ extension ImageView {
             sources: sources,
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -97,8 +92,7 @@ extension ImageView {
             sources: [ImageSource(url: source, blurHash: nil)],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -107,8 +101,7 @@ extension ImageView {
             sources: sources.map { ImageSource(url: $0, blurHash: nil) },
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 }
@@ -117,7 +110,7 @@ extension ImageView {
 
 extension ImageView {
 
-    func image(@ViewBuilder _ content: @escaping (NukeUI.Image) -> any View) -> Self {
+    func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
     }
 
@@ -127,10 +120,6 @@ extension ImageView {
 
     func failure(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.failure, with: content)
-    }
-
-    func resizingMode(_ resizingMode: ImageResizingMode) -> Self {
-        copy(modifying: \.resizingMode, with: resizingMode)
     }
 }
 
@@ -146,10 +135,16 @@ extension ImageView {
     }
 
     struct DefaultPlaceholderView: View {
+        
+        let blurHash: String?
 
         var body: some View {
-            Color.secondarySystemFill
-                .opacity(0.5)
+            if let blurHash {
+                BlurHashView(blurHash: blurHash, size: .Square(length: 16))
+            } else {
+                Color.secondarySystemFill
+                    .opacity(0.5)
+            }
         }
     }
 }

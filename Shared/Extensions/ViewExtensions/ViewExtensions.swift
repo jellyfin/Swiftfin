@@ -49,17 +49,31 @@ extension View {
             transformElse(self)
         }
     }
+    
+    @ViewBuilder
+    @inlinable
+    func ifLet<Value, Content: View>(_ value: Value?, transformIf: (Value, Self) -> Content, transformElse: (Self) -> Content) -> some View {
+        if let value {
+            transformIf(value, self)
+        } else {
+            transformElse(self)
+        }
+    }
 
-    // TODO: Don't apply corner radius on tvOS because buttons handle themselves, add new modifier for setting corner radius of poster type
+    /// Applies the aspect ratio and corner radius for the given `PosterType`
     @ViewBuilder
     func posterStyle(_ type: PosterType) -> some View {
         switch type {
         case .portrait:
             aspectRatio(2 / 3, contentMode: .fit)
+            #if !os(tvOS)
                 .cornerRadius(ratio: 0.0375, of: \.width)
+            #endif
         case .landscape:
             aspectRatio(1.77, contentMode: .fit)
+            #if !os(tvOS)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
+            #endif
         }
     }
 
@@ -101,7 +115,7 @@ extension View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 
-    /// Apply a corner radius as a ratio of a side of the view's size
+    /// Apply a corner radius as a ratio of a view's side
     func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
         modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
     }

@@ -132,7 +132,7 @@ extension ItemView.CompactLogoScrollView {
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
                 ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width, maxHeight: 100))
-                    .resizingMode(.aspectFit)
+//                    .resizingMode(.aspectFit)
                     .placeholder {
                         EmptyView()
                     }
@@ -143,6 +143,7 @@ extension ItemView.CompactLogoScrollView {
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                     }
+                    .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
                     .frame(height: 100)
 

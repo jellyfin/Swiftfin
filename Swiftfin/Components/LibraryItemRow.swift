@@ -9,12 +9,12 @@
 import JellyfinAPI
 import SwiftUI
 
-struct LibraryItemRow: View {
+struct LibraryItemRow<Item: Poster>: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
-    private let item: BaseItemDto
+    private let item: Item
     private var onSelect: () -> Void
 
     private let posterWidth: CGFloat = 60
@@ -23,11 +23,15 @@ struct LibraryItemRow: View {
         Button {
             onSelect()
         } label: {
-            HStack(alignment: .bottom) {
-                ImageView(item.portraitPosterImageSource(maxWidth: posterWidth))
-                    .posterStyle(.portrait)
-                    .frame(width: posterWidth)
-                    .posterShadow()
+            HStack(alignment: .center) {
+                ZStack {
+                    Color.clear
+                    
+                    ImageView(item.portraitPosterImageSource(maxWidth: 300))
+                }
+                .frame(width: 60, height: 90)
+                .posterStyle(.portrait)
+                .posterShadow()
 
                 VStack(alignment: .leading) {
                     Text(item.displayTitle)
@@ -37,35 +41,38 @@ struct LibraryItemRow: View {
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    DotHStack {
-                        if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLocator {
-                            Text(seasonEpisodeLocator)
-                        } else if let premiereYear = item.premiereDateYear {
-                            Text(premiereYear)
+                    if let item = item as? BaseItemDto {
+                        DotHStack {
+                            if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLocator {
+                                Text(seasonEpisodeLocator)
+                            } else if let premiereYear = item.premiereDateYear {
+                                Text(premiereYear)
+                            }
+                            
+                            if let runtime = item.getItemRuntime() {
+                                Text(runtime)
+                            }
+                            
+                            if let officialRating = item.officialRating {
+                                Text(officialRating)
+                            }
                         }
-
-                        if let runtime = item.getItemRuntime() {
-                            Text(runtime)
-                        }
-
-                        if let officialRating = item.officialRating {
-                            Text(officialRating)
-                        }
+                        .font(.caption)
+                        .foregroundColor(Color(UIColor.lightGray))
                     }
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
                 }
                 .padding(.vertical)
 
                 Spacer()
             }
+            .padding(.vertical, 5)
         }
     }
 }
 
 extension LibraryItemRow {
 
-    init(item: BaseItemDto) {
+    init(item: Item) {
         self.init(
             item: item,
             onSelect: {}

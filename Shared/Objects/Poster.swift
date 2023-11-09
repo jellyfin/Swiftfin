@@ -10,7 +10,7 @@ import Foundation
 
 // TODO: find way to remove special `single` handling
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
-protocol Poster: Displayable, Hashable {
+protocol Poster: Displayable, Hashable, Identifiable {
 
     var subtitle: String? { get }
     var showTitle: Bool { get }

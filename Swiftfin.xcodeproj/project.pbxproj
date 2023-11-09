@@ -464,6 +464,8 @@
 		E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55A28C1266400311DFE /* GenresHStack.swift */; };
 		E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */; };
 		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
+		E1856DD22AF85C8A007FDDBC /* PagingCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1856DD12AF85C8A007FDDBC /* PagingCollectionView.swift */; };
+		E1856DEE2AFA007A007FDDBC /* UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1856DED2AFA007A007FDDBC /* UICollectionView.swift */; };
 		E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */; };
 		E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */; };
 		E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920928CEF23A00326F80 /* FocusGuide.swift */; };
@@ -1090,6 +1092,8 @@
 		E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E17FB55828C125E900311DFE /* StudiosHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudiosHStack.swift; sourceTree = "<group>"; };
 		E17FB55A28C1266400311DFE /* GenresHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresHStack.swift; sourceTree = "<group>"; };
+		E1856DD12AF85C8A007FDDBC /* PagingCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingCollectionView.swift; sourceTree = "<group>"; };
+		E1856DED2AFA007A007FDDBC /* UICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionView.swift; sourceTree = "<group>"; };
 		E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E185920928CEF23A00326F80 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
@@ -1820,6 +1824,7 @@
 				E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */,
 				E14A08CC28E68729004FC984 /* MenuPosterHStack.swift */,
 				E111D8F728D03BF900400001 /* PagingLibraryView.swift */,
+				E1856DD12AF85C8A007FDDBC /* PagingCollectionView.swift */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
 				E16AA60728A364A6009A983C /* PosterButton.swift */,
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
@@ -1869,6 +1874,7 @@
 				E1B5861129E32EEF00E45D6E /* Set.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
+				E1856DED2AFA007A007FDDBC /* UICollectionView.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */,
@@ -3436,6 +3442,7 @@
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
+				E1856DD22AF85C8A007FDDBC /* PagingCollectionView.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
 				E113132B28BDB4B500930F75 /* NavBarDrawerView.swift in Sources */,
@@ -3593,6 +3600,7 @@
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */,
 				E1549662296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */,
+				E1856DEE2AFA007A007FDDBC /* UICollectionView.swift in Sources */,
 				E15756362936856700976E1F /* VideoPlayerType.swift in Sources */,
 				E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* iOSViewExtensions.swift in Sources */,
@@ -4219,7 +4227,7 @@
 			repositoryURL = "https://github.com/kean/Nuke";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.1.0;
+				minimumVersion = 12.0.0;
 			};
 		};
 		E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */ = {

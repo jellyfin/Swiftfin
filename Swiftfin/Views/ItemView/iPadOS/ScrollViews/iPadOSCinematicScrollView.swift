@@ -123,7 +123,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         maxWidth: UIScreen.main.bounds.width * 0.4,
                         maxHeight: 150
                     ))
-                    .resizingMode(.bottomLeft)
+//                    .resizingMode(.bottomLeft)
                     .placeholder {
                         EmptyView()
                     }

@@ -67,8 +67,8 @@ final class LibraryViewModel: PagingLibraryViewModel {
         }
 
         var parameters = _getDefaultParams()
-        parameters?.limit = pageItemSize
-        parameters?.startIndex = currentPage * pageItemSize
+        parameters?.limit = 100
+        parameters?.startIndex = currentPage * 100
         parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
 

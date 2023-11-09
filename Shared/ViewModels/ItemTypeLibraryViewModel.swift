@@ -37,7 +37,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         }
 
         Task {
-            var parameters = self._getDefaultParams()
+            let parameters = self._getDefaultParams()
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
 
@@ -61,8 +61,8 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
 
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
-            startIndex: currentPage * pageItemSize,
-            limit: pageItemSize,
+            startIndex: currentPage * 100,
+            limit: 100,
             isRecursive: true,
             sortOrder: sortOrder,
             fields: ItemFields.allCases,

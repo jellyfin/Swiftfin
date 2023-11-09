@@ -23,20 +23,20 @@ struct PosterButton<Item: Poster>: View {
     private var onSelect: () -> Void
     private var singleImage: Bool
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
-    }
+//    private var itemWidth: CGFloat {
+//        type.width * itemScale
+//    }
 
     @ViewBuilder
     private func poster(from item: any Poster) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+            ImageView(item.portraitPosterImageSource(maxWidth: 500))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
                 .failure {
                     InitialFailureView(item.displayTitle.initials)
                 }
@@ -45,11 +45,15 @@ struct PosterButton<Item: Poster>: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-
             Button {
                 onSelect()
             } label: {
-                poster(from: item)
+                ZStack {
+                    Color.clear
+                    
+                    poster(from: item)
+                }
+                    .posterStyle(type)
                     .overlay {
                         imageOverlay(item)
                             .eraseToAnyView()
@@ -60,14 +64,11 @@ struct PosterButton<Item: Poster>: View {
                 contextMenu(item)
                     .eraseToAnyView()
             })
-            .posterStyle(type)
-            .frame(width: itemWidth)
             .posterShadow()
 
             content(item)
                 .eraseToAnyView()
         }
-        .frame(width: itemWidth)
     }
 }
 
@@ -125,9 +126,7 @@ extension PosterButton {
                 Text(item.displayTitle)
                     .font(.footnote.weight(.regular))
                     .foregroundColor(.primary)
-                    .lineLimit(2)
-            } else {
-                EmptyView()
+                    .lineLimit(1)
             }
         }
 

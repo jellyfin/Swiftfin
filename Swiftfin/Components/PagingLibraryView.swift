@@ -23,85 +23,17 @@ struct PagingLibraryView: View {
 
     private var onSelect: (BaseItemDto) -> Void
 
-    private let portraitPosterScale = 1.25
-
-    private var gridLayout: NSCollectionLayoutSection.GridLayoutMode {
-        if libraryGridPosterType == .landscape && UIDevice.isPhone {
-            return .fixedNumberOfColumns(2)
-        } else {
-            return .adaptive(withMinItemSize: libraryGridPosterType.width * portraitPosterScale + 10)
-        }
-    }
-
-    @ViewBuilder
-    private var libraryListView: some View {
-        CollectionView(items: viewModel.items.elements) { _, item, _ in
-            LibraryItemRow(item: item)
-                .onSelect {
-                    onSelect(item)
-                }
-                .padding()
-        }
-        .layout { _, layoutEnvironment in
-            .list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
-            }
-        }
-        .onEdgeReached { edge in
-            if viewModel.hasNextPage, !viewModel.isLoading, edge == .bottom {
-                viewModel.requestNextPage()
-            }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-    }
-
-    @ViewBuilder
-    private var libraryGridView: some View {
-        CollectionView(items: viewModel.items.elements) { _, item, _ in
-            PosterButton(item: item, type: libraryGridPosterType)
-                .scaleItem(libraryGridPosterType == .landscape && UIDevice.isPhone ? 0.85 : portraitPosterScale)
-                .onSelect {
-                    onSelect(item)
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: gridLayout,
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-            )
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 200, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
-            }
-        }
-        .onEdgeReached { edge in
-            if viewModel.hasNextPage, !viewModel.isLoading, edge == .bottom {
-                viewModel.requestNextPage()
-            }
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-    }
-
     var body: some View {
-        switch libraryViewType {
-        case .grid:
-            libraryGridView
-        case .list:
-            libraryListView
-        }
+        PagingCollectionView(
+            items: $viewModel.items,
+            viewType: $libraryViewType
+        )
+        .ignoresSafeArea()
     }
 }
 
 extension PagingLibraryView {
+    
     init(viewModel: PagingLibraryViewModel) {
         self.init(
             viewModel: viewModel,

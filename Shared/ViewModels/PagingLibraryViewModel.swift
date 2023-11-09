@@ -24,10 +24,10 @@ class PagingLibraryViewModel: ViewModel {
     var currentPage = 0
     var hasNextPage = true
 
-    var pageItemSize: Int {
-        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
-    }
+//    var pageItemSize: Int {
+//        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
+//        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
+//    }
 
     public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {
 

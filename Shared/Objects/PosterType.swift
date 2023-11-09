@@ -14,15 +14,6 @@ enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
     case portrait
     case landscape
 
-    var width: CGFloat {
-        switch self {
-        case .portrait:
-            return Width.portrait
-        case .landscape:
-            return Width.landscape
-        }
-    }
-
     // TODO: localize
     var displayTitle: String {
         switch self {
@@ -31,18 +22,5 @@ enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
         case .landscape:
             return "Landscape"
         }
-    }
-
-    // TODO: Make property of the enum type, not a nested type
-    enum Width {
-        #if os(tvOS)
-        static let portrait = 200.0
-
-        static let landscape = 350.0
-        #else
-        static var portrait = 100.0
-
-        static var landscape = 200.0
-        #endif
     }
 }

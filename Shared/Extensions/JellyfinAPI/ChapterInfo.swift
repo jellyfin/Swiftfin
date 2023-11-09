@@ -31,7 +31,11 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Hashable {
+    struct FullInfo: Poster {
+        
+        var id: Int {
+            chapterInfo.hashValue
+        }
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource

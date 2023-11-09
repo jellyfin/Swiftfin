@@ -137,7 +137,7 @@ extension ItemView.CinematicScrollView {
                 VStack(alignment: .center, spacing: 10) {
                     if !cinematicItemViewTypeUsePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-                            .resizingMode(.aspectFit)
+//                            .resizingMode(.aspectFit)
                             .placeholder {
                                 EmptyView()
                             }
@@ -148,6 +148,7 @@ extension ItemView.CinematicScrollView {
                                     .multilineTextAlignment(.center)
                                     .foregroundColor(.white)
                             }
+                            .aspectRatio(contentMode: .fit)
                             .frame(height: 100)
                             .frame(maxWidth: .infinity)
                     } else {
