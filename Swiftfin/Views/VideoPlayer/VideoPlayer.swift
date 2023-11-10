@@ -231,7 +231,7 @@ struct VideoPlayer: View {
             videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
         }
         .onChange(of: subtitleSize) { newValue in
-            videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
+            videoPlayerManager.proxy.setSubtitleSize(.absolute(32 - newValue))
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
