@@ -24,10 +24,19 @@ struct PagingLibraryView: View {
     private var onSelect: (BaseItemDto) -> Void
 
     var body: some View {
-        PagingCollectionView(
-            items: $viewModel.items,
-            viewType: $libraryViewType
-        )
+//        PagingCollectionView(items: $viewModel.items,viewType: $libraryViewType, makeView: <#(LibraryViewType) -> View#>)
+        PagingCollectionView(items: $viewModel.items, viewType: $libraryViewType) { item in
+            switch libraryViewType {
+            case .grid:
+                PosterButton(item: item, type: libraryGridPosterType)
+                    .onSelect {
+                        onSelect(item)
+                    }
+            case .list:
+                LibraryItemRow(item: item)
+                    .padding(.vertical, 5)
+            }
+        }
         .ignoresSafeArea()
     }
 }

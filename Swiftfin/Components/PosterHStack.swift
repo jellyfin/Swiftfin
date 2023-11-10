@@ -49,7 +49,7 @@ struct PosterHStack<Item: Poster>: View {
                             type: type,
                             singleImage: singleImage
                         )
-                        .scaleItem(itemScale)
+//                        .scaleItem(itemScale)
                         .content { content($0).eraseToAnyView() }
                         .imageOverlay { imageOverlay($0).eraseToAnyView() }
                         .contextMenu { contextMenu($0).eraseToAnyView() }

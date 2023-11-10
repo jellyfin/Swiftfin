@@ -8,16 +8,20 @@
 
 import SwiftUI
 
-extension UIEdgeInsets {
-
-    var asEdgeInsets: EdgeInsets {
-        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
-    }
-}
-
 extension NSDirectionalEdgeInsets {
     
     init(constant: CGFloat) {
         self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
+    }
+    
+    init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
+        self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
+    }
+}
+
+extension UIEdgeInsets {
+
+    var asEdgeInsets: EdgeInsets {
+        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
     }
 }

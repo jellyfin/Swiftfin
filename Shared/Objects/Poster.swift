@@ -8,6 +8,7 @@
 
 import Foundation
 
+// TODO: do we really need this? I've probably dealt with more issues with this than positives.
 // TODO: find way to remove special `single` handling
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
 protocol Poster: Displayable, Hashable, Identifiable {

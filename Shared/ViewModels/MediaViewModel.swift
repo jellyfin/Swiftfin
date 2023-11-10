@@ -9,11 +9,14 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 final class MediaViewModel: ViewModel {
+    
+    private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
 
     @Published
-    private var libraries: [BaseItemDto] = []
+    var libraries: OrderedSet<BaseItemDto> = []
 
     var libraryItems: [MediaItemViewModel] {
         libraries.map { .init(item: $0) }
@@ -31,25 +34,29 @@ final class MediaViewModel: ViewModel {
             )
     }
 
-    private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
-
     override init() {
         super.init()
 
-        requestLibraries()
-    }
-
-    func requestLibraries() {
         Task {
-            let request = Paths.getUserViews(userID: userSession.user.id)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-            let supportedLibraries = items.filter { Self.supportedCollectionTypes.contains($0.collectionType ?? "unknown") }
-
-            await MainActor.run {
-                libraries = supportedLibraries
+            do {
+                let newLibraries = try await getUserLibraries()
+                
+                await MainActor.run {
+                    libraries.elements = newLibraries
+                }
+            } catch {
+                // TODO: have error once MediaView has error + retry state
             }
         }
+    }
+
+    func getUserLibraries() async throws -> [BaseItemDto] {
+        let request = Paths.getUserViews(userID: userSession.user.id)
+        let response = try await userSession.client.send(request)
+
+        guard let items = response.value.items else { return [] }
+        let supportedLibraries = items.filter(using: \.collectionType, by: Self.supportedCollectionTypes)
+        
+        return supportedLibraries
     }
 }

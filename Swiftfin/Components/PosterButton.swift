@@ -16,7 +16,6 @@ struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -82,17 +81,12 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            itemScale: 1,
             content: { DefaultContentView(item: $0) },
             imageOverlay: { DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
-    }
-
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

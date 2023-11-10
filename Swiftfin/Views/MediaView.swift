@@ -8,6 +8,7 @@
 
 import CollectionView
 import Defaults
+import Factory
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -21,51 +22,22 @@ struct MediaView: View {
     var viewModel: MediaViewModel
 
     var body: some View {
-        CollectionView(items: viewModel.libraryItems) { _, viewModel, _ in
-            LibraryCard(viewModel: viewModel)
+        PagingCollectionView(items: $viewModel.libraries, viewType: .constant(.grid)) { item in
+            LibraryCard(item: item)
                 .onSelect {
-                    switch viewModel.item.collectionType {
+                    switch item.collectionType {
                     case "downloads":
                         router.route(to: \.downloads)
                     case "favorites":
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
+                        router.route(to: \.library, .init(parent: item, type: .library, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .folders, filters: .init()))
+                        router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .init()))
+                        router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
                     }
                 }
-        }
-        .layout { _, layoutEnvironment in
-            let perRow: CGFloat = 2
-            
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1 / perRow),
-                heightDimension: .estimated(50)
-            )
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(50)
-            )
-            
-            let group = NSCollectionLayoutGroup.horizontal(
-                layoutSize: groupSize,
-                subitems: [item]
-            )
-            group.contentInsets = .init(top: 0, leading: 5, bottom: 0, trailing: 5)
-            group.interItemSpacing = NSCollectionLayoutSpacing.fixed(10)
-
-            let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 5
-            
-            return section
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
@@ -80,54 +52,87 @@ struct MediaView: View {
 }
 
 extension MediaView {
-
+    
     struct LibraryCard: View {
-
-        @ObservedObject
-        var viewModel: MediaItemViewModel
-
+        
+        @State
+        private var imageSources: [ImageSource]
+        
+        let item: BaseItemDto
         private var onSelect: () -> Void
+        
+        init(item: BaseItemDto) {
+            self._imageSources = .init(initialValue: [])
+            self.item = item
+            self.onSelect = { }
+            
+            if item.collectionType == "favorites" {
+                getRandomItemImageSource(with: [.isFavorite])
+            } else if item.collectionType == "downloads" {
+                imageSources = []
+            } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
+                imageSources = [item.imageSource(.primary, maxWidth: 500)]
+            } else {
+                getRandomItemImageSource(with: nil)
+            }
+        }
+        
+        private func getRandomItemImageSource(with filters: [ItemFilter]?) {
+            Task {
+                
+                let userSession = Container.userSession.callAsFunction()
+                
+                let parameters = Paths.GetItemsParameters(
+                    userID: userSession.user.id,
+                    limit: 1,
+                    isRecursive: true,
+                    parentID: item.id,
+                    includeItemTypes: [.movie, .series],
+                    filters: filters,
+                    sortBy: ["Random"]
+                )
+                let request = Paths.getItems(parameters: parameters)
+                let response = try await userSession.client.send(request)
 
+                guard let item = response.value.items?.first else { return }
+
+                await MainActor.run {
+                    imageSources = [item.imageSource(.backdrop, maxWidth: 500)]
+                }
+            }
+        }
+        
         var body: some View {
             Button {
                 onSelect()
             } label: {
-//                ImageView(viewModel.imageSources ?? [])
-                Color.blue
+                ImageView(imageSources)
                     .overlay {
                         if Defaults[.Customization.Library.randomImage] ||
-                            viewModel.item.collectionType == "favorites" ||
-                            viewModel.item.collectionType == "downloads"
+                            item.collectionType == "favorites" ||
+                            item.collectionType == "downloads"
                         {
                             ZStack {
                                 Color.black
                                     .opacity(0.5)
 
-                                Text(viewModel.item.displayTitle)
+                                Text(item.displayTitle)
                                     .foregroundColor(.white)
                                     .font(.title2)
                                     .fontWeight(.semibold)
-                                    .lineLimit(2)
+                                    .lineLimit(1)
                                     .multilineTextAlignment(.center)
                                     .frame(alignment: .center)
                             }
                         }
                     }
                     .posterStyle(.landscape)
-//                .frame(width: itemWidth)
             }
         }
     }
 }
 
 extension MediaView.LibraryCard {
-
-    init(viewModel: MediaItemViewModel) {
-        self.init(
-            viewModel: viewModel,
-            onSelect: {}
-        )
-    }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)

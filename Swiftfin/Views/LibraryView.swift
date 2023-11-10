@@ -87,8 +87,10 @@ struct LibraryView: View {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
+                
                 Menu {
                     LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                    
                     RandomItemButton(viewModel: viewModel)
                         .onSelect { response in
                             if let item = response.items?.first {

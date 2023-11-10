@@ -10,6 +10,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
+// TODO: remove
 final class MediaItemViewModel: ViewModel {
 
     @Published
@@ -52,19 +53,5 @@ final class MediaItemViewModel: ViewModel {
                 imageSources = [item.imageSource(.backdrop, maxWidth: 500)]
             }
         }
-    }
-}
-
-extension MediaItemViewModel: Equatable {
-
-    static func == (lhs: MediaItemViewModel, rhs: MediaItemViewModel) -> Bool {
-        lhs.item == rhs.item
-    }
-}
-
-extension MediaItemViewModel: Hashable {
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(item)
     }
 }

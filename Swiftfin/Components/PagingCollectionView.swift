@@ -7,23 +7,30 @@
 //
 
 import OrderedCollections
+import JellyfinAPI
 import SwiftUI
 
-struct PagingCollectionView<Item: Poster>: UIViewRepresentable {
+// TODO: find cleaner way to pass all of the button extensions?
+
+struct PagingCollectionView: UIViewRepresentable {
     
     @Binding
-    var items: OrderedSet<Item>
+    var items: OrderedSet<BaseItemDto>
     @Binding
     var viewType: LibraryViewType
     
     private var onBottom: () -> Void
-    private var onSelect: (Item) -> Void
+    private var makeView: (BaseItemDto) -> any View
     
-    init(items: Binding<OrderedSet<Item>>, viewType: Binding<LibraryViewType>) {
+    init(
+        items: Binding<OrderedSet<BaseItemDto>>,
+        viewType: Binding<LibraryViewType>,
+        @ViewBuilder makeView: @escaping (BaseItemDto) -> any View
+    ) {
         self._items = items
         self._viewType = viewType
         self.onBottom = { }
-        self.onSelect = { _ in }
+        self.makeView = makeView
     }
     
     func makeUIView(context: Context) -> UICollectionView {
@@ -39,40 +46,50 @@ struct PagingCollectionView<Item: Poster>: UIViewRepresentable {
     }
     
     func updateUIView(_ view: UICollectionView, context: Context) {
-        
         context.coordinator.updateItems(with: $items)
         context.coordinator.updateLayout(type: viewType)
     }
     
     func makeCoordinator() -> Coordinator {
-        Coordinator(items: $items, viewType: viewType, onBottom: onBottom)
+        Coordinator(
+            items: .constant([]),
+            viewType: viewType,
+            onBottom: onBottom,
+            makeView: makeView
+        )
     }
     
     class Coordinator: NSObject, UICollectionViewDelegate {
         
         var collectionView: UICollectionView!
-        var items: Binding<OrderedSet<Item>>
+        var items: Binding<OrderedSet<BaseItemDto>>
         var viewType: LibraryViewType
+        var dataSource: UICollectionViewDiffableDataSource<Int, BaseItemDto.ID>!
+        var makeView: (BaseItemDto) -> any View
         
-        private var lastItemHash: Int = -1
-        var onBottom: () -> Void
-        var dataSource: UICollectionViewDiffableDataSource<Int, Item.ID>!
+        private var onBottom: () -> Void
         
-        init(items: Binding<OrderedSet<Item>>, viewType: LibraryViewType, onBottom: @escaping () -> Void) {
+        init(
+            items: Binding<OrderedSet<BaseItemDto>>,
+            viewType: LibraryViewType,
+            onBottom: @escaping () -> Void,
+            makeView: @escaping (BaseItemDto) -> any View
+        ) {
             self.items = items
             self.viewType = viewType
             self.onBottom = onBottom
             self.dataSource = nil
+            self.makeView = makeView
             super.init()
         }
         
         func configureDataSource() {
-            let cellRegistration = UICollectionView.CellRegistration<PosterButtonCell, Item> { cell, indexPath, item in
-                cell.setupHostingView(with: item, indexPath: indexPath, type: self.viewType)
+            let cellRegistration = UICollectionView.CellRegistration<PosterButtonCell, BaseItemDto> { cell, indexPath, item in
+                cell.setupHostingView(with: self.makeView(item))
             }
             
             dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView) { collectionView, indexPath, itemID in
-                // TODO: Fix as you can't return nil
+                // TODO: what should happen if out of sync and not found, since nil will crash?
                 guard let item = self.items.wrappedValue.first(where: { $0.id == itemID }) else {
                     return nil
                 }
@@ -80,14 +97,15 @@ struct PagingCollectionView<Item: Poster>: UIViewRepresentable {
             }
         }
         
-        func updateItems(with newItems: Binding<OrderedSet<Item>>) {
+        // TODO: new vs old state checking
+        func updateItems(with newItems: Binding<OrderedSet<BaseItemDto>>) {
             
             print("Updating snapshot.")
             
-//            guard items.wrappedValue.count != newItems.wrappedValue.count else { return }
+            guard items.wrappedValue.count != newItems.wrappedValue.count else { return }
             items = newItems
             
-            var snapshot = NSDiffableDataSourceSnapshot<Int, Item.ID>()
+            var snapshot = NSDiffableDataSourceSnapshot<Int, BaseItemDto.ID>()
             snapshot.appendSections([0])
             snapshot.appendItems(newItems.elements.map(\.id))
             dataSource.apply(snapshot, animatingDifferences: true, completion: nil)
@@ -134,10 +152,9 @@ struct PagingCollectionView<Item: Poster>: UIViewRepresentable {
         }
         
         private func listLayoutProvider(index: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-            let a = NSCollectionLayoutSection.list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
-            a.contentInsets = .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-            a.interGroupSpacing = 5
-            return a
+            let layout = NSCollectionLayoutSection.list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
+            layout.contentInsets = .init(vertical: 10, horizontal: 5)
+            return layout
         }
         
         private func landscapePosterLayoutProvider(index: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
@@ -184,19 +201,11 @@ struct PagingCollectionView<Item: Poster>: UIViewRepresentable {
 extension PagingCollectionView {
     
     func onBottom(_ action: @escaping () -> Void) -> Self {
-        var copy = self
-        copy.onBottom = action
-        return copy
-    }
-    
-    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
-        var copy = self
-        copy.onSelect = action
-        return copy
+        copy(modifying: \.onBottom, with: action)
     }
 }
 
-class PosterButtonCell<Item: Poster>: UICollectionViewCell {
+class PosterButtonCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -206,39 +215,56 @@ class PosterButtonCell<Item: Poster>: UICollectionViewCell {
         }
     }
     
-    func setupHostingView(with item: Item, indexPath: IndexPath, type: LibraryViewType) {
-        let newHost = makeHost(with: item, indexPath: indexPath, type: type)
-        addSubview(newHost.view)
+    func setupHostingView(with view: any View) {
+        let hostingController = UIHostingController(rootView: AnyView(view))
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         
+        addSubview(hostingController.view)
         NSLayoutConstraint.activate([
-            newHost.view.topAnchor.constraint(equalTo: topAnchor),
-            newHost.view.bottomAnchor.constraint(equalTo: bottomAnchor),
-            newHost.view.leadingAnchor.constraint(equalTo: leadingAnchor),
-            newHost.view.trailingAnchor.constraint(equalTo: trailingAnchor)
+            hostingController.view.topAnchor.constraint(equalTo: topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
     
-    private func makePosterButton(with item: Item, indexPath: IndexPath, viewType: LibraryViewType, onSelect: @escaping (Item) -> Void) -> some View {
-        PosterButton(item: item, type: .portrait)
-    }
-    
-    private func makeListButton(with item: Item, indexPath: IndexPath) -> some View {
-        LibraryItemRow(item: item)
-    }
-    
-    private func makeHost(with item: Item, indexPath: IndexPath, type: LibraryViewType) -> UIHostingController<AnyView> {
-        
-        let v: AnyView
-        
-        switch type {
-        case.grid:
-            v = AnyView(makePosterButton(with: item, indexPath: indexPath, viewType: type, onSelect: { _ in }))
-        case .list:
-            v = AnyView(makeListButton(with: item, indexPath: indexPath))
-        }
-        
-        let hostingController = UIHostingController(rootView: v)
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        return hostingController
-    }
+//    func setupHostingView(with item: BaseItemDto, type: LibraryViewType) {
+//        let newHost = makeHost(with: item, type: type)
+//        addSubview(newHost.view)
+//        
+//        NSLayoutConstraint.activate([
+//            newHost.view.topAnchor.constraint(equalTo: topAnchor),
+//            newHost.view.bottomAnchor.constraint(equalTo: bottomAnchor),
+//            newHost.view.leadingAnchor.constraint(equalTo: leadingAnchor),
+//            newHost.view.trailingAnchor.constraint(equalTo: trailingAnchor)
+//        ])
+//    }
+//    
+//    private func makePosterButton(with item: BaseItemDto, viewType: LibraryViewType, onSelect: @escaping (BaseItemDto) -> Void) -> some View {
+//        PosterButton(item: item, type: .portrait)
+//            .onSelect {
+//                onSelect(item)
+//            }
+//    }
+//    
+//    private func makeListButton(with item: BaseItemDto) -> some View {
+//        LibraryItemRow(item: item)
+//            .padding(.vertical, 5)
+//    }
+//    
+//    private func makeHost(with item: BaseItemDto, type: LibraryViewType) -> UIHostingController<AnyView> {
+//        
+//        let v: AnyView
+//        
+//        switch type {
+//        case.grid:
+//            v = AnyView(makePosterButton(with: item, viewType: type, onSelect: { _ in }))
+//        case .list:
+//            v = AnyView(makeListButton(with: item))
+//        }
+//        
+//        let hostingController = UIHostingController(rootView: v)
+//        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+//        return hostingController
+//    }
 }
