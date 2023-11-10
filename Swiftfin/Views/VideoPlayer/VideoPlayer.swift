@@ -59,8 +59,6 @@ struct VideoPlayer: View {
     private var horizontalSwipeGesture
     @Default(.VideoPlayer.Gesture.longPressGesture)
     private var longPressGesture
-    @Default(.VideoPlayer.Gesture.multiTapGesture)
-    private var multiTapGesture
     @Default(.VideoPlayer.Gesture.doubleTouchGesture)
     private var doubleTouchGesture
     @Default(.VideoPlayer.Gesture.pinchGesture)
@@ -146,8 +144,8 @@ struct VideoPlayer: View {
                         .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
                         .onLongPress(minimumDuration: 2, handleLongPress)
                         .onPinch(handlePinchGesture)
-                        .onTap(samePointPadding: 10, samePointTimeout: 0.7, handleTapGesture)
-                        .onDoubleTouch(handleDoubleTouchGesture)
+                        .onTap(handleTapGesture)
+                        .onDoubleTouch(doubleTapTimeout: 0.7, handleDoubleTouchGesture)
                         .onVerticalPan {
                             if $1.x <= 0.5 {
                                 handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
@@ -339,28 +337,14 @@ extension VideoPlayer {
         }
     }
 
-    private func handleTapGesture(unitPoint: UnitPoint, taps: Int) {
+    private func handleTapGesture(unitPoint: UnitPoint) {
         guard !isGestureLocked else {
             updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             return
         }
-
-        if taps > 1 && multiTapGesture != .none {
-
-            withAnimation(.linear(duration: 0.1)) {
-                isPresentingOverlay = false
-            }
-
-            switch multiTapGesture {
-            case .none:
-                return
-            case .jump:
-                jumpAction(unitPoint: unitPoint, amount: taps - 1)
-            }
-        } else {
-            withAnimation(.linear(duration: 0.1)) {
-                isPresentingOverlay = !isPresentingOverlay
-            }
+        
+        withAnimation(.linear(duration: 0.1)) {
+            isPresentingOverlay = !isPresentingOverlay
         }
     }
 
@@ -374,11 +358,12 @@ extension VideoPlayer {
         case .none:
             return
         case .aspectFill: ()
-//            aspectFillAction(state: state, unitPoint: unitPoint, scale: <#T##CGFloat#>)
         case .gestureLock:
             guard !isPresentingOverlay else { return }
             isGestureLocked.toggle()
         case .pausePlay: ()
+        case .jump:
+            jumpAction(unitPoint: unitPoint, amount: taps)
         }
     }
 }

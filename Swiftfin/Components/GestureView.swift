@@ -19,8 +19,10 @@ typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CG
 typealias PinchGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat) -> Void
 // point, direction, amount
 typealias SwipeGestureHandler = (UnitPoint, Bool, Int) -> Void
+// point
+typealias TapGestureHandler = (UnitPoint) -> Void
 // point, amount
-typealias TapGestureHandler = (UnitPoint, Int) -> Void
+typealias DoubleTapGestureHandler = (UnitPoint, Int) -> Void
 
 struct GestureView: UIViewRepresentable {
 
@@ -29,12 +31,11 @@ struct GestureView: UIViewRepresentable {
     private var onLongPress: ((UnitPoint) -> Void)?
     private var onPinch: PinchGestureHandler?
     private var onTap: TapGestureHandler?
-    private var onDoubleTouch: TapGestureHandler?
+    private var onDoubleTouch: DoubleTapGestureHandler?
     private var onVerticalPan: PanGestureHandler?
 
     private var longPressMinimumDuration: TimeInterval
-    private var samePointPadding: CGFloat
-    private var samePointTimeout: TimeInterval
+    private var doubleTapTimeout: TimeInterval
     private var swipeTranslation: CGFloat
     private var swipeVelocity: CGFloat
     private var sameSwipeDirectionTimeout: TimeInterval
@@ -49,8 +50,7 @@ struct GestureView: UIViewRepresentable {
             onDoubleTouch: onDoubleTouch,
             onVerticalPan: onVerticalPan,
             longPressMinimumDuration: longPressMinimumDuration,
-            samePointPadding: samePointPadding,
-            samePointTimeout: samePointTimeout,
+            doubleTapTimeout: doubleTapTimeout,
             swipeTranslation: swipeTranslation,
             swipeVelocity: swipeVelocity,
             sameSwipeDirectionTimeout: sameSwipeDirectionTimeout
@@ -65,8 +65,7 @@ extension GestureView {
     init() {
         self.init(
             longPressMinimumDuration: 0,
-            samePointPadding: 0,
-            samePointTimeout: 0,
+            doubleTapTimeout: 0,
             swipeTranslation: 0,
             swipeVelocity: 0,
             sameSwipeDirectionTimeout: 0
@@ -94,17 +93,14 @@ extension GestureView {
     }
 
     func onTap(
-        samePointPadding: CGFloat,
-        samePointTimeout: TimeInterval,
         _ action: @escaping TapGestureHandler
     ) -> Self {
-        copy(modifying: \.samePointPadding, with: samePointPadding)
-            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
-            .copy(modifying: \.onTap, with: action)
+        copy(modifying: \.onTap, with: action)
     }
 
-    func onDoubleTouch(_ action: @escaping TapGestureHandler) -> Self {
-        copy(modifying: \.onDoubleTouch, with: action)
+    func onDoubleTouch(doubleTapTimeout: TimeInterval, _ action: @escaping DoubleTapGestureHandler) -> Self {
+        copy(modifying: \.doubleTapTimeout, with: doubleTapTimeout)
+            .copy(modifying: \.onDoubleTouch, with: action)
     }
 
     func onLongPress(minimumDuration: TimeInterval, _ action: @escaping (UnitPoint) -> Void) -> Self {
@@ -124,12 +120,11 @@ class UIGestureView: UIView {
     private let onLongPress: ((UnitPoint) -> Void)?
     private let onPinch: PinchGestureHandler?
     private let onTap: TapGestureHandler?
-    private let onDoubleTouch: TapGestureHandler?
+    private let onDoubleTouch: DoubleTapGestureHandler?
     private let onVerticalPan: PanGestureHandler?
 
     private let longPressMinimumDuration: TimeInterval
-    private let samePointPadding: CGFloat
-    private let samePointTimeout: TimeInterval
+    private let doubleTapTimeout: TimeInterval
     private let swipeTranslation: CGFloat
     private let swipeVelocity: CGFloat
     private var sameSwipeDirectionTimeout: TimeInterval
@@ -137,9 +132,9 @@ class UIGestureView: UIView {
     private var hasSwiped: Bool = false
     private var lastSwipeDirection: Bool?
     private var lastTouchLocation: CGPoint?
-    private var multiTapWorkItem: DispatchWorkItem?
+    private var doubleTapWorkItem: DispatchWorkItem?
     private var sameSwipeWorkItem: DispatchWorkItem?
-    private var multiTapAmount: Int = 0
+    private var doubleTapAmount: Int = 0
     private var sameSwipeAmount: Int = 0
 
     init(
@@ -148,11 +143,10 @@ class UIGestureView: UIView {
         onLongPress: ((UnitPoint) -> Void)?,
         onPinch: PinchGestureHandler?,
         onTap: TapGestureHandler?,
-        onDoubleTouch: TapGestureHandler?,
+        onDoubleTouch: DoubleTapGestureHandler?,
         onVerticalPan: PanGestureHandler?,
         longPressMinimumDuration: TimeInterval,
-        samePointPadding: CGFloat,
-        samePointTimeout: TimeInterval,
+        doubleTapTimeout: TimeInterval,
         swipeTranslation: CGFloat,
         swipeVelocity: CGFloat,
         sameSwipeDirectionTimeout: TimeInterval
@@ -165,8 +159,7 @@ class UIGestureView: UIView {
         self.onDoubleTouch = onDoubleTouch
         self.onVerticalPan = onVerticalPan
         self.longPressMinimumDuration = longPressMinimumDuration
-        self.samePointPadding = samePointPadding
-        self.samePointTimeout = samePointTimeout
+        self.doubleTapTimeout = doubleTapTimeout
         self.swipeTranslation = swipeTranslation
         self.swipeVelocity = swipeVelocity
         self.sameSwipeDirectionTimeout = sameSwipeDirectionTimeout
@@ -174,8 +167,9 @@ class UIGestureView: UIView {
 
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
-        let doubleTouchGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
-        doubleTouchGesture.numberOfTouchesRequired = 2
+        let doubleTouchGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformDoubleTouch))
+        doubleTouchGesture.numberOfTapsRequired = 2
+        tapGesture.require(toFail: doubleTouchGesture)
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
         let verticalPanGesture = PanDirectionGestureRecognizer(
@@ -271,24 +265,27 @@ class UIGestureView: UIView {
     @objc
     private func didPerformTap(_ gestureRecognizer: UITapGestureRecognizer) {
         guard let onTap else { return }
-        let location = gestureRecognizer.location(in: self)
         let unitPoint = gestureRecognizer.unitPoint(in: self)
 
-        if let lastTouchLocation, lastTouchLocation.isNear(lastTouchLocation, padding: samePointPadding) {
-            multiTapOccurred(at: location)
-            onTap(unitPoint, multiTapAmount)
-        } else {
-            multiTapOccurred(at: location)
-            onTap(unitPoint, 1)
-        }
+        onTap(unitPoint)
     }
 
     @objc
     private func didPerformDoubleTouch(_ gestureRecognizer: UITapGestureRecognizer) {
         guard let onDoubleTouch else { return }
         let unitPoint = gestureRecognizer.unitPoint(in: self)
+        
+        self.doubleTapAmount += 1
+        doubleTapWorkItem?.cancel()
+        let task = DispatchWorkItem {
+            self.doubleTapAmount = 0
+        }
 
-        onDoubleTouch(unitPoint, 1)
+        doubleTapWorkItem = task
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + sameSwipeDirectionTimeout, execute: task)
+
+        onDoubleTouch(unitPoint, self.doubleTapAmount)
     }
 
     @objc
@@ -299,22 +296,5 @@ class UIGestureView: UIView {
         let velocity = gestureRecognizer.velocity(in: self).y
 
         onVerticalPan(gestureRecognizer.state, unitPoint, velocity, translation)
-    }
-
-    private func multiTapOccurred(at location: CGPoint) {
-        guard samePointTimeout > 0 else { return }
-        lastTouchLocation = location
-
-        multiTapAmount += 1
-
-        multiTapWorkItem?.cancel()
-        let task = DispatchWorkItem {
-            self.multiTapAmount = 0
-            self.lastTouchLocation = nil
-        }
-
-        multiTapWorkItem = task
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + samePointTimeout, execute: task)
     }
 }

@@ -131,10 +131,9 @@ extension Defaults.Keys {
                 default: .gestureLock,
                 suite: .generalSuite
             )
-            static let multiTapGesture: Key<MultiTapAction> = .init("videoPlayerMultiTapGesture", default: .none, suite: .generalSuite)
             static let doubleTouchGesture: Key<DoubleTouchAction> = .init(
                 "videoPlayerDoubleTouchGesture",
-                default: .none,
+                default: .jump,
                 suite: .generalSuite
             )
             static let pinchGesture: Key<PinchAction> = .init("videoPlayerSwipeGesture", default: .aspectFill, suite: .generalSuite)

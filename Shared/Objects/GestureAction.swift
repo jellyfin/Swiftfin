@@ -29,27 +29,13 @@ enum LongPressAction: String, GestureAction {
     }
 }
 
-enum MultiTapAction: String, GestureAction {
-
-    case none
-    case jump
-
-    var displayTitle: String {
-        switch self {
-        case .none:
-            return L10n.none
-        case .jump:
-            return "Jump"
-        }
-    }
-}
-
 enum DoubleTouchAction: String, GestureAction {
 
     case none
     case aspectFill
     case gestureLock
     case pausePlay
+    case jump
 
     var displayTitle: String {
         switch self {
@@ -61,6 +47,8 @@ enum DoubleTouchAction: String, GestureAction {
             return "Gesture Lock"
         case .pausePlay:
             return "Pause/Play"
+        case .jump:
+            return "Jump"
         }
     }
 }
