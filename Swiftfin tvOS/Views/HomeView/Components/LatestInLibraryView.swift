@@ -17,18 +17,24 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @StateObject
-        var viewModel: LibraryViewModel
+        var viewModel: LatestInLibraryViewModel
 
         var body: some View {
             PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                title: L10n.latestWithString(viewModel.parent.displayTitle),
                 type: .portrait,
                 items: viewModel.items.prefix(20).asArray
             )
             .trailing {
                 SeeAllPosterButton(type: .portrait)
                     .onSelect {
-                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                        router.route(
+                            to: \.basicLibrary,
+                            .init(
+                                title: L10n.latestWithString(viewModel.parent.displayTitle),
+                                viewModel: viewModel
+                            )
+                        )
                     }
             }
             .onSelect { item in

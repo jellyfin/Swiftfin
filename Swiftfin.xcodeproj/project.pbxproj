@@ -151,6 +151,8 @@
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		6334175B287DDFB9000603CE /* QuickConnectSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */; };
 		6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175C287DE0D0000603CE /* QuickConnectSettingsViewModel.swift */; };
+		8BF1BD842AE93DFB00C3B271 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF1BD832AE93DFB00C3B271 /* LatestInLibraryViewModel.swift */; };
+		8BF1BD852AE93DFB00C3B271 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BF1BD832AE93DFB00C3B271 /* LatestInLibraryViewModel.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
 		BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
@@ -908,6 +910,7 @@
 		6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectSettingsView.swift; sourceTree = "<group>"; };
 		6334175C287DE0D0000603CE /* QuickConnectSettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectSettingsViewModel.swift; sourceTree = "<group>"; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
+		8BF1BD832AE93DFB00C3B271 /* LatestInLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestInLibraryViewModel.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineVideoPlayerManager.swift; sourceTree = "<group>"; };
 		BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadVideoPlayerManager.swift; sourceTree = "<group>"; };
@@ -1450,6 +1453,7 @@
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
+				8BF1BD832AE93DFB00C3B271 /* LatestInLibraryViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -3290,6 +3294,7 @@
 				E1575E90293E7B1E001665B1 /* EdgeInsets.swift in Sources */,
 				E1E6C43D29AECC310064123F /* BarActionButtons.swift in Sources */,
 				E1E6C44529AECCF20064123F /* PlayNextItemActionButton.swift in Sources */,
+				8BF1BD852AE93DFB00C3B271 /* LatestInLibraryViewModel.swift in Sources */,
 				6264E88D273850380081A12A /* Strings.swift in Sources */,
 				E1C926102887565C002A7A66 /* PlayButton.swift in Sources */,
 				E1575E67293E77B5001665B1 /* OverlayType.swift in Sources */,
@@ -3619,6 +3624,7 @@
 				E1BDF2F329524C3B00CC0294 /* ChaptersActionButton.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */,
+				8BF1BD842AE93DFB00C3B271 /* LatestInLibraryViewModel.swift in Sources */,
 				E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */,
 				E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */,
 				E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */,
