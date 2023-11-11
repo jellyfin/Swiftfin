@@ -456,6 +456,7 @@
 		E17AC96F2954EE4B003D2BC2 /* DownloadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */; };
 		E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */; };
 		E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */; };
+		E17B0EA72B004ADE002A394F /* LongPressResetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17B0EA62B004ADE002A394F /* LongPressResetModifier.swift */; };
 		E17FB54F28C1197700311DFE /* SelectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB54E28C1197700311DFE /* SelectorType.swift */; };
 		E17FB55228C119D400311DFE /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */; };
@@ -1084,6 +1085,7 @@
 		E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewModel.swift; sourceTree = "<group>"; };
 		E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListCoordinator.swift; sourceTree = "<group>"; };
 		E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskButton.swift; sourceTree = "<group>"; };
+		E17B0EA62B004ADE002A394F /* LongPressResetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LongPressResetModifier.swift; sourceTree = "<group>"; };
 		E17FB54E28C1197700311DFE /* SelectorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectorType.swift; sourceTree = "<group>"; };
 		E17FB55128C119D400311DFE /* Displayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Displayable.swift; sourceTree = "<group>"; };
 		E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
@@ -2049,6 +2051,7 @@
 			children = (
 				E11CEB8A28998552003E74C7 /* iOSViewExtensions.swift */,
 				E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */,
+				E17B0EA62B004ADE002A394F /* LongPressResetModifier.swift */,
 				E113133028BDB6D600930F75 /* NavBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavBarOffset */,
 			);
@@ -3452,6 +3455,7 @@
 				62C29EA326D1030F00C1D2E7 /* ConnectToServerCoodinator.swift in Sources */,
 				E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */,
 				E18E01E1288747230022598C /* EpisodeItemContentView.swift in Sources */,
+				E17B0EA72B004ADE002A394F /* LongPressResetModifier.swift in Sources */,
 				E129429B28F4A5E300796AC6 /* PlaybackSettingsView.swift in Sources */,
 				E1E9017B28DAAE4D001B1594 /* RoundedCorner.swift in Sources */,
 				C400DB6A27FE894F007B65FE /* LiveTVChannelsView.swift in Sources */,

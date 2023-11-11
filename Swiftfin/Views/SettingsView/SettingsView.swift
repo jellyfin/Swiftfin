@@ -83,6 +83,7 @@ struct SettingsView: View {
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
 
+                // TODO: make defaults binding for current AppIcon
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector)
@@ -103,6 +104,7 @@ struct SettingsView: View {
 
             Section {
                 ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+                    .longPressReset($accentColor, to: .jellyfinPurple)
             } footer: {
                 Text(L10n.accentColorDescription)
             }

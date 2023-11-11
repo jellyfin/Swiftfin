@@ -22,6 +22,11 @@ extension View {
     func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
+    
+    /// Use within a `Form` on a setting row to reset a `Binding` to a default value on a long press
+    func longPressReset<Value>(_ binding: Binding<Value>, to value: Value) -> some View {
+        modifier(LongPressResetModifier(binding: binding, toValue: value))
+    }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         modifier(

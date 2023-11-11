@@ -30,6 +30,8 @@ struct NativeVideoPlayerSettingsView: View {
                 .valueFormatter {
                     $0.secondFormat
                 }
+                .longPressReset($resumeOffset, to: 0)
+                
             } footer: {
                 Text("Resume content seconds before the recorded resume time")
             }
