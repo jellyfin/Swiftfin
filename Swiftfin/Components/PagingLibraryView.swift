@@ -24,7 +24,6 @@ struct PagingLibraryView: View {
     private var onSelect: (BaseItemDto) -> Void
 
     var body: some View {
-//        PagingCollectionView(items: $viewModel.items,viewType: $libraryViewType, makeView: <#(LibraryViewType) -> View#>)
         PagingCollectionView(items: $viewModel.items, viewType: $libraryViewType) { item in
             switch libraryViewType {
             case .grid:

@@ -15,9 +15,9 @@ import SwiftUI
 struct PagingCollectionView: UIViewRepresentable {
     
     @Binding
-    var items: OrderedSet<BaseItemDto>
+    private var items: OrderedSet<BaseItemDto>
     @Binding
-    var viewType: LibraryViewType
+    private var viewType: LibraryViewType
     
     private var onBottom: () -> Void
     private var makeView: (BaseItemDto) -> any View
@@ -47,7 +47,7 @@ struct PagingCollectionView: UIViewRepresentable {
     
     func updateUIView(_ view: UICollectionView, context: Context) {
         context.coordinator.updateItems(with: $items)
-        context.coordinator.updateLayout(type: viewType)
+//        context.coordinator.updateLayout(type: viewType)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -227,44 +227,4 @@ class PosterButtonCell: UICollectionViewCell {
             hostingController.view.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
-    
-//    func setupHostingView(with item: BaseItemDto, type: LibraryViewType) {
-//        let newHost = makeHost(with: item, type: type)
-//        addSubview(newHost.view)
-//        
-//        NSLayoutConstraint.activate([
-//            newHost.view.topAnchor.constraint(equalTo: topAnchor),
-//            newHost.view.bottomAnchor.constraint(equalTo: bottomAnchor),
-//            newHost.view.leadingAnchor.constraint(equalTo: leadingAnchor),
-//            newHost.view.trailingAnchor.constraint(equalTo: trailingAnchor)
-//        ])
-//    }
-//    
-//    private func makePosterButton(with item: BaseItemDto, viewType: LibraryViewType, onSelect: @escaping (BaseItemDto) -> Void) -> some View {
-//        PosterButton(item: item, type: .portrait)
-//            .onSelect {
-//                onSelect(item)
-//            }
-//    }
-//    
-//    private func makeListButton(with item: BaseItemDto) -> some View {
-//        LibraryItemRow(item: item)
-//            .padding(.vertical, 5)
-//    }
-//    
-//    private func makeHost(with item: BaseItemDto, type: LibraryViewType) -> UIHostingController<AnyView> {
-//        
-//        let v: AnyView
-//        
-//        switch type {
-//        case.grid:
-//            v = AnyView(makePosterButton(with: item, viewType: type, onSelect: { _ in }))
-//        case .list:
-//            v = AnyView(makeListButton(with: item))
-//        }
-//        
-//        let hostingController = UIHostingController(rootView: v)
-//        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-//        return hostingController
-//    }
 }
