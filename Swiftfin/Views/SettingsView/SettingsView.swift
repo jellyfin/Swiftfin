@@ -66,6 +66,7 @@ struct SettingsView: View {
                     title: L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
+                .longPressReset($videoPlayerType, to: .swiftfin)
 
                 ChevronButton(title: L10n.nativePlayer)
                     .onSelect {
@@ -82,6 +83,7 @@ struct SettingsView: View {
 
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
+                    .longPressReset($appAppearance, to: .system)
 
                 // TODO: make defaults binding for current AppIcon
                 ChevronButton(title: L10n.appIcon)
