@@ -21,9 +21,7 @@ extension MediaSourceInfo {
         let streamType: StreamType
 
         if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
-            guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
-            else { throw JellyfinAPIError("Unable to construct transcoded url") }
-            playbackURL = fullTranscodeURL
+            playbackURL = userSession.client.fullURL(with: transcodingURL)
             streamType = .transcode
         } else {
 
