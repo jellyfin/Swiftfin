@@ -47,19 +47,20 @@ struct PosterButton<Item: Poster>: View {
                             .failure {
                                 InitialFailureView(item.displayTitle.initials)
                             }
-                            .posterStyle(type: type, width: itemWidth)
                     case .landscape:
                         ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
                             .failure {
                                 InitialFailureView(item.displayTitle.initials)
                             }
-                            .posterStyle(type: type, width: itemWidth)
                     }
                 }
+                .posterStyle(type)
+                .frame(width: itemWidth)
                 .overlay {
                     imageOverlay()
                         .eraseToAnyView()
-                        .posterStyle(type: type, width: itemWidth)
+                        .posterStyle(type)
+                        .frame(width: itemWidth)
                 }
             }
             .buttonStyle(.card)

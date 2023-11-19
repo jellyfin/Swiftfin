@@ -63,11 +63,11 @@ struct SettingsView: View {
 
             Section {
                 EnumPicker(
-                    title: "Video Player Type",
+                    title: L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
 
-                ChevronButton(title: "Native Player")
+                ChevronButton(title: L10n.nativePlayer)
                     .onSelect {
                         router.route(to: \.nativePlayerSettings)
                     }
@@ -83,7 +83,7 @@ struct SettingsView: View {
             Section {
                 EnumPicker(title: L10n.appearance, selection: $appAppearance)
 
-                ChevronButton(title: "App Icon")
+                ChevronButton(title: L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector)
                     }
@@ -102,9 +102,9 @@ struct SettingsView: View {
             }
 
             Section {
-                ColorPicker("Accent Color", selection: $accentColor, supportsOpacity: false)
+                ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
             } footer: {
-                Text("Some views may need an app restart to update.")
+                Text(L10n.accentColorDescription)
             }
 
             ChevronButton(title: L10n.about)
@@ -112,7 +112,7 @@ struct SettingsView: View {
                     router.route(to: \.about)
                 }
 
-            ChevronButton(title: "Logs")
+            ChevronButton(title: L10n.logs)
                 .onSelect {
                     router.route(to: \.log)
                 }

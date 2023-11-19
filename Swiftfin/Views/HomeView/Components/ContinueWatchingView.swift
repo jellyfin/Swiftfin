@@ -22,31 +22,27 @@ extension HomeView {
         var body: some View {
             PosterHStack(
                 type: .landscape,
-                items: viewModel.resumeItems.map { .item($0) }
+                items: viewModel.resumeItems
             )
             .scaleItems(1.5)
-            .contextMenu { state in
-                if case let PosterButtonType.item(item) = state {
-                    Button {
-                        viewModel.markItemPlayed(item)
-                    } label: {
-                        Label(L10n.played, systemImage: "checkmark.circle")
-                    }
+            .contextMenu { item in
+                Button {
+                    viewModel.markItemPlayed(item)
+                } label: {
+                    Label(L10n.played, systemImage: "checkmark.circle")
+                }
 
-                    Button(role: .destructive) {
-                        viewModel.markItemUnplayed(item)
-                    } label: {
-                        Label(L10n.unplayed, systemImage: "minus.circle")
-                    }
+                Button(role: .destructive) {
+                    viewModel.markItemUnplayed(item)
+                } label: {
+                    Label(L10n.unplayed, systemImage: "minus.circle")
                 }
             }
-            .imageOverlay { state in
-                if case let PosterButtonType.item(item) = state {
-                    LandscapePosterProgressBar(
-                        title: item.progressLabel ?? L10n.continue,
-                        progress: (item.userData?.playedPercentage ?? 0) / 100
-                    )
-                }
+            .imageOverlay { item in
+                LandscapePosterProgressBar(
+                    title: item.progressLabel ?? L10n.continue,
+                    progress: (item.userData?.playedPercentage ?? 0) / 100
+                )
             }
             .onSelect { item in
                 router.route(to: \.item, item)

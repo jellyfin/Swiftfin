@@ -51,11 +51,11 @@ struct FilterDrawerButtonSelectorView: View {
                 .onMove(perform: move)
 
                 if _selectedButtons.isEmpty {
-                    Text("None")
+                    Text(L10n.none)
                         .foregroundColor(.secondary)
                 }
             } header: {
-                Text("Enabled")
+                Text(L10n.enabled)
             }
 
             Section {
@@ -80,11 +80,11 @@ struct FilterDrawerButtonSelectorView: View {
                 }
 
                 if disabledButtons.isEmpty {
-                    Text("None")
+                    Text(L10n.none)
                         .foregroundColor(.secondary)
                 }
             } header: {
-                Text("Disabled")
+                Text(L10n.disabled)
             }
         }
         .animation(.linear(duration: 0.2), value: _selectedButtons)

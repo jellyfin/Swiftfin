@@ -25,7 +25,8 @@ extension CastAndCrewLibraryView {
             } label: {
                 HStack(alignment: .bottom) {
                     ImageView(person.portraitPosterImageSource(maxWidth: 60))
-                        .posterStyle(type: .portrait, width: 60)
+                        .posterStyle(.portrait)
+                        .frame(width: 60)
 
                     VStack(alignment: .leading) {
                         Text(person.displayTitle)

@@ -31,7 +31,7 @@ extension Array {
     }
 
     func oneSatisfies(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-        try first(where: predicate) != nil
+        try contains(where: predicate)
     }
 
     func prepending(_ element: Element) -> [Element] {

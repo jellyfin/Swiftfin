@@ -23,8 +23,8 @@ extension HomeView {
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
 
-        private var items: [PosterButtonType<BaseItemDto>] {
-            viewModel.items.prefix(20).asArray.map { .item($0) }
+        private var items: [BaseItemDto] {
+            viewModel.items.prefix(20).asArray
         }
 
         var body: some View {
@@ -39,13 +39,11 @@ extension HomeView {
                         router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
                     }
             }
-            .contextMenu { state in
-                if case let PosterButtonType.item(item) = state {
-                    Button {
-                        viewModel.markPlayed(item: item)
-                    } label: {
-                        Label(L10n.played, systemImage: "checkmark.circle")
-                    }
+            .contextMenu { item in
+                Button {
+                    viewModel.markPlayed(item: item)
+                } label: {
+                    Label(L10n.played, systemImage: "checkmark.circle")
                 }
             }
             .onSelect { item in

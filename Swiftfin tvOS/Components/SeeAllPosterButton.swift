@@ -29,7 +29,8 @@ struct SeeAllPosterButton: View {
                         .font(.title3)
                 }
             }
-            .posterStyle(type: type, width: type.width)
+            .posterStyle(type)
+            .frame(width: type.width)
         }
         .buttonStyle(.card)
     }

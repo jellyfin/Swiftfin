@@ -93,7 +93,8 @@ extension MediaView {
                         }
                     }
                 }
-                .posterStyle(type: .landscape, width: itemWidth)
+                .posterStyle(.landscape)
+                .frame(width: itemWidth)
             }
             .buttonStyle(.card)
         }

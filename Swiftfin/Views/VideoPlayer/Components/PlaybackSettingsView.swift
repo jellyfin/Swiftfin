@@ -45,7 +45,7 @@ struct PlaybackSettingsView: View {
             }
 
             BasicStepper(
-                title: "Audio Offset",
+                title: L10n.audioOffset,
                 value: _audioOffset.wrappedValue,
                 range: -30000 ... 30000,
                 step: 100
@@ -55,7 +55,7 @@ struct PlaybackSettingsView: View {
             }
 
             BasicStepper(
-                title: "Subtitle Offset",
+                title: L10n.subtitleOffset,
                 value: _subtitleOffset.wrappedValue,
                 range: -30000 ... 30000,
                 step: 100
@@ -65,7 +65,7 @@ struct PlaybackSettingsView: View {
             }
 
             if !viewModel.videoStreams.isEmpty {
-                Section("Video") {
+                Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -76,7 +76,7 @@ struct PlaybackSettingsView: View {
             }
 
             if !viewModel.audioStreams.isEmpty {
-                Section("Audio") {
+                Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -87,7 +87,7 @@ struct PlaybackSettingsView: View {
             }
 
             if !viewModel.subtitleStreams.isEmpty {
-                Section("Subtitle") {
+                Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -97,7 +97,7 @@ struct PlaybackSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Playback")
+        .navigationTitle(L10n.playback)
         .navigationBarTitleDisplayMode(.inline)
         .navigationCloseButton {
             splitContentViewProxy.hide()
