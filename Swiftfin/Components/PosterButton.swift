@@ -52,12 +52,12 @@ struct PosterButton<Item: Poster>: View {
                     
                     poster(from: item)
                 }
-                    .posterStyle(type)
-                    .overlay {
-                        imageOverlay(item)
-                            .eraseToAnyView()
-                            .posterStyle(type)
-                    }
+                .posterStyle(type)
+                .overlay {
+                    imageOverlay(item)
+                        .eraseToAnyView()
+                        .posterStyle(type)
+                }
             }
             .contextMenu(menuItems: {
                 contextMenu(item)
@@ -81,7 +81,7 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            content: { DefaultContentView(item: $0) },
+            content: { TitleSubtitleContentView(item: $0) },
             imageOverlay: { DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             onSelect: {},
@@ -109,38 +109,54 @@ extension PosterButton {
 extension PosterButton {
 
     // MARK: Default Content
-
-    struct DefaultContentView: View {
-
+    
+    struct TitleContentView: View {
+        
         let item: Item
-
-        @ViewBuilder
-        private var title: some View {
-            if item.showTitle {
-                Text(item.displayTitle)
-                    .font(.footnote.weight(.regular))
-                    .foregroundColor(.primary)
-                    .lineLimit(1)
-            }
+        
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
         }
+    }
+    
+    struct SubtitleContentView: View {
+        
+        let item: Item
+        
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
 
-        @ViewBuilder
-        private var subtitle: some View {
-            if let subtitle = item.subtitle {
-                Text(subtitle)
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            } else {
-                EmptyView()
-            }
+    struct TitleSubtitleContentView: View {
+
+        private let item: Item
+        private let titleLineLimit: Int
+        private let subtitleLineLimit: Int
+        
+        init(
+            item: Item,
+            titleLineLimit: Int = 1,
+            subtitleLineLimit: Int = 1
+        ) {
+            self.titleLineLimit = titleLineLimit
+            self.subtitleLineLimit = subtitleLineLimit
+            self.item = item
         }
 
         var body: some View {
             VStack(alignment: .leading) {
-                title
+                if item.showTitle {
+                    TitleContentView(item: item)
+                        .reservingSpaceLineLimit(titleLineLimit)
+                }
 
-                subtitle
+                SubtitleContentView(item: item)
+                    .reservingSpaceLineLimit(subtitleLineLimit)
             }
         }
     }

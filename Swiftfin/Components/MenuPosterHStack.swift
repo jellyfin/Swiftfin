@@ -15,7 +15,6 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
     private var manager: Model
 
     private let type: PosterType
-    private var itemScale: CGFloat
     private let singleImage: Bool
     private var content: (Model.Item) -> any View
     private var imageOverlay: (Model.Item) -> any View
@@ -65,7 +64,6 @@ struct MenuPosterHStack<Model: MenuPosterHStackModel>: View {
         .header {
             selectorMenu
         }
-        .scaleItems(itemScale)
         .content(content)
         .imageOverlay(imageOverlay)
         .contextMenu(contextMenu)
@@ -85,7 +83,6 @@ extension MenuPosterHStack {
         self.init(
             manager: manager,
             type: type,
-            itemScale: 1,
             singleImage: singleImage,
             content: { _ in EmptyView() },
             imageOverlay: { _ in EmptyView() },
@@ -96,10 +93,6 @@ extension MenuPosterHStack {
 }
 
 extension MenuPosterHStack {
-
-    func scaleItems(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
-    }
 
     func content(@ViewBuilder _ content: @escaping (Model.Item) -> any View) -> Self {
         copy(modifying: \.content, with: content)

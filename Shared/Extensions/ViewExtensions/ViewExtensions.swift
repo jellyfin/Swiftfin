@@ -65,12 +65,12 @@ extension View {
     func posterStyle(_ type: PosterType) -> some View {
         switch type {
         case .portrait:
-            aspectRatio(2 / 3, contentMode: .fit)
+            aspectRatio(2 / 3, contentMode: .fill)
             #if !os(tvOS)
                 .cornerRadius(ratio: 0.0375, of: \.width)
             #endif
         case .landscape:
-            aspectRatio(1.77, contentMode: .fit)
+            aspectRatio(1.77, contentMode: .fill)
             #if !os(tvOS)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
             #endif
@@ -216,5 +216,14 @@ extension View {
 
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
         modifier(ScenePhaseChangeModifier(phase: phase, action: action))
+    }
+    
+    func reservingSpaceLineLimit(_ number: Int) -> some View {
+        ZStack(alignment: .top) {
+            Text(String(repeating: "\n", count: number - 1))
+            
+            self
+                .lineLimit(number)
+        }
     }
 }

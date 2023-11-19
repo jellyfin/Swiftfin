@@ -24,6 +24,8 @@ struct ImageSource: Hashable {
     }
 }
 
+private let imagePipeline = ImagePipeline(configuration: .withDataCache)
+
 struct ImageView: View {
 
     @State
@@ -45,7 +47,7 @@ struct ImageView: View {
 
     var body: some View {
         if let currentSource = sources.first {
-            LazyImage(url: currentSource.url) { state in
+            LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
@@ -59,6 +61,7 @@ struct ImageView: View {
                         }
                 }
             }
+            .pipeline(imagePipeline)
 //            .pipeline(ImagePipeline(configuration: .withDataCache))
         } else {
             failure()

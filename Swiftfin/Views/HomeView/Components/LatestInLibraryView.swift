@@ -6,8 +6,10 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CongruentScrollingHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension HomeView {
@@ -22,26 +24,41 @@ extension HomeView {
 
         @ObservedObject
         var viewModel: LibraryViewModel
-
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
+        
+        @State
+        private var prefixedItems: OrderedSet<BaseItemDto> = []
 
         var body: some View {
-            PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                type: latestInLibraryPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
+            CongruentScrollingHStack(
+                items: $viewModel.items,
+                columns: 3,
+                scrollBehavior: .continuousLeadingEdge
+            ) { item in
+                PosterButton(item: item, type: .portrait)
                     .onSelect {
-                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                        router.route(to: \.item, item)
                     }
             }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            .onChange(of: viewModel.items) { newValue in
+                prefixedItems.elements = newValue
+                    .prefix(20)
+                    .asArray
             }
+            
+//            PosterHStack(
+//                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+//                type: latestInLibraryPosterType,
+//                items: items
+//            )
+//            .trailing {
+//                SeeAllButton()
+//                    .onSelect {
+//                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+//                    }
+//            }
+//            .onSelect { item in
+//                router.route(to: \.item, item)
+//            }
         }
     }
 }

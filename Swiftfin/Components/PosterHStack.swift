@@ -6,6 +6,8 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CongruentScrollingHStack
+import OrderedCollections
 import SwiftUI
 
 // TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
@@ -17,7 +19,6 @@ struct PosterHStack<Item: Poster>: View {
     private var type: PosterType
     private var items: [Item]
     private var singleImage: Bool
-    private var itemScale: CGFloat
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -40,27 +41,42 @@ struct PosterHStack<Item: Poster>: View {
             .if(UIDevice.isIPad) { view in
                 view.padding(.horizontal)
             }
+            
+            CongruentScrollingHStack(
+                items: .constant(OrderedSet(items)),
+                columns: type == .portrait ? 3.2 : 2,
+                scrollBehavior: .continuousLeadingEdge
+            ) { item in
+                    PosterButton(
+                        item: item,
+                        type: type,
+                        singleImage: singleImage
+                    )
+                    .content { content($0).eraseToAnyView() }
+                    .imageOverlay { imageOverlay($0).eraseToAnyView() }
+                    .contextMenu { contextMenu($0).eraseToAnyView() }
+                    .onSelect { onSelect(item) }
+                }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 15) {
-                    ForEach(items, id: \.self) { item in
-                        PosterButton(
-                            item: item,
-                            type: type,
-                            singleImage: singleImage
-                        )
-//                        .scaleItem(itemScale)
-                        .content { content($0).eraseToAnyView() }
-                        .imageOverlay { imageOverlay($0).eraseToAnyView() }
-                        .contextMenu { contextMenu($0).eraseToAnyView() }
-                        .onSelect { onSelect(item) }
-                    }
-                }
-                .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
-            }
+//            ScrollView(.horizontal, showsIndicators: false) {
+//                HStack(alignment: .top, spacing: 15) {
+//                    ForEach(items, id: \.self) { item in
+//                        PosterButton(
+//                            item: item,
+//                            type: type,
+//                            singleImage: singleImage
+//                        )
+//                        .content { content($0).eraseToAnyView() }
+//                        .imageOverlay { imageOverlay($0).eraseToAnyView() }
+//                        .contextMenu { contextMenu($0).eraseToAnyView() }
+//                        .onSelect { onSelect(item) }
+//                    }
+//                }
+//                .padding(.horizontal)
+//                .if(UIDevice.isIPad) { view in
+//                    view.padding(.horizontal)
+//                }
+//            }
         }
     }
 }
@@ -79,8 +95,7 @@ extension PosterHStack {
             type: type,
             items: items,
             singleImage: singleImage,
-            itemScale: 1,
-            content: { PosterButton.DefaultContentView(item: $0) },
+            content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -99,8 +114,7 @@ extension PosterHStack {
             type: type,
             items: items,
             singleImage: singleImage,
-            itemScale: 1,
-            content: { PosterButton.DefaultContentView(item: $0) },
+            content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -110,10 +124,6 @@ extension PosterHStack {
 
     func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
-    }
-
-    func scaleItems(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

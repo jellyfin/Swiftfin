@@ -11,6 +11,7 @@ import CoreStore
 import Factory
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
 final class HomeViewModel: ViewModel {
@@ -24,7 +25,7 @@ final class HomeViewModel: ViewModel {
     @Published
     var libraries: [BaseItemDto] = []
     @Published
-    var resumeItems: [BaseItemDto] = []
+    var resumeItems: OrderedSet<BaseItemDto> = []
 
     override init() {
         super.init()
@@ -137,7 +138,7 @@ final class HomeViewModel: ViewModel {
             guard let items = response.value.items else { return }
 
             await MainActor.run {
-                resumeItems = items
+                resumeItems.append(contentsOf: items)
             }
         }
     }

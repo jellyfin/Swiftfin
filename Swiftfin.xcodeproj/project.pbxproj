@@ -577,6 +577,7 @@
 		E1A42E4C28CBD39300A14DCB /* HomeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4B28CBD39300A14DCB /* HomeContentView.swift */; };
 		E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */; };
 		E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */; };
+		E1A709DA2B08BBAE00684540 /* CongruentScrollingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1A709D92B08BBAE00684540 /* CongruentScrollingHStack */; };
 		E1AA331D2782541500F6439C /* PrimaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331C2782541500F6439C /* PrimaryButton.swift */; };
 		E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AA331E2782639D00F6439C /* OverlayType.swift */; };
 		E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDto.swift */; };
@@ -735,6 +736,7 @@
 		E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A628C29B720021BC93 /* ProgressBar.swift */; };
 		E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
+		E1FE7A7C2B09B7C700F061B8 /* CongruentScrollingHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1FE7A7B2B09B7C700F061B8 /* CongruentScrollingHStack */; };
 		E43918662AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
 		E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
 /* End PBXBuildFile section */
@@ -1353,6 +1355,7 @@
 				62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */,
 				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
 				E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */,
+				E1A709DA2B08BBAE00684540 /* CongruentScrollingHStack in Frameworks */,
 				62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */,
 				E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */,
 				E10706102942F57D00646DAF /* Pulse in Frameworks */,
@@ -1373,6 +1376,7 @@
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
+				E1FE7A7C2B09B7C700F061B8 /* CongruentScrollingHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
 				E1B2AB9928808E150072B3B9 /* GoogleCast.xcframework in Frameworks */,
@@ -2896,6 +2900,8 @@
 				E1DC9820296DDBE600982F06 /* CollectionView */,
 				E1FAD1C52A0375BA007F5521 /* UDPBroadcast */,
 				E14CB6852A9FF62A001586C6 /* JellyfinAPI */,
+				E1A709D92B08BBAE00684540 /* CongruentScrollingHStack */,
+				E1FE7A7B2B09B7C700F061B8 /* CongruentScrollingHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -2964,6 +2970,7 @@
 				E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */,
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
+				E1FE7A7A2B09B7C700F061B8 /* XCRemoteSwiftPackageReference "CongruentScrollingHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4022,7 +4029,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4036,7 +4043,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4060,7 +4067,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4074,7 +4081,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4262,6 +4269,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		E1FE7A7A2B09B7C700F061B8 /* XCRemoteSwiftPackageReference "CongruentScrollingHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CongruentScrollingHStack";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4440,6 +4455,10 @@
 			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
 			productName = BlurHashKit;
 		};
+		E1A709D92B08BBAE00684540 /* CongruentScrollingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CongruentScrollingHStack;
+		};
 		E1B5F7A629577BCE004B26CF /* Pulse */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */;
@@ -4478,6 +4497,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
 			productName = UDPBroadcast;
+		};
+		E1FE7A7B2B09B7C700F061B8 /* CongruentScrollingHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1FE7A7A2B09B7C700F061B8 /* XCRemoteSwiftPackageReference "CongruentScrollingHStack" */;
+			productName = CongruentScrollingHStack;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

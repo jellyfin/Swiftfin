@@ -10,8 +10,6 @@ import OrderedCollections
 import JellyfinAPI
 import SwiftUI
 
-// TODO: find cleaner way to pass all of the button extensions?
-
 struct PagingCollectionView: UIViewRepresentable {
     
     @Binding
@@ -47,7 +45,7 @@ struct PagingCollectionView: UIViewRepresentable {
     
     func updateUIView(_ view: UICollectionView, context: Context) {
         context.coordinator.updateItems(with: $items)
-//        context.coordinator.updateLayout(type: viewType)
+        context.coordinator.updateLayout(type: viewType)
     }
     
     func makeCoordinator() -> Coordinator {
@@ -84,7 +82,7 @@ struct PagingCollectionView: UIViewRepresentable {
         }
         
         func configureDataSource() {
-            let cellRegistration = UICollectionView.CellRegistration<PosterButtonCell, BaseItemDto> { cell, indexPath, item in
+            let cellRegistration = UICollectionView.CellRegistration<HostingCollectionViewCell, BaseItemDto> { cell, indexPath, item in
                 cell.setupHostingView(with: self.makeView(item))
             }
             
@@ -99,8 +97,6 @@ struct PagingCollectionView: UIViewRepresentable {
         
         // TODO: new vs old state checking
         func updateItems(with newItems: Binding<OrderedSet<BaseItemDto>>) {
-            
-            print("Updating snapshot.")
             
             guard items.wrappedValue.count != newItems.wrappedValue.count else { return }
             items = newItems
@@ -132,7 +128,8 @@ struct PagingCollectionView: UIViewRepresentable {
             
             let layout = layout(for: type)
             
-            // stay at top when transitioning between the layouts while at the top since the cells have different heights
+            // stay at top when transitioning between the layouts while at the top since 
+            // a change in cells may cause a new offset with new heights
             let isAtTop = collectionView.contentOffset.y <= -collectionView.adjustedContentInset.top
             
             collectionView.setCollectionViewLayout(layout, animated: false) { _ in
@@ -145,7 +142,7 @@ struct PagingCollectionView: UIViewRepresentable {
         func layout(for type: LibraryViewType) -> UICollectionViewLayout {
             switch type {
             case .grid:
-                return UICollectionViewCompositionalLayout(sectionProvider: landscapePosterLayoutProvider(index:layoutEnvironment:))
+                return UICollectionViewCompositionalLayout(sectionProvider: posterLayoutProvider(index:layoutEnvironment:))
             case .list:
                 return UICollectionViewCompositionalLayout(sectionProvider: listLayoutProvider(index:layoutEnvironment:))
             }
@@ -157,15 +154,14 @@ struct PagingCollectionView: UIViewRepresentable {
             return layout
         }
         
-        private func landscapePosterLayoutProvider(index: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
+        private func posterLayoutProvider(index: Int, layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
             
             let minWidth: CGFloat
             
             // TODO: potential for reading accessibility settings and making items bigger
-            // TODO: make bigger for larger frames
             switch viewType {
             case .grid:
-                minWidth = 150
+                minWidth = 120
             default:
                 minWidth = 180
             }
@@ -190,7 +186,7 @@ struct PagingCollectionView: UIViewRepresentable {
             group.interItemSpacing = NSCollectionLayoutSpacing.fixed(10)
 
             let section = NSCollectionLayoutSection(group: group)
-            section.interGroupSpacing = 5
+            section.interGroupSpacing = 10
             section.contentInsets = .init(constant: 10)
             
             return section
@@ -205,7 +201,7 @@ extension PagingCollectionView {
     }
 }
 
-class PosterButtonCell: UICollectionViewCell {
+class HostingCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
