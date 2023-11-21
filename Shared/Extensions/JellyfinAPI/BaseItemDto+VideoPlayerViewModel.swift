@@ -55,7 +55,7 @@ extension BaseItemDto {
         let tempOverkillBitrate = 360_000_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
         var profile = builder.buildProfile()
-        if(Defaults[.Experimental.liveTVForceDirectPlay]) {
+        if Defaults[.Experimental.liveTVForceDirectPlay] {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
         }
 
@@ -75,7 +75,7 @@ extension BaseItemDto {
 
         let response = try await userSession.client.send(request)
         NSLog("liveVideoPlayerViewModel response received")
-        
+
         var matchingMediaSource: MediaSourceInfo?
         if let responseMediaSources = response.value.mediaSources {
             for responseMediaSource in responseMediaSources {
