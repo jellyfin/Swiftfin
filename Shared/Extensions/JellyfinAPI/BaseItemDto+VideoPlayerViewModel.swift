@@ -54,7 +54,10 @@ extension BaseItemDto {
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
         builder.setMaxBitrate(bitrate: tempOverkillBitrate)
-        let profile = builder.buildProfile()
+        var profile = builder.buildProfile()
+        if(Defaults[.Experimental.liveTVForceDirectPlay]) {
+            profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
+        }
 
         let userSession = Container.userSession.callAsFunction()
 

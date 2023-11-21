@@ -72,8 +72,10 @@ extension MediaSourceInfo {
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
+        } else if self.isSupportsDirectPlay ?? false, let path = self.path, let playbackUrl = URL(string: path) {
+            playbackURL = playbackUrl
+            streamType = .direct
         } else {
-
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
                 tag: item.etag,
