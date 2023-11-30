@@ -56,11 +56,12 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
 
     var _orientations: UIInterfaceOrientationMask = .allButUpsideDown {
         didSet {
-            print("didset orientations: \(_orientations)")
             if #available(iOS 16.0, *) {
-//                setNeedsUpdateOfSupportedInterfaceOrientations()
+                setNeedsUpdateOfSupportedInterfaceOrientations()
+                
             } else {
                 // Fallback on earlier versions
+                Self.attemptRotationToDeviceOrientation()
             }
 //            if _orientations == .landscape {
 //                let value = UIInterfaceOrientation.landscapeRight.rawValue

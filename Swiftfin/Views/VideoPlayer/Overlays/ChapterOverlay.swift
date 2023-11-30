@@ -67,7 +67,7 @@ extension VideoPlayer.Overlay {
                 }
                 .padding(.leading, safeAreaInsets.leading)
                 .padding(.trailing, safeAreaInsets.trailing)
-                .if(UIDevice.isIPad) { view in
+                .if(UIDevice.isPad) { view in
                     view.padding(.horizontal)
                 }
 
@@ -117,7 +117,7 @@ extension VideoPlayer.Overlay {
                         .padding(.leading, safeAreaInsets.leading)
                         .padding(.trailing, safeAreaInsets.trailing)
                         .padding(.bottom)
-                        .if(UIDevice.isIPad) { view in
+                        .if(UIDevice.isPad) { view in
                             view.padding(.horizontal)
                         }
                     }

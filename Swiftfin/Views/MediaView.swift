@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import CollectionView
 import Defaults
 import Factory
@@ -22,22 +23,22 @@ struct MediaView: View {
     var viewModel: MediaViewModel
 
     var body: some View {
-        PagingCollectionView(items: $viewModel.libraries, viewType: .constant(.grid)) { item in
-            LibraryCard(item: item)
+        CollectionVGrid($viewModel.libraries, layout: .minWidth(120)) { library in
+            LibraryCard(item: library)
                 .onSelect {
-                    switch item.collectionType {
+                    switch library.collectionType {
                     case "downloads":
                         router.route(to: \.downloads)
                     case "favorites":
-                        router.route(to: \.library, .init(parent: item, type: .library, filters: .favorites))
+                        router.route(to: \.library, .init(parent: library, type: .library, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+                        router.route(to: \.library, .init(parent: library, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
-                    }
+                        router.route(to: \.library, .init(parent: library, type: .library, filters: .init()))
                 }
+            }
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
@@ -48,24 +49,44 @@ struct MediaView: View {
                 }
             }
         }
+        
+        
+//        PagingCollectionView(items: $viewModel.libraries, viewType: .constant(.grid)) { item in
+//            LibraryCard(item: item)
+//                .onSelect {
+//                    switch item.collectionType {
+//                    case "downloads":
+//                        router.route(to: \.downloads)
+//                    case "favorites":
+//                        router.route(to: \.library, .init(parent: item, type: .library, filters: .favorites))
+//                    case "folders":
+//                        router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+//                    case "liveTV":
+//                        router.route(to: \.liveTV)
+//                    default:
+//                        router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
+//                    }
+//                }
+//        }
+
     }
 }
 
 extension MediaView {
-    
+
     struct LibraryCard: View {
-        
+
         @State
         private var imageSources: [ImageSource]
-        
+
         let item: BaseItemDto
         private var onSelect: () -> Void
-        
+
         init(item: BaseItemDto) {
             self._imageSources = .init(initialValue: [])
             self.item = item
-            self.onSelect = { }
-            
+            self.onSelect = {}
+
             if item.collectionType == "favorites" {
                 getRandomItemImageSource(with: [.isFavorite])
             } else if item.collectionType == "downloads" {
@@ -76,12 +97,12 @@ extension MediaView {
                 getRandomItemImageSource(with: nil)
             }
         }
-        
+
         private func getRandomItemImageSource(with filters: [ItemFilter]?) {
             Task {
-                
+
                 let userSession = Container.userSession.callAsFunction()
-                
+
                 let parameters = Paths.GetItemsParameters(
                     userID: userSession.user.id,
                     limit: 1,
@@ -101,7 +122,7 @@ extension MediaView {
                 }
             }
         }
-        
+
         var body: some View {
             Button {
                 onSelect()

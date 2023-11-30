@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import Factory
 import Foundation
+import OrderedCollections
 import JellyfinAPI
 
 final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
@@ -17,7 +18,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     @Published
     var menuSelection: BaseItemDto?
     @Published
-    var menuSections: [BaseItemDto: [BaseItemDto]]
+    var currentItems: OrderedSet<BaseItemDto> = []
+    
+    var menuSections: [BaseItemDto: OrderedSet<BaseItemDto>]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
@@ -116,10 +119,18 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     func select(section: BaseItemDto) {
         self.menuSelection = section
-
-        if !menuSections.keys.contains(section) {
+        
+        if let items = menuSections[section] {
+            currentItems = items
+        } else {
             getEpisodesForSeason(section)
         }
+
+//        if !menuSections.keys.contains(section) {
+//            
+//        } else {
+//            
+//        }
     }
 
     private func getSeasons() {
@@ -142,6 +153,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         }
     }
 
+    // TODO: implement lazy loading
     private func getEpisodesForSeason(_ season: BaseItemDto) {
         Task {
             let parameters = Paths.GetEpisodesParameters(
@@ -156,7 +168,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
             await MainActor.run {
                 if let items = response.value.items {
-                    self.menuSections[season] = items
+                    let newItems = OrderedSet(items)
+                    self.menuSections[season] = newItems
+                    self.currentItems = newItems
                 }
             }
         }

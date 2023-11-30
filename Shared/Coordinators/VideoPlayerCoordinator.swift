@@ -37,13 +37,11 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                     NativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
-            .overrideViewPreference(.dark)
+            .preferredColorScheme(.dark)
+            .supportedOrientations(.landscape)
         }
         .ignoresSafeArea()
         .hideSystemOverlays()
-        .onAppear {
-            AppDelegate.enterPlaybackOrientation()
-        }
 
         #else
 

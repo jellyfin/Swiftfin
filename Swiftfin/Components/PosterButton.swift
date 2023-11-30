@@ -49,7 +49,7 @@ struct PosterButton<Item: Poster>: View {
             } label: {
                 ZStack {
                     Color.clear
-                    
+
                     poster(from: item)
                 }
                 .posterStyle(type)
@@ -109,22 +109,22 @@ extension PosterButton {
 extension PosterButton {
 
     // MARK: Default Content
-    
+
     struct TitleContentView: View {
-        
+
         let item: Item
-        
+
         var body: some View {
             Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
                 .foregroundColor(.primary)
         }
     }
-    
+
     struct SubtitleContentView: View {
-        
+
         let item: Item
-        
+
         var body: some View {
             Text(item.subtitle ?? "")
                 .font(.caption.weight(.medium))
@@ -137,7 +137,7 @@ extension PosterButton {
         private let item: Item
         private let titleLineLimit: Int
         private let subtitleLineLimit: Int
-        
+
         init(
             item: Item,
             titleLineLimit: Int = 1,
@@ -153,10 +153,10 @@ extension PosterButton {
                 if item.showTitle {
                     TitleContentView(item: item)
                         .reservingSpaceLineLimit(titleLineLimit)
+                    
+                    SubtitleContentView(item: item)
+                        .reservingSpaceLineLimit(subtitleLineLimit)
                 }
-
-                SubtitleContentView(item: item)
-                    .reservingSpaceLineLimit(subtitleLineLimit)
             }
         }
     }

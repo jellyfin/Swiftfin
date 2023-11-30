@@ -21,7 +21,7 @@ struct PillHStack<Item: Displayable>: View {
                 .fontWeight(.semibold)
                 .accessibility(addTraits: [.isHeader])
                 .padding(.leading)
-                .if(UIDevice.isIPad) { view in
+                .if(UIDevice.isPad) { view in
                     view.padding(.leading)
                 }
 
@@ -44,7 +44,7 @@ struct PillHStack<Item: Displayable>: View {
                     }
                 }
                 .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
+                .if(UIDevice.isPad) { view in
                     view.padding(.horizontal)
                 }
             }

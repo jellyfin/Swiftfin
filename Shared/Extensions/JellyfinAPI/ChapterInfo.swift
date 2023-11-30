@@ -32,7 +32,7 @@ extension ChapterInfo {
 extension ChapterInfo {
 
     struct FullInfo: Poster {
-        
+
         var id: Int {
             chapterInfo.hashValue
         }

@@ -38,6 +38,7 @@ extension UIViewController {
         Swizzle(UIViewController.self) {
             #selector(getter: childForScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
             #selector(getter: childForHomeIndicatorAutoHidden) <-> #selector(swizzled_childForHomeIndicatorAutoHidden)
+            #selector(getter: supportedInterfaceOrientations) <-> #selector(swizzled_supportedInterfaceOrientations)
         }
     }()
 }
@@ -46,21 +47,24 @@ extension UIViewController {
     @objc
     func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
         if self is PreferenceUIHostingController {
-            // dont continue searching
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
     }
 
     @objc
     func swizzled_childForHomeIndicatorAutoHidden() -> UIViewController? {
         if self is PreferenceUIHostingController {
-            // dont continue searching
-            return nil
+            nil
         } else {
-            return search()
+            search()
         }
+    }
+    
+    @objc
+    func swizzled_supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
+        search()?.supportedInterfaceOrientations ?? .all
     }
 
     private func search() -> PreferenceUIHostingController? {

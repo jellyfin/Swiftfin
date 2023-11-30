@@ -31,6 +31,7 @@ struct PlaybackSpeedKey: EnvironmentKey {
     static let defaultValue: Binding<Float> = .constant(1)
 }
 
+// TODO: remove, this doesn't actually give us anything useful
 struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
         UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero

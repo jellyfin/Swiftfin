@@ -6,7 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CongruentScrollingHStack
+import CollectionHStack
 import OrderedCollections
 import SwiftUI
 
@@ -17,7 +17,7 @@ struct PosterHStack<Item: Poster>: View {
     private var header: () -> any View
     private var title: String?
     private var type: PosterType
-    private var items: [Item]
+    private var items: Binding<OrderedSet<Item>>
     private var singleImage: Bool
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
@@ -37,46 +37,27 @@ struct PosterHStack<Item: Poster>: View {
                 trailingContent()
                     .eraseToAnyView()
             }
-            .padding(.horizontal)
-            .if(UIDevice.isIPad) { view in
-                view.padding(.horizontal)
-            }
-            
-            CongruentScrollingHStack(
-                items: .constant(OrderedSet(items)),
-                columns: type == .portrait ? 3.2 : 2,
-                scrollBehavior: .continuousLeadingEdge
-            ) { item in
-                    PosterButton(
-                        item: item,
-                        type: type,
-                        singleImage: singleImage
-                    )
-                    .content { content($0).eraseToAnyView() }
-                    .imageOverlay { imageOverlay($0).eraseToAnyView() }
-                    .contextMenu { contextMenu($0).eraseToAnyView() }
-                    .onSelect { onSelect(item) }
-                }
+            .padding(.horizontal, 16)
 
-//            ScrollView(.horizontal, showsIndicators: false) {
-//                HStack(alignment: .top, spacing: 15) {
-//                    ForEach(items, id: \.self) { item in
-//                        PosterButton(
-//                            item: item,
-//                            type: type,
-//                            singleImage: singleImage
-//                        )
-//                        .content { content($0).eraseToAnyView() }
-//                        .imageOverlay { imageOverlay($0).eraseToAnyView() }
-//                        .contextMenu { contextMenu($0).eraseToAnyView() }
-//                        .onSelect { onSelect(item) }
-//                    }
-//                }
-//                .padding(.horizontal)
-//                .if(UIDevice.isIPad) { view in
-//                    view.padding(.horizontal)
-//                }
-//            }
+            CollectionHStack(
+                items,
+                columns: type == .portrait ? 3 : 2
+            ) { item in
+                PosterButton(
+                    item: item,
+                    type: type,
+                    singleImage: singleImage
+                )
+                .content { content($0).eraseToAnyView() }
+                .imageOverlay { imageOverlay($0).eraseToAnyView() }
+                .contextMenu { contextMenu($0).eraseToAnyView() }
+                .onSelect { onSelect(item) }
+            }
+            .clipsToBounds(false)
+            .dataPrefix(20)
+            .horizontalInset(16)
+            .itemSpacing(8)
+            .scrollBehavior(.continuousLeadingEdge)
         }
     }
 }
@@ -84,9 +65,9 @@ struct PosterHStack<Item: Poster>: View {
 extension PosterHStack {
 
     init(
-        title: String,
+        title: String? = nil,
         type: PosterType,
-        items: [Item],
+        items: Binding<OrderedSet<Item>>,
         singleImage: Bool = false
     ) {
         self.init(
@@ -102,23 +83,18 @@ extension PosterHStack {
             onSelect: { _ in }
         )
     }
-
-    init(
+    
+    init<S: Sequence<Item>>(
+        title: String? = nil,
         type: PosterType,
-        items: [Item],
+        items: S,
         singleImage: Bool = false
     ) {
         self.init(
-            header: { DefaultHeader(title: nil) },
-            title: nil,
+            title: title,
             type: type,
-            items: items,
-            singleImage: singleImage,
-            content: { PosterButton.TitleSubtitleContentView(item: $0) },
-            imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
-            contextMenu: { _ in EmptyView() },
-            trailingContent: { EmptyView() },
-            onSelect: { _ in }
+            items: .constant(OrderedSet(items)),
+            singleImage: singleImage
         )
     }
 

@@ -6,16 +6,18 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import OrderedCollections
 import Foundation
 
 // TODO: Don't be specific to Poster, allow other types
+// TODO: remove
 
 protocol MenuPosterHStackModel: ObservableObject {
     associatedtype Section: Hashable, Displayable
     associatedtype Item: Poster
 
     var menuSelection: Section? { get }
-    var menuSections: [Section: [Item]] { get set }
+    var menuSections: [Section: OrderedSet<Item>] { get set }
     var menuSectionSort: (Section, Section) -> Bool { get }
 
     func select(section: Section)

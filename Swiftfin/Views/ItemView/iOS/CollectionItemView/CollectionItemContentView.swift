@@ -40,14 +40,14 @@ extension CollectionItemView {
 
                 // MARK: Items
 
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.collectionItems
-                )
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
+//                PosterHStack(
+//                    title: L10n.items,
+//                    type: .portrait,
+//                    items: viewModel.collectionItems
+//                )
+//                .onSelect { item in
+//                    router.route(to: \.item, item)
+//                }
             }
         }
     }

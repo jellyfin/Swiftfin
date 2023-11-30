@@ -7,6 +7,7 @@
 //
 
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension ItemView {
@@ -22,7 +23,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.specialFeatures,
                 type: .landscape,
-                items: items
+                items: .constant(OrderedSet(items))
             )
             .onSelect { item in
                 guard let mediaSource = item.mediaSources?.first else { return }

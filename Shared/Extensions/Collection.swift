@@ -24,12 +24,12 @@ extension Collection {
 }
 
 extension Collection where Element: Equatable {
-    
+
     /// Filter a collection of items by containment in the given elements
     func filter(by elements: [Element]) -> [Element] {
-        filter({ elements.contains($0) })
+        filter { elements.contains($0) }
     }
-    
+
     /// Filter a collection of items with a `KeyPath` by containment in the given elements
     func filter<Value: Equatable>(using keyPath: KeyPath<Element, Value>, by values: [Value]) -> [Element] {
         filter { values.contains($0[keyPath: keyPath]) }

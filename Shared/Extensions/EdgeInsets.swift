@@ -8,12 +8,36 @@
 
 import SwiftUI
 
-extension NSDirectionalEdgeInsets {
+extension EdgeInsets {
+    
+    // TODO: tvOS
+    /// The default padding for View's against contextual edges,
+    /// typically the edges of the View's scene
+    static let defaultEdgePadding: CGFloat = {
+        if UIDevice.isPad {
+            32
+        } else {
+            16
+        }
+    }()
+    
+    static let DefaultEdgeInsets: EdgeInsets = .init(constant: defaultEdgePadding)
     
     init(constant: CGFloat) {
         self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
     }
     
+    init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
+        self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
+    }
+}
+
+extension NSDirectionalEdgeInsets {
+
+    init(constant: CGFloat) {
+        self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
+    }
+
     init(vertical: CGFloat = 0, horizontal: CGFloat = 0) {
         self.init(top: vertical, leading: horizontal, bottom: vertical, trailing: horizontal)
     }

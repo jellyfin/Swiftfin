@@ -49,10 +49,14 @@ extension View {
             transformElse(self)
         }
     }
-    
+
     @ViewBuilder
     @inlinable
-    func ifLet<Value, Content: View>(_ value: Value?, transformIf: (Value, Self) -> Content, transformElse: (Self) -> Content) -> some View {
+    func ifLet<Value, Content: View>(
+        _ value: Value?,
+        transformIf: (Value, Self) -> Content,
+        transformElse: (Self) -> Content
+    ) -> some View {
         if let value {
             transformIf(value, self)
         } else {
@@ -217,13 +221,17 @@ extension View {
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
         modifier(ScenePhaseChangeModifier(phase: phase, action: action))
     }
-    
+
     func reservingSpaceLineLimit(_ number: Int) -> some View {
         ZStack(alignment: .top) {
             Text(String(repeating: "\n", count: number - 1))
-            
+
             self
                 .lineLimit(number)
         }
+    }
+    
+    func edgePadding(_ edges: Edge.Set = .all) -> some View {
+        padding(edges, EdgeInsets.defaultEdgePadding)
     }
 }

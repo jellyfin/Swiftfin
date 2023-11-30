@@ -14,7 +14,7 @@ extension UIDevice {
         current.identifierForVendor!.uuidString
     }
 
-    static var isIPad: Bool {
+    static var isPad: Bool {
         current.userInterfaceIdiom == .pad
     }
 
@@ -31,7 +31,7 @@ extension UIDevice {
         #if os(tvOS)
         "tvOS"
         #else
-        if UIDevice.isIPad {
+        if UIDevice.isPad {
             return "iPadOS"
         } else {
             return "iOS"
@@ -45,7 +45,7 @@ extension UIDevice {
     }
 
     static var isLandscape: Bool {
-        isIPad || current.orientation.isLandscape
+        isPad || current.orientation.isLandscape
     }
 
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {

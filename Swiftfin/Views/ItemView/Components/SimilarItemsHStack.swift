@@ -8,6 +8,7 @@
 
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension ItemView {
@@ -26,7 +27,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: items
+                items: .constant(OrderedSet(items))
             )
             .trailing {
                 SeeAllButton()

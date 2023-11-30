@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -31,7 +32,7 @@ extension HomeView {
             PosterHStack(
                 title: L10n.nextUp,
                 type: nextUpPosterType,
-                items: items
+                items: $viewModel.items
             )
             .trailing {
                 SeeAllButton()

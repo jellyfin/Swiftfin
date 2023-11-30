@@ -26,7 +26,7 @@ struct LibraryItemRow: View {
             HStack(alignment: .center) {
                 ZStack {
                     Color.clear
-                    
+
                     ImageView(item.portraitPosterImageSource(maxWidth: 300))
                 }
                 .frame(width: 60, height: 90)
@@ -47,11 +47,11 @@ struct LibraryItemRow: View {
                         } else if let premiereYear = item.premiereDateYear {
                             Text(premiereYear)
                         }
-                        
+
                         if let runtime = item.getItemRuntime() {
                             Text(runtime)
                         }
-                        
+
                         if let officialRating = item.officialRating {
                             Text(officialRating)
                         }

@@ -37,6 +37,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
                 .onAppear {
@@ -131,21 +132,21 @@ extension ItemView.CompactLogoScrollView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width, maxHeight: 100))
+                ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
 //                    .resizingMode(.aspectFit)
-                    .placeholder {
-                        EmptyView()
-                    }
-                    .failure {
-                        Text(viewModel.item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.white)
-                    }
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
+                        .placeholder {
+                            EmptyView()
+                        }
+                        .failure {
+                            Text(viewModel.item.displayTitle)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .multilineTextAlignment(.center)
+                                .foregroundColor(.white)
+                        }
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 70)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

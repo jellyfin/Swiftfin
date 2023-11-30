@@ -6,7 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CongruentScrollingHStack
+import CollectionHStack
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
@@ -22,10 +22,9 @@ extension HomeView {
         var viewModel: HomeViewModel
 
         var body: some View {
-            CongruentScrollingHStack(
-                items: $viewModel.resumeItems,
-                columns: 1.5,
-                scrollBehavior: .continuousLeadingEdge
+            CollectionHStack(
+                $viewModel.resumeItems,
+                columns: 1.5
             ) { item in
                 PosterButton(item: item, type: .landscape)
                     .content { item in
@@ -34,12 +33,18 @@ extension HomeView {
                             subtitleLineLimit: 1
                         )
                     }
+                    .imageOverlay { item in
+                        LandscapePosterProgressBar(
+                            title: item.progressLabel ?? L10n.continue,
+                            progress: (item.userData?.playedPercentage ?? 0) / 100
+                        )
+                    }
                     .onSelect {
                         router.route(to: \.item, item)
                     }
             }
-            
-            
+            .scrollBehavior(.continuousLeadingEdge)
+
 //            PosterHStack(
 //                type: .landscape,
 //                items: viewModel.resumeItems

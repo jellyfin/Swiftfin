@@ -52,7 +52,7 @@ struct ImageView: View {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
                     _image
-                        .resizable(resizingMode: .stretch)
+                        .resizable()
                 } else if state.error != nil {
                     failure()
                         .eraseToAnyView()
@@ -62,7 +62,6 @@ struct ImageView: View {
                 }
             }
             .pipeline(imagePipeline)
-//            .pipeline(ImagePipeline(configuration: .withDataCache))
         } else {
             failure()
                 .eraseToAnyView()
@@ -71,7 +70,7 @@ struct ImageView: View {
 }
 
 extension ImageView {
-    
+
     init(_ source: ImageSource) {
         self.init(
             sources: [source],
@@ -138,7 +137,7 @@ extension ImageView {
     }
 
     struct DefaultPlaceholderView: View {
-        
+
         let blurHash: String?
 
         var body: some View {

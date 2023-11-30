@@ -30,7 +30,7 @@ extension ItemView {
                     .fontWeight(.bold)
                     .accessibility(addTraits: [.isHeader])
                     .padding(.horizontal)
-                    .if(UIDevice.isIPad) { view in
+                    .if(UIDevice.isPad) { view in
                         view.padding(.horizontal)
                     }
 
@@ -55,7 +55,7 @@ extension ItemView {
                         RatingsCard(item: viewModel.item)
                     }
                     .padding(.horizontal)
-                    .if(UIDevice.isIPad) { view in
+                    .if(UIDevice.isPad) { view in
                         view.padding(.horizontal)
                     }
                 }

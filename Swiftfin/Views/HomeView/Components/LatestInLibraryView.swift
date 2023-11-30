@@ -6,7 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import CongruentScrollingHStack
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import OrderedCollections
@@ -24,41 +24,22 @@ extension HomeView {
 
         @ObservedObject
         var viewModel: LibraryViewModel
-        
-        @State
-        private var prefixedItems: OrderedSet<BaseItemDto> = []
 
         var body: some View {
-            CongruentScrollingHStack(
-                items: $viewModel.items,
-                columns: 3,
-                scrollBehavior: .continuousLeadingEdge
-            ) { item in
-                PosterButton(item: item, type: .portrait)
+            PosterHStack(
+                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                type: latestInLibraryPosterType,
+                items: $viewModel.items
+            )
+            .trailing {
+                SeeAllButton()
                     .onSelect {
-                        router.route(to: \.item, item)
+                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
                     }
             }
-            .onChange(of: viewModel.items) { newValue in
-                prefixedItems.elements = newValue
-                    .prefix(20)
-                    .asArray
+            .onSelect { item in
+                router.route(to: \.item, item)
             }
-            
-//            PosterHStack(
-//                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-//                type: latestInLibraryPosterType,
-//                items: items
-//            )
-//            .trailing {
-//                SeeAllButton()
-//                    .onSelect {
-//                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
-//                    }
-//            }
-//            .onSelect { item in
-//                router.route(to: \.item, item)
-//            }
         }
     }
 }

@@ -54,7 +54,7 @@ struct CastAndCrewLibraryView: View {
         .layout { _, layoutEnvironment in
             .grid(
                 layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 150 + (UIDevice.isIPad ? 10 : 0)),
+                layoutMode: .adaptive(withMinItemSize: 150 + (UIDevice.isPad ? 10 : 0)),
                 sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
             )
         }

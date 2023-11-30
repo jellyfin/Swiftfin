@@ -138,19 +138,19 @@ extension ItemView.CinematicScrollView {
                     if !cinematicItemViewTypeUsePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
 //                            .resizingMode(.aspectFit)
-                            .placeholder {
-                                EmptyView()
-                            }
-                            .failure {
-                                Text(viewModel.item.displayTitle)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .multilineTextAlignment(.center)
-                                    .foregroundColor(.white)
-                            }
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 100)
-                            .frame(maxWidth: .infinity)
+                                .placeholder {
+                                    EmptyView()
+                                }
+                                .failure {
+                                    Text(viewModel.item.displayTitle)
+                                        .font(.largeTitle)
+                                        .fontWeight(.semibold)
+                                        .multilineTextAlignment(.center)
+                                        .foregroundColor(.white)
+                                }
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 100)
+                                .frame(maxWidth: .infinity)
                     } else {
                         Spacer()
                             .frame(height: 50)

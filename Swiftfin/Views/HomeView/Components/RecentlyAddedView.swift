@@ -23,15 +23,11 @@ extension HomeView {
         @ObservedObject
         var viewModel: ItemTypeLibraryViewModel
 
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
-
         var body: some View {
             PosterHStack(
                 title: L10n.recentlyAdded,
                 type: recentlyAddedPosterType,
-                items: items
+                items: $viewModel.items
             )
             .trailing {
                 SeeAllButton()

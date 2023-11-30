@@ -12,7 +12,7 @@ import JellyfinAPI
 import OrderedCollections
 
 final class MediaViewModel: ViewModel {
-    
+
     private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
 
     @Published
@@ -40,7 +40,7 @@ final class MediaViewModel: ViewModel {
         Task {
             do {
                 let newLibraries = try await getUserLibraries()
-                
+
                 await MainActor.run {
                     libraries.elements = newLibraries
                 }
@@ -56,7 +56,7 @@ final class MediaViewModel: ViewModel {
 
         guard let items = response.value.items else { return [] }
         let supportedLibraries = items.filter(using: \.collectionType, by: Self.supportedCollectionTypes)
-        
+
         return supportedLibraries
     }
 }

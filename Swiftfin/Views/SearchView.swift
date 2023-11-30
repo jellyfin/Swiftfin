@@ -83,14 +83,16 @@ struct SearchView: View {
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
         posterType: PosterType
     ) -> some View {
-        PosterHStack(
-            title: title,
-            type: posterType,
-            items: viewModel[keyPath: keyPath]
-        )
-        .onSelect { item in
-            baseItemOnSelect(item)
-        }
+//        PosterHStack(
+//            title: title,
+//            type: posterType,
+//            items: viewModel[keyPath: keyPath]
+//        )
+//        .onSelect { item in
+//            baseItemOnSelect(item)
+//        }
+
+        Text("TODO")
     }
 
     var body: some View {
