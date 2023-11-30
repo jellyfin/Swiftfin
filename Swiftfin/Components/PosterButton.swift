@@ -10,6 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: just establish rules for default content line limits for design
 // TODO: builder methods shouldn't take the item
 
 struct PosterButton<Item: Poster>: View {

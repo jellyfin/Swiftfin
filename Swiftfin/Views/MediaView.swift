@@ -23,7 +23,7 @@ struct MediaView: View {
     var viewModel: MediaViewModel
 
     var body: some View {
-        CollectionVGrid($viewModel.libraries, layout: .minWidth(120)) { library in
+        CollectionVGrid($viewModel.libraries, layout: .columns(2)) { library in
             LibraryCard(item: library)
                 .onSelect {
                     switch library.collectionType {
@@ -49,26 +49,6 @@ struct MediaView: View {
                 }
             }
         }
-        
-        
-//        PagingCollectionView(items: $viewModel.libraries, viewType: .constant(.grid)) { item in
-//            LibraryCard(item: item)
-//                .onSelect {
-//                    switch item.collectionType {
-//                    case "downloads":
-//                        router.route(to: \.downloads)
-//                    case "favorites":
-//                        router.route(to: \.library, .init(parent: item, type: .library, filters: .favorites))
-//                    case "folders":
-//                        router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
-//                    case "liveTV":
-//                        router.route(to: \.liveTV)
-//                    default:
-//                        router.route(to: \.library, .init(parent: item, type: .library, filters: .init()))
-//                    }
-//                }
-//        }
-
     }
 }
 

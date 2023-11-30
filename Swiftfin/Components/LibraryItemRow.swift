@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: manual dividers
+
 struct LibraryItemRow: View {
 
     @EnvironmentObject

@@ -12,6 +12,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: pad vs phone layouts
+// TODO: find better way to init layout
+// - is onAppear good enough since right now it will always open up in loading state?
+// - that should change if/when better caching is implemented
+// TODO: on pad: list layout columns (up to 3?)?
+
 struct PagingLibraryView: View {
 
     @Default(.Customization.Library.gridPosterType)
@@ -28,20 +34,6 @@ struct PagingLibraryView: View {
     private var onSelect: (BaseItemDto) -> Void
 
     var body: some View {
-//        PagingCollectionView(items: $viewModel.items, viewType: $libraryViewType) { item in
-//            switch libraryViewType {
-//            case .grid:
-//                PosterButton(item: item, type: libraryGridPosterType)
-//                    .onSelect {
-//                        onSelect(item)
-//                    }
-//            case .list:
-//                LibraryItemRow(item: item)
-//                    .padding(.vertical, 5)
-//            }
-//        }
-//        .ignoresSafeArea()
-        
         CollectionVGrid(
             $viewModel.items,
             layout: $layout
@@ -49,20 +41,41 @@ struct PagingLibraryView: View {
             switch libraryViewType {
             case .grid:
                 PosterButton(item: item, type: libraryGridPosterType)
+                    .content { item in
+                        if item.showTitle {
+                            PosterButton.TitleContentView(item: item)
+                                .reservingSpaceLineLimit(1)
+                        }
+                    }
                     .onSelect {
                         onSelect(item)
                     }
             case .list:
                 LibraryItemRow(item: item)
+                    .onSelect {
+                        onSelect(item)
+                    }
                     .padding(5)
             }
         }
         .ignoresSafeArea()
+        .onAppear {
+            switch (libraryViewType, libraryGridPosterType) {
+            case (.grid, .portrait):
+                layout = .columns(3)
+            case (.grid, .landscape):
+                layout = .columns(2)
+            case (.list, _):
+                layout = .columns(1, insets: .init(constant: 0), itemSpacing: 0, lineSpacing: 0)
+            }
+        }
         .onChange(of: libraryViewType) { newValue in
-            switch newValue {
-            case .grid:
-                layout = .minWidth(100)
-            case .list:
+            switch (newValue, libraryGridPosterType) {
+            case (.grid, .portrait):
+                layout = .columns(3)
+            case (.grid, .landscape):
+                layout = .columns(2)
+            case (.list, _):
                 layout = .columns(1, insets: .init(constant: 0), itemSpacing: 0, lineSpacing: 0)
             }
         }
@@ -72,19 +85,9 @@ struct PagingLibraryView: View {
 extension PagingLibraryView {
 
     init(viewModel: PagingLibraryViewModel) {
-        
-        let layout: CollectionVGridLayout
-        
-        switch Defaults[.Customization.Library.viewType] {
-        case .grid:
-            layout = .minWidth(120)
-        case .list:
-            layout = .columns(1, insets: .init(constant: 0), itemSpacing: 0, lineSpacing: 0)
-        }
-        
         self.init(
             viewModel: viewModel,
-            layout: layout,
+            layout: .columns(3),
             onSelect: { _ in }
         )
     }
