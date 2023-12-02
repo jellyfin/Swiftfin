@@ -15,7 +15,6 @@ import SwiftUI
 // TODO: find better way to init layout
 // - is onAppear good enough since right now it will always open up in loading state?
 // - that should change if/when better caching is implemented
-// TODO: on pad: list layout columns (up to 3?)?
 
 struct PagingLibraryView: View {
 
@@ -65,7 +64,8 @@ struct PagingLibraryView: View {
                     .content {
                         if item.showTitle {
                             PosterButton.TitleContentView(item: item)
-                                .reservingSpaceLineLimit(1)
+                                .backport
+                                .lineLimit(1, reservesSpace: true)
                         }
                     }
                     .onSelect {
@@ -76,7 +76,8 @@ struct PagingLibraryView: View {
                     .content {
                         if item.showTitle {
                             PosterButton.TitleContentView(item: item)
-                                .reservingSpaceLineLimit(1)
+                                .backport
+                                .lineLimit(1, reservesSpace: true)
                         }
                     }
                     .onSelect {

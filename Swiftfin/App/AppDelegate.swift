@@ -31,38 +31,4 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         return true
     }
-
-    static func enterPlaybackOrientation() {
-        AppDelegate.changeOrientation(.landscape)
-    }
-
-    static func leavePlaybackOrientation() {
-        if UIDevice.isPad {
-            AppDelegate.changeOrientation(.allButUpsideDown)
-        } else {
-            // On iPhone, users likely want to return to portrait mode after leaving playback.
-            // However, we don't want to lock them into portrait mode, so switch back after a delay.
-            AppDelegate.changeOrientation(.portrait)
-
-            // 0.25 seconds is about the time to switch from landscape to portrait.
-            // Changing orientation again too early will cause the top time/battery bar to remain
-            // at the side instead of moving up top, like it should.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                AppDelegate.changeOrientation(.allButUpsideDown)
-            }
-        }
-    }
-
-    private static func changeOrientation(_ orientation: UIInterfaceOrientationMask) {
-//        guard UIDevice.isPhone || UIDevice.isPad else { return }
-//
-//        orientationLock = orientation
-//
-//        if #available(iOS 16, *) {
-//            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-//            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: orientation))
-//        } else {
-//            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
-//        }
-    }
 }

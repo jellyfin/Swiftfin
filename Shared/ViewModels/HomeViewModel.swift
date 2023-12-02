@@ -14,6 +14,8 @@ import JellyfinAPI
 import OrderedCollections
 import UIKit
 
+// TODO: remove the `has` stuff
+
 final class HomeViewModel: ViewModel {
 
     @Published
@@ -138,7 +140,7 @@ final class HomeViewModel: ViewModel {
             guard let items = response.value.items else { return }
 
             await MainActor.run {
-                resumeItems.append(contentsOf: items)
+                resumeItems = OrderedSet(items)
             }
         }
     }

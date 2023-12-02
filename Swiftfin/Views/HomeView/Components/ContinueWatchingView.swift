@@ -21,17 +21,35 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
+        // TODO: see how this looks across multiple screen sizes
+        //       alongside PosterHStack + landscape
+        // - see if a minWidth + fractional on CollectionHStack is desired?
+        private var columnCount: CGFloat {
+            if UIDevice.isPhone {
+                1.5
+            } else {
+                3.5
+            }
+        }
+
         var body: some View {
             CollectionHStack(
                 $viewModel.resumeItems,
-                columns: 1.5
+                columns: columnCount
             ) { item in
                 PosterButton(item: item, type: .landscape)
-                    .content {
-                        PosterButton.TitleSubtitleContentView(
-                            item: item,
-                            subtitleLineLimit: 1
-                        )
+                    .contextMenu {
+                        Button {
+                            viewModel.markItemPlayed(item)
+                        } label: {
+                            Label(L10n.played, systemImage: "checkmark.circle")
+                        }
+
+                        Button(role: .destructive) {
+                            viewModel.markItemUnplayed(item)
+                        } label: {
+                            Label(L10n.unplayed, systemImage: "minus.circle")
+                        }
                     }
                     .imageOverlay {
                         LandscapePosterProgressBar(
@@ -44,33 +62,6 @@ extension HomeView {
                     }
             }
             .scrollBehavior(.continuousLeadingEdge)
-
-//            PosterHStack(
-//                type: .landscape,
-//                items: viewModel.resumeItems
-//            )
-//            .contextMenu { item in
-//                Button {
-//                    viewModel.markItemPlayed(item)
-//                } label: {
-//                    Label(L10n.played, systemImage: "checkmark.circle")
-//                }
-//
-//                Button(role: .destructive) {
-//                    viewModel.markItemUnplayed(item)
-//                } label: {
-//                    Label(L10n.unplayed, systemImage: "minus.circle")
-//                }
-//            }
-//            .imageOverlay { item in
-//                LandscapePosterProgressBar(
-//                    title: item.progressLabel ?? L10n.continue,
-//                    progress: (item.userData?.playedPercentage ?? 0) / 100
-//                )
-//            }
-//            .onSelect { item in
-//                router.route(to: \.item, item)
-//            }
         }
     }
 }

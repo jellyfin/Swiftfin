@@ -163,15 +163,6 @@ extension View {
         return copy
     }
 
-    @ViewBuilder
-    func hideSystemOverlays() -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            persistentSystemOverlays(.hidden)
-        } else {
-            self
-        }
-    }
-
     // TODO: rename isVisible
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
@@ -222,16 +213,11 @@ extension View {
         modifier(ScenePhaseChangeModifier(phase: phase, action: action))
     }
 
-    func reservingSpaceLineLimit(_ number: Int) -> some View {
-        ZStack(alignment: .top) {
-            Text(String(repeating: "\n", count: number - 1))
-
-            self
-                .lineLimit(number)
-        }
-    }
-
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
         padding(edges, EdgeInsets.defaultEdgePadding)
+    }
+
+    var backport: Backport<Self> {
+        Backport(content: self)
     }
 }

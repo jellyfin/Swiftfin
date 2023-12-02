@@ -25,6 +25,52 @@ struct PosterHStack<Item: Poster>: View {
     private var trailingContent: () -> any View
     private var onSelect: (Item) -> Void
 
+    @ViewBuilder
+    private var padHStack: some View {
+        CollectionHStack(
+            items,
+            minWidth: type == .portrait ? 150 : 220
+        ) { item in
+            PosterButton(
+                item: item,
+                type: type,
+                singleImage: singleImage
+            )
+            .content { content(item).eraseToAnyView() }
+            .imageOverlay { imageOverlay(item).eraseToAnyView() }
+            .contextMenu { contextMenu(item).eraseToAnyView() }
+            .onSelect { onSelect(item) }
+        }
+        .clipsToBounds(false)
+        .dataPrefix(20)
+        .horizontalInset(EdgeInsets.defaultEdgePadding)
+        .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+        .scrollBehavior(.continuousLeadingEdge)
+    }
+
+    @ViewBuilder
+    private var phoneHStack: some View {
+        CollectionHStack(
+            items,
+            columns: type == .portrait ? 3 : 2
+        ) { item in
+            PosterButton(
+                item: item,
+                type: type,
+                singleImage: singleImage
+            )
+            .content { content(item).eraseToAnyView() }
+            .imageOverlay { imageOverlay(item).eraseToAnyView() }
+            .contextMenu { contextMenu(item).eraseToAnyView() }
+            .onSelect { onSelect(item) }
+        }
+        .clipsToBounds(false)
+        .dataPrefix(20)
+        .horizontalInset(EdgeInsets.defaultEdgePadding)
+        .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+        .scrollBehavior(.continuousLeadingEdge)
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
 
@@ -37,27 +83,13 @@ struct PosterHStack<Item: Poster>: View {
                 trailingContent()
                     .eraseToAnyView()
             }
-            .padding(.horizontal, 16)
+            .edgePadding(.horizontal)
 
-            CollectionHStack(
-                items,
-                columns: type == .portrait ? 3 : 2
-            ) { item in
-                PosterButton(
-                    item: item,
-                    type: type,
-                    singleImage: singleImage
-                )
-                .content { content(item).eraseToAnyView() }
-                .imageOverlay { imageOverlay(item).eraseToAnyView() }
-                .contextMenu { contextMenu(item).eraseToAnyView() }
-                .onSelect { onSelect(item) }
+            if UIDevice.isPhone {
+                phoneHStack
+            } else {
+                padHStack
             }
-            .clipsToBounds(false)
-            .dataPrefix(20)
-            .horizontalInset(16)
-            .itemSpacing(8)
-            .scrollBehavior(.continuousLeadingEdge)
         }
     }
 }

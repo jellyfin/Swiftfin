@@ -9,6 +9,7 @@
 import CoreStore
 import Defaults
 import Logging
+import PreferencesView
 import Pulse
 import PulseLogHandler
 import SwiftUI
@@ -56,7 +57,7 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PreferenceUIHostingControllerView {
+            PreferencesView {
                 MainCoordinator()
                     .view()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)

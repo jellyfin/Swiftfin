@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MarioIannotta/SwizzleSwift",
       "state" : {
-        "revision" : "337dd5f158182620b2bb53c6847f8874a0117b2f",
-        "version" : "1.0.0"
+        "branch" : "master",
+        "revision" : "e2d31c646182bf94a496b173c6ee5ad191230e9a"
       }
     },
     {

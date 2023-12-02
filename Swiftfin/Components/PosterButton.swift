@@ -11,7 +11,6 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: just establish rules for default content line limits for design
-// TODO: builder methods shouldn't take the item
 
 struct PosterButton<Item: Poster>: View {
 
@@ -22,10 +21,6 @@ struct PosterButton<Item: Poster>: View {
     private var contextMenu: () -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
-
-//    private var itemWidth: CGFloat {
-//        type.width * itemScale
-//    }
 
     @ViewBuilder
     private func poster(from item: any Poster) -> some View {
@@ -135,28 +130,18 @@ extension PosterButton {
 
     struct TitleSubtitleContentView: View {
 
-        private let item: Item
-        private let titleLineLimit: Int
-        private let subtitleLineLimit: Int
-
-        init(
-            item: Item,
-            titleLineLimit: Int = 1,
-            subtitleLineLimit: Int = 1
-        ) {
-            self.titleLineLimit = titleLineLimit
-            self.subtitleLineLimit = subtitleLineLimit
-            self.item = item
-        }
+        let item: Item
 
         var body: some View {
             VStack(alignment: .leading) {
                 if item.showTitle {
                     TitleContentView(item: item)
-                        .reservingSpaceLineLimit(titleLineLimit)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
 
                     SubtitleContentView(item: item)
-                        .reservingSpaceLineLimit(subtitleLineLimit)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
                 }
             }
         }

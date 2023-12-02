@@ -15,15 +15,15 @@ extension EdgeInsets {
     /// typically the edges of the View's scene
     static let defaultEdgePadding: CGFloat = {
         if UIDevice.isPad {
-            32
+            24
         } else {
             16
         }
     }()
 
-    static let DefaultEdgeInsets: EdgeInsets = .init(constant: defaultEdgePadding)
+    static let DefaultEdgeInsets: EdgeInsets = .init(defaultEdgePadding)
 
-    init(constant: CGFloat) {
+    init(_ constant: CGFloat) {
         self.init(top: constant, leading: constant, bottom: constant, trailing: constant)
     }
 

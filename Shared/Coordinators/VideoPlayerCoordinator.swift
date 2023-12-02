@@ -9,6 +9,7 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import PreferencesView
 import Stinsen
 import SwiftUI
 
@@ -29,7 +30,12 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         #if os(iOS)
 
-        PreferenceUIHostingControllerView {
+        // Some settings have to apply to the root PreferencesView and this
+        // one - separately.
+        // It is assumed that because Stinsen adds a lot of views that the
+        // PreferencesView isn't in the right place in the VC chain so that
+        // it can apply the settings, even SwiftUI settings.
+        PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     VideoPlayer(manager: self.videoPlayerManager)
@@ -38,10 +44,13 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                 }
             }
             .preferredColorScheme(.dark)
-            .supportedOrientations(.landscape)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
         .ignoresSafeArea()
-        .hideSystemOverlays()
+        .backport
+        .persistentSystemOverlays(.hidden)
+        .backport
+        .defersSystemGestures(on: .all)
 
         #else
 

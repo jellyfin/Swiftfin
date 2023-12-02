@@ -121,20 +121,21 @@ extension ItemView.iPadOSCinematicScrollView {
                     ImageView(viewModel.item.imageSource(
                         .logo,
                         maxWidth: UIScreen.main.bounds.width * 0.4,
-                        maxHeight: 150
+                        maxHeight: 130
                     ))
-//                    .resizingMode(.bottomLeft)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
-                        }
+                    .placeholder {
+                        EmptyView()
+                    }
+                    .failure {
+                        Text(viewModel.item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.white)
+                    }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)

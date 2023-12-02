@@ -6,31 +6,74 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
 
 extension View {
 
     func videoPlayerKeyCommands(
+        isAspectFilled: Binding<Bool>,
         gestureStateHandler: VideoPlayer.GestureStateHandler,
         videoPlayerManager: VideoPlayerManager,
         updateViewProxy: UpdateViewProxy
     ) -> some View {
+        keyCommands {
 
-        self
+            KeyCommandAction(
+                title: L10n.playAndPause,
+                input: " "
+            ) {
+                if videoPlayerManager.state == .playing {
+                    videoPlayerManager.proxy.pause()
+                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                } else {
+                    videoPlayerManager.proxy.play()
+                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+                }
+            }
 
-//        self
-//            .addingKeyCommand(
-//                title: L10n.playAndPause,
-//                input: " "
-//            ) {
-//                if videoPlayerManager.state == .playing {
-//                    videoPlayerManager.proxy.pause()
-//                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-//                } else {
-//                    videoPlayerManager.proxy.play()
-//                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-//                }
-//            }
+            KeyCommandAction(
+                title: L10n.jumpForward,
+                input: UIKeyCommand.inputRightArrow
+            ) {
+                if gestureStateHandler.jumpForwardKeyPressActive {
+                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
+
+                    let task = DispatchWorkItem {
+                        gestureStateHandler.jumpForwardKeyPressActive = false
+                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+                    }
+
+                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                } else {
+                    gestureStateHandler.jumpForwardKeyPressActive = true
+                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+
+                    let task = DispatchWorkItem {
+                        gestureStateHandler.jumpForwardKeyPressActive = false
+                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+                    }
+
+                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                }
+            }
+
+            KeyCommandAction(
+                title: "Aspect Fill",
+                input: "f",
+                modifierFlags: .command
+            ) {
+                DispatchQueue.main.async {
+                    isAspectFilled.wrappedValue.toggle()
+                }
+            }
+        }
+
 //            .addingKeyCommand(
 //                title: L10n.jumpForward,
 //                input: UIKeyCommand.inputRightArrow

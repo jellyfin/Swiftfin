@@ -24,10 +24,6 @@ extension HomeView {
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
 
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
-
         var body: some View {
             PosterHStack(
                 title: L10n.nextUp,
