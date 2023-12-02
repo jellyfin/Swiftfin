@@ -17,9 +17,9 @@ struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var content: (Item) -> any View
-    private var imageOverlay: (Item) -> any View
-    private var contextMenu: (Item) -> any View
+    private var content: () -> any View
+    private var imageOverlay: () -> any View
+    private var contextMenu: () -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
 
@@ -55,18 +55,18 @@ struct PosterButton<Item: Poster>: View {
                 }
                 .posterStyle(type)
                 .overlay {
-                    imageOverlay(item)
+                    imageOverlay()
                         .eraseToAnyView()
                         .posterStyle(type)
                 }
             }
             .contextMenu(menuItems: {
-                contextMenu(item)
+                contextMenu()
                     .eraseToAnyView()
             })
             .posterShadow()
 
-            content(item)
+            content()
                 .eraseToAnyView()
         }
     }
@@ -82,23 +82,23 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            content: { TitleSubtitleContentView(item: $0) },
-            imageOverlay: { DefaultOverlay(item: $0) },
-            contextMenu: { _ in EmptyView() },
+            content: { TitleSubtitleContentView(item: item) },
+            imageOverlay: { DefaultOverlay(item: item) },
+            contextMenu: { EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
     }
 
-    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
@@ -154,7 +154,7 @@ extension PosterButton {
                 if item.showTitle {
                     TitleContentView(item: item)
                         .reservingSpaceLineLimit(titleLineLimit)
-                    
+
                     SubtitleContentView(item: item)
                         .reservingSpaceLineLimit(subtitleLineLimit)
                 }

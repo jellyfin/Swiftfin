@@ -17,13 +17,14 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
             wrappedView()
                 .onPreferenceChange(PrefersHomeIndicatorAutoHiddenPreferenceKey.self) {
                     box.value?._prefersHomeIndicatorAutoHidden = $0
-                }.onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
+                }
+                .onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
                     box.value?._orientations = $0
-                }.onPreferenceChange(ViewPreferenceKey.self) {
-                    box.value?._viewPreference = $0
-                }.onPreferenceChange(KeyCommandsPreferenceKey.self) {
+                }
+                .onPreferenceChange(KeyCommandsPreferenceKey.self) {
                     box.value?._keyCommands = $0
-                }.onPreferenceChange(AddingKeyCommandPreferenceKey.self) {
+                }
+                .onPreferenceChange(AddingKeyCommandPreferenceKey.self) {
                     guard let newAction = $0 else { return }
                     box.value?._keyCommands.append(newAction)
                 }
@@ -58,9 +59,7 @@ class PreferenceUIHostingController: UIHostingController<AnyView> {
         didSet {
             if #available(iOS 16.0, *) {
                 setNeedsUpdateOfSupportedInterfaceOrientations()
-                
             } else {
-                // Fallback on earlier versions
                 Self.attemptRotationToDeviceOrientation()
             }
 //            if _orientations == .landscape {
@@ -145,15 +144,6 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
     }
 }
 
-struct ViewPreferenceKey: PreferenceKey {
-
-    static var defaultValue: UIUserInterfaceStyle = .unspecified
-
-    static func reduce(value: inout UIUserInterfaceStyle, nextValue: () -> UIUserInterfaceStyle) {
-        value = nextValue()
-    }
-}
-
 // MARK: Preference Key View Extension
 
 extension View {
@@ -180,9 +170,5 @@ extension View {
 
     func supportedOrientations(_ supportedOrientations: UIInterfaceOrientationMask) -> some View {
         preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
-    }
-
-    func overrideViewPreference(_ viewPreference: UIUserInterfaceStyle) -> some View {
-        preference(key: ViewPreferenceKey.self, value: viewPreference)
     }
 }

@@ -62,15 +62,31 @@ extension Defaults.Keys {
 
         enum Library {
 
-            static let gridPosterType = Key<PosterType>("libraryGridPosterType", default: .portrait, suite: .generalSuite)
             static let cinematicBackground: Key<Bool> = .init(
                 "Customization.Library.cinematicBackground",
                 default: true,
                 suite: .generalSuite
             )
-            static let randomImage: Key<Bool> = .init("libraryRandomImage", default: true, suite: .generalSuite)
-            static let showFavorites: Key<Bool> = .init("libraryShowFavorites", default: true, suite: .generalSuite)
-            static let viewType = Key<LibraryViewType>("libraryViewType", default: .grid, suite: .generalSuite)
+            static let viewType = Key<LibraryViewType>(
+                "libraryViewType",
+                default: .portraitGrid,
+                suite: .generalSuite
+            )
+            static let listColumnCount = Key<Int>(
+                "listColumnCount",
+                default: 1,
+                suite: .generalSuite
+            )
+            static let randomImage: Key<Bool> = .init(
+                "libraryRandomImage",
+                default: true,
+                suite: .generalSuite
+            )
+            static let showFavorites: Key<Bool> = .init(
+                "libraryShowFavorites",
+                default: true,
+                suite: .generalSuite
+            )
         }
 
         enum Filters {

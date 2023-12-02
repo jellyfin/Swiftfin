@@ -68,7 +68,7 @@ extension EnumPicker {
         let binding = Binding<EnumType?> {
             selection.wrappedValue
         } set: { newValue, _ in
-            assert(newValue != nil, "Should not have nil new value with non-optional binding")
+            precondition(newValue != nil, "Should not have nil new value with non-optional binding")
             selection.wrappedValue = newValue!
         }
 

@@ -15,19 +15,19 @@ import UIKit
 
 class PagingLibraryViewModel: ViewModel {
 
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
-
     @Published
-    var items: OrderedSet<BaseItemDto> = []
+    var items: OrderedSet<BaseItemDto>
 
     var currentPage = 0
     var hasNextPage = true
 
-//    var pageItemSize: Int {
-//        let height = libraryGridPosterType == .portrait ? libraryGridPosterType.width * 1.5 : libraryGridPosterType.width / 1.77
-//        return UIScreen.main.maxChildren(width: libraryGridPosterType.width, height: height)
-//    }
+    override init() {
+        self.items = []
+    }
+
+    init(_ data: some Sequence<BaseItemDto>) {
+        self.items = OrderedSet(data)
+    }
 
     public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {
 

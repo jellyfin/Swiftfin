@@ -66,19 +66,19 @@ final class LibraryViewModel: PagingLibraryViewModel {
             self.hasNextPage = true
         }
 
-        var parameters = _getDefaultParams()
-        parameters?.limit = 100
-        parameters?.startIndex = currentPage * 100
-        parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
-
-        if filters.sortBy.first == SortBy.random.filter {
-            parameters?.excludeItemIDs = items.compactMap(\.id)
-        }
-
         Task {
             await MainActor.run {
                 self.isLoading = true
+            }
+
+            var parameters = _getDefaultParams()
+            parameters?.limit = 100
+            parameters?.startIndex = currentPage * 100
+            parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+            parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
+
+            if filters.sortBy.first == SortBy.random.filter {
+                parameters?.excludeItemIDs = items.compactMap(\.id)
             }
 
             let request = Paths.getItems(parameters: parameters)

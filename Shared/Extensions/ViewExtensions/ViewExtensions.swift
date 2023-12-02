@@ -230,7 +230,7 @@ extension View {
                 .lineLimit(number)
         }
     }
-    
+
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
         padding(edges, EdgeInsets.defaultEdgePadding)
     }

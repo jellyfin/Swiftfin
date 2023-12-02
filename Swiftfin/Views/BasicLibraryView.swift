@@ -9,6 +9,7 @@
 import CollectionView
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 struct BasicLibraryView: View {
@@ -21,6 +22,14 @@ struct BasicLibraryView: View {
 
     @ObservedObject
     var viewModel: PagingLibraryViewModel
+
+    init(viewModel: PagingLibraryViewModel) {
+        self.viewModel = viewModel
+    }
+
+    init(data: some Sequence<BaseItemDto>) {
+        self.viewModel = PagingLibraryViewModel(data)
+    }
 
     @ViewBuilder
     private var loadingView: some View {
@@ -58,8 +67,11 @@ struct BasicLibraryView: View {
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }
+
                 Menu {
+
                     LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+
                     RandomItemButton(viewModel: viewModel)
                         .onSelect { response in
                             if let item = response.items?.first {

@@ -11,16 +11,19 @@ import Foundation
 
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case grid
+    case landscapeGrid
+    case portraitGrid
     case list
 
     // TODO: localize after organization
     var displayTitle: String {
         switch self {
-        case .grid:
-            return "Grid"
+        case .landscapeGrid:
+            "Landscape"
+        case .portraitGrid:
+            "Portrait"
         case .list:
-            return "List"
+            "List"
         }
     }
 }

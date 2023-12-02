@@ -29,7 +29,7 @@ struct LibraryItemRow: View {
                 ZStack {
                     Color.clear
 
-                    ImageView(item.portraitPosterImageSource(maxWidth: 300))
+                    ImageView(item.portraitPosterImageSource(maxWidth: 60))
                 }
                 .frame(width: 60, height: 90)
                 .posterStyle(.portrait)

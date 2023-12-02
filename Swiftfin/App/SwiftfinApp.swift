@@ -59,7 +59,7 @@ struct SwiftfinApp: App {
             PreferenceUIHostingControllerView {
                 MainCoordinator()
                     .view()
-                    .supportedOrientations(.portrait)
+                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
             .ignoresSafeArea()
             .onOpenURL { url in

@@ -18,7 +18,7 @@ struct SeriesEpisodeSelector: View {
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
-    
+
     @ViewBuilder
     private var selectorMenu: some View {
         Menu {
@@ -51,7 +51,7 @@ struct SeriesEpisodeSelector: View {
         VStack(alignment: .leading) {
             selectorMenu
                 .edgePadding(.horizontal)
-            
+
             CollectionHStack(
                 $viewModel.currentItems,
                 columns: 1.5
@@ -61,10 +61,10 @@ struct SeriesEpisodeSelector: View {
                     type: .landscape,
                     singleImage: true
                 )
-                .content { item in
+                .content {
                     EpisodeContent(episode: item)
                 }
-                .imageOverlay { item in
+                .imageOverlay {
                     EpisodeOverlay(episode: item)
                 }
                 .onSelect {
@@ -76,7 +76,7 @@ struct SeriesEpisodeSelector: View {
             .horizontalInset(16)
             .itemSpacing(8)
         }
-        
+
 //        PosterHStack(
 //            type: .landscape,
 //            manager: viewModel,

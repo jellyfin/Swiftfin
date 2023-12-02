@@ -6,6 +6,7 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import CollectionView
 import Defaults
 import JellyfinAPI
@@ -13,13 +14,36 @@ import SwiftUI
 
 struct CastAndCrewLibraryView: View {
 
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
     @Default(.Customization.Library.viewType)
     private var libraryViewType
 
     @EnvironmentObject
     private var router: CastAndCrewLibraryCoordinator.Router
 
+    @State
+    private var layout: CollectionVGridLayout = .columns(3)
+
     let people: [BaseItemPerson]
+
+    private func padLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
+        switch libraryViewType {
+        case .landscapeGrid, .portraitGrid:
+            .minWidth(150)
+        case .list:
+            .columns(listColumnCount)
+        }
+    }
+
+    private func phoneLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
+        switch libraryViewType {
+        case .landscapeGrid, .portraitGrid:
+            .columns(3)
+        case .list:
+            .columns(1)
+        }
+    }
 
     @ViewBuilder
     private var noResultsView: some View {
@@ -27,39 +51,23 @@ struct CastAndCrewLibraryView: View {
     }
 
     @ViewBuilder
-    private var libraryListView: some View {
-        CollectionView(items: people) { _, person, _ in
-            CastAndCrewItemRow(person: person)
-                .onSelect {
-                    router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
-                }
-                .padding()
-        }
-        .layout { _, layoutEnvironment in
-            .list(using: .init(appearance: .plain), layoutEnvironment: layoutEnvironment)
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
-        }
-    }
-
-    @ViewBuilder
-    private var libraryGridView: some View {
-        CollectionView(items: people) { _, person, _ in
-            PosterButton(item: person, type: .portrait)
-                .onSelect {
-                    router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 150 + (UIDevice.isPad ? 10 : 0)),
-                sectionInsets: .init(top: 0, leading: 10, bottom: 0, trailing: 10)
-            )
-        }
-        .configure { configuration in
-            configuration.showsVerticalScrollIndicator = false
+    private var libraryView: some View {
+        CollectionVGrid(
+            people,
+            layout: $layout
+        ) { person in
+            switch libraryViewType {
+            case .landscapeGrid, .portraitGrid:
+                PosterButton(item: person, type: .portrait)
+                    .onSelect {
+                        router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                    }
+            case .list:
+                CastAndCrewItemRow(person: person)
+                    .onSelect {
+                        router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                    }
+            }
         }
     }
 
@@ -68,12 +76,21 @@ struct CastAndCrewLibraryView: View {
             if people.isEmpty {
                 noResultsView
             } else {
-                switch libraryViewType {
-                case .grid:
-                    libraryGridView
-                case .list:
-                    libraryListView
-                }
+                libraryView
+            }
+        }
+        .onAppear {
+            if UIDevice.isPhone {
+                layout = phoneLayout(libraryViewType: libraryViewType)
+            } else {
+                layout = padLayout(libraryViewType: libraryViewType)
+            }
+        }
+        .onChange(of: libraryViewType) { _ in
+            if UIDevice.isPhone {
+                layout = phoneLayout(libraryViewType: libraryViewType)
+            } else {
+                layout = padLayout(libraryViewType: libraryViewType)
             }
         }
         .navigationTitle(L10n.castAndCrew)

@@ -36,32 +36,16 @@ struct PreferenceUIHostingControllerView<Wrapped: View>: UIViewControllerReprese
 extension UIViewController {
     static var preferenceSwizzling: Void = {
         Swizzle(UIViewController.self) {
-            #selector(getter: childForScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
-            #selector(getter: childForHomeIndicatorAutoHidden) <-> #selector(swizzled_childForHomeIndicatorAutoHidden)
+//            #selector(getter: childForScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
+//            #selector(getter: childForHomeIndicatorAutoHidden) <-> #selector(swizzled_childForHomeIndicatorAutoHidden)
+//            #selector(getter: preferredScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_preferredScreenEdgesDeferringSystemGestures)
             #selector(getter: supportedInterfaceOrientations) <-> #selector(swizzled_supportedInterfaceOrientations)
         }
     }()
 }
 
 extension UIViewController {
-    @objc
-    func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
-        if self is PreferenceUIHostingController {
-            nil
-        } else {
-            search()
-        }
-    }
 
-    @objc
-    func swizzled_childForHomeIndicatorAutoHidden() -> UIViewController? {
-        if self is PreferenceUIHostingController {
-            nil
-        } else {
-            search()
-        }
-    }
-    
     @objc
     func swizzled_supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         search()?.supportedInterfaceOrientations ?? .all

@@ -81,12 +81,8 @@ extension BaseItemDto {
         maxHeight: Int?,
         itemID: String
     ) -> URL? {
-
-        // TODO: See if the scaling is actually right so that it isn't so big
-//        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-//        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
-        let scaleWidth = maxWidth
-        let scaleHeight = maxHeight
+        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
 
         guard let tag = getImageTag(for: type) else { return nil }
 
@@ -117,19 +113,9 @@ extension BaseItemDto {
         }
     }
 
-    fileprivate func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {
+    private func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
         let blurHash = blurHash(type)
         return ImageSource(url: url, blurHash: blurHash)
-    }
-}
-
-fileprivate extension Int {
-    init?(_ source: CGFloat?) {
-        if let source = source {
-            self.init(source)
-        } else {
-            return nil
-        }
     }
 }

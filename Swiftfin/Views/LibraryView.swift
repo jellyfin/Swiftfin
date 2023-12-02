@@ -68,6 +68,7 @@ struct LibraryView: View {
                 libraryItemsView
             }
         }
+        .animation(.linear, value: viewModel.items.isEmpty)
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .if(!filterDrawerButtonSelection.isEmpty) { view in

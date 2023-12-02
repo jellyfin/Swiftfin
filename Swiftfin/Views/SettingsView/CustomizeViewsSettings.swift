@@ -41,8 +41,10 @@ struct CustomizeViewsSettings: View {
     var similarPosterType
     @Default(.Customization.searchPosterType)
     var searchPosterType
-    @Default(.Customization.Library.gridPosterType)
-    var libraryGridPosterType
+    @Default(.Customization.Library.viewType)
+    var libraryViewType
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     var useSeriesLandscapeBackdrop
@@ -125,7 +127,19 @@ struct CustomizeViewsSettings: View {
 
                 EnumPicker(title: L10n.search, selection: $searchPosterType)
 
-                EnumPicker(title: L10n.library, selection: $libraryGridPosterType)
+                // TODO: break out library view type and columns
+
+                EnumPicker(title: L10n.library, selection: $libraryViewType)
+
+                if libraryViewType == .list && !UIDevice.isPhone {
+                    BasicStepper(
+                        title: "Columns",
+                        value: $listColumnCount,
+                        range: 1 ... 3,
+                        step: 1
+                    )
+                }
+
             } header: {
                 L10n.posters.text
             }

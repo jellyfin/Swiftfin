@@ -15,9 +15,9 @@ extension View {
         videoPlayerManager: VideoPlayerManager,
         updateViewProxy: UpdateViewProxy
     ) -> some View {
-        
+
         self
-        
+
 //        self
 //            .addingKeyCommand(
 //                title: L10n.playAndPause,
@@ -61,7 +61,7 @@ extension View {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
 //                }
 //
-////                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
+        ////                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
 //            }
 //            .addingKeyCommand(
 //                title: L10n.jumpBackward,
@@ -93,7 +93,7 @@ extension View {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
 //                }
 //
-////                    jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
+        ////                    jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
 //            }
 
 //        self.keyCommands([

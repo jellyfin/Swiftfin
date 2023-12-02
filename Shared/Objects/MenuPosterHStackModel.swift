@@ -6,8 +6,8 @@
 // Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
-import OrderedCollections
 import Foundation
+import OrderedCollections
 
 // TODO: Don't be specific to Poster, allow other types
 // TODO: remove

@@ -12,7 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: pad vs phone layouts
 // TODO: find better way to init layout
 // - is onAppear good enough since right now it will always open up in loading state?
 // - that should change if/when better caching is implemented
@@ -20,18 +19,40 @@ import SwiftUI
 
 struct PagingLibraryView: View {
 
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
     @Default(.Customization.Library.viewType)
     private var libraryViewType
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
 
     @ObservedObject
     var viewModel: PagingLibraryViewModel
-    
+
     @State
     private var layout: CollectionVGridLayout
 
     private var onSelect: (BaseItemDto) -> Void
+
+    private func padLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
+        switch libraryViewType {
+        case .landscapeGrid:
+            .minWidth(220)
+        case .portraitGrid:
+            .minWidth(150)
+        case .list:
+            .columns(listColumnCount)
+        }
+    }
+
+    private func phoneLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
+        switch libraryViewType {
+        case .portraitGrid:
+            .columns(3)
+        case .landscapeGrid:
+            .columns(2)
+        case .list:
+            .columns(1)
+        }
+    }
 
     var body: some View {
         CollectionVGrid(
@@ -39,9 +60,20 @@ struct PagingLibraryView: View {
             layout: $layout
         ) { item in
             switch libraryViewType {
-            case .grid:
-                PosterButton(item: item, type: libraryGridPosterType)
-                    .content { item in
+            case .landscapeGrid:
+                PosterButton(item: item, type: .landscape)
+                    .content {
+                        if item.showTitle {
+                            PosterButton.TitleContentView(item: item)
+                                .reservingSpaceLineLimit(1)
+                        }
+                    }
+                    .onSelect {
+                        onSelect(item)
+                    }
+            case .portraitGrid:
+                PosterButton(item: item, type: .portrait)
+                    .content {
                         if item.showTitle {
                             PosterButton.TitleContentView(item: item)
                                 .reservingSpaceLineLimit(1)
@@ -55,28 +87,21 @@ struct PagingLibraryView: View {
                     .onSelect {
                         onSelect(item)
                     }
-                    .padding(5)
             }
         }
         .ignoresSafeArea()
         .onAppear {
-            switch (libraryViewType, libraryGridPosterType) {
-            case (.grid, .portrait):
-                layout = .columns(3)
-            case (.grid, .landscape):
-                layout = .columns(2)
-            case (.list, _):
-                layout = .columns(1, insets: .init(constant: 0), itemSpacing: 0, lineSpacing: 0)
+            if UIDevice.isPhone {
+                layout = phoneLayout(libraryViewType: libraryViewType)
+            } else {
+                layout = padLayout(libraryViewType: libraryViewType)
             }
         }
-        .onChange(of: libraryViewType) { newValue in
-            switch (newValue, libraryGridPosterType) {
-            case (.grid, .portrait):
-                layout = .columns(3)
-            case (.grid, .landscape):
-                layout = .columns(2)
-            case (.list, _):
-                layout = .columns(1, insets: .init(constant: 0), itemSpacing: 0, lineSpacing: 0)
+        .onChange(of: libraryViewType) { _ in
+            if UIDevice.isPhone {
+                layout = phoneLayout(libraryViewType: libraryViewType)
+            } else {
+                layout = padLayout(libraryViewType: libraryViewType)
             }
         }
     }

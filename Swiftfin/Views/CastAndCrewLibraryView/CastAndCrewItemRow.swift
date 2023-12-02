@@ -24,9 +24,14 @@ extension CastAndCrewLibraryView {
                 onSelect()
             } label: {
                 HStack(alignment: .bottom) {
-                    ImageView(person.portraitPosterImageSource(maxWidth: 60))
-                        .posterStyle(.portrait)
-                        .frame(width: 60)
+                    ZStack {
+                        Color.clear
+
+                        ImageView(person.portraitPosterImageSource(maxWidth: 60))
+                    }
+                    .frame(width: 60, height: 90)
+                    .posterStyle(.portrait)
+                    .posterShadow()
 
                     VStack(alignment: .leading) {
                         Text(person.displayTitle)
@@ -52,9 +57,12 @@ extension CastAndCrewLibraryView {
 }
 
 extension CastAndCrewLibraryView.CastAndCrewItemRow {
+
     init(person: BaseItemPerson) {
-        self.person = person
-        self.onSelect = {}
+        self.init(
+            person: person,
+            onSelect: {}
+        )
     }
 
     func onSelect(_ action: @escaping () -> Void) -> Self {

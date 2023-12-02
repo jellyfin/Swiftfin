@@ -22,8 +22,19 @@ struct MediaView: View {
     @ObservedObject
     var viewModel: MediaViewModel
 
+    private var padLayout: CollectionVGridLayout {
+        .minWidth(200)
+    }
+
+    private var phoneLayout: CollectionVGridLayout {
+        .columns(2)
+    }
+
     var body: some View {
-        CollectionVGrid($viewModel.libraries, layout: .columns(2)) { library in
+        CollectionVGrid(
+            $viewModel.libraries,
+            layout: UIDevice.isPhone ? phoneLayout : padLayout
+        ) { library in
             LibraryCard(item: library)
                 .onSelect {
                     switch library.collectionType {
@@ -37,8 +48,8 @@ struct MediaView: View {
                         router.route(to: \.liveTV)
                     default:
                         router.route(to: \.library, .init(parent: library, type: .library, filters: .init()))
+                    }
                 }
-            }
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)

@@ -27,13 +27,13 @@ extension HomeView {
                 columns: 1.5
             ) { item in
                 PosterButton(item: item, type: .landscape)
-                    .content { item in
+                    .content {
                         PosterButton.TitleSubtitleContentView(
                             item: item,
                             subtitleLineLimit: 1
                         )
                     }
-                    .imageOverlay { item in
+                    .imageOverlay {
                         LandscapePosterProgressBar(
                             title: item.progressLabel ?? L10n.continue,
                             progress: (item.userData?.playedPercentage ?? 0) / 100

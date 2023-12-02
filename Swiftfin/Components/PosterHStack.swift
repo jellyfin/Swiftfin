@@ -48,9 +48,9 @@ struct PosterHStack<Item: Poster>: View {
                     type: type,
                     singleImage: singleImage
                 )
-                .content { content($0).eraseToAnyView() }
-                .imageOverlay { imageOverlay($0).eraseToAnyView() }
-                .contextMenu { contextMenu($0).eraseToAnyView() }
+                .content { content(item).eraseToAnyView() }
+                .imageOverlay { imageOverlay(item).eraseToAnyView() }
+                .contextMenu { contextMenu(item).eraseToAnyView() }
                 .onSelect { onSelect(item) }
             }
             .clipsToBounds(false)
@@ -83,7 +83,7 @@ extension PosterHStack {
             onSelect: { _ in }
         )
     }
-    
+
     init<S: Sequence<Item>>(
         title: String? = nil,
         type: PosterType,

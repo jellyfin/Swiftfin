@@ -52,4 +52,12 @@ extension Int {
             .appending("s")
             .prepending("-", if: isNegative)
     }
+
+    init?(_ source: CGFloat?) {
+        if let source = source {
+            self.init(source)
+        } else {
+            return nil
+        }
+    }
 }

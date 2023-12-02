@@ -15,19 +15,33 @@ struct LibraryViewTypeToggle: View {
     var libraryViewType: LibraryViewType
 
     var body: some View {
-        Button {
-            switch libraryViewType {
-            case .grid:
+        Menu {
+
+            Button {
+                libraryViewType = .landscapeGrid
+            } label: {
+                Label("Landscape", systemImage: "rectangle")
+            }
+
+            Button {
+                libraryViewType = .portraitGrid
+            } label: {
+                Label("Portrait", systemImage: "rectangle.portrait")
+            }
+
+            Button {
                 libraryViewType = .list
-            case .list:
-                libraryViewType = .grid
+            } label: {
+                Label(L10n.list, systemImage: "list.dash")
             }
         } label: {
             switch libraryViewType {
-            case .grid:
-                Label(L10n.list, systemImage: "list.dash")
+            case .landscapeGrid:
+                Label("Landscape", systemImage: "rectangle")
+            case .portraitGrid:
+                Label("Portrait", systemImage: "rectangle.portrait")
             case .list:
-                Label(L10n.grid, systemImage: "square.grid.2x2")
+                Label(L10n.list, systemImage: "list.dash")
             }
         }
     }

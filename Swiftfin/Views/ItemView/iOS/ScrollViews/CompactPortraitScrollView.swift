@@ -173,7 +173,7 @@ extension ItemView.CompactPosterScrollView {
                     // MARK: Portrait Image
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .posterStyle(.portrait)
+                        .aspectRatio(2 / 3, contentMode: .fit)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 

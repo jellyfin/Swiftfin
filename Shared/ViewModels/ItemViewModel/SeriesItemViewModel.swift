@@ -10,8 +10,8 @@ import Combine
 import Defaults
 import Factory
 import Foundation
-import OrderedCollections
 import JellyfinAPI
+import OrderedCollections
 
 final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
@@ -19,7 +19,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     var menuSelection: BaseItemDto?
     @Published
     var currentItems: OrderedSet<BaseItemDto> = []
-    
+
     var menuSections: [BaseItemDto: OrderedSet<BaseItemDto>]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
@@ -119,7 +119,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
     func select(section: BaseItemDto) {
         self.menuSelection = section
-        
+
         if let items = menuSections[section] {
             currentItems = items
         } else {
@@ -127,9 +127,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         }
 
 //        if !menuSections.keys.contains(section) {
-//            
+//
 //        } else {
-//            
+//
 //        }
     }
 
