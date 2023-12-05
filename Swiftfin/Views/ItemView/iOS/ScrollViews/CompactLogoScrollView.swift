@@ -36,7 +36,7 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
                 .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
@@ -132,8 +132,7 @@ extension ItemView.CompactLogoScrollView {
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
-//                    .resizingMode(.aspectFit)
+                ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
                         .placeholder {
                             EmptyView()
                         }
@@ -141,12 +140,13 @@ extension ItemView.CompactLogoScrollView {
                             Text(viewModel.item.displayTitle)
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
+                                .lineLimit(2)
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.white)
                         }
                         .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 70)
+                        .frame(maxWidth: .infinity, alignment: .bottom)
+                        .frame(height: 70, alignment: .bottom)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

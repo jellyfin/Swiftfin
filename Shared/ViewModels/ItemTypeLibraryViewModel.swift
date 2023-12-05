@@ -61,8 +61,8 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
 
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
-            startIndex: currentPage * 100,
-            limit: 100,
+            startIndex: currentPage * Self.DefaultPageSize,
+            limit: Self.DefaultPageSize,
             isRecursive: true,
             sortOrder: sortOrder,
             fields: ItemFields.allCases,

@@ -22,7 +22,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people
+                items: people.filter(\.isDisplayed)
             )
             .trailing {
                 SeeAllButton()

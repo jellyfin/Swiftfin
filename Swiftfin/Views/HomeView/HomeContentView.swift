@@ -26,24 +26,20 @@ extension HomeView {
         var body: some View {
             RefreshableScrollView {
                 VStack(alignment: .leading, spacing: 20) {
+                    
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(viewModel: viewModel)
                     }
 
-                    if viewModel.hasNextUp {
-                        NextUpView(viewModel: .init())
+                    if !viewModel.nextUpViewModel.items.isEmpty {
+                        NextUpView(viewModel: viewModel.nextUpViewModel)
+                    }
+                    
+                    if !viewModel.recentlyAddedViewModel.items.isEmpty {
+                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
 
-                    if viewModel.hasRecentlyAdded {
-                        RecentlyAddedView(
-                            viewModel: .init(
-                                itemTypes: [.movie, .series],
-                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                            )
-                        )
-                    }
-
-                    ForEach(viewModel.libraries, id: \.self) { library in
+                    ForEach(viewModel.libraries) { library in
                         LatestInLibraryView(viewModel: .init(parent: library, type: .library, filters: .recent))
                     }
                 }

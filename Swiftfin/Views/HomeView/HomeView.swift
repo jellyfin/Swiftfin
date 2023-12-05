@@ -14,7 +14,7 @@ struct HomeView: View {
     @EnvironmentObject
     private var router: HomeCoordinator.Router
 
-    @ObservedObject
+    @StateObject
     var viewModel: HomeViewModel
 
     var body: some View {

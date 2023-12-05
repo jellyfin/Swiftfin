@@ -48,6 +48,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
         super.init()
 
         filterViewModel.$currentFilters
+            .debounce(for: 0.5, scheduler: DispatchQueue.main)
             .sink { newFilters in
                 self.requestItems(with: newFilters, replaceCurrentItems: true)
 
@@ -72,8 +73,8 @@ final class LibraryViewModel: PagingLibraryViewModel {
             }
 
             var parameters = _getDefaultParams()
-            parameters?.limit = 100
-            parameters?.startIndex = currentPage * 100
+            parameters?.limit = Self.DefaultPageSize
+            parameters?.startIndex = currentPage * Self.DefaultPageSize
             parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
             parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
 

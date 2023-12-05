@@ -12,11 +12,13 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
-    override init() {
-        super.init()
+//    override init() {
+//        super.init()
 
-        _requestNextPage()
-    }
+//        _requestNextPage()
+//    }
+    
+    
 
     override func _requestNextPage() {
         Task {
@@ -27,7 +29,8 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
             let parameters = Paths.GetNextUpParameters(
                 userID: userSession.user.id,
-                limit: 100,
+                startIndex: currentPage,
+                limit: Self.DefaultPageSize,
                 fields: ItemFields.minimumCases,
                 enableUserData: true
             )

@@ -21,7 +21,7 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemTypeLibraryViewModel
+        var viewModel: RecentlyAddedLibraryViewModel
 
         var body: some View {
             PosterHStack(

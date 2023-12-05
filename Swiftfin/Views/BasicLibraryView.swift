@@ -27,7 +27,7 @@ struct BasicLibraryView: View {
         self.viewModel = viewModel
     }
 
-    init(data: some Sequence<BaseItemDto>) {
+    init(data: some Collection<BaseItemDto>) {
         self.viewModel = PagingLibraryViewModel(data)
     }
 

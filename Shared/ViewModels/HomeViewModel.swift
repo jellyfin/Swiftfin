@@ -9,25 +9,20 @@
 import Combine
 import CoreStore
 import Factory
-import Foundation
 import JellyfinAPI
 import OrderedCollections
-import UIKit
-
-// TODO: remove the `has` stuff
 
 final class HomeViewModel: ViewModel {
 
     @Published
     var errorMessage: String?
     @Published
-    var hasNextUp: Bool = false
-    @Published
-    var hasRecentlyAdded: Bool = false
-    @Published
     var libraries: [BaseItemDto] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
+    
+    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
         super.init()
@@ -38,8 +33,6 @@ final class HomeViewModel: ViewModel {
     @objc
     func refresh() {
 
-        hasNextUp = false
-        hasRecentlyAdded = false
         libraries = []
         resumeItems = []
 
@@ -50,9 +43,9 @@ final class HomeViewModel: ViewModel {
                 isLoading = true
             }
 
-            refreshHasRecentlyAddedItems()
             refreshResumeItems()
-            refreshHasNextUp()
+            nextUpViewModel.refresh()
+            recentlyAddedViewModel.refresh()
 
             do {
                 try await refreshLibrariesLatest()
@@ -106,23 +99,6 @@ final class HomeViewModel: ViewModel {
         return response?.value.configuration?.latestItemsExcludes ?? []
     }
 
-    // MARK: Recently Added Items
-
-    private func refreshHasRecentlyAddedItems() {
-        Task {
-            let parameters = Paths.GetLatestMediaParameters(
-                includeItemTypes: [.movie, .series],
-                limit: 1
-            )
-            let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasRecentlyAdded = !response.value.isEmpty
-            }
-        }
-    }
-
     // MARK: Resume Items
 
     private func refreshResumeItems() {
@@ -156,7 +132,8 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
             refreshResumeItems()
-            refreshHasNextUp()
+            nextUpViewModel.refresh()
+            recentlyAddedViewModel.refresh()
         }
     }
 
@@ -171,24 +148,8 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
             refreshResumeItems()
-            refreshHasNextUp()
-        }
-    }
-
-    // MARK: Next Up Items
-
-    private func refreshHasNextUp() {
-        Task {
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                limit: 1
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasNextUp = !(response.value.items?.isEmpty ?? true)
-            }
+            nextUpViewModel.refresh()
+            recentlyAddedViewModel.refresh()
         }
     }
 }

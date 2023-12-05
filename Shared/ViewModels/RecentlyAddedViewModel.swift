@@ -12,18 +12,12 @@ import JellyfinAPI
 
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel {
 
-    override init() {
-        super.init()
-
-        _requestNextPage()
-    }
-
     override func _requestNextPage() {
         Task {
             let parameters = Paths.GetItemsParameters(
                 userID: userSession.user.id,
-                startIndex: currentPage * 100,
-                limit: 100,
+                startIndex: currentPage * Self.DefaultPageSize,
+                limit: Self.DefaultPageSize,
                 isRecursive: true,
                 sortOrder: [.descending],
                 fields: ItemFields.allCases,

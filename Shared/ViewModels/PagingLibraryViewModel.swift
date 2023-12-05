@@ -14,6 +14,9 @@ import OrderedCollections
 import UIKit
 
 class PagingLibraryViewModel: ViewModel {
+    
+    /// The default page
+    static let DefaultPageSize = 50
 
     @Published
     var items: OrderedSet<BaseItemDto>
@@ -25,8 +28,9 @@ class PagingLibraryViewModel: ViewModel {
         self.items = []
     }
 
-    init(_ data: some Sequence<BaseItemDto>) {
-        self.items = OrderedSet(data)
+    init(_ data: some Collection<BaseItemDto>) {
+        items = OrderedSet(data)
+        currentPage = data.count / Self.DefaultPageSize
     }
 
     public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {
@@ -59,7 +63,7 @@ class PagingLibraryViewModel: ViewModel {
 
         items = []
 
-        requestNextPage()
+        _requestNextPage()
     }
 
     func requestNextPage() {
