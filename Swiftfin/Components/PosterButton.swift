@@ -48,12 +48,11 @@ struct PosterButton<Item: Poster>: View {
 
                     poster(from: item)
                 }
-                .posterStyle(type)
                 .overlay {
                     imageOverlay()
                         .eraseToAnyView()
-                        .posterStyle(type)
                 }
+                .posterStyle(type)
             }
             .contextMenu(menuItems: {
                 contextMenu()
@@ -138,11 +137,11 @@ extension PosterButton {
                     TitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
-
-                    SubtitleContentView(item: item)
-                        .backport
-                        .lineLimit(1, reservesSpace: true)
                 }
+
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }

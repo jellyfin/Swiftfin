@@ -31,6 +31,7 @@ struct PagingLibraryView: View {
 
     private var onSelect: (BaseItemDto) -> Void
 
+    // lists will add their own insets to manually add the dividers
     private func padLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
         switch libraryViewType {
         case .landscapeGrid:
@@ -38,7 +39,7 @@ struct PagingLibraryView: View {
         case .portraitGrid:
             .minWidth(150)
         case .list:
-            .columns(listColumnCount)
+            .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
 
@@ -49,7 +50,7 @@ struct PagingLibraryView: View {
         case .landscapeGrid:
             .columns(2)
         case .list:
-            .columns(1)
+            .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
 
@@ -87,6 +88,10 @@ struct PagingLibraryView: View {
                 LibraryItemRow(item: item)
                     .onSelect {
                         onSelect(item)
+                    }
+                    .padding(10)
+                    .overlay(alignment: .bottom) {
+                        Divider()
                     }
             }
         }

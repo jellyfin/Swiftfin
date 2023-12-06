@@ -26,7 +26,7 @@ extension HomeView {
         var body: some View {
             RefreshableScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    
+
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(viewModel: viewModel)
                     }
@@ -34,7 +34,7 @@ extension HomeView {
                     if !viewModel.nextUpViewModel.items.isEmpty {
                         NextUpView(viewModel: viewModel.nextUpViewModel)
                     }
-                    
+
                     if !viewModel.recentlyAddedViewModel.items.isEmpty {
                         RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }

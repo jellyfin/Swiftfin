@@ -133,20 +133,20 @@ extension ItemView.CompactLogoScrollView {
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
                 ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.white)
-                        }
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: .infinity, alignment: .bottom)
-                        .frame(height: 70, alignment: .bottom)
+                    .placeholder {
+                        EmptyView()
+                    }
+                    .failure {
+                        Text(viewModel.item.displayTitle)
+                            .font(.largeTitle)
+                            .fontWeight(.semibold)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.white)
+                    }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity, alignment: .bottom)
+                    .frame(height: 70, alignment: .bottom)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {

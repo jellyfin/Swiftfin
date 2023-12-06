@@ -26,19 +26,23 @@ extension HomeView {
         var viewModel: LibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                type: latestInLibraryPosterType,
-                items: $viewModel.items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
-                    }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.items.isEmpty {
+                EmptyView()
+            } else {
+                PosterHStack(
+                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                    type: latestInLibraryPosterType,
+                    items: $viewModel.items
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                        }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

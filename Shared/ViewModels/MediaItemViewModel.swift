@@ -10,11 +10,10 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-// TODO: remove
 final class MediaItemViewModel: ViewModel {
 
     @Published
-    var imageSources: [ImageSource]?
+    var imageSources: [ImageSource] = []
 
     let item: BaseItemDto
 
@@ -23,35 +22,54 @@ final class MediaItemViewModel: ViewModel {
         super.init()
 
         if item.collectionType == "favorites" {
-            getRandomItemImageSource(with: [.isFavorite])
+            Task {
+                let sources = try await getRandomItemImageSource(filters: [.isFavorite])
+
+                await MainActor.run {
+                    self.imageSources = sources
+                }
+            }
         } else if item.collectionType == "downloads" {
-            imageSources = nil
+            imageSources = []
         } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
             imageSources = [item.imageSource(.primary, maxWidth: 500)]
         } else {
-            getRandomItemImageSource(with: nil)
+            Task {
+                let sources = try await getRandomItemImageSource()
+
+                await MainActor.run {
+                    self.imageSources = sources
+                }
+            }
         }
     }
 
-    private func getRandomItemImageSource(with filters: [ItemFilter]?) {
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 1,
-                isRecursive: true,
-                parentID: item.id,
-                includeItemTypes: [.movie, .series],
-                filters: filters,
-                sortBy: ["Random"]
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+    private func getRandomItemImageSource(filters: [ItemFilter]? = nil) async throws -> [ImageSource] {
+        let parameters = Paths.GetItemsParameters(
+            userID: userSession.user.id,
+            limit: 1,
+            isRecursive: true,
+            parentID: item.id,
+            includeItemTypes: [.movie, .series],
+            filters: filters,
+            sortBy: ["Random"]
+        )
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-            guard let item = response.value.items?.first else { return }
+        guard let item = response.value.items?.first else { return [] }
 
-            await MainActor.run {
-                imageSources = [item.imageSource(.backdrop, maxWidth: 500)]
-            }
-        }
+        return [item.imageSource(.backdrop, maxWidth: 500)]
+    }
+}
+
+extension MediaItemViewModel: Equatable, Hashable {
+
+    static func == (lhs: MediaItemViewModel, rhs: MediaItemViewModel) -> Bool {
+        lhs.item == rhs.item
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(item.id)
     }
 }

@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import OrderedCollections
@@ -16,41 +17,44 @@ final class MediaViewModel: ViewModel {
     private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
 
     @Published
-    var libraries: OrderedSet<BaseItemDto> = []
-
-    var libraryItems: [MediaItemViewModel] {
-        libraries.map { .init(item: $0) }
-            .prepending(
-                .init(item: .init(collectionType: "liveTV", name: L10n.liveTV)),
-                if: Defaults[.Experimental.liveTVAlphaEnabled]
-            )
-            .prepending(
-                .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
-                if: Defaults[.Customization.Library.showFavorites]
-            )
-            .prepending(
-                .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
-                if: Defaults[.Experimental.downloads]
-            )
-    }
+    var libraries: OrderedSet<MediaItemViewModel> = []
 
     override init() {
         super.init()
 
         Task {
-            do {
-                let newLibraries = try await getUserLibraries()
+            await refresh()
+        }
+    }
 
-                await MainActor.run {
-                    libraries.elements = newLibraries
-                }
-            } catch {
-                // TODO: have error once MediaView has error + retry state
+    func refresh() async {
+        do {
+            let newLibraries = try await getUserLibraries()
+
+            await MainActor.run {
+                libraries.elements = newLibraries.map(MediaItemViewModel.init)
+                    .prepending(
+                        .init(item: .init(collectionType: "liveTV", name: L10n.liveTV)),
+                        if: Defaults[.Experimental.liveTVAlphaEnabled]
+                    )
+                    .prepending(
+                        .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
+                        if: Defaults[.Customization.Library.showFavorites]
+                    )
+                    .prepending(
+                        .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
+                        if: Defaults[.Experimental.downloads]
+                    )
+            }
+        } catch {
+            // TODO: set error once MediaView has error + retry state
+            await MainActor.run {
+                libraries = []
             }
         }
     }
 
-    func getUserLibraries() async throws -> [BaseItemDto] {
+    private func getUserLibraries() async throws -> [BaseItemDto] {
         let request = Paths.getUserViews(userID: userSession.user.id)
         let response = try await userSession.client.send(request)
 

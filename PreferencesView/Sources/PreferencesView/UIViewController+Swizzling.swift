@@ -1,10 +1,18 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+//
+
 import SwizzleSwift
 import UIKit
 
 extension UIViewController {
-    
+
     // MARK: Swizzle
-    
+
     // only swizzle once
     static var swizzlePreferences = {
         Swizzle(UIViewController.self) {
@@ -14,9 +22,9 @@ extension UIViewController {
 //            #selector(getter: prefersHomeIndicatorAutoHidden) <-> #selector(swizzled_prefersHomeIndicatorAutoHidden)
         }
     }()
-    
+
     // MARK: Swizzles
-    
+
     @objc
     func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
         if self is UIPreferencesHostingController {
@@ -34,17 +42,17 @@ extension UIViewController {
             return search()
         }
     }
-    
+
     @objc
     func swizzled_prefersHomeIndicatorAutoHidden() -> Bool {
         search()?.prefersHomeIndicatorAutoHidden ?? false
     }
-    
+
     @objc
     func swizzled_supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         search()?._orientations ?? .all
     }
-    
+
     // MARK: Search
 
     private func search() -> UIPreferencesHostingController? {

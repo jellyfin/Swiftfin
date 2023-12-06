@@ -17,8 +17,6 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
 //        _requestNextPage()
 //    }
-    
-    
 
     override func _requestNextPage() {
         Task {

@@ -18,7 +18,7 @@ extension View {
         updateViewProxy: UpdateViewProxy
     ) -> some View {
         keyCommands {
-            
+
             // MARK: play/pause
 
             KeyCommandAction(
@@ -33,7 +33,7 @@ extension View {
                     updateViewProxy.present(systemName: "play.fill", title: "Play")
                 }
             }
-            
+
             // MARK: jump forward
 
             KeyCommandAction(
@@ -66,7 +66,7 @@ extension View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                 }
             }
-            
+
             // MARK: aspect fill
 
             KeyCommandAction(
@@ -110,7 +110,7 @@ extension View {
 //                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
 //                }
 //
-        ////                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
+//                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
 //            }
 //            .addingKeyCommand(
 //                title: L10n.jumpBackward,

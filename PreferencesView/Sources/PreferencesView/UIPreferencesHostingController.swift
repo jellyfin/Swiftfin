@@ -1,3 +1,11 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+//
+
 import SwiftUI
 
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
@@ -19,9 +27,9 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
                     box.value?._orientations = $0
                 }
         )
-        
+
         super.init(rootView: rootView)
-        
+
         box.value = self
     }
 
@@ -29,14 +37,14 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: Defer Edges
-    
+
     private var _preferredScreenEdgesDeferringSystemGestures: UIRectEdge = [.left, .right] {
         didSet { setNeedsUpdateOfScreenEdgesDeferringSystemGestures() }
     }
-    
-    public override var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+
+    override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
         _preferredScreenEdgesDeferringSystemGestures
     }
 
@@ -46,12 +54,12 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
     }
 
-    public override var prefersHomeIndicatorAutoHidden: Bool {
+    override public var prefersHomeIndicatorAutoHidden: Bool {
         _prefersHomeIndicatorAutoHidden
     }
-    
+
     // MARK: Key Commands
-    
+
     private var _keyCommandActions: [KeyCommandAction] = [] {
         willSet {
             _keyCommands = newValue.map { action in
@@ -61,27 +69,28 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
                     input: String(action.input),
                     modifierFlags: action.modifierFlags
                 )
-                
+
                 keyCommand.subtitle = action.subtitle
                 keyCommand.wantsPriorityOverSystemBehavior = true
-                
+
                 return keyCommand
             }
         }
     }
-    
+
     private var _keyCommands: [UIKeyCommand] = []
 
-    public override var keyCommands: [UIKeyCommand]? {
+    override public var keyCommands: [UIKeyCommand]? {
         _keyCommands
     }
 
     @objc
     private func keyCommandHit(keyCommand: UIKeyCommand) {
-        guard let action = _keyCommandActions.first(where: { $0.input == keyCommand.input && $0.modifierFlags == keyCommand.modifierFlags }) else { return }
+        guard let action = _keyCommandActions
+            .first(where: { $0.input == keyCommand.input && $0.modifierFlags == keyCommand.modifierFlags }) else { return }
         action.action()
     }
-    
+
     // MARK: Orientation
 
     var _orientations: UIInterfaceOrientationMask = .all {
@@ -92,7 +101,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         }
     }
 
-    public override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
 }

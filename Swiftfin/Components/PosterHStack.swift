@@ -10,8 +10,6 @@ import CollectionHStack
 import OrderedCollections
 import SwiftUI
 
-// TODO: Remove `Header` and `TrailingContent` and create `HeaderPosterHStack`
-
 struct PosterHStack<Item: Poster>: View {
 
     private var header: () -> any View

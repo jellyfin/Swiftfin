@@ -20,7 +20,7 @@ final class HomeViewModel: ViewModel {
     var libraries: [BaseItemDto] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
-    
+
     var nextUpViewModel: NextUpLibraryViewModel = .init()
     var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 

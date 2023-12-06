@@ -34,22 +34,25 @@ struct MediaView: View {
         CollectionVGrid(
             $viewModel.libraries,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
-        ) { library in
-            LibraryCard(item: library)
+        ) { viewModel in
+            MediaItem(viewModel: viewModel)
                 .onSelect {
-                    switch library.collectionType {
+                    switch viewModel.item.collectionType {
                     case "downloads":
                         router.route(to: \.downloads)
                     case "favorites":
-                        router.route(to: \.library, .init(parent: library, type: .library, filters: .favorites))
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: library, type: .folders, filters: .init()))
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .folders, filters: .init()))
                     case "liveTV":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: library, type: .library, filters: .init()))
+                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .init()))
                     }
                 }
+        }
+        .refreshable {
+            await viewModel.refresh()
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
@@ -65,86 +68,74 @@ struct MediaView: View {
 
 extension MediaView {
 
-    struct LibraryCard: View {
+    struct MediaItem: View {
 
-        @State
-        private var imageSources: [ImageSource]
+        @ObservedObject
+        var viewModel: MediaItemViewModel
 
-        let item: BaseItemDto
+//        @State
+//        private var imageSources: [ImageSource]
+
+//        let item: BaseItemDto
+
         private var onSelect: () -> Void
 
-        init(item: BaseItemDto) {
-            self._imageSources = .init(initialValue: [])
-            self.item = item
+        init(viewModel: MediaItemViewModel) {
+//            self._imageSources = .init(initialValue: [])
+//            self.item = item
+            self.viewModel = viewModel
             self.onSelect = {}
 
-            if item.collectionType == "favorites" {
-                getRandomItemImageSource(with: [.isFavorite])
-            } else if item.collectionType == "downloads" {
-                imageSources = []
-            } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
-                imageSources = [item.imageSource(.primary, maxWidth: 500)]
-            } else {
-                getRandomItemImageSource(with: nil)
-            }
-        }
-
-        private func getRandomItemImageSource(with filters: [ItemFilter]?) {
-            Task {
-
-                let userSession = Container.userSession.callAsFunction()
-
-                let parameters = Paths.GetItemsParameters(
-                    userID: userSession.user.id,
-                    limit: 1,
-                    isRecursive: true,
-                    parentID: item.id,
-                    includeItemTypes: [.movie, .series],
-                    filters: filters,
-                    sortBy: ["Random"]
-                )
-                let request = Paths.getItems(parameters: parameters)
-                let response = try await userSession.client.send(request)
-
-                guard let item = response.value.items?.first else { return }
-
-                await MainActor.run {
-                    imageSources = [item.imageSource(.backdrop, maxWidth: 500)]
-                }
-            }
+//            if item.collectionType == "favorites" {
+//                Task {
+//                    try await getRandomItemImageSource(with: [.isFavorite])
+//                }
+//            } else if item.collectionType == "downloads" {
+//                imageSources = []
+//            } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
+//                imageSources = [item.imageSource(.primary, maxWidth: 500)]
+//            } else {
+//                Task {
+//                    try await getRandomItemImageSource(with: nil)
+//                }
+//            }
         }
 
         var body: some View {
             Button {
                 onSelect()
             } label: {
-                ImageView(imageSources)
-                    .overlay {
-                        if Defaults[.Customization.Library.randomImage] ||
-                            item.collectionType == "favorites" ||
-                            item.collectionType == "downloads"
-                        {
-                            ZStack {
-                                Color.black
-                                    .opacity(0.5)
+                ZStack {
+                    Color.clear
 
-                                Text(item.displayTitle)
-                                    .foregroundColor(.white)
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .multilineTextAlignment(.center)
-                                    .frame(alignment: .center)
-                            }
+                    ImageView(viewModel.imageSources)
+                }
+                .overlay {
+                    if Defaults[.Customization.Library.randomImage] ||
+                        viewModel.item.collectionType == "favorites" ||
+                        viewModel.item.collectionType == "downloads"
+                    {
+                        ZStack {
+                            Color.black
+                                .opacity(0.5)
+
+                            Text(viewModel.item.displayTitle)
+                                .foregroundColor(.white)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .multilineTextAlignment(.center)
+                                .frame(alignment: .center)
                         }
                     }
-                    .posterStyle(.landscape)
+                }
+                .posterStyle(.landscape)
             }
         }
     }
 }
 
-extension MediaView.LibraryCard {
+extension MediaView.MediaItem {
 
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)

@@ -14,7 +14,7 @@ import OrderedCollections
 import UIKit
 
 class PagingLibraryViewModel: ViewModel {
-    
+
     /// The default page
     static let DefaultPageSize = 50
 
