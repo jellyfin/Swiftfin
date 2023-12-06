@@ -78,7 +78,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     @objc
     private func keyCommandHit(keyCommand: UIKeyCommand) {
-        guard let action = _keyCommandActions.first(where: { String($0.input) == keyCommand.input && $0.modifierFlags == keyCommand.modifierFlags }) else { return }
+        guard let action = _keyCommandActions.first(where: { $0.input == keyCommand.input && $0.modifierFlags == keyCommand.modifierFlags }) else { return }
         action.action()
     }
     

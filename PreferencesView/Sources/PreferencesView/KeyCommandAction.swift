@@ -4,14 +4,14 @@ public struct KeyCommandAction {
 
     let title: String
     let subtitle: String?
-    let input: Character
+    let input: String
     let modifierFlags: UIKeyModifierFlags
     let action: () -> Void
 
     public init(
         title: String,
         subtitle: String? = nil,
-        input: Character,
+        input: String,
         modifierFlags: UIKeyModifierFlags = [],
         action: @escaping () -> Void
     ) {
