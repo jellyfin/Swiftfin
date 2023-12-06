@@ -2,10 +2,6 @@ import SwiftUI
 
 public extension View {
     
-    func keyCommands(_ commands: [KeyCommandAction]) -> some View {
-        preference(key: KeyCommandsPreferenceKey.self, value: commands)
-    }
-    
     func keyCommands(@KeyCommandsBuilder _ commands: @escaping () -> [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands())
     }

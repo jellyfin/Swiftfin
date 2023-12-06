@@ -1,6 +1,5 @@
 import SwiftUI
 import SwizzleSwift
-import UIKit
 
 public struct PreferencesView<Content: View>: UIViewControllerRepresentable {
 

@@ -18,6 +18,8 @@ extension View {
         updateViewProxy: UpdateViewProxy
     ) -> some View {
         keyCommands {
+            
+            // MARK: play/pause
 
             KeyCommandAction(
                 title: L10n.playAndPause,
@@ -31,6 +33,8 @@ extension View {
                     updateViewProxy.present(systemName: "play.fill", title: "Play")
                 }
             }
+            
+            // MARK: jump forward
 
             KeyCommandAction(
                 title: L10n.jumpForward,
@@ -62,6 +66,8 @@ extension View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                 }
             }
+            
+            // MARK: aspect fill
 
             KeyCommandAction(
                 title: "Aspect Fill",
