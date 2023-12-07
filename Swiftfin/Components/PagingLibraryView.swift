@@ -54,6 +54,47 @@ struct PagingLibraryView: View {
         }
     }
 
+    private func landscapeGridItemView(item: BaseItemDto) -> some View {
+        PosterButton(item: item, type: .landscape)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
+    }
+
+    private func portraitGridItemView(item: BaseItemDto) -> some View {
+        PosterButton(item: item, type: .portrait)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
+    }
+
+    private func listItemView(item: BaseItemDto) -> some View {
+        LibraryItemRow(item: item)
+            .onSelect {
+                onSelect(item)
+            }
+            .padding(10)
+            .overlay(alignment: .bottom) {
+                Divider()
+            }
+    }
+
+    // MARK: body
+
     var body: some View {
         CollectionVGrid(
             $viewModel.items,
@@ -61,38 +102,11 @@ struct PagingLibraryView: View {
         ) { item in
             switch libraryViewType {
             case .landscapeGrid:
-                PosterButton(item: item, type: .landscape)
-                    .content {
-                        if item.showTitle {
-                            PosterButton.TitleContentView(item: item)
-                                .backport
-                                .lineLimit(1, reservesSpace: true)
-                        }
-                    }
-                    .onSelect {
-                        onSelect(item)
-                    }
+                landscapeGridItemView(item: item)
             case .portraitGrid:
-                PosterButton(item: item, type: .portrait)
-                    .content {
-                        if item.showTitle {
-                            PosterButton.TitleContentView(item: item)
-                                .backport
-                                .lineLimit(1, reservesSpace: true)
-                        }
-                    }
-                    .onSelect {
-                        onSelect(item)
-                    }
+                portraitGridItemView(item: item)
             case .list:
-                LibraryItemRow(item: item)
-                    .onSelect {
-                        onSelect(item)
-                    }
-                    .padding(10)
-                    .overlay(alignment: .bottom) {
-                        Divider()
-                    }
+                listItemView(item: item)
             }
         }
         .ignoresSafeArea()

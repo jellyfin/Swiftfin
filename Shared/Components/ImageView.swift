@@ -73,7 +73,7 @@ extension ImageView {
 
     init(_ source: ImageSource) {
         self.init(
-            sources: [source],
+            sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
             failure: { DefaultFailureView() }
@@ -82,7 +82,7 @@ extension ImageView {
 
     init(_ sources: [ImageSource]) {
         self.init(
-            sources: sources,
+            sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
             failure: { DefaultFailureView() }
@@ -91,7 +91,7 @@ extension ImageView {
 
     init(_ source: URL?) {
         self.init(
-            sources: [ImageSource(url: source, blurHash: nil)],
+            sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
             failure: { DefaultFailureView() }
@@ -99,8 +99,12 @@ extension ImageView {
     }
 
     init(_ sources: [URL?]) {
+        let imageSources = sources
+            .compactMap { $0 }
+            .map { ImageSource(url: $0) }
+
         self.init(
-            sources: sources.map { ImageSource(url: $0, blurHash: nil) },
+            sources: imageSources,
             image: { $0 },
             placeholder: nil,
             failure: { DefaultFailureView() }
@@ -142,10 +146,9 @@ extension ImageView {
 
         var body: some View {
             if let blurHash {
-                BlurHashView(blurHash: blurHash, size: .Square(length: 16))
+                BlurHashView(blurHash: blurHash, size: .Square(length: 8))
             } else {
                 Color.secondarySystemFill
-                    .opacity(0.5)
             }
         }
     }

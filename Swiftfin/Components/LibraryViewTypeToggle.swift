@@ -14,25 +14,38 @@ struct LibraryViewTypeToggle: View {
     @Binding
     var libraryViewType: LibraryViewType
 
+    let allowedTypes: [LibraryViewType]
+
+    init(libraryViewType: Binding<LibraryViewType>, allowedTypes: [LibraryViewType] = LibraryViewType.allCases) {
+        self._libraryViewType = libraryViewType
+        self.allowedTypes = allowedTypes
+    }
+
     var body: some View {
         Menu {
 
-            Button {
-                libraryViewType = .landscapeGrid
-            } label: {
-                Label("Landscape", systemImage: "rectangle")
+            if allowedTypes.contains(.landscapeGrid) {
+                Button {
+                    libraryViewType = .landscapeGrid
+                } label: {
+                    Label("Landscape", systemImage: "rectangle")
+                }
             }
 
-            Button {
-                libraryViewType = .portraitGrid
-            } label: {
-                Label("Portrait", systemImage: "rectangle.portrait")
+            if allowedTypes.contains(.portraitGrid) {
+                Button {
+                    libraryViewType = .portraitGrid
+                } label: {
+                    Label("Portrait", systemImage: "rectangle.portrait")
+                }
             }
 
-            Button {
-                libraryViewType = .list
-            } label: {
-                Label(L10n.list, systemImage: "list.dash")
+            if allowedTypes.contains(.list) {
+                Button {
+                    libraryViewType = .list
+                } label: {
+                    Label(L10n.list, systemImage: "list.dash")
+                }
             }
         } label: {
             switch libraryViewType {

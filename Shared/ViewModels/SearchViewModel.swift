@@ -30,7 +30,7 @@ final class SearchViewModel: ViewModel {
     private var searchTextSubject = CurrentValueSubject<String, Never>("")
     private var searchCancellables = Set<AnyCancellable>()
 
-    var noResults: Bool {
+    var hasNoResults: Bool {
         movies.isEmpty &&
             collections.isEmpty &&
             series.isEmpty &&
@@ -64,6 +64,7 @@ final class SearchViewModel: ViewModel {
 
         filterViewModel.$currentFilters
             .sink { newFilters in
+                guard !self.searchTextSubject.value.isEmpty else { return }
                 self._search(with: self.searchTextSubject.value, filters: newFilters)
             }
             .store(in: &cancellables)

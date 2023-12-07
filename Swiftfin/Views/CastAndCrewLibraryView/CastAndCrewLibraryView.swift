@@ -97,7 +97,13 @@ struct CastAndCrewLibraryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                LibraryViewTypeToggle(
+                    libraryViewType: $libraryViewType,
+                    allowedTypes: [
+                        .portraitGrid,
+                        .list,
+                    ]
+                )
             }
         }
     }

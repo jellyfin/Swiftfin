@@ -52,53 +52,34 @@ struct SeriesEpisodeSelector: View {
             selectorMenu
                 .edgePadding(.horizontal)
 
-            CollectionHStack(
-                $viewModel.currentItems,
-                columns: 1.5
-            ) { item in
-                PosterButton(
-                    item: item,
-                    type: .landscape,
-                    singleImage: true
-                )
-                .content {
-                    EpisodeContent(episode: item)
+            if viewModel.currentItems.isEmpty {
+                EmptyView()
+            } else {
+                CollectionHStack(
+                    $viewModel.currentItems,
+                    columns: 1.5
+                ) { item in
+                    PosterButton(
+                        item: item,
+                        type: .landscape,
+                        singleImage: true
+                    )
+                    .content {
+                        EpisodeContent(episode: item)
+                    }
+                    .imageOverlay {
+                        EpisodeOverlay(episode: item)
+                    }
+                    .onSelect {
+                        guard let mediaSource = item.mediaSources?.first else { return }
+                        mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                    }
                 }
-                .imageOverlay {
-                    EpisodeOverlay(episode: item)
-                }
-                .onSelect {
-                    guard let mediaSource = item.mediaSources?.first else { return }
-                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
-                }
+                .scrollBehavior(.continuousLeadingEdge)
+                .horizontalInset(16)
+                .itemSpacing(8)
             }
-            .scrollBehavior(.continuousLeadingEdge)
-            .horizontalInset(16)
-            .itemSpacing(8)
         }
-
-//        PosterHStack(
-//            type: .landscape,
-//            manager: viewModel,
-//            singleImage: true
-//        )
-//        PosterHStack(
-//            type: .landscape,
-//            items: $viewModel.currentItems
-//        )
-//        .header {
-//            selectorMenu
-//        }
-//        .imageOverlay { item in
-//            EpisodeOverlay(episode: item)
-//        }
-//        .content { type in
-//            EpisodeContent(episode: type)
-//        }
-//        .onSelect { item in
-//            guard let mediaSource = item.mediaSources?.first else { return }
-//            mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
-//        }
     }
 }
 

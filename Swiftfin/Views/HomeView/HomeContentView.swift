@@ -24,7 +24,7 @@ extension HomeView {
         var viewModel: HomeViewModel
 
         var body: some View {
-            RefreshableScrollView {
+            ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
                     if !viewModel.resumeItems.isEmpty {
@@ -44,9 +44,13 @@ extension HomeView {
                     }
                 }
                 .padding(.bottom, 50)
-            } onRefresh: {
-                viewModel.refresh()
             }
+            .refreshable {
+                await viewModel.refresh()
+            }
+//            } onRefresh: {
+//                await viewModel.refresh()
+//            }
         }
     }
 }

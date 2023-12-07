@@ -40,7 +40,9 @@ extension HomeView {
 
                 PrimaryButton(title: L10n.retry)
                     .onSelect {
-                        viewModel.refresh()
+                        Task {
+                            await viewModel.refresh()
+                        }
                     }
                     .frame(maxWidth: 300)
                     .frame(height: 50)

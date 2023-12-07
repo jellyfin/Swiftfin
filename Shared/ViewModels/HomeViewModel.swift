@@ -15,8 +15,6 @@ import OrderedCollections
 final class HomeViewModel: ViewModel {
 
     @Published
-    var errorMessage: String?
-    @Published
     var libraries: [BaseItemDto] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
@@ -27,41 +25,47 @@ final class HomeViewModel: ViewModel {
     override init() {
         super.init()
 
-        refresh()
+        Task {
+            await refresh()
+        }
     }
 
     @objc
-    func refresh() {
+    func refresh() async {
 
-        libraries = []
-        resumeItems = []
+        logger.debug("Refreshing home screen")
+
+        await MainActor.run {
+            isLoading = true
+            libraries = []
+            resumeItems = []
+        }
+
+        refreshResumeItems()
 
         Task {
-            logger.debug("Refreshing home screen")
+            await nextUpViewModel.refresh()
+        }
 
+        Task {
+            await recentlyAddedViewModel.refresh()
+        }
+
+        do {
+            try await refreshLibrariesLatest()
+        } catch {
             await MainActor.run {
-                isLoading = true
-            }
-
-            refreshResumeItems()
-            nextUpViewModel.refresh()
-            recentlyAddedViewModel.refresh()
-
-            do {
-                try await refreshLibrariesLatest()
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                    errorMessage = error.localizedDescription
-                }
-
-                return
-            }
-
-            await MainActor.run {
+                libraries = []
                 isLoading = false
-                errorMessage = nil
+                self.error = .init(message: error.localizedDescription)
             }
+
+            return
+        }
+
+        await MainActor.run {
+            self.error = nil
+            isLoading = false
         }
     }
 
@@ -132,8 +136,9 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
             refreshResumeItems()
-            nextUpViewModel.refresh()
-            recentlyAddedViewModel.refresh()
+
+            await nextUpViewModel.refresh()
+            await recentlyAddedViewModel.refresh()
         }
     }
 
@@ -148,8 +153,8 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
             refreshResumeItems()
-            nextUpViewModel.refresh()
-            recentlyAddedViewModel.refresh()
+            await nextUpViewModel.refresh()
+            await recentlyAddedViewModel.refresh()
         }
     }
 }

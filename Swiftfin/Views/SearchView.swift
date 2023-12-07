@@ -83,23 +83,21 @@ struct SearchView: View {
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
         posterType: PosterType
     ) -> some View {
-//        PosterHStack(
-//            title: title,
-//            type: posterType,
-//            items: viewModel[keyPath: keyPath]
-//        )
-//        .onSelect { item in
-//            baseItemOnSelect(item)
-//        }
-
-        Text("TODO")
+        PosterHStack(
+            title: title,
+            type: posterType,
+            items: viewModel[keyPath: keyPath]
+        )
+        .onSelect { item in
+            baseItemOnSelect(item)
+        }
     }
 
     var body: some View {
-        Group {
+        ZStack {
             if searchText.isEmpty {
                 suggestionsView
-            } else if !viewModel.isLoading && viewModel.noResults {
+            } else if !viewModel.isLoading && viewModel.hasNoResults {
                 L10n.noResults.text
             } else {
                 resultsView

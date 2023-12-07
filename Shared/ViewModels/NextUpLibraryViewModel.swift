@@ -56,9 +56,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            await MainActor.run {
-                refresh()
-            }
+            await refresh()
         }
     }
 }

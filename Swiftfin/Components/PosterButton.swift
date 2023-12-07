@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: just establish rules for default content line limits for design
-
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
@@ -47,8 +45,7 @@ struct PosterButton<Item: Poster>: View {
                     Color.clear
 
                     poster(from: item)
-                }
-                .overlay {
+
                     imageOverlay()
                         .eraseToAnyView()
                 }

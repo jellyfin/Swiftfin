@@ -57,11 +57,13 @@ class PagingLibraryViewModel: ViewModel {
         Paths.GetItemsParameters()
     }
 
-    func refresh() {
+    func refresh() async {
         currentPage = 0
         hasNextPage = true
 
-        items = []
+        await MainActor.run {
+            items = []
+        }
 
         _requestNextPage()
     }

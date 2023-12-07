@@ -64,7 +64,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         if let parent = parameters.parent {
-            if parameters.filters == .init(), let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
+            if !parameters.filters.hasFilters, let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
                 LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
             } else {
                 LibraryView(viewModel: LibraryViewModel(

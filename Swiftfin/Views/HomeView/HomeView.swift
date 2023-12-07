@@ -18,16 +18,16 @@ struct HomeView: View {
     var viewModel: HomeViewModel
 
     var body: some View {
-        Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(
-                    viewModel: viewModel,
-                    errorMessage: .init(message: errorMessage, code: -1)
-                )
-            } else if viewModel.isLoading {
+        ZStack {
+            if let error = viewModel.error {
+                ErrorView(viewModel: viewModel, errorMessage: error)
+            }
+
+            if viewModel.isLoading {
                 ProgressView()
             } else {
                 ContentView(viewModel: viewModel)
+                    .transition(.opacity)
             }
         }
         .navigationTitle(L10n.home)
