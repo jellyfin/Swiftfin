@@ -8,11 +8,8 @@
 
 import SwiftUI
 
-struct Divider: View {
-
+struct FolderLibraryView: View {
     var body: some View {
-        Color.secondarySystemFill
-            .frame(height: 1)
-            .padding(.horizontal)
+        Text("")
     }
 }

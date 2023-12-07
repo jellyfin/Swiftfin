@@ -63,7 +63,8 @@ struct CastAndCrewLibraryView: View {
                         router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
                     }
             case .list:
-                CastAndCrewItemRow(person: person)
+//                CastAndCrewItemRow(person: person)
+                LibraryItemRow(item: person)
                     .onSelect {
                         router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
                     }

@@ -60,16 +60,12 @@ final class LibraryViewModel: PagingLibraryViewModel {
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
-
-        if replaceCurrentItems {
-            self.items = []
-            self.currentPage = 0
-            self.hasNextPage = true
-        }
-
         Task {
             await MainActor.run {
                 self.isLoading = true
+                self.items = []
+                self.currentPage = 0
+                self.hasNextPage = true
             }
 
             var parameters = _getDefaultParams()

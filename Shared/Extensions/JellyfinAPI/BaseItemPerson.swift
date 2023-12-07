@@ -20,8 +20,6 @@ extension BaseItemPerson: LibraryParent {}
 
 extension BaseItemPerson {
 
-    // MARK: First Role
-
     // Jellyfin will grab all roles the person played in the show which makes the role
     //    text too long. This will grab the first role which:
     //      - assumes that the most important role is the first

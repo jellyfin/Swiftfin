@@ -13,8 +13,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: find better way to init layout
-// - is onAppear good enough since right now it will always open up in loading state?
-// - that should change if/when better caching is implemented
+// - is onAppear good enough since it's fast?
 
 struct PagingLibraryView: View {
 

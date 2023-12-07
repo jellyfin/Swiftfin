@@ -11,15 +11,54 @@ import SwiftUI
 
 // TODO: manual dividers
 
-struct LibraryItemRow: View {
+struct LibraryItemRow<Item: Displayable & Poster>: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
-    private let item: BaseItemDto
+    private let item: Item
     private var onSelect: () -> Void
 
     private let posterWidth: CGFloat = 60
+
+    @ViewBuilder
+    private func personAccessoryView(person: BaseItemPerson) -> some View {
+        if let subtitle = person.subtitle {
+            Text(subtitle)
+                .font(.caption)
+                .foregroundColor(Color(UIColor.lightGray))
+        }
+    }
+
+    @ViewBuilder
+    private func videoAccessoryView(item: BaseItemDto) -> some View {
+        DotHStack {
+            if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLocator {
+                Text(seasonEpisodeLocator)
+            } else if let premiereYear = item.premiereDateYear {
+                Text(premiereYear)
+            }
+
+            if let runtime = item.getItemRuntime() {
+                Text(runtime)
+            }
+
+            if let officialRating = item.officialRating {
+                Text(officialRating)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var accessoryView: some View {
+        if let item = item as? BaseItemDto {
+            videoAccessoryView(item: item)
+        } else if let person = item as? BaseItemPerson {
+            personAccessoryView(person: person)
+        }
+    }
+
+    // MARK: body
 
     var body: some View {
         Button {
@@ -43,23 +82,10 @@ struct LibraryItemRow: View {
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    DotHStack {
-                        if item.type == .episode, let seasonEpisodeLocator = item.seasonEpisodeLocator {
-                            Text(seasonEpisodeLocator)
-                        } else if let premiereYear = item.premiereDateYear {
-                            Text(premiereYear)
-                        }
-
-                        if let runtime = item.getItemRuntime() {
-                            Text(runtime)
-                        }
-
-                        if let officialRating = item.officialRating {
-                            Text(officialRating)
-                        }
-                    }
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
+                    accessoryView
+                        .eraseToAnyView()
+                        .font(.caption)
+                        .foregroundColor(Color(UIColor.lightGray))
                 }
                 .padding(.vertical)
 
@@ -71,7 +97,7 @@ struct LibraryItemRow: View {
 
 extension LibraryItemRow {
 
-    init(item: BaseItemDto) {
+    init(item: Item) {
         self.init(
             item: item,
             onSelect: {}
