@@ -3044,6 +3044,7 @@
 		};
 		BD0BA2282AD64BB200306A8D /* Run Swiftformat */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -3058,7 +3059,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\" \n\nif [ \"$ACTION\" == \"build\" ]; then\n  if which swiftformat >/dev/null; then\n    swiftformat .\n  else\n    echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  fi\nfi\n";
+			shellScript = "export PATH=\"$PATH:/opt/homebrew/bin\" \n\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
