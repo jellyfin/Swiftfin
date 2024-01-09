@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import AVKit
@@ -37,7 +37,6 @@ struct NativeVideoPlayer: View {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-//                VideoPlayer.LoadingView()
                 Text("Loading")
             }
         }
@@ -57,7 +56,9 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
 }
 
-class UINativeVideoPlayerViewController: AVPlayerViewController {
+// TODO: Refactor such that this does not subclass AVPlayerViewController. Subclassing is not
+// supported according to the apple docs.
+class UINativeVideoPlayerViewController: AVPlayerViewController, AVPlayerViewControllerDelegate {
 
     let videoPlayerManager: VideoPlayerManager
 
@@ -104,6 +105,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         }
 
         player = newPlayer
+        self.delegate = self
     }
 
     @available(*, unavailable)
@@ -171,5 +173,12 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player?.pause()
 
         videoPlayerManager.sendStopReport()
+    }
+
+    // MARK: AVPlayerViewControllerDelegateFunctions
+
+    public func playerViewControllerShouldDismiss(_ playerViewController: AVPlayerViewController) -> Bool {
+        dismiss(animated: true)
+        return true
     }
 }
