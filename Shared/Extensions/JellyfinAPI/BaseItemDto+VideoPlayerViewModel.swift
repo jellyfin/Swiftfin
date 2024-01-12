@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -17,11 +17,10 @@ extension BaseItemDto {
 
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
 
-        let builder = DeviceProfileBuilder()
+        let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
-        builder.setMaxBitrate(bitrate: tempOverkillBitrate)
-        let profile = builder.buildProfile()
+        let profile = DeviceProfileBuilder.buildProfile(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
 
         let userSession = Container.userSession.callAsFunction()
 
