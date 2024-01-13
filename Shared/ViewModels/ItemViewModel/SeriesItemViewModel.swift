@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -20,9 +20,13 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     var menuSections: [BaseItemDto: [BaseItemDto]]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
+    /// A list of seasons in this series. Resolved once. Populated when `menuSelection` is published.
+    var seasons: [BaseItemDto]
+
     override init(item: BaseItemDto) {
         self.menuSections = [:]
         self.menuSectionSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
+        self.seasons = []
 
         super.init(item: item)
 
@@ -136,6 +140,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {
+                    self.seasons = seasons
                     self.menuSelection = firstSeason
                 }
             }
