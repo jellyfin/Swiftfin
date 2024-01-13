@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Algorithms
@@ -49,7 +49,7 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
 
         let channels = (1 ..< 20).map { _ in BaseItemDto.randomItem() }
 
-        channels.forEach { channel in
+        for channel in channels {
             viewModel.channels[channel.id!] = channel
         }
 
