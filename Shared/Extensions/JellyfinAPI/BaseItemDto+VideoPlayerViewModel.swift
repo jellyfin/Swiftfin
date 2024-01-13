@@ -17,11 +17,10 @@ extension BaseItemDto {
 
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
 
-        let builder = DeviceProfileBuilder()
+        let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
-        builder.setMaxBitrate(bitrate: tempOverkillBitrate)
-        let profile = builder.buildProfile()
+        let profile = DeviceProfileBuilder.buildProfile(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
 
         let userSession = Container.userSession.callAsFunction()
 

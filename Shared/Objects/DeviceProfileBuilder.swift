@@ -6,143 +6,181 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-// lol can someone buy me a coffee this took forever :|
-
-import Defaults
-import Foundation
 import JellyfinAPI
 
-enum CPUModel {
-    case A4
-    case A5
-    case A5X
-    case A6
-    case A6X
-    case A7
-    case A7X
-    case A8
-    case A8X
-    case A9
-    case A9X
-    case A10
-    case A10X
-    case A11
-    case A12
-    case A12X
-    case A12Z
-    case A13
-    case A14
-    case M1
-    case A99
-}
+enum DeviceProfileBuilder {
 
-class DeviceProfileBuilder {
-    public var bitrate: Int = 0
-
-    public func setMaxBitrate(bitrate: Int) {
-        self.bitrate = bitrate
-    }
-
-    public func buildProfile() -> DeviceProfile {
-        let segmentContainer = "mp4"
-        let maxStreamingBitrate = bitrate
-        let maxStaticBitrate = bitrate
-        let musicStreamingTranscodingBitrate = bitrate
-
-        // Build direct play profiles
+    static func buildProfile(for type: VideoPlayerType, maxBitrate: Int? = nil) -> DeviceProfile {
+        let maxStreamingBitrate = maxBitrate
+        let maxStaticBitrate = maxBitrate
+        let musicStreamingTranscodingBitrate = maxBitrate
         var directPlayProfiles: [DirectPlayProfile] = []
-        directPlayProfiles =
-            [DirectPlayProfile(audioCodec: "aac,mp3,wav", container: "mov,mp4,mkv,webm", type: .video, videoCodec: "h264,mpeg4,vp9")]
-
-        // Device supports Dolby Digital (AC3, EAC3)
-        if supportsFeature(minimumSupported: .A8X) {
-            if supportsFeature(minimumSupported: .A9) {
-                directPlayProfiles = [DirectPlayProfile(
-                    audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                    container: "mov,mp4,mkv,webm",
-                    type: .video,
-                    videoCodec: "hevc,h264,hev1,mpeg4,vp9"
-                )] // HEVC/H.264 with Dolby Digital
-            } else {
-                directPlayProfiles = [DirectPlayProfile(
-                    audioCodec: "ac3,eac3,aac,mp3,wav,opus",
-                    container: "mov,mp4,mkv,webm",
-                    type: .video,
-                    videoCodec: "h264,mpeg4,vp9"
-                )] // H.264 with Dolby Digital
-            }
-        }
-
-        // Device supports Dolby Vision?
-        if supportsFeature(minimumSupported: .A10X) {
-            directPlayProfiles = [DirectPlayProfile(
-                audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                container: "mov,mp4,mkv,webm",
-                type: .video,
-                videoCodec: "dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9"
-            )] // H.264/HEVC with Dolby Digital - No Atmos - Vision
-        }
-
-        // Device supports Dolby Atmos?
-        if supportsFeature(minimumSupported: .A12) {
-            directPlayProfiles = [DirectPlayProfile(
-                audioCodec: "aac,mp3,wav,ac3,eac3,flac,truehd,dts,dca,opus",
-                container: "mov,mp4,mkv,webm",
-                type: .video,
-                videoCodec: "h264,hevc,dvhe,dvh1,h264,hevc,hev1,mpeg4,vp9"
-            )] // H.264/HEVC with Dolby Digital & Atmos - Vision
-        }
-
-        // Build transcoding profiles
         var transcodingProfiles: [TranscodingProfile] = []
-        transcodingProfiles = [TranscodingProfile(audioCodec: "aac,mp3,wav", container: "ts", type: .video, videoCodec: "h264,mpeg4")]
-
-        // Device supports Dolby Digital (AC3, EAC3)
-        if supportsFeature(minimumSupported: .A8X) {
-            if supportsFeature(minimumSupported: .A9) {
-                transcodingProfiles = [TranscodingProfile(
-                    audioCodec: "aac,mp3,wav,eac3,ac3,flac,opus",
-                    isBreakOnNonKeyFrames: true,
-                    container: segmentContainer,
-                    context: .streaming,
-                    maxAudioChannels: "6",
-                    minSegments: 2,
-                    protocol: "hls",
-                    type: .video,
-                    videoCodec: "h264,hevc,mpeg4"
-                )]
-            } else {
-                transcodingProfiles = [TranscodingProfile(
-                    audioCodec: "aac,mp3,wav,eac3,ac3,opus",
-                    isBreakOnNonKeyFrames: true,
-                    container: segmentContainer,
-                    context: .streaming,
-                    maxAudioChannels: "6",
-                    minSegments: 2,
-                    protocol: "hls",
-                    type: .video,
-                    videoCodec: "h264,mpeg4"
-                )]
-            }
-        }
-
-        // Device supports FLAC?
-        if supportsFeature(minimumSupported: .A10X) {
-            transcodingProfiles = [TranscodingProfile(
-                audioCodec: "aac,mp3,wav,ac3,eac3,flac,opus",
-                isBreakOnNonKeyFrames: true,
-                container: segmentContainer,
-                context: .streaming,
-                maxAudioChannels: "6",
-                minSegments: 2,
-                protocol: "hls",
-                type: .video,
-                videoCodec: "hevc,h264,mpeg4"
-            )]
-        }
-
         var codecProfiles: [CodecProfile] = []
+        var subtitleProfiles: [SubtitleProfile] = []
 
+        switch type {
+
+        case .swiftfin:
+            func buildProfileSwiftfin() {
+                // Build direct play profiles
+                directPlayProfiles = [
+                    // Just make one profile because if VLCKit can't decode it in a certain container, ffmpeg probably can't decode it for
+                    // transcode either
+                    DirectPlayProfile(
+                        // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can
+                        // VLCKit
+                        // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
+                        audioCodec: "flac,alac,aac,eac3,ac3,dts,opus,vorbis,mp3,mp2,mp1,pcm_s24be,pcm_s24le,pcm_s16be,pcm_s16le,pcm_u8,pcm_alaw,pcm_mulaw,pcm_bluray,pcm_dvd,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb",
+                        type: .video
+                    ),
+                ]
+
+                // Build transcoding profiles
+                // The only cases where transcoding should occur:
+                // 1) TrueHD/mlp audio
+                // 2) When server forces transcode for bitrate reasons
+                transcodingProfiles = [TranscodingProfile(
+                    audioCodec: "flac,alac,aac,eac3,ac3,dts,opus,vorbis,mp3,mp2,mp1",
+                    // no PCM,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
+                    isBreakOnNonKeyFrames: true,
+                    container: "mp4",
+                    context: .streaming,
+                    maxAudioChannels: "8",
+                    minSegments: 2,
+                    protocol: "hls",
+                    type: .video,
+                    videoCodec: "hevc,h264,av1,vp9,vc1,mpeg4,h263,mpeg2video,mpeg1video,mjpeg" // vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1
+                    // not supported in mp4
+                )]
+
+                // Create subtitle profiles
+                subtitleProfiles = [
+                    SubtitleProfile(format: "pgssub", method: .embed), // *pgs* normalized to pgssub; includes sup
+                    SubtitleProfile(format: "dvdsub", method: .embed),
+                    // *dvd* normalized to dvdsub; includes sub/idx I think; microdvd case?
+                    SubtitleProfile(format: "subrip", method: .embed), // srt
+                    SubtitleProfile(format: "ass", method: .embed),
+                    SubtitleProfile(format: "ssa", method: .embed),
+                    SubtitleProfile(format: "vtt", method: .embed), // webvtt
+                    SubtitleProfile(format: "mov_text", method: .embed), // MPEG-4 Timed Text
+                    SubtitleProfile(format: "ttml", method: .embed),
+                    SubtitleProfile(format: "text", method: .embed), // txt
+                    SubtitleProfile(format: "dvbsub", method: .embed),
+                    // dvb_subtitle normalized to dvbsub; burned in during transcode regardless?
+                    SubtitleProfile(format: "libzvbi_teletextdec", method: .embed), // dvb_teletext
+                    SubtitleProfile(format: "xsub", method: .embed),
+                    SubtitleProfile(format: "vplayer", method: .embed),
+                    SubtitleProfile(format: "subviewer", method: .embed),
+                    SubtitleProfile(format: "subviewer1", method: .embed),
+                    SubtitleProfile(format: "sami", method: .embed), // SMI
+                    SubtitleProfile(format: "realtext", method: .embed),
+                    SubtitleProfile(format: "pjs", method: .embed), // Phoenix Subtitle
+                    SubtitleProfile(format: "mpl2", method: .embed),
+                    SubtitleProfile(format: "jacosub", method: .embed),
+                    SubtitleProfile(format: "cc_dec", method: .embed), // eia_608
+                    // Can be passed as external files; ones that jellyfin can encode to must come first
+                    SubtitleProfile(format: "subrip", method: .external), // srt
+                    SubtitleProfile(format: "ttml", method: .external),
+                    SubtitleProfile(format: "vtt", method: .external), // webvtt
+                    SubtitleProfile(format: "ass", method: .external),
+                    SubtitleProfile(format: "ssa", method: .external),
+                    SubtitleProfile(format: "pgssub", method: .external),
+                    SubtitleProfile(format: "text", method: .external), // txt
+                    SubtitleProfile(format: "dvbsub", method: .external), // dvb_subtitle normalized to dvbsub
+                    SubtitleProfile(format: "libzvbi_teletextdec", method: .external), // dvb_teletext
+                    SubtitleProfile(format: "dvdsub", method: .external),
+                    // *dvd* normalized to dvdsub; includes sub/idx I think; microdvd case?
+                    SubtitleProfile(format: "xsub", method: .external),
+                    SubtitleProfile(format: "vplayer", method: .external),
+                    SubtitleProfile(format: "subviewer", method: .external),
+                    SubtitleProfile(format: "subviewer1", method: .external),
+                    SubtitleProfile(format: "sami", method: .external), // SMI
+                    SubtitleProfile(format: "realtext", method: .external),
+                    SubtitleProfile(format: "pjs", method: .external), // Phoenix Subtitle
+                    SubtitleProfile(format: "mpl2", method: .external),
+                    SubtitleProfile(format: "jacosub", method: .external),
+                ]
+            }
+            buildProfileSwiftfin()
+
+        case .native:
+            func buildProfileNative() {
+                // Build direct play profiles
+                directPlayProfiles = [
+                    // Apple limitation: no mp3 in mp4; avi only supports mjpeg with pcm
+                    // Right now, mp4 restrictions can't be enforced because mp4, m4v, mov, 3gp,3g2 treated the same
+                    DirectPlayProfile(
+                        audioCodec: "flac,alac,aac,eac3,ac3,opus",
+                        container: "mp4",
+                        type: .video,
+                        videoCodec: "hevc,h264,mpeg4"
+                    ),
+                    DirectPlayProfile(
+                        audioCodec: "alac,aac,ac3",
+                        container: "m4v",
+                        type: .video,
+                        videoCodec: "h264,mpeg4"
+                    ),
+                    DirectPlayProfile(
+                        audioCodec: "alac,aac,eac3,ac3,mp3,pcm_s24be,pcm_s24le,pcm_s16be,pcm_s16le",
+                        container: "mov",
+                        type: .video,
+                        videoCodec: "hevc,h264,mpeg4,mjpeg"
+                    ),
+                    DirectPlayProfile(
+                        audioCodec: "aac,eac3,ac3,mp3",
+                        container: "mpegts",
+                        type: .video,
+                        videoCodec: "h264"
+                    ),
+                    DirectPlayProfile(
+                        audioCodec: "aac,amr_nb",
+                        container: "3gp,3g2",
+                        type: .video,
+                        videoCodec: "h264,mpeg4"
+                    ),
+                    DirectPlayProfile(
+                        audioCodec: "pcm_s16le,pcm_mulaw",
+                        container: "avi",
+                        type: .video,
+                        videoCodec: "mjpeg"
+                    ),
+                ]
+
+                // Build transcoding profiles
+                transcodingProfiles = [
+                    TranscodingProfile(
+                        audioCodec: "flac,alac,aac,eac3,ac3,opus",
+                        isBreakOnNonKeyFrames: true,
+                        container: "mp4",
+                        context: .streaming,
+                        maxAudioChannels: "8",
+                        minSegments: 2,
+                        protocol: "hls",
+                        type: .video,
+                        videoCodec: "hevc,h264,mpeg4"
+                    ),
+                ]
+
+                // Create subtitle profiles
+                subtitleProfiles = [
+                    // FFmpeg can only convert bitmap to bitmap and text to text; burn in bitmap subs
+                    SubtitleProfile(format: "pgssub", method: .encode),
+                    SubtitleProfile(format: "dvdsub", method: .encode),
+                    SubtitleProfile(format: "dvbsub", method: .encode),
+                    SubtitleProfile(format: "xsub", method: .encode),
+                    // According to Apple HLS authoring specs, WebVTT must be in a text file delivered via HLS
+                    SubtitleProfile(format: "vtt", method: .hls), // webvtt
+                    // Apple HLS authoring spec has closed captions in video segments and TTML in fmp4
+                    SubtitleProfile(format: "ttml", method: .embed),
+                    SubtitleProfile(format: "cc_dec", method: .embed),
+                ]
+            }
+            buildProfileNative()
+        }
+
+        // For now, assume native and VLCKit support same codec conditions:
         let h264CodecConditions: [ProfileCondition] = [
             ProfileCondition(
                 condition: .notEquals,
@@ -169,6 +207,9 @@ class DeviceProfileBuilder {
                 value: "true"
             ),
         ]
+
+        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
+
         let hevcCodecConditions: [ProfileCondition] = [
             ProfileCondition(
                 condition: .notEquals,
@@ -196,28 +237,7 @@ class DeviceProfileBuilder {
             ),
         ]
 
-        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
-
-        if supportsFeature(minimumSupported: .A9) {
-            codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))
-        }
-
-        var subtitleProfiles: [SubtitleProfile] = []
-
-        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "subrip", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .embed))
-        subtitleProfiles.append(SubtitleProfile(format: "pgssub", method: .embed))
-
-        // These need to be filtered. Most subrips are embedded. I hate subtitles.
-        subtitleProfiles.append(SubtitleProfile(format: "subrip", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "sub", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "vtt", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "ass", method: .external))
-        subtitleProfiles.append(SubtitleProfile(format: "ssa", method: .external))
+        codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))
 
         let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
 
@@ -232,103 +252,5 @@ class DeviceProfileBuilder {
             subtitleProfiles: subtitleProfiles,
             transcodingProfiles: transcodingProfiles
         )
-    }
-
-    private func supportsFeature(minimumSupported: CPUModel) -> Bool {
-        let intValues: [CPUModel: Int] = [
-            .A4: 1,
-            .A5: 2,
-            .A5X: 3,
-            .A6: 4,
-            .A6X: 5,
-            .A7: 6,
-            .A7X: 7,
-            .A8: 8,
-            .A8X: 9,
-            .A9: 10,
-            .A9X: 11,
-            .A10: 12,
-            .A10X: 13,
-            .A11: 14,
-            .A12: 15,
-            .A12X: 16,
-            .A12Z: 16,
-            .A13: 17,
-            .A14: 18,
-            .M1: 19,
-            .A99: 99,
-        ]
-        return intValues[CPUinfo()] ?? 0 >= intValues[minimumSupported] ?? 0
-    }
-
-    /**********************************************
-     *  CPUInfo():
-     *     Returns a hardcoded value of the current
-     * devices CPU name.
-     ***********************************************/
-    private func CPUinfo() -> CPUModel {
-
-        #if targetEnvironment(simulator)
-        let identifier = ProcessInfo().environment["SIMULATOR_MODEL_IDENTIFIER"]!
-        #else
-
-        var systemInfo = utsname()
-        uname(&systemInfo)
-        let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let subtitle = element.value as? Int8, subtitle != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(subtitle)))
-        }
-        #endif
-
-        switch identifier {
-        case "iPod5,1": return .A5
-        case "iPod7,1": return .A8
-        case "iPod9,1": return .A10
-        case "iPhone3,1", "iPhone3,2", "iPhone3,3": return .A4
-        case "iPhone4,1": return .A5
-        case "iPhone5,1", "iPhone5,2": return .A6
-        case "iPhone5,3", "iPhone5,4": return .A6
-        case "iPhone6,1", "iPhone6,2": return .A7
-        case "iPhone7,2": return .A8
-        case "iPhone7,1": return .A8
-        case "iPhone8,1": return .A9
-        case "iPhone8,2", "iPhone8,4": return .A9
-        case "iPhone9,1", "iPhone9,3": return .A10
-        case "iPhone9,2", "iPhone9,4": return .A10
-        case "iPhone10,1", "iPhone10,4": return .A11
-        case "iPhone10,2", "iPhone10,5": return .A11
-        case "iPhone10,3", "iPhone10,6": return .A11
-        case "iPhone11,2", "iPhone11,6", "iPhone11,8": return .A12
-        case "iPhone12,1", "iPhone12,3", "iPhone12,5", "iPhone12,8": return .A13
-        case "iPhone13,1", "iPhone13,2", "iPhone13,3", "iPhone13,4": return .A14
-        case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4": return .A5
-        case "iPad3,1", "iPad3,2", "iPad3,3": return .A5X
-        case "iPad3,4", "iPad3,5", "iPad3,6": return .A6X
-        case "iPad4,1", "iPad4,2", "iPad4,3": return .A7
-        case "iPad5,3", "iPad5,4": return .A8X
-        case "iPad6,11", "iPad6,12": return .A9
-        case "iPad2,5", "iPad2,6", "iPad2,7": return .A5
-        case "iPad4,4", "iPad4,5", "iPad4,6": return .A7
-        case "iPad4,7", "iPad4,8", "iPad4,9": return .A7
-        case "iPad5,1", "iPad5,2": return .A8
-        case "iPad11,1", "iPad11,2": return .A12
-        case "iPad6,3", "iPad6,4": return .A9X
-        case "iPad6,7", "iPad6,8": return .A9X
-        case "iPad7,1", "iPad7,2": return .A10X
-        case "iPad7,3", "iPad7,4": return .A10X
-        case "iPad7,5", "iPad7,6", "iPad7,11", "iPad7,12": return .A10
-        case "iPad8,1", "iPad8,2", "iPad8,3", "iPad8,4": return .A12X
-        case "iPad8,5", "iPad8,6", "iPad8,7", "iPad8,8": return .A12X
-        case "iPad8,9", "iPad8,10", "iPad8,11", "iPad8,12": return .A12Z
-        case "iPad11,3", "iPad11,4", "iPad11,6", "iPad11,7": return .A12
-        case "iPad13,1", "iPad13,2": return .A14
-        case "iPad13,8", "iPad13,9", "iPad13,10", "iPad13,11": return .M1
-        case "AppleTV5,3": return .A8
-        case "AppleTV6,2": return .A10X
-        case "AppleTV11,1": return .A12
-        case "AudioAccessory1,1": return .A8
-        default: return .A99
-        }
     }
 }

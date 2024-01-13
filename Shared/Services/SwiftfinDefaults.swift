@@ -150,11 +150,6 @@ extension Defaults.Keys {
             )
         }
 
-        enum Native {
-
-            static let fMP4Container: Key<Bool> = .init("fmp4Container", default: false, suite: .generalSuite)
-        }
-
         enum Overlay {
 
             static let chapterSlider: Key<Bool> = .init("chapterSlider", default: true, suite: .generalSuite)

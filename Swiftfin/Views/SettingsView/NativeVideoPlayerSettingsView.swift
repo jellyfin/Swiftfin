@@ -11,8 +11,6 @@ import SwiftUI
 
 struct NativeVideoPlayerSettingsView: View {
 
-    @Default(.VideoPlayer.Native.fMP4Container)
-    private var fMP4Container
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
@@ -32,13 +30,6 @@ struct NativeVideoPlayerSettingsView: View {
                 }
             } footer: {
                 Text("Resume content seconds before the recorded resume time")
-            }
-
-            Section {
-
-                Toggle("fMP4 Container", isOn: $fMP4Container)
-            } footer: {
-                Text("Use fMP4 container to allow hevc content on supported devices")
             }
         }
         .navigationTitle("Native Player")
