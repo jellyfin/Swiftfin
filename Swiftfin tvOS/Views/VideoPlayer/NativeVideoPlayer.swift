@@ -58,7 +58,7 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
 // TODO: Refactor such that this does not subclass AVPlayerViewController. Subclassing is not
 // supported according to the apple docs.
-class UINativeVideoPlayerViewController: AVPlayerViewController, AVPlayerViewControllerDelegate {
+class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     let videoPlayerManager: VideoPlayerManager
 
@@ -105,7 +105,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController, AVPlayerViewCon
         }
 
         player = newPlayer
-        self.delegate = self
     }
 
     @available(*, unavailable)
@@ -173,12 +172,5 @@ class UINativeVideoPlayerViewController: AVPlayerViewController, AVPlayerViewCon
         player?.pause()
 
         videoPlayerManager.sendStopReport()
-    }
-
-    // MARK: AVPlayerViewControllerDelegateFunctions
-
-    public func playerViewControllerShouldDismiss(_ playerViewController: AVPlayerViewController) -> Bool {
-        dismiss(animated: true)
-        return true
     }
 }
