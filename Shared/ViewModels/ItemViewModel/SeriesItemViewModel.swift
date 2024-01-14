@@ -20,13 +20,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     var menuSections: [BaseItemDto: [BaseItemDto]]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
-    /// A list of seasons in this series. Resolved once. Populated when `menuSelection` is published.
-    var seasons: [BaseItemDto]
-
     override init(item: BaseItemDto) {
         self.menuSections = [:]
         self.menuSectionSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
-        self.seasons = []
 
         super.init(item: item)
 
@@ -121,7 +117,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if !menuSections.keys.contains(section) {
+        if let seasonData = menuSections[section], seasonData.isEmpty {
             getEpisodesForSeason(section)
         }
     }
@@ -135,12 +131,13 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let request = Paths.getSeasons(seriesID: item.id!, parameters: parameters)
             let response = try await userSession.client.send(request)
 
-            guard let seasons = response.value.items else { return }
-
+            let seasons = response.value.items ?? []
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {
-                    self.seasons = seasons
+                    for season in seasons {
+                        self.menuSections[season] = []
+                    }
                     self.menuSelection = firstSeason
                 }
             }
