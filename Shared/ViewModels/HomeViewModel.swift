@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -12,7 +12,6 @@ import Factory
 import Foundation
 import JellyfinAPI
 import UIKit
-
 final class HomeViewModel: ViewModel {
 
     @Published
@@ -26,15 +25,39 @@ final class HomeViewModel: ViewModel {
     @Published
     var resumeItems: [BaseItemDto] = []
 
+    /// Indicates if the view the model is backing is visible. Setting this value may trigger a refresh.
+    var isVisible = false {
+        didSet {
+            if oldValue != isVisible {
+                refreshIfNeeded()
+            }
+        }
+    }
+
+    /// If the data fetched is stale.
+    private var isInvalidated = false {
+        didSet {
+            if oldValue != isInvalidated {
+                refreshIfNeeded()
+            }
+        }
+    }
+
     override init() {
         super.init()
 
         refresh()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(HomeViewModel.playbackDataInvalidated),
+            name: AppNotifications.nowPlayingDidChange,
+            object: nil
+        )
     }
 
     @objc
     func refresh() {
-
+        isInvalidated = false
         hasNextUp = false
         hasRecentlyAdded = false
         libraries = []
@@ -66,6 +89,13 @@ final class HomeViewModel: ViewModel {
                 isLoading = false
                 errorMessage = nil
             }
+        }
+    }
+
+    /// Refreshes the model if the backing data has become stale.
+    private func refreshIfNeeded() {
+        if isInvalidated && isVisible {
+            refresh()
         }
     }
 
@@ -187,5 +217,12 @@ final class HomeViewModel: ViewModel {
                 hasNextUp = !(response.value.items?.isEmpty ?? true)
             }
         }
+    }
+
+    // MARK: NotificationCenter Observers
+
+    @objc
+    private func playbackDataInvalidated() {
+        isInvalidated = true
     }
 }

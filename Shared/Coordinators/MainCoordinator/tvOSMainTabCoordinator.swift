@@ -33,10 +33,8 @@ final class MainTabCoordinator: TabCoordinatable {
     @Route(tabItem: makeSettingsTab)
     var settings = makeSettings
 
-    var homeCoordinator = HomeCoordinator()
-
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
-        NavigationViewCoordinator(homeCoordinator)
+        NavigationViewCoordinator(HomeCoordinator())
     }
 
     @ViewBuilder
@@ -111,17 +109,5 @@ final class MainTabCoordinator: TabCoordinatable {
     func makeSettingsTab(isActive: Bool) -> some View {
         Image(systemName: "gearshape.fill")
             .accessibilityLabel(L10n.settings)
-    }
-
-    @ViewBuilder
-    func customize(_ view: AnyView) -> some View {
-        weak var weakSelf = self
-        view.onAppear(perform: {
-            weakSelf?.viewDidAppear()
-        })
-    }
-
-    private func viewDidAppear() {
-        homeCoordinator.homeView.viewModel.refresh()
     }
 }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -221,6 +221,7 @@ class VideoPlayerManager: ViewModel {
             let request = Paths.reportPlaybackStopped(stopInfo)
             let _ = try await userSession.client.send(request)
         }
+        NotificationCenter.default.post(name: AppNotifications.nowPlayingDidChange, object: nil)
     }
 
     func sendPauseReport() {

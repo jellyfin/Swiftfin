@@ -15,9 +15,6 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \HomeCoordinator.start)
 
-    var homeView: HomeView { _homeView }
-    private lazy var _homeView = HomeView(viewModel: .init())
-
     @Root
     var start = makeStart
     @Route(.modal)
@@ -69,7 +66,8 @@ final class HomeCoordinator: NavigationCoordinatable {
     }
     #endif
 
+    @ViewBuilder
     func makeStart() -> some View {
-        homeView
+        HomeView(viewModel: .init())
     }
 }
