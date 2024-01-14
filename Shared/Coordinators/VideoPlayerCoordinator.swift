@@ -45,7 +45,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             AppDelegate.enterPlaybackOrientation()
         }
 
-        #else // os(iOS)
+        #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
             PreferenceUIHostingControllerView {
                 Group {
@@ -56,6 +56,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         } else {
             NativeVideoPlayer(manager: self.videoPlayerManager)
         }
-        #endif // os(iOS)
+        #endif 
     }
 }
