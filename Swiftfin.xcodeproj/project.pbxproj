@@ -2795,7 +2795,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
-				6286F0A3271C0ABA00C40ED5 /* R.swift */,
+				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
+				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
 				5358705C2669D21600D05A09 /* Sources */,
 				5358705D2669D21600D05A09 /* Frameworks */,
 				5358705E2669D21600D05A09 /* Resources */,
@@ -2837,7 +2838,7 @@
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
 				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
-				BD0BA2282AD64BB200306A8D /* Run Swiftformat */,
+				BD0BA2282AD64BB200306A8D /* Run SwiftFormat */,
 				5377CBED263B596A003A4E83 /* Sources */,
 				5377CBEE263B596A003A4E83 /* Frameworks */,
 				5377CBEF263B596A003A4E83 /* Resources */,
@@ -3023,7 +3024,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
 		};
-		6286F0A3271C0ABA00C40ED5 /* R.swift */ = {
+		6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -3033,7 +3034,7 @@
 			);
 			inputPaths = (
 			);
-			name = R.swift;
+			name = "Run Swiftgen.swift";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -3042,7 +3043,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
 		};
-		BD0BA2282AD64BB200306A8D /* Run Swiftformat */ = {
+		BD0BA2282AD64BB200306A8D /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -3052,7 +3053,26 @@
 			);
 			inputPaths = (
 			);
-			name = "Run Swiftformat";
+			name = "Run SwiftFormat";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
+		};
+		BD83D7852B55EEB600652C24 /* Run SwiftFormat */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftFormat";
 			outputFileListPaths = (
 			);
 			outputPaths = (
