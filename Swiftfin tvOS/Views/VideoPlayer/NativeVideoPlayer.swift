@@ -57,6 +57,8 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
 }
 
+// TODO: Refactor such that this does not subclass AVPlayerViewController. Subclassing is not
+// supported according to the apple docs.
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     let videoPlayerManager: VideoPlayerManager
