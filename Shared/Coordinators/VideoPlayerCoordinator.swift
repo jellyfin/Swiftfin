@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -53,18 +53,14 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         .defersSystemGestures(on: .all)
 
         #else
-
-        PreferenceUIHostingControllerView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: self.videoPlayerManager)
-                } else {
-                    NativeVideoPlayer(manager: self.videoPlayerManager)
-                }
+        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+            PreferenceUIHostingControllerView {
+                VideoPlayer(manager: self.videoPlayerManager)
             }
+            .ignoresSafeArea()
+        } else {
+            NativeVideoPlayer(manager: self.videoPlayerManager)
         }
-        .ignoresSafeArea()
-
         #endif
     }
 }
