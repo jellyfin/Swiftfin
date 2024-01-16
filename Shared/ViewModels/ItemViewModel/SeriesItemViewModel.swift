@@ -132,12 +132,14 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let response = try await userSession.client.send(request)
 
             guard let seasons = response.value.items else { return }
+            await MainActor.run {
+                for season in seasons {
+                    self.menuSections[season] = []
+                }
+            }
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {
-                    for season in seasons {
-                        self.menuSections[season] = []
-                    }
                     self.menuSelection = firstSeason
                 }
             }
