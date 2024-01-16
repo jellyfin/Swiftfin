@@ -48,14 +48,12 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
             PreferenceUIHostingControllerView {
-                Group {
-                    VideoPlayer(manager: self.videoPlayerManager)
-                }
+                VideoPlayer(manager: self.videoPlayerManager)
             }
             .ignoresSafeArea()
         } else {
             NativeVideoPlayer(manager: self.videoPlayerManager)
         }
-        #endif 
+        #endif
     }
 }
