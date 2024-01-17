@@ -159,7 +159,6 @@ extension SeriesEpisodeSelector {
             }
             .onChange(of: viewModel.menuSelection) { _ in
                 lastFocusedEpisodeID = items.first?.id
-                wrappedScrollView?.scrollToTop(animated: false)
             }
             .onChange(of: focusedEpisodeID) { episodeIndex in
                 guard let episodeIndex = episodeIndex else { return }
