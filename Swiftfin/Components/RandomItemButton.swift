@@ -14,12 +14,13 @@ struct RandomItemButton: View {
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel
-    private var onSelect: (BaseItemDtoQueryResult) -> Void
+    
+    private var onSelect: (BaseItemDto?) -> Void
 
     var body: some View {
         Button {
             Task {
-                let response = try await viewModel.getRandomItemFromLibrary()
+                let response = await viewModel.getRandomItem()
                 onSelect(response)
             }
         } label: {
@@ -29,6 +30,7 @@ struct RandomItemButton: View {
 }
 
 extension RandomItemButton {
+    
     init(viewModel: PagingLibraryViewModel) {
         self.init(
             viewModel: viewModel,
@@ -36,7 +38,7 @@ extension RandomItemButton {
         )
     }
 
-    func onSelect(_ action: @escaping (BaseItemDtoQueryResult) -> Void) -> Self {
+    func onSelect(_ action: @escaping (BaseItemDto?) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

@@ -23,7 +23,7 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: LatestInLibraryViewModel
+        var viewModel: LibraryViewModel
 
         var body: some View {
             if viewModel.items.isEmpty {

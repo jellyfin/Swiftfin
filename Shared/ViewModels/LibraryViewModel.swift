@@ -93,7 +93,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
         }
     }
 
-    override func _requestNextPage() {
+    override func getCurrentPage() async throws {
         requestItems(with: filterViewModel.currentFilters)
     }
 

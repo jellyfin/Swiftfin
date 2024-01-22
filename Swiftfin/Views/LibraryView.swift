@@ -93,8 +93,8 @@ struct LibraryView: View {
                     LibraryViewTypeToggle(libraryViewType: $libraryViewType)
 
                     RandomItemButton(viewModel: viewModel)
-                        .onSelect { response in
-                            if let item = response.items?.first {
+                        .onSelect { item in
+                            if let item {
                                 router.route(to: \.item, item)
                             }
                         }

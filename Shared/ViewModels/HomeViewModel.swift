@@ -44,11 +44,11 @@ final class HomeViewModel: ViewModel {
         refreshResumeItems()
 
         Task {
-            await nextUpViewModel.refresh()
+            try await nextUpViewModel.refresh()
         }
 
         Task {
-            await recentlyAddedViewModel.refresh()
+            try await recentlyAddedViewModel.refresh()
         }
 
         do {
@@ -137,8 +137,8 @@ final class HomeViewModel: ViewModel {
 
             refreshResumeItems()
 
-            await nextUpViewModel.refresh()
-            await recentlyAddedViewModel.refresh()
+            try await nextUpViewModel.refresh()
+            try await recentlyAddedViewModel.refresh()
         }
     }
 
@@ -153,8 +153,8 @@ final class HomeViewModel: ViewModel {
             let _ = try await userSession.client.send(request)
 
             refreshResumeItems()
-            await nextUpViewModel.refresh()
-            await recentlyAddedViewModel.refresh()
+            try await nextUpViewModel.refresh()
+            try await recentlyAddedViewModel.refresh()
         }
     }
 }

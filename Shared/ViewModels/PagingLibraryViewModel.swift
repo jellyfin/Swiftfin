@@ -15,7 +15,6 @@ import UIKit
 
 class PagingLibraryViewModel: ViewModel {
 
-    /// The default page
     static let DefaultPageSize = 50
 
     @Published
@@ -33,7 +32,7 @@ class PagingLibraryViewModel: ViewModel {
         currentPage = data.count / Self.DefaultPageSize
     }
 
-    public func getRandomItemFromLibrary() async throws -> BaseItemDtoQueryResult {
+    public func getRandomItem() async -> BaseItemDto? {
 
         var parameters = _getDefaultParams()
         parameters?.limit = 1
@@ -44,20 +43,20 @@ class PagingLibraryViewModel: ViewModel {
         }
 
         let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
-
+        let response = try? await userSession.client.send(request)
+        
         await MainActor.run {
             self.isLoading = false
         }
-
-        return response.value
+        
+        return response?.value.items?.first
     }
 
     func _getDefaultParams() -> Paths.GetItemsParameters? {
         Paths.GetItemsParameters()
     }
 
-    func refresh() async {
+    func refresh() async throws {
         currentPage = 0
         hasNextPage = true
 
@@ -65,14 +64,16 @@ class PagingLibraryViewModel: ViewModel {
             items = []
         }
 
-        _requestNextPage()
+        try await getCurrentPage()
     }
 
-    func requestNextPage() {
+    // TODO: rename `getNextPage`
+    func getNextPage() async throws {
         guard hasNextPage else { return }
         currentPage += 1
-        _requestNextPage()
+        try await getCurrentPage()
     }
 
-    func _requestNextPage() {}
+    // TODO: rename to `getCurrentPage` that gets passed `currentPage` and `hasNextPage`
+    func getCurrentPage() async throws {}
 }

@@ -49,8 +49,8 @@ final class BasicLibraryCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         BasicLibraryView(viewModel: parameters.viewModel)
         #if os(iOS)
-            .if(parameters.title != nil) { view in
-                view.navigationTitle(parameters.title ?? .emptyDash)
+            .ifLet(parameters.title) { view, value in
+                view.navigationTitle(value)
             }
         #endif
     }

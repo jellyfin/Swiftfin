@@ -42,11 +42,28 @@ extension View {
 
     @ViewBuilder
     @inlinable
-    func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
+    func `if`<Content: View>(
+        _ condition: Bool,
+        transformIf: (Self) -> Content,
+        transformElse: (Self) -> Content
+    ) -> some View {
         if condition {
             transformIf(self)
         } else {
             transformElse(self)
+        }
+    }
+    
+    @ViewBuilder
+    @inlinable
+    func ifLet<Value, Content: View>(
+        _ value: Value?,
+        transform: (Self, Value) -> Content
+    ) -> some View {
+        if let value {
+            transform(self, value)
+        } else {
+            self
         }
     }
 
@@ -54,11 +71,11 @@ extension View {
     @inlinable
     func ifLet<Value, Content: View>(
         _ value: Value?,
-        transformIf: (Value, Self) -> Content,
+        transformIf: (Self, Value) -> Content,
         transformElse: (Self) -> Content
     ) -> some View {
         if let value {
-            transformIf(value, self)
+            transformIf(self, value)
         } else {
             transformElse(self)
         }

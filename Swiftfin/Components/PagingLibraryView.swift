@@ -94,6 +94,7 @@ struct PagingLibraryView: View {
 
     // MARK: body
 
+    // TODO: `getNextpage` on bottom
     var body: some View {
         CollectionVGrid(
             $viewModel.items,
@@ -106,6 +107,11 @@ struct PagingLibraryView: View {
                 portraitGridItemView(item: item)
             case .list:
                 listItemView(item: item)
+            }
+        }
+        .onReachedBottomEdge(offset: 200) {
+            Task {
+                try await viewModel.getNextPage()
             }
         }
         .ignoresSafeArea()

@@ -12,38 +12,30 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
-//    override init() {
-//        super.init()
+    override func getCurrentPage() async throws {
+        
+        await MainActor.run {
+            self.isLoading = true
+        }
 
-//        _requestNextPage()
-//    }
+        let parameters = Paths.GetNextUpParameters(
+            userID: userSession.user.id,
+            startIndex: currentPage,
+            limit: Self.DefaultPageSize,
+            fields: ItemFields.minimumCases,
+            enableUserData: true
+        )
+        let request = Paths.getNextUp(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-    override func _requestNextPage() {
-        Task {
+        guard let items = response.value.items, !items.isEmpty else {
+            hasNextPage = false
+            return
+        }
 
-            await MainActor.run {
-                self.isLoading = true
-            }
-
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                startIndex: currentPage,
-                limit: Self.DefaultPageSize,
-                fields: ItemFields.minimumCases,
-                enableUserData: true
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items, !items.isEmpty else {
-                hasNextPage = false
-                return
-            }
-
-            await MainActor.run {
-                self.isLoading = false
-                self.items.append(contentsOf: items)
-            }
+        await MainActor.run {
+            self.items.append(contentsOf: items)
+            self.isLoading = false
         }
     }
 
@@ -56,7 +48,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            await refresh()
+            try await refresh()
         }
     }
 }
