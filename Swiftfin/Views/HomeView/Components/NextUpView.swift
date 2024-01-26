@@ -28,26 +28,30 @@ extension HomeView {
         }
 
         var body: some View {
-            PosterHStack(
-                title: L10n.nextUp,
-                type: nextUpPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                    }
-            }
-            .contextMenu { item in
-                Button {
-                    viewModel.markPlayed(item: item)
-                } label: {
-                    Label(L10n.played, systemImage: "checkmark.circle")
+            if items.isEmpty {
+                EmptyView()
+            } else {
+                PosterHStack(
+                    title: L10n.nextUp,
+                    type: nextUpPosterType,
+                    items: items
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
+                        }
                 }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+                .contextMenu { item in
+                    Button {
+                        viewModel.markPlayed(item: item)
+                    } label: {
+                        Label(L10n.played, systemImage: "checkmark.circle")
+                    }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

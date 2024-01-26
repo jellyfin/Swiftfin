@@ -17,8 +17,29 @@ extension Collection {
     func sorted<Value: Comparable>(using keyPath: KeyPath<Element, Value>) -> [Element] {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }
+    
+    func subtracting<Value: Equatable> (_ other: some Collection<Element>, using keyPath: KeyPath<Element, Value>) -> [Element] {
+        filter { x in
+            !other.contains(where: { $0[keyPath: keyPath] == x[keyPath: keyPath] })
+        }
+    }
+    
+    func subtracting<Value: Equatable> (_ other: some Collection<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
+        filter { x in
+            !other.contains(where: { $0 == x[keyPath: keyPath] })
+        }
+    }
 
     subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
+    }
+}
+
+extension Collection where Element: Equatable {
+    
+    func subtracting(_ other: some Collection<Element>) -> [Element] {
+        filter { x in
+            !other.contains(where: { $0 == x })
+        }
     }
 }

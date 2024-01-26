@@ -12,11 +12,11 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
-    override init() {
-        super.init()
-
-        _requestNextPage()
-    }
+//    override init() {
+//        super.init()
+//
+//        _requestNextPage()
+//    }
 
     override func _requestNextPage() {
         Task {

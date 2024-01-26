@@ -15,37 +15,51 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
-        let errorMessage: ErrorMessage
-
         var body: some View {
-            VStack(spacing: 5) {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .frame(width: 100, height: 100)
-                        .scaleEffect(2)
-                } else {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 72))
-                        .foregroundColor(Color.red)
-                        .frame(width: 100, height: 100)
+            if case let HomeViewModel.State.error(error) = viewModel.state {
+                VStack {
+                    
+                    Text("Has error: \(error.localizedDescription)")
+                    
+                    PrimaryButton(title: L10n.retry)
+                        .onSelect {
+                            viewModel.send(.refresh)
+                        }
+                        .frame(maxWidth: 300)
+                        .frame(height: 50)
+                    
                 }
-
-                if let code = errorMessage.code {
-                    Text("\(code)")
-                }
-
-                Text(errorMessage.message)
-                    .frame(minWidth: 50, maxWidth: 240)
-                    .multilineTextAlignment(.center)
-
-                PrimaryButton(title: L10n.retry)
-                    .onSelect {
-                        viewModel.refresh()
-                    }
-                    .frame(maxWidth: 300)
-                    .frame(height: 50)
             }
-            .offset(y: -50)
+            
+//            VStack(spacing: 5) {
+//                if viewModel.isLoading {
+//                    ProgressView()
+//                        .frame(width: 100, height: 100)
+//                        .scaleEffect(2)
+//                } else {
+//                    Image(systemName: "xmark.circle.fill")
+//                        .font(.system(size: 72))
+//                        .foregroundColor(Color.red)
+//                        .frame(width: 100, height: 100)
+//                }
+//
+//                if let code = errorMessage.code {
+//                    Text("\(code)")
+//                }
+//
+//                Text(errorMessage.message)
+//                    .frame(minWidth: 50, maxWidth: 240)
+//                    .multilineTextAlignment(.center)
+//
+//                PrimaryButton(title: L10n.retry)
+//                    .onSelect {
+//                        viewModel.send(.refresh)
+////                        viewModel.refresh()
+//                    }
+//                    .frame(maxWidth: 300)
+//                    .frame(height: 50)
+//            }
+//            .offset(y: -50)
         }
     }
 }

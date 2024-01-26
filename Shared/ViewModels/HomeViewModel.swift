@@ -13,133 +13,169 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-final class HomeViewModel: ViewModel {
+final class HomeViewModel: ViewModel, Stateful {
+    
+    // MARK: State/Event
+    
+    enum State {
+        case loading
+        case error(Error)
+        case results
+    }
+    
+    enum Event {
+        case getLibraries
+        case error(Error)
+        case refresh
+        case markItemPlayed(BaseItemDto)
+        case markItemUnplayed(BaseItemDto)
+        case showContent
+    }
+    
+    // MARK: Properties
 
-    @Published
-    var errorMessage: String?
-    @Published
-    var hasNextUp: Bool = false
-    @Published
-    var hasRecentlyAdded: Bool = false
     @Published
     var libraries: [BaseItemDto] = []
     @Published
     var resumeItems: [BaseItemDto] = []
+    
+    let nextUpLibraryViewModel: NextUpLibraryViewModel
+    
+    private var refreshTask: Task<Void, Error>?
+    
+    @Published
+    var state: State = .loading
+    
+    // MARK: init
 
     override init() {
+        
+        self.nextUpLibraryViewModel = .init()
+        
         super.init()
 
-        refresh()
+//        refresh()
     }
+    
+    // MARK: respond
+    
+    func respond(to action: Event) -> State {
+        switch action {
+        case .getLibraries:
+            
+            refreshTask = Task {
+                await refresh()
+            }
+            
+            return .loading
+        case .error(let error):
+            return .error(error)
+        case .refresh:
+            
+            refreshTask?.cancel()
+            refreshTask = Task {
+                await refresh()
+            }
+            
+            return .results
+        case .markItemPlayed(let baseItemDto):
+            return .results
+        case .markItemUnplayed(let baseItemDto):
+            return .results
+        case .showContent:
+            return .results
+        }
+    }
+    
+    // MARK: refresh
 
-    @objc
-    func refresh() {
+    func refresh() async {
 
-        hasNextUp = false
-        hasRecentlyAdded = false
-        libraries = []
-        resumeItems = []
-
+//        hasNextUp = false
+//        hasRecentlyAdded = false
+        await MainActor.run {
+            libraries = []
+            resumeItems = []
+        }
+        
         Task {
-            logger.debug("Refreshing home screen")
+            await nextUpLibraryViewModel.refresh()
+        }
 
+//        refreshHasRecentlyAddedItems()
+//        refreshResumeItems()
+//        refreshHasNextUp()
+
+        do {
+            let newLibraries = try await getLibrariesLatest()
+            
             await MainActor.run {
-                isLoading = true
+                libraries = newLibraries
+                send(.showContent)
             }
-
-            refreshHasRecentlyAddedItems()
-            refreshResumeItems()
-            refreshHasNextUp()
-
-            do {
-                try await refreshLibrariesLatest()
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                    errorMessage = error.localizedDescription
-                }
-
-                return
-            }
-
-            await MainActor.run {
-                isLoading = false
-                errorMessage = nil
-            }
+        } catch {
+            await send(.error(error))
+            return
         }
     }
 
     // MARK: Libraries Latest Items
 
-    private func refreshLibrariesLatest() async throws {
+    private func getLibrariesLatest() async throws -> [BaseItemDto] {
         let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        let response = try await userSession.client.send(userViewsPath)
-
-        guard let allLibraries = response.value.items else {
-            await MainActor.run {
-                libraries = []
-            }
-
-            return
+        
+        async let userViewsResponse = try userSession.client.send(userViewsPath)
+        async let excludedLibraries = getExcludedLibraries()
+        
+        guard let userViews = try await userViewsResponse.value.items else {
+            return []
         }
-
-        let excludedLibraryIDs = await getExcludedLibraries()
-
-        let newLibraries = allLibraries
+        
+        let newLibraries = userViews
             .filter { $0.collectionType == "movies" || $0.collectionType == "tvshows" }
-            .filter { library in
-                !excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
-            }
-
-        await MainActor.run {
-            libraries = newLibraries
-        }
+            .subtracting(try await excludedLibraries, using: \.id)
+        
+        return newLibraries
     }
 
-    private func getExcludedLibraries() async -> [String] {
+    private func getExcludedLibraries() async throws -> [String?] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try? await userSession.client.send(currentUserPath)
+        let response = try await userSession.client.send(currentUserPath)
 
-        return response?.value.configuration?.latestItemsExcludes ?? []
+        return response.value.configuration?.latestItemsExcludes ?? []
     }
 
     // MARK: Recently Added Items
 
-    private func refreshHasRecentlyAddedItems() {
-        Task {
-            let parameters = Paths.GetLatestMediaParameters(
-                includeItemTypes: [.movie, .series],
-                limit: 1
-            )
-            let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasRecentlyAdded = !response.value.isEmpty
-            }
-        }
-    }
+//    private func refreshHasRecentlyAddedItems() {
+//        Task {
+//            let parameters = Paths.GetLatestMediaParameters(
+//                includeItemTypes: [.movie, .series],
+//                limit: 1
+//            )
+//            let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            await MainActor.run {
+//                hasRecentlyAdded = !response.value.isEmpty
+//            }
+//        }
+//    }
 
     // MARK: Resume Items
+    
+    private func getResumeItems() async throws -> [BaseItemDto] {
+        let resumeParameters = Paths.GetResumeItemsParameters(
+            limit: 20,
+            fields: ItemFields.minimumCases,
+            enableUserData: true,
+            includeItemTypes: [.movie, .episode]
+        )
 
-    private func refreshResumeItems() {
-        Task {
-            let resumeParameters = Paths.GetResumeItemsParameters(
-                limit: 20,
-                fields: ItemFields.minimumCases,
-                enableUserData: true,
-                includeItemTypes: [.movie, .episode]
-            )
+        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
+        let response = try await userSession.client.send(request)
 
-            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                resumeItems = items
-            }
-        }
+        return response.value.items ?? []
     }
 
     func markItemUnplayed(_ item: BaseItemDto) {
@@ -152,8 +188,8 @@ final class HomeViewModel: ViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            refreshResumeItems()
-            refreshHasNextUp()
+//            refreshResumeItems()
+//            refreshHasNextUp()
         }
     }
 
@@ -167,25 +203,25 @@ final class HomeViewModel: ViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            refreshResumeItems()
-            refreshHasNextUp()
+//            refreshResumeItems()
+//            refreshHasNextUp()
         }
     }
 
     // MARK: Next Up Items
 
-    private func refreshHasNextUp() {
-        Task {
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                limit: 1
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasNextUp = !(response.value.items?.isEmpty ?? true)
-            }
-        }
-    }
+//    private func refreshHasNextUp() {
+//        Task {
+//            let parameters = Paths.GetNextUpParameters(
+//                userID: userSession.user.id,
+//                limit: 1
+//            )
+//            let request = Paths.getNextUp(parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            await MainActor.run {
+//                hasNextUp = !(response.value.items?.isEmpty ?? true)
+//            }
+//        }
+//    }
 }

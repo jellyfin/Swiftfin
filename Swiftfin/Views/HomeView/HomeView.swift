@@ -19,16 +19,27 @@ struct HomeView: View {
 
     var body: some View {
         Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(
-                    viewModel: viewModel,
-                    errorMessage: .init(message: errorMessage, code: -1)
-                )
-            } else if viewModel.isLoading {
+            switch viewModel.state {
+            case .loading:
                 ProgressView()
-            } else {
+                    .onAppear {
+                        viewModel.send(.getLibraries)
+                    }
+            case .error:
+                ErrorView(viewModel: viewModel)
+            case .results:
                 ContentView(viewModel: viewModel)
             }
+//            if let errorMessage = viewModel.errorMessage {
+//                ErrorView(
+//                    viewModel: viewModel,
+//                    errorMessage: .init(message: errorMessage, code: -1)
+//                )
+//            } else if viewModel.isLoading {
+//                ProgressView()
+//            } else {
+//                ContentView(viewModel: viewModel)
+//            }
         }
         .navigationTitle(L10n.home)
         .toolbar {
@@ -41,5 +52,6 @@ struct HomeView: View {
                 }
             }
         }
+        .transition(.opacity.animation(.linear(duration: 5)))
     }
 }

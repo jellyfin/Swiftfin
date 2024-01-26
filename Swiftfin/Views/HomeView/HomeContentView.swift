@@ -29,19 +29,21 @@ extension HomeView {
                     if !viewModel.resumeItems.isEmpty {
                         ContinueWatchingView(viewModel: viewModel)
                     }
+                    
+                    NextUpView(viewModel: viewModel.nextUpLibraryViewModel)
 
-                    if viewModel.hasNextUp {
-                        NextUpView(viewModel: .init())
-                    }
+//                    if viewModel.hasNextUp {
+//                        NextUpView(viewModel: .init())
+//                    }
 
-                    if viewModel.hasRecentlyAdded {
-                        RecentlyAddedView(
-                            viewModel: .init(
-                                itemTypes: [.movie, .series],
-                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-                            )
-                        )
-                    }
+//                    if viewModel.hasRecentlyAdded {
+//                        RecentlyAddedView(
+//                            viewModel: .init(
+//                                itemTypes: [.movie, .series],
+//                                filters: .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+//                            )
+//                        )
+//                    }
 
                     ForEach(viewModel.libraries, id: \.self) { library in
                         LatestInLibraryView(viewModel: .init(parent: library))
@@ -49,7 +51,7 @@ extension HomeView {
                 }
                 .padding(.bottom, 50)
             } onRefresh: {
-                viewModel.refresh()
+//                viewModel.refresh()
             }
         }
     }
