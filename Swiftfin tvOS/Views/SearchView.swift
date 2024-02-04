@@ -22,30 +22,33 @@ struct SearchView: View {
 
     @ViewBuilder
     private var resultsView: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 20) {
-                if !viewModel.movies.isEmpty {
-                    itemsSection(title: L10n.movies, keyPath: \.movies)
-                }
+        GeometryReader { geo in
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 20) {
+                    if !viewModel.movies.isEmpty {
+                        itemsSection(title: L10n.movies, keyPath: \.movies)
+                    }
 
-                if !viewModel.collections.isEmpty {
-                    itemsSection(title: L10n.collections, keyPath: \.collections)
-                }
+                    if !viewModel.collections.isEmpty {
+                        itemsSection(title: L10n.collections, keyPath: \.collections)
+                    }
 
-                if !viewModel.series.isEmpty {
-                    itemsSection(title: L10n.tvShows, keyPath: \.series)
-                }
+                    if !viewModel.series.isEmpty {
+                        itemsSection(title: L10n.tvShows, keyPath: \.series)
+                    }
 
-                if !viewModel.episodes.isEmpty {
-                    itemsSection(title: L10n.episodes, keyPath: \.episodes)
-                }
+                    if !viewModel.episodes.isEmpty {
+                        itemsSection(title: L10n.episodes, keyPath: \.episodes)
+                    }
 
-                if !viewModel.people.isEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people)
+                    if !viewModel.people.isEmpty {
+                        itemsSection(title: L10n.people, keyPath: \.people)
+                    }
                 }
             }
+            .padding(.top, geo.size.height * 0.65)
+            .ignoresSafeArea()
         }
-        .ignoresSafeArea()
     }
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
