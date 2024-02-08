@@ -259,7 +259,6 @@
 		E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1BA28D11E1000678D5D /* RecentlyAddedViewModel.swift */; };
 		E12CC1BC28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1BA28D11E1000678D5D /* RecentlyAddedViewModel.swift */; };
 		E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1BD28D11F4500678D5D /* RecentlyAddedView.swift */; };
-		E12CC1BF28D1260600678D5D /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
 		E12CC1C128D12B0A00678D5D /* BasicLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1C028D12B0A00678D5D /* BasicLibraryView.swift */; };
 		E12CC1C528D12D9B00678D5D /* SeeAllPosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1C428D12D9B00678D5D /* SeeAllPosterButton.swift */; };
 		E12CC1C728D12FD600678D5D /* CinematicRecentlyAddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1C628D12FD600678D5D /* CinematicRecentlyAddedView.swift */; };
@@ -650,7 +649,6 @@
 		E1D3043C28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043B28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift */; };
 		E1D3043D28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043B28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift */; };
 		E1D3043F28D18F5700587289 /* CastAndCrewLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043E28D18F5700587289 /* CastAndCrewLibraryView.swift */; };
-		E1D3044228D1976600587289 /* CastAndCrewItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3044128D1976600587289 /* CastAndCrewItemRow.swift */; };
 		E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */; };
 		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
 		E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
@@ -686,6 +684,8 @@
 		E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9843296DECB600982F06 /* ProgressIndicator.swift */; };
 		E1DC9847296DEFF500982F06 /* FavoriteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9846296DEFF500982F06 /* FavoriteIndicator.swift */; };
 		E1DC9848296DEFF500982F06 /* FavoriteIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9846296DEFF500982F06 /* FavoriteIndicator.swift */; };
+		E1DD55372B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
+		E1DD55382B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
 		E1E0BEB729EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */; };
 		E1E0BEB829EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */; };
 		E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1643928BAC2EF00323B0A /* SearchView.swift */; };
@@ -694,6 +694,12 @@
 		E1E1644128BB301900323B0A /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* Array.swift */; };
 		E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */; };
 		E1E1E24E28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */; };
+		E1E2F83F2B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */; };
+		E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */; };
+		E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */; };
+		E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */; };
+		E1E2F8452B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */; };
+		E1E2F8462B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */; };
 		E1E306CD28EF6E8000537998 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* TimerProxy.swift */; };
 		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */; };
@@ -1225,7 +1231,6 @@
 		E1D3043928D189C500587289 /* CastAndCrewLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewLibraryView.swift; sourceTree = "<group>"; };
 		E1D3043B28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewLibraryCoordinator.swift; sourceTree = "<group>"; };
 		E1D3043E28D18F5700587289 /* CastAndCrewLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewLibraryView.swift; sourceTree = "<group>"; };
-		E1D3044128D1976600587289 /* CastAndCrewItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewItemRow.swift; sourceTree = "<group>"; };
 		E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewTypeToggle.swift; sourceTree = "<group>"; };
 		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
 		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
@@ -1252,11 +1257,15 @@
 		E1DC9840296DEBD800982F06 /* WatchedIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedIndicator.swift; sourceTree = "<group>"; };
 		E1DC9843296DECB600982F06 /* ProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndicator.swift; sourceTree = "<group>"; };
 		E1DC9846296DEFF500982F06 /* FavoriteIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteIndicator.swift; sourceTree = "<group>"; };
+		E1DD55362B6EE533007501C0 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIGestureRecognizer.swift; sourceTree = "<group>"; };
 		E1E1643928BAC2EF00323B0A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		E1E1643D28BB074000323B0A /* SelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectorView.swift; sourceTree = "<group>"; };
 		E1E1644028BB301900323B0A /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
+		E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFinalDisappearModifier.swift; sourceTree = "<group>"; };
+		E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
+		E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AfterLastDisappearModifier.swift; sourceTree = "<group>"; };
 		E1E306CC28EF6E8000537998 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
 		E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshHelper.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsView.swift; sourceTree = "<group>"; };
@@ -1872,6 +1881,7 @@
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */,
+				E1DD55362B6EE533007501C0 /* Task.swift */,
 				E1937A3D288F0D3D00CB80AA /* UIScreen.swift */,
 				E18E0239288749540022598C /* UIScrollView.swift */,
 				62E1DCC2273CE19800C9AE76 /* URL.swift */,
@@ -2148,7 +2158,7 @@
 				E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */,
 				E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */,
 				E12CC1B828D11A1D00678D5D /* BasicLibraryView.swift */,
-				E1D3044028D1974700587289 /* CastAndCrewLibraryView */,
+				E1D3043928D189C500587289 /* CastAndCrewLibraryView.swift */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */,
 				E13332922953BA9400EE76AB /* DownloadTaskView */,
@@ -2261,14 +2271,17 @@
 		E170D101294CE4C10017224C /* Modifiers */ = {
 			isa = PBXGroup;
 			children = (
+				E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */,
 				E18E0202288749200022598C /* AttributeStyleModifier.swift */,
 				E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */,
 				E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */,
+				E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */,
+				E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */,
 				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
 				E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */,
 				E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */,
-				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
 				E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */,
+				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -2669,15 +2682,6 @@
 				E1C926072887565C002A7A66 /* SeriesEpisodeSelector.swift */,
 			);
 			path = Components;
-			sourceTree = "<group>";
-		};
-		E1D3044028D1974700587289 /* CastAndCrewLibraryView */ = {
-			isa = PBXGroup;
-			children = (
-				E1D3044128D1976600587289 /* CastAndCrewItemRow.swift */,
-				E1D3043928D189C500587289 /* CastAndCrewLibraryView.swift */,
-			);
-			path = CastAndCrewLibraryView;
 			sourceTree = "<group>";
 		};
 		E1D5C39728DF914100CDBEFB /* Slider */ = {
@@ -3113,6 +3117,7 @@
 				E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */,
 				E1C926162887565C002A7A66 /* SeriesItemView.swift in Sources */,
 				E1575E6A293E77B5001665B1 /* RoundedCorner.swift in Sources */,
+				E1DD55382B6EE533007501C0 /* Task.swift in Sources */,
 				E1575EA1293E7B1E001665B1 /* String.swift in Sources */,
 				E1E6C45429B1304E0064123F /* ChaptersActionButton.swift in Sources */,
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
@@ -3179,6 +3184,7 @@
 				E193D54B271941D300900D82 /* ServerListView.swift in Sources */,
 				E1575E91293E7B1E001665B1 /* URL.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
+				E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
 				E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
 				E1575E87293E7A00001665B1 /* InvertedDarkAppIcon.swift in Sources */,
 				C400DB6B27FE8C97007B65FE /* LiveTVChannelItemElement.swift in Sources */,
@@ -3186,6 +3192,7 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */,
+				E1E2F8462B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */,
 				E1575E80293E77CF001665B1 /* VideoPlayerViewModel.swift in Sources */,
 				E1C926122887565C002A7A66 /* SeriesItemContentView.swift in Sources */,
 				E193D53727193F8700900D82 /* MediaCoordinator.swift in Sources */,
@@ -3203,6 +3210,7 @@
 				C4BE07892728448B003F4AD1 /* LiveTVChannelsCoordinator.swift in Sources */,
 				E1DC9842296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
 				E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */,
+				E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
 				E10E842A29A587110064EA49 /* LoadingView.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				C4BE078C272844AF003F4AD1 /* LiveTVChannelsView.swift in Sources */,
@@ -3412,6 +3420,7 @@
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
+				E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
 				E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */,
 				E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */,
 				4F1282B12A7F3E8F005BCA29 /* RandomItemButton.swift in Sources */,
@@ -3490,6 +3499,7 @@
 				E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
+				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
 				E113133428BE988200930F75 /* FilterDrawerHStack.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
@@ -3514,6 +3524,7 @@
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
 				E1D3043C28D18CD400587289 /* CastAndCrewLibraryCoordinator.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
+				E1E2F8452B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */,
 				E18E01AB288746AF0022598C /* PillHStack.swift in Sources */,
 				E1401CAB2938140A00E8B599 /* LightAppIcon.swift in Sources */,
 				E18E01E4288747230022598C /* CompactLogoScrollView.swift in Sources */,
@@ -3648,7 +3659,6 @@
 				E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */,
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDevice.swift in Sources */,
-				E1D3044228D1976600587289 /* CastAndCrewItemRow.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */,
 				E1549668296CA2EF00C4EF88 /* PlaybackManager.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
@@ -3670,11 +3680,11 @@
 				E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
-				E12CC1BF28D1260600678D5D /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
 				E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */,
 				E1E6C44029AECC6D0064123F /* ActionButtons.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
+				E1E2F83F2B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
 				E15D4F072B1B12C300442DB8 /* Backport.swift in Sources */,
 				E1549660296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,

@@ -12,9 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: find better way to init layout
-// - is onAppear good enough since it's fast?
-
 struct PagingLibraryView: View {
 
     @Default(.Customization.Library.viewType)
@@ -109,19 +106,16 @@ struct PagingLibraryView: View {
                 listItemView(item: item)
             }
         }
-        .onReachedBottomEdge(offset: 200) {
+        .onReachedBottomEdge(offset: 100) {
             Task {
-                try await viewModel.getNextPage()
+                do {
+                    try await viewModel.getNextPage()
+                } catch {
+                    print(error)
+                }
             }
         }
         .ignoresSafeArea()
-        .onAppear {
-            if UIDevice.isPhone {
-                layout = phoneLayout(libraryViewType: libraryViewType)
-            } else {
-                layout = padLayout(libraryViewType: libraryViewType)
-            }
-        }
         .onChange(of: libraryViewType) { _ in
             if UIDevice.isPhone {
                 layout = phoneLayout(libraryViewType: libraryViewType)
@@ -140,6 +134,12 @@ extension PagingLibraryView {
             layout: .columns(3),
             onSelect: { _ in }
         )
+        
+        if UIDevice.isPhone {
+            layout = phoneLayout(libraryViewType: libraryViewType)
+        } else {
+            layout = padLayout(libraryViewType: libraryViewType)
+        }
     }
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {

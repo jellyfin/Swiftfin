@@ -237,4 +237,20 @@ extension View {
     var backport: Backport<Self> {
         Backport(content: self)
     }
+    
+    /// Perform an action on the final disappear of a `View`
+    func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
+        modifier(OnFinalDisappearModifier(action: action))
+    }
+    
+    /// Perform an action only on the first appearance of a `View`
+    func onFirstAppear(perform action: @escaping () -> Void) -> some View {
+        modifier(OnFirstAppearModifier(action: action))
+    }
+    
+    /// Perform an action as a view appears which gives a time interval
+    /// from when this view last disappeared.
+    func afterLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
+        modifier(AfterLastDisappearModifier(action: action))
+    }
 }

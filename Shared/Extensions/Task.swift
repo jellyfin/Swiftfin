@@ -6,18 +6,12 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
-import JellyfinAPI
 
-extension ItemFields {
-
-    // TODO: rename to `MinimumItemFields`?
-    // TODO: explain why
-    static let minimumCases: [ItemFields] = [
-        .chapters,
-        .mediaSources,
-        .overview,
-        .parentID,
-        .taglines,
-    ]
+extension Task {
+    
+    func asAnyCancellable() -> AnyCancellable {
+        AnyCancellable(cancel)
+    }
 }

@@ -11,6 +11,7 @@ import Foundation
 import Get
 import JellyfinAPI
 
+// TODO: atow, this is only really used for tvOS tabs
 final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
 
     let itemTypes: [BaseItemKind]
@@ -21,11 +22,11 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         self.filterViewModel = .init(parent: nil, currentFilters: filters)
         super.init()
 
-        filterViewModel.$currentFilters
-            .sink { newFilters in
-                self.requestItems(with: newFilters, replaceCurrentItems: true)
-            }
-            .store(in: &cancellables)
+//        filterViewModel.$currentFilters
+//            .sink { newFilters in
+//                self.requestItems(with: newFilters, replaceCurrentItems: true)
+//            }
+//            .store(in: &cancellables)
     }
 
     private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {

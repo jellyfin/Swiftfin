@@ -43,13 +43,13 @@ final class HomeViewModel: ViewModel {
 
         refreshResumeItems()
 
-        Task {
-            try await nextUpViewModel.refresh()
-        }
-
-        Task {
-            try await recentlyAddedViewModel.refresh()
-        }
+//        Task {
+//            try await nextUpViewModel.refresh()
+//        }
+//
+//        Task {
+//            try await recentlyAddedViewModel.refresh()
+//        }
 
         do {
             try await refreshLibrariesLatest()

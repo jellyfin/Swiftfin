@@ -9,6 +9,7 @@
 import Defaults
 import SwiftUI
 
+// TODO: Rename to `PosterDisplayType` or `PosterDisplay`?
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case portrait

@@ -65,17 +65,22 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         if let parent = parameters.parent {
             if !parameters.filters.hasFilters, let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
-                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
+//                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
+                Text("FIX ME")
             } else {
-                LibraryView(viewModel: LibraryViewModel(
-                    parent: parent,
-                    type: parameters.type,
-                    filters: parameters.filters,
-                    saveFilters: false
-                ))
+                LibraryView(parent: parent, type: parameters.type, filters: parameters.filters)
+                
+                
+//                LibraryView(viewModel: LibraryViewModel(
+//                    parent: parent,
+//                    type: parameters.type,
+//                    filters: parameters.filters,
+//                    saveFilters: false
+//                ))
             }
         } else {
-            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
+            Text("FIX ME")
+//            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
         }
     }
 

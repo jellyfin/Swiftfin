@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: manual dividers
-
 struct LibraryItemRow<Item: Displayable & Poster>: View {
 
     @EnvironmentObject
@@ -18,8 +16,6 @@ struct LibraryItemRow<Item: Displayable & Poster>: View {
 
     private let item: Item
     private var onSelect: () -> Void
-
-    private let posterWidth: CGFloat = 60
 
     @ViewBuilder
     private func personAccessoryView(person: BaseItemPerson) -> some View {

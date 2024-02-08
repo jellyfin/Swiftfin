@@ -16,6 +16,10 @@ import UIKit
 
 // TODO: Look at refactoring
 final class LibraryViewModel: PagingLibraryViewModel {
+    
+    deinit {
+        print("LibraryViewModel.deinit")
+    }
 
     let filterViewModel: FilterViewModel
 
@@ -31,8 +35,16 @@ final class LibraryViewModel: PagingLibraryViewModel {
         }
     }
 
-    convenience init(filters: ItemFilters, saveFilters: Bool = false) {
-        self.init(parent: nil, type: .library, filters: filters, saveFilters: saveFilters)
+    convenience init(
+        filters: ItemFilters,
+        saveFilters: Bool = false
+    ) {
+        self.init(
+            parent: nil,
+            type: .library,
+            filters: filters,
+            saveFilters: saveFilters
+        )
     }
 
     init(
@@ -47,57 +59,37 @@ final class LibraryViewModel: PagingLibraryViewModel {
         self.saveFilters = saveFilters
         super.init()
 
-        filterViewModel.$currentFilters
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { newFilters in
-                self.requestItems(with: newFilters, replaceCurrentItems: true)
-
-                if self.saveFilters, let id = self.parent?.id {
-                    Defaults[.libraryFilterStore][id] = newFilters
-                }
-            }
-            .store(in: &cancellables)
+        // TODO: call `refresh` instead
+//        filterViewModel.$currentFilters
+//            .debounce(for: 0.5, scheduler: DispatchQueue.main)
+//            .sink { newFilters in
+//
+//                if self.saveFilters, let id = self.parent?.id {
+//                    Defaults[.libraryFilterStore][id] = newFilters
+//                }
+//                
+//                print("got new filters?")
+//                
+//                Task {
+//                    print("refreshing from filter change")
+//                    
+//                    
+//                }
+//                .asAnyCancellable()
+//                .store(in: &self.cancellables)
+//            }
+//            .store(in: &cancellables)
+    }
+    
+    override func get(page: Int) async throws -> [BaseItemDto] {
+        let parameters = getItemParameters(for: page)
+        let request = Paths.getItems(parameters: parameters)
+        let response = try await userSession.client.send(request)
+        
+        return response.value.items ?? []
     }
 
-    private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
-        Task {
-            await MainActor.run {
-                self.isLoading = true
-                self.items = []
-                self.currentPage = 0
-                self.hasNextPage = true
-            }
-
-            var parameters = _getDefaultParams()
-            parameters?.limit = Self.DefaultPageSize
-            parameters?.startIndex = currentPage * Self.DefaultPageSize
-            parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-            parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
-
-            if filters.sortBy.first == SortBy.random.filter {
-                parameters?.excludeItemIDs = items.compactMap(\.id)
-            }
-
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items, !items.isEmpty else {
-                self.hasNextPage = false
-                return
-            }
-
-            await MainActor.run {
-                self.isLoading = false
-                self.items.append(contentsOf: items)
-            }
-        }
-    }
-
-    override func getCurrentPage() async throws {
-        requestItems(with: filterViewModel.currentFilters)
-    }
-
-    override func _getDefaultParams() -> Paths.GetItemsParameters? {
+    private func getItemParameters(for page: Int) -> Paths.GetItemsParameters {
 
         let filters = filterViewModel.currentFilters
         var libraryID: String?
@@ -129,11 +121,11 @@ final class LibraryViewModel: PagingLibraryViewModel {
         let genreIDs = filters.genres.compactMap(\.id)
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        let parameters = Paths.GetItemsParameters(
+        var parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
             isRecursive: recursive,
             parentID: libraryID,
-            fields: ItemFields.allCases,
+            fields: ItemFields.minimumCases,
             includeItemTypes: includeItemTypes,
             filters: itemFilters,
             enableUserData: true,
@@ -142,6 +134,15 @@ final class LibraryViewModel: PagingLibraryViewModel {
             genreIDs: genreIDs,
             enableImages: true
         )
+        
+        parameters.limit = Self.DefaultPageSize
+        parameters.startIndex = page * Self.DefaultPageSize
+        parameters.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+        parameters.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
+
+        if filters.sortBy.first == SortBy.random.filter {
+            parameters.excludeItemIDs = items.compactMap(\.id)
+        }
 
         return parameters
     }

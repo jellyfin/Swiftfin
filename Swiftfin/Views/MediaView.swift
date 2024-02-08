@@ -7,7 +7,6 @@
 //
 
 import CollectionVGrid
-import CollectionView
 import Defaults
 import Factory
 import JellyfinAPI

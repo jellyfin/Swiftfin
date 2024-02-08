@@ -12,6 +12,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: This only exists because of the restriction on poster types,
+//       should find a way to consolidate into `PagingLibraryView`?
 struct CastAndCrewLibraryView: View {
 
     @Default(.Customization.Library.listColumnCount)
@@ -32,7 +34,7 @@ struct CastAndCrewLibraryView: View {
         case .landscapeGrid, .portraitGrid:
             .minWidth(150)
         case .list:
-            .columns(listColumnCount)
+            .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
 
@@ -41,13 +43,31 @@ struct CastAndCrewLibraryView: View {
         case .landscapeGrid, .portraitGrid:
             .columns(3)
         case .list:
-            .columns(1)
+            .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
 
     @ViewBuilder
     private var noResultsView: some View {
         L10n.noResults.text
+    }
+    
+    private func gridItemView(person: BaseItemPerson) -> some View {
+        PosterButton(item: person, type: .portrait)
+            .onSelect {
+                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+            }
+    }
+    
+    private func listItemView(person: BaseItemPerson) -> some View {
+        LibraryItemRow(item: person)
+            .onSelect {
+                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+            }
+            .padding(10)
+            .overlay(alignment: .bottom) {
+                Divider()
+            }
     }
 
     @ViewBuilder
@@ -58,16 +78,9 @@ struct CastAndCrewLibraryView: View {
         ) { person in
             switch libraryViewType {
             case .landscapeGrid, .portraitGrid:
-                PosterButton(item: person, type: .portrait)
-                    .onSelect {
-                        router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
-                    }
+                gridItemView(person: person)
             case .list:
-//                CastAndCrewItemRow(person: person)
-                LibraryItemRow(item: person)
-                    .onSelect {
-                        router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
-                    }
+                listItemView(person: person)
             }
         }
     }

@@ -13,10 +13,9 @@ import SwiftUI
 final class FilterViewModel: ViewModel {
 
     @Published
-    var allFilters: ItemFilters = .all
-    @Published
     var currentFilters: ItemFilters
 
+    var allFilters: ItemFilters = .all
     let parent: LibraryParent?
 
     init(
@@ -26,22 +25,17 @@ final class FilterViewModel: ViewModel {
         self.parent = parent
         self.currentFilters = currentFilters
         super.init()
-
-        getQueryFilters()
     }
 
-    private func getQueryFilters() {
-        Task {
-            let parameters = Paths.GetQueryFiltersParameters(
-                userID: userSession.user.id,
-                parentID: parent?.id
-            )
-            let request = Paths.getQueryFilters(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                allFilters.genres = response.value.genres?.map(\.filter) ?? []
-            }
-        }
+    func getGenres() async -> [ItemFilters.Filter] {
+        let parameters = Paths.GetQueryFiltersParameters(
+            userID: userSession.user.id,
+            parentID: parent?.id
+        )
+        let request = Paths.getQueryFilters(parameters: parameters)
+        let response = try? await userSession.client.send(request)
+        
+        return response?.value.genres?
+            .map(\.filter) ?? []
     }
 }

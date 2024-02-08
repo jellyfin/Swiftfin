@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
+import Combine
 import Foundation
 import Get
 import JellyfinAPI
@@ -15,13 +15,22 @@ import UIKit
 
 class PagingLibraryViewModel: ViewModel {
 
-    static let DefaultPageSize = 50
+    static let DefaultPageSize = 16
 
     @Published
-    var items: OrderedSet<BaseItemDto>
+    final var items: OrderedSet<BaseItemDto>
 
-    var currentPage = 0
-    var hasNextPage = true
+    private var currentPage = 0
+    private var hasNextPage = true
+    private var currentPagingRequest: AnyCancellable? {
+        didSet {
+            print("did set currentPagingRequest")
+        }
+    }
+    
+    deinit {
+        print("PagingLibraryViewModel.deinit")
+    }
 
     override init() {
         self.items = []
@@ -32,48 +41,94 @@ class PagingLibraryViewModel: ViewModel {
         currentPage = data.count / Self.DefaultPageSize
     }
 
-    public func getRandomItem() async -> BaseItemDto? {
-
-        var parameters = _getDefaultParams()
-        parameters?.limit = 1
-        parameters?.sortBy = [SortBy.random.rawValue]
-
-        await MainActor.run {
-            self.isLoading = true
-        }
-
-        let request = Paths.getItems(parameters: parameters)
-        let response = try? await userSession.client.send(request)
-        
-        await MainActor.run {
-            self.isLoading = false
-        }
-        
-        return response?.value.items?.first
+    // TODO: move out
+    func getRandomItem() async -> BaseItemDto? {
+        nil
+//        var parameters = _getDefaultParams()
+//        parameters?.limit = 1
+//        parameters?.sortBy = [SortBy.random.rawValue]
+//
+//        await MainActor.run {
+//            self.isLoading = true
+//        }
+//
+//        let request = Paths.getItems(parameters: parameters)
+//        let response = try? await userSession.client.send(request)
+//        
+//        await MainActor.run {
+//            self.isLoading = false
+//        }
+//        
+//        return response?.value.items?.first
     }
 
-    func _getDefaultParams() -> Paths.GetItemsParameters? {
-        Paths.GetItemsParameters()
-    }
-
-    func refresh() async throws {
-        currentPage = 0
+    final func refresh() async throws {
+        
+        currentPage = -1
         hasNextPage = true
 
         await MainActor.run {
             items = []
         }
-
-        try await getCurrentPage()
+        
+//        try await withCheckedThrowingContinuation { [weak self] continuation in
+//            self?.currentPagingRequest = Task {
+//                do {
+//                    try await getNextPage()
+//                    print("in continuation: will resume: \(Task.isCancelled)")
+//                    continuation.resume()
+//                } catch {
+//                    print("in continuation: \(error)")
+//                    continuation.resume(throwing: error)
+//                }
+//            }
+//            .asAnyCancellable()
+//        }
+        
+        var a = Task {
+            return try await getNextPage()
+        }
+        
+        currentPagingRequest = a.asAnyCancellable()
+        
+        try await a.value
+        
+        print(a.isCancelled)
+        print(Task.isCancelled)
+        
+//        currentPagingRequest = a
     }
 
-    // TODO: rename `getNextPage`
-    func getNextPage() async throws {
-        guard hasNextPage else { return }
+    /// Gets the next page of items or immediately returns if
+    /// there is not a next page.
+    ///
+    /// See `get(page:)` for the conditions that determine
+    /// if there is a next page or not.
+    final func getNextPage() async throws {
+        guard !isLoading, hasNextPage else { return }
+        
+        await MainActor.run {
+            isLoading = true
+        }
+        
         currentPage += 1
-        try await getCurrentPage()
+        
+        let pageItems = try await get(page: currentPage)
+        try await Task.sleep(nanoseconds: 3_000_000_000)
+        
+        hasNextPage = !(pageItems.count < Self.DefaultPageSize)
+        
+        await MainActor.run {
+            items.append(contentsOf: pageItems)
+            isLoading = false
+        }
     }
 
-    // TODO: rename to `getCurrentPage` that gets passed `currentPage` and `hasNextPage`
-    func getCurrentPage() async throws {}
+    /// Gets the items at the given page. If the number of items
+    /// is less than `DefaultPageSize`, then it is inferred that
+    /// there is not a next page and subsequent calls to `getNextPage`
+    /// will immediately return.
+    func get(page: Int) async throws -> [BaseItemDto] {
+        []
+    }
 }
