@@ -33,7 +33,13 @@ struct ConnectToServerView: View {
     @State
     private var isPresentingError: Bool = false
     @State
-    private var url = "http://"
+    private var url = ""
+    @State
+    private var urlPrefix = "http://"
+    @State
+    private var urlPostfix = ""
+
+    private let prefixOptions = ["http://", "https://"]
 
     private func connectToServer() {
         let task = Task {
@@ -64,11 +70,22 @@ struct ConnectToServerView: View {
     @ViewBuilder
     private var connectSection: some View {
         Section {
-            TextField(L10n.serverURL, text: $url)
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
-                .keyboardType(.URL)
-
+            HStack {
+                Menu {
+                    Picker(selection: $urlPrefix) {
+                        ForEach(prefixOptions) { value in
+                            Text(value)
+                                .tag(value)
+                        }
+                    } label: {}
+                } label: {
+                    Text(urlPrefix)
+                }.id(urlPrefix)
+                TextField(L10n.serverURL, text: $urlPostfix)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
+                    .keyboardType(.URL)
+            }
             if isConnecting {
                 Button(role: .destructive) {
                     connectionTask?.cancel()
@@ -78,11 +95,12 @@ struct ConnectToServerView: View {
                 }
             } else {
                 Button {
+                    url = urlPrefix + urlPostfix
                     connectToServer()
                 } label: {
                     L10n.connect.text
                 }
-                .disabled(URL(string: url) == nil || isConnecting)
+                .disabled(URL(string: urlPrefix + urlPostfix) == nil || isConnecting)
             }
         } header: {
             L10n.connectToJellyfinServer.text
