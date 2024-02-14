@@ -71,7 +71,7 @@ struct SearchView: View {
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
         if item.type == .person {
-            router.route(to: \.library, .init(parent: item, type: .person, filters: .init()))
+            router.route(to: \.library, .init(parent: item, filters: .init()))
         } else {
             router.route(to: \.item, item)
         }

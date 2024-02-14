@@ -253,4 +253,12 @@ extension View {
     func afterLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
         modifier(AfterLastDisappearModifier(action: action))
     }
+    
+    func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                content()
+            }
+        }
+    }
 }

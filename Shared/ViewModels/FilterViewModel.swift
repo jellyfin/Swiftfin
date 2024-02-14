@@ -16,10 +16,10 @@ final class FilterViewModel: ViewModel {
     var currentFilters: ItemFilters
 
     var allFilters: ItemFilters = .all
-    let parent: LibraryParent?
+    let parent: (any LibraryParent)?
 
     init(
-        parent: LibraryParent?,
+        parent: (any LibraryParent)?,
         currentFilters: ItemFilters
     ) {
         self.parent = parent
@@ -30,7 +30,7 @@ final class FilterViewModel: ViewModel {
     func getGenres() async -> [ItemFilters.Filter] {
         let parameters = Paths.GetQueryFiltersParameters(
             userID: userSession.user.id,
-            parentID: parent?.id
+            parentID: parent?.id as? String
         )
         let request = Paths.getQueryFilters(parameters: parameters)
         let response = try? await userSession.client.send(request)

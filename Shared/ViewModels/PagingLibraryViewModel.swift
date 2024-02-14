@@ -71,32 +71,13 @@ class PagingLibraryViewModel: ViewModel {
             items = []
         }
         
-//        try await withCheckedThrowingContinuation { [weak self] continuation in
-//            self?.currentPagingRequest = Task {
-//                do {
-//                    try await getNextPage()
-//                    print("in continuation: will resume: \(Task.isCancelled)")
-//                    continuation.resume()
-//                } catch {
-//                    print("in continuation: \(error)")
-//                    continuation.resume(throwing: error)
-//                }
-//            }
-//            .asAnyCancellable()
-//        }
-        
-        var a = Task {
+        let a = Task {
             return try await getNextPage()
         }
         
         currentPagingRequest = a.asAnyCancellable()
         
         try await a.value
-        
-        print(a.isCancelled)
-        print(Task.isCancelled)
-        
-//        currentPagingRequest = a
     }
 
     /// Gets the next page of items or immediately returns if
@@ -113,8 +94,8 @@ class PagingLibraryViewModel: ViewModel {
         
         currentPage += 1
         
+        try await Task.sleep(nanoseconds: 10_000_000_000)
         let pageItems = try await get(page: currentPage)
-        try await Task.sleep(nanoseconds: 3_000_000_000)
         
         hasNextPage = !(pageItems.count < Self.DefaultPageSize)
         

@@ -194,6 +194,8 @@
 		E10E842A29A587110064EA49 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842929A587110064EA49 /* LoadingView.swift */; };
 		E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842B29A589860064EA49 /* NonePosterButton.swift */; };
 		E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSize.swift */; };
+		E11042562B7A9A7500821020 /* FoldersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042552B7A9A7500821020 /* FoldersViewModel.swift */; };
+		E11042572B7A9A7500821020 /* FoldersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042552B7A9A7500821020 /* FoldersViewModel.swift */; };
 		E111D8F528D03B7500400001 /* PagingLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */; };
 		E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */; };
 		E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F728D03BF900400001 /* PagingLibraryView.swift */; };
@@ -947,6 +949,7 @@
 		E10E842929A587110064EA49 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		E10E842B29A589860064EA49 /* NonePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonePosterButton.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSize.swift; sourceTree = "<group>"; };
+		E11042552B7A9A7500821020 /* FoldersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersViewModel.swift; sourceTree = "<group>"; };
 		E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryViewModel.swift; sourceTree = "<group>"; };
 		E111D8F728D03BF900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
 		E111D8F928D0400900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
@@ -1450,6 +1453,7 @@
 				C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */,
 				E107BB9127880A4000354E07 /* ItemViewModel */,
 				62E632DF267D30CA0063E547 /* LibraryViewModel.swift */,
+				E11042552B7A9A7500821020 /* FoldersViewModel.swift */,
 				C4BE07842728446F003F4AD1 /* LiveTVChannelsViewModel.swift */,
 				C4BE07752725EBEA003F4AD1 /* LiveTVProgramsViewModel.swift */,
 				625CB5742678C33500530A6E /* MediaViewModel.swift */,
@@ -3320,6 +3324,7 @@
 				E1575E70293E77B5001665B1 /* TextPair.swift in Sources */,
 				E1575E79293E77B5001665B1 /* DeviceProfileBuilder.swift in Sources */,
 				E18E021C2887492B0022598C /* BlurView.swift in Sources */,
+				E11042572B7A9A7500821020 /* FoldersViewModel.swift in Sources */,
 				E1E6C44729AECD5D0064123F /* PlayPreviousItemActionButton.swift in Sources */,
 				E1E6C44E29AEE9DC0064123F /* SmallMenuOverlay.swift in Sources */,
 				E154966B296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
@@ -3569,6 +3574,7 @@
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E170D105294D21FA0017224C /* MediaSourceInfoView.swift in Sources */,
 				E11895AC289383EE0042947B /* NavBarOffsetModifier.swift in Sources */,
+				E11042562B7A9A7500821020 /* FoldersViewModel.swift in Sources */,
 				E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */,
 				E157563029355B7900976E1F /* UpdateView.swift in Sources */,
 				E1D8424F2932F7C400D1041A /* OverviewView.swift in Sources */,
@@ -4046,6 +4052,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4084,6 +4091,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
+				OTHER_CFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

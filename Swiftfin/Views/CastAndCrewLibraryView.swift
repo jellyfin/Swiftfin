@@ -55,14 +55,14 @@ struct CastAndCrewLibraryView: View {
     private func gridItemView(person: BaseItemPerson) -> some View {
         PosterButton(item: person, type: .portrait)
             .onSelect {
-                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                router.route(to: \.library, .init(parent: person, filters: .init()))
             }
     }
     
     private func listItemView(person: BaseItemPerson) -> some View {
         LibraryItemRow(item: person)
             .onSelect {
-                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                router.route(to: \.library, .init(parent: person, filters: .init()))
             }
             .padding(10)
             .overlay(alignment: .bottom) {

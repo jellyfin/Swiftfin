@@ -19,7 +19,11 @@ extension BaseItemDto: Displayable {
     }
 }
 
-extension BaseItemDto: LibraryParent {}
+extension BaseItemDto: LibraryParent {
+    var libraryType: BaseItemKind? {
+        type
+    }
+}
 
 extension BaseItemDto {
 
@@ -249,5 +253,26 @@ extension BaseItemDto {
 
     static var noResults: BaseItemDto {
         .init(name: L10n.noResults)
+    }
+    
+    // TODO: remove when `collectionType` becomes an enum
+    func includedItemTypesForCollectionType() -> [BaseItemKind]? {
+        
+        guard let collectionType else { return nil }
+        
+        var itemTypes: [BaseItemKind]?
+        
+        switch collectionType {
+        case "movies":
+            itemTypes = [.movie]
+        case "tvshows":
+            itemTypes = [.series]
+        case "mixed":
+            itemTypes = [.movie, .series]
+        default:
+            itemTypes = nil
+        }
+        
+        return itemTypes
     }
 }

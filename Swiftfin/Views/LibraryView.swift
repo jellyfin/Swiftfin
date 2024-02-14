@@ -15,7 +15,6 @@ struct LibraryView: View {
 
     @Default(.Customization.Library.viewType)
     private var libraryViewType
-
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     private var filterDrawerButtonSelection
 
@@ -23,17 +22,12 @@ struct LibraryView: View {
     private var router: LibraryCoordinator.Router
 
     @StateObject
-    var viewModel: LibraryViewModel
+    private var viewModel: LibraryViewModel
     
-//    init(viewModel: LibraryViewModel) {
-//        self._viewModel = StateObject(wrappedValue: viewModel)
-//    }
-    
-    init(parent: LibraryParent, type: LibraryParentType, filters: ItemFilters) {
+    init(parent: any LibraryParent, filters: ItemFilters) {
         self._viewModel = StateObject(
             wrappedValue: LibraryViewModel(
                 parent: parent,
-                type: type,
                 filters: filters,
                 saveFilters: false
             )
@@ -53,7 +47,7 @@ struct LibraryView: View {
     private func baseItemOnSelect(_ item: BaseItemDto) {
         switch item.type {
         case .collectionFolder, .folder:
-            router.route(to: \.library, .init(parent: item, type: .folders, filters: .init()))
+            router.route(to: \.library, .init(parent: item, filters: .init()))
         default:
             router.route(to: \.item, item)
         }
@@ -81,52 +75,46 @@ struct LibraryView: View {
         innerBody
             .navigationTitle(viewModel.parent?.displayTitle ?? "")
             .navigationBarTitleDisplayMode(.inline)
-            .if(!filterDrawerButtonSelection.isEmpty) { view in
-                view.navBarDrawer {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
-                            .onSelect { filterCoordinatorParameters in
-                                router.route(to: \.filter, filterCoordinatorParameters)
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 1)
-                    }
+//            .if(!filterDrawerButtonSelection.isEmpty) { view in
+//                view.navBarDrawer {
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
+//                            .onSelect { filterCoordinatorParameters in
+//                                router.route(to: \.filter, filterCoordinatorParameters)
+//                            }
+//                            .padding(.horizontal)
+//                            .padding(.vertical, 1)
+//                    }
+//                }
+//            }
+            .topBarTrailing {
+                
+                if viewModel.isLoading && !viewModel.items.isEmpty {
+                    ProgressView()
                 }
-            }
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading && !viewModel.items.isEmpty {
-                        ProgressView()
-                    }
 
-                    Menu {
-                        LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+                Menu {
+                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
 
-                        RandomItemButton(viewModel: viewModel)
-                            .onSelect { item in
-                                if let item {
-                                    router.route(to: \.item, item)
-                                }
+                    RandomItemButton(viewModel: viewModel)
+                        .onSelect { item in
+                            if let item {
+                                router.route(to: \.item, item)
                             }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
+                        }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
             .onFirstAppear {
-                <#code#>
+                Task {
+                    do {
+                        try await viewModel.refresh()
+                        print("refreshed")
+                    } catch {
+                        print(error)
+                    }
+                }
             }
-//            .task {
-//                // SwiftUI doesn't have a single `onLoad` event, only when appearing.
-//                // Only hard refresh on a fresh appearance, but not on a navigation pop.
-//                guard viewModel.items.isEmpty else { return }
-//                
-//                do {
-//                    try await viewModel.refresh()
-//                    print("successfully refreshed")
-//                } catch {
-//                    print(error)
-//                }
-//            }
     }
 }

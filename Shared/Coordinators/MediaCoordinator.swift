@@ -37,6 +37,10 @@ final class MediaCoordinator: NavigationCoordinatable {
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
     }
+    
+    func makeFolderLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
+        LibraryCoordinator(parameters: parameters)
+    }
 
     func makeLiveTV() -> LiveTVCoordinator {
         LiveTVCoordinator()

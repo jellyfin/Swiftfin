@@ -14,18 +14,11 @@ import OrderedCollections
 
 final class MediaViewModel: ViewModel {
 
-    private static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "unknown"]
+    // TODO: remove once collection types become an enum
+    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
     @Published
     var libraries: OrderedSet<MediaItemViewModel> = []
-
-    override init() {
-        super.init()
-
-        Task {
-            await refresh()
-        }
-    }
 
     func refresh() async {
         do {
@@ -33,18 +26,14 @@ final class MediaViewModel: ViewModel {
 
             await MainActor.run {
                 libraries.elements = newLibraries.map(MediaItemViewModel.init)
-                    .prepending(
-                        .init(item: .init(collectionType: "liveTV", name: L10n.liveTV)),
-                        if: Defaults[.Experimental.liveTVAlphaEnabled]
-                    )
-                    .prepending(
-                        .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
-                        if: Defaults[.Customization.Library.showFavorites]
-                    )
-                    .prepending(
-                        .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
-                        if: Defaults[.Experimental.downloads]
-                    )
+//                    .prepending(
+//                        .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
+//                        if: Defaults[.Customization.Library.showFavorites]
+//                    )
+//                    .prepending(
+//                        .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
+//                        if: Defaults[.Experimental.downloads]
+//                    )
             }
         } catch {
             // TODO: set error once MediaView has error + retry state
@@ -59,7 +48,19 @@ final class MediaViewModel: ViewModel {
         let response = try await userSession.client.send(request)
 
         guard let items = response.value.items else { return [] }
-        let supportedLibraries = items.filter(using: \.collectionType, by: Self.supportedCollectionTypes)
+        
+        // folders has `type = UserView`, but we need to manually
+        // force it to `folders` for better view handling
+        let supportedLibraries = items
+            .filter(using: \.collectionType, by: Self.supportedCollectionTypes)
+            .map { item in
+                
+                if item.type == .userView, item.collectionType == "folder" {
+                    return item.mutating(\.type, with: .folder)
+                }
+                
+                return item
+            }
 
         return supportedLibraries
     }

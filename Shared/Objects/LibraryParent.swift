@@ -7,15 +7,15 @@
 //
 
 import Foundation
+import JellyfinAPI
 
-protocol LibraryParent: Displayable {
+protocol LibraryParent: Displayable, Identifiable {
     var id: String? { get }
-}
-
-// TODO: Remove so multiple people/studios can be used
-enum LibraryParentType {
-    case library
-    case folders
-    case person
-    case studio
+    
+    // Only called `libraryType` because `BaseItemPerson` has
+    // a different `type` property. However, people should have
+    // different views so this can be renamed when they do, or
+    // this protocol to be removed entirely and replace just with
+    // a concrete `BaseItemDto`
+    var libraryType: BaseItemKind? { get }
 }

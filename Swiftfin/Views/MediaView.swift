@@ -40,13 +40,13 @@ struct MediaView: View {
                     case "downloads":
                         router.route(to: \.downloads)
                     case "favorites":
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .favorites))
+                        router.route(to: \.library, .init(parent: viewModel.item, filters: .favorites))
                     case "folders":
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .folders, filters: .init()))
-                    case "liveTV":
+                        router.route(to: \.library, .init(parent: viewModel.item, filters: .init()))
+                    case "livetv":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: viewModel.item, type: .library, filters: .init()))
+                        router.route(to: \.library, .init(parent: viewModel.item, filters: .init()))
                     }
                 }
         }
@@ -60,6 +60,11 @@ struct MediaView: View {
                 if viewModel.isLoading {
                     ProgressView()
                 }
+            }
+        }
+        .onFirstAppear {
+            Task {
+                await viewModel.refresh()
             }
         }
     }

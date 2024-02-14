@@ -31,7 +31,7 @@ extension ItemView {
                     }
             }
             .onSelect { person in
-                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                router.route(to: \.library, .init(parent: person, filters: .init()))
             }
         }
     }

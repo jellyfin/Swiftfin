@@ -223,7 +223,6 @@ extension Defaults.Keys {
         )
         static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: .generalSuite)
 
-        static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
     }
 

@@ -15,23 +15,19 @@ import SwiftUI
 final class LibraryCoordinator: NavigationCoordinatable {
 
     struct Parameters {
-        let parent: LibraryParent?
-        let type: LibraryParentType
+        let parent: (any LibraryParent)?
         let filters: ItemFilters
 
         init(
-            parent: LibraryParent,
-            type: LibraryParentType,
+            parent: any LibraryParent,
             filters: ItemFilters
         ) {
             self.parent = parent
-            self.type = type
             self.filters = filters
         }
 
         init(filters: ItemFilters) {
             self.parent = nil
-            self.type = .library
             self.filters = filters
         }
     }
@@ -51,6 +47,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+//    @Route(.push)
+//    var folderLibrary = makeFolderLibrary
     @Route(.modal)
     var filter = makeFilter
     #endif
@@ -68,7 +66,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
 //                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
                 Text("FIX ME")
             } else {
-                LibraryView(parent: parent, type: parameters.type, filters: parameters.filters)
+                LibraryView(parent: parent, filters: parameters.filters)
                 
                 
 //                LibraryView(viewModel: LibraryViewModel(
@@ -100,6 +98,10 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
     }
+    
+//    func makeFolderLibrary() -> LibraryCoordinator {
+//        LibraryCoordinator(parameters: .init(parent: <#T##LibraryParent#>, filters: <#T##ItemFilters#>))
+//    }
 
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
         NavigationViewCoordinator(FilterCoordinator(parameters: parameters))

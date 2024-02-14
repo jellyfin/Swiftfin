@@ -15,7 +15,7 @@ import SwiftUI
 import UIKit
 
 // TODO: Look at refactoring
-final class LibraryViewModel: PagingLibraryViewModel {
+class LibraryViewModel: PagingLibraryViewModel {
     
     deinit {
         print("LibraryViewModel.deinit")
@@ -23,13 +23,12 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
     let filterViewModel: FilterViewModel
 
-    let parent: LibraryParent?
-    let type: LibraryParentType
+    let parent: (any LibraryParent)?
     private let saveFilters: Bool
 
     var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
         if let parent = parent {
-            return .init(parent: parent, type: type, filters: filterViewModel.currentFilters)
+            return .init(parent: parent, filters: filterViewModel.currentFilters)
         } else {
             return .init(filters: filterViewModel.currentFilters)
         }
@@ -41,20 +40,17 @@ final class LibraryViewModel: PagingLibraryViewModel {
     ) {
         self.init(
             parent: nil,
-            type: .library,
             filters: filters,
             saveFilters: saveFilters
         )
     }
 
     init(
-        parent: LibraryParent?,
-        type: LibraryParentType,
+        parent: (any LibraryParent)?,
         filters: ItemFilters = .init(),
         saveFilters: Bool = false
     ) {
         self.parent = parent
-        self.type = type
         self.filterViewModel = .init(parent: parent, currentFilters: filters)
         self.saveFilters = saveFilters
         super.init()
@@ -83,63 +79,79 @@ final class LibraryViewModel: PagingLibraryViewModel {
     
     override func get(page: Int) async throws -> [BaseItemDto] {
         let parameters = getItemParameters(for: page)
-        let request = Paths.getItems(parameters: parameters)
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
         
-        return response.value.items ?? []
+        // 1 - only care to keep collections that hold valid items
+        // 2 - if parent is type `folder`, then we are in a folder-view
+        //     context so change `collectionFolder` types to `folder`
+        //     for better view handling
+        let validItems = (response.value.items ?? [])
+            .filter { item in
+                if let collectionType = item.collectionType {
+                    return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
+                }
+                
+                return true
+            }
+            .map { item in
+                if parent?.libraryType == .folder, item.type == .collectionFolder {
+                    return item.mutating(\.type, with: .folder)
+                }
+                
+                return item
+            }
+        
+        return validItems
     }
 
-    private func getItemParameters(for page: Int) -> Paths.GetItemsParameters {
+    func getItemParameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
 
         let filters = filterViewModel.currentFilters
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        let includeItemTypes: [BaseItemKind]
-        var recursive = true
+        var includeItemTypes: [BaseItemKind]?
+        var isRecursive: Bool? = true
 
-        if let parent = parent {
-            switch type {
-            case .library, .folders:
-                libraryID = parent.id
+        if let libraryType = parent?.libraryType, let id = parent?.id {
+            switch libraryType {
+            case .collectionFolder:
+                libraryID = id
+            case .folder, .userView:
+                libraryID = id
+                isRecursive = nil
             case .person:
-                personIDs = [parent].compactMap(\.id)
+                personIDs = [id]
             case .studio:
-                studioIDs = [parent].compactMap(\.id)
+                studioIDs = [id]
+            default: ()
             }
-        }
-
-        if filters.filters.contains(ItemFilter.isFavorite.filter) {
-            includeItemTypes = [.movie, .boxSet, .series, .season, .episode]
-        } else if type == .folders {
-            recursive = false
-            includeItemTypes = [.movie, .boxSet, .series, .folder, .collectionFolder]
-        } else {
-            includeItemTypes = [.movie, .boxSet, .series]
         }
 
         let genreIDs = filters.genres.compactMap(\.id)
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
-        var parameters = Paths.GetItemsParameters(
-            userID: userSession.user.id,
-            isRecursive: recursive,
-            parentID: libraryID,
-            fields: ItemFields.minimumCases,
-            includeItemTypes: includeItemTypes,
-            filters: itemFilters,
-            enableUserData: true,
-            personIDs: personIDs,
-            studioIDs: studioIDs,
-            genreIDs: genreIDs,
-            enableImages: true
-        )
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.isRecursive = isRecursive
+        parameters.parentID = libraryID
+        parameters.fields = ItemFields.minimumCases
+        parameters.includeItemTypes = includeItemTypes
+        parameters.filters = itemFilters
+        parameters.enableUserData = true
+        parameters.personIDs = personIDs
+        parameters.studioIDs = studioIDs
+        parameters.genreIDs = genreIDs
         
         parameters.limit = Self.DefaultPageSize
         parameters.startIndex = page * Self.DefaultPageSize
         parameters.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        parameters.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
+        parameters.sortBy = filters.sortBy.map(\.filterName).prepending("IsFolder")
 
+        // Random sort won't take into account previous items, so
+        // manual exclusion is necessary. This could possibly be
+        // a performance issue for loading very large libraries,
+        // but that's a server issue.
         if filters.sortBy.first == SortBy.random.filter {
             parameters.excludeItemIDs = items.compactMap(\.id)
         }

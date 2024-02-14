@@ -14,7 +14,7 @@ extension ItemFields {
     // TODO: rename to `MinimumItemFields`?
     // TODO: explain why
     static let minimumCases: [ItemFields] = [
-        .chapters,
+        .chapters, // ?
         .mediaSources,
         .overview,
         .parentID,

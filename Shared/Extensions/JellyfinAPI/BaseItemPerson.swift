@@ -16,7 +16,11 @@ extension BaseItemPerson: Displayable {
     }
 }
 
-extension BaseItemPerson: LibraryParent {}
+extension BaseItemPerson: LibraryParent {
+    var libraryType: BaseItemKind? {
+        .person
+    }
+}
 
 extension BaseItemPerson {
 

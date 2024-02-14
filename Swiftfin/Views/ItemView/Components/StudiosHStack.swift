@@ -23,7 +23,7 @@ extension ItemView {
                 title: L10n.studios,
                 items: studios
             ).onSelect { studio in
-                router.route(to: \.library, .init(parent: studio, type: .studio, filters: .init()))
+//                router.route(to: \.library, .init(parent: studio, type: .studio, filters: .init()))
             }
         }
     }
