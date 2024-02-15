@@ -43,8 +43,8 @@ struct SearchView: View {
                 if !viewModel.people.isEmpty {
                     itemsSection(title: L10n.people, keyPath: \.people)
                 }
-            }.ignoresSafeArea(edges: [.bottom, .horizontal])
-        }
+            }
+        }.ignoresSafeArea(edges: [.bottom, .horizontal])
     }
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
