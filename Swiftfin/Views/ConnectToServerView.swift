@@ -85,7 +85,7 @@ struct ConnectToServerView: View {
                 } label: {
                     L10n.connect.text
                 }
-                .disabled((URL(string: url) == nil && URL(string: "http://" + url) == nil) || isConnecting || url == "")
+                .disabled(URL(string: url) == nil || isConnecting)
             }
         } header: {
             L10n.connectToJellyfinServer.text
