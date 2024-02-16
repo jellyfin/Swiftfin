@@ -87,7 +87,7 @@ struct ConnectToServerView: View {
                 .buttonStyle(.card)
             } else {
                 Button {
-                    if !(url.contains("://")) {
+                    if !url.contains("://") {
                         url = "http://" + url
                     }
                     connectToServer(at: url)
