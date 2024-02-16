@@ -78,7 +78,7 @@ struct ConnectToServerView: View {
                 }
             } else {
                 Button {
-                    if !(url.contains("://")) {
+                    if !url.contains("://") {
                         url = "http://" + url
                     }
                     connectToServer()
