@@ -120,9 +120,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if let items = menuSections[section] {
-            currentItems = items
-        } else {
+        if let episodes = menuSections[section], episodes.isEmpty {
             getEpisodesForSeason(section)
         }
 
@@ -143,7 +141,11 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let response = try await userSession.client.send(request)
 
             guard let seasons = response.value.items else { return }
-
+            await MainActor.run {
+                for season in seasons {
+                    self.menuSections[season] = []
+                }
+            }
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {
