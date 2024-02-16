@@ -51,14 +51,14 @@ struct CastAndCrewLibraryView: View {
     private var noResultsView: some View {
         L10n.noResults.text
     }
-    
+
     private func gridItemView(person: BaseItemPerson) -> some View {
         PosterButton(item: person, type: .portrait)
             .onSelect {
                 router.route(to: \.library, .init(parent: person, filters: .init()))
             }
     }
-    
+
     private func listItemView(person: BaseItemPerson) -> some View {
         LibraryItemRow(item: person)
             .onSelect {

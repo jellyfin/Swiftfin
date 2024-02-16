@@ -9,12 +9,12 @@
 import SwiftUI
 
 struct OnFirstAppearModifier: ViewModifier {
-    
+
     @State
     private var didAppear = false
-    
+
     let action: () -> Void
-    
+
     func body(content: Content) -> some View {
         content
             .onAppear {

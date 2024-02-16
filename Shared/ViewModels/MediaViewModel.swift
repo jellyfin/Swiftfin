@@ -48,17 +48,17 @@ final class MediaViewModel: ViewModel {
         let response = try await userSession.client.send(request)
 
         guard let items = response.value.items else { return [] }
-        
+
         // folders has `type = UserView`, but we need to manually
         // force it to `folders` for better view handling
         let supportedLibraries = items
             .filter(using: \.collectionType, by: Self.supportedCollectionTypes)
             .map { item in
-                
+
                 if item.type == .userView, item.collectionType == "folder" {
                     return item.mutating(\.type, with: .folder)
                 }
-                
+
                 return item
             }
 

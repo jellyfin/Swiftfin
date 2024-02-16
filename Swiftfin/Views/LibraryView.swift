@@ -23,7 +23,7 @@ struct LibraryView: View {
 
     @StateObject
     private var viewModel: LibraryViewModel
-    
+
     init(parent: any LibraryParent, filters: ItemFilters) {
         self._viewModel = StateObject(
             wrappedValue: LibraryViewModel(
@@ -56,10 +56,11 @@ struct LibraryView: View {
     @ViewBuilder
     private var libraryItemsView: some View {
         PagingLibraryView(viewModel: viewModel)
+            .onReachedBottomEdge(offset: 100) {}
             .onSelect(baseItemOnSelect(_:))
             .ignoresSafeArea()
     }
-    
+
     @ViewBuilder
     private var innerBody: some View {
         if viewModel.isLoading && viewModel.items.isEmpty {
@@ -88,7 +89,7 @@ struct LibraryView: View {
 //                }
 //            }
             .topBarTrailing {
-                
+
                 if viewModel.isLoading && !viewModel.items.isEmpty {
                     ProgressView()
                 }

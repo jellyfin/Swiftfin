@@ -9,29 +9,29 @@
 import SwiftUI
 
 struct OnFinalDisappearModifier: ViewModifier {
-    
+
     @StateObject
     private var observer: Observer
-    
+
     init(action: @escaping () -> Void) {
         _observer = StateObject(wrappedValue: Observer(action: action))
     }
-    
+
     func body(content: Content) -> some View {
         content
             .background {
                 Color.clear
             }
     }
-    
+
     private class Observer: ObservableObject {
-        
+
         private let action: () -> Void
-        
+
         init(action: @escaping () -> Void) {
             self.action = action
         }
-        
+
         deinit {
             action()
         }

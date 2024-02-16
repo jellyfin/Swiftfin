@@ -15,8 +15,22 @@ import SwiftUI
 import UIKit
 
 // TODO: Look at refactoring
-class LibraryViewModel: PagingLibraryViewModel {
-    
+class LibraryViewModel: PagingLibraryViewModel, Stateful {
+
+    enum Action {
+        case error(JellyfinAPIError)
+        case getNextPage
+        case getRandomItem
+    }
+
+    enum State {
+        case error(JellyfinAPIError)
+        case gettingFirstPage
+        case gettingNextPage
+        case gettingRandomItem
+        case initial
+    }
+
     deinit {
         print("LibraryViewModel.deinit")
     }
@@ -25,6 +39,11 @@ class LibraryViewModel: PagingLibraryViewModel {
 
     let parent: (any LibraryParent)?
     private let saveFilters: Bool
+    var state: State
+
+    func respond(to action: Action) -> State {
+        switch action {}
+    }
 
     var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
         if let parent = parent {
@@ -63,25 +82,25 @@ class LibraryViewModel: PagingLibraryViewModel {
 //                if self.saveFilters, let id = self.parent?.id {
 //                    Defaults[.libraryFilterStore][id] = newFilters
 //                }
-//                
+//
 //                print("got new filters?")
-//                
+//
 //                Task {
 //                    print("refreshing from filter change")
-//                    
-//                    
+//
+//
 //                }
 //                .asAnyCancellable()
 //                .store(in: &self.cancellables)
 //            }
 //            .store(in: &cancellables)
     }
-    
+
     override func get(page: Int) async throws -> [BaseItemDto] {
         let parameters = getItemParameters(for: page)
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
-        
+
         // 1 - only care to keep collections that hold valid items
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`
@@ -91,17 +110,17 @@ class LibraryViewModel: PagingLibraryViewModel {
                 if let collectionType = item.collectionType {
                     return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
                 }
-                
+
                 return true
             }
             .map { item in
                 if parent?.libraryType == .folder, item.type == .collectionFolder {
                     return item.mutating(\.type, with: .folder)
                 }
-                
+
                 return item
             }
-        
+
         return validItems
     }
 
@@ -142,7 +161,7 @@ class LibraryViewModel: PagingLibraryViewModel {
         parameters.personIDs = personIDs
         parameters.studioIDs = studioIDs
         parameters.genreIDs = genreIDs
-        
+
         parameters.limit = Self.DefaultPageSize
         parameters.startIndex = page * Self.DefaultPageSize
         parameters.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }

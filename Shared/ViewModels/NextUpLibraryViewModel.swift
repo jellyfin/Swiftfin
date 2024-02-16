@@ -13,7 +13,7 @@ import JellyfinAPI
 final class NextUpLibraryViewModel: PagingLibraryViewModel {
 
 //    override func getCurrentPage() async throws {
-//        
+//
 //        await MainActor.run {
 //            self.isLoading = true
 //        }

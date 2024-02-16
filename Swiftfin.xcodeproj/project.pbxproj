@@ -196,6 +196,8 @@
 		E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSize.swift */; };
 		E11042562B7A9A7500821020 /* FoldersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042552B7A9A7500821020 /* FoldersViewModel.swift */; };
 		E11042572B7A9A7500821020 /* FoldersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042552B7A9A7500821020 /* FoldersViewModel.swift */; };
+		E11042752B8013DF00821020 /* Stateful.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042742B8013DF00821020 /* Stateful.swift */; };
+		E11042762B8013DF00821020 /* Stateful.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11042742B8013DF00821020 /* Stateful.swift */; };
 		E111D8F528D03B7500400001 /* PagingLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */; };
 		E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */; };
 		E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F728D03BF900400001 /* PagingLibraryView.swift */; };
@@ -931,6 +933,7 @@
 		E10E842B29A589860064EA49 /* NonePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonePosterButton.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSize.swift; sourceTree = "<group>"; };
 		E11042552B7A9A7500821020 /* FoldersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersViewModel.swift; sourceTree = "<group>"; };
+		E11042742B8013DF00821020 /* Stateful.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stateful.swift; sourceTree = "<group>"; };
 		E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryViewModel.swift; sourceTree = "<group>"; };
 		E111D8F728D03BF900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
 		E111D8F928D0400900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
@@ -1860,13 +1863,14 @@
 				E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */,
 				E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */,
 				E1B5861129E32EEF00E45D6E /* Set.swift */,
+				E11042742B8013DF00821020 /* Stateful.swift */,
 				621338922660107500A81A2A /* String.swift */,
+				E1DD55362B6EE533007501C0 /* Task.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
 				E1856DED2AFA007A007FDDBC /* UICollectionView.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */,
-				E1DD55362B6EE533007501C0 /* Task.swift */,
 				E1937A3D288F0D3D00CB80AA /* UIScreen.swift */,
 				E18E0239288749540022598C /* UIScrollView.swift */,
 				62E1DCC2273CE19800C9AE76 /* URL.swift */,
@@ -3272,6 +3276,7 @@
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
 				E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E1A1528B28FD22F600600579 /* TextPairView.swift in Sources */,
+				E11042762B8013DF00821020 /* Stateful.swift in Sources */,
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* InitialFailureView.swift in Sources */,
@@ -3642,6 +3647,7 @@
 				E11CEB8B28998552003E74C7 /* iOSViewExtensions.swift in Sources */,
 				E1401CA92938140700E8B599 /* DarkAppIcon.swift in Sources */,
 				E1A1529028FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
+				E11042752B8013DF00821020 /* Stateful.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
 				E12376AE2A33D680001F5B44 /* AboutViewCard.swift in Sources */,
 				E1A2C154279A7D5A005EC829 /* UIApplication.swift in Sources */,

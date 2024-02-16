@@ -254,14 +254,14 @@ extension BaseItemDto {
     static var noResults: BaseItemDto {
         .init(name: L10n.noResults)
     }
-    
+
     // TODO: remove when `collectionType` becomes an enum
     func includedItemTypesForCollectionType() -> [BaseItemKind]? {
-        
+
         guard let collectionType else { return nil }
-        
+
         var itemTypes: [BaseItemKind]?
-        
+
         switch collectionType {
         case "movies":
             itemTypes = [.movie]
@@ -272,7 +272,7 @@ extension BaseItemDto {
         default:
             itemTypes = nil
         }
-        
+
         return itemTypes
     }
 }

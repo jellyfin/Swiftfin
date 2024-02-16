@@ -10,7 +10,7 @@ import Combine
 import Foundation
 
 extension Task {
-    
+
     func asAnyCancellable() -> AnyCancellable {
         AnyCancellable(cancel)
     }

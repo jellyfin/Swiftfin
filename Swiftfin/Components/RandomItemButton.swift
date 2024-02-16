@@ -14,7 +14,7 @@ struct RandomItemButton: View {
 
     @ObservedObject
     private var viewModel: PagingLibraryViewModel
-    
+
     private var onSelect: (BaseItemDto?) -> Void
 
     var body: some View {
@@ -30,7 +30,7 @@ struct RandomItemButton: View {
 }
 
 extension RandomItemButton {
-    
+
     init(viewModel: PagingLibraryViewModel) {
         self.init(
             viewModel: viewModel,

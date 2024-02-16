@@ -34,7 +34,7 @@ final class FilterViewModel: ViewModel {
         )
         let request = Paths.getQueryFilters(parameters: parameters)
         let response = try? await userSession.client.send(request)
-        
+
         return response?.value.genres?
             .map(\.filter) ?? []
     }

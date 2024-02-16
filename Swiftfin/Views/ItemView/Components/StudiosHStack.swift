@@ -22,7 +22,7 @@ extension ItemView {
             PillHStack(
                 title: L10n.studios,
                 items: studios
-            ).onSelect { studio in
+            ).onSelect { _ in
 //                router.route(to: \.library, .init(parent: studio, type: .studio, filters: .init()))
             }
         }

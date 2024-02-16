@@ -9,12 +9,12 @@
 import SwiftUI
 
 struct AfterLastDisappearModifier: ViewModifier {
-    
+
     @State
     private var lastDisappear: Date? = nil
-    
+
     let action: (TimeInterval) -> Void
-    
+
     func body(content: Content) -> some View {
         content
             .onAppear {

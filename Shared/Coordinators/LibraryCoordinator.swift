@@ -67,8 +67,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
                 Text("FIX ME")
             } else {
                 LibraryView(parent: parent, filters: parameters.filters)
-                
-                
+
 //                LibraryView(viewModel: LibraryViewModel(
 //                    parent: parent,
 //                    type: parameters.type,
@@ -98,7 +97,7 @@ final class LibraryCoordinator: NavigationCoordinatable {
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
         LibraryCoordinator(parameters: parameters)
     }
-    
+
 //    func makeFolderLibrary() -> LibraryCoordinator {
 //        LibraryCoordinator(parameters: .init(parent: <#T##LibraryParent#>, filters: <#T##ItemFilters#>))
 //    }

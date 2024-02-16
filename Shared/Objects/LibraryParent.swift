@@ -11,7 +11,7 @@ import JellyfinAPI
 
 protocol LibraryParent: Displayable, Identifiable {
     var id: String? { get }
-    
+
     // Only called `libraryType` because `BaseItemPerson` has
     // a different `type` property. However, people should have
     // different views so this can be renamed when they do, or

@@ -25,6 +25,8 @@ struct PagingLibraryView: View {
     @State
     private var layout: CollectionVGridLayout
 
+    private var onReachedBottomEdge: () -> Void
+    private var onReachedBottomEdgeOffset: Int
     private var onSelect: (BaseItemDto) -> Void
 
     // lists will add their own insets to manually add the dividers
@@ -91,7 +93,6 @@ struct PagingLibraryView: View {
 
     // MARK: body
 
-    // TODO: `getNextpage` on bottom
     var body: some View {
         CollectionVGrid(
             $viewModel.items,
@@ -132,14 +133,21 @@ extension PagingLibraryView {
         self.init(
             viewModel: viewModel,
             layout: .columns(3),
+            onReachedBottomEdge: {},
+            onReachedBottomEdgeOffset: 0,
             onSelect: { _ in }
         )
-        
+
         if UIDevice.isPhone {
             layout = phoneLayout(libraryViewType: libraryViewType)
         } else {
             layout = padLayout(libraryViewType: libraryViewType)
         }
+    }
+
+    func onReachedBottomEdge(offset: Int, perform action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onReachedBottomEdge, with: action)
+            .copy(modifying: \.onReachedBottomEdgeOffset, with: offset)
     }
 
     func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
