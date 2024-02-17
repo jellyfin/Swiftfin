@@ -56,19 +56,26 @@ struct LibraryView: View {
     @ViewBuilder
     private var libraryItemsView: some View {
         PagingLibraryView(viewModel: viewModel)
-            .onReachedBottomEdge(offset: 100) {}
+            .onReachedBottomEdge(offset: 100) {
+                viewModel.send(.getNextPage)
+            }
             .onSelect(baseItemOnSelect(_:))
             .ignoresSafeArea()
     }
 
     @ViewBuilder
     private var innerBody: some View {
-        if viewModel.isLoading && viewModel.items.isEmpty {
+        switch viewModel.state {
+        case let .error(jellyfinAPIError):
+            Text(jellyfinAPIError.localizedDescription)
+        case .refreshing:
             loadingView
-        } else if viewModel.items.isEmpty {
-            noResultsView
-        } else {
-            libraryItemsView
+        case .gettingNextPage, .gettingRandomItem, .items:
+            if viewModel.items.isEmpty {
+                noResultsView
+            } else {
+                libraryItemsView
+            }
         }
     }
 
@@ -108,14 +115,7 @@ struct LibraryView: View {
                 }
             }
             .onFirstAppear {
-                Task {
-                    do {
-                        try await viewModel.refresh()
-                        print("refreshed")
-                    } catch {
-                        print(error)
-                    }
-                }
+                viewModel.send(.refresh)
             }
     }
 }

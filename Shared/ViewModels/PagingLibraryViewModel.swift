@@ -22,15 +22,6 @@ class PagingLibraryViewModel: ViewModel {
 
     private var currentPage = 0
     private var hasNextPage = true
-    private var currentPagingRequest: AnyCancellable? {
-        didSet {
-            print("did set currentPagingRequest")
-        }
-    }
-
-    deinit {
-        print("PagingLibraryViewModel.deinit")
-    }
 
     override init() {
         self.items = []
@@ -71,13 +62,7 @@ class PagingLibraryViewModel: ViewModel {
             items = []
         }
 
-        let a = Task {
-            try await getNextPage()
-        }
-
-        currentPagingRequest = a.asAnyCancellable()
-
-        try await a.value
+        try await getNextPage()
     }
 
     /// Gets the next page of items or immediately returns if
@@ -86,22 +71,17 @@ class PagingLibraryViewModel: ViewModel {
     /// See `get(page:)` for the conditions that determine
     /// if there is a next page or not.
     final func getNextPage() async throws {
-        guard !isLoading, hasNextPage else { return }
-
-        await MainActor.run {
-            isLoading = true
-        }
+        guard hasNextPage else { return }
 
         currentPage += 1
 
-        try await Task.sleep(nanoseconds: 10_000_000_000)
+//        try await Task.sleep(nanoseconds: 5_000_000_000)
         let pageItems = try await get(page: currentPage)
 
         hasNextPage = !(pageItems.count < Self.DefaultPageSize)
 
         await MainActor.run {
             items.append(contentsOf: pageItems)
-            isLoading = false
         }
     }
 

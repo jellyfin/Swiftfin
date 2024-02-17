@@ -19,30 +19,72 @@ class LibraryViewModel: PagingLibraryViewModel, Stateful {
 
     enum Action {
         case error(JellyfinAPIError)
+        case refresh
         case getNextPage
         case getRandomItem
     }
 
     enum State {
         case error(JellyfinAPIError)
-        case gettingFirstPage
         case gettingNextPage
         case gettingRandomItem
-        case initial
+        case items
+        case refreshing
     }
 
     deinit {
-        print("LibraryViewModel.deinit")
+        print("LibraryViewModel.deinit: \(Int.random(in: 0 ..< 100))")
     }
+
+    @Published
+    var state: State = .refreshing
 
     let filterViewModel: FilterViewModel
 
     let parent: (any LibraryParent)?
     private let saveFilters: Bool
-    var state: State
+    private var currentRequestTask: AnyCancellable?
 
     func respond(to action: Action) -> State {
-        switch action {}
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
+
+            currentRequestTask?.cancel()
+            currentRequestTask = Task { [weak self] in
+                do {
+                    try await self?.refresh()
+
+                    await MainActor.run {
+                        self?.state = .items
+                    }
+                } catch {
+                    await MainActor.run {
+                        self?.state = .error(JellyfinAPIError(error.localizedDescription))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .refreshing
+        case .getNextPage:
+
+            currentRequestTask = Task { [weak self] in
+                do {
+                    try await self?.getNextPage()
+                } catch {
+                    await MainActor.run {
+                        self?.state = .error(JellyfinAPIError(error.localizedDescription))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .gettingNextPage
+        case .getRandomItem:
+            return .gettingRandomItem
+        }
     }
 
     var libraryCoordinatorParameters: LibraryCoordinator.Parameters {
@@ -53,19 +95,8 @@ class LibraryViewModel: PagingLibraryViewModel, Stateful {
         }
     }
 
-    convenience init(
-        filters: ItemFilters,
-        saveFilters: Bool = false
-    ) {
-        self.init(
-            parent: nil,
-            filters: filters,
-            saveFilters: saveFilters
-        )
-    }
-
     init(
-        parent: (any LibraryParent)?,
+        parent: (any LibraryParent)? = nil,
         filters: ItemFilters = .init(),
         saveFilters: Bool = false
     ) {
