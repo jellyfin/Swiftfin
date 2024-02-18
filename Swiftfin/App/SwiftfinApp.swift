@@ -60,6 +60,7 @@ struct SwiftfinApp: App {
                 MainCoordinator()
                     .view()
                     .supportedOrientations(.portrait)
+                    .prefersHomeIndicatorAutoHidden(true)
             }
             .ignoresSafeArea()
             .onOpenURL { url in
