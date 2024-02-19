@@ -38,6 +38,10 @@ struct SafeAreaInsetsKey: EnvironmentKey {
     }
 }
 
+struct ShowsLibraryFiltersKey: EnvironmentKey {
+    static let defaultValue: Bool = true
+}
+
 struct SubtitleOffset: EnvironmentKey {
     static let defaultValue: Binding<Int> = .constant(0)
 }
@@ -80,6 +84,11 @@ extension EnvironmentValues {
 
     var safeAreaInsets: EdgeInsets {
         self[SafeAreaInsetsKey.self]
+    }
+
+    var showsLibraryFilters: Bool {
+        get { self[ShowsLibraryFiltersKey.self] }
+        set { self[ShowsLibraryFiltersKey.self] = newValue }
     }
 
     var subtitleOffset: Binding<Int> {

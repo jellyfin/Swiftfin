@@ -10,28 +10,28 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct RandomItemButton: View {
+extension LibraryView {
 
-    @ObservedObject
-    private var viewModel: PagingLibraryViewModel
+    struct RandomItemButton: View {
 
-    private var onSelect: (BaseItemDto?) -> Void
+        @ObservedObject
+        private var viewModel: LibraryViewModel
 
-    var body: some View {
-        Button {
-            Task {
-                let response = await viewModel.getRandomItem()
-                onSelect(response)
+        private var onSelect: (BaseItemDto?) -> Void
+
+        var body: some View {
+            Button {
+                viewModel.send(.getRandomItem)
+            } label: {
+                Label(L10n.random, systemImage: "dice.fill")
             }
-        } label: {
-            Label(L10n.random, systemImage: "dice.fill")
         }
     }
 }
 
-extension RandomItemButton {
+extension LibraryView.RandomItemButton {
 
-    init(viewModel: PagingLibraryViewModel) {
+    init(viewModel: LibraryViewModel) {
         self.init(
             viewModel: viewModel,
             onSelect: { _ in }

@@ -37,3 +37,5 @@ struct ItemFilters: Codable, Defaults.Serializable, Hashable {
         var filterName: String
     }
 }
+
+// protocol ItemFilter {}

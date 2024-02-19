@@ -8,7 +8,8 @@
 
 import Foundation
 
-struct JellyfinAPIError: Error {
+// TODO: remove and have each occurrence replaced with local errors
+struct JellyfinAPIError: Error, Equatable {
 
     private let message: String
 

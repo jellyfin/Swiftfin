@@ -18,6 +18,9 @@ struct LibraryView: View {
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     private var filterDrawerButtonSelection
 
+    @Environment(\.showsLibraryFilters)
+    private var showsLibraryFilters
+
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
@@ -61,6 +64,9 @@ struct LibraryView: View {
             }
             .onSelect(baseItemOnSelect(_:))
             .ignoresSafeArea()
+            .refreshable {
+                viewModel.send(.refresh)
+            }
     }
 
     @ViewBuilder
@@ -83,21 +89,21 @@ struct LibraryView: View {
         innerBody
             .navigationTitle(viewModel.parent?.displayTitle ?? "")
             .navigationBarTitleDisplayMode(.inline)
-//            .if(!filterDrawerButtonSelection.isEmpty) { view in
-//                view.navBarDrawer {
-//                    ScrollView(.horizontal, showsIndicators: false) {
-//                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
-//                            .onSelect { filterCoordinatorParameters in
-//                                router.route(to: \.filter, filterCoordinatorParameters)
-//                            }
-//                            .padding(.horizontal)
-//                            .padding(.vertical, 1)
-//                    }
-//                }
-//            }
+            .if(showsLibraryFilters && !filterDrawerButtonSelection.isEmpty) { view in
+                view.navBarDrawer {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
+                            .onSelect { filterCoordinatorParameters in
+                                router.route(to: \.filter, filterCoordinatorParameters)
+                            }
+                            .padding(.horizontal)
+                            .padding(.vertical, 1)
+                    }
+                }
+            }
             .topBarTrailing {
 
-                if viewModel.isLoading && !viewModel.items.isEmpty {
+                if viewModel.state == .gettingNextPage || viewModel.state == .gettingRandomItem {
                     ProgressView()
                 }
 

@@ -32,34 +32,13 @@ class PagingLibraryViewModel: ViewModel {
         currentPage = data.count / Self.DefaultPageSize
     }
 
-    // TODO: move out
-    func getRandomItem() async -> BaseItemDto? {
-        nil
-//        var parameters = _getDefaultParams()
-//        parameters?.limit = 1
-//        parameters?.sortBy = [SortBy.random.rawValue]
-//
-//        await MainActor.run {
-//            self.isLoading = true
-//        }
-//
-//        let request = Paths.getItems(parameters: parameters)
-//        let response = try? await userSession.client.send(request)
-//
-//        await MainActor.run {
-//            self.isLoading = false
-//        }
-//
-//        return response?.value.items?.first
-    }
-
     final func refresh() async throws {
 
         currentPage = -1
         hasNextPage = true
 
         await MainActor.run {
-            items = []
+            items.removeAll()
         }
 
         try await getNextPage()
@@ -75,7 +54,6 @@ class PagingLibraryViewModel: ViewModel {
 
         currentPage += 1
 
-//        try await Task.sleep(nanoseconds: 5_000_000_000)
         let pageItems = try await get(page: currentPage)
 
         hasNextPage = !(pageItems.count < Self.DefaultPageSize)

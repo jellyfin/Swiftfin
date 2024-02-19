@@ -10,8 +10,8 @@ import Foundation
 
 protocol Stateful: AnyObject {
 
-    associatedtype State
     associatedtype Action
+    associatedtype State: Equatable
 
     var state: State { get set }
 

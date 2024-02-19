@@ -72,12 +72,12 @@ struct BasicLibraryView: View {
 
                     LibraryViewTypeToggle(libraryViewType: $libraryViewType)
 
-                    RandomItemButton(viewModel: viewModel)
-                        .onSelect { item in
-                            if let item {
-                                router.route(to: \.item, item)
-                            }
-                        }
+//                    RandomItemButton(viewModel: viewModel)
+//                        .onSelect { item in
+//                            if let item {
+//                                router.route(to: \.item, item)
+//                            }
+//                        }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }

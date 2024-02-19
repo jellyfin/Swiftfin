@@ -379,7 +379,6 @@ extension VideoPlayer {
         case .none:
             return
         case .aspectFill: ()
-//            aspectFillAction(state: state, unitPoint: unitPoint, scale: <#T##CGFloat#>)
         case .gestureLock:
             guard !isPresentingOverlay else { return }
             isGestureLocked.toggle()

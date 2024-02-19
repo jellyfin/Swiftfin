@@ -275,8 +275,6 @@
 		E12F038C28F8B0B100976CC3 /* EdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */; };
 		E13316FE2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
 		E13316FF2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
-		E13317012ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */; };
-		E13317022ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */; };
 		E133328829538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
 		E133328929538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
 		E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328C2953AE4B00EE76AB /* CircularProgressView.swift */; };
@@ -474,7 +472,6 @@
 		E17FB55B28C1266400311DFE /* GenresHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55A28C1266400311DFE /* GenresHStack.swift */; };
 		E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */; };
 		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
-		E1856DEE2AFA007A007FDDBC /* UICollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1856DED2AFA007A007FDDBC /* UICollectionView.swift */; };
 		E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */; };
 		E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */; };
 		E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920928CEF23A00326F80 /* FocusGuide.swift */; };
@@ -601,8 +598,8 @@
 		E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490462967E2E500D3EDCE /* CoreStore.swift */; };
 		E1B5784128F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
 		E1B5784228F8AFCB00D42911 /* Wrapped View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5784028F8AFCB00D42911 /* Wrapped View.swift */; };
-		E1B5861229E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
-		E1B5861329E32EEF00E45D6E /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Set.swift */; };
+		E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Sequence.swift */; };
+		E1B5861329E32EEF00E45D6E /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B5861129E32EEF00E45D6E /* Sequence.swift */; };
 		E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A629577BCE004B26CF /* Pulse */; };
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
@@ -987,7 +984,6 @@
 		E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPickerView.swift; sourceTree = "<group>"; };
 		E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EdgeInsets.swift; sourceTree = "<group>"; };
 		E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatioCornerRadiusModifier.swift; sourceTree = "<group>"; };
-		E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddingMultiplierModifier.swift; sourceTree = "<group>"; };
 		E133328729538D8D00EE76AB /* Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Files.swift; sourceTree = "<group>"; };
 		E133328C2953AE4B00EE76AB /* CircularProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
 		E133328E2953B71000EE76AB /* DownloadTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskView.swift; sourceTree = "<group>"; };
@@ -1088,7 +1084,6 @@
 		E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E17FB55828C125E900311DFE /* StudiosHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudiosHStack.swift; sourceTree = "<group>"; };
 		E17FB55A28C1266400311DFE /* GenresHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresHStack.swift; sourceTree = "<group>"; };
-		E1856DED2AFA007A007FDDBC /* UICollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UICollectionView.swift; sourceTree = "<group>"; };
 		E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E185920928CEF23A00326F80 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
@@ -1174,7 +1169,7 @@
 		E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentLogHandler.swift; sourceTree = "<group>"; };
 		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* Wrapped View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Wrapped View.swift"; sourceTree = "<group>"; };
-		E1B5861129E32EEF00E45D6E /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		E1B5861129E32EEF00E45D6E /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapeItemElement.swift; sourceTree = "<group>"; };
 		E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
@@ -1862,12 +1857,11 @@
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
 				E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */,
 				E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */,
-				E1B5861129E32EEF00E45D6E /* Set.swift */,
+				E1B5861129E32EEF00E45D6E /* Sequence.swift */,
 				E11042742B8013DF00821020 /* Stateful.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1DD55362B6EE533007501C0 /* Task.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
-				E1856DED2AFA007A007FDDBC /* UICollectionView.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */,
@@ -2267,7 +2261,6 @@
 				E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */,
 				E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */,
 				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
-				E13317002ADE4B8D009BF865 /* PaddingMultiplierModifier.swift */,
 				E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */,
 				E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */,
 				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
@@ -3341,7 +3334,7 @@
 				E1575E65293E77B5001665B1 /* VideoPlayerJumpLength.swift in Sources */,
 				E169C7B8296D2E8200AE25F9 /* SpecialFeaturesHStack.swift in Sources */,
 				E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */,
-				E1B5861329E32EEF00E45D6E /* Set.swift in Sources */,
+				E1B5861329E32EEF00E45D6E /* Sequence.swift in Sources */,
 				C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
 				E113133B28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
@@ -3356,7 +3349,6 @@
 				E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
-				E13317022ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
 				E187A60329AB28F0008387E6 /* RotateContentView.swift in Sources */,
 				E1575E94293E7B1E001665B1 /* VerticalAlignment.swift in Sources */,
@@ -3475,7 +3467,7 @@
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
-				E1B5861229E32EEF00E45D6E /* Set.swift in Sources */,
+				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */,
@@ -3571,7 +3563,6 @@
 				E168BD15289A4162001A6922 /* HomeErrorView.swift in Sources */,
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
-				E13317012ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				E148128B28C15526003B8787 /* SortBy.swift in Sources */,
@@ -3641,7 +3632,6 @@
 				62E632E0267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */,
 				E1549662296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */,
-				E1856DEE2AFA007A007FDDBC /* UICollectionView.swift in Sources */,
 				E15756362936856700976E1F /* VideoPlayerType.swift in Sources */,
 				E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* iOSViewExtensions.swift in Sources */,

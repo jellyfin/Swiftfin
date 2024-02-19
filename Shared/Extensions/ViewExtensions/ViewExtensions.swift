@@ -29,7 +29,8 @@ extension View {
         }
     }
 
-    // From: https://www.avanderlee.com/swiftui/conditional-view-modifier/
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if` statement.
     @ViewBuilder
     @inlinable
     func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
@@ -40,6 +41,8 @@ extension View {
         }
     }
 
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if/else` statement.
     @ViewBuilder
     @inlinable
     func `if`<Content: View>(
@@ -54,6 +57,8 @@ extension View {
         }
     }
 
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if let` statement.
     @ViewBuilder
     @inlinable
     func ifLet<Value, Content: View>(
@@ -67,6 +72,8 @@ extension View {
         }
     }
 
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if let/else` statement.
     @ViewBuilder
     @inlinable
     func ifLet<Value, Content: View>(
@@ -98,17 +105,10 @@ extension View {
         }
     }
 
-    // TODO: switch to padding(multiplier: 2)
+    // TODO: remove
     @inlinable
     func padding2(_ edges: Edge.Set = .all) -> some View {
         padding(edges).padding(edges)
-    }
-
-    /// Applies the default system padding a number of times with a multiplier
-    func padding(multiplier: Int, _ edges: Edge.Set = .all) -> some View {
-        precondition(multiplier > 0, "Multiplier must be > 0")
-
-        return modifier(PaddingMultiplierModifier(edges: edges, multiplier: multiplier))
     }
 
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
@@ -181,6 +181,8 @@ extension View {
     }
 
     // TODO: rename isVisible
+    /// - Important: Do not use this to add or remove a view from the view heirarchy.
+    ///              Use a conditional statement instead.
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
@@ -238,17 +240,17 @@ extension View {
         Backport(content: self)
     }
 
-    /// Perform an action on the final disappear of a `View`
+    /// Perform an action on the final disappear of a `View`.
     func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFinalDisappearModifier(action: action))
     }
 
-    /// Perform an action only on the first appearance of a `View`
+    /// Perform an action before the first appearance of a `View`.
     func onFirstAppear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFirstAppearModifier(action: action))
     }
 
-    /// Perform an action as a view appears which gives a time interval
+    /// Perform an action as a view appears given the time interval
     /// from when this view last disappeared.
     func afterLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
         modifier(AfterLastDisappearModifier(action: action))

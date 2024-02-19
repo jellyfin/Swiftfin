@@ -16,7 +16,7 @@ final class FilterViewModel: ViewModel {
     var currentFilters: ItemFilters
 
     var allFilters: ItemFilters = .all
-    let parent: (any LibraryParent)?
+    private let parent: (any LibraryParent)?
 
     init(
         parent: (any LibraryParent)?,

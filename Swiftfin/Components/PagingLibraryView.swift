@@ -108,6 +108,7 @@ struct PagingLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: onReachedBottomEdgeOffset, action: onReachedBottomEdge)
+        .refreshable {}
         .ignoresSafeArea()
         .onChange(of: libraryViewType) { _ in
             if UIDevice.isPhone {

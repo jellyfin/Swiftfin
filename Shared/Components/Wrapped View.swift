@@ -8,12 +8,11 @@
 
 import SwiftUI
 
-struct WrappedView: View {
+struct WrappedView<Content: View>: View {
 
-    let content: () -> any View
+    let content: () -> Content
 
     var body: some View {
         content()
-            .eraseToAnyView()
     }
 }
