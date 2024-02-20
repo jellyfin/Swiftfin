@@ -44,8 +44,7 @@ struct SearchView: View {
                     itemsSection(title: L10n.people, keyPath: \.people)
                 }
             }
-        }
-        .ignoresSafeArea()
+        }.ignoresSafeArea(edges: [.bottom, .horizontal])
     }
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
