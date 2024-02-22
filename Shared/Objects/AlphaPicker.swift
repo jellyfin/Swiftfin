@@ -31,7 +31,7 @@ class AlphaPicker {
     }
 
     init(_ letter: String?) {
-        self.selection = letter ?? nil
+        self.selection = letter
     }
 
     func updateSelection(_ letter: String?) {
