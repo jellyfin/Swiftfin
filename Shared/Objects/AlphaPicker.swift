@@ -31,13 +31,13 @@ class AlphaPicker {
      }*/
 
     static let characters: [String] = UILocalizedIndexedCollation.current().sectionTitles.sorted()
-    var selection: String
+    var selection: String?
 
     var nameStartsWith: String {
         if selection == "#" {
             return ""
         } else {
-            return selection
+            return selection ?? ""
         }
     }
 
@@ -50,14 +50,12 @@ class AlphaPicker {
     }
 
     init(_ letter: String?) {
-
-        self.selection = letter ?? ""
+        self.selection = letter ?? nil
     }
 
-    func updateSelection(_ letter: String) {
-
+    func updateSelection(_ letter: String?) {
         if selection == letter {
-            selection = ""
+            selection = nil
         } else {
             selection = letter
         }
