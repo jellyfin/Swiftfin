@@ -86,6 +86,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
             guard let items = response.value.items, !items.isEmpty else {
                 self.hasNextPage = false
+                self.isLoading = (parameters?.nameLessThan == "" && parameters?.nameStartsWith == "")
                 return
             }
 
