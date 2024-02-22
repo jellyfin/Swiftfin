@@ -129,6 +129,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
             includeItemTypes = [.movie, .boxSet, .series]
         }
 
+        let alphaPicker = AlphaPicker(filters.alphaPicker.compactMap(\.id).first)
         let genreIDs = filters.genres.compactMap(\.id)
         let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
@@ -141,6 +142,8 @@ final class LibraryViewModel: PagingLibraryViewModel {
             filters: itemFilters,
             enableUserData: true,
             personIDs: personIDs,
+            nameStartsWith: alphaPicker.nameStartsWith,
+            nameLessThan: alphaPicker.nameLessThan,
             studioIDs: studioIDs,
             genreIDs: genreIDs,
             enableImages: true

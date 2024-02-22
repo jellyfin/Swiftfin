@@ -87,6 +87,7 @@ final class SearchViewModel: ViewModel {
         type itemType: BaseItemKind,
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
     ) {
+        let alphaPicker = AlphaPicker(filters.alphaPicker.compactMap(\.id).first)
         let genreIDs = filters.genres.compactMap(\.id)
         let sortBy = filters.sortBy.map(\.filterName)
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
@@ -104,6 +105,8 @@ final class SearchViewModel: ViewModel {
                 filters: itemFilters,
                 sortBy: sortBy,
                 enableUserData: true,
+                nameStartsWith: alphaPicker.nameStartsWith,
+                nameLessThan: alphaPicker.nameLessThan,
                 genreIDs: genreIDs,
                 enableImages: true
             )
