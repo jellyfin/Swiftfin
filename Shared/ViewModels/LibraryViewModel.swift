@@ -66,11 +66,17 @@ final class LibraryViewModel: PagingLibraryViewModel {
             self.hasNextPage = true
         }
 
+        let alphaPicker = AlphaPicker(filters.alphaPicker.compactMap(\.id).first)
+
         var parameters = _getDefaultParams()
         parameters?.limit = pageItemSize
         parameters?.startIndex = currentPage * pageItemSize
         parameters?.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
         parameters?.sortBy = filters.sortBy.map(\.filterName).appending("IsFolder")
+        parameters?.nameLessThan = alphaPicker.nameLessThan
+        parameters?.nameStartsWith = alphaPicker.nameStartsWith
+        parameters?.genreIDs = filters.genres.compactMap(\.id)
+        parameters?.filters = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
         if filters.sortBy.first == SortBy.random.filter {
             parameters?.excludeItemIDs = items.compactMap(\.id)
@@ -86,7 +92,7 @@ final class LibraryViewModel: PagingLibraryViewModel {
 
             guard let items = response.value.items, !items.isEmpty else {
                 self.hasNextPage = false
-                self.isLoading = (parameters?.nameLessThan == "" && parameters?.nameStartsWith == "")
+                self.isLoading = false
                 return
             }
 
@@ -130,23 +136,15 @@ final class LibraryViewModel: PagingLibraryViewModel {
             includeItemTypes = [.movie, .boxSet, .series]
         }
 
-        let alphaPicker = AlphaPicker(filters.alphaPicker.compactMap(\.id).first)
-        let genreIDs = filters.genres.compactMap(\.id)
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
             isRecursive: recursive,
             parentID: libraryID,
             fields: ItemFields.allCases,
             includeItemTypes: includeItemTypes,
-            filters: itemFilters,
             enableUserData: true,
             personIDs: personIDs,
-            nameStartsWith: alphaPicker.nameStartsWith,
-            nameLessThan: alphaPicker.nameLessThan,
             studioIDs: studioIDs,
-            genreIDs: genreIDs,
             enableImages: true
         )
 

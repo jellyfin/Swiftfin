@@ -11,25 +11,6 @@ import UIKit
 
 class AlphaPicker {
 
-    /* TODO: Enable with the AlphaPickerBar for determining which side of the screen in the settings
-     enum Setting {
-
-         case none
-         case leading
-         case trailing
-
-         var displayTitle: String {
-             switch self {
-             case .none:
-                 return L10n.none
-             case .leading:
-                 return "Left" // L10n.left
-             case .trailing:
-                 return "Right" // L10n.right
-             }
-         }
-     }*/
-
     static let characters: [String] = UILocalizedIndexedCollation.current().sectionTitles.sorted()
     var selection: String?
 
