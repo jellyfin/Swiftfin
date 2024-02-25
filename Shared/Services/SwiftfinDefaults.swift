@@ -74,14 +74,17 @@ extension Defaults.Keys {
         }
 
         enum Filters {
+            static let alphaPickerOrientation: Key<AlphaPicker.Orientation> = .init(
+                "alphaPickerOrientation", default: .trailing, suite: .generalSuite
+            )
             static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
                 "defaultLibraryFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+                default: FilterDrawerButtonSelection.defaultLibraryFilterDrawerButtons,
                 suite: .generalSuite
             )
             static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
                 "defaultSearchFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+                default: FilterDrawerButtonSelection.defaultSearchFilterDrawerButtons,
                 suite: .generalSuite
             )
         }

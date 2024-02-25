@@ -6,10 +6,29 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import UIKit
 
 class AlphaPicker {
+
+    enum Orientation: String, CaseIterable, Defaults.Serializable, Displayable {
+
+        case none
+        case leading
+        case trailing
+
+        var displayTitle: String {
+            switch self {
+            case .none:
+                return L10n.none
+            case .leading:
+                return L10n.left
+            case .trailing:
+                return L10n.right
+            }
+        }
+    }
 
     static let characters: [String] = UILocalizedIndexedCollation.current().sectionTitles.sorted()
     var selection: String?

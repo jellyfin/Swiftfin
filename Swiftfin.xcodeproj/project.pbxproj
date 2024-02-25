@@ -14,6 +14,8 @@
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
+		4EA729C32B8BC1DC001C0489 /* AlphaPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA729C22B8BC1DC001C0489 /* AlphaPickerBar.swift */; };
+		4EA729C52B8BC20A001C0489 /* AlphaPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA729C42B8BC20A001C0489 /* AlphaPickerButton.swift */; };
 		4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */; };
 		4F1282B12A7F3E8F005BCA29 /* RandomItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1282B02A7F3E8F005BCA29 /* RandomItemButton.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
@@ -771,6 +773,8 @@
 		4E397C352B866CF30004D09C /* AlphaPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPicker.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerSelection.swift; sourceTree = "<group>"; };
+		4EA729C22B8BC1DC001C0489 /* AlphaPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerBar.swift; sourceTree = "<group>"; };
+		4EA729C42B8BC20A001C0489 /* AlphaPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerButton.swift; sourceTree = "<group>"; };
 		4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerButtonSelectorView.swift; sourceTree = "<group>"; };
 		4F1282B02A7F3E8F005BCA29 /* RandomItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomItemButton.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -1381,6 +1385,15 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4EA729C12B8BC1AE001C0489 /* AlphaPicker */ = {
+			isa = PBXGroup;
+			children = (
+				4EA729C22B8BC1DC001C0489 /* AlphaPickerBar.swift */,
+				4EA729C42B8BC20A001C0489 /* AlphaPickerButton.swift */,
+			);
+			path = AlphaPicker;
+			sourceTree = "<group>";
+		};
 		4EAA35B82AB9694000D840DD /* FilterDrawerSettingsView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1798,6 +1811,7 @@
 		53F866422687A45400DCD1D7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4EA729C12B8BC1AE001C0489 /* AlphaPicker */,
 				E1D8429429346C6400D1041A /* BasicStepper.swift */,
 				E1A1528728FD229500600579 /* ChevronButton.swift */,
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
@@ -3419,6 +3433,7 @@
 				E18E0208288749200022598C /* BlurView.swift in Sources */,
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
+				4EA729C52B8BC20A001C0489 /* AlphaPickerButton.swift in Sources */,
 				E18ACA8B2A14301800BB4F35 /* ScalingButtonStyle.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
@@ -3707,6 +3722,7 @@
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E148128528C15472003B8787 /* APISortOrder.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
+				4EA729C32B8BC1DC001C0489 /* AlphaPickerBar.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
 				E13F05F328BC9016003499D2 /* LibraryView.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,

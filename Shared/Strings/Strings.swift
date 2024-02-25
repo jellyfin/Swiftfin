@@ -30,6 +30,10 @@ internal enum L10n {
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
+  /// Alpha Picker
+  internal static let alphaPicker = L10n.tr("Localizable", "alphaPicker", fallback: "Alpha Picker")
+  /// Letter Picker
+  internal static let alphaPickerTitle = L10n.tr("Localizable", "alphaPickerTitle", fallback: "Letter Picker")
   /// Appearance
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
   /// App Icon
@@ -220,6 +224,8 @@ internal enum L10n {
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
   }
+  /// Left
+  internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
   /// Letter
   internal static let letter = L10n.tr("Localizable", "letter", fallback: "Letter")
   /// Library
@@ -444,6 +450,8 @@ internal enum L10n {
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
+  /// Right
+  internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Scrub Current Time

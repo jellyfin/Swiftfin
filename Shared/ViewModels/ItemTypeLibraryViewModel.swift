@@ -37,7 +37,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         }
 
         Task {
-            var parameters = self._getDefaultParams()
+            let parameters = self._getDefaultParams()
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
 

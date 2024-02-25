@@ -90,13 +90,20 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
         }
     }
 
-    static var defaultFilterDrawerButtons: [FilterDrawerButtonSelection] {
+    static var defaultLibraryFilterDrawerButtons: [FilterDrawerButtonSelection] {
         [
-            .alphaPicker,
             .filters,
             .genres,
             .order,
             .sort,
+        ]
+    }
+
+    static var defaultSearchFilterDrawerButtons: [FilterDrawerButtonSelection] {
+        [
+            .filters,
+            .genres,
+            .alphaPicker,
         ]
     }
 }
