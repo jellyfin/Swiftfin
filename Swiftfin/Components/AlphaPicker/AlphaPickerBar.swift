@@ -42,11 +42,13 @@ struct AlphaPickerBar: View {
             if AlphaPicker.characters.count > 27 {
                 ScrollView(showsIndicators: false) {
                     alphaPickerBody
+                        .frame(maxWidth: .infinity)
                 }
             } else {
                 alphaPickerBody
             }
         }
+        .frame(width: 40)
     }
 }
 

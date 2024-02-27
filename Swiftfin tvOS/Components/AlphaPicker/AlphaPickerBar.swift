@@ -38,15 +38,11 @@ struct AlphaPickerBar: View {
     }
 
     var body: some View {
-        Group {
-            if AlphaPicker.characters.count > 27 {
-                ScrollView(showsIndicators: false) {
-                    alphaPickerBody
-                }
-            } else {
-                alphaPickerBody
-            }
+        ScrollView(showsIndicators: false) {
+            alphaPickerBody
+                .frame(maxWidth: .infinity)
         }
+        .frame(width: 150)
     }
 }
 

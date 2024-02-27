@@ -65,15 +65,13 @@ struct LibraryView: View {
                 HStack(spacing: 0) {
                     libraryBody
                         .frame(maxWidth: .infinity)
-                    Spacer()
                     AlphaPickerBar(viewModel: viewModel.filterViewModel)
-                        .padding(.vertical, 5)
+                        .frame(maxHeight: .infinity)
                 }
             } else if alphaPickerOrientation == .leading {
                 HStack(spacing: 0) {
                     AlphaPickerBar(viewModel: viewModel.filterViewModel)
-                        .padding(.vertical, 5)
-                    Spacer()
+                        .frame(maxHeight: .infinity)
                     libraryBody
                         .frame(maxWidth: .infinity)
                 }

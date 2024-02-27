@@ -44,11 +44,9 @@ extension AlphaPickerBar {
                 .font(.headline)
                 .frame(width: 35, height: 35)
                 .foregroundColor(activated ? Color.white : accentColor)
-                .padding(.vertical, 2)
-                .fixedSize(horizontal: true, vertical: true)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 80, height: 40)
                         .foregroundColor(activated ? accentColor.opacity(0.5) : Color.clear)
                 }
             }
