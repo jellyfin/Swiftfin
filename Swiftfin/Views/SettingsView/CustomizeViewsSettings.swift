@@ -24,13 +24,12 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
+    @Default(.Customization.Filters.alphaPickerOrientation)
+    var alphaPickerOrientation
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     var libraryFilterDrawerButtons
     @Default(.Customization.Filters.searchFilterDrawerButtons)
     var searchFilterDrawerButtons
-
-    @Default(.Customization.Filters.alphaPickerOrientation)
-    var alphaPickerOrientation
 
     @Default(.Customization.showPosterLabels)
     var showPosterLabels

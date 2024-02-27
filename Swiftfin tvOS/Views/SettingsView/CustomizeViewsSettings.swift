@@ -31,6 +31,9 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.Library.gridPosterType)
     private var libraryGridPosterType
 
+    @Default(.Customization.Filters.alphaPickerOrientation)
+    var alphaPickerOrientation
+
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
     @Default(.Customization.Library.randomImage)
@@ -58,6 +61,14 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
                 } header: {
                     L10n.missingItems.text
+                }
+
+                Section {
+
+                    InlineEnumToggle(title: L10n.alphaPickerTitle, selection: $alphaPickerOrientation)
+
+                } header: {
+                    L10n.filters.text
                 }
 
                 Section {

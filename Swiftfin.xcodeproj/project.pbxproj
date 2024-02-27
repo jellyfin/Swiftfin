@@ -12,6 +12,8 @@
 		4E397C362B866CF30004D09C /* AlphaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E397C352B866CF30004D09C /* AlphaPicker.swift */; };
 		4E397C372B866CF30004D09C /* AlphaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E397C352B866CF30004D09C /* AlphaPicker.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
+		4E69C91B2B8D95520095EF18 /* AlphaPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E69C91A2B8D95520095EF18 /* AlphaPickerBar.swift */; };
+		4E69C91D2B8D95680095EF18 /* AlphaPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E69C91C2B8D95680095EF18 /* AlphaPickerButton.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* FilterDrawerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */; };
 		4EA729C32B8BC1DC001C0489 /* AlphaPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA729C22B8BC1DC001C0489 /* AlphaPickerBar.swift */; };
@@ -772,6 +774,8 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E397C352B866CF30004D09C /* AlphaPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPicker.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
+		4E69C91A2B8D95520095EF18 /* AlphaPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerBar.swift; sourceTree = "<group>"; };
+		4E69C91C2B8D95680095EF18 /* AlphaPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerButton.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* FilterDrawerSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerSelection.swift; sourceTree = "<group>"; };
 		4EA729C22B8BC1DC001C0489 /* AlphaPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerBar.swift; sourceTree = "<group>"; };
 		4EA729C42B8BC20A001C0489 /* AlphaPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphaPickerButton.swift; sourceTree = "<group>"; };
@@ -1385,6 +1389,15 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E69C9192B8D953C0095EF18 /* AlphaPicker */ = {
+			isa = PBXGroup;
+			children = (
+				4E69C91A2B8D95520095EF18 /* AlphaPickerBar.swift */,
+				4E69C91C2B8D95680095EF18 /* AlphaPickerButton.swift */,
+			);
+			path = AlphaPicker;
+			sourceTree = "<group>";
+		};
 		4EA729C12B8BC1AE001C0489 /* AlphaPicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -1575,6 +1588,7 @@
 		536D3D77267BB9650004248C /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				4E69C9192B8D953C0095EF18 /* AlphaPicker */,
 				E12E30F229638B140022FAC9 /* ChevronButton.swift */,
 				E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */,
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
@@ -3205,6 +3219,7 @@
 				E1C926112887565C002A7A66 /* ActionButtonHStack.swift in Sources */,
 				E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */,
 				E18E02252887492B0022598C /* PlainNavigationLinkButton.swift in Sources */,
+				4E69C91D2B8D95680095EF18 /* AlphaPickerButton.swift in Sources */,
 				62E632E1267D30CA0063E547 /* LibraryViewModel.swift in Sources */,
 				53A83C33268A309300DF3D92 /* LibraryView.swift in Sources */,
 				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
@@ -3353,6 +3368,7 @@
 				535870632669D21600D05A09 /* SwiftfinApp.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
+				4E69C91B2B8D95520095EF18 /* AlphaPickerBar.swift in Sources */,
 				E13317022ADE4B8D009BF865 /* PaddingMultiplierModifier.swift in Sources */,
 				E1575E8D293E7B1E001665B1 /* URLComponents.swift in Sources */,
 				E187A60329AB28F0008387E6 /* RotateContentView.swift in Sources */,
