@@ -13,7 +13,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
+final class SeriesItemViewModel: ItemViewModel {
 
     @Published
     var menuSelection: BaseItemDto?
@@ -60,7 +60,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         Task {
             let parameters = Paths.GetNextUpParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: ItemFields.MinimumFields,
                 seriesID: item.id,
                 enableUserData: true
             )
@@ -80,7 +80,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let parameters = Paths.GetResumeItemsParameters(
                 limit: 1,
                 parentID: item.id,
-                fields: ItemFields.minimumCases
+                fields: ItemFields.MinimumFields
             )
             let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
             let response = try await userSession.client.send(request)
@@ -101,7 +101,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
                 isRecursive: true,
                 sortOrder: [.ascending],
                 parentID: item.id,
-                fields: ItemFields.minimumCases,
+                fields: ItemFields.MinimumFields,
                 includeItemTypes: [.episode]
             )
             let request = Paths.getItems(parameters: parameters)
@@ -160,7 +160,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         Task {
             let parameters = Paths.GetEpisodesParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: ItemFields.MinimumFields,
                 seasonID: season.id!,
                 isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false,
                 enableUserData: true

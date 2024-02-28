@@ -33,8 +33,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
-    @Route(.push)
-    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
+//    @Route(.push)
+//    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
@@ -117,9 +117,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
-    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
-        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
-    }
+//    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
+//        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+//    }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()

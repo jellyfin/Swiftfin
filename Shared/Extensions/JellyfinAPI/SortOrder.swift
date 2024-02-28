@@ -9,9 +9,10 @@
 import Foundation
 import JellyfinAPI
 
-typealias APISortOrder = JellyfinAPI.SortOrder
+// Necessary to handle conflict with Foundation.SortOrder
+typealias ItemSortOrder = JellyfinAPI.SortOrder
 
-extension APISortOrder: Displayable {
+extension ItemSortOrder: Displayable {
     // TODO: Localize
     var displayTitle: String {
         switch self {
@@ -23,9 +24,13 @@ extension APISortOrder: Displayable {
     }
 }
 
-extension APISortOrder {
+extension ItemSortOrder: ItemFilter {
 
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, id: rawValue, filterName: rawValue)
+    var value: String {
+        rawValue
+    }
+
+    init(from anyFilter: AnyItemFilter) {
+        self.init(rawValue: anyFilter.value)!
     }
 }

@@ -21,7 +21,6 @@ extension Backport where Content: View {
     // It is assumed that because Stinsen adds a lot of views that the
     // PreferencesView isn't in the right place in the VC chain so that
     // it can apply the settings, even SwiftUI's deferment.
-    @available(iOS 15.0, *)
     @ViewBuilder
     func defersSystemGestures(on edges: Edge.Set) -> some View {
         if #available(iOS 16, *) {

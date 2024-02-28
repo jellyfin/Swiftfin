@@ -86,7 +86,7 @@ extension BaseItemDto {
 
         guard let tag = getImageTag(for: type) else { return nil }
 
-        let client = Container.userSession.callAsFunction().client
+        let client = Container.userSession().client
         let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,

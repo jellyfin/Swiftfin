@@ -12,7 +12,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct PagingLibraryView: View {
+struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.viewType)
     private var libraryViewType
@@ -20,14 +20,14 @@ struct PagingLibraryView: View {
     private var listColumnCount
 
     @ObservedObject
-    var viewModel: PagingLibraryViewModel
+    private var viewModel: PagingLibraryViewModel<Element>
 
     @State
     private var layout: CollectionVGridLayout
 
     private var onReachedBottomEdge: () -> Void
     private var onReachedBottomEdgeOffset: CGFloat
-    private var onSelect: (BaseItemDto) -> Void
+    private var onSelect: (Element) -> Void
 
     // lists will add their own insets to manually add the dividers
     private func padLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
@@ -52,7 +52,7 @@ struct PagingLibraryView: View {
         }
     }
 
-    private func landscapeGridItemView(item: BaseItemDto) -> some View {
+    private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
             .content {
                 if item.showTitle {
@@ -66,7 +66,7 @@ struct PagingLibraryView: View {
             }
     }
 
-    private func portraitGridItemView(item: BaseItemDto) -> some View {
+    private func portraitGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .portrait)
             .content {
                 if item.showTitle {
@@ -80,7 +80,7 @@ struct PagingLibraryView: View {
             }
     }
 
-    private func listItemView(item: BaseItemDto) -> some View {
+    private func listItemView(item: Element) -> some View {
         LibraryItemRow(item: item)
             .onSelect {
                 onSelect(item)
@@ -108,7 +108,6 @@ struct PagingLibraryView: View {
             }
         }
         .onReachedBottomEdge(offset: onReachedBottomEdgeOffset, action: onReachedBottomEdge)
-        .refreshable {}
         .ignoresSafeArea()
         .onChange(of: libraryViewType) { _ in
             if UIDevice.isPhone {
@@ -122,7 +121,7 @@ struct PagingLibraryView: View {
 
 extension PagingLibraryView {
 
-    init(viewModel: PagingLibraryViewModel) {
+    init(viewModel: PagingLibraryViewModel<Element>) {
         self.init(
             viewModel: viewModel,
             layout: .columns(3),
@@ -143,7 +142,7 @@ extension PagingLibraryView {
             .copy(modifying: \.onReachedBottomEdgeOffset, with: offset)
     }
 
-    func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
+    func onSelect(_ action: @escaping (Element) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

@@ -15,8 +15,8 @@ struct LibraryView: View {
 
     @Default(.Customization.Library.viewType)
     private var libraryViewType
-    @Default(.Customization.Filters.libraryFilterDrawerButtons)
-    private var filterDrawerButtonSelection
+//    @Default(.Customization.Filters.libraryFilterDrawerButtons)
+//    private var filterDrawerButtonSelection
 
     @Environment(\.showsLibraryFilters)
     private var showsLibraryFilters
@@ -27,7 +27,7 @@ struct LibraryView: View {
     @StateObject
     private var viewModel: LibraryViewModel
 
-    init(parent: any LibraryParent, filters: ItemFilters) {
+    init(parent: (any LibraryParent)?, filters: ItemFilterCollection) {
         self._viewModel = StateObject(
             wrappedValue: LibraryViewModel(
                 parent: parent,
@@ -89,12 +89,12 @@ struct LibraryView: View {
         innerBody
             .navigationTitle(viewModel.parent?.displayTitle ?? "")
             .navigationBarTitleDisplayMode(.inline)
-            .if(showsLibraryFilters && !filterDrawerButtonSelection.isEmpty) { view in
+            .if(showsLibraryFilters) { view in
                 view.navBarDrawer {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
-                            .onSelect { filterCoordinatorParameters in
-                                router.route(to: \.filter, filterCoordinatorParameters)
+                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
+                            .onSelect {
+                                router.route(to: \.filter, $0)
                             }
                             .padding(.horizontal)
                             .padding(.vertical, 1)

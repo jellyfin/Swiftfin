@@ -14,7 +14,7 @@ import UIKit
 extension BaseItemPerson: Poster {
 
     var subtitle: String? {
-        self.firstRole
+        firstRole
     }
 
     var showTitle: Bool {
@@ -23,7 +23,7 @@ extension BaseItemPerson: Poster {
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
-        let client = Container.userSession.callAsFunction().client
+        let client = Container.userSession().client
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             tag: primaryImageTag

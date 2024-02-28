@@ -109,7 +109,7 @@ final class HomeViewModel: ViewModel {
         Task {
             let resumeParameters = Paths.GetResumeItemsParameters(
                 limit: 20,
-                fields: ItemFields.minimumCases,
+                fields: ItemFields.MinimumFields,
                 enableUserData: true,
                 includeItemTypes: [.movie, .episode]
             )

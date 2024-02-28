@@ -18,5 +18,3 @@ extension Collection {
         indices.contains(index) ? self[index] : nil
     }
 }
-
-extension Collection where Element: Equatable {}

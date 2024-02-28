@@ -9,9 +9,9 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: Move to jellyfin-api-swift
+// TODO: Remove when JellyfinAPI generates 10.9.0 schema
 
-enum SortBy: String, CaseIterable, Displayable {
+enum ItemSortBy: String, CaseIterable, Displayable, Codable {
 
     case premiereDate = "PremiereDate"
     case name = "SortName"
@@ -31,8 +31,15 @@ enum SortBy: String, CaseIterable, Displayable {
             return "Random"
         }
     }
+}
 
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, id: rawValue, filterName: rawValue)
+extension ItemSortBy: ItemFilter {
+
+    var value: String {
+        rawValue
+    }
+
+    init(from anyFilter: AnyItemFilter) {
+        self.init(rawValue: anyFilter.value)!
     }
 }

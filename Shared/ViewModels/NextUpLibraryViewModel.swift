@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class NextUpLibraryViewModel: PagingLibraryViewModel {
+final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
 //    override func getCurrentPage() async throws {
 //

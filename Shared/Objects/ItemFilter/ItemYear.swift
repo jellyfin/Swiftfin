@@ -7,11 +7,20 @@
 //
 
 import Foundation
-import JellyfinAPI
 
-extension NameGuidPair: Displayable {
+struct ItemYear: Codable, ExpressibleByIntegerLiteral, Hashable, ItemFilter {
+
+    let value: String
 
     var displayTitle: String {
-        name ?? .emptyDash
+        value
+    }
+
+    init(integerLiteral value: IntegerLiteralType) {
+        self.value = "\(value)"
+    }
+
+    init(from anyFilter: AnyItemFilter) {
+        self.value = anyFilter.value
     }
 }

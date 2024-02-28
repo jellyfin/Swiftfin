@@ -18,7 +18,7 @@ extension MediaStream {
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
         guard let deliveryURL else { return nil }
-        let client = Container.userSession.callAsFunction().client
+        let client = Container.userSession().client
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
 
         let fullURL = client.fullURL(with: deliveryPath)
@@ -44,11 +44,6 @@ extension MediaStream {
 
     var isHDVideo: Bool {
         (width ?? 0) > 1900 && type == .video
-    }
-
-    var size: String? {
-        guard let height, let width else { return nil }
-        return "\(width)x\(height)"
     }
 
     // MARK: Property groups

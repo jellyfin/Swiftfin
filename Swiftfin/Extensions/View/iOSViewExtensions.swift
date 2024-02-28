@@ -15,10 +15,12 @@ extension View {
         modifier(DetectOrientation(orientation: orientation))
     }
 
+    // TODO: rename `navigationBarOffset`
     func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
         modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
+    // TODO: rename `navigationBarDrawer`
     func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
@@ -50,6 +52,7 @@ extension View {
         )
     }
 
+    // TODO: rename `navigationBarCloseButton`
     func navigationCloseButton(accentColor: Color = Defaults[.accentColor], _ action: @escaping () -> Void) -> some View {
         toolbar {
             ToolbarItemGroup(placement: .navigationBarLeading) {

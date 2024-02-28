@@ -13,25 +13,13 @@ extension FilterDrawerHStack {
 
     struct FilterDrawerButton: View {
 
-        @Default(.accentColor)
+        @Environment(\.accentColor)
         private var accentColor
 
         private let systemName: String?
         private let title: String
         private let activated: Bool
         private var onSelect: () -> Void
-
-        private init(
-            systemName: String?,
-            title: String,
-            activated: Bool,
-            onSelect: @escaping () -> Void
-        ) {
-            self.systemName = systemName
-            self.title = title
-            self.activated = activated
-            self.onSelect = onSelect
-        }
 
         var body: some View {
             Button {

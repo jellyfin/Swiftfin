@@ -28,7 +28,9 @@ final class CastAndCrewLibraryCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        CastAndCrewLibraryView(people: people)
+//        CastAndCrewLibraryView(people: people)
+//        LibraryView(parent: <#T##LibraryParent#>, filters: <#T##ItemFilterCollection#>)
+        Text("FIXME")
     }
 
     func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {

@@ -77,7 +77,7 @@ final class LiveTVChannelsViewModel: ViewModel {
                 startIndex: 0,
                 limit: 100,
                 enableImageTypes: [.primary],
-                fields: ItemFields.minimumCases,
+                fields: ItemFields.MinimumFields,
                 enableUserData: false,
                 enableFavoriteSorting: true
             )

@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: documentation
+
 protocol Stateful: AnyObject {
 
     associatedtype Action

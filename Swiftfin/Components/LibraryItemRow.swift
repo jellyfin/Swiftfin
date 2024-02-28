@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Move to LibraryView/Components
+
 struct LibraryItemRow<Item: Displayable & Poster>: View {
 
     @EnvironmentObject

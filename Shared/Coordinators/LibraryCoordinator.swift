@@ -16,17 +16,17 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     struct Parameters {
         let parent: (any LibraryParent)?
-        let filters: ItemFilters
+        let filters: ItemFilterCollection
 
         init(
             parent: any LibraryParent,
-            filters: ItemFilters
+            filters: ItemFilterCollection = .init()
         ) {
             self.parent = parent
             self.filters = filters
         }
 
-        init(filters: ItemFilters) {
+        init(filters: ItemFilterCollection) {
             self.parent = nil
             self.filters = filters
         }
@@ -59,12 +59,14 @@ final class LibraryCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        if let parent = parameters.parent {
-            if !parameters.filters.hasFilters, let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
-//                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters, saveFilters: true))
-                Text("FIX ME")
-            } else {
-                LibraryView(parent: parent, filters: parameters.filters)
+        LibraryView(parent: parameters.parent, filters: parameters.filters)
+
+//        if let parent = parameters.parent {
+//            if !parameters.filters.hasFilters, let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
+        ////                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters,
+        /// saveFilters: true))
+//                Text("FIX ME")
+//            } else {
 
 //                LibraryView(viewModel: LibraryViewModel(
 //                    parent: parent,
@@ -72,11 +74,11 @@ final class LibraryCoordinator: NavigationCoordinatable {
 //                    filters: parameters.filters,
 //                    saveFilters: false
 //                ))
-            }
-        } else {
-            Text("FIX ME")
+//            }
+//        } else {
+//            Text("FIX ME")
 //            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
-        }
+//        }
     }
 
     #if os(tvOS)

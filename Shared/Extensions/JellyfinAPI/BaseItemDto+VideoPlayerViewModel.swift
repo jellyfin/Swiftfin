@@ -22,7 +22,7 @@ extension BaseItemDto {
         let tempOverkillBitrate = 360_000_000
         let profile = DeviceProfileBuilder.buildProfile(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
 
-        let userSession = Container.userSession.callAsFunction()
+        let userSession = Container.userSession()
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(

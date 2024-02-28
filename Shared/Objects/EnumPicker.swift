@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: change name
 struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
 
     enum NoneStyle: Displayable {
@@ -34,13 +35,13 @@ struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
     private var selection: EnumType?
 
     private let title: String
-    private let hasNil: Bool
+    private let hasNone: Bool
     private var noneStyle: NoneStyle
 
     var body: some View {
         Picker(title, selection: $selection) {
 
-            if hasNil {
+            if hasNone {
                 Text(noneStyle.displayTitle)
                     .tag(nil as EnumType?)
             }
@@ -56,10 +57,12 @@ struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
 extension EnumPicker {
 
     init(title: String, selection: Binding<EnumType?>) {
-        self.title = title
-        self._selection = selection
-        self.hasNil = true
-        self.noneStyle = .text
+        self.init(
+            selection: selection,
+            title: title,
+            hasNone: true,
+            noneStyle: .text
+        )
     }
 
     init(title: String, selection: Binding<EnumType>) {
@@ -74,7 +77,7 @@ extension EnumPicker {
 
         self._selection = binding
 
-        self.hasNil = false
+        self.hasNone = false
         self.noneStyle = .text
     }
 

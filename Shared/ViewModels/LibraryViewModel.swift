@@ -11,11 +11,32 @@ import Defaults
 import Factory
 import Get
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 import UIKit
 
-// TODO: Look at refactoring
-final class LibraryViewModel: PagingLibraryViewModel, Stateful {
+class BasicLibraryViewModel: LibraryViewModel {
+
+    override init(
+        parent: (any LibraryParent)? = nil,
+        filters: ItemFilterCollection = .init(),
+        saveFilters: Bool = false
+    ) {}
+
+    override func respond(to action: LibraryViewModel.Action) -> LibraryViewModel.State {
+        .items
+    }
+
+    override func get(page: Int) async throws -> [BaseItemDto] {
+        []
+    }
+
+    override func getRandomItem() async -> BaseItemDto? {
+        items.randomElement()
+    }
+}
+
+class LibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Stateful {
 
     // MARK: Action
 
@@ -61,7 +82,7 @@ final class LibraryViewModel: PagingLibraryViewModel, Stateful {
 
     init(
         parent: (any LibraryParent)? = nil,
-        filters: ItemFilters = .init(),
+        filters: ItemFilterCollection = .init(),
         saveFilters: Bool = false
     ) {
         self.parent = parent
@@ -69,16 +90,18 @@ final class LibraryViewModel: PagingLibraryViewModel, Stateful {
         self.saveFilters = saveFilters
         super.init()
 
+        // TODO: move to refresh?
         Task {
-            await filterViewModel.getGenres()
+            await filterViewModel.setQueryFilters()
         }
         .asAnyCancellable()
         .store(in: &cancellables)
 
         filterViewModel.$currentFilters
             .debounce(for: 0.5, scheduler: RunLoop.main)
+            .removeDuplicates()
             .sink { [weak self] newFilters in
-                guard let self = self, filterViewModel.currentFilters != newFilters else { return }
+                guard let self else { return }
 
                 print("got new filters")
 
@@ -198,6 +221,8 @@ final class LibraryViewModel: PagingLibraryViewModel, Stateful {
         return validItems
     }
 
+    // MARK: getItemParameters
+
     private func getItemParameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
 
         let filters = filterViewModel.currentFilters
@@ -224,30 +249,32 @@ final class LibraryViewModel: PagingLibraryViewModel, Stateful {
             }
         }
 
-        let genreIDs = filters.genres.compactMap(\.id)
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.isRecursive = isRecursive
         parameters.parentID = libraryID
-        parameters.fields = ItemFields.minimumCases
+        parameters.fields = ItemFields.MinimumFields
         parameters.includeItemTypes = includeItemTypes
-        parameters.filters = itemFilters
         parameters.enableUserData = true
+
+        // Page size
+        parameters.limit = DefaultPageSize
+        parameters.startIndex = page * DefaultPageSize
+
+        // Filters
+        parameters.filters = filters.traits
+        parameters.genres = filters.genres.map(\.value)
+        parameters.sortBy = filters.sortBy.map(\.rawValue)
+        parameters.sortOrder = filters.sortOrder
         parameters.personIDs = personIDs
         parameters.studioIDs = studioIDs
-        parameters.genreIDs = genreIDs
-
-        parameters.limit = Self.DefaultPageSize
-        parameters.startIndex = page * Self.DefaultPageSize
-        parameters.sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        parameters.sortBy = filters.sortBy.map(\.filterName).prepending("IsFolder")
+        parameters.tags = filters.tags.map(\.value)
+        parameters.years = filters.years.compactMap { Int($0.value) }
 
         // Random sort won't take into account previous items, so
         // manual exclusion is necessary. This could possibly be
-        // a performance issue for loading pages when one has already
-        // loaded many items, but there's nothing we can do about that.
-        if filters.sortBy.first == SortBy.random.filter {
+        // a performance issue for loading pages after already loading
+        // many items, but there's nothing we can do about that.
+        if filters.sortBy.first == ItemSortBy.random {
             parameters.excludeItemIDs = items.compactMap(\.id)
         }
 
@@ -256,12 +283,13 @@ final class LibraryViewModel: PagingLibraryViewModel, Stateful {
 
     // MARK: getRandomItem
 
-    func getRandomItem() async -> BaseItemDto? {
+    override func getRandomItem() async -> BaseItemDto? {
 
         var parameters = getItemParameters(for: 0)
         parameters.startIndex = nil
         parameters.limit = 1
-        parameters.sortBy = [SortBy.random.rawValue]
+        parameters.sortBy = [ItemSortBy.random.rawValue]
+        // TODO: fix removing all other filters
 
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try? await userSession.client.send(request)

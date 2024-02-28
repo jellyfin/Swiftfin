@@ -96,8 +96,8 @@ extension BaseItemDto {
     }
 
     func getLiveProgressPercentage() -> Double {
-        if let startDate = self.startDate,
-           let endDate = self.endDate
+        if let startDate,
+           let endDate
         {
             let start = startDate.timeIntervalSinceReferenceDate
             let end = endDate.timeIntervalSinceReferenceDate
@@ -192,8 +192,7 @@ extension BaseItemDto {
                 )
 
                 let imageURL = Container
-                    .userSession
-                    .callAsFunction()
+                    .userSession()
                     .client
                     .fullURL(with: request)
 
@@ -232,29 +231,7 @@ extension BaseItemDto {
         }
     }
 
-    // TODO: Don't use spoof objects as a placeholder or no results
-
-    static var placeHolder: BaseItemDto {
-        .init(
-            id: "1",
-            name: "Placeholder",
-            overview: String(repeating: "a", count: 100)
-//            indexNumber: 20
-        )
-    }
-
-    static func randomItem() -> BaseItemDto {
-        .init(
-            id: UUID().uuidString,
-            name: "Lorem Ipsum",
-            overview: "Lorem ipsum dolor sit amet"
-        )
-    }
-
-    static var noResults: BaseItemDto {
-        .init(name: L10n.noResults)
-    }
-
+    // TODO: move as extension on `BaseItemKind`
     // TODO: remove when `collectionType` becomes an enum
     func includedItemTypesForCollectionType() -> [BaseItemKind]? {
 

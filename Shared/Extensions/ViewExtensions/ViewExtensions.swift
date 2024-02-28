@@ -181,6 +181,7 @@ extension View {
     }
 
     // TODO: rename isVisible
+
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable
@@ -194,6 +195,8 @@ extension View {
         }
     }
 
+    // TODO: change to accepting an optional color, where if nil uses the environment
+    //       accent color instead
     func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
         symbolRenderingMode(.palette)
             .foregroundStyle(accentColor.overlayColor, accentColor)
@@ -240,7 +243,7 @@ extension View {
         Backport(content: self)
     }
 
-    /// Perform an action on the final disappear of a `View`.
+    /// Perform an action on the final disappearance of a `View`.
     func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFinalDisappearModifier(action: action))
     }

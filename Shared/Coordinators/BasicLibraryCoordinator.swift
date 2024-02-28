@@ -13,53 +13,54 @@ import SwiftUI
 
 // TODO: See if this and LibraryCoordinator can be merged,
 //       along with all corresponding views
-final class BasicLibraryCoordinator: NavigationCoordinatable {
-
-    struct Parameters {
-        let title: String?
-        let viewModel: PagingLibraryViewModel
-    }
-
-    let stack = NavigationStack(initial: \BasicLibraryCoordinator.start)
-
-    @Root
-    var start = makeStart
-
-    #if os(iOS)
-    @Route(.push)
-    var item = makeItem
-    @Route(.push)
-    var library = makeLibrary
-    #endif
-
-    #if os(tvOS)
-    @Route(.modal)
-    var item = makeItem
-    @Route(.modal)
-    var library = makeLibrary
-    #endif
-
-    private let parameters: Parameters
-
-    init(parameters: Parameters) {
-        self.parameters = parameters
-    }
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        BasicLibraryView(viewModel: parameters.viewModel)
-        #if os(iOS)
-            .ifLet(parameters.title) { view, value in
-                view.navigationTitle(value)
-            }
-        #endif
-    }
-
-    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
-        NavigationViewCoordinator(ItemCoordinator(item: item))
-    }
-
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
-    }
-}
+// final class BasicLibraryCoordinator: NavigationCoordinatable {
+//
+//    struct Parameters {
+//        let title: String?
+//        let viewModel: PagingLibraryViewModel<BaseItemDto>
+//    }
+//
+//    let stack = NavigationStack(initial: \BasicLibraryCoordinator.start)
+//
+//    @Root
+//    var start = makeStart
+//
+//    #if os(iOS)
+//    @Route(.push)
+//    var item = makeItem
+//    @Route(.push)
+//    var library = makeLibrary
+//    #endif
+//
+//    #if os(tvOS)
+//    @Route(.modal)
+//    var item = makeItem
+//    @Route(.modal)
+//    var library = makeLibrary
+//    #endif
+//
+//    private let parameters: Parameters
+//
+//    init(parameters: Parameters) {
+//        self.parameters = parameters
+//    }
+//
+//    @ViewBuilder
+//    func makeStart() -> some View {
+//        Text("FIXME")
+////        BasicLibraryView(viewModel: parameters.viewModel)
+////        #if os(iOS)
+////            .ifLet(parameters.title) { view, value in
+////                view.navigationTitle(value)
+////            }
+////        #endif
+//    }
+//
+//    func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {
+//        NavigationViewCoordinator(ItemCoordinator(item: item))
+//    }
+//
+//    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
+//        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
+//    }
+// }

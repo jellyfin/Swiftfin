@@ -13,12 +13,15 @@ import JellyfinAPI
 import OrderedCollections
 import UIKit
 
-class PagingLibraryViewModel: ViewModel {
+// Magic number for page sizes
+let DefaultPageSize = 16
 
-    static let DefaultPageSize = 16
+class PagingLibraryViewModel<Element: Poster>: ViewModel {
+
+//    static let DefaultPageSize = 16
 
     @Published
-    final var items: OrderedSet<BaseItemDto>
+    final var items: OrderedSet<Element>
 
     private var currentPage = 0
     private var hasNextPage = true
@@ -27,9 +30,9 @@ class PagingLibraryViewModel: ViewModel {
         self.items = []
     }
 
-    init(_ data: some Collection<BaseItemDto>) {
+    init(_ data: some Collection<Element>) {
         items = OrderedSet(data)
-        currentPage = data.count / Self.DefaultPageSize
+        hasNextPage = false
     }
 
     final func refresh() async throws {
@@ -56,7 +59,7 @@ class PagingLibraryViewModel: ViewModel {
 
         let pageItems = try await get(page: currentPage)
 
-        hasNextPage = !(pageItems.count < Self.DefaultPageSize)
+        hasNextPage = !(pageItems.count < DefaultPageSize)
 
         await MainActor.run {
             items.append(contentsOf: pageItems)
@@ -67,7 +70,11 @@ class PagingLibraryViewModel: ViewModel {
     /// is less than `DefaultPageSize`, then it is inferred that
     /// there is not a next page and subsequent calls to `getNextPage`
     /// will immediately return.
-    func get(page: Int) async throws -> [BaseItemDto] {
+    func get(page: Int) async throws -> [Element] {
         []
+    }
+
+    func getRandomItem() async throws -> Element? {
+        nil
     }
 }

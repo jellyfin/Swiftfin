@@ -24,10 +24,10 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
-    @Default(.Customization.Filters.libraryFilterDrawerButtons)
-    var libraryFilterDrawerButtons
-    @Default(.Customization.Filters.searchFilterDrawerButtons)
-    var searchFilterDrawerButtons
+//    @Default(.Customization.Filters.libraryFilterDrawerButtons)
+//    var libraryFilterDrawerButtons
+//    @Default(.Customization.Filters.searchFilterDrawerButtons)
+//    var searchFilterDrawerButtons
 
     @Default(.Customization.showPosterLabels)
     var showPosterLabels
@@ -87,15 +87,15 @@ struct CustomizeViewsSettings: View {
 
             Section {
 
-                ChevronButton(title: L10n.library)
-                    .onSelect {
-                        router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
-                    }
-
-                ChevronButton(title: L10n.search)
-                    .onSelect {
-                        router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
-                    }
+//                ChevronButton(title: L10n.library)
+//                    .onSelect {
+//                        router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
+//                    }
+//
+//                ChevronButton(title: L10n.search)
+//                    .onSelect {
+//                        router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
+//                    }
 
             } header: {
                 L10n.filters.text

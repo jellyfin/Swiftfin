@@ -9,7 +9,23 @@
 import Foundation
 import JellyfinAPI
 
-extension ItemFilter: Displayable {
+/// Aliased so the name `ItemFilter` can be repurposed.
+///
+/// - Important: Make sure to use the correct `filters` parameter for item calls!
+typealias ItemTrait = JellyfinAPI.ItemFilter
+
+extension ItemTrait: ItemFilter {
+
+    var value: String {
+        rawValue
+    }
+
+    init(from anyFilter: AnyItemFilter) {
+        self.init(rawValue: anyFilter.value)!
+    }
+}
+
+extension ItemTrait: Displayable {
     // TODO: Localize
     var displayTitle: String {
         switch self {
@@ -27,13 +43,14 @@ extension ItemFilter: Displayable {
     }
 }
 
-extension ItemFilter {
+extension ItemTrait: SupportedCaseIterable {
 
-    static var supportedCases: [ItemFilter] {
-        [.isUnplayed, .isPlayed, .isFavorite, .likes]
-    }
-
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, id: rawValue, filterName: rawValue)
+    static var supportedCases: [ItemTrait] {
+        [
+            .isUnplayed,
+            .isPlayed,
+            .isFavorite,
+            .likes,
+        ]
     }
 }

@@ -30,11 +30,11 @@ extension ItemView {
                 items: .constant(OrderedSet(items))
             )
             .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        let viewModel = StaticLibraryViewModel(items: items)
-                        router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
-                    }
+//                SeeAllButton()
+//                    .onSelect {
+//                        let viewModel = StaticLibraryViewModel(items: items)
+//                        router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
+//                    }
             }
             .onSelect { item in
                 router.route(to: \.item, item)

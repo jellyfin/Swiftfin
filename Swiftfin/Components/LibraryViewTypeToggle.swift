@@ -9,22 +9,24 @@
 import Defaults
 import SwiftUI
 
+// TODO: Move to LibraryView/Components
+
 struct LibraryViewTypeToggle: View {
 
     @Binding
-    var libraryViewType: LibraryViewType
+    private var libraryViewType: LibraryViewType
 
-    let allowedTypes: [LibraryViewType]
+    @Environment(\.libraryViewTypes)
+    private var libraryViewTypes
 
-    init(libraryViewType: Binding<LibraryViewType>, allowedTypes: [LibraryViewType] = LibraryViewType.allCases) {
+    init(libraryViewType: Binding<LibraryViewType>) {
         self._libraryViewType = libraryViewType
-        self.allowedTypes = allowedTypes
     }
 
     var body: some View {
         Menu {
 
-            if allowedTypes.contains(.landscapeGrid) {
+            if libraryViewTypes.contains(.landscapeGrid) {
                 Button {
                     libraryViewType = .landscapeGrid
                 } label: {
@@ -32,7 +34,7 @@ struct LibraryViewTypeToggle: View {
                 }
             }
 
-            if allowedTypes.contains(.portraitGrid) {
+            if libraryViewTypes.contains(.portraitGrid) {
                 Button {
                     libraryViewType = .portraitGrid
                 } label: {
@@ -40,7 +42,7 @@ struct LibraryViewTypeToggle: View {
                 }
             }
 
-            if allowedTypes.contains(.list) {
+            if libraryViewTypes.contains(.list) {
                 Button {
                     libraryViewType = .list
                 } label: {

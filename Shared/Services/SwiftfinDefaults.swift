@@ -27,7 +27,7 @@ extension Defaults.Keys {
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
 
     // TODO: Replace with a cache
-    static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
+    static let libraryFilterStore = Key<[String: ItemFilterCollection]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
 
@@ -90,16 +90,16 @@ extension Defaults.Keys {
         }
 
         enum Filters {
-            static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-                "defaultLibraryFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
-                suite: .generalSuite
-            )
-            static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-                "defaultSearchFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
-                suite: .generalSuite
-            )
+//            static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
+//                "defaultLibraryFilterDrawerButtons",
+//                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+//                suite: .generalSuite
+//            )
+//            static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
+//                "defaultSearchFilterDrawerButtons",
+//                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+//                suite: .generalSuite
+//            )
         }
     }
 

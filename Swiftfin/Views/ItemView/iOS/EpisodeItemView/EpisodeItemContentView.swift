@@ -42,7 +42,7 @@ extension EpisodeItemView {
                 // MARK: Genres
 
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
-                    ItemView.GenresHStack(genres: genres)
+//                    ItemView.GenresHStack(genres: genres)
 
                     Divider()
                 }

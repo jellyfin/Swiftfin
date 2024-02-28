@@ -11,6 +11,7 @@ import Foundation
 
 extension Task {
 
+    @inlinable
     func asAnyCancellable() -> AnyCancellable {
         AnyCancellable(cancel)
     }

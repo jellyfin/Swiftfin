@@ -16,9 +16,9 @@ extension FixedWidthInteger {
         let seconds = self % 3600 % 60
 
         let hourText = hours > 0 ? String(hours).appending(":") : ""
-        let minutesText = hours > 0 ? String(minutes).leftPad(toWidth: 2, withString: "0").appending(":") : String(minutes)
+        let minutesText = hours > 0 ? String(minutes).leftPad(maxWidth: 2, with: "0").appending(":") : String(minutes)
             .appending(":")
-        let secondsText = String(seconds).leftPad(toWidth: 2, withString: "0")
+        let secondsText = String(seconds).leftPad(maxWidth: 2, with: "0")
 
         return hourText
             .appending(minutesText)

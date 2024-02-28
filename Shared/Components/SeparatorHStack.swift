@@ -37,37 +37,40 @@ extension SeparatorHStack {
     }
 }
 
-struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
+extension SeparatorHStack {
 
-    var separator: () -> any View
+    struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
 
-    @ViewBuilder
-    func body(children: _VariadicView.Children) -> some View {
+        var separator: () -> any View
 
-        let last = children.last?.id
+        @ViewBuilder
+        func body(children: _VariadicView.Children) -> some View {
 
-        localHStack {
-            ForEach(children) { child in
-                child
+            let last = children.last?.id
 
-                if child.id != last {
-                    separator()
-                        .eraseToAnyView()
+            localHStack {
+                ForEach(children) { child in
+                    child
+
+                    if child.id != last {
+                        separator()
+                            .eraseToAnyView()
+                    }
                 }
             }
         }
-    }
 
-    @ViewBuilder
-    private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-        #if os(tvOS)
-        HStack(spacing: 0) {
-            content()
+        @ViewBuilder
+        private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
+            #if os(tvOS)
+            HStack(spacing: 0) {
+                content()
+            }
+            #else
+            HStack {
+                content()
+            }
+            #endif
         }
-        #else
-        HStack {
-            content()
-        }
-        #endif
     }
 }

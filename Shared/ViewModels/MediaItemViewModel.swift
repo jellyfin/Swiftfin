@@ -22,13 +22,13 @@ final class MediaItemViewModel: ViewModel {
         super.init()
 
         if item.collectionType == "favorites" {
-            Task {
-                let sources = try await getRandomItemImageSource(filters: [.isFavorite])
-
-                await MainActor.run {
-                    self.imageSources = sources
-                }
-            }
+//            Task {
+//                let sources = try await getRandomItemImageSource(filters: [.isFavorite])
+//
+//                await MainActor.run {
+//                    self.imageSources = sources
+//                }
+//            }
         } else if item.collectionType == "downloads" {
             imageSources = []
         } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
@@ -44,7 +44,7 @@ final class MediaItemViewModel: ViewModel {
         }
     }
 
-    private func getRandomItemImageSource(filters: [ItemFilter]? = nil) async throws -> [ImageSource] {
+    private func getRandomItemImageSource(filters: [ItemTrait]? = nil) async throws -> [ImageSource] {
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
             limit: 1,

@@ -74,7 +74,7 @@ final class SearchViewModel: ViewModel {
         searchTextSubject.send(query)
     }
 
-    private func _search(with query: String, filters: ItemFilters) {
+    private func _search(with query: String, filters: ItemFilterCollection) {
         getItems(for: query, with: filters, type: .movie, keyPath: \.movies)
         getItems(for: query, with: filters, type: .boxSet, keyPath: \.collections)
         getItems(for: query, with: filters, type: .series, keyPath: \.series)
@@ -84,40 +84,40 @@ final class SearchViewModel: ViewModel {
 
     private func getItems(
         for query: String,
-        with filters: ItemFilters,
+        with filters: ItemFilterCollection,
         type itemType: BaseItemKind,
         keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
     ) {
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy = filters.sortBy.map(\.filterName)
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 20,
-                isRecursive: true,
-                searchTerm: query,
-                sortOrder: sortOrder,
-                fields: ItemFields.allCases,
-                includeItemTypes: [itemType],
-                filters: itemFilters,
-                sortBy: sortBy,
-                enableUserData: true,
-                genreIDs: genreIDs,
-                enableImages: true
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                self[keyPath: keyPath] = response.value.items ?? []
-            }
-        }
+//        let genreIDs = filters.genres.compactMap(\.id)
+//        let sortBy = filters.sortBy.map(\.filterName)
+//        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+//        let ItemFilterCollection: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+//
+//        Task {
+//            let parameters = Paths.GetItemsParameters(
+//                userID: userSession.user.id,
+//                limit: 20,
+//                isRecursive: true,
+//                searchTerm: query,
+//                sortOrder: sortOrder,
+//                fields: ItemFields.allCases,
+//                includeItemTypes: [itemType],
+//                filters: ItemFilterCollection,
+//                sortBy: sortBy,
+//                enableUserData: true,
+//                genreIDs: genreIDs,
+//                enableImages: true
+//            )
+//            let request = Paths.getItems(parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            await MainActor.run {
+//                self[keyPath: keyPath] = response.value.items ?? []
+//            }
+//        }
     }
 
-    private func getPeople(for query: String?, with filters: ItemFilters) {
+    private func getPeople(for query: String?, with filters: ItemFilterCollection) {
         guard !filters.hasFilters else {
             self.people = []
             return

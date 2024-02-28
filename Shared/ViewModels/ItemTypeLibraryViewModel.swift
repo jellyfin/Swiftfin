@@ -17,7 +17,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
     let itemTypes: [BaseItemKind]
     let filterViewModel: FilterViewModel
 
-    init(itemTypes: [BaseItemKind], filters: ItemFilters) {
+    init(itemTypes: [BaseItemKind], filters: ItemFilterCollection) {
         self.itemTypes = itemTypes
         self.filterViewModel = .init(parent: nil, currentFilters: filters)
         super.init()
@@ -29,7 +29,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
 //            .store(in: &cancellables)
     }
 
-    private func requestItems(with filters: ItemFilters, replaceCurrentItems: Bool = false) {
+    private func requestItems(with filters: ItemFilterCollection, replaceCurrentItems: Bool = false) {
 
         if replaceCurrentItems {
             items = []
@@ -58,7 +58,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
         let genreIDs = filters.genres.compactMap(\.id)
         let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
         let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+        let ItemFilterCollection: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
 
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
@@ -68,7 +68,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
             sortOrder: sortOrder,
             fields: ItemFields.allCases,
             includeItemTypes: itemTypes,
-            filters: itemFilters,
+            filters: ItemFilterCollection,
             sortBy: sortBy,
             enableUserData: true,
             genreIDs: genreIDs

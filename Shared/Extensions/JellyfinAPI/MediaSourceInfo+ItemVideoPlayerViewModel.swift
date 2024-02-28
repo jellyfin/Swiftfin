@@ -16,7 +16,7 @@ extension MediaSourceInfo {
 
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
-        let userSession = Container.userSession.callAsFunction()
+        let userSession = Container.userSession()
         let playbackURL: URL
         let streamType: StreamType
 

@@ -32,7 +32,7 @@ extension HomeView {
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
+//                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
                     }
             }
             .onSelect { item in

@@ -123,7 +123,7 @@ class ItemViewModel: ViewModel {
             let parameters = Paths.GetSimilarItemsParameters(
                 userID: userSession.user.id,
                 limit: 20,
-                fields: ItemFields.minimumCases
+                fields: ItemFields.MinimumFields
             )
             let request = Paths.getSimilarItems(
                 itemID: item.id!,
