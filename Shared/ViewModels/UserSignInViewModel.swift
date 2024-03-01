@@ -118,110 +118,53 @@ final class UserSignInViewModel: ViewModel {
 
     @Published
     private(set) var quickConnectEnabled = false
-    /// We want to tell the monitor task when we're ready to poll for authentication. Without this, we may encounter
-    /// a race condition where the monitor task expects the secret before it's fetched and exits prematurely.
+    /// To maintain logic within this view model, we expose this property to track the status during quick connect execution.
     @Published
     private(set) var quickConnectStatus: QuickConnectStatus?
 
+    /// How often to poll quick connect auth
     private let quickConnectPollTimeoutSeconds: UInt64 = 5
 
-    /// We don't use Timer.scheduledTimer because checking quick connect status is async. We only want to start the next
-    /// poll when the current has finished.
-    private var quickConnectPollTask: Task<Void, Never>?
-    /// When two quick connect tasks are started for whatever reason, cancelling the repeating task above seems to fail
-    /// and the attempted cancelled task seems to continue to spawn more repeating tasks. We ensure only a single
-    /// poll task continues to live with this ID.
-    private var quickConnectPollTaskID: UUID?
-    /// If, for whatever reason, the monitor task keeps going, we don't want to let it silently run forever.
-    private let quickConnectMaxRetries = 200
+    private var quickConnectPollTask: Task<String, any Error>?
 
     enum QuickConnectStatus {
         case fetchingSecret
-        // After secret and code is fetched from the server, store it in the associated value as:
-        //                         (secret, code)
-        case awaitingAuthentication(String, String)
+        case awaitingAuthentication(code: String)
         // Store the error and surface it to user if possible
-        case fetchingSecretFailed(Error?)
+        case error(Error)
+        case authorized
     }
 
-    func startQuickConnect() -> AsyncStream<QuickConnectResult> {
-        logger.debug("Attempting to start quick connect...")
-        quickConnectStatus = .fetchingSecret
-
-        Task {
-            let initiatePath = Paths.initiate
-            do {
-                let response = try await client.send(initiatePath)
-
-                guard let secret = response.value.secret,
-                      let code = response.value.code
-                else {
-                    // TODO: Create an error & display it in QuickConnectView (iOS)/UserSignInView (tvOS)
-                    quickConnectStatus = .fetchingSecretFailed(nil)
-                    return
-                }
-
-                await MainActor.run {
-                    quickConnectStatus = .awaitingAuthentication(secret, code)
-                }
-
-            } catch {
-                quickConnectStatus = .fetchingSecretFailed(error)
-            }
-        }
-
-        let taskID = UUID()
-        quickConnectPollTaskID = taskID
-
-        return .init { continuation in
-            checkAuthStatus(continuation: continuation, id: taskID)
-        }
+    enum QuickConnectError: Error {
+        case fetchSecretFailed
+        case pollingFailed
     }
 
-    private func checkAuthStatus(continuation: AsyncStream<QuickConnectResult>.Continuation, id: UUID, tries: Int = 0) {
-        let task = Task {
-            // Don't race into failure while we're fetching the secret.
-            while case .fetchingSecret = quickConnectStatus {
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
+    /// Signs in with quick connect. Returns whether sign in was successful.
+    func signInWithQuickConnect() async -> Bool {
+        do {
+            await MainActor.run {
+                quickConnectStatus = .fetchingSecret
+            }
+            let (initiateSecret, code) = try await startQuickConnect()
+
+            await MainActor.run {
+                quickConnectStatus = .awaitingAuthentication(code: code)
+            }
+            let authSecret = try await pollForAuthSecret(initialSecret: initiateSecret)
+
+            try await signIn(quickConnectSecret: authSecret)
+            await MainActor.run {
+                quickConnectStatus = .authorized
             }
 
-            logger.debug("Attempting to poll for quick connect auth on taskID \(id)")
-
-            guard case let .awaitingAuthentication(quickConnectSecret, _) = quickConnectStatus,
-                  quickConnectPollTaskID == id else { return }
-
-            if tries > quickConnectMaxRetries {
-                logger.warning("Hit max retries while using quick connect, did `checkAuthStatus` keep running after signing in?")
-                stopQuickConnectAuthCheck()
-                return
+            return true
+        } catch {
+            await MainActor.run {
+                quickConnectStatus = .error(error)
             }
-
-            let connectPath = Paths.connect(secret: quickConnectSecret)
-            let response = try? await client.send(connectPath)
-
-            if let responseValue = response?.value, responseValue.isAuthenticated ?? false {
-                continuation.yield(responseValue)
-
-                await MainActor.run {
-                    stopQuickConnectAuthCheck()
-                }
-
-                return
-            }
-
-            try? await Task.sleep(nanoseconds: 1_000_000_000 * quickConnectPollTimeoutSeconds)
-
-            checkAuthStatus(continuation: continuation, id: id, tries: tries + 1)
+            return false
         }
-
-        quickConnectPollTask = task
-    }
-
-    func stopQuickConnectAuthCheck() {
-        logger.debug("Stopping quick connect")
-
-        quickConnectStatus = nil
-        quickConnectPollTaskID = nil
     }
 
     func checkQuickConnect() async throws {
@@ -235,7 +178,64 @@ final class UserSignInViewModel: ViewModel {
         }
     }
 
-    func signIn(quickConnectSecret: String) async throws {
+    /// Gets secret and code to start quick connect authorization flow.
+    private func startQuickConnect() async throws -> (secret: String, code: String) {
+        logger.debug("Attempting to start quick connect...")
+
+        let initiatePath = Paths.initiate
+        let response = try await client.send(initiatePath)
+
+        guard let secret = response.value.secret,
+              let code = response.value.code
+        else {
+            throw QuickConnectError.fetchSecretFailed
+        }
+
+        return (secret, code)
+    }
+
+    private func pollForAuthSecret(initialSecret: String) async throws -> String {
+        let task = Task {
+            var authSecret: String?
+            repeat {
+                authSecret = try await checkAuth(initialSecret: initialSecret)
+                try await Task.sleep(nanoseconds: 1_000_000_000 * quickConnectPollTimeoutSeconds)
+            } while authSecret == nil
+            return authSecret!
+        }
+
+        quickConnectPollTask = task
+        return try await task.result.get()
+    }
+
+    private func checkAuth(initialSecret: String) async throws -> String? {
+        logger.debug("Attempting to poll for quick connect auth")
+
+        let connectPath = Paths.connect(secret: initialSecret)
+        do {
+            let response = try await client.send(connectPath)
+
+            guard response.value.isAuthenticated ?? false else {
+                return nil
+            }
+            guard let authSecret = response.value.secret else {
+                logger.debug("Quick connect response was authorized but secret missing")
+                throw QuickConnectError.pollingFailed
+            }
+            return authSecret
+        } catch {
+            throw QuickConnectError.pollingFailed
+        }
+    }
+
+    func stopQuickConnectAuthCheck() {
+        logger.debug("Stopping quick connect")
+
+        quickConnectStatus = nil
+        quickConnectPollTask?.cancel()
+    }
+
+    private func signIn(quickConnectSecret: String) async throws {
         let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
         let response = try await client.send(quickConnectPath)
 

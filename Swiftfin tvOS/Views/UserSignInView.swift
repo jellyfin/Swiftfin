@@ -129,81 +129,6 @@ struct UserSignInView: View {
         }
     }
 
-    func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
-        Group {
-            VStack(alignment: .leading, spacing: 20) {
-                L10n.quickConnectStep1.text
-
-                L10n.quickConnectStep2.text
-
-                L10n.quickConnectStep3.text
-            }
-            .padding(.vertical)
-
-            Text(quickConnectCode)
-                .tracking(10)
-                .font(.title)
-                .monospacedDigit()
-                .frame(maxWidth: .infinity)
-        }
-    }
-
-    var quickConnectFailed: some View {
-        Label {
-            Text("Failed to retrieve quick connect code")
-        } icon: {
-            Image(systemName: "exclamationmark.circle.fill")
-                .foregroundColor(.red)
-        }
-    }
-
-    var quickConnectLoading: some View {
-        ProgressView()
-    }
-
-    @ViewBuilder
-    var quickConnectBody: some View {
-        switch viewModel.quickConnectStatus {
-        case let .awaitingAuthentication(_, code):
-            quickConnectWaitingAuthentication(quickConnectCode: code)
-        case nil, .fetchingSecret:
-            quickConnectLoading
-        case .fetchingSecretFailed:
-            quickConnectFailed
-        }
-    }
-
-    @ViewBuilder
-    private var quickConnect: some View {
-        VStack(alignment: .center) {
-            L10n.quickConnect.text
-                .font(.title3)
-                .fontWeight(.semibold)
-
-            quickConnectBody
-                .padding(.bottom)
-
-            Button {
-                isPresentingQuickConnect = false
-            } label: {
-                L10n.close.text
-                    .frame(width: 400, height: 75)
-            }
-            .buttonStyle(.plain)
-        }
-        .onAppear {
-            Task {
-                for await result in viewModel.startQuickConnect() {
-                    guard let secret = result.secret else { continue }
-                    try? await viewModel.signIn(quickConnectSecret: secret)
-                }
-            }
-        }
-        .onDisappear {
-            viewModel.stopQuickConnectAuthCheck()
-        }
-    }
-
     var body: some View {
         ZStack {
             ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
@@ -231,7 +156,7 @@ struct UserSignInView: View {
 //            )
 //        }
         .blurFullScreenCover(isPresented: $isPresentingQuickConnect) {
-            quickConnect
+            QuickConnectView(viewModel: viewModel, isPresentingQuickConnect: $isPresentingQuickConnect)
         }
         .onAppear {
             Task {

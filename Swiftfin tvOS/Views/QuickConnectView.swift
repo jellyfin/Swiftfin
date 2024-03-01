@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct QuickConnectView: View {
-    @EnvironmentObject
-    private var router: QuickConnectCoordinator.Router
-
     @ObservedObject
     var viewModel: UserSignInViewModel
+    @Binding
+    var isPresentingQuickConnect: Bool
 
     func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         Text(quickConnectCode)
             .tracking(10)
-            .font(.largeTitle)
+            .font(.title)
             .monospacedDigit()
             .frame(maxWidth: .infinity)
     }
@@ -33,11 +32,7 @@ struct QuickConnectView: View {
     }
 
     var quickConnectLoading: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-            Spacer()
-        }
+        ProgressView()
     }
 
     @ViewBuilder
@@ -53,32 +48,40 @@ struct QuickConnectView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            L10n.quickConnectStep1.text
+        VStack(alignment: .center) {
+            L10n.quickConnect.text
+                .font(.title3)
+                .fontWeight(.semibold)
 
-            L10n.quickConnectStep2.text
+            Group {
+                VStack(alignment: .leading, spacing: 20) {
+                    L10n.quickConnectStep1.text
 
-            L10n.quickConnectStep3.text
-                .padding(.bottom)
+                    L10n.quickConnectStep2.text
 
-            quickConnectBody
+                    L10n.quickConnectStep3.text
+                }
+                .padding(.vertical)
 
-            Spacer()
+                quickConnectBody
+            }
+            .padding(.bottom)
+
+            Button {
+                isPresentingQuickConnect = false
+            } label: {
+                L10n.close.text
+                    .frame(width: 400, height: 75)
+            }
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal)
-        .navigationTitle(L10n.quickConnect)
         .onAppear {
             Task {
-                if await viewModel.signInWithQuickConnect() {
-                    router.dismissCoordinator()
-                }
+                await viewModel.signInWithQuickConnect()
             }
         }
         .onDisappear {
             viewModel.stopQuickConnectAuthCheck()
-        }
-        .navigationCloseButton {
-            router.dismissCoordinator()
         }
     }
 }
