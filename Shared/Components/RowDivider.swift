@@ -8,7 +8,8 @@
 
 import SwiftUI
 
-struct Divider: View {
+// TODO: rename!
+struct RowDivider: View {
 
     var body: some View {
         Color.secondarySystemFill

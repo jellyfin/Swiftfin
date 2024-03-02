@@ -26,7 +26,6 @@ struct SwiftfinApp: App {
         Task {
             for await newValue in Defaults.updates(.accentColor) {
                 UIApplication.shared.setAccentColor(newValue.uiColor)
-                UIApplication.shared.setNavigationBackButtonAccentColor(newValue.uiColor)
             }
         }
 

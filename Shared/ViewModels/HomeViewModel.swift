@@ -19,8 +19,8 @@ final class HomeViewModel: ViewModel {
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
-    var nextUpViewModel: NextUpLibraryViewModel = .init()
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    var nextUpViewModel: NextUpLibraryViewModel = .init([], parent: nil)
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init([], parent: nil)
 
     override init() {
         super.init()

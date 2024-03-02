@@ -27,7 +27,7 @@ extension BaseItemDto: Poster {
     var subtitle: String? {
         switch type {
         case .episode:
-            return seasonEpisodeLocator
+            return seasonEpisodeLabel
         case .video:
             return extraType?.displayTitle
         default:

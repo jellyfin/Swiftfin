@@ -15,3 +15,10 @@ extension NameGuidPair: Displayable {
         name ?? .emptyDash
     }
 }
+
+extension NameGuidPair: LibraryParent {
+
+    var libraryType: BaseItemKind? {
+        .studio
+    }
+}

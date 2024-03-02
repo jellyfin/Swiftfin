@@ -25,7 +25,7 @@ extension MovieItemView {
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
 //                    ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
@@ -33,7 +33,7 @@ extension MovieItemView {
                 if let studios = viewModel.item.studios, !studios.isEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -43,7 +43,7 @@ extension MovieItemView {
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Special Features
@@ -51,7 +51,7 @@ extension MovieItemView {
                 if !viewModel.specialFeatures.isEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Similar
@@ -59,7 +59,7 @@ extension MovieItemView {
                 if !viewModel.similarItems.isEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

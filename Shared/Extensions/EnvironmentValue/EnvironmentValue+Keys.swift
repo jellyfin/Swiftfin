@@ -34,10 +34,6 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
 
-    struct LibraryViewTypesKey: EnvironmentKey {
-        static let defaultValue: [LibraryViewType] = LibraryViewType.allCases
-    }
-
     struct PlaybackSpeedKey: EnvironmentKey {
         static let defaultValue: Binding<Float> = .constant(1)
     }

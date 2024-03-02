@@ -22,10 +22,10 @@ struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
             case .text:
                 return L10n.none
             case let .dash(length):
-                precondition(length >= 1, "Dash must have length of at least 1.")
+                assert(length >= 1, "Dash must have length of at least 1.")
                 return String(repeating: "-", count: length)
             case let .custom(text):
-                precondition(!text.isEmpty, "Custom text must have length of at least 1.")
+                assert(!text.isEmpty, "Custom text must have length of at least 1.")
                 return text
             }
         }

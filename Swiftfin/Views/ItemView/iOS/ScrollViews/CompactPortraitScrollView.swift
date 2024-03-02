@@ -154,7 +154,7 @@ extension ItemView.CompactPosterScrollView {
                         }
                     }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                         Text(runtime)
                     }
                 }

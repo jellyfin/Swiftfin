@@ -6,122 +6,127 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
-import Defaults
-import JellyfinAPI
-import SwiftUI
-
-struct LibraryView: View {
-
-    @Default(.Customization.Library.viewType)
-    private var libraryViewType
-//    @Default(.Customization.Filters.libraryFilterDrawerButtons)
-//    private var filterDrawerButtonSelection
-
-    @Environment(\.showsLibraryFilters)
-    private var showsLibraryFilters
-
-    @EnvironmentObject
-    private var router: LibraryCoordinator.Router
-
-    @StateObject
-    private var viewModel: LibraryViewModel
-
-    init(parent: (any LibraryParent)?, filters: ItemFilterCollection) {
-        self._viewModel = StateObject(
-            wrappedValue: LibraryViewModel(
-                parent: parent,
-                filters: filters,
-                saveFilters: false
-            )
-        )
-    }
-
-    @ViewBuilder
-    private var loadingView: some View {
-        ProgressView()
-    }
-
-    @ViewBuilder
-    private var noResultsView: some View {
-        L10n.noResults.text
-    }
-
-    private func baseItemOnSelect(_ item: BaseItemDto) {
-        switch item.type {
-        case .collectionFolder, .folder:
-            router.route(to: \.library, .init(parent: item, filters: .init()))
-        default:
-            router.route(to: \.item, item)
-        }
-    }
-
-    @ViewBuilder
-    private var libraryItemsView: some View {
-        PagingLibraryView(viewModel: viewModel)
-            .onReachedBottomEdge(offset: 100) {
-                viewModel.send(.getNextPage)
-            }
-            .onSelect(baseItemOnSelect(_:))
-            .ignoresSafeArea()
-            .refreshable {
-                viewModel.send(.refresh)
-            }
-    }
-
-    @ViewBuilder
-    private var innerBody: some View {
-        switch viewModel.state {
-        case let .error(jellyfinAPIError):
-            Text(jellyfinAPIError.localizedDescription)
-        case .refreshing:
-            loadingView
-        case .gettingNextPage, .gettingRandomItem, .items:
-            if viewModel.items.isEmpty {
-                noResultsView
-            } else {
-                libraryItemsView
-            }
-        }
-    }
-
-    var body: some View {
-        innerBody
-            .navigationTitle(viewModel.parent?.displayTitle ?? "")
-            .navigationBarTitleDisplayMode(.inline)
-            .if(showsLibraryFilters) { view in
-                view.navBarDrawer {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
-                            .onSelect {
-                                router.route(to: \.filter, $0)
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 1)
-                    }
-                }
-            }
-            .topBarTrailing {
-
-                if viewModel.state == .gettingNextPage || viewModel.state == .gettingRandomItem {
-                    ProgressView()
-                }
-
-                Menu {
-                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
-
-                    RandomItemButton(viewModel: viewModel)
-                        .onSelect { item in
-                            if let item {
-                                router.route(to: \.item, item)
-                            }
-                        }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
-            }
-            .onFirstAppear {
-                viewModel.send(.refresh)
-            }
-    }
-}
+////
+//// Swiftfin is subject to the terms of the Mozilla Public
+//// License, v2.0. If a copy of the MPL was not distributed with this
+//// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+////
+//// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+////
+//
+// import CollectionView
+// import Defaults
+// import JellyfinAPI
+// import SwiftUI
+//
+// struct LibraryView: View {
+//
+//    @Default(.Customization.Library.viewType)
+//    private var libraryViewType
+////    @Default(.Customization.Filters.libraryFilterDrawerButtons)
+////    private var filterDrawerButtonSelection
+//
+//    @Environment(\.showsLibraryFilters)
+//    private var showsLibraryFilters
+//
+//    @EnvironmentObject
+//    private var router: LibraryCoordinator.Router
+//
+//    @StateObject
+//    private var viewModel: ItemLibraryViewModel
+//
+//    init(parent: (any LibraryParent)?, filters: ItemFilterCollection) {
+//        self._viewModel = StateObject(
+//            wrappedValue: ItemLibraryViewModel(
+//                parent: parent,
+//                filters: filters,
+//                saveFilters: false
+//            )
+//        )
+//    }
+//
+//    @ViewBuilder
+//    private var loadingView: some View {
+//        ProgressView()
+//    }
+//
+//    @ViewBuilder
+//    private var noResultsView: some View {
+//        L10n.noResults.text
+//    }
+//
+//    private func baseItemOnSelect(_ item: BaseItemDto) {
+//        switch item.type {
+//        case .collectionFolder, .folder:
+//            router.route(to: \.library, .init(parent: item, filters: .init()))
+//        default:
+//            router.route(to: \.item, item)
+//        }
+//    }
+//
+//    @ViewBuilder
+//    private var libraryItemsView: some View {
+//        PagingLibraryView(viewModel: viewModel)
+//            .onSelect(baseItemOnSelect(_:))
+//            .ignoresSafeArea()
+//            .refreshable {
+//                viewModel.send(.refresh)
+//            }
+//    }
+//
+//    @ViewBuilder
+//    private var innerBody: some View {
+//        switch viewModel.state {
+//        case let .error(jellyfinAPIError):
+//            Text(jellyfinAPIError.localizedDescription)
+//        case .refreshing:
+//            loadingView
+//        case .gettingNextPage, .gettingRandomItem, .items:
+//            if viewModel.items.isEmpty {
+//                noResultsView
+//            } else {
+//                libraryItemsView
+//            }
+//        }
+//    }
+//
+//    var body: some View {
+//        innerBody
+//            .navigationTitle(viewModel.parent?.displayTitle ?? "")
+//            .navigationBarTitleDisplayMode(.inline)
+//            .if(showsLibraryFilters) { view in
+//                view.navBarDrawer {
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
+//                            .onSelect {
+//                                router.route(to: \.filter, $0)
+//                            }
+//                            .padding(.horizontal)
+//                            .padding(.vertical, 1)
+//                    }
+//                }
+//            }
+//            .topBarTrailing {
+//
+//                if viewModel.state == .gettingNextPage || viewModel.state == .gettingRandomItem {
+//                    ProgressView()
+//                }
+//
+//                Menu {
+//                    LibraryViewTypeToggle(libraryViewType: $libraryViewType)
+//
+//                    RandomItemButton(viewModel: viewModel)
+//                        .onSelect { item in
+//                            if let item {
+//                                router.route(to: \.item, item)
+//                            }
+//                        }
+//                } label: {
+//                    Image(systemName: "ellipsis.circle")
+//                }
+//            }
+//            .onFirstAppear {
+//                viewModel.send(.refresh)
+//            }
+//    }
+// }

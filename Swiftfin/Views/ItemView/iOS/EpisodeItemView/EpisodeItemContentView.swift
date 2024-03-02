@@ -44,7 +44,7 @@ extension EpisodeItemView {
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
 //                    ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
@@ -52,7 +52,7 @@ extension EpisodeItemView {
                 if let studios = viewModel.item.studios, !studios.isEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -62,7 +62,7 @@ extension EpisodeItemView {
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Series
@@ -116,7 +116,7 @@ extension EpisodeItemView.ContentView {
                         Text(productionYear)
                     }
 
-                    if let runtime = viewModel.item.getItemRuntime() {
+                    if let runtime = viewModel.item.runTimeLabel {
                         Text(runtime)
                     }
                 }

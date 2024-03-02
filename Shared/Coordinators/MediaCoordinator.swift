@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -34,12 +35,8 @@ final class MediaCoordinator: NavigationCoordinatable {
     }
 
     #else
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-        LibraryCoordinator(parameters: parameters)
-    }
-
-    func makeFolderLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-        LibraryCoordinator(parameters: parameters)
+    func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
+        LibraryCoordinator(viewModel: viewModel)
     }
 
     func makeLiveTV() -> LiveTVCoordinator {

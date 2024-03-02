@@ -49,13 +49,13 @@ final class MediaViewModel: ViewModel {
 
         guard let items = response.value.items else { return [] }
 
-        // folders has `type = UserView`, but we need to manually
+        // folders has `type = UserView`, but we manually
         // force it to `folders` for better view handling
         let supportedLibraries = items
             .filtered(using: \.collectionType, by: Self.supportedCollectionTypes)
             .map { item in
 
-                if item.type == .userView, item.collectionType == "folder" {
+                if item.type == .userView, item.collectionType == "folders" {
                     return item.mutating(\.type, with: .folder)
                 }
 

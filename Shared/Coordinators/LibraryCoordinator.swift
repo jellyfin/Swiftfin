@@ -12,25 +12,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class LibraryCoordinator: NavigationCoordinatable {
-
-    struct Parameters {
-        let parent: (any LibraryParent)?
-        let filters: ItemFilterCollection
-
-        init(
-            parent: any LibraryParent,
-            filters: ItemFilterCollection = .init()
-        ) {
-            self.parent = parent
-            self.filters = filters
-        }
-
-        init(filters: ItemFilterCollection) {
-            self.parent = nil
-            self.filters = filters
-        }
-    }
+final class LibraryCoordinator<Element: Poster>: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
@@ -51,34 +33,15 @@ final class LibraryCoordinator: NavigationCoordinatable {
     var filter = makeFilter
     #endif
 
-    private let parameters: Parameters
+    private let viewModel: PagingLibraryViewModel<Element>
 
-    init(parameters: Parameters) {
-        self.parameters = parameters
+    init(viewModel: PagingLibraryViewModel<Element>) {
+        self.viewModel = viewModel
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        LibraryView(parent: parameters.parent, filters: parameters.filters)
-
-//        if let parent = parameters.parent {
-//            if !parameters.filters.hasFilters, let id = parent.id, let storedFilters = Defaults[.libraryFilterStore][id] {
-        ////                LibraryView(viewModel: LibraryViewModel(parent: parent, type: parameters.type, filters: storedFilters,
-        /// saveFilters: true))
-//                Text("FIX ME")
-//            } else {
-
-//                LibraryView(viewModel: LibraryViewModel(
-//                    parent: parent,
-//                    type: parameters.type,
-//                    filters: parameters.filters,
-//                    saveFilters: false
-//                ))
-//            }
-//        } else {
-//            Text("FIX ME")
-//            LibraryView(viewModel: LibraryViewModel(filters: parameters.filters, saveFilters: false))
-//        }
+        PagingLibraryView(viewModel: viewModel)
     }
 
     #if os(tvOS)
@@ -94,8 +57,8 @@ final class LibraryCoordinator: NavigationCoordinatable {
         ItemCoordinator(item: item)
     }
 
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> LibraryCoordinator {
-        LibraryCoordinator(parameters: parameters)
+    func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
+        LibraryCoordinator<BaseItemDto>(viewModel: viewModel)
     }
 
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {

@@ -27,7 +27,7 @@ extension iPadOSEpisodeItemView {
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
 //                    ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
@@ -35,7 +35,7 @@ extension iPadOSEpisodeItemView {
                 if let studios = viewModel.item.studios, !studios.isEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -45,7 +45,7 @@ extension iPadOSEpisodeItemView {
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Series

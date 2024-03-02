@@ -28,7 +28,7 @@ extension SeparatorHStack {
     init(@ViewBuilder _ content: @escaping () -> any View) {
         self.init(
             content: content,
-            separator: { Divider() }
+            separator: { RowDivider() }
         )
     }
 

@@ -57,7 +57,7 @@ struct SeriesEpisodeSelector: View {
             } else {
                 CollectionHStack(
                     $viewModel.currentItems,
-                    columns: 1.5
+                    columns: UIDevice.isPhone ? 1.5 : 3.5
                 ) { item in
                     PosterButton(
                         item: item,

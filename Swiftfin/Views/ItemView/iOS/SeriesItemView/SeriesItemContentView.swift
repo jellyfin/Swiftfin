@@ -29,7 +29,7 @@ extension SeriesItemView {
                 if let genres = viewModel.item.genreItems, !genres.isEmpty {
 //                    ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
@@ -37,7 +37,7 @@ extension SeriesItemView {
                 if let studios = viewModel.item.studios, !studios.isEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
@@ -47,7 +47,7 @@ extension SeriesItemView {
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Similar
@@ -55,7 +55,7 @@ extension SeriesItemView {
                 if !viewModel.similarItems.isEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

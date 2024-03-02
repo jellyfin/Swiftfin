@@ -10,16 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Move to LibraryView/Components
-
-extension LibraryView {
+extension PagingLibraryView {
 
     struct RandomItemButton: View {
 
         @ObservedObject
-        private var viewModel: LibraryViewModel
-
-        private var onSelect: (BaseItemDto?) -> Void
+        var viewModel: PagingLibraryViewModel<Element>
 
         var body: some View {
             Button {
@@ -28,19 +24,5 @@ extension LibraryView {
                 Label(L10n.random, systemImage: "dice.fill")
             }
         }
-    }
-}
-
-extension LibraryView.RandomItemButton {
-
-    init(viewModel: LibraryViewModel) {
-        self.init(
-            viewModel: viewModel,
-            onSelect: { _ in }
-        )
-    }
-
-    func onSelect(_ action: @escaping (BaseItemDto?) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

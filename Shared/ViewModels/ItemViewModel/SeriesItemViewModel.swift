@@ -51,7 +51,7 @@ final class SeriesItemViewModel: ItemViewModel {
         }
 
         guard let playButtonItem = playButtonItem,
-              let episodeLocator = playButtonItem.seasonEpisodeLocator else { return L10n.play }
+              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
 
         return episodeLocator
     }

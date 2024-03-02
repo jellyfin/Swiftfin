@@ -37,11 +37,9 @@ extension BaseItemDto {
         return Int(playbackPositionTicks / 10_000_000)
     }
 
-    var seasonEpisodeLocator: String? {
-        if let seasonNo = parentIndexNumber, let episodeNo = indexNumber {
-            return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
-        }
-        return nil
+    var seasonEpisodeLabel: String? {
+        guard let seasonNo = parentIndexNumber, let episodeNo = indexNumber else { return nil }
+        return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
     var startTimeSeconds: Int {
@@ -51,8 +49,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
 
-    // TODO: make computed var or function that takes allowed units
-    func getItemRuntime() -> String? {
+    var runTimeLabel: String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()
             formatter.unitsStyle = .abbreviated
@@ -136,11 +133,11 @@ extension BaseItemDto {
     }
 
     var airDateLabel: String? {
-        guard let premiereDateFormatted = premiereDateFormatted else { return nil }
+        guard let premiereDateFormatted = premiereDateLabel else { return nil }
         return L10n.airWithDate(premiereDateFormatted)
     }
 
-    var premiereDateFormatted: String? {
+    var premiereDateLabel: String? {
         guard let premiereDate = premiereDate else { return nil }
 
         let dateFormatter = DateFormatter()

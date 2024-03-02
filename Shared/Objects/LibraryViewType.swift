@@ -8,7 +8,9 @@
 
 import Defaults
 import Foundation
+import UIKit
 
+// TODO: `compactList`?
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case landscapeGrid

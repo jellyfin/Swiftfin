@@ -12,7 +12,7 @@ import SwiftUI
 struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
-    var itemViewType
+    private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
 
@@ -20,9 +20,9 @@ struct CustomizeViewsSettings: View {
     private var hapticFeedback
 
     @Default(.Customization.shouldShowMissingSeasons)
-    var shouldShowMissingSeasons
+    private var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
-    var shouldShowMissingEpisodes
+    private var shouldShowMissingEpisodes
 
 //    @Default(.Customization.Filters.libraryFilterDrawerButtons)
 //    var libraryFilterDrawerButtons
@@ -30,24 +30,24 @@ struct CustomizeViewsSettings: View {
 //    var searchFilterDrawerButtons
 
     @Default(.Customization.showPosterLabels)
-    var showPosterLabels
+    private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
-    var nextUpPosterType
+    private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
-    var recentlyAddedPosterType
+    private var recentlyAddedPosterType
     @Default(.Customization.latestInLibraryPosterType)
-    var latestInLibraryPosterType
+    private var latestInLibraryPosterType
     @Default(.Customization.similarPosterType)
-    var similarPosterType
+    private var similarPosterType
     @Default(.Customization.searchPosterType)
-    var searchPosterType
+    private var searchPosterType
     @Default(.Customization.Library.viewType)
-    var libraryViewType
+    private var libraryViewType
     @Default(.Customization.Library.listColumnCount)
     private var listColumnCount
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    var useSeriesLandscapeBackdrop
+    private var useSeriesLandscapeBackdrop
 
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
@@ -127,15 +127,14 @@ struct CustomizeViewsSettings: View {
 
                 EnumPicker(title: L10n.search, selection: $searchPosterType)
 
-                // TODO: break out library view type and columns
-
+                // TODO: figure out how we can do the same Menu as the library menu picker?
                 EnumPicker(title: L10n.library, selection: $libraryViewType)
 
-                if libraryViewType == .list && !UIDevice.isPhone {
+                if libraryViewType == .list, UIDevice.isPad {
                     BasicStepper(
                         title: "Columns",
                         value: $listColumnCount,
-                        range: 1 ... 3,
+                        range: 1 ... 4,
                         step: 1
                     )
                 }

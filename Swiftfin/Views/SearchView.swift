@@ -71,7 +71,9 @@ struct SearchView: View {
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
         if item.type == .person {
-            router.route(to: \.library, .init(parent: item, filters: .init()))
+            let viewModel = PagingLibraryViewModel<BaseItemDto>(parent: item)
+            router.route(to: \.library, viewModel)
+//            router.route(to: \.library, .init(parent: item, filters: .init()))
         } else {
             router.route(to: \.item, item)
         }

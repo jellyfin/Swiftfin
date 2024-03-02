@@ -40,13 +40,16 @@ struct MediaView: View {
                     case "downloads":
                         router.route(to: \.downloads)
                     case "favorites":
-                        router.route(to: \.library, .init(parent: viewModel.item, filters: .favorites))
+                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .favorites)
+                        router.route(to: \.library, viewModel)
                     case "folders":
-                        router.route(to: \.library, .init(parent: viewModel.item, filters: .init()))
+                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
+                        router.route(to: \.library, viewModel)
                     case "livetv":
                         router.route(to: \.liveTV)
                     default:
-                        router.route(to: \.library, .init(parent: viewModel.item, filters: .init()))
+                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
+                        router.route(to: \.library, viewModel)
                     }
                 }
         }

@@ -40,11 +40,6 @@ extension EnvironmentValues {
         set { self[IsScrubbingKey.self] = newValue }
     }
 
-    var libraryViewTypes: [LibraryViewType] {
-        get { self[LibraryViewTypesKey.self] }
-        set { self[LibraryViewTypesKey.self] = newValue }
-    }
-
     var playbackSpeed: Binding<Float> {
         get { self[PlaybackSpeedKey.self] }
         set { self[PlaybackSpeedKey.self] = newValue }
@@ -54,6 +49,8 @@ extension EnvironmentValues {
         self[SafeAreaInsetsKey.self]
     }
 
+    // TODO: remove and make a parameter instead, isn't necessarily an
+    //       environment value
     var showsLibraryFilters: Bool {
         get { self[ShowsLibraryFiltersKey.self] }
         set { self[ShowsLibraryFiltersKey.self] = newValue }

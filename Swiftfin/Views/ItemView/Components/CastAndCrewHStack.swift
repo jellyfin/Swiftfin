@@ -31,7 +31,9 @@ extension ItemView {
                     }
             }
             .onSelect { person in
-                router.route(to: \.library, .init(parent: person, filters: .init()))
+                let viewModel = ItemLibraryViewModel(parent: person)
+                router.route(to: \.library, viewModel)
+//                router.route(to: \.library, .init(parent: person, filters: .init()))
             }
         }
     }
