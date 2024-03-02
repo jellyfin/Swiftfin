@@ -67,7 +67,8 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func select(person: BaseItemPerson) {
-        router.route(to: \.library, .init(parent: person))
+        let viewModel = ItemLibraryViewModel(parent: person)
+        router.route(to: \.library, viewModel)
     }
 
     // MARK: layout
@@ -226,7 +227,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 case let item as BaseItemDto:
                     router.route(to: \.item, item)
                 case let item as BaseItemPerson:
-                    let viewModel = PagingLibraryViewModel<BaseItemDto>(parent: item)
+                    let viewModel = ItemLibraryViewModel(parent: item)
                     router.route(to: \.library, viewModel)
                 default:
                     fatalError("Used an unexpected type within a `PagingLibaryView`?")

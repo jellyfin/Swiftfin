@@ -22,6 +22,6 @@ class LibraryViewModel<Element: Poster>: ViewModel {
     }
 
     func getRandomItem() async throws -> Element? {
-        nil
+        items.randomElement()
     }
 }

@@ -21,7 +21,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case cancel
         case error(LibraryError)
         case refresh
@@ -74,7 +74,9 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
     @MainActor
     func respond(to action: Action) -> State {
 
-        guard !isStatic else { return .items }
+        if action == .refresh, isStatic {
+            return .items
+        }
 
         switch action {
         case .cancel:

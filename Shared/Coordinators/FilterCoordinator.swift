@@ -34,13 +34,6 @@ final class FilterCoordinator: NavigationCoordinatable {
         #if os(tvOS)
         Text(verbatim: .emptyDash)
         #else
-//        FilterView(
-//            title: parameters.title,
-//            viewModel: parameters.viewModel,
-//            filter: parameters.filter,
-//            selectorType: parameters.selectorType
-//        )
-
         FilterView(viewModel: parameters.viewModel, type: parameters.type)
         #endif
     }

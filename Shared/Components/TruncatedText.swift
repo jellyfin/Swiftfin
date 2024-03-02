@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: allow `isTruncated` to be communicated externally via modifier
+
 struct TruncatedText: View {
 
     @Default(.accentColor)

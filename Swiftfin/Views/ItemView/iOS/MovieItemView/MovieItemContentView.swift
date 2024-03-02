@@ -22,8 +22,8 @@ extension MovieItemView {
 
                 // MARK: Genres
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
-//                    ItemView.GenresHStack(genres: genres)
+                if !viewModel.item.itemGenres.isEmpty {
+                    ItemView.GenresHStack(genres: viewModel.item.itemGenres)
 
                     RowDivider()
                 }

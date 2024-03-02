@@ -21,25 +21,30 @@ extension ItemView {
         private var taglineLineLimit: Int
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            Button {
+                router.route(to: \.itemOverview, item)
+            } label: {
+                VStack(alignment: .leading, spacing: 10) {
 
-                if let firstTagline = item.taglines?.first {
-                    Text(firstTagline)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.leading)
-                        .lineLimit(taglineLineLimit)
-                }
+                    if let firstTagline = item.taglines?.first {
+                        Text(firstTagline)
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.leading)
+                            .lineLimit(taglineLineLimit)
+                    }
 
-                if let itemOverview = item.overview {
-                    TruncatedText(itemOverview)
-                        .seeMoreAction {
-                            router.route(to: \.itemOverview, item)
-                        }
-                        .font(.footnote)
-                        .lineLimit(overviewLineLimit)
+                    if let itemOverview = item.overview {
+                        TruncatedText(itemOverview)
+                            .seeMoreAction {
+                                router.route(to: \.itemOverview, item)
+                            }
+                            .font(.footnote)
+                            .lineLimit(overviewLineLimit)
+                    }
                 }
             }
+            .buttonStyle(.plain)
         }
     }
 }

@@ -314,7 +314,6 @@
 		E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */; };
 		E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EB28BC9000003499D2 /* LibraryViewType.swift */; };
 		E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EF28BC9016003499D2 /* LibraryRow.swift */; };
-		E13F05F328BC9016003499D2 /* LibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05F028BC9016003499D2 /* LibraryView.swift */; };
 		E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */; };
 		E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA12938122C00E8B599 /* AppIcons.swift */; };
 		E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */; };
@@ -1011,7 +1010,6 @@
 		E13DD4012717EE79009D4DAF /* UserListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCoordinator.swift; sourceTree = "<group>"; };
 		E13F05EB28BC9000003499D2 /* LibraryViewType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryViewType.swift; sourceTree = "<group>"; };
 		E13F05EF28BC9016003499D2 /* LibraryRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryRow.swift; sourceTree = "<group>"; };
-		E13F05F028BC9016003499D2 /* LibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryView.swift; sourceTree = "<group>"; };
 		E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconSelectorView.swift; sourceTree = "<group>"; };
 		E1401CA12938122C00E8B599 /* AppIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIcons.swift; sourceTree = "<group>"; };
 		E1401CA4293813F400E8B599 /* InvertedDarkAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedDarkAppIcon.swift; sourceTree = "<group>"; };
@@ -2136,7 +2134,6 @@
 				E168BD07289A4162001A6922 /* HomeView */,
 				E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */,
 				E14F7D0A26DB3714007C3AE6 /* ItemView */,
-				E13F05F028BC9016003499D2 /* LibraryView.swift */,
 				C4E5598828124C10003DECA5 /* LiveTVChannelItemElement.swift */,
 				C400DB6C27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift */,
 				C400DB6927FE894F007B65FE /* LiveTVChannelsView.swift */,
@@ -3759,7 +3756,6 @@
 				E148128528C15472003B8787 /* SortOrder.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
-				E13F05F328BC9016003499D2 /* LibraryView.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,
 				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,

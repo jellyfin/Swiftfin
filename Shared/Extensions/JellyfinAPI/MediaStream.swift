@@ -217,6 +217,7 @@ extension MediaStream {
 
 extension [MediaStream] {
 
+    // TODO: explain why adjustment is necessary
     func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
         guard allSatisfy({ $0.type == .subtitle }) else { return self }
         let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
@@ -234,6 +235,7 @@ extension [MediaStream] {
         return mediaStreams
     }
 
+    // TODO: explain why adjustment is necessary
     func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
         guard allSatisfy({ $0.type == .audio }) else { return self }
 
@@ -249,22 +251,22 @@ extension [MediaStream] {
     }
 
     var has4KVideo: Bool {
-        first(where: { $0.is4kVideo }) != nil
+        oneSatisfies { $0.is4kVideo }
     }
 
     var has51AudioChannelLayout: Bool {
-        first(where: { $0.is51AudioChannelLayout }) != nil
+        oneSatisfies { $0.is51AudioChannelLayout }
     }
 
     var has71AudioChannelLayout: Bool {
-        first(where: { $0.is71AudioChannelLayout }) != nil
+        oneSatisfies { $0.is71AudioChannelLayout }
     }
 
     var hasHDVideo: Bool {
-        first(where: { $0.isHDVideo }) != nil
+        oneSatisfies { $0.isHDVideo }
     }
 
     var hasSubtitles: Bool {
-        first(where: { $0.type == .subtitle }) != nil
+        oneSatisfies { $0.type == .subtitle }
     }
 }

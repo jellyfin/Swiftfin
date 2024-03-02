@@ -21,20 +21,24 @@ extension ItemView {
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
-        let items: [BaseItemDto]
+        @StateObject
+        private var viewModel: PagingLibraryViewModel<BaseItemDto>
+
+        init(items: [BaseItemDto]) {
+            self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(items, parent: BaseItemDto(name: L10n.recommended)))
+        }
 
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: .constant(OrderedSet(items))
+                items: $viewModel.items
             )
             .trailing {
-//                SeeAllButton()
-//                    .onSelect {
-//                        let viewModel = StaticLibraryViewModel(items: items)
-//                        router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
-//                    }
+                SeeAllButton()
+                    .onSelect {
+                        router.route(to: \.library, viewModel)
+                    }
             }
             .onSelect { item in
                 router.route(to: \.item, item)

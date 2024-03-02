@@ -32,6 +32,10 @@ extension BaseItemDto {
         return L10n.episodeNumber(episodeNo)
     }
 
+    var itemGenres: [ItemGenre] {
+        (genres ?? []).map(ItemGenre.init)
+    }
+
     var runTimeSeconds: Int {
         let playbackPositionTicks = runTimeTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)
