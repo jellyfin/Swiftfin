@@ -19,8 +19,8 @@ final class HomeViewModel: ViewModel {
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
-    var nextUpViewModel: NextUpLibraryViewModel = .init([], parent: nil)
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init([], parent: nil)
+    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
         super.init()
@@ -43,13 +43,17 @@ final class HomeViewModel: ViewModel {
 
         refreshResumeItems()
 
-//        Task {
-//            try await nextUpViewModel.refresh()
-//        }
-//
-//        Task {
-//            try await recentlyAddedViewModel.refresh()
-//        }
+        Task {
+            try await nextUpViewModel.refresh()
+        }
+        .asAnyCancellable()
+        .store(in: &cancellables)
+
+        Task {
+            try await recentlyAddedViewModel.refresh()
+        }
+        .asAnyCancellable()
+        .store(in: &cancellables)
 
         do {
             try await refreshLibrariesLatest()

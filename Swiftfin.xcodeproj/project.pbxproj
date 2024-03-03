@@ -353,8 +353,6 @@
 		E1549665296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */; };
 		E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */; };
 		E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */; };
-		E1549668296CA2EF00C4EF88 /* PlaybackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */; };
-		E1549669296CA2EF00C4EF88 /* PlaybackManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */; };
 		E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965B296CA2EF00C4EF88 /* DownloadManager.swift */; };
 		E154966B296CA2EF00C4EF88 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965B296CA2EF00C4EF88 /* DownloadManager.swift */; };
 		E154966E296CA2EF00C4EF88 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965D296CA2EF00C4EF88 /* LogManager.swift */; };
@@ -1031,7 +1029,6 @@
 		E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSessionManager.swift; sourceTree = "<group>"; };
 		E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
 		E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinNotifications.swift; sourceTree = "<group>"; };
-		E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackManager.swift; sourceTree = "<group>"; };
 		E154965B296CA2EF00C4EF88 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		E154965D296CA2EF00C4EF88 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineEnumToggle.swift; sourceTree = "<group>"; };
@@ -2192,7 +2189,6 @@
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
 				E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */,
-				E154965A296CA2EF00C4EF88 /* PlaybackManager.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
 				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
 				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
@@ -3379,7 +3375,6 @@
 				E1C926152887565C002A7A66 /* EpisodeCard.swift in Sources */,
 				E1A1528E28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift in Sources */,
 				E18E021D2887492B0022598C /* AttributeStyleModifier.swift in Sources */,
-				E1549669296CA2EF00C4EF88 /* PlaybackManager.swift in Sources */,
 				E193D53227193F7B00900D82 /* ConnectToServerCoodinator.swift in Sources */,
 				53ABFDE4267974EF00886593 /* MediaViewModel.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
@@ -3699,7 +3694,6 @@
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDevice.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */,
-				E1549668296CA2EF00C4EF88 /* PlaybackManager.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* ItemFilterCollection.swift in Sources */,
 				E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */,

@@ -12,28 +12,27 @@ import JellyfinAPI
 
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-//    override func getCurrentPage() async throws {
-//        let parameters = Paths.GetItemsParameters(
-//            userID: userSession.user.id,
-//            startIndex: currentPage * Self.DefaultPageSize,
-//            limit: Self.DefaultPageSize,
-//            isRecursive: true,
-//            sortOrder: [.descending],
-//            fields: ItemFields.allCases,
-//            includeItemTypes: [.movie, .series],
-//            sortBy: [SortBy.dateAdded.rawValue],
-//            enableUserData: true
-//        )
-//        let request = Paths.getItems(parameters: parameters)
-//        let response = try await userSession.client.send(request)
-//
-//        guard let items = response.value.items, !items.isEmpty else {
-//            hasNextPage = false
-//            return
-//        }
-//
-//        await MainActor.run {
-//            self.items.append(contentsOf: items)
-//        }
-//    }
+    override func get(page: Int) async throws -> [BaseItemDto] {
+
+        let parameters = parameters(for: page)
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func parameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.limit = DefaultPageSize
+        parameters.startIndex = page
+        parameters.isRecursive = true
+        parameters.sortOrder = [.descending]
+        parameters.fields = ItemFields.MinimumFields
+        parameters.includeItemTypes = [.movie, .series]
+        parameters.sortBy = [ItemSortBy.dateAdded.rawValue]
+        parameters.enableUserData = true
+
+        return parameters
+    }
 }

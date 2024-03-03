@@ -12,32 +12,25 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-//    override func getCurrentPage() async throws {
-//
-//        await MainActor.run {
-//            self.isLoading = true
-//        }
-//
-//        let parameters = Paths.GetNextUpParameters(
-//            userID: userSession.user.id,
-//            startIndex: currentPage,
-//            limit: Self.DefaultPageSize,
-//            fields: ItemFields.minimumCases,
-//            enableUserData: true
-//        )
-//        let request = Paths.getNextUp(parameters: parameters)
-//        let response = try await userSession.client.send(request)
-//
-//        guard let items = response.value.items, !items.isEmpty else {
-//            hasNextPage = false
-//            return
-//        }
-//
-//        await MainActor.run {
-//            self.items.append(contentsOf: items)
-//            self.isLoading = false
-//        }
-//    }
+    override func get(page: Int) async throws -> [BaseItemDto] {
+
+        let parameters = parameters(for: page)
+        let request = Paths.getNextUp(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func parameters(for page: Int) -> Paths.GetNextUpParameters {
+
+        var parameters = Paths.GetNextUpParameters()
+        parameters.limit = DefaultPageSize
+        parameters.startIndex = page
+        parameters.fields = ItemFields.MinimumFields
+        parameters.enableUserData = true
+
+        return parameters
+    }
 
     func markPlayed(item: BaseItemDto) {
         Task {
