@@ -12,7 +12,6 @@
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
-		4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */; };
 		4F1282B12A7F3E8F005BCA29 /* RandomItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F1282B02A7F3E8F005BCA29 /* RandomItemButton.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		53192D5D265AA78A008A4215 /* DeviceProfileBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */; };
@@ -779,7 +778,6 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
-		4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterDrawerButtonSelectorView.swift; sourceTree = "<group>"; };
 		4F1282B02A7F3E8F005BCA29 /* RandomItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomItemButton.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlainNavigationLinkButton.swift; sourceTree = "<group>"; };
@@ -1391,22 +1389,6 @@
 				091B5A872683142E00D78B61 /* ServerDiscovery.swift */,
 			);
 			path = ServerDiscovery;
-			sourceTree = "<group>";
-		};
-		4EAA35B82AB9694000D840DD /* FilterDrawerSettingsView */ = {
-			isa = PBXGroup;
-			children = (
-				4EAA35B92AB9694D00D840DD /* Components */,
-			);
-			path = FilterDrawerSettingsView;
-			sourceTree = "<group>";
-		};
-		4EAA35B92AB9694D00D840DD /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4EAA35BA2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift */,
-			);
-			path = Components;
 			sourceTree = "<group>";
 		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
@@ -2736,7 +2718,6 @@
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				4EAA35B82AB9694000D840DD /* FilterDrawerSettingsView */,
 				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
 				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
@@ -3571,7 +3552,6 @@
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */,
-				4EAA35BB2AB9699B00D840DD /* FilterDrawerButtonSelectorView.swift in Sources */,
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */,

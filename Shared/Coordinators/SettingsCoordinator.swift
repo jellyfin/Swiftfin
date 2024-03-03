@@ -33,8 +33,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
-//    @Route(.push)
-//    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
+    @Route(.push)
+    var itemFilterDrawerSelector = makeItemFilterDrawerSelector
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
@@ -116,6 +116,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         DebugSettingsView()
     }
     #endif
+
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+    }
 
 //    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
 //        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)

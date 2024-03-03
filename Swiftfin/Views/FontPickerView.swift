@@ -36,5 +36,6 @@ struct FontPickerView: View {
         .onChange(of: updateSelection) { newValue in
             selection = newValue
         }
+        .navigationTitle("Font")
     }
 }

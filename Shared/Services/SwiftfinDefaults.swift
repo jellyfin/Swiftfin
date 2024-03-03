@@ -90,16 +90,16 @@ extension Defaults.Keys {
         }
 
         enum Filters {
-//            static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-//                "defaultLibraryFilterDrawerButtons",
-//                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
-//                suite: .generalSuite
-//            )
-//            static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-//                "defaultSearchFilterDrawerButtons",
-//                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
-//                suite: .generalSuite
-//            )
+            static let libraryFilterDrawerButtons: Key<[ItemFilterType]> = .init(
+                "defaultLibraryFilterDrawerButtons",
+                default: ItemFilterType.allCases,
+                suite: .generalSuite
+            )
+            static let searchFilterDrawerButtons: Key<[ItemFilterType]> = .init(
+                "defaultSearchFilterDrawerButtons",
+                default: ItemFilterType.allCases,
+                suite: .generalSuite
+            )
         }
     }
 

@@ -64,6 +64,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                                     .foregroundColor(.red)
                             }
                         }
+                        .foregroundColor(.primary)
                     }
                 }
                 .onMove(perform: move)
@@ -93,6 +94,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                                     .foregroundColor(.green)
                             }
                         }
+                        .foregroundColor(.primary)
                     }
                 }
             }
