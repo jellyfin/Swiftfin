@@ -39,7 +39,7 @@ struct BasicAppSettingsView: View {
                 }
 
             Section {
-                EnumPicker(title: L10n.appearance, selection: $appAppearance)
+                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
@@ -86,7 +86,7 @@ struct BasicAppSettingsView: View {
                 viewModel.removeAllServers()
             }
         }
-        .navigationBarTitle(L10n.settings)
+        .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
         .navigationCloseButton {
             router.dismissCoordinator()

@@ -28,8 +28,8 @@ extension iPadOSSeriesItemView {
 
                 // MARK: Genres
 
-                if !viewModel.item.itemGenres.isEmpty {
-                    ItemView.GenresHStack(genres: viewModel.item.itemGenres)
+                if let genres = viewModel.item.itemGenres, !genres.isEmpty {
+                    ItemView.GenresHStack(genres: genres)
 
                     RowDivider()
                 }

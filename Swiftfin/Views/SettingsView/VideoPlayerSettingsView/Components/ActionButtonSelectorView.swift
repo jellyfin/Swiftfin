@@ -9,116 +9,22 @@
 import Defaults
 import SwiftUI
 
-// TODO: Look at moving across sections
-// TODO: Look at general implementation in SelectorView
 struct ActionButtonSelectorView: View {
 
     @Binding
-    var selectedButtonsBinding: [VideoPlayerActionButton]
-
-    @Environment(\.editMode)
-    private var editMode
-
-    @State
-    private var _selectedButtons: [VideoPlayerActionButton]
-
-    private var disabledButtons: [VideoPlayerActionButton] {
-        VideoPlayerActionButton.allCases.filter { !_selectedButtons.contains($0) }
-    }
+    var selection: [VideoPlayerActionButton]
 
     var body: some View {
-        List {
-            Section {
-                ForEach(_selectedButtons) { item in
-                    Button {
-                        if !(editMode?.wrappedValue.isEditing ?? true) {
-                            select(item: item)
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: item.settingsSystemImage)
-                            Text(item.displayTitle)
-
-                            Spacer()
-
-                            if !(editMode?.wrappedValue.isEditing ?? false) {
-                                Image(systemName: "minus.circle.fill")
-                                    .foregroundColor(.red)
-                            }
-                        }
-                        .foregroundColor(.primary)
-                    }
-                }
-                .onMove(perform: move)
-
-                if _selectedButtons.isEmpty {
-                    Text("None")
-                        .foregroundColor(.secondary)
-                }
-            } header: {
-                Text("Enabled")
-            }
-
-            Section {
-                ForEach(disabledButtons) { item in
-                    Button {
-                        if !(editMode?.wrappedValue.isEditing ?? true) {
-                            select(item: item)
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: item.settingsSystemImage)
-                            Text(item.displayTitle)
-
-                            Spacer()
-
-                            if !(editMode?.wrappedValue.isEditing ?? false) {
-                                Image(systemName: "plus.circle.fill")
-                                    .foregroundColor(.green)
-                            }
-                        }
-                        .foregroundColor(.primary)
-                    }
-                }
-
-                if disabledButtons.isEmpty {
-                    Text("None")
-                        .foregroundColor(.secondary)
-                }
-            } header: {
-                Text("Disabled")
-            }
-        }
-        .animation(.linear(duration: 0.2), value: _selectedButtons)
-        .toolbar {
-            EditButton()
-        }
-        .onChange(of: _selectedButtons) { newValue in
-            selectedButtonsBinding = newValue
-        }
-    }
-
-    func move(from source: IndexSet, to destination: Int) {
-        _selectedButtons.move(fromOffsets: source, toOffset: destination)
-    }
-
-    private func select(item: VideoPlayerActionButton) {
-        if _selectedButtons.contains(item) {
-            _selectedButtons.removeAll(where: { $0.id == item.id })
-        } else {
-            _selectedButtons.append(item)
-        }
-    }
-}
-
-extension ActionButtonSelectorView {
-
-    init(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) {
-        self.init(
-            selectedButtonsBinding: selectedButtonsBinding,
-            _selectedButtons: selectedButtonsBinding.wrappedValue
+        OrderedSectionSelectorView(
+            selection: $selection,
+            sources: VideoPlayerActionButton.allCases
         )
-//        self._selectedButtonsBinding = selectedButtonsBinding
-//        self._selectedButtons = selectedButtonsBinding.wrappedValue
+        .label { button in
+            HStack {
+                Image(systemName: button.settingsSystemImage)
+
+                Text(button.displayTitle)
+            }
+        }
     }
 }

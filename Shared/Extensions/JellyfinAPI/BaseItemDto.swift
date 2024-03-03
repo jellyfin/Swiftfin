@@ -32,8 +32,9 @@ extension BaseItemDto {
         return L10n.episodeNumber(episodeNo)
     }
 
-    var itemGenres: [ItemGenre] {
-        (genres ?? []).map(ItemGenre.init)
+    var itemGenres: [ItemGenre]? {
+        guard let genres else { return nil }
+        return genres.map(ItemGenre.init)
     }
 
     var runTimeSeconds: Int {

@@ -52,7 +52,7 @@ final class MediaViewModel: ViewModel {
         // folders has `type = UserView`, but we manually
         // force it to `folders` for better view handling
         let supportedLibraries = items
-            .filtered(using: \.collectionType, by: Self.supportedCollectionTypes)
+            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
             .map { item in
 
                 if item.type == .userView, item.collectionType == "folders" {

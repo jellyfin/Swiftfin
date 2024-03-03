@@ -8,8 +8,11 @@
 
 import SwiftUI
 
-// TODO: change name
-struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
+/// A `View` that automatically generates a SwiftUI `Picker` if `Element` conforms to `CaseIterable`.
+///
+/// If `Element` is optional, an additional `none` value is added to select `nil` and can be customized
+/// by `.noneStyle()`.
+struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View {
 
     enum NoneStyle: Displayable {
 
@@ -32,7 +35,7 @@ struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
     }
 
     @Binding
-    private var selection: EnumType?
+    private var selection: Element?
 
     private let title: String
     private let hasNone: Bool
@@ -43,20 +46,20 @@ struct EnumPicker<EnumType: CaseIterable & Displayable & Hashable>: View {
 
             if hasNone {
                 Text(noneStyle.displayTitle)
-                    .tag(nil as EnumType?)
+                    .tag(nil as Element?)
             }
 
-            ForEach(EnumType.allCases.asArray, id: \.hashValue) {
+            ForEach(Element.allCases.asArray, id: \.hashValue) {
                 Text($0.displayTitle)
-                    .tag($0 as EnumType?)
+                    .tag($0 as Element?)
             }
         }
     }
 }
 
-extension EnumPicker {
+extension CaseIterablePicker {
 
-    init(title: String, selection: Binding<EnumType?>) {
+    init(title: String, selection: Binding<Element?>) {
         self.init(
             selection: selection,
             title: title,
@@ -65,10 +68,10 @@ extension EnumPicker {
         )
     }
 
-    init(title: String, selection: Binding<EnumType>) {
+    init(title: String, selection: Binding<Element>) {
         self.title = title
 
-        let binding = Binding<EnumType?> {
+        let binding = Binding<Element?> {
             selection.wrappedValue
         } set: { newValue, _ in
             precondition(newValue != nil, "Should not have nil new value with non-optional binding")

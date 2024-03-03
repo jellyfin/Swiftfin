@@ -110,6 +110,7 @@ struct SearchView: View {
         }
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
 //        .if(!filterDrawerButtonSelection.isEmpty) { view in
 //            view.navBarDrawer {
 //                ScrollView(.horizontal, showsIndicators: false) {

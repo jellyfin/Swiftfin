@@ -44,7 +44,7 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
-        ActionButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+        ActionButtonSelectorView(selection: selectedButtonsBinding)
     }
     #endif
 

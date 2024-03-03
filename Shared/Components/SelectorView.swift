@@ -12,12 +12,13 @@ import SwiftUI
 
 struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
-    @Binding
-    private var selection: Set<Element>
-
     @Environment(\.accentColor)
     private var accentColor
 
+    @Binding
+    private var selection: Set<Element>
+
+    // TODO: rename `sources`
     private let allElements: [Element]
     private var label: (Element) -> Label
     private let type: SelectorType
@@ -69,7 +70,7 @@ extension SelectorView where Label == Text {
         let selectionBinding = Binding {
             Set(selection.wrappedValue)
         } set: { newValue in
-            selection.wrappedValue = allItems.filtered(by: newValue)
+            selection.wrappedValue = allItems.intersection(newValue)
         }
 
         self.init(

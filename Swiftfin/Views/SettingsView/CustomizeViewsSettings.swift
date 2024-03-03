@@ -62,7 +62,7 @@ struct CustomizeViewsSettings: View {
 
             if UIDevice.isPhone {
                 Section {
-                    EnumPicker(title: L10n.items, selection: $itemViewType)
+                    CaseIterablePicker(title: L10n.items, selection: $itemViewType)
                 }
 
                 if itemViewType == .cinematic {
@@ -117,18 +117,18 @@ struct CustomizeViewsSettings: View {
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                EnumPicker(title: L10n.next, selection: $nextUpPosterType)
+                CaseIterablePicker(title: L10n.next, selection: $nextUpPosterType)
 
-                EnumPicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                CaseIterablePicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                EnumPicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                CaseIterablePicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                EnumPicker(title: L10n.recommended, selection: $similarPosterType)
+                CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
 
-                EnumPicker(title: L10n.search, selection: $searchPosterType)
+                CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
 
                 // TODO: figure out how we can do the same Menu as the library menu picker?
-                EnumPicker(title: L10n.library, selection: $libraryViewType)
+                CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
 
                 if libraryViewType == .list, UIDevice.isPad {
                     BasicStepper(

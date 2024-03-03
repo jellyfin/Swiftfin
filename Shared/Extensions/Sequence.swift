@@ -14,10 +14,8 @@ extension Sequence {
         filter { $0[keyPath: keyPath] != nil }
     }
 
-    /// Returns an array containing the elements of the sequence whose
-    /// value at the given `KeyPath` are also within the given sequence.
-    func filtered<Value: Equatable>(using keyPath: KeyPath<Element, Value>, by values: some Sequence<Value>) -> [Element] {
-        filter { values.contains($0[keyPath: keyPath]) }
+    func intersection<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
+        filter { other.contains($0[keyPath: keyPath]) }
     }
 
     /// Returns the elements of the sequence, sorted by comparing values
@@ -31,7 +29,11 @@ extension Sequence where Element: Equatable {
 
     /// Returns an array containing the elements of the sequence that
     /// are also within the given sequence.
-    func filtered(by elements: some Sequence<Element>) -> [Element] {
-        filter { elements.contains($0) }
+    func intersection(_ other: some Sequence<Element>) -> [Element] {
+        filter { other.contains($0) }
+    }
+
+    func subtracting(_ other: some Sequence<Element>) -> [Element] {
+        filter { !other.contains($0) }
     }
 }

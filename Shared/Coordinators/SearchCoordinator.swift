@@ -48,10 +48,6 @@ final class SearchCoordinator: NavigationCoordinatable {
         LibraryCoordinator(viewModel: viewModel)
     }
 
-//    func makeLibrary(parameters: LibraryCoordinator<BaseItemDto>.Parameters) -> LibraryCoordinator<BaseItemDto> {
-//        LibraryCoordinator(parameters: parameters)
-//    }
-
     func makeFilter(parameters: FilterCoordinator.Parameters) -> NavigationViewCoordinator<FilterCoordinator> {
         NavigationViewCoordinator(FilterCoordinator(parameters: parameters))
     }
