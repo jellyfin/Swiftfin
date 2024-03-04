@@ -30,7 +30,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            if !viewModel.chapters.isEmpty {
+            if viewModel.chapters.isNotEmpty {
                 ActionButtons.Chapters()
             }
         }

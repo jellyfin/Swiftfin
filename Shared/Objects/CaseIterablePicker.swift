@@ -28,7 +28,7 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
                 assert(length >= 1, "Dash must have length of at least 1.")
                 return String(repeating: "-", count: length)
             case let .custom(text):
-                assert(!text.isEmpty, "Custom text must have length of at least 1.")
+                assert(text.isNotEmpty, "Custom text must have length of at least 1.")
                 return text
             }
         }

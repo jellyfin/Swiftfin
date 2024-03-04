@@ -80,7 +80,7 @@ final class SearchViewModel: ViewModel, Stateful {
         
 //        filterViewModel.$currentFilters
 //            .sink { newFilters in
-//                guard !self.searchTextSubject.value.isEmpty else { return }
+//                guard self.searchTextSubject.value.isNotEmpty else { return }
 //                self._search(with: self.searchTextSubject.value, filters: newFilters)
 //            }
 //            .store(in: &cancellables)

@@ -93,7 +93,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getPrograms() {
-        guard !channels.isEmpty else {
+        guard channels.isNotEmpty else {
             logger.debug("Cannot get programs, channels list empty.")
             return
         }

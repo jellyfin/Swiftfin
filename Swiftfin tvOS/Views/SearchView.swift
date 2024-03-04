@@ -24,23 +24,23 @@ struct SearchView: View {
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
-                if !viewModel.movies.isEmpty {
+                if viewModel.movies.isNotEmpty {
                     itemsSection(title: L10n.movies, keyPath: \.movies)
                 }
 
-                if !viewModel.collections.isEmpty {
+                if viewModel.collections.isNotEmpty {
                     itemsSection(title: L10n.collections, keyPath: \.collections)
                 }
 
-                if !viewModel.series.isEmpty {
+                if viewModel.series.isNotEmpty {
                     itemsSection(title: L10n.tvShows, keyPath: \.series)
                 }
 
-                if !viewModel.episodes.isEmpty {
+                if viewModel.episodes.isNotEmpty {
                     itemsSection(title: L10n.episodes, keyPath: \.episodes)
                 }
 
-                if !viewModel.people.isEmpty {
+                if viewModel.people.isNotEmpty {
                     itemsSection(title: L10n.people, keyPath: \.people)
                 }
             }

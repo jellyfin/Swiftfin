@@ -19,7 +19,7 @@ struct LiveTVProgramsView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
-                if !viewModel.recommendedItems.isEmpty {
+                if viewModel.recommendedItems.isNotEmpty {
                     let items = viewModel.recommendedItems
 //                    PosterHStack(title: L10n.onNow, type: .portrait, items: items)
 //                        .onSelect { item in
@@ -32,7 +32,7 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.seriesItems.isEmpty {
+                if viewModel.seriesItems.isNotEmpty {
                     let items = viewModel.seriesItems
 //                    PosterHStack(title: L10n.tvShows, type: .portrait, items: items)
 //                        .onSelect { item in
@@ -45,7 +45,7 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.movieItems.isEmpty {
+                if viewModel.movieItems.isNotEmpty {
                     let items = viewModel.movieItems
 //                    PosterHStack(title: L10n.movies, type: .portrait, items: items)
 //                        .onSelect { item in
@@ -58,7 +58,7 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.sportsItems.isEmpty {
+                if viewModel.sportsItems.isNotEmpty {
                     let items = viewModel.sportsItems
 //                    PosterHStack(title: L10n.sports, type: .portrait, items: items)
 //                        .onSelect { item in
@@ -71,7 +71,7 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.kidsItems.isEmpty {
+                if viewModel.kidsItems.isNotEmpty {
                     let items = viewModel.kidsItems
 //                    PosterHStack(title: L10n.kids, type: .portrait, items: items)
 //                        .onSelect { item in
@@ -84,7 +84,7 @@ struct LiveTVProgramsView: View {
 //                            }
 //                        }
                 }
-                if !viewModel.newsItems.isEmpty {
+                if viewModel.newsItems.isNotEmpty {
                     let items = viewModel.newsItems
 //                    PosterHStack(title: L10n.news, type: .portrait, items: items)
 //                        .onSelect { item in

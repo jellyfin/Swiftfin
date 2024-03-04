@@ -27,15 +27,15 @@ extension HomeView {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
 
-                    if !viewModel.resumeItems.isEmpty {
+                    if viewModel.resumeItems.isNotEmpty {
                         ContinueWatchingView(viewModel: viewModel)
                     }
 
-                    if !viewModel.nextUpViewModel.items.isEmpty {
+                    if viewModel.nextUpViewModel.items.isNotEmpty {
                         NextUpView(viewModel: viewModel.nextUpViewModel)
                     }
 
-                    if !viewModel.recentlyAddedViewModel.items.isEmpty {
+                    if viewModel.recentlyAddedViewModel.items.isNotEmpty {
                         RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
 

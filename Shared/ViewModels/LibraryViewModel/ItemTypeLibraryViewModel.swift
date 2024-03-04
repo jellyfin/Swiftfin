@@ -42,7 +42,7 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
             let request = Paths.getItems(parameters: parameters)
             let response = try await userSession.client.send(request)
 
-            guard let items = response.value.items, !items.isEmpty else {
+            guard let items = response.value.items, items.isNotEmpty else {
                 hasNextPage = false
                 return
             }

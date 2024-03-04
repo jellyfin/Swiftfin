@@ -159,7 +159,7 @@ extension BaseItemDto {
 
     var hasExternalLinks: Bool {
         guard let externalURLs else { return false }
-        return !externalURLs.isEmpty
+        return externalURLs.isNotEmpty
     }
 
     var hasRatings: Bool {

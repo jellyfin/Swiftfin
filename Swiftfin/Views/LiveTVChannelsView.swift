@@ -56,7 +56,7 @@ struct LiveTVChannelsView: View {
 
         if viewModel.isLoading {
             ProgressView()
-        } else if !viewModel.channelPrograms.isEmpty {
+        } else if viewModel.channelPrograms.isNotEmpty {
 
             CollectionView(items: viewModel.channelPrograms) { _, program, _ in
                 channelCell(for: program)

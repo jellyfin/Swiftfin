@@ -84,7 +84,7 @@ struct UserListView: View {
             }
         }
         .navigationTitle(viewModel.server.name)
-        .if(!viewModel.users.isEmpty) { view in
+        .if(viewModel.users.isNotEmpty) { view in
             view.toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {

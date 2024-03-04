@@ -112,7 +112,7 @@ extension SeriesEpisodeSelector {
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 40) {
-                    if !items.isEmpty {
+                    if items.isNotEmpty {
                         ForEach(items, id: \.self) { episode in
                             EpisodeCard(episode: episode)
                                 .focused($focusedEpisodeID, equals: episode.id)

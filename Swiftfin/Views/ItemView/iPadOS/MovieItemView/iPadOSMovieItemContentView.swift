@@ -24,7 +24,7 @@ extension iPadOSMovieItemView {
 
                 // MARK: Genres
 
-                if let genres = viewModel.item.itemGenres, !genres.isEmpty {
+                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
 
                     RowDivider()
@@ -32,7 +32,7 @@ extension iPadOSMovieItemView {
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
                     RowDivider()
@@ -41,7 +41,7 @@ extension iPadOSMovieItemView {
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people,
-                   !castAndCrew.isEmpty
+                   castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
@@ -50,7 +50,7 @@ extension iPadOSMovieItemView {
 
                 // MARK: Special Features
 
-                if !viewModel.specialFeatures.isEmpty {
+                if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
 
                     RowDivider()
@@ -58,7 +58,7 @@ extension iPadOSMovieItemView {
 
                 // MARK: Similar
 
-                if !viewModel.similarItems.isEmpty {
+                if viewModel.similarItems.isNotEmpty {
                     ItemView.SimilarItemsHStack(items: viewModel.similarItems)
 
                     RowDivider()

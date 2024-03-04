@@ -27,7 +27,7 @@ extension MovieItemView {
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
 
-                if !viewModel.specialFeatures.isEmpty {
+                if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
                 }
 

@@ -98,7 +98,7 @@ struct ServerListView: View {
 //    var body: some View {
 //        innerBody
 //            .navigationTitle(L10n.servers)
-//            .if(!viewModel.servers.isEmpty) { view in
+//            .if(viewModel.servers.isNotEmpty) { view in
 //                view.toolbar {
 //                    ToolbarItem(placement: .navigationBarTrailing) {
 //                        SFSymbolButton(systemName: "plus.circle.fill")

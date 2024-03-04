@@ -92,7 +92,7 @@ struct ServerListView: View {
 
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if !viewModel.servers.isEmpty {
+        if viewModel.servers.isNotEmpty {
             Button {
                 router.route(to: \.connectToServer)
             } label: {
