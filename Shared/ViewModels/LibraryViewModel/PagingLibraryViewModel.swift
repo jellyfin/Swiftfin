@@ -127,6 +127,8 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
             return .refreshing
         case .getNextPage:
 
+            guard hasNextPage else { return .items }
+
             pagingTask = Task { [weak self] in
                 do {
                     try await self?.getNextPage()
@@ -148,6 +150,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
 
             return .gettingNextPage
         case .getRandomItem:
+            // TODO: we need a different way to get a random item as requested from the view
 
             randomItemTask = Task { [weak self] in
                 do {

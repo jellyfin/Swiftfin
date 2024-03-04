@@ -16,9 +16,6 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
-//    @Default(.Customization.Filters.searchFilterDrawerButtons)
-//    private var filterDrawerButtonSelection
-
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
@@ -26,14 +23,14 @@ struct SearchView: View {
     var viewModel: SearchViewModel
 
     @State
-    private var searchText = ""
+    private var searchQuery = ""
 
     @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
-            ForEach(viewModel.suggestions, id: \.id) { item in
+            ForEach(viewModel.suggestions) { item in
                 Button {
-                    searchText = item.displayTitle
+                    searchQuery = item.displayTitle
                 } label: {
                     Text(item.displayTitle)
                         .font(.body)
@@ -73,7 +70,6 @@ struct SearchView: View {
         if item.type == .person {
             let viewModel = PagingLibraryViewModel<BaseItemDto>(parent: item)
             router.route(to: \.library, viewModel)
-//            router.route(to: \.library, .init(parent: item, filters: .init()))
         } else {
             router.route(to: \.item, item)
         }
@@ -96,33 +92,34 @@ struct SearchView: View {
     }
 
     var body: some View {
-        ZStack {
-            if searchText.isEmpty {
-                suggestionsView
-            } else if !viewModel.isLoading && viewModel.hasNoResults {
-                L10n.noResults.text
-            } else {
-                resultsView
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case .error(let jellyfinAPIError):
+                    Text(jellyfinAPIError.localizedDescription)
+                case .initial:
+                    suggestionsView
+                case .items:
+                    if viewModel.hasNoResults {
+                        L10n.noResults.text
+                    } else {
+                        resultsView
+                    }
+                case .searching:
+                    ProgressView()
+                }
             }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
-        .onChange(of: searchText) { newText in
-            viewModel.search(with: newText)
+        .onFirstAppear {
+            viewModel.send(.getSuggestions)
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
-//        .if(!filterDrawerButtonSelection.isEmpty) { view in
-//            view.navBarDrawer {
-//                ScrollView(.horizontal, showsIndicators: false) {
-//                    FilterDrawerHStack(viewModel: viewModel.filterViewModel, filterDrawerButtonSelection: filterDrawerButtonSelection)
-//                        .onSelect { filterCoordinatorParameters in
-//                            router.route(to: \.filter, filterCoordinatorParameters)
-//                        }
-//                        .padding(.horizontal)
-//                        .padding(.vertical, 1)
-//                }
-//            }
-//        }
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: L10n.search)
+        .onChange(of: searchQuery) { newValue in
+            viewModel.send(.search(query: newValue))
+        }
+        .searchable(text: $searchQuery, placement: .navigationBarDrawer(displayMode: .always), prompt: L10n.search)
     }
 }

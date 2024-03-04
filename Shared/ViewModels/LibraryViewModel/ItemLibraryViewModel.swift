@@ -88,7 +88,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     /// Makes the base item parameters for this library. Does not set any filters
     /// except for the parent and item types.
-    private func makeBaseItemParameters() -> Paths.GetItemsByUserIDParameters {
+    private final func makeBaseItemParameters() -> Paths.GetItemsByUserIDParameters {
 
         var libraryID: String?
         var personIDs: [String]?
@@ -114,11 +114,11 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         }
 
         var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.isRecursive = isRecursive
-        parameters.parentID = libraryID
+        parameters.enableUserData = true
         parameters.fields = ItemFields.MinimumFields
         parameters.includeItemTypes = includeItemTypes
-        parameters.enableUserData = true
+        parameters.isRecursive = isRecursive
+        parameters.parentID = libraryID
         parameters.personIDs = personIDs
         parameters.studioIDs = studioIDs
 
@@ -135,7 +135,6 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Filters
         let filters = filterViewModel.currentFilters
-
         parameters.filters = filters.traits
         parameters.genres = filters.genres.map(\.value)
         parameters.sortBy = filters.sortBy.map(\.rawValue)

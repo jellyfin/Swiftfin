@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: transition to `Stateful`
 class ItemViewModel: ViewModel {
 
     @Published

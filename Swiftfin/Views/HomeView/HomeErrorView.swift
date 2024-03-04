@@ -10,6 +10,7 @@ import SwiftUI
 
 extension HomeView {
 
+    // TODO: make a general component that takes a generic `Error` and action
     struct ErrorView: View {
 
         @ObservedObject

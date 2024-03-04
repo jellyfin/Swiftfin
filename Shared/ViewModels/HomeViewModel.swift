@@ -12,10 +12,22 @@ import Factory
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: transition to `Stateful`
 final class HomeViewModel: ViewModel {
 
     @Published
-    var libraries: [BaseItemDto] = []
+    var libraries: [LatestInLibraryViewModel] = [] {
+        didSet {
+            for library in libraries {
+                Task {
+                    try await library.refresh()
+                }
+                .asAnyCancellable()
+                .store(in: &cancellables)
+            }
+        }
+    }
+
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
@@ -90,10 +102,9 @@ final class HomeViewModel: ViewModel {
         let excludedLibraryIDs = await getExcludedLibraries()
 
         let newLibraries = allLibraries
-            .filter { $0.collectionType == "movies" || $0.collectionType == "tvshows" }
-            .filter { library in
-                !excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
-            }
+            .intersection(["movies", "tvshows"], using: \.collectionType)
+            .subtracting(excludedLibraryIDs, using: \.id)
+            .map { LatestInLibraryViewModel(parent: $0) }
 
         await MainActor.run {
             libraries = newLibraries

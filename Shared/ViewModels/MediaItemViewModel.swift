@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
@@ -17,42 +18,50 @@ final class MediaItemViewModel: ViewModel {
 
     let item: BaseItemDto
 
+    private var randomItemTask: AnyCancellable?
+
     init(item: BaseItemDto) {
         self.item = item
         super.init()
 
         if item.collectionType == "favorites" {
-//            Task {
-//                let sources = try await getRandomItemImageSource(filters: [.isFavorite])
-//
-//                await MainActor.run {
-//                    self.imageSources = sources
-//                }
-//            }
-        } else if item.collectionType == "downloads" {
-            imageSources = []
-        } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
-            imageSources = [item.imageSource(.primary, maxWidth: 500)]
-        } else {
-            Task {
-                let sources = try await getRandomItemImageSource()
+            randomItemTask = Task { [weak self] in
+
+                guard let sources = try? await self?.getRandomItemImageSource(traits: [.isFavorite]) else { return }
+                guard let self else { return }
 
                 await MainActor.run {
                     self.imageSources = sources
                 }
             }
+            .asAnyCancellable()
+        } else if item.collectionType == "downloads" {
+            imageSources = []
+        } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
+            imageSources = [item.imageSource(.primary, maxWidth: 500)]
+        } else {
+            randomItemTask = Task { [weak self] in
+
+                guard let sources = try? await self?.getRandomItemImageSource() else { return }
+                guard let self else { return }
+
+                await MainActor.run {
+                    self.imageSources = sources
+                }
+            }
+            .asAnyCancellable()
         }
     }
 
-    private func getRandomItemImageSource(filters: [ItemTrait]? = nil) async throws -> [ImageSource] {
+    private func getRandomItemImageSource(traits: [ItemTrait]? = nil) async throws -> [ImageSource] {
         let parameters = Paths.GetItemsParameters(
             userID: userSession.user.id,
-            limit: 1,
+            limit: 3,
             isRecursive: true,
             parentID: item.id,
             includeItemTypes: [.movie, .series],
-            filters: filters,
-            sortBy: ["Random"]
+            filters: traits,
+            sortBy: [ItemSortBy.random.rawValue]
         )
         let request = Paths.getItems(parameters: parameters)
         let response = try await userSession.client.send(request)

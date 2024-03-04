@@ -12,6 +12,10 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
+    init() {
+        super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp))
+    }
+
     override func get(page: Int) async throws -> [BaseItemDto] {
 
         let parameters = parameters(for: page)
@@ -24,6 +28,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private func parameters(for page: Int) -> Paths.GetNextUpParameters {
 
         var parameters = Paths.GetNextUpParameters()
+        parameters.userID = userSession.user.id
         parameters.limit = DefaultPageSize
         parameters.startIndex = page
         parameters.fields = ItemFields.MinimumFields

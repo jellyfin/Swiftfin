@@ -40,6 +40,8 @@ extension Defaults.Keys {
         static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
         static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
         static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
+
+        // TODO: have search poster type by types of items if applicable
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum CinematicItemViewType {

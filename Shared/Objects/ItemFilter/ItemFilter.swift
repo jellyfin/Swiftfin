@@ -25,6 +25,17 @@ extension ItemFilter {
     }
 }
 
+extension ItemFilter where Self: RawRepresentable<String> {
+
+    var value: String {
+        rawValue
+    }
+
+    init(from anyFilter: AnyItemFilter) {
+        self.init(rawValue: anyFilter.value)!
+    }
+}
+
 extension Array where Element: ItemFilter {
 
     var asAnyItemFilter: [AnyItemFilter] {

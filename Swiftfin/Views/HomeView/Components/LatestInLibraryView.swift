@@ -23,7 +23,7 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemLibraryViewModel
+        var viewModel: LatestInLibraryViewModel
 
         var body: some View {
             if viewModel.items.isEmpty {
@@ -37,7 +37,7 @@ extension HomeView {
                 .trailing {
                     SeeAllButton()
                         .onSelect {
-//                            router.route(to: \.library, viewModel.libraryCoordinatorParameters)
+                            router.route(to: \.library, viewModel)
                         }
                 }
                 .onSelect { item in

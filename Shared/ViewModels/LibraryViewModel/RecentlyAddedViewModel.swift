@@ -12,6 +12,10 @@ import JellyfinAPI
 
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
+    init() {
+        super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded))
+    }
+
     override func get(page: Int) async throws -> [BaseItemDto] {
 
         let parameters = parameters(for: page)

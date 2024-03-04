@@ -39,8 +39,8 @@ extension HomeView {
                         RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                     }
 
-                    ForEach(viewModel.libraries) { library in
-                        LatestInLibraryView(viewModel: .init(parent: library, filters: .recent))
+                    ForEach(viewModel.libraries) { viewModel in
+                        LatestInLibraryView(viewModel: viewModel)
                     }
                 }
                 .padding(.bottom, 50)
@@ -48,9 +48,6 @@ extension HomeView {
             .refreshable {
                 await viewModel.refresh()
             }
-//            } onRefresh: {
-//                await viewModel.refresh()
-//            }
         }
     }
 }

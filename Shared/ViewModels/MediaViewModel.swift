@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: refactor so that we aren't depending on the `collectionType` for special local types
+// TODO: transition to `Stateful`
 final class MediaViewModel: ViewModel {
 
     // TODO: remove once collection types become an enum
@@ -23,17 +25,13 @@ final class MediaViewModel: ViewModel {
     func refresh() async {
         do {
             let newLibraries = try await getUserLibraries()
+                .prepending(
+                    .init(collectionType: "favorites", name: L10n.favorites),
+                    if: Defaults[.Customization.Library.showFavorites]
+                )
 
             await MainActor.run {
                 libraries.elements = newLibraries.map(MediaItemViewModel.init)
-//                    .prepending(
-//                        .init(item: .init(collectionType: "favorites", name: L10n.favorites)),
-//                        if: Defaults[.Customization.Library.showFavorites]
-//                    )
-//                    .prepending(
-//                        .init(item: .init(collectionType: "downloads", name: L10n.downloads)),
-//                        if: Defaults[.Experimental.downloads]
-//                    )
             }
         } catch {
             // TODO: set error once MediaView has error + retry state

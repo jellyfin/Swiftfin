@@ -23,6 +23,10 @@ extension Sequence {
     func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key>) -> [Element] {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }
+
+    func subtracting<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
+        filter { !other.contains($0[keyPath: keyPath]) }
+    }
 }
 
 extension Sequence where Element: Equatable {

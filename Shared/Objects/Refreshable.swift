@@ -8,17 +8,7 @@
 
 import Foundation
 
-extension Collection {
-
-    var asArray: [Element] {
-        Array(self)
-    }
+protocol Refreshable {
     
-    var isNotEmpty: Bool {
-        !isEmpty
-    }
-
-    subscript(safe index: Index) -> Element? {
-        indices.contains(index) ? self[index] : nil
-    }
+    func refresh() async
 }

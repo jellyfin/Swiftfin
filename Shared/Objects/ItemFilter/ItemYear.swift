@@ -16,6 +16,10 @@ struct ItemYear: Codable, ExpressibleByIntegerLiteral, Hashable, ItemFilter {
         value
     }
 
+    var intValue: Int {
+        Int(value)!
+    }
+
     init(integerLiteral value: IntegerLiteralType) {
         self.value = "\(value)"
     }

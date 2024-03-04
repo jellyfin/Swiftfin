@@ -78,34 +78,13 @@ extension MediaView {
     struct MediaItem: View {
 
         @ObservedObject
-        var viewModel: MediaItemViewModel
-
-//        @State
-//        private var imageSources: [ImageSource]
-
-//        let item: BaseItemDto
+        private var viewModel: MediaItemViewModel
 
         private var onSelect: () -> Void
 
         init(viewModel: MediaItemViewModel) {
-//            self._imageSources = .init(initialValue: [])
-//            self.item = item
             self.viewModel = viewModel
             self.onSelect = {}
-
-//            if item.collectionType == "favorites" {
-//                Task {
-//                    try await getRandomItemImageSource(with: [.isFavorite])
-//                }
-//            } else if item.collectionType == "downloads" {
-//                imageSources = []
-//            } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
-//                imageSources = [item.imageSource(.primary, maxWidth: 500)]
-//            } else {
-//                Task {
-//                    try await getRandomItemImageSource(with: nil)
-//                }
-//            }
         }
 
         var body: some View {
@@ -116,6 +95,7 @@ extension MediaView {
                     Color.clear
 
                     ImageView(viewModel.imageSources)
+                        .id(viewModel.imageSources.hashValue)
                 }
                 .overlay {
                     if Defaults[.Customization.Library.randomImage] ||

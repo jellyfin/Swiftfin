@@ -21,8 +21,8 @@ final class FilterViewModel: ViewModel {
     private let parent: (any LibraryParent)?
 
     init(
-        parent: (any LibraryParent)?,
-        currentFilters: ItemFilterCollection
+        parent: (any LibraryParent)? = nil,
+        currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
