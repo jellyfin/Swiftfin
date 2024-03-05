@@ -10,6 +10,7 @@ import SwiftUI
 
 // https://movingparts.io/variadic-views-in-swiftui
 
+// TODO: add customization for spacing, or just have 0 and have separator handle spacing
 struct SeparatorHStack: View {
 
     private var content: () -> any View

@@ -10,13 +10,12 @@ import Defaults
 import Foundation
 import UIKit
 
-// TODO: `compactList`?
-// TODO: also allow list to choose between landscape and portrait poster icons...
+// TODO: have just `grid/list`, use separate setting for poster type
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case landscapeGrid
     case portraitGrid
-    case list
+    case list // TODO: rename `PortraitList`
 
     // TODO: localize
     var displayTitle: String {

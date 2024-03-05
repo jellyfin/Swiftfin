@@ -8,6 +8,44 @@
 
 import SwiftUI
 
+struct ErrorView<_Error: Error>: View {
+
+    let error: _Error
+
+    private var onRetry: () -> Void
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color.red)
+
+            Text(error.localizedDescription)
+                .frame(minWidth: 50, maxWidth: 240)
+                .multilineTextAlignment(.center)
+
+            PrimaryButton(title: L10n.retry)
+                .onSelect(onRetry)
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+        }
+    }
+}
+
+extension ErrorView {
+
+    init(error: _Error) {
+        self.init(
+            error: error,
+            onRetry: {}
+        )
+    }
+
+    func onRetry(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onRetry, with: action)
+    }
+}
+
 extension HomeView {
 
     // TODO: make a general component that takes a generic `Error` and action

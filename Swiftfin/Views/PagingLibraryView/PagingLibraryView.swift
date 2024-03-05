@@ -73,7 +73,6 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: layout
 
-    // lists will add their own insets to manually add the dividers
     private static func padLayout(libraryViewType: LibraryViewType, listColumnCount: Int) -> CollectionVGridLayout {
         switch libraryViewType {
         case .landscapeGrid:
@@ -128,10 +127,6 @@ struct PagingLibraryView<Element: Poster>: View {
         LibraryRow(item: item)
             .onSelect {
                 onSelect(item)
-            }
-            .padding(10)
-            .overlay(alignment: .bottom) {
-                RowDivider()
             }
     }
 
@@ -191,11 +186,8 @@ struct PagingLibraryView<Element: Poster>: View {
             .ignoresSafeArea()
             .navigationTitle(viewModel.parent?.displayTitle ?? "")
             .navigationBarTitleDisplayMode(.inline)
-            .if(true) { view in
-                view.navBarDrawer {
-
-                    Text("here")
-
+//            .if(true) { view in
+//                view.navBarDrawer {
 //                    ScrollView(.horizontal, showsIndicators: false) {
 //                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
 //                            .onSelect {
@@ -204,8 +196,8 @@ struct PagingLibraryView<Element: Poster>: View {
 //                            .padding(.horizontal)
 //                            .padding(.vertical, 1)
 //                    }
-                }
-            }
+//                }
+//            }
             .onChange(of: libraryViewType) { newValue in
                 if UIDevice.isPhone {
                     layout = Self.phoneLayout(libraryViewType: newValue)

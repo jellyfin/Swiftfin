@@ -16,5 +16,7 @@ protocol LibraryParent: Displayable, Identifiable<String?> {
     // different views so this can be renamed when they do, or
     // this protocol to be removed entirely and replace just with
     // a concrete `BaseItemDto`
+    //
+    // edit: studios also implement `LibraryParent` - reconsider above comment
     var libraryType: BaseItemKind? { get }
 }

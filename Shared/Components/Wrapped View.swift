@@ -11,7 +11,7 @@ import SwiftUI
 struct WrappedView<Content: View>: View {
 
     let content: () -> Content
-    
+
     init(@ViewBuilder content: @escaping () -> Content) {
         self.content = content
     }

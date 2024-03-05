@@ -26,8 +26,18 @@ struct SearchView: View {
     private var searchQuery = ""
 
     @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.search(query: searchQuery))
+            }
+    }
+
+    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
+            Spacer()
+
             ForEach(viewModel.suggestions) { item in
                 Button {
                     searchQuery = item.displayTitle
@@ -36,6 +46,8 @@ struct SearchView: View {
                         .font(.body)
                 }
             }
+
+            Spacer()
         }
     }
 
@@ -95,8 +107,8 @@ struct SearchView: View {
         WrappedView {
             Group {
                 switch viewModel.state {
-                case .error(let jellyfinAPIError):
-                    Text(jellyfinAPIError.localizedDescription)
+                case let .error(error):
+                    errorView(with: error)
                 case .initial:
                     suggestionsView
                 case .items:
@@ -120,6 +132,10 @@ struct SearchView: View {
         .onChange(of: searchQuery) { newValue in
             viewModel.send(.search(query: newValue))
         }
-        .searchable(text: $searchQuery, placement: .navigationBarDrawer(displayMode: .always), prompt: L10n.search)
+        .searchable(
+            text: $searchQuery,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: L10n.search
+        )
     }
 }

@@ -12,13 +12,7 @@ import JellyfinAPI
 /// A basic structure conforming to `LibraryParent` that is meant to only define its `displayTitle`
 struct TitledLibraryParent: LibraryParent {
 
-    var displayTitle: String
-    var id: String?
-    var libraryType: BaseItemKind?
-
-    init(displayTitle: String) {
-        self.displayTitle = displayTitle
-        self.id = nil
-        self.libraryType = nil
-    }
+    let displayTitle: String
+    let id: String? = nil
+    let libraryType: BaseItemKind? = nil
 }

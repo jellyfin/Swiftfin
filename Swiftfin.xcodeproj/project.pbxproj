@@ -425,8 +425,6 @@
 		E1575EA2293E7B1E001665B1 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* Color.swift */; };
 		E1575EA3293E7B1E001665B1 /* UIDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3C727164B1E009D4DAF /* UIDevice.swift */; };
 		E1575EA6293E7D40001665B1 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1575EA5293E7D40001665B1 /* VideoPlayer.swift */; };
-		E1579EA42B96712D00A31CA1 /* Refreshable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1579EA32B96712D00A31CA1 /* Refreshable.swift */; };
-		E1579EA52B96712D00A31CA1 /* Refreshable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1579EA32B96712D00A31CA1 /* Refreshable.swift */; };
 		E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1581E26291EF59800D6C640 /* SplitContentView.swift */; };
 		E158C8D12A31947500C527C5 /* MediaSourceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */; };
 		E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E15D4F042B1B0C3C00442DB8 /* PreferencesView */; };
@@ -1047,7 +1045,6 @@
 		E15756332936851D00976E1F /* NativeVideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeVideoPlayerSettingsView.swift; sourceTree = "<group>"; };
 		E15756352936856700976E1F /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		E1575EA5293E7D40001665B1 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
-		E1579EA32B96712D00A31CA1 /* Refreshable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Refreshable.swift; sourceTree = "<group>"; };
 		E1581E26291EF59800D6C640 /* SplitContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitContentView.swift; sourceTree = "<group>"; };
 		E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoView.swift; sourceTree = "<group>"; };
 		E15D4F062B1B12C300442DB8 /* Backport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backport.swift; sourceTree = "<group>"; };
@@ -1516,7 +1513,6 @@
 			isa = PBXGroup;
 			children = (
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
-				E1579EA32B96712D00A31CA1 /* Refreshable.swift */,
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
 				53192D5C265AA78A008A4215 /* DeviceProfileBuilder.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
@@ -3175,7 +3171,6 @@
 				E1E6C45629B130F50064123F /* ChapterOverlay.swift in Sources */,
 				E12CC1C128D12B0A00678D5D /* BasicLibraryView.swift in Sources */,
 				E1549665296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
-				E1579EA52B96712D00A31CA1 /* Refreshable.swift in Sources */,
 				E1E9EFEB28C7EA2C00CC1F8B /* UserDto.swift in Sources */,
 				E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */,
 				E1575EA6293E7D40001665B1 /* VideoPlayer.swift in Sources */,
@@ -3568,7 +3563,6 @@
 				E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */,
 				E1DC9847296DEFF500982F06 /* FavoriteIndicator.swift in Sources */,
 				E1E306CD28EF6E8000537998 /* TimerProxy.swift in Sources */,
-				E1579EA42B96712D00A31CA1 /* Refreshable.swift in Sources */,
 				BD0BA22E2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */,
 				E18CE0B228A229E70092E7F1 /* UserDto.swift in Sources */,
 				E18E01F0288747230022598C /* AttributeHStack.swift in Sources */,

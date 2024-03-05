@@ -6,10 +6,12 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 // TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
+// TODO: different text sized based on poster type
 
 extension PagingLibraryView {
 
@@ -41,8 +43,6 @@ extension PagingLibraryView {
         private func personAccessoryView(person: BaseItemPerson) -> some View {
             if let subtitle = person.subtitle {
                 Text(subtitle)
-                    .font(.caption)
-                    .foregroundColor(Color(UIColor.lightGray))
             }
         }
 
@@ -64,33 +64,46 @@ extension PagingLibraryView {
             Button {
                 onSelect()
             } label: {
-                HStack(alignment: .center) {
+                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
                     ZStack {
                         Color.clear
 
-                        ImageView(item.portraitPosterImageSource(maxWidth: 60))
+//                        switch listPosterType {
+//                        case .landscape:
+                        ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
+//                        case .portrait:
+//                            ImageView(item.portraitPosterImageSource(maxWidth: 60))
+//                        }
                     }
-                    .frame(width: 60, height: 90)
-                    .posterStyle(.portrait)
+                    .posterStyle(.landscape)
+                    .frame(width: 110)
+//                    .frame(width: listPosterType == .landscape ? 110 : 60)
                     .posterShadow()
+                    .padding(.vertical, 10)
 
-                    VStack(alignment: .leading) {
-                        Text(item.displayTitle)
-                            .foregroundColor(.primary)
-                            .fontWeight(.semibold)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(item.displayTitle)
+                                .font(.subheadline)
+                                .fontWeight(.regular)
+                                .foregroundColor(.primary)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
 
-                        accessoryView
-                            .font(.caption)
-                            .foregroundColor(Color(UIColor.lightGray))
+                            accessoryView
+                                .font(.caption)
+                                .foregroundColor(Color(UIColor.lightGray))
+                        }
+
+                        Spacer()
                     }
-                    .padding(.vertical)
-
-                    Spacer()
+                    .frame(maxHeight: .infinity)
+                    .overlay(alignment: .bottom) {
+                        RowDivider()
+                    }
                 }
             }
+            .edgePadding(.horizontal)
         }
     }
 }

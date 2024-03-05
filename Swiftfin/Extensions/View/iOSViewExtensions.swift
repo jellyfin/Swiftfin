@@ -25,31 +25,26 @@ extension View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
 
-    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+    // TODO: move to `Shared`
+    func onNotification(_ name: NSNotification.Name, perform action: @escaping () -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
-                notification: UIApplication.didEnterBackgroundNotification,
+                notification: name,
                 onReceive: action
             )
         )
+    }
+
+    func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
+        onNotification(UIApplication.didEnterBackgroundNotification, perform: action)
     }
 
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                notification: UIApplication.willResignActiveNotification,
-                onReceive: action
-            )
-        )
+        onNotification(UIApplication.willResignActiveNotification, perform: action)
     }
 
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                notification: UIApplication.willTerminateNotification,
-                onReceive: action
-            )
-        )
+        onNotification(UIApplication.willTerminateNotification, perform: action)
     }
 
     // TODO: rename `navigationBarCloseButton`

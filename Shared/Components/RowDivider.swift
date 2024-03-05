@@ -8,12 +8,10 @@
 
 import SwiftUI
 
-// TODO: rename!
 struct RowDivider: View {
 
     var body: some View {
         Color.secondarySystemFill
             .frame(height: 1)
-            .padding(.horizontal)
     }
 }

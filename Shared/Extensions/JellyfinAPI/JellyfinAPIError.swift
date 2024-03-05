@@ -9,7 +9,7 @@
 import Foundation
 
 // TODO: remove and have each occurrence replaced with local errors
-struct JellyfinAPIError: Error, Equatable {
+struct JellyfinAPIError: LocalizedError, Equatable {
 
     private let message: String
 
@@ -17,7 +17,7 @@ struct JellyfinAPIError: Error, Equatable {
         self.message = message
     }
 
-    var localizedDescription: String {
+    var errorDescription: String? {
         message
     }
 }

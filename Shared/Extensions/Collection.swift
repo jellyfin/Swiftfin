@@ -13,7 +13,7 @@ extension Collection {
     var asArray: [Element] {
         Array(self)
     }
-    
+
     var isNotEmpty: Bool {
         !isEmpty
     }
