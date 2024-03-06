@@ -130,22 +130,12 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    // MARK: innerBody
-
     @ViewBuilder
-    private var innerBody: some View {
-        switch viewModel.state {
-        case let .error(jellyfinAPIError):
-            Text(jellyfinAPIError.localizedDescription)
-        case .refreshing:
-            loadingView
-        case .gettingNextPage, .gettingRandomItem, .items:
-            if viewModel.items.isEmpty {
-                noResultsView
-            } else {
-                libraryItemsView
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
             }
-        }
     }
 
     private var libraryItemsView: some View {
@@ -165,27 +155,38 @@ struct PagingLibraryView<Element: Poster>: View {
         .onReachedBottomEdge(offset: 100) {
             viewModel.send(.getNextPage)
         }
-        .refreshable {
-            print("pulled to refresh")
-            viewModel.send(.refresh)
-        }
-    }
-
-    private var loadingView: some View {
-        ProgressView()
-    }
-
-    private var noResultsView: some View {
-        L10n.noResults.text
+        // TODO: Freezes the app for some reason. Other attempts at wrapping
+        //       in MainActor explicitly or DispatchQueue.main.asyncAfter
+        //       result in other issues. However, the user can just exit and
+        //       re-enter the library so refreshability is just a nice-to-have
+//        .refreshable {
+//            viewModel.send(.refresh)
+//        }
     }
 
     // MARK: body
 
     var body: some View {
-        innerBody
-            .ignoresSafeArea()
-            .navigationTitle(viewModel.parent?.displayTitle ?? "")
-            .navigationBarTitleDisplayMode(.inline)
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case let .error(error):
+                    errorView(with: error)
+                case .refreshing:
+                    ProgressView()
+                case .gettingNextPage, .items:
+                    if viewModel.items.isEmpty {
+                        L10n.noResults.text
+                    } else {
+                        libraryItemsView
+                    }
+                }
+            }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
+        }
+        .ignoresSafeArea()
+        .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .navigationBarTitleDisplayMode(.inline)
 //            .if(true) { view in
 //                view.navBarDrawer {
 //                    ScrollView(.horizontal, showsIndicators: false) {
@@ -198,23 +199,23 @@ struct PagingLibraryView<Element: Poster>: View {
 //                    }
 //                }
 //            }
-            .onChange(of: libraryViewType) { newValue in
-                if UIDevice.isPhone {
-                    layout = Self.phoneLayout(libraryViewType: newValue)
-                } else {
-                    layout = Self.padLayout(libraryViewType: newValue, listColumnCount: listColumnCount)
-                }
+        .onChange(of: libraryViewType) { newValue in
+            if UIDevice.isPhone {
+                layout = Self.phoneLayout(libraryViewType: newValue)
+            } else {
+                layout = Self.padLayout(libraryViewType: newValue, listColumnCount: listColumnCount)
             }
-            .onChange(of: listColumnCount) { newValue in
-                if UIDevice.isPhone {
-                    layout = Self.phoneLayout(libraryViewType: libraryViewType)
-                } else {
-                    layout = Self.padLayout(libraryViewType: libraryViewType, listColumnCount: newValue)
-                }
+        }
+        .onChange(of: listColumnCount) { newValue in
+            if UIDevice.isPhone {
+                layout = Self.phoneLayout(libraryViewType: libraryViewType)
+            } else {
+                layout = Self.padLayout(libraryViewType: libraryViewType, listColumnCount: newValue)
             }
-            .onChange(of: viewModel.randomItem) { item in
-                guard let item else { return }
-
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .gotRandomItem(item):
                 switch item {
                 case let item as BaseItemDto:
                     router.route(to: \.item, item)
@@ -225,22 +226,23 @@ struct PagingLibraryView<Element: Poster>: View {
                     fatalError("Used an unexpected type within a `PagingLibaryView`?")
                 }
             }
-            .onFirstAppear {
-                viewModel.send(.refresh)
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .topBarTrailing {
+
+            if viewModel.state == .gettingNextPage {
+                ProgressView()
             }
-            .topBarTrailing {
 
-                if viewModel.state == .gettingNextPage || viewModel.state == .gettingRandomItem {
-                    ProgressView()
-                }
+            Menu {
+                LibraryViewTypeToggle(libraryViewType: $libraryViewType, listColumnCount: $listColumnCount)
 
-                Menu {
-                    LibraryViewTypeToggle(libraryViewType: $libraryViewType, listColumnCount: $listColumnCount)
-
-                    RandomItemButton(viewModel: viewModel)
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                }
+                RandomItemButton(viewModel: viewModel)
+            } label: {
+                Image(systemName: "ellipsis.circle")
             }
+        }
     }
 }

@@ -13,6 +13,7 @@ import JellyfinAPI
 import OrderedCollections
 
 // TODO: refactor so that we aren't depending on the `collectionType` for special local types
+//       - have an enum `MediaViewType` on the item view models?
 // TODO: transition to `Stateful`
 final class MediaViewModel: ViewModel {
 

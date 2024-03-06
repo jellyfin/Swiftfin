@@ -47,7 +47,7 @@ final class SearchViewModel: ViewModel, Stateful {
     var state: State = .initial
 
     private var searchTask: AnyCancellable?
-    private var searchQuery: PassthroughSubject<String, Never> = .init()
+    private var searchQuery: CurrentValueSubject<String, Never> = .init("")
 
     let filterViewModel: FilterViewModel
 
@@ -66,19 +66,25 @@ final class SearchViewModel: ViewModel, Stateful {
         searchQuery
             .debounce(for: 0.5, scheduler: RunLoop.main)
             .sink { [weak self] query in
-                guard let self else { return }
+                guard let self, query.isNotEmpty else { return }
 
                 self.searchTask?.cancel()
                 self.search(query: query)
             }
             .store(in: &cancellables)
 
-//        filterViewModel.$currentFilters
-//            .sink { newFilters in
-//                guard self.searchTextSubject.value.isNotEmpty else { return }
-//                self._search(with: self.searchTextSubject.value, filters: newFilters)
-//            }
-//            .store(in: &cancellables)
+        filterViewModel.$currentFilters
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .filter { _ in self.searchQuery.value.isNotEmpty }
+            .sink { [weak self] _ in
+                guard let self else { return }
+
+                guard searchQuery.value.isNotEmpty else { return }
+
+                self.searchTask?.cancel()
+                self.search(query: searchQuery.value)
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: respond
@@ -91,12 +97,19 @@ final class SearchViewModel: ViewModel, Stateful {
             if query.isEmpty {
                 searchTask?.cancel()
                 searchTask = nil
+                searchQuery.send(query)
                 return .initial
             } else {
                 searchQuery.send(query)
                 return .searching
             }
         case .getSuggestions:
+            Task {
+                await filterViewModel.setQueryFilters()
+            }
+            .asAnyCancellable()
+            .store(in: &cancellables)
+
             Task {
                 let suggestions = try await getSuggestions()
 
@@ -116,7 +129,7 @@ final class SearchViewModel: ViewModel, Stateful {
 
             do {
 
-                try await Task.sleep(nanoseconds: 3_000_000_000)
+//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 let items = try await withThrowingTaskGroup(
                     of: (BaseItemKind, [BaseItemDto]).self,
@@ -166,7 +179,9 @@ final class SearchViewModel: ViewModel, Stateful {
                 }
             } catch {
 
-                guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { print("search was cancelled")
+                    return
+                }
 
                 await MainActor.run {
                     self.send(.error(.init(error.localizedDescription)))

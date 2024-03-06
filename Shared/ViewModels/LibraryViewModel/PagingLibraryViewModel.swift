@@ -13,11 +13,13 @@ import JellyfinAPI
 import OrderedCollections
 import UIKit
 
-// TODO: frankly this is just generic because we also view `BaseItemPerson` types and
-//       I don't want additional views for it. Is there a way we can transform a
+// TODO: frankly this is just generic because we also view `BaseItemPerson` elements
+//       and I don't want additional views for it. Is there a way we can transform a
 //       `BaseItemPerson` into a `BaseItemDto` and just use the concrete type?
 
-class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Stateful {
+// TODO: how to indicate that this is performing some kind of background action (ie: RandomItem)
+//       *without* being in an explicit state?
+class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventful, Stateful {
 
     // MARK: Action
 
@@ -29,29 +31,48 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
         case getRandomItem
     }
 
+    enum Event: Equatable {
+        case gotRandomItem(Element)
+    }
+
     // MARK: State
 
     enum State: Equatable {
         case error(LibraryError)
         case gettingNextPage
-        case gettingRandomItem
         case items
         case refreshing
     }
 
-    enum LibraryError: Error {
+    // TODO: flesh out - wrap Get HTTP and NSURL errors either here
+    //       or in a general implementation
+    enum LibraryError: LocalizedError {
         case unableToGetPage
         case unableToGetRandomItem
+
+        var errorDescription: String? {
+            switch self {
+            case .unableToGetPage:
+                "Unable to get page"
+            case .unableToGetRandomItem:
+                "Unable to get random item"
+            }
+        }
+    }
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     @Published
     final var state: State = .refreshing
 
     private var currentPage = 0
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
     private var hasNextPage = true
     private var isStatic: Bool
-
-    private(set) var randomItem: Element?
 
     // tasks
 
@@ -150,31 +171,22 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Statef
 
             return .gettingNextPage
         case .getRandomItem:
-            // TODO: we need a different way to get a random item as requested from the view
 
             randomItemTask = Task { [weak self] in
                 do {
-                    let randomItem = try await self?.getRandomItem()
+                    guard let randomItem = try await self?.getRandomItem() else { return }
 
                     guard !Task.isCancelled else { return }
 
-                    await MainActor.run {
-                        self?.state = .items
-                        // TODO: potential problem where old item == new item, meaning it won't
-                        //       trigger `onChange`s in Views. Find other solution.
-                        self?.randomItem = randomItem
-                    }
+                    self?.eventSubject.send(.gotRandomItem(randomItem))
                 } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        self?.state = .error(.unableToGetRandomItem)
-                    }
+                    // TODO: when a general toasting mechanism is implemented, add
+                    //       background errors for errors from other background tasks
                 }
             }
             .asAnyCancellable()
 
-            return .gettingRandomItem
+            return state
         }
     }
 

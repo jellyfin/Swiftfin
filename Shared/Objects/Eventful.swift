@@ -6,21 +6,12 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
-import JellyfinAPI
 
-// TODO: remove
-struct ErrorMessage: Hashable, Identifiable {
+protocol Eventful {
 
-    let code: Int?
-    let message: String
+    associatedtype Event
 
-    var id: Int {
-        hashValue
-    }
-
-    init(message: String, code: Int? = nil) {
-        self.code = code
-        self.message = message
-    }
+    var events: AnyPublisher<Event, Never> { get }
 }

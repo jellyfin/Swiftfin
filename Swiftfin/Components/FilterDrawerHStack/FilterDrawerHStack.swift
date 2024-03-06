@@ -33,10 +33,14 @@ struct FilterDrawerHStack: View {
             }
 
             ForEach(filterTypes, id: \.self) { type in
-                FilterDrawerButton(title: type.displayTitle, activated: false)
-                    .onSelect {
-                        onSelect(.init(type: type, viewModel: viewModel))
-                    }
+                FilterDrawerButton(
+                    title: type.displayTitle,
+                    activated: viewModel.currentFilters[keyPath: type.collectionKeyPath] != ItemFilterCollection
+                        .default[keyPath: type.collectionKeyPath]
+                )
+                .onSelect {
+                    onSelect(.init(type: type, viewModel: viewModel))
+                }
             }
         }
     }

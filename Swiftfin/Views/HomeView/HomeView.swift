@@ -20,7 +20,7 @@ struct HomeView: View {
     var body: some View {
         ZStack {
             if let error = viewModel.error {
-                ErrorView(viewModel: viewModel, errorMessage: error)
+                ErrorView(error: JellyfinAPIError(error.message))
             }
 
             if viewModel.isLoading {

@@ -129,6 +129,16 @@ struct SearchView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
+        .navBarDrawer {
+            ScrollView(.horizontal, showsIndicators: false) {
+                FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
+                    .onSelect {
+                        router.route(to: \.filter, $0)
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 1)
+            }
+        }
         .onChange(of: searchQuery) { newValue in
             viewModel.send(.search(query: newValue))
         }

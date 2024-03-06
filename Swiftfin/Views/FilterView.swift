@@ -96,7 +96,7 @@ extension FilterView {
     }
 }
 
-private extension ItemFilterType {
+extension ItemFilterType {
 
     var collectionKeyPath: KeyPath<ItemFilterCollection, [AnyItemFilter]> {
         switch self {

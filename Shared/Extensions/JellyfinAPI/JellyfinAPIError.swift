@@ -8,7 +8,12 @@
 
 import Foundation
 
-// TODO: remove and have each occurrence replaced with local errors
+// TODO: rename to `ErrorMessage` and remove other implementation
+
+/// A basic error that holds a message, useful for debugging.
+///
+/// - Important: Only really use for debugging. For practical errors,
+///              statically define errors for each domain/context.
 struct JellyfinAPIError: LocalizedError, Equatable {
 
     private let message: String
