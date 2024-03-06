@@ -44,7 +44,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
         case refreshing
     }
 
-    // TODO: flesh out - wrap Get HTTP and NSURL errors either here
+    // TODO: wrap Get HTTP and NSURL errors either here
     //       or in a general implementation
     enum LibraryError: LocalizedError {
         case unableToGetPage

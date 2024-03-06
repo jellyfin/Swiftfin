@@ -83,7 +83,7 @@ struct VideoPlayerSettingsView: View {
                     step: 1
                 )
                 .valueFormatter {
-                    $0.secondFormat
+                    $0.secondLabel
                 }
             } footer: {
                 Text(L10n.resumeOffsetDescription)

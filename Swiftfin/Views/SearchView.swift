@@ -19,11 +19,11 @@ struct SearchView: View {
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
-    @ObservedObject
-    var viewModel: SearchViewModel
-
     @State
     private var searchQuery = ""
+
+    @StateObject
+    private var viewModel = SearchViewModel()
 
     @ViewBuilder
     private func errorView(with error: some Error) -> some View {
@@ -75,6 +75,7 @@ struct SearchView: View {
                     itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
             }
+            .edgePadding(.vertical)
         }
     }
 
@@ -129,7 +130,8 @@ struct SearchView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
-        .navBarDrawer {
+        .navigationBarDrawer {
+            // TODO: breakout into `navigationBarFilterDrawer(...)`
             ScrollView(.horizontal, showsIndicators: false) {
                 FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
                     .onSelect {

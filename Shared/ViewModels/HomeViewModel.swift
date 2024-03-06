@@ -12,132 +12,129 @@ import Factory
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: transition to `Stateful`
-final class HomeViewModel: ViewModel {
+final class HomeViewModel: ViewModel, Stateful {
 
-    @Published
-    var libraries: [LatestInLibraryViewModel] = [] {
-        didSet {
-            for library in libraries {
-                Task {
-                    try await library.refresh()
-                }
-                .asAnyCancellable()
-                .store(in: &cancellables)
-            }
-        }
+    // MARK: Action
+
+    enum Action {
+        case error(JellyfinAPIError)
+        case refresh
     }
 
+    // MARK: State
+
+    enum State: Equatable {
+        case content
+        case error(JellyfinAPIError)
+        case initial
+        case refreshing
+    }
+
+    @Published
+    var libraries: [LatestInLibraryViewModel] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
-    var nextUpViewModel: NextUpLibraryViewModel = .init()
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    @Published
+    var state: State = .initial
 
-    override init() {
-        super.init()
+    private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
+    private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
-        Task {
-            await refresh()
-        }
-    }
+    private var refreshTask: AnyCancellable?
 
-    @objc
-    func refresh() async {
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
+            cancellables.removeAll()
 
-        logger.debug("Refreshing home screen")
+            Task {
+                do {
 
-        await MainActor.run {
-            isLoading = true
-            libraries = []
-            resumeItems = []
-        }
+                    if Bool.random() {
+                        throw JellyfinAPIError("Don't choke on your aspirations")
+                    }
 
-        refreshResumeItems()
+                    try await self.refresh()
 
-        Task {
-            try await nextUpViewModel.refresh()
-        }
-        .asAnyCancellable()
-        .store(in: &cancellables)
+                    guard !Task.isCancelled else { return }
 
-        Task {
-            try await recentlyAddedViewModel.refresh()
-        }
-        .asAnyCancellable()
-        .store(in: &cancellables)
+                    await MainActor.run {
+                        self.state = .content
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
 
-        do {
-            try await refreshLibrariesLatest()
-        } catch {
-            await MainActor.run {
-                libraries = []
-                isLoading = false
-                self.error = .init(message: error.localizedDescription)
+                    await MainActor.run {
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
             }
+            .store(in: &cancellables)
 
-            return
-        }
-
-        await MainActor.run {
-            self.error = nil
-            isLoading = false
+            return .refreshing
         }
     }
 
-    // MARK: Libraries Latest Items
+    private func refresh() async throws {
 
-    private func refreshLibrariesLatest() async throws {
+        Task {
+            await nextUpViewModel.send(.refresh)
+        }
+
+        Task {
+            await recentlyAddedViewModel.send(.refresh)
+        }
+
+        let resumeItems = try await getResumeItems()
+        let libraries = try await getLibraries()
+
+        // should probably in a task group, but fast enough
+        for library in libraries {
+            await library.send(.refresh)
+        }
+
+        await MainActor.run {
+            self.resumeItems.append(contentsOf: resumeItems)
+            self.libraries = libraries
+        }
+    }
+
+    private func getResumeItems() async throws -> [BaseItemDto] {
+        var parameters = Paths.GetResumeItemsParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.MinimumFields
+        parameters.includeItemTypes = [.movie, .episode]
+        parameters.limit = 20
+
+        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func getLibraries() async throws -> [LatestInLibraryViewModel] {
+
         let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        let response = try await userSession.client.send(userViewsPath)
+        async let userViews = userSession.client.send(userViewsPath)
 
-        guard let allLibraries = response.value.items else {
-            await MainActor.run {
-                libraries = []
-            }
+        async let excludedLibraryIDs = getExcludedLibraries()
 
-            return
-        }
-
-        let excludedLibraryIDs = await getExcludedLibraries()
-
-        let newLibraries = allLibraries
+        return try await (userViews.value.items ?? [])
             .intersection(["movies", "tvshows"], using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
-
-        await MainActor.run {
-            libraries = newLibraries
-        }
     }
 
-    private func getExcludedLibraries() async -> [String] {
+    // TODO: eventually a more robust user/server information retrieval system
+    //       will be in place. Replace with using the data from the remove user
+    private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try? await userSession.client.send(currentUserPath)
+        let response = try await userSession.client.send(currentUserPath)
 
-        return response?.value.configuration?.latestItemsExcludes ?? []
-    }
-
-    // MARK: Resume Items
-
-    private func refreshResumeItems() {
-        Task {
-            let resumeParameters = Paths.GetResumeItemsParameters(
-                limit: 20,
-                fields: ItemFields.MinimumFields,
-                enableUserData: true,
-                includeItemTypes: [.movie, .episode]
-            )
-
-            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                resumeItems = OrderedSet(items)
-            }
-        }
+        return response.value.configuration?.latestItemsExcludes ?? []
     }
 
     func markItemUnplayed(_ item: BaseItemDto) {
@@ -150,7 +147,7 @@ final class HomeViewModel: ViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            refreshResumeItems()
+//            refreshResumeItems()
 
             try await nextUpViewModel.refresh()
             try await recentlyAddedViewModel.refresh()
@@ -167,7 +164,7 @@ final class HomeViewModel: ViewModel {
             )
             let _ = try await userSession.client.send(request)
 
-            refreshResumeItems()
+//            refreshResumeItems()
             try await nextUpViewModel.refresh()
             try await recentlyAddedViewModel.refresh()
         }

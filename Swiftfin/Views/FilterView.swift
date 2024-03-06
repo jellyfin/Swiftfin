@@ -32,7 +32,7 @@ struct FilterView: View {
         )
         .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
         .topBarTrailing {

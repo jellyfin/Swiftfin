@@ -10,7 +10,7 @@ import SwiftUI
 
 /// A `View` that automatically generates a SwiftUI `Picker` if `Element` conforms to `CaseIterable`.
 ///
-/// If `Element` is optional, an additional `none` value is added to select `nil` and can be customized
+/// If `Element` is optional, an additional `none` value is added to select `nil` that can be customized
 /// by `.noneStyle()`.
 struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View {
 

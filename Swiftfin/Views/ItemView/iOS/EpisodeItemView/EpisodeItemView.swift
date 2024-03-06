@@ -25,7 +25,7 @@ struct EpisodeItemView: View {
             ContentView(viewModel: viewModel)
         }
         .scrollViewOffset($scrollViewOffset)
-        .navBarOffset(
+        .navigationBarOffset(
             $scrollViewOffset,
             start: 0,
             end: 30

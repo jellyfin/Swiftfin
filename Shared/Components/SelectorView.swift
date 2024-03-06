@@ -43,7 +43,7 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
-                            .accentSymbolRendering()
+                            .paletteOverlayRendering()
                     }
                 }
             }

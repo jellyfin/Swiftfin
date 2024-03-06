@@ -88,7 +88,7 @@ struct BasicAppSettingsView: View {
         }
         .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

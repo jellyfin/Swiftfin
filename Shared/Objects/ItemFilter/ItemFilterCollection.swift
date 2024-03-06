@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
 import Foundation
 import JellyfinAPI

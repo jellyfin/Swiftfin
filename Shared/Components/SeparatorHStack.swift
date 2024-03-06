@@ -11,22 +11,21 @@ import SwiftUI
 // https://movingparts.io/variadic-views-in-swiftui
 
 // TODO: add customization for spacing, or just have 0 and have separator handle spacing
-struct SeparatorHStack: View {
+struct SeparatorHStack<Content: View>: View {
 
-    private var content: () -> any View
+    private var content: () -> Content
     private var separator: () -> any View
 
     var body: some View {
         _VariadicView.Tree(SeparatorHStackLayout(separator: separator)) {
             content()
-                .eraseToAnyView()
         }
     }
 }
 
 extension SeparatorHStack {
 
-    init(@ViewBuilder _ content: @escaping () -> any View) {
+    init(@ViewBuilder _ content: @escaping () -> Content) {
         self.init(
             content: content,
             separator: { RowDivider() }

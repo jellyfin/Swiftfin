@@ -51,7 +51,7 @@ struct PlaybackSettingsView: View {
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
             BasicStepper(
@@ -61,7 +61,7 @@ struct PlaybackSettingsView: View {
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
             if viewModel.videoStreams.isNotEmpty {
@@ -99,7 +99,7 @@ struct PlaybackSettingsView: View {
         }
         .navigationTitle(L10n.playback)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             splitContentViewProxy.hide()
         }
     }

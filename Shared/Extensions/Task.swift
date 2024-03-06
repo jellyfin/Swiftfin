@@ -15,4 +15,8 @@ extension Task {
     func asAnyCancellable() -> AnyCancellable {
         AnyCancellable(cancel)
     }
+
+    func store(in set: inout Set<AnyCancellable>) {
+        set.insert(asAnyCancellable())
+    }
 }

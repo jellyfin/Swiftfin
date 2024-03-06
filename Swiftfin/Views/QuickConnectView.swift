@@ -47,7 +47,7 @@ struct QuickConnectView: View {
         .onDisappear {
             viewModel.stopQuickConnectAuthCheck()
         }
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

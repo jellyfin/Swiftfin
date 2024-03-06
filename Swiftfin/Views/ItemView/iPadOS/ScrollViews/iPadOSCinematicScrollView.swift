@@ -80,7 +80,7 @@ extension ItemView {
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.65,
                 end: UIScreen.main.bounds.height * 0.65 + 50

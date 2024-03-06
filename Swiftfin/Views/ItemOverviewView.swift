@@ -23,7 +23,7 @@ struct ItemOverviewView: View {
         }
         .navigationTitle(L10n.overview)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

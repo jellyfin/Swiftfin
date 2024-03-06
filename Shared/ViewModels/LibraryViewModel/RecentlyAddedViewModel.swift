@@ -28,14 +28,14 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private func parameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
 
         var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.limit = DefaultPageSize
-        parameters.startIndex = page
-        parameters.isRecursive = true
-        parameters.sortOrder = [.descending]
+        parameters.enableUserData = true
         parameters.fields = ItemFields.MinimumFields
         parameters.includeItemTypes = [.movie, .series]
+        parameters.isRecursive = true
+        parameters.limit = DefaultPageSize
         parameters.sortBy = [ItemSortBy.dateAdded.rawValue]
-        parameters.enableUserData = true
+        parameters.sortOrder = [.descending]
+        parameters.startIndex = page
 
         return parameters
     }

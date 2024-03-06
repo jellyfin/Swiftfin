@@ -60,7 +60,7 @@ struct MediaSourceInfoView: View {
         }
         .navigationTitle(source.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

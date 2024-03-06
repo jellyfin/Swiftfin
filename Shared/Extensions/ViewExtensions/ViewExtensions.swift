@@ -195,11 +195,13 @@ extension View {
         }
     }
 
-    // TODO: change to accepting an optional color, where if nil uses the environment
-    //       accent color instead
-    func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
-        symbolRenderingMode(.palette)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
+    /// Applies the `.palette` symbol rendering mode and a foreground style
+    /// where the primary style is the passed `Color`'s `overlayColor` and the
+    /// secondary style is the passed `Color`.
+    ///
+    /// If `color == nil`, then `accentColor` from the environment is used.
+    func paletteOverlayRendering(color: Color? = nil) -> some View {
+        modifier(PaletteOverlayRenderingModifier(color: color))
     }
 
     @ViewBuilder
@@ -265,5 +267,14 @@ extension View {
                 content()
             }
         }
+    }
+
+    func onNotification(_ name: NSNotification.Name, perform action: @escaping () -> Void) -> some View {
+        modifier(
+            OnReceiveNotificationModifier(
+                notification: name,
+                onReceive: action
+            )
+        )
     }
 }

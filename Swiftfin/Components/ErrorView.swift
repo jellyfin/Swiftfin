@@ -10,8 +10,7 @@ import SwiftUI
 
 struct ErrorView<_Error: Error>: View {
 
-    let error: _Error
-
+    private let error: _Error
     private var onRetry: () -> Void
 
     var body: some View {

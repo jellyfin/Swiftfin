@@ -419,7 +419,7 @@ extension VideoPlayer {
             toNearest: 100
         )
 
-        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondLabel)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
 
@@ -543,7 +543,7 @@ extension VideoPlayer {
         )
         let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
 
-        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondLabel)
 
         subtitleOffset = clampedOffset
     }

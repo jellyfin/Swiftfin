@@ -9,8 +9,7 @@
 import Foundation
 import SwiftUI
 
-// TODO: I think I like strong typing instead of using a primitive type.
-//       Remove this and strongly type occurrences.
+// TODO: Remove this and strongly type instances if it makes sense.
 extension String: Displayable {
 
     var displayTitle: String {
@@ -69,7 +68,6 @@ extension String {
         return padding + self
     }
 
-    // TODO: Should remove and instead create an init on Text that takes an L10n instance
     var text: Text {
         Text(self)
     }

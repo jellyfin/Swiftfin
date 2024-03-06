@@ -107,7 +107,6 @@ final class SearchViewModel: ViewModel, Stateful {
             Task {
                 await filterViewModel.setQueryFilters()
             }
-            .asAnyCancellable()
             .store(in: &cancellables)
 
             Task {
@@ -117,7 +116,6 @@ final class SearchViewModel: ViewModel, Stateful {
                     self.suggestions = suggestions
                 }
             }
-            .asAnyCancellable()
             .store(in: &cancellables)
 
             return state
@@ -129,6 +127,7 @@ final class SearchViewModel: ViewModel, Stateful {
 
             do {
 
+                // TODO: remove debug
 //                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 let items = try await withThrowingTaskGroup(

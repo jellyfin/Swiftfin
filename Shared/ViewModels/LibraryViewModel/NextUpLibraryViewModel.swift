@@ -28,11 +28,11 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private func parameters(for page: Int) -> Paths.GetNextUpParameters {
 
         var parameters = Paths.GetNextUpParameters()
-        parameters.userID = userSession.user.id
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.MinimumFields
         parameters.limit = DefaultPageSize
         parameters.startIndex = page
-        parameters.fields = ItemFields.MinimumFields
-        parameters.enableUserData = true
+        parameters.userID = userSession.user.id
 
         return parameters
     }
