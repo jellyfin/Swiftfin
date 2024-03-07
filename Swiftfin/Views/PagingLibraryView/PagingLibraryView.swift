@@ -154,13 +154,6 @@ struct PagingLibraryView<Element: Poster>: View {
         .onReachedBottomEdge(offset: 100) {
             viewModel.send(.getNextPage)
         }
-        // TODO: Freezes the app for some reason. Other attempts at wrapping
-        //       in MainActor explicitly or DispatchQueue.main.asyncAfter
-        //       result in other issues. However, the user can just exit and
-        //       re-enter the library so refreshability is just a nice-to-have
-//        .refreshable {
-//            viewModel.send(.refresh)
-//        }
     }
 
     // MARK: body
@@ -181,7 +174,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     }
                 }
             }
-            // TODO: this causes the navigation bar to not refresh on .items, find fix
+            // TODO: this causes the navigation bar to not refresh on .content, find fix
 //            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .ignoresSafeArea()

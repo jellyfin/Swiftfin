@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: should use environment refresh instead?
 struct ErrorView<_Error: Error>: View {
 
     private let error: _Error

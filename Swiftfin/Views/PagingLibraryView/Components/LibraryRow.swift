@@ -13,11 +13,13 @@ import SwiftUI
 // TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
 // TODO: different text sized based on poster type
 // TODO: for landscape, have thumbs come first
-// TODO: implement so that the separator isn't influenced by tap effect
 
 extension PagingLibraryView {
 
     struct LibraryRow: View {
+
+        @State
+        private var contentWidth: CGFloat = 0
 
         private let item: Element
         private var onSelect: () -> Void
@@ -63,48 +65,52 @@ extension PagingLibraryView {
         // MARK: body
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
-                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
-                    ZStack {
-                        Color.clear
+            ZStack(alignment: .bottomTrailing) {
+                Button {
+                    onSelect()
+                } label: {
+                    HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
+                        ZStack {
+                            Color.clear
 
-//                        switch listPosterType {
-//                        case .landscape:
-                        ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
-//                        case .portrait:
-//                            ImageView(item.portraitPosterImageSource(maxWidth: 60))
-//                        }
-                    }
-                    .posterStyle(.landscape)
-                    .frame(width: 110)
-//                    .frame(width: listPosterType == .landscape ? 110 : 60)
-                    .posterShadow()
-                    .padding(.vertical, 10)
-
-                    HStack {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(item.displayTitle)
-                                .font(.subheadline)
-                                .fontWeight(.regular)
-                                .foregroundColor(.primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-
-                            accessoryView
-                                .font(.caption)
-                                .foregroundColor(Color(UIColor.lightGray))
+                            //                        switch listPosterType {
+                            //                        case .landscape:
+                            ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
+                            //                        case .portrait:
+                            //                            ImageView(item.portraitPosterImageSource(maxWidth: 60))
+                            //                        }
                         }
+                        .posterStyle(.landscape)
+                        .frame(width: 110)
+                        //                    .frame(width: listPosterType == .landscape ? 110 : 60)
+                        .posterShadow()
+                        .padding(.vertical, 10)
 
-                        Spacer()
-                    }
-                    .frame(maxHeight: .infinity)
-                    .overlay(alignment: .bottom) {
-                        Color.secondarySystemFill
-                            .frame(height: 1)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(item.displayTitle)
+                                    .font(.subheadline)
+                                    .fontWeight(.regular)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+
+                                accessoryView
+                                    .font(.caption)
+                                    .foregroundColor(Color(UIColor.lightGray))
+                            }
+
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity)
+                        .onSizeChanged { newSize in
+                            contentWidth = newSize.width
+                        }
                     }
                 }
+
+                Color.secondarySystemFill
+                    .frame(width: contentWidth, height: 1)
             }
             .edgePadding(.horizontal)
         }

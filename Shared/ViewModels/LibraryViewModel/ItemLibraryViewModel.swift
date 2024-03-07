@@ -25,7 +25,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     init(
         title: String,
-        filters: ItemFilterCollection = .init()
+        filters: ItemFilterCollection = .default
     ) {
         self.filterViewModel = .init(currentFilters: filters)
         self.saveFilters = false
@@ -34,7 +34,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     init(
         parent: (any LibraryParent)? = nil,
-        filters: ItemFilterCollection = .init(),
+        filters: ItemFilterCollection = .default,
         saveFilters: Bool = false
     ) {
         self.filterViewModel = .init(parent: parent, currentFilters: filters)
