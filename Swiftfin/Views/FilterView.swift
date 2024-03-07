@@ -27,7 +27,7 @@ struct FilterView: View {
     var body: some View {
         SelectorView(
             selection: $selection,
-            allItems: viewModel.allFilters[keyPath: type.collectionKeyPath],
+            allItems: viewModel.allFilters[keyPath: type.collectionAnyKeyPath],
             type: type.selectorType
         )
         .navigationTitle(type.displayTitle)
@@ -56,7 +56,8 @@ struct FilterView: View {
             }
             .environment(
                 \.isEnabled,
-                viewModel.currentFilters[keyPath: type.collectionKeyPath] != ItemFilterCollection.default[keyPath: type.collectionKeyPath]
+                viewModel.currentFilters[keyPath: type.collectionAnyKeyPath] != ItemFilterCollection
+                    .default[keyPath: type.collectionAnyKeyPath]
             )
         }
     }
@@ -70,7 +71,7 @@ extension FilterView {
     ) {
 
         let selectionBinding = Binding {
-            viewModel.currentFilters[keyPath: type.collectionKeyPath]
+            viewModel.currentFilters[keyPath: type.collectionAnyKeyPath]
         } set: { newValue in
             switch type {
             case .genres:
@@ -93,25 +94,5 @@ extension FilterView {
             viewModel: viewModel,
             type: type
         )
-    }
-}
-
-extension ItemFilterType {
-
-    var collectionKeyPath: KeyPath<ItemFilterCollection, [AnyItemFilter]> {
-        switch self {
-        case .genres:
-            \ItemFilterCollection.genres.asAnyItemFilter
-        case .sortBy:
-            \ItemFilterCollection.sortBy.asAnyItemFilter
-        case .sortOrder:
-            \ItemFilterCollection.sortOrder.asAnyItemFilter
-        case .tags:
-            \ItemFilterCollection.tags.asAnyItemFilter
-        case .traits:
-            \ItemFilterCollection.traits.asAnyItemFilter
-        case .years:
-            \ItemFilterCollection.years.asAnyItemFilter
-        }
     }
 }

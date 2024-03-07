@@ -27,6 +27,23 @@ enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
             return .single
         }
     }
+
+    var collectionAnyKeyPath: KeyPath<ItemFilterCollection, [AnyItemFilter]> {
+        switch self {
+        case .genres:
+            \ItemFilterCollection.genres.asAnyItemFilter
+        case .sortBy:
+            \ItemFilterCollection.sortBy.asAnyItemFilter
+        case .sortOrder:
+            \ItemFilterCollection.sortOrder.asAnyItemFilter
+        case .tags:
+            \ItemFilterCollection.tags.asAnyItemFilter
+        case .traits:
+            \ItemFilterCollection.traits.asAnyItemFilter
+        case .years:
+            \ItemFilterCollection.years.asAnyItemFilter
+        }
+    }
 }
 
 extension ItemFilterType: Displayable {

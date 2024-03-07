@@ -13,6 +13,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
+// TODO: list view
 struct MediaView: View {
 
     @EnvironmentObject
@@ -29,32 +30,57 @@ struct MediaView: View {
         .columns(2)
     }
 
-    var body: some View {
+    private var contentView: some View {
         CollectionVGrid(
-            $viewModel.libraries,
+            $viewModel.mediaItems,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
         ) { viewModel in
             MediaItem(viewModel: viewModel)
                 .onSelect {
-                    switch viewModel.item.collectionType {
-                    case "downloads":
+                    switch viewModel.mediaType {
+                    case .downloads:
                         router.route(to: \.downloads)
-                    case "favorites":
-                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .favorites)
+                    case .favorites:
+                        let viewModel = ItemLibraryViewModel(title: L10n.favorites, filters: .favorites)
                         router.route(to: \.library, viewModel)
-                    case "folders":
-                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
-                        router.route(to: \.library, viewModel)
-                    case "livetv":
+                    case .liveTV:
                         router.route(to: \.liveTV)
-                    default:
-                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
+                    case let .userView(item): ()
+                        let viewModel = ItemLibraryViewModel(parent: item)
                         router.route(to: \.library, viewModel)
                     }
+
+//                    switch viewModel.item.collectionType {
+//                    case "downloads":
+//                        router.route(to: \.downloads)
+//                    case "favorites":
+//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .favorites)
+//                        router.route(to: \.library, viewModel)
+//                    case "folders":
+//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
+//                        router.route(to: \.library, viewModel)
+//                    case "livetv":
+//                        router.route(to: \.liveTV)
+//                    default:
+//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
+//                        router.route(to: \.library, viewModel)
+//                    }
                 }
         }
-        .refreshable {
-            await viewModel.refresh()
+    }
+
+    var body: some View {
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case .content:
+                    contentView
+                case let .error(error):
+                    ErrorView(error: error)
+                case .initial, .refreshing:
+                    ProgressView()
+                }
+            }
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
@@ -66,9 +92,7 @@ struct MediaView: View {
             }
         }
         .onFirstAppear {
-            Task {
-                await viewModel.refresh()
-            }
+            viewModel.send(.refresh)
         }
     }
 }
@@ -97,25 +121,25 @@ extension MediaView {
                     ImageView(viewModel.imageSources)
                         .id(viewModel.imageSources.hashValue)
                 }
-                .overlay {
-                    if Defaults[.Customization.Library.randomImage] ||
-                        viewModel.item.collectionType == "favorites" ||
-                        viewModel.item.collectionType == "downloads"
-                    {
-                        ZStack {
-                            Color.black
-                                .opacity(0.5)
-
-                            Text(viewModel.item.displayTitle)
-                                .foregroundColor(.white)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .multilineTextAlignment(.center)
-                                .frame(alignment: .center)
-                        }
-                    }
-                }
+//                .overlay {
+//                    if Defaults[.Customization.Library.randomImage] ||
+//                        viewModel.item.collectionType == "favorites" ||
+//                        viewModel.item.collectionType == "downloads"
+//                    {
+//                        ZStack {
+//                            Color.black
+//                                .opacity(0.5)
+//
+//                            Text(viewModel.item.displayTitle)
+//                                .foregroundColor(.white)
+//                                .font(.title2)
+//                                .fontWeight(.semibold)
+//                                .lineLimit(1)
+//                                .multilineTextAlignment(.center)
+//                                .frame(alignment: .center)
+//                        }
+//                    }
+//                }
                 .posterStyle(.landscape)
             }
         }

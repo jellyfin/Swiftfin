@@ -13,72 +13,107 @@ import JellyfinAPI
 
 final class MediaItemViewModel: ViewModel {
 
+    enum MediaType: Hashable {
+        case downloads
+        case favorites
+        case liveTV
+        case userView(BaseItemDto)
+    }
+
     @Published
     var imageSources: [ImageSource] = []
 
-    let item: BaseItemDto
+    let mediaType: MediaType
 
-    private var randomItemTask: AnyCancellable?
-
-    init(item: BaseItemDto) {
-        self.item = item
+    init(type: MediaType) {
+        self.mediaType = type
         super.init()
 
-        if item.collectionType == "favorites" {
-            randomItemTask = Task { [weak self] in
+//        if item.collectionType == "favorites" {
+//            randomItemTask = Task { [weak self] in
+//
+//                guard let sources = try? await self?.getRandomItemImageSource(traits: [.isFavorite]) else { return }
+//                guard let self else { return }
+//
+//                await MainActor.run {
+//                    self.imageSources = sources
+//                }
+//            }
+//            .asAnyCancellable()
+//        } else if item.collectionType == "downloads" {
+//            imageSources = []
+//        } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
+//            imageSources = [item.imageSource(.primary, maxWidth: 500)]
+//        } else {
+//            randomItemTask = Task { [weak self] in
+//
+//                guard let sources = try? await self?.getRandomItemImageSource() else { return }
+//                guard let self else { return }
+//
+//                await MainActor.run {
+//                    self.imageSources = sources
+//                }
+//            }
+//            .asAnyCancellable()
+//        }
+    }
 
-                guard let sources = try? await self?.getRandomItemImageSource(traits: [.isFavorite]) else { return }
+    func setImageSources(randomImage: Bool) {
+        switch mediaType {
+        case .downloads:
+            ()
+        case .favorites:
+            Task { [weak self] in
                 guard let self else { return }
+
+                let sources = try await randomItemImageSources(traits: [.isFavorite])
 
                 await MainActor.run {
                     self.imageSources = sources
                 }
             }
-            .asAnyCancellable()
-        } else if item.collectionType == "downloads" {
-            imageSources = []
-        } else if !Defaults[.Customization.Library.randomImage] || item.collectionType == "liveTV" {
-            imageSources = [item.imageSource(.primary, maxWidth: 500)]
-        } else {
-            randomItemTask = Task { [weak self] in
-
-                guard let sources = try? await self?.getRandomItemImageSource() else { return }
+            .store(in: &cancellables)
+        case .liveTV:
+            ()
+        case let .userView(item):
+            Task { [weak self] in
                 guard let self else { return }
+
+                let sources = try await randomItemImageSources(parent: item)
 
                 await MainActor.run {
                     self.imageSources = sources
                 }
             }
-            .asAnyCancellable()
+            .store(in: &cancellables)
         }
     }
 
-    private func getRandomItemImageSource(traits: [ItemTrait]? = nil) async throws -> [ImageSource] {
-        let parameters = Paths.GetItemsParameters(
-            userID: userSession.user.id,
-            limit: 3,
-            isRecursive: true,
-            parentID: item.id,
-            includeItemTypes: [.movie, .series],
-            filters: traits,
-            sortBy: [ItemSortBy.random.rawValue]
-        )
-        let request = Paths.getItems(parameters: parameters)
+    private func randomItemImageSources(parent: BaseItemDto? = nil, traits: [ItemTrait]? = nil) async throws -> [ImageSource] {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.limit = 3
+        parameters.isRecursive = true
+        parameters.parentID = parent?.id
+        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.filters = traits
+        parameters.sortBy = [ItemSortBy.random.rawValue]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        guard let item = response.value.items?.first else { return [] }
-
-        return [item.imageSource(.backdrop, maxWidth: 500)]
+        return (response.value.items ?? [])
+            .map { $0.imageSource(.backdrop, maxWidth: 500) }
     }
 }
 
-extension MediaItemViewModel: Equatable, Hashable {
+extension MediaItemViewModel: Hashable {
 
     static func == (lhs: MediaItemViewModel, rhs: MediaItemViewModel) -> Bool {
-        lhs.item == rhs.item
+        lhs.mediaType == rhs.mediaType
     }
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(item.id)
+        hasher.combine(mediaType)
     }
 }

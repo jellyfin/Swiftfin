@@ -15,43 +15,89 @@ import OrderedCollections
 // TODO: refactor so that we aren't depending on the `collectionType` for special local types
 //       - have an enum `MediaViewType` on the item view models?
 // TODO: transition to `Stateful`
-final class MediaViewModel: ViewModel {
+// TODO: excluded userviews
+final class MediaViewModel: ViewModel, Stateful {
 
     // TODO: remove once collection types become an enum
     static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
+    // MARK: Action
+
+    enum Action {
+        case error(JellyfinAPIError)
+        case refresh
+    }
+
+    // MARK: State
+
+    enum State: Equatable {
+        case content
+        case error(JellyfinAPIError)
+        case initial
+        case refreshing
+    }
+
     @Published
-    var libraries: OrderedSet<MediaItemViewModel> = []
+    var mediaItems: OrderedSet<MediaItemViewModel> = []
 
-    func refresh() async {
-        do {
-            let newLibraries = try await getUserLibraries()
-                .prepending(
-                    .init(collectionType: "favorites", name: L10n.favorites),
-                    if: Defaults[.Customization.Library.showFavorites]
-                )
+    @Published
+    var state: State = .initial
 
-            await MainActor.run {
-                libraries.elements = newLibraries.map(MediaItemViewModel.init)
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
+            cancellables.removeAll()
+
+            Task {
+                do {
+                    try await refresh()
+
+                    await MainActor.run {
+                        self.state = .content
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
             }
-        } catch {
-            // TODO: set error once MediaView has error + retry state
-            await MainActor.run {
-                libraries = []
-            }
+            .store(in: &cancellables)
+
+            return .refreshing
         }
     }
 
-    private func getUserLibraries() async throws -> [BaseItemDto] {
-        let request = Paths.getUserViews(userID: userSession.user.id)
-        let response = try await userSession.client.send(request)
+    private func refresh() async throws {
 
-        guard let items = response.value.items else { return [] }
+        await MainActor.run {
+            mediaItems.removeAll()
+        }
+
+        let userViews = try await getUserViews()
+            .map { MediaItemViewModel(type: .userView($0)) }
+
+        let allMediaItems = userViews
+            .prepending(.init(type: .favorites), if: Defaults[.Customization.Library.showFavorites])
+
+        await MainActor.run {
+            mediaItems.append(contentsOf: allMediaItems)
+        }
+    }
+
+    private func getUserViews() async throws -> [BaseItemDto] {
+
+        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        async let userViews = userSession.client.send(userViewsPath)
+
+        async let excludedLibraryIDs = getExcludedLibraries()
 
         // folders has `type = UserView`, but we manually
         // force it to `folders` for better view handling
-        let supportedLibraries = items
+        let supportedUserViews = try await (userViews.value.items ?? [])
             .intersection(Self.supportedCollectionTypes, using: \.collectionType)
+            .subtracting(excludedLibraryIDs, using: \.id)
             .map { item in
 
                 if item.type == .userView, item.collectionType == "folders" {
@@ -61,6 +107,13 @@ final class MediaViewModel: ViewModel {
                 return item
             }
 
-        return supportedLibraries
+        return supportedUserViews
+    }
+
+    private func getExcludedLibraries() async throws -> [String] {
+        let currentUserPath = Paths.getCurrentUser
+        let response = try await userSession.client.send(currentUserPath)
+
+        return response.value.configuration?.latestItemsExcludes ?? []
     }
 }

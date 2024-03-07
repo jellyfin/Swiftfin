@@ -699,7 +699,6 @@
 		E1E2F8452B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */; };
 		E1E2F8462B757E3400B75998 /* AfterLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */; };
 		E1E306CD28EF6E8000537998 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* TimerProxy.swift */; };
-		E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */; };
 		E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */; };
 		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
@@ -1247,7 +1246,6 @@
 		E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
 		E1E2F8442B757E3400B75998 /* AfterLastDisappearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AfterLastDisappearModifier.swift; sourceTree = "<group>"; };
 		E1E306CC28EF6E8000537998 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
-		E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshHelper.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
@@ -2710,7 +2708,6 @@
 		E1DD1127271E7D15005BE12F /* Objects */ = {
 			isa = PBXGroup;
 			children = (
-				E1E48CC8271E6D410021A2F9 /* RefreshHelper.swift */,
 				E18ACA8A2A14301800BB4F35 /* ScalingButtonStyle.swift */,
 			);
 			path = Objects;
@@ -3634,7 +3631,6 @@
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				E1921B7628E63306003A5238 /* GestureView.swift in Sources */,
 				E18A8E8028D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,
-				E1E48CC9271E6D410021A2F9 /* RefreshHelper.swift in Sources */,
 				E18E01DC288747230022598C /* iPadOSCinematicScrollView.swift in Sources */,
 				E18E01E2288747230022598C /* EpisodeItemView.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,

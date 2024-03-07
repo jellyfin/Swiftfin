@@ -11,6 +11,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: implement search view result type between `PosterHStack`
+//       and `ListHStack` (3 row list columns)?
 struct SearchView: View {
 
     @Default(.Customization.searchPosterType)
@@ -99,6 +101,13 @@ struct SearchView: View {
             type: posterType,
             items: viewModel[keyPath: keyPath]
         )
+        .trailing {
+            SeeAllButton()
+                .onSelect {
+                    // TODO: have a `SearchLibraryViewModel` that allows paginating on searched items?
+                    router.route(to: \.library, .init(viewModel[keyPath: keyPath]))
+                }
+        }
         .onSelect { item in
             baseItemOnSelect(item)
         }

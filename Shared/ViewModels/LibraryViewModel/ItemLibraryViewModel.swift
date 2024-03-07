@@ -24,6 +24,15 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     private var filterQueryTask: AnyCancellable?
 
     init(
+        title: String,
+        filters: ItemFilterCollection = .init()
+    ) {
+        self.filterViewModel = .init(currentFilters: filters)
+        self.saveFilters = false
+        super.init(parent: TitledLibraryParent(displayTitle: title))
+    }
+
+    init(
         parent: (any LibraryParent)? = nil,
         filters: ItemFilterCollection = .init(),
         saveFilters: Bool = false
@@ -96,6 +105,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var includeItemTypes: [BaseItemKind]?
         var isRecursive: Bool? = true
 
+        // TODO: fix favorites/TitledLibraryParent
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {
             case .collectionFolder:
