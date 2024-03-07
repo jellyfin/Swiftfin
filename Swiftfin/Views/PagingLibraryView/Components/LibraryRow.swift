@@ -12,6 +12,8 @@ import SwiftUI
 
 // TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
 // TODO: different text sized based on poster type
+// TODO: for landscape, have thumbs come first
+// TODO: implement so that the separator isn't influenced by tap effect
 
 extension PagingLibraryView {
 

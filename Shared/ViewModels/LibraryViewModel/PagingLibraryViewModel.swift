@@ -40,7 +40,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
     enum State: Equatable {
         case error(LibraryError)
         case gettingNextPage
-        case items
+        case content
         case refreshing
     }
 
@@ -69,9 +69,10 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
     @Published
     final var state: State = .refreshing
 
-    private var currentPage = 0
+    private(set) final var currentPage = 0
+    private(set) final var hasNextPage = true
+
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
-    private var hasNextPage = true
     private var isStatic: Bool
 
     // tasks
@@ -96,7 +97,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
     func respond(to action: Action) -> State {
 
         if action == .refresh, isStatic {
-            return .items
+            return .content
         }
 
         switch action {
@@ -133,7 +134,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self?.state = .items
+                        self?.state = .content
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -148,7 +149,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
             return .refreshing
         case .getNextPage:
 
-            guard hasNextPage else { return .items }
+            guard hasNextPage else { return .content }
 
             pagingTask = Task { [weak self] in
                 do {
@@ -157,7 +158,7 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self?.state = .items
+                        self?.state = .content
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
@@ -216,9 +217,15 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
 
         hasNextPage = !(pageItems.count < DefaultPageSize)
 
+        // Sometimes, a subclass may return a page even if it's contextually
+        // "out of pages". Check explicitly if items were duplicated.
+        let preItemCount = items.count
+
         await MainActor.run {
             items.append(contentsOf: pageItems)
         }
+
+        print("increased item size by: \(items.count - preItemCount)")
     }
 
     /// Gets the items at the given page. If the number of items

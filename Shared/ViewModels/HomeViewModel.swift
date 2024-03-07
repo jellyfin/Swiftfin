@@ -91,13 +91,12 @@ final class HomeViewModel: ViewModel, Stateful {
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
-        // should probably in a task group, but fast enough
         for library in libraries {
             await library.send(.refresh)
         }
 
         await MainActor.run {
-            self.resumeItems.append(contentsOf: resumeItems)
+            self.resumeItems.elements = resumeItems
             self.libraries = libraries
         }
     }

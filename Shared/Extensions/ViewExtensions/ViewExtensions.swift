@@ -19,6 +19,7 @@ extension View {
         AnyView(self)
     }
 
+    // TODO: rename `invertedMask`?
     func inverseMask(alignment: Alignment = .center, _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
@@ -217,6 +218,7 @@ extension View {
         modifier(AttributeViewModifier(style: style))
     }
 
+    // TODO: rename `blurredFullScreenCover`
     func blurFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,

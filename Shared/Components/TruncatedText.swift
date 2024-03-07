@@ -10,6 +10,9 @@ import Defaults
 import SwiftUI
 
 // TODO: allow `isTruncated` to be communicated externally via modifier
+// TODO: `seeMoreBehavior` for iOS
+//       - `entireView`: entire view becomes a button
+//       - `seeMore`: can only select see more
 
 struct TruncatedText: View {
 
@@ -109,6 +112,7 @@ extension TruncatedText {
         )
     }
 
+    // TODO: rename `onSeeMore`
     func seeMoreAction(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.seeMoreAction, with: action)
     }

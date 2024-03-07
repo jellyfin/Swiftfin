@@ -47,7 +47,6 @@ struct HomeView: View {
         }
     }
 
-    @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
@@ -67,7 +66,7 @@ struct HomeView: View {
                     ProgressView()
                 }
             }
-            .transition(.opacity.animation(.linear(duration: 2)))
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .onFirstAppear {
             viewModel.send(.refresh)

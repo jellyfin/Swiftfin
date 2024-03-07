@@ -13,6 +13,7 @@ import NukeUI
 import SwiftUI
 import UIKit
 
+// TODO: move to separate file
 struct ImageSource: Hashable {
 
     let url: URL?
@@ -26,6 +27,8 @@ struct ImageSource: Hashable {
 
 private let imagePipeline = ImagePipeline(configuration: .withDataCache)
 
+// TODO: Binding inits?
+//       - instead of removing first source on failure, just safe index into sources
 struct ImageView: View {
 
     @State

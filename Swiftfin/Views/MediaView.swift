@@ -34,10 +34,10 @@ struct MediaView: View {
         CollectionVGrid(
             $viewModel.mediaItems,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
-        ) { viewModel in
-            MediaItem(viewModel: viewModel)
+        ) { mediaType in
+            MediaItem(viewModel: viewModel, type: mediaType)
                 .onSelect {
-                    switch viewModel.mediaType {
+                    switch mediaType {
                     case .downloads:
                         router.route(to: \.downloads)
                     case .favorites:
@@ -45,28 +45,19 @@ struct MediaView: View {
                         router.route(to: \.library, viewModel)
                     case .liveTV:
                         router.route(to: \.liveTV)
-                    case let .userView(item): ()
+                    case let .userView(item):
                         let viewModel = ItemLibraryViewModel(parent: item)
                         router.route(to: \.library, viewModel)
                     }
-
-//                    switch viewModel.item.collectionType {
-//                    case "downloads":
-//                        router.route(to: \.downloads)
-//                    case "favorites":
-//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .favorites)
-//                        router.route(to: \.library, viewModel)
-//                    case "folders":
-//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
-//                        router.route(to: \.library, viewModel)
-//                    case "livetv":
-//                        router.route(to: \.liveTV)
-//                    default:
-//                        let viewModel = ItemLibraryViewModel(parent: viewModel.item, filters: .default)
-//                        router.route(to: \.library, viewModel)
-//                    }
                 }
         }
+    }
+
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
+            }
     }
 
     var body: some View {
@@ -76,19 +67,18 @@ struct MediaView: View {
                 case .content:
                     contentView
                 case let .error(error):
-                    ErrorView(error: error)
+                    errorView(with: error)
                 case .initial, .refreshing:
                     ProgressView()
                 }
             }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if viewModel.isLoading {
-                    ProgressView()
-                }
+        .topBarTrailing {
+            if viewModel.isLoading {
+                ProgressView()
             }
         }
         .onFirstAppear {
@@ -99,16 +89,38 @@ struct MediaView: View {
 
 extension MediaView {
 
+    // TODO: custom view for folders
     struct MediaItem: View {
 
+        @Default(.Customization.Library.randomImage)
+        private var useRandomImage
+
         @ObservedObject
-        private var viewModel: MediaItemViewModel
+        var viewModel: MediaViewModel
+
+        @State
+        private var imageSources: [ImageSource] = []
 
         private var onSelect: () -> Void
+        private let mediaType: MediaViewModel.MediaType
 
-        init(viewModel: MediaItemViewModel) {
+        init(viewModel: MediaViewModel, type: MediaViewModel.MediaType) {
             self.viewModel = viewModel
             self.onSelect = {}
+            self.mediaType = type
+        }
+
+        private func setImageSources() {
+            Task { @MainActor in
+                if useRandomImage {
+                    self.imageSources = try await viewModel.randomItemImageSources(for: mediaType)
+                    return
+                }
+
+                if case let MediaViewModel.MediaType.userView(item) = mediaType {
+                    self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
+                }
+            }
         }
 
         var body: some View {
@@ -118,29 +130,32 @@ extension MediaView {
                 ZStack {
                     Color.clear
 
-                    ImageView(viewModel.imageSources)
-                        .id(viewModel.imageSources.hashValue)
+                    ImageView(imageSources)
+                        .id(imageSources.hashValue)
+
+                    if useRandomImage ||
+                        mediaType == .favorites ||
+                        mediaType == .downloads
+                    {
+                        ZStack {
+                            Color.black
+                                .opacity(0.5)
+
+                            Text(mediaType.displayTitle)
+                                .foregroundColor(.white)
+                                .font(.title2)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .multilineTextAlignment(.center)
+                                .frame(alignment: .center)
+                        }
+                    }
                 }
-//                .overlay {
-//                    if Defaults[.Customization.Library.randomImage] ||
-//                        viewModel.item.collectionType == "favorites" ||
-//                        viewModel.item.collectionType == "downloads"
-//                    {
-//                        ZStack {
-//                            Color.black
-//                                .opacity(0.5)
-//
-//                            Text(viewModel.item.displayTitle)
-//                                .foregroundColor(.white)
-//                                .font(.title2)
-//                                .fontWeight(.semibold)
-//                                .lineLimit(1)
-//                                .multilineTextAlignment(.center)
-//                                .frame(alignment: .center)
-//                        }
-//                    }
-//                }
                 .posterStyle(.landscape)
+            }
+            .onFirstAppear(perform: setImageSources)
+            .onChange(of: useRandomImage) { _ in
+                setImageSources()
             }
         }
     }

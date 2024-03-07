@@ -18,6 +18,26 @@ import OrderedCollections
 // TODO: excluded userviews
 final class MediaViewModel: ViewModel, Stateful {
 
+    enum MediaType: Displayable, Hashable {
+        case downloads
+        case favorites
+        case liveTV
+        case userView(BaseItemDto)
+
+        var displayTitle: String {
+            switch self {
+            case .downloads:
+                return L10n.downloads
+            case .favorites:
+                return L10n.favorites
+            case .liveTV:
+                return L10n.liveTV
+            case let .userView(item):
+                return item.displayTitle
+            }
+        }
+    }
+
     // TODO: remove once collection types become an enum
     static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
@@ -38,7 +58,7 @@ final class MediaViewModel: ViewModel, Stateful {
     }
 
     @Published
-    var mediaItems: OrderedSet<MediaItemViewModel> = []
+    var mediaItems: OrderedSet<MediaType> = []
 
     @Published
     var state: State = .initial
@@ -75,14 +95,12 @@ final class MediaViewModel: ViewModel, Stateful {
             mediaItems.removeAll()
         }
 
-        let userViews = try await getUserViews()
-            .map { MediaItemViewModel(type: .userView($0)) }
-
-        let allMediaItems = userViews
-            .prepending(.init(type: .favorites), if: Defaults[.Customization.Library.showFavorites])
+        let media = try await getUserViews()
+            .map(MediaType.userView)
+            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
         await MainActor.run {
-            mediaItems.append(contentsOf: allMediaItems)
+            mediaItems.elements = media
         }
     }
 
@@ -114,6 +132,35 @@ final class MediaViewModel: ViewModel, Stateful {
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)
 
-        return response.value.configuration?.latestItemsExcludes ?? []
+        return response.value.configuration?.myMediaExcludes ?? []
+    }
+
+    func randomItemImageSources(for mediaType: MediaType) async throws -> [ImageSource] {
+
+        var parentID: String?
+
+        if case let MediaType.userView(item) = mediaType {
+            parentID = item.id
+        }
+
+        var filters: [ItemTrait]?
+
+        if mediaType == .favorites {
+            filters = [.isFavorite]
+        }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.limit = 3
+        parameters.isRecursive = true
+        parameters.parentID = parentID
+        parameters.includeItemTypes = [.movie, .series, .boxSet]
+        parameters.filters = filters
+        parameters.sortBy = [ItemSortBy.random.rawValue]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return (response.value.items ?? [])
+            .map { $0.imageSource(.backdrop, maxWidth: 500) }
     }
 }

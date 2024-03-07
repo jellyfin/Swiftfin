@@ -10,6 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
+// TODO: verify this properly returns pages of items in correct date-added order
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     init() {
@@ -36,6 +37,11 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.sortBy = [ItemSortBy.dateAdded.rawValue]
         parameters.sortOrder = [.descending]
         parameters.startIndex = page
+
+        // Ncessary to get an actual "next page" with this endpoint.
+        // Could be a performance issue for lots of items, but there's
+        // nothing we can do about it.
+        parameters.excludeItemIDs = items.compactMap(\.id)
 
         return parameters
     }

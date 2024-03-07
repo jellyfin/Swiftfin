@@ -130,7 +130,6 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
@@ -174,7 +173,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     errorView(with: error)
                 case .refreshing:
                     ProgressView()
-                case .gettingNextPage, .items:
+                case .gettingNextPage, .content:
                     if viewModel.items.isEmpty {
                         L10n.noResults.text
                     } else {
@@ -182,7 +181,8 @@ struct PagingLibraryView<Element: Poster>: View {
                     }
                 }
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
+            // TODO: this causes the navigation bar to not refresh on .items, find fix
+//            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
@@ -228,7 +228,10 @@ struct PagingLibraryView<Element: Poster>: View {
             }
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            // May have been passed a view model that already had a page of items
+            if viewModel.items.isEmpty {
+                viewModel.send(.refresh)
+            }
         }
         .topBarTrailing {
 

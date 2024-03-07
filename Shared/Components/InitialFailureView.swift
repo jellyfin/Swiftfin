@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+// TODO: remove and replace with icon of item type instead
 struct InitialFailureView: View {
 
     let initials: String
