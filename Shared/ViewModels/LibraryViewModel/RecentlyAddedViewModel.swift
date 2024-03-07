@@ -30,7 +30,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
         parameters.limit = DefaultPageSize
@@ -38,7 +38,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.sortOrder = [.descending]
         parameters.startIndex = page
 
-        // Ncessary to get an actual "next page" with this endpoint.
+        // Necessary to get an actual "next page" with this endpoint.
         // Could be a performance issue for lots of items, but there's
         // nothing we can do about it.
         parameters.excludeItemIDs = items.compactMap(\.id)

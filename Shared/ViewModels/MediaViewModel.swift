@@ -7,16 +7,14 @@
 //
 
 import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: refactor so that we aren't depending on the `collectionType` for special local types
-//       - have an enum `MediaViewType` on the item view models?
-// TODO: transition to `Stateful`
-// TODO: excluded userviews
 final class MediaViewModel: ViewModel, Stateful {
+
+    // TODO: remove once collection types become an enum
+    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
     enum MediaType: Displayable, Hashable {
         case downloads
@@ -37,9 +35,6 @@ final class MediaViewModel: ViewModel, Stateful {
             }
         }
     }
-
-    // TODO: remove once collection types become an enum
-    static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
     // MARK: Action
 

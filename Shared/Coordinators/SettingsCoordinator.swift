@@ -121,10 +121,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
     }
 
-//    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
-//        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
-//    }
-
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }

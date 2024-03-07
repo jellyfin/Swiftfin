@@ -27,7 +27,7 @@ struct FilterView: View {
     var body: some View {
         SelectorView(
             selection: $selection,
-            allItems: viewModel.allFilters[keyPath: type.collectionAnyKeyPath],
+            sources: viewModel.allFilters[keyPath: type.collectionAnyKeyPath],
             type: type.selectorType
         )
         .navigationTitle(type.displayTitle)

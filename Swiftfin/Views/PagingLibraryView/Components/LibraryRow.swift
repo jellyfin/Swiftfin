@@ -101,7 +101,8 @@ extension PagingLibraryView {
                     }
                     .frame(maxHeight: .infinity)
                     .overlay(alignment: .bottom) {
-                        RowDivider()
+                        Color.secondarySystemFill
+                            .frame(height: 1)
                     }
                 }
             }

@@ -29,7 +29,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         var parameters = Paths.GetNextUpParameters()
         parameters.enableUserData = true
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.limit = DefaultPageSize
         parameters.startIndex = page
         parameters.userID = userSession.user.id
@@ -38,15 +38,15 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
     }
 
     func markPlayed(item: BaseItemDto) {
-        Task {
-
-            let request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-            let _ = try await userSession.client.send(request)
-
-            try await refresh()
-        }
+//        Task {
+//
+//            let request = Paths.markPlayedItem(
+//                userID: userSession.user.id,
+//                itemID: item.id!
+//            )
+//            let _ = try await userSession.client.send(request)
+//
+//            try await refresh()
+//        }
     }
 }

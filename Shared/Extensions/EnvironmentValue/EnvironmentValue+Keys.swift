@@ -9,9 +9,6 @@
 import Defaults
 import SwiftUI
 
-// TODO: Look at name spacing
-// TODO: Consistent naming: ...Key
-
 extension EnvironmentValues {
 
     struct AccentColorKey: EnvironmentKey {
@@ -38,7 +35,8 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Float> = .constant(1)
     }
 
-    // TODO: remove, this doesn't actually give us anything useful
+    // TODO: does this actually do anything useful?
+    //       should instead use view safe area?
     struct SafeAreaInsetsKey: EnvironmentKey {
         static var defaultValue: EdgeInsets {
             UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero

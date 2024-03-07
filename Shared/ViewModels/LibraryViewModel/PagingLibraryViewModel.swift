@@ -19,7 +19,7 @@ import UIKit
 
 // TODO: how to indicate that this is performing some kind of background action (ie: RandomItem)
 //       *without* being in an explicit state?
-class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Action
 
@@ -60,14 +60,18 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
         }
     }
 
+    @Published
+    final var items: OrderedSet<Element>
+    @Published
+    final var state: State = .refreshing
+
+    final let parent: (any LibraryParent)?
+
     var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
-
-    @Published
-    final var state: State = .refreshing
 
     private(set) final var currentPage = 0
     private(set) final var hasNextPage = true
@@ -80,15 +84,19 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
     private var pagingTask: AnyCancellable?
     private var randomItemTask: AnyCancellable?
 
-    override init(_ data: some Collection<Element>, parent: (any LibraryParent)? = nil) {
+    init(_ data: some Collection<Element>, parent: (any LibraryParent)? = nil) {
         isStatic = true
         hasNextPage = false
-        super.init(data, parent: parent)
+
+        items = OrderedSet(data)
+        self.parent = parent
     }
 
     init(parent: (any LibraryParent)? = nil) {
         isStatic = false
-        super.init([], parent: parent)
+
+        items = OrderedSet()
+        self.parent = parent
     }
 
     // MARK: respond
@@ -234,5 +242,9 @@ class PagingLibraryViewModel<Element: Poster>: LibraryViewModel<Element>, Eventf
     /// will immediately return.
     func get(page: Int) async throws -> [Element] {
         []
+    }
+
+    func getRandomItem() async throws -> Element? {
+        items.randomElement()
     }
 }

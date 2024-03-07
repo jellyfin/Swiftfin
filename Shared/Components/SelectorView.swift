@@ -6,9 +6,10 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import OrderedCollections
 import SwiftUI
+
+// TODO: Label generic not really necessary if just restricting to `Text`
+//       - go back to `any View` implementation instead
 
 struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
@@ -18,13 +19,12 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
     @Binding
     private var selection: Set<Element>
 
-    // TODO: rename `sources`
-    private let allElements: [Element]
+    private let sources: [Element]
     private var label: (Element) -> Label
     private let type: SelectorType
 
     var body: some View {
-        List(allElements, id: \.hashValue) { element in
+        List(sources, id: \.hashValue) { element in
             Button {
                 switch type {
                 case .single:
@@ -65,23 +65,23 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
 extension SelectorView where Label == Text {
 
-    init(selection: Binding<[Element]>, allItems: [Element], type: SelectorType) {
+    init(selection: Binding<[Element]>, sources: [Element], type: SelectorType) {
 
         let selectionBinding = Binding {
             Set(selection.wrappedValue)
         } set: { newValue in
-            selection.wrappedValue = allItems.intersection(newValue)
+            selection.wrappedValue = sources.intersection(newValue)
         }
 
         self.init(
             selection: selectionBinding,
-            allElements: allItems,
+            sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: type
         )
     }
 
-    init(selection: Binding<Element>, allItems: [Element]) {
+    init(selection: Binding<Element>, sources: [Element]) {
 
         let selectionBinding = Binding {
             Set([selection.wrappedValue])
@@ -91,7 +91,7 @@ extension SelectorView where Label == Text {
 
         self.init(
             selection: selectionBinding,
-            allElements: allItems,
+            sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: .single
         )

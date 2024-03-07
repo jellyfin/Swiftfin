@@ -127,9 +127,6 @@ final class SearchViewModel: ViewModel, Stateful {
 
             do {
 
-                // TODO: remove debug
-//                try await Task.sleep(nanoseconds: 3_000_000_000)
-
                 let items = try await withThrowingTaskGroup(
                     of: (BaseItemKind, [BaseItemDto]).self,
                     returning: [BaseItemKind: [BaseItemDto]].self
@@ -194,7 +191,7 @@ final class SearchViewModel: ViewModel, Stateful {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [itemType]
         parameters.isRecursive = true
         parameters.limit = 20

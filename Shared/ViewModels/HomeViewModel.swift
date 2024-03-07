@@ -104,7 +104,7 @@ final class HomeViewModel: ViewModel, Stateful {
     private func getResumeItems() async throws -> [BaseItemDto] {
         var parameters = Paths.GetResumeItemsParameters()
         parameters.enableUserData = true
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .episode]
         parameters.limit = 20
 
@@ -137,35 +137,35 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     func markItemUnplayed(_ item: BaseItemDto) {
-        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-
-        Task {
-            let request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-            let _ = try await userSession.client.send(request)
-
-//            refreshResumeItems()
-
-            try await nextUpViewModel.refresh()
-            try await recentlyAddedViewModel.refresh()
-        }
+//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
+//
+//        Task {
+//            let request = Paths.markUnplayedItem(
+//                userID: userSession.user.id,
+//                itemID: item.id!
+//            )
+//            let _ = try await userSession.client.send(request)
+//
+        ////            refreshResumeItems()
+//
+//            try await nextUpViewModel.refresh()
+//            try await recentlyAddedViewModel.refresh()
+//        }
     }
 
     func markItemPlayed(_ item: BaseItemDto) {
-        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-
-        Task {
-            let request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-            let _ = try await userSession.client.send(request)
-
-//            refreshResumeItems()
-            try await nextUpViewModel.refresh()
-            try await recentlyAddedViewModel.refresh()
-        }
+//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
+//
+//        Task {
+//            let request = Paths.markPlayedItem(
+//                userID: userSession.user.id,
+//                itemID: item.id!
+//            )
+//            let _ = try await userSession.client.send(request)
+//
+        ////            refreshResumeItems()
+//            try await nextUpViewModel.refresh()
+//            try await recentlyAddedViewModel.refresh()
+//        }
     }
 }

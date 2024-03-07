@@ -24,7 +24,7 @@ class LatestInLibraryViewModel: ItemLibraryViewModel, Identifiable {
 
         var parameters = Paths.GetLatestMediaParameters()
         parameters.parentID = parent?.id
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.enableUserData = true
         parameters.limit = DefaultPageSize
 

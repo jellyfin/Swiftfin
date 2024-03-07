@@ -21,3 +21,10 @@ extension ItemFields {
         .taglines,
     ]
 }
+
+extension Array where Element == ItemFields {
+
+    static let MinimumFields: Self = {
+        ItemFields.MinimumFields
+    }()
+}

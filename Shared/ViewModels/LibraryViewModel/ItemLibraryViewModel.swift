@@ -125,7 +125,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
-        parameters.fields = ItemFields.MinimumFields
+        parameters.fields = .MinimumFields
         parameters.includeItemTypes = includeItemTypes
         parameters.isRecursive = isRecursive
         parameters.parentID = libraryID
