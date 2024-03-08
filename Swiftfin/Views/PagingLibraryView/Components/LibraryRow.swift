@@ -10,7 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
 // TODO: for landscape, have thumbs come first
 
 extension PagingLibraryView {

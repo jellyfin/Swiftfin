@@ -62,9 +62,9 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     func makeItemOverview(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(BasicNavigationViewCoordinator {
+        NavigationViewCoordinator {
             ItemOverviewView(item: item)
-        })
+        }
     }
 
     func makeMediaSourceInfo(source: MediaSourceInfo) -> NavigationViewCoordinator<MediaSourceInfoCoordinator> {

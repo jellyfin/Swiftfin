@@ -10,6 +10,8 @@ import Foundation
 
 // TODO: find way to remove special `single` handling
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
+// TODO: instead of the below image functions, have variables that match `ImageType`
+//       - allows caller to choose images
 protocol Poster: Displayable, Hashable, Identifiable {
 
     var subtitle: String? { get }

@@ -11,7 +11,11 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: `BaseItemPerson` should still have role subtitle
+// Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
+//       This is problematic due to episodes, which have their `S_E_` subtitles, and these can be
+//       alongside other items that don't have a subtitle which requires the entire library to
+//       implement subtitle content but that doesn't look appealing. Until a solution arrives
+//       grid posters will not have subtitle content.
 
 struct PagingLibraryView<Element: Poster>: View {
 

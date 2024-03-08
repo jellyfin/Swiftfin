@@ -11,6 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
 // TODO: implement search view result type between `PosterHStack`
 //       and `ListHStack` (3 row list columns)? (iOS only)
 struct SearchView: View {
@@ -36,18 +37,11 @@ struct SearchView: View {
 
     private var suggestionsView: some View {
         VStack(spacing: 20) {
-            Spacer()
-
             ForEach(viewModel.suggestions) { item in
-                Button {
+                Button(item.displayTitle) {
                     searchQuery = item.displayTitle
-                } label: {
-                    Text(item.displayTitle)
-                        .font(.body)
                 }
             }
-
-            Spacer()
         }
     }
 
@@ -101,7 +95,6 @@ struct SearchView: View {
         .trailing {
             SeeAllButton()
                 .onSelect {
-                    // TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
                     router.route(to: \.library, .init(viewModel[keyPath: keyPath]))
                 }
         }
