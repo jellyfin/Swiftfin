@@ -27,12 +27,12 @@ extension EpisodeItemView {
 
                 ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
 
-                if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
-                        .onSelect { item in
-                            router.route(to: \.item, item)
-                        }
-                }
+//                if let seriesItem = viewModel.seriesItem {
+//                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
+//                        .onSelect { item in
+//                            router.route(to: \.item, item)
+//                        }
+//                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }
@@ -112,11 +112,11 @@ extension EpisodeItemView.ContentView {
                         HStack {
                             DotHStack {
                                 if let premiereYear = viewModel.item.premiereDateYear {
-                                    premiereYear.text
+                                    Text(premiereYear)
                                 }
 
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                                    runtime.text
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
                                 }
                             }
                             .font(.caption)

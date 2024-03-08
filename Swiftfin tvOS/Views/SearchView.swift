@@ -14,11 +14,11 @@ struct SearchView: View {
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
-    @ObservedObject
-    var viewModel: SearchViewModel
+    @StateObject
+    private var viewModel = SearchViewModel()
 
     @State
-    private var searchText = ""
+    private var searchQuery = ""
 
     @ViewBuilder
     private var resultsView: some View {
@@ -49,11 +49,11 @@ struct SearchView: View {
     }
 
     private func baseItemOnSelect(_ item: BaseItemDto) {
-        if item.type == .person {
-            router.route(to: \.library, .init(parent: item, type: .person, filters: .init()))
-        } else {
-            router.route(to: \.item, item)
-        }
+//        if item.type == .person {
+//            router.route(to: \.library, .init(parent: item, type: .person, filters: .init()))
+//        } else {
+//            router.route(to: \.item, item)
+//        }
     }
 
     @ViewBuilder
@@ -73,17 +73,24 @@ struct SearchView: View {
 
     var body: some View {
         Group {
-            if searchText.isEmpty {
-                EmptyView()
-            } else if !viewModel.isLoading && viewModel.noResults {
-                L10n.noResults.text
-            } else {
-                resultsView
+            switch viewModel.state {
+            case let .error(error):
+                Text(error.localizedDescription)
+            case .initial:
+                Text("Fix me")
+            case .items:
+                if viewModel.hasNoResults {
+                    L10n.noResults.text
+                } else {
+                    resultsView
+                }
+            case .searching:
+                ProgressView()
             }
         }
-        .onChange(of: searchText) { newText in
-            viewModel.search(with: newText)
+        .onChange(of: searchQuery) { newValue in
+            viewModel.send(.search(query: newValue))
         }
-        .searchable(text: $searchText, prompt: L10n.search)
+        .searchable(text: $searchQuery, prompt: L10n.search)
     }
 }

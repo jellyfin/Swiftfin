@@ -67,19 +67,19 @@ extension ItemView {
                             maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
-                        .resizingMode(.bottomLeft)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(viewModel.item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
-                                .foregroundColor(.white)
-                        }
-                        .padding(.bottom)
+//                        .resizingMode(.bottomLeft)
+                            .placeholder {
+                                EmptyView()
+                            }
+                            .failure {
+                                Text(viewModel.item.displayTitle)
+                                    .font(.largeTitle)
+                                    .fontWeight(.semibold)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+                                    .foregroundColor(.white)
+                            }
+                            .padding(.bottom)
 
                         if let tagline = viewModel.item.taglines?.first {
                             Text(tagline)
@@ -97,15 +97,15 @@ extension ItemView {
 
                             DotHStack {
                                 if let firstGenre = viewModel.item.genres?.first {
-                                    firstGenre.text
+                                    Text(firstGenre)
                                 }
 
                                 if let premiereYear = viewModel.item.premiereDateYear {
-                                    premiereYear.text
+                                    Text(premiereYear)
                                 }
 
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                                    runtime.text
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
                                 }
                             }
                             .font(.caption)

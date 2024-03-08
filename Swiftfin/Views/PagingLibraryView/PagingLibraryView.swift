@@ -137,7 +137,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    private var libraryItemsView: some View {
+    private var contentView: some View {
         CollectionVGrid(
             $viewModel.items,
             layout: $layout
@@ -170,7 +170,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     if viewModel.items.isEmpty {
                         L10n.noResults.text
                     } else {
-                        libraryItemsView
+                        contentView
                     }
                 }
             }

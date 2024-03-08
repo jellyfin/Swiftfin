@@ -24,7 +24,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         print("getting page from `ItemLibraryViewModel`")
 
-        let parameters = getItemParameters(for: page)
+        let parameters = itemParameters(for: page)
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
 
@@ -53,7 +53,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: item parameters
 
-    func getItemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
+    func itemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
 
         var libraryID: String?
         var personIDs: [String]?
@@ -120,7 +120,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     override func getRandomItem() async -> BaseItemDto? {
 
-        var parameters = getItemParameters(for: nil)
+        var parameters = itemParameters(for: nil)
         parameters.limit = 1
         parameters.sortBy = [ItemSortBy.random.rawValue]
 

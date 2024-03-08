@@ -13,13 +13,14 @@ extension HomeView {
 
     struct RecentlyAddedView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
-        @ObservedObject
-        var viewModel: ItemTypeLibraryViewModel
-
         @Default(.Customization.recentlyAddedPosterType)
         private var recentlyAddedPosterType
+
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+
+        @ObservedObject
+        var viewModel: RecentlyAddedLibraryViewModel
 
         var body: some View {
             PosterHStack(
@@ -30,12 +31,12 @@ extension HomeView {
             .onSelect { item in
                 router.route(to: \.item, item)
             }
-            .trailing {
-                SeeAllPosterButton(type: recentlyAddedPosterType)
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                    }
-            }
+//            .trailing {
+//                SeeAllPosterButton(type: recentlyAddedPosterType)
+//                    .onSelect {
+//                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
+//                    }
+//            }
         }
     }
 }

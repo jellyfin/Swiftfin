@@ -53,14 +53,15 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         .defersSystemGestures(on: .all)
 
         #else
-        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            PreferenceUIHostingControllerView {
-                VideoPlayer(manager: self.videoPlayerManager)
-            }
-            .ignoresSafeArea()
-        } else {
-            NativeVideoPlayer(manager: self.videoPlayerManager)
-        }
+        Text("FIXME")
+//        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+//            PreferenceUIHostingControllerView {
+//                VideoPlayer(manager: self.videoPlayerManager)
+//            }
+//            .ignoresSafeArea()
+//        } else {
+//            NativeVideoPlayer(manager: self.videoPlayerManager)
+//        }
         #endif
     }
 }

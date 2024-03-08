@@ -16,21 +16,61 @@ struct HomeView: View {
 
     @EnvironmentObject
     private var router: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: HomeViewModel
+
+    @StateObject
+    private var viewModel = HomeViewModel()
+
+    private var contentView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+
+//                if viewModel.resumeItems.isEmpty {
+//                    CinematicRecentlyAddedView(viewModel: .init(
+//                        itemTypes: [.movie, .series],
+//                        filters: .init(sortOrder: [ItemSortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+//                    ))
+//
+//                    if viewModel.hasNextUp {
+//                        NextUpView(viewModel: .init())
+//                    }
+//                } else {
+//                    CinematicResumeView(viewModel: viewModel)
+//
+//                    if viewModel.hasNextUp {
+//                        NextUpView(viewModel: .init())
+//                    }
+//
+//                    if viewModel.hasRecentlyAdded {
+//                        RecentlyAddedView(viewModel: .init(
+//                            itemTypes: [.movie, .series],
+//                            filters: .init(sortOrder: [ItemSortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
+//                        ))
+//                    }
+//                }
+
+//                ForEach(viewModel.libraries, id: \.self) { library in
+//                    LatestInLibraryView(viewModel: .init(parent: library))
+//                }
+            }
+        }
+    }
 
     var body: some View {
-        Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(
-                    viewModel: viewModel,
-                    errorMessage: .init(message: errorMessage)
-                )
-            } else if viewModel.isLoading {
-                ProgressView()
-            } else {
-                ContentView(viewModel: viewModel)
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case .content:
+                    contentView
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial, .refreshing:
+                    ProgressView()
+                }
             }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
         }
         .edgesIgnoringSafeArea(.top)
         .edgesIgnoringSafeArea(.horizontal)

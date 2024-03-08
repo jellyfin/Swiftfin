@@ -22,31 +22,32 @@ extension HomeView {
         private var nextUpPosterType
 
         var body: some View {
-            PosterHStack(
-                title: L10n.nextUp,
-                type: nextUpPosterType,
-                items: viewModel.items.prefix(20).asArray
-            )
-            .trailing {
-                Button {
-                    router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                } label: {
-                    HStack {
-                        L10n.seeAll.text
-                        Image(systemName: "chevron.right")
-                    }
-                    .font(.subheadline.bold())
-                }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
-            }
-            .trailing {
-                SeeAllPosterButton(type: nextUpPosterType)
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                    }
-            }
+            Text("FIXME")
+//            PosterHStack(
+//                title: L10n.nextUp,
+//                type: nextUpPosterType,
+//                items: viewModel.items.prefix(20).asArray
+//            )
+//            .trailing {
+//                Button {
+//                    router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
+//                } label: {
+//                    HStack {
+//                        L10n.seeAll.text
+//                        Image(systemName: "chevron.right")
+//                    }
+//                    .font(.subheadline.bold())
+//                }
+//            }
+//            .onSelect { item in
+//                router.route(to: \.item, item)
+//            }
+//            .trailing {
+//                SeeAllPosterButton(type: nextUpPosterType)
+//                    .onSelect {
+//                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
+//                    }
+//            }
         }
     }
 }

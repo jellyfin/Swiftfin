@@ -30,8 +30,8 @@ final class MediaCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
+    func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
     #else

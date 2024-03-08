@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+#if os(iOS)
 struct KeyCommandsPreferenceKey: PreferenceKey {
 
     static var defaultValue: [KeyCommandAction] = []
@@ -39,3 +40,4 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {}
 }
+#endif

@@ -16,8 +16,6 @@ struct ExperimentalSettingsView: View {
     @Default(.Experimental.syncSubtitleStateWithAdjacent)
     private var syncSubtitleStateWithAdjacent
 
-    @Default(.Experimental.liveTVAlphaEnabled)
-    private var liveTVAlphaEnabled
     @Default(.Experimental.liveTVForceDirectPlay)
     private var liveTVForceDirectPlay
 
@@ -41,8 +39,6 @@ struct ExperimentalSettingsView: View {
                 }
 
                 Section {
-
-                    Toggle("Live TV (Alpha)", isOn: $liveTVAlphaEnabled)
 
                     Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
 

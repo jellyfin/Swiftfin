@@ -53,9 +53,9 @@ final class HomeViewModel: ViewModel, Stateful {
             Task {
                 do {
 
-                    if Bool.random() {
-                        throw JellyfinAPIError("Don't choke on your aspirations")
-                    }
+//                    if Bool.random() {
+//                        throw JellyfinAPIError("Don't choke on your aspirations")
+//                    }
 
                     try await self.refresh()
 

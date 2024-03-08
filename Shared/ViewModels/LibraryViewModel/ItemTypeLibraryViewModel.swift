@@ -12,72 +12,63 @@ import Get
 import JellyfinAPI
 
 // TODO: atow, this is only really used for tvOS tabs
-final class ItemTypeLibraryViewModel: PagingLibraryViewModel {
+final class ItemTypeLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     let itemTypes: [BaseItemKind]
-    let filterViewModel: FilterViewModel
 
-    init(itemTypes: [BaseItemKind], filters: ItemFilterCollection) {
+    init(itemTypes: [BaseItemKind]) {
         self.itemTypes = itemTypes
-        self.filterViewModel = .init(parent: nil, currentFilters: filters)
+
         super.init()
-
-//        filterViewModel.$currentFilters
-//            .sink { newFilters in
-//                self.requestItems(with: newFilters, replaceCurrentItems: true)
-//            }
-//            .store(in: &cancellables)
     }
 
-    private func requestItems(with filters: ItemFilterCollection, replaceCurrentItems: Bool = false) {
+    override func get(page: Int) async throws -> [BaseItemDto] {
 
-        if replaceCurrentItems {
-            items = []
-            currentPage = 0
-            hasNextPage = true
-        }
+        let parameters = itemParameters(for: page)
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-        Task {
-            let parameters = self._getDefaultParams()
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items, items.isNotEmpty else {
-                hasNextPage = false
-                return
-            }
-
-            await MainActor.run {
-                self.items.append(contentsOf: items)
-            }
-        }
+        return response.value.items ?? []
     }
 
-    override func _getDefaultParams() -> Paths.GetItemsParameters? {
-        let filters = filterViewModel.currentFilters
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let ItemFilterCollection: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+    func itemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
 
-        let parameters = Paths.GetItemsParameters(
-            userID: userSession.user.id,
-            startIndex: currentPage * Self.DefaultPageSize,
-            limit: Self.DefaultPageSize,
-            isRecursive: true,
-            sortOrder: sortOrder,
-            fields: ItemFields.allCases,
-            includeItemTypes: itemTypes,
-            filters: ItemFilterCollection,
-            sortBy: sortBy,
-            enableUserData: true,
-            genreIDs: genreIDs
-        )
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = itemTypes
+        parameters.isRecursive = true
+
+        // Page size
+        if let page {
+            parameters.limit = DefaultPageSize
+            parameters.startIndex = page * DefaultPageSize
+        }
 
         return parameters
     }
 
-    override func getCurrentPage() async throws {
-        requestItems(with: filterViewModel.currentFilters)
-    }
+//    override func _getDefaultParams() -> Paths.GetItemsParameters? {
+//        let filters = filterViewModel.currentFilters
+//        let genreIDs = filters.genres.compactMap(\.id)
+//        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
+//        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
+//        let ItemFilterCollection: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+//
+//        let parameters = Paths.GetItemsParameters(
+//            userID: userSession.user.id,
+//            startIndex: currentPage * Self.DefaultPageSize,
+//            limit: Self.DefaultPageSize,
+//            isRecursive: true,
+//            sortOrder: sortOrder,
+//            fields: ItemFields.allCases,
+//            includeItemTypes: itemTypes,
+//            filters: ItemFilterCollection,
+//            sortBy: sortBy,
+//            enableUserData: true,
+//            genreIDs: genreIDs
+//        )
+//
+//        return parameters
+//    }
 }

@@ -15,23 +15,6 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
-    // TODO: - remove comment when migrated away from Stinsen
-    //
-    // This doesn't seem to work on device, but does in the simulator.
-    // It is assumed that because Stinsen adds a lot of views that the
-    // PreferencesView isn't in the right place in the VC chain so that
-    // it can apply the settings, even SwiftUI's deferment.
-    @ViewBuilder
-    func defersSystemGestures(on edges: Edge.Set) -> some View {
-        if #available(iOS 16, *) {
-            content
-                .defersSystemGestures(on: edges)
-        } else {
-            content
-                .preferredScreenEdgesDeferringSystemGestures(edges.asUIRectEdge)
-        }
-    }
-
     @ViewBuilder
     func lineLimit(_ limit: Int, reservesSpace: Bool = false) -> some View {
         if #available(iOS 16, tvOS 16, *) {
@@ -47,6 +30,26 @@ extension Backport where Content: View {
         }
     }
 
+    #if os(iOS)
+
+    // TODO: - remove comment when migrated away from Stinsen
+    //
+    // This doesn't seem to work on device, but does in the simulator.
+    // It is assumed that because Stinsen adds a lot of views that the
+    // PreferencesView isn't in the right place in the VC chain so that
+    // it can apply the settings, even SwiftUI's deferment.
+    @available(iOS 15.0, *)
+    @ViewBuilder
+    func defersSystemGestures(on edges: Edge.Set) -> some View {
+        if #available(iOS 16, *) {
+            content
+                .defersSystemGestures(on: edges)
+        } else {
+            content
+                .preferredScreenEdgesDeferringSystemGestures(edges.asUIRectEdge)
+        }
+    }
+
     @ViewBuilder
     func persistentSystemOverlays(_ visibility: Visibility) -> some View {
         if #available(iOS 16, *) {
@@ -57,4 +60,5 @@ extension Backport where Content: View {
                 .prefersHomeIndicatorAutoHidden(visibility == .hidden ? true : false)
         }
     }
+    #endif
 }

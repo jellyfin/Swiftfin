@@ -15,7 +15,7 @@ enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case landscapeGrid
     case portraitGrid
-    case list // TODO: rename `PortraitList`
+    case list
 
     // TODO: localize
     var displayTitle: String {

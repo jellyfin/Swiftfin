@@ -14,6 +14,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         let box = Box()
         let rootView = AnyView(
             content()
+            #if os(iOS)
                 .onPreferenceChange(KeyCommandsPreferenceKey.self) {
                     box.value?._keyCommandActions = $0
                 }
@@ -26,6 +27,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
                 .onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
                     box.value?._orientations = $0
                 }
+            #endif
         )
 
         super.init(rootView: rootView)
@@ -38,25 +40,7 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: Defer Edges
-
-    private var _preferredScreenEdgesDeferringSystemGestures: UIRectEdge = [.left, .right] {
-        didSet { setNeedsUpdateOfScreenEdgesDeferringSystemGestures() }
-    }
-
-    override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
-        _preferredScreenEdgesDeferringSystemGestures
-    }
-
-    // MARK: Home Indicator Auto Hidden
-
-    private var _prefersHomeIndicatorAutoHidden = false {
-        didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
-    }
-
-    override public var prefersHomeIndicatorAutoHidden: Bool {
-        _prefersHomeIndicatorAutoHidden
-    }
+    #if os(iOS)
 
     // MARK: Key Commands
 
@@ -104,4 +88,26 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         _orientations
     }
+
+    // MARK: Defer Edges
+
+    private var _preferredScreenEdgesDeferringSystemGestures: UIRectEdge = [.left, .right] {
+        didSet { setNeedsUpdateOfScreenEdgesDeferringSystemGestures() }
+    }
+
+    override public var preferredScreenEdgesDeferringSystemGestures: UIRectEdge {
+        _preferredScreenEdgesDeferringSystemGestures
+    }
+
+    // MARK: Home Indicator Auto Hidden
+
+    private var _prefersHomeIndicatorAutoHidden = false {
+        didSet { setNeedsUpdateOfHomeIndicatorAutoHidden() }
+    }
+
+    override public var prefersHomeIndicatorAutoHidden: Bool {
+        _prefersHomeIndicatorAutoHidden
+    }
+
+    #endif
 }

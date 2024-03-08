@@ -14,11 +14,15 @@ extension EdgeInsets {
     /// The default padding for View's against contextual edges,
     /// typically the edges of the View's scene
     static let defaultEdgePadding: CGFloat = {
+        #if os(tvOS)
+        50
+        #else
         if UIDevice.isPad {
             24
         } else {
             16
         }
+        #endif
     }()
 
     static let DefaultEdgeInsets: EdgeInsets = .init(defaultEdgePadding)

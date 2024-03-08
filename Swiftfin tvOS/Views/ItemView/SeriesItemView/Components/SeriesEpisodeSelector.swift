@@ -103,30 +103,30 @@ extension SeriesEpisodeSelector {
         @State
         private var wrappedScrollView: UIScrollView?
 
-        private var items: [BaseItemDto] {
-            guard let selection = viewModel.menuSelection,
-                  let items = viewModel.menuSections[selection] else { return [.noResults] }
-            return items
-        }
+//        private var items: [BaseItemDto] {
+//            guard let selection = viewModel.menuSelection,
+//                  let items = viewModel.menuSections[selection] else { return [.noResults] }
+//            return items
+//        }
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .top, spacing: 40) {
-                    if items.isNotEmpty {
-                        ForEach(items, id: \.self) { episode in
-                            EpisodeCard(episode: episode)
-                                .focused($focusedEpisodeID, equals: episode.id)
-                        }
-                    } else if viewModel.isLoading {
-                        ForEach(1 ..< 10) { i in
-                            EpisodeCard(episode: .placeHolder)
-                                .redacted(reason: .placeholder)
-                                .focused($focusedEpisodeID, equals: "\(i)")
-                        }
-                    } else {
-                        EpisodeCard(episode: .noResults)
-                            .focused($focusedEpisodeID, equals: "no-results")
-                    }
+//                    if items.isNotEmpty {
+//                        ForEach(items, id: \.self) { episode in
+//                            EpisodeCard(episode: episode)
+//                                .focused($focusedEpisodeID, equals: episode.id)
+//                        }
+//                    } else if viewModel.isLoading {
+//                        ForEach(1 ..< 10) { i in
+//                            EpisodeCard(episode: .placeHolder)
+//                                .redacted(reason: .placeholder)
+//                                .focused($focusedEpisodeID, equals: "\(i)")
+//                        }
+//                    } else {
+//                        EpisodeCard(episode: .noResults)
+//                            .focused($focusedEpisodeID, equals: "no-results")
+//                    }
                 }
                 .padding(.horizontal, 50)
                 .padding(.bottom, 50)
@@ -157,16 +157,16 @@ extension SeriesEpisodeSelector {
             .introspectScrollView { scrollView in
                 wrappedScrollView = scrollView
             }
-            .onChange(of: viewModel.menuSelection) { _ in
-                lastFocusedEpisodeID = items.first?.id
-            }
+//            .onChange(of: viewModel.menuSelection) { _ in
+//                lastFocusedEpisodeID = items.first?.id
+//            }
             .onChange(of: focusedEpisodeID) { episodeIndex in
                 guard let episodeIndex = episodeIndex else { return }
                 lastFocusedEpisodeID = episodeIndex
             }
-            .onChange(of: viewModel.menuSections) { _ in
-                lastFocusedEpisodeID = items.first?.id
-            }
+//            .onChange(of: viewModel.menuSections) { _ in
+//                lastFocusedEpisodeID = items.first?.id
+//            }
         }
     }
 }

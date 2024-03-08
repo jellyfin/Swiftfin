@@ -24,8 +24,6 @@ final class HomeCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var item = makeItem
     @Route(.modal)
-    var basicLibrary = makeBasicLibrary
-    @Route(.modal)
     var library = makeLibrary
     #else
     @Route(.push)
@@ -43,12 +41,8 @@ final class HomeCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(ItemCoordinator(item: item))
     }
 
-    func makeBasicLibrary(parameters: BasicLibraryCoordinator.Parameters) -> NavigationViewCoordinator<BasicLibraryCoordinator> {
-        NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
-    }
-
-    func makeLibrary(parameters: LibraryCoordinator.Parameters) -> NavigationViewCoordinator<LibraryCoordinator> {
-        NavigationViewCoordinator(LibraryCoordinator(parameters: parameters))
+    func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        NavigationViewCoordinator(LibraryCoordinator<BaseItemDto>(viewModel: viewModel))
     }
     #else
     func makeItem(item: BaseItemDto) -> ItemCoordinator {

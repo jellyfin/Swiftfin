@@ -16,14 +16,16 @@ extension UIViewController {
     // only swizzle once
     static var swizzlePreferences = {
         Swizzle(UIViewController.self) {
+            #if os(iOS)
             #selector(getter: childForScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
             #selector(getter: supportedInterfaceOrientations) <-> #selector(swizzled_supportedInterfaceOrientations)
-//            #selector(getter: childForHomeIndicatorAutoHidden) <-> #selector(swizzled_childForHomeIndicatorAutoHidden)
-//            #selector(getter: prefersHomeIndicatorAutoHidden) <-> #selector(swizzled_prefersHomeIndicatorAutoHidden)
+            #endif
         }
     }()
 
     // MARK: Swizzles
+
+    #if os(iOS)
 
     @objc
     func swizzled_childForScreenEdgesDeferringSystemGestures() -> UIViewController? {
@@ -52,6 +54,7 @@ extension UIViewController {
     func swizzled_supportedInterfaceOrientations() -> UIInterfaceOrientationMask {
         search()?._orientations ?? .all
     }
+    #endif
 
     // MARK: Search
 

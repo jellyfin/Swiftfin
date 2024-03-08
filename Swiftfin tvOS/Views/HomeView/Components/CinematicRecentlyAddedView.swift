@@ -36,29 +36,30 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.items.prefix(20).asArray)
-                .topContent { item in
-                    ImageView(itemSelectorImageSource(for: item))
-                        .resizingMode(.bottomLeft)
-                        .placeholder {
-                            EmptyView()
-                        }
-                        .failure {
-                            Text(item.displayTitle)
-                                .font(.largeTitle)
-                                .fontWeight(.semibold)
-                        }
-                        .padding2(.leading)
-                }
-                .onSelect { item in
-                    router.route(to: \.item, item)
-                }
-                .trailingContent {
-                    SeeAllPosterButton(type: .landscape)
-                        .onSelect {
-                            router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                        }
-                }
+            Text("FIXME")
+//            CinematicItemSelector(items: viewModel.items.prefix(20).asArray)
+//                .topContent { item in
+//                    ImageView(itemSelectorImageSource(for: item))
+//                        .resizingMode(.bottomLeft)
+//                        .placeholder {
+//                            EmptyView()
+//                        }
+//                        .failure {
+//                            Text(item.displayTitle)
+//                                .font(.largeTitle)
+//                                .fontWeight(.semibold)
+//                        }
+//                        .padding2(.leading)
+//                }
+//                .onSelect { item in
+//                    router.route(to: \.item, item)
+//                }
+//                .trailingContent {
+//                    SeeAllPosterButton(type: .landscape)
+//                        .onSelect {
+//                            router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
+//                        }
+//                }
         }
     }
 }

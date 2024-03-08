@@ -31,8 +31,20 @@ struct PosterButton<Item: Poster>: View {
     // Only set if desiring focus changes
     private var onFocusChanged: ((Bool) -> Void)?
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
+    @ViewBuilder
+    private func poster(from item: any Poster) -> some View {
+        switch type {
+        case .portrait:
+            ImageView(item.portraitPosterImageSource(maxWidth: 500))
+                .failure {
+                    InitialFailureView(item.displayTitle.initials)
+                }
+        case .landscape:
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+                .failure {
+                    InitialFailureView(item.displayTitle.initials)
+                }
+        }
     }
 
     var body: some View {
@@ -40,28 +52,15 @@ struct PosterButton<Item: Poster>: View {
             Button {
                 onSelect()
             } label: {
-                Group {
-                    switch type {
-                    case .portrait:
-                        ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                            .failure {
-                                InitialFailureView(item.displayTitle.initials)
-                            }
-                    case .landscape:
-                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                            .failure {
-                                InitialFailureView(item.displayTitle.initials)
-                            }
-                    }
-                }
-                .posterStyle(type)
-                .frame(width: itemWidth)
-                .overlay {
+                ZStack {
+                    Color.clear
+
+                    poster(from: item)
+
                     imageOverlay()
                         .eraseToAnyView()
-                        .posterStyle(type)
-                        .frame(width: itemWidth)
                 }
+                .posterStyle(type)
             }
             .buttonStyle(.card)
             .contextMenu(menuItems: {
@@ -69,11 +68,11 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterShadow()
-            .if(onFocusChanged != nil) { view in
+            .ifLet(onFocusChanged) { view, onFocusChanged in
                 view
                     .focused($isFocused)
                     .onChange(of: isFocused) { newValue in
-                        onFocusChanged?(newValue)
+                        onFocusChanged(newValue)
                     }
             }
 
@@ -81,7 +80,6 @@ struct PosterButton<Item: Poster>: View {
                 .eraseToAnyView()
                 .zIndex(-1)
         }
-        .frame(width: itemWidth)
     }
 }
 
