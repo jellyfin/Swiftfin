@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-extension FilterDrawerHStack {
+extension NavigationBarFilterDrawer {
 
     struct FilterDrawerButton: View {
 
@@ -55,7 +55,7 @@ extension FilterDrawerHStack {
     }
 }
 
-extension FilterDrawerHStack.FilterDrawerButton {
+extension NavigationBarFilterDrawer.FilterDrawerButton {
 
     init(title: String, activated: Bool) {
         self.init(

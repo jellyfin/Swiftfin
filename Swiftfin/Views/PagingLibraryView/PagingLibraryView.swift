@@ -11,33 +11,46 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: `BaseItemPerson` should still have role subtitle
+
 struct PagingLibraryView<Element: Poster>: View {
 
-    @Default(.Customization.Library.viewType)
-    private var libraryViewType
     @Default(.Customization.Library.listColumnCount)
     private var listColumnCount
+    @Default(.Customization.Library.posterType)
+    private var posterType
+    @Default(.Customization.Library.viewType)
+    private var viewType
 
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
+    @State
+    private var layout: CollectionVGridLayout
+
+    @StateObject
+    private var collectionVGridProxy: CollectionVGridProxy<Element> = .init()
     @StateObject
     private var viewModel: PagingLibraryViewModel<Element>
 
-    @State
-    private var layout: CollectionVGridLayout
+    // MARK: init
 
     init(viewModel: PagingLibraryViewModel<Element>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
 
-        let initialLibraryViewType = Defaults[.Customization.Library.viewType]
+        let initialPosterType = Defaults[.Customization.Library.posterType]
+        let initialViewType = Defaults[.Customization.Library.viewType]
         let initialListColumnCount = Defaults[.Customization.Library.listColumnCount]
 
         if UIDevice.isPhone {
-            layout = Self.phoneLayout(libraryViewType: initialLibraryViewType)
+            layout = Self.phoneLayout(
+                posterType: initialPosterType,
+                viewType: initialViewType
+            )
         } else {
             layout = Self.padLayout(
-                libraryViewType: initialLibraryViewType,
+                posterType: initialPosterType,
+                viewType: initialViewType,
                 listColumnCount: initialListColumnCount
             )
         }
@@ -73,27 +86,36 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: layout
 
-    private static func padLayout(libraryViewType: LibraryViewType, listColumnCount: Int) -> CollectionVGridLayout {
-        switch libraryViewType {
-        case .landscapeGrid:
+    private static func padLayout(
+        posterType: PosterType,
+        viewType: LibraryViewType,
+        listColumnCount: Int
+    ) -> CollectionVGridLayout {
+        switch (posterType, viewType) {
+        case (.landscape, .grid):
             .minWidth(220)
-        case .portraitGrid:
+        case (.portrait, .grid):
             .minWidth(150)
-        case .list:
+        case (_, .list):
             .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
 
-    private static func phoneLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
-        switch libraryViewType {
-        case .portraitGrid:
-            .columns(3)
-        case .landscapeGrid:
+    private static func phoneLayout(
+        posterType: PosterType,
+        viewType: LibraryViewType
+    ) -> CollectionVGridLayout {
+        switch (posterType, viewType) {
+        case (.landscape, .grid):
             .columns(2)
-        case .list:
+        case (.portrait, .grid):
+            .columns(3)
+        case (_, .list):
             .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
         }
     }
+
+    // MARK: item view
 
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
@@ -124,7 +146,7 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func listItemView(item: Element) -> some View {
-        LibraryRow(item: item)
+        LibraryRow(item: item, posterType: posterType)
             .onSelect {
                 onSelect(item)
             }
@@ -139,21 +161,22 @@ struct PagingLibraryView<Element: Poster>: View {
 
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.items,
+            $viewModel.elements,
             layout: $layout
         ) { item in
-            switch libraryViewType {
-            case .landscapeGrid:
+            switch (posterType, viewType) {
+            case (.landscape, .grid):
                 landscapeGridItemView(item: item)
-            case .portraitGrid:
+            case (.portrait, .grid):
                 portraitGridItemView(item: item)
-            case .list:
+            case (_, .list):
                 listItemView(item: item)
             }
         }
-        .onReachedBottomEdge(offset: 100) {
+        .onReachedBottomEdge(offset: 300) {
             viewModel.send(.getNextPage)
         }
+        .proxy(collectionVGridProxy)
     }
 
     // MARK: body
@@ -164,10 +187,10 @@ struct PagingLibraryView<Element: Poster>: View {
                 switch viewModel.state {
                 case let .error(error):
                     errorView(with: error)
-                case .refreshing:
+                case .initial, .refreshing:
                     ProgressView()
                 case .gettingNextPage, .content:
-                    if viewModel.items.isEmpty {
+                    if viewModel.elements.isEmpty {
                         L10n.noResults.text
                     } else {
                         contentView
@@ -181,29 +204,56 @@ struct PagingLibraryView<Element: Poster>: View {
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in
-            view.navigationBarDrawer {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    FilterDrawerHStack(viewModel: filterViewModel, types: ItemFilterType.allCases)
-                        .onSelect {
-                            router.route(to: \.filter, $0)
-                        }
-                        .padding(.horizontal)
-                        .padding(.vertical, 1)
+            view.navigationBarFilterDrawer(
+                viewModel: filterViewModel,
+                types: ItemFilterType.allCases
+            ) {
+                router.route(to: \.filter, $0)
+            }
+        }
+        .onChange(of: posterType) { newValue in
+            if UIDevice.isPhone {
+                if viewType == .list {
+                    collectionVGridProxy.layout()
+                } else {
+                    layout = Self.phoneLayout(
+                        posterType: newValue,
+                        viewType: viewType
+                    )
+                }
+            } else {
+                if viewType == .list {
+                    collectionVGridProxy.layout()
+                } else {
+                    layout = Self.padLayout(
+                        posterType: newValue,
+                        viewType: viewType,
+                        listColumnCount: listColumnCount
+                    )
                 }
             }
         }
-        .onChange(of: libraryViewType) { newValue in
+        .onChange(of: viewType) { newValue in
             if UIDevice.isPhone {
-                layout = Self.phoneLayout(libraryViewType: newValue)
+                layout = Self.phoneLayout(
+                    posterType: posterType,
+                    viewType: newValue
+                )
             } else {
-                layout = Self.padLayout(libraryViewType: newValue, listColumnCount: listColumnCount)
+                layout = Self.padLayout(
+                    posterType: posterType,
+                    viewType: newValue,
+                    listColumnCount: listColumnCount
+                )
             }
         }
         .onChange(of: listColumnCount) { newValue in
-            if UIDevice.isPhone {
-                layout = Self.phoneLayout(libraryViewType: libraryViewType)
-            } else {
-                layout = Self.padLayout(libraryViewType: libraryViewType, listColumnCount: newValue)
+            if UIDevice.isPad {
+                layout = Self.padLayout(
+                    posterType: posterType,
+                    viewType: viewType,
+                    listColumnCount: newValue
+                )
             }
         }
         .onReceive(viewModel.events) { event in
@@ -221,8 +271,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
         }
         .onFirstAppear {
-            // May have been passed a view model that already had a page of items
-            if viewModel.items.isEmpty {
+            if viewModel.state == .initial {
                 viewModel.send(.refresh)
             }
         }
@@ -233,10 +282,13 @@ struct PagingLibraryView<Element: Poster>: View {
             }
 
             Menu {
-                LibraryViewTypeToggle(libraryViewType: $libraryViewType, listColumnCount: $listColumnCount)
 
-                RandomItemButton(viewModel: viewModel)
-                    .disabled(viewModel.items.isEmpty)
+                LibraryViewTypeToggle(posterType: $posterType, viewType: $viewType, listColumnCount: $listColumnCount)
+
+                Button(L10n.random, systemImage: "dice.fill") {
+                    viewModel.send(.getRandomItem)
+                }
+                .disabled(viewModel.elements.isEmpty)
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

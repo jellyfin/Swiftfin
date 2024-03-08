@@ -41,7 +41,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // Necessary to get an actual "next page" with this endpoint.
         // Could be a performance issue for lots of items, but there's
         // nothing we can do about it.
-        parameters.excludeItemIDs = items.compactMap(\.id)
+        parameters.excludeItemIDs = elements.compactMap(\.id)
 
         return parameters
     }

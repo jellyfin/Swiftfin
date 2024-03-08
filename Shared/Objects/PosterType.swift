@@ -13,16 +13,16 @@ import SwiftUI
 // TODO: in Swift 5.10, nest under `Poster`
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case portrait
     case landscape
+    case portrait
 
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .portrait:
-            return "Portrait"
         case .landscape:
-            return "Landscape"
+            "Landscape"
+        case .portrait:
+            "Portrait"
         }
     }
 }

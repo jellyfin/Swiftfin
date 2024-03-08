@@ -10,20 +10,16 @@ import Defaults
 import Foundation
 import UIKit
 
-// TODO: have just `grid/list`, use separate setting for poster type
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case landscapeGrid
-    case portraitGrid
+    case grid
     case list
 
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .landscapeGrid:
-            "Landscape"
-        case .portraitGrid:
-            "Portrait"
+        case .grid:
+            "Grid"
         case .list:
             "List"
         }

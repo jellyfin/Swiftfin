@@ -47,28 +47,4 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         return parameters
     }
-
-//    override func _getDefaultParams() -> Paths.GetItemsParameters? {
-//        let filters = filterViewModel.currentFilters
-//        let genreIDs = filters.genres.compactMap(\.id)
-//        let sortBy: [String] = filters.sortBy.map(\.filterName).appending("IsFolder")
-//        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-//        let ItemFilterCollection: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
-//
-//        let parameters = Paths.GetItemsParameters(
-//            userID: userSession.user.id,
-//            startIndex: currentPage * Self.DefaultPageSize,
-//            limit: Self.DefaultPageSize,
-//            isRecursive: true,
-//            sortOrder: sortOrder,
-//            fields: ItemFields.allCases,
-//            includeItemTypes: itemTypes,
-//            filters: ItemFilterCollection,
-//            sortBy: sortBy,
-//            enableUserData: true,
-//            genreIDs: genreIDs
-//        )
-//
-//        return parameters
-//    }
 }

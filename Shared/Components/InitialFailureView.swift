@@ -29,3 +29,30 @@ struct InitialFailureView: View {
         }
     }
 }
+
+struct TypeSystemNameView<Item: Poster>: View {
+
+    @State
+    private var contentSize: CGSize = .zero
+
+    let item: Item
+
+    var body: some View {
+        ZStack {
+            Color.secondarySystemFill
+                .opacity(0.5)
+
+            if let typeSystemImage = item.typeSystemImage {
+                Image(systemName: typeSystemImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .foregroundColor(.secondary)
+                    .accessibilityHidden(true)
+                    .frame(width: contentSize.width / 3.5, height: contentSize.height / 3)
+            }
+        }
+        .onSizeChanged { newSize in
+            contentSize = newSize
+        }
+    }
+}

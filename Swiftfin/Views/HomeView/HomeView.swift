@@ -31,11 +31,11 @@ struct HomeView: View {
                     ContinueWatchingView(viewModel: viewModel)
                 }
 
-                if viewModel.nextUpViewModel.items.isNotEmpty {
+                if viewModel.nextUpViewModel.elements.isNotEmpty {
                     NextUpView(viewModel: viewModel.nextUpViewModel)
                 }
 
-                if viewModel.recentlyAddedViewModel.items.isNotEmpty {
+                if viewModel.recentlyAddedViewModel.elements.isNotEmpty {
                     RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
                 }
 

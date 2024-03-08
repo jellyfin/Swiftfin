@@ -142,6 +142,7 @@ extension View {
         modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
     }
 
+    // TODO: binding overload
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -152,6 +153,7 @@ extension View {
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
 
+    // TODO: binding overload
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -165,6 +167,7 @@ extension View {
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
 
+    // TODO: binding overload
     func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
         background {
             GeometryReader { reader in

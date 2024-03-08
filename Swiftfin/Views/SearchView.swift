@@ -27,7 +27,6 @@ struct SearchView: View {
     @StateObject
     private var viewModel = SearchViewModel()
 
-    @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
@@ -35,7 +34,6 @@ struct SearchView: View {
             }
     }
 
-    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -53,7 +51,6 @@ struct SearchView: View {
         }
     }
 
-    @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -104,7 +101,7 @@ struct SearchView: View {
         .trailing {
             SeeAllButton()
                 .onSelect {
-                    // TODO: have a `SearchLibraryViewModel` that allows paginating on searched items?
+                    // TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
                     router.route(to: \.library, .init(viewModel[keyPath: keyPath]))
                 }
         }
@@ -121,7 +118,7 @@ struct SearchView: View {
                     errorView(with: error)
                 case .initial:
                     suggestionsView
-                case .items:
+                case .content:
                     if viewModel.hasNoResults {
                         L10n.noResults.text
                     } else {
@@ -139,16 +136,11 @@ struct SearchView: View {
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarDrawer {
-            // TODO: breakout into `navigationBarFilterDrawer(...)`
-            ScrollView(.horizontal, showsIndicators: false) {
-                FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
-                    .onSelect {
-                        router.route(to: \.filter, $0)
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 1)
-            }
+        .navigationBarFilterDrawer(
+            viewModel: viewModel.filterViewModel,
+            types: ItemFilterType.allCases
+        ) {
+            router.route(to: \.filter, $0)
         }
         .onChange(of: searchQuery) { newValue in
             viewModel.send(.search(query: newValue))

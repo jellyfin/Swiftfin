@@ -44,7 +44,8 @@
 // extension UIViewController {
 //    static var preferenceSwizzling: Void = {
 //        Swizzle(UIViewController.self) {
-////            #selector(getter: childForScreenEdgesDeferringSystemGestures) <-> #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
+////            #selector(getter: childForScreenEdgesDeferringSystemGestures) <->
+/// #selector(swizzled_childForScreenEdgesDeferringSystemGestures)
 ////            #selector(getter: childForHomeIndicatorAutoHidden) <-> #selector(swizzled_childForHomeIndicatorAutoHidden)
 //        }
 //    }()

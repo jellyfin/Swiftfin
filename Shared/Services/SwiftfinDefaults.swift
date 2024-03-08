@@ -71,7 +71,12 @@ extension Defaults.Keys {
             )
             static let viewType = Key<LibraryViewType>(
                 "libraryViewType",
-                default: .portraitGrid,
+                default: .grid,
+                suite: .generalSuite
+            )
+            static let posterType = Key<PosterType>(
+                "libraryPosterType",
+                default: .portrait,
                 suite: .generalSuite
             )
             static let listColumnCount = Key<Int>(

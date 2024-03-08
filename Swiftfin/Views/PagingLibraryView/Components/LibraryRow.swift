@@ -11,7 +11,6 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
-// TODO: different text sized based on poster type
 // TODO: for landscape, have thumbs come first
 
 extension PagingLibraryView {
@@ -23,6 +22,7 @@ extension PagingLibraryView {
 
         private let item: Element
         private var onSelect: () -> Void
+        private let posterType: PosterType
 
         @ViewBuilder
         private func itemAccessoryView(item: BaseItemDto) -> some View {
@@ -73,23 +73,28 @@ extension PagingLibraryView {
                         ZStack {
                             Color.clear
 
-                            //                        switch listPosterType {
-                            //                        case .landscape:
-                            ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
-                            //                        case .portrait:
-                            //                            ImageView(item.portraitPosterImageSource(maxWidth: 60))
-                            //                        }
+                            switch posterType {
+                            case .portrait:
+                                ImageView(item.portraitPosterImageSource(maxWidth: 60))
+                                    .failure {
+                                        TypeSystemNameView(item: item)
+                                    }
+                            case .landscape:
+                                ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
+                                    .failure {
+                                        TypeSystemNameView(item: item)
+                                    }
+                            }
                         }
-                        .posterStyle(.landscape)
-                        .frame(width: 110)
-                        //                    .frame(width: listPosterType == .landscape ? 110 : 60)
+                        .posterStyle(posterType)
+                        .frame(width: posterType == .landscape ? 110 : 60)
                         .posterShadow()
-                        .padding(.vertical, 10)
+                        .padding(.vertical, 8)
 
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(item.displayTitle)
-                                    .font(.subheadline)
+                                    .font(posterType == .landscape ? .subheadline : .callout)
                                     .fontWeight(.regular)
                                     .foregroundColor(.primary)
                                     .lineLimit(2)
@@ -119,10 +124,11 @@ extension PagingLibraryView {
 
 extension PagingLibraryView.LibraryRow {
 
-    init(item: Element) {
+    init(item: Element, posterType: PosterType) {
         self.init(
             item: item,
-            onSelect: {}
+            onSelect: {},
+            posterType: posterType
         )
     }
 

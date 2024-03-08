@@ -18,6 +18,7 @@ struct DotHStack<Content: View>: View {
             .separator {
                 Circle()
                     .frame(width: 2, height: 2)
+                    .padding(.horizontal, 5)
             }
     }
 }

@@ -14,6 +14,7 @@ protocol Poster: Displayable, Hashable, Identifiable {
 
     var subtitle: String? { get }
     var showTitle: Bool { get }
+    var typeSystemImage: String? { get }
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]

@@ -24,9 +24,9 @@ final class SearchViewModel: ViewModel, Stateful {
     // MARK: State
 
     enum State: Equatable {
+        case content
         case error(JellyfinAPIError)
         case initial
-        case items
         case searching
     }
 
@@ -175,7 +175,7 @@ final class SearchViewModel: ViewModel, Stateful {
                     self.people = items[.person] ?? []
                     self.series = items[.series] ?? []
 
-                    self.state = .items
+                    self.state = .content
                 }
             } catch {
 

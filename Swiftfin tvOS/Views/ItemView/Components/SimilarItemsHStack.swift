@@ -44,7 +44,7 @@ extension ItemView {
 //                        }
 //                }
 //            }
-                .onSelect { item in
+            .onSelect { item in
                     router.route(to: \.item, item)
                 }
         }

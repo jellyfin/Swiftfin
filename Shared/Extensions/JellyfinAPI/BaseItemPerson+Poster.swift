@@ -21,6 +21,10 @@ extension BaseItemPerson: Poster {
         true
     }
 
+    var typeSystemImage: String? {
+        "person.fill"
+    }
+
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         let scaleWidth = UIScreen.main.scale(maxWidth)
         let client = Container.userSession().client

@@ -41,4 +41,16 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
     var hasFilters: Bool {
         self != Self.default
     }
+
+    var activeFilterCount: Int {
+        var count = 0
+
+        for filter in ItemFilterType.allCases {
+            if self[keyPath: filter.collectionAnyKeyPath] != Self.default[keyPath: filter.collectionAnyKeyPath] {
+                count += 1
+            }
+        }
+
+        return count
+    }
 }

@@ -16,13 +16,11 @@ import SwiftUI
 /// Magic number for page sizes
 let DefaultPageSize = 16
 
-class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
+final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: get
 
     override func get(page: Int) async throws -> [BaseItemDto] {
-
-        print("getting page from `ItemLibraryViewModel`")
 
         let parameters = itemParameters(for: page)
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
@@ -32,7 +30,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         // 2 - if parent is type `folder`, then we are in a folder-view
         //     context so change `collectionFolder` types to `folder`
         //     for better view handling
-        let validItems = (response.value.items ?? [])
+        let items = (response.value.items ?? [])
             .filter { item in
                 if let collectionType = item.collectionType {
                     return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
@@ -48,7 +46,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
                 return item
             }
 
-        return validItems
+        return items
     }
 
     // MARK: item parameters
@@ -61,8 +59,6 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
         var isRecursive: Bool? = true
 
-        // TODO: fix favorites/TitledLibraryParent
-        // TODO: fix includeItemTypes
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {
             case .collectionFolder:
@@ -109,7 +105,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             // a performance issue for loading pages after already loading
             // many items, but there's nothing we can do about that.
             if filters.sortBy.first == ItemSortBy.random {
-                parameters.excludeItemIDs = items.compactMap(\.id)
+                parameters.excludeItemIDs = elements.compactMap(\.id)
             }
         }
 

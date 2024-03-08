@@ -50,12 +50,9 @@ final class HomeViewModel: ViewModel, Stateful {
         case .refresh:
             cancellables.removeAll()
 
-            Task {
+            Task { [weak self] in
+                guard let self else { return }
                 do {
-
-//                    if Bool.random() {
-//                        throw JellyfinAPIError("Don't choke on your aspirations")
-//                    }
 
                     try await self.refresh()
 

@@ -44,6 +44,18 @@ extension BaseItemDto: Poster {
         }
     }
 
+    var typeSystemImage: String? {
+        switch type {
+        case .episode, .movie, .series:
+            "film"
+        case .folder:
+            "folder.fill"
+        case .person:
+            "person.fill"
+        default: nil
+        }
+    }
+
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
         switch type {
         case .episode:

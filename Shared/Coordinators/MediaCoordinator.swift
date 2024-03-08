@@ -50,6 +50,6 @@ final class MediaCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        MediaView(viewModel: .init())
+        MediaView()
     }
 }

@@ -23,6 +23,20 @@ extension View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
 
+    func navigationBarFilterDrawer(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType],
+        onSelect: @escaping (FilterCoordinator.Parameters) -> Void
+    ) -> some View {
+        navigationBarDrawer {
+            NavigationBarFilterDrawer(
+                viewModel: viewModel,
+                types: ItemFilterType.allCases
+            )
+            .onSelect(onSelect)
+        }
+    }
+
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
         onNotification(UIApplication.didEnterBackgroundNotification, perform: action)
     }
@@ -37,7 +51,7 @@ extension View {
 
     func navigationBarCloseButton(_ action: @escaping () -> Void) -> some View {
         toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
+            ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     action()
                 } label: {

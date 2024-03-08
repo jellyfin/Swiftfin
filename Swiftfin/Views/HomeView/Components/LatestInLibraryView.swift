@@ -26,13 +26,13 @@ extension HomeView {
         var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            if viewModel.items.isEmpty {
+            if viewModel.elements.isEmpty {
                 EmptyView()
             } else {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: latestInLibraryPosterType,
-                    items: $viewModel.items
+                    items: $viewModel.elements
                 )
                 .trailing {
                     SeeAllButton()

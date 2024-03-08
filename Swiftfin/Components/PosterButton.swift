@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: have `ImageView` failure view be an icon based on Element/BaseItemDto type
-
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
@@ -23,17 +21,17 @@ struct PosterButton<Item: Poster>: View {
     private var singleImage: Bool
 
     @ViewBuilder
-    private func poster(from item: any Poster) -> some View {
+    private func poster(from item: Item) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: 500))
+            ImageView(item.portraitPosterImageSource(maxWidth: 200))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         case .landscape:
             ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         }
     }

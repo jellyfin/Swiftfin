@@ -21,7 +21,7 @@ import UIKit
 //       *without* being in an explicit state?
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
-//       - a check if elements were actually appended to the set but that requires a redundant get
+//         a check if elements were actually appended to the set but that requires a redundant get
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -42,9 +42,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     // MARK: State
 
     enum State: Equatable {
+        case content
         case error(LibraryError)
         case gettingNextPage
-        case content
+        case initial
         case refreshing
     }
 
@@ -65,9 +66,9 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    final var items: OrderedSet<Element>
+    final var elements: OrderedSet<Element>
     @Published
-    final var state: State = .refreshing
+    final var state: State = .initial
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
@@ -97,7 +98,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.items = OrderedSet(data)
+        self.elements = OrderedSet(data)
         self.isStatic = true
         self.hasNextPage = false
         self.parent = parent
@@ -107,7 +108,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         parent: (any LibraryParent)? = nil,
         filters: ItemFilterCollection? = nil
     ) {
-        self.items = OrderedSet()
+        self.elements = OrderedSet()
         self.isStatic = false
         self.parent = parent
 
@@ -156,6 +157,11 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         switch action {
         case let .error(error):
+
+            Task { @MainActor in
+                elements.removeAll()
+            }
+
             return .error(error)
         case .refresh:
 
@@ -174,11 +180,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                 guard let self else { return }
 
                 do {
-                    // Suspension points cause references to the object. (AsyncSlab)
-                    // Meaning many `LibraryViewModel's can be retained in the
-                    // background even though the View is gone and handled its release.
-                    // That's okay though since mechanisms throughout the app should
-                    // handle whether the server can't be connected to/is too slow.
                     try await self.refresh()
 
                     guard !Task.isCancelled else { return }
@@ -199,7 +200,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             return .refreshing
         case .getNextPage:
 
-            guard hasNextPage else { return .content }
+            guard hasNextPage else { return state }
 
             pagingTask = Task { [weak self] in
                 do {
@@ -249,7 +250,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         hasNextPage = true
 
         await MainActor.run {
-            items.removeAll()
+            elements.removeAll()
         }
 
         try await getNextPage()
@@ -270,7 +271,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         hasNextPage = !(pageItems.count < DefaultPageSize)
 
         await MainActor.run {
-            items.append(contentsOf: pageItems)
+            elements.append(contentsOf: pageItems)
         }
     }
 
@@ -283,6 +284,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     }
 
     func getRandomItem() async throws -> Element? {
-        items.randomElement()
+        elements.randomElement()
     }
 }

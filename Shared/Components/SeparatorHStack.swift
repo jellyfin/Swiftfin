@@ -10,7 +10,10 @@ import SwiftUI
 
 // https://movingparts.io/variadic-views-in-swiftui
 
-// TODO: add customization for spacing, or just have 0 and have separator handle spacing
+/// An `HStack` that inserts an optional `separator` between views.
+///
+/// - Note: Default spacing is removed. The separator view is responsible
+///         for spacing.
 struct SeparatorHStack<Content: View>: View {
 
     private var content: () -> Content
@@ -62,15 +65,9 @@ extension SeparatorHStack {
 
         @ViewBuilder
         private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-            #if os(tvOS)
             HStack(spacing: 0) {
                 content()
             }
-            #else
-            HStack {
-                content()
-            }
-            #endif
         }
     }
 }

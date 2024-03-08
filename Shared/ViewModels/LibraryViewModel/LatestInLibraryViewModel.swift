@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
+final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 

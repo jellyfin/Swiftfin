@@ -28,7 +28,7 @@ extension HomeView {
             PosterHStack(
                 title: L10n.nextUp,
                 type: nextUpPosterType,
-                items: $viewModel.items
+                items: $viewModel.elements
             )
             .trailing {
                 SeeAllButton()

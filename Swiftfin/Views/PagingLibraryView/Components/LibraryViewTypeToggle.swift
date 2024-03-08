@@ -14,71 +14,78 @@ extension PagingLibraryView {
     struct LibraryViewTypeToggle: View {
 
         @Binding
-        private var libraryViewType: LibraryViewType
-        @Binding
         private var listColumnCount: Int
+        @Binding
+        private var posterType: PosterType
+        @Binding
+        private var viewType: LibraryViewType
 
-        init(libraryViewType: Binding<LibraryViewType>, listColumnCount: Binding<Int>) {
-            self._libraryViewType = libraryViewType
+        init(
+            posterType: Binding<PosterType>,
+            viewType: Binding<LibraryViewType>,
+            listColumnCount: Binding<Int>
+        ) {
             self._listColumnCount = listColumnCount
+            self._posterType = posterType
+            self._viewType = viewType
         }
 
         var body: some View {
             Menu {
 
-                Button {
-                    libraryViewType = .landscapeGrid
-                } label: {
-                    if libraryViewType == .landscapeGrid {
-                        Label("Landscape", systemImage: "checkmark")
-                    } else {
-                        Label("Landscape", systemImage: "rectangle")
-                    }
-                }
-
-                Button {
-                    libraryViewType = .portraitGrid
-                } label: {
-                    if libraryViewType == .portraitGrid {
-                        Label("Portrait", systemImage: "checkmark")
-                    } else {
-                        Label("Portrait", systemImage: "rectangle.portrait")
-                    }
-                }
-
-                if libraryViewType == .list, UIDevice.isPad {
-
+                Section("Poster") {
                     Button {
-                        libraryViewType = .list
+                        posterType = .landscape
                     } label: {
-                        if libraryViewType == .list {
-                            Label(L10n.list, systemImage: "checkmark")
+                        if posterType == .landscape {
+                            Label("Landscape", systemImage: "checkmark")
                         } else {
-                            Label(L10n.list, systemImage: "list.dash")
+                            Label("Landscape", systemImage: "rectangle")
                         }
                     }
 
-                    Stepper("Columns: \(listColumnCount)", value: $listColumnCount, in: 1 ... 4)
-                } else {
-
                     Button {
-                        libraryViewType = .list
+                        posterType = .portrait
                     } label: {
-                        if libraryViewType == .list {
-                            Label(L10n.list, systemImage: "checkmark")
+                        if posterType == .portrait {
+                            Label("Portrait", systemImage: "checkmark")
                         } else {
-                            Label(L10n.list, systemImage: "list.dash")
+                            Label("Portrait", systemImage: "rectangle.portrait")
                         }
                     }
+                }
+
+                Section("Layout") {
+                    Button {
+                        viewType = .grid
+                    } label: {
+                        if viewType == .grid {
+                            Label("Grid", systemImage: "checkmark")
+                        } else {
+                            Label("Grid", systemImage: "square.grid.2x2")
+                        }
+                    }
+
+                    Button {
+                        viewType = .list
+                    } label: {
+                        if viewType == .list {
+                            Label("List", systemImage: "checkmark")
+                        } else {
+                            Label("List", systemImage: "square.fill.text.grid.1x2")
+                        }
+                    }
+                }
+
+                if viewType == .list, UIDevice.isPad {
+                    Stepper("Columns: \(listColumnCount)", value: $listColumnCount, in: 1 ... 3)
                 }
             } label: {
-                switch libraryViewType {
-                case .landscapeGrid:
-                    Label("Landscape", systemImage: "rectangle")
-                case .portraitGrid:
-                    Label("Portrait", systemImage: "rectangle.portrait")
+                switch viewType {
+                case .grid:
+                    Label("Layout", systemImage: "square.grid.2x2")
                 case .list:
-                    Label(L10n.list, systemImage: "list.dash")
+                    Label("Layout", systemImage: "square.fill.text.grid.1x2")
                 }
             }
         }
