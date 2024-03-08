@@ -59,6 +59,8 @@ final class SearchViewModel: ViewModel, Stateful {
             series.isEmpty
     }
 
+    // MARK: init
+
     override init() {
         self.filterViewModel = .init()
         super.init()
@@ -121,6 +123,8 @@ final class SearchViewModel: ViewModel, Stateful {
             return state
         }
     }
+
+    // MARK: search
 
     private func search(query: String) {
         searchTask = Task {
@@ -223,6 +227,8 @@ final class SearchViewModel: ViewModel, Stateful {
 
         return response.value.items ?? []
     }
+
+    // MARK: suggestions
 
     private func getSuggestions() async throws -> [BaseItemDto] {
 

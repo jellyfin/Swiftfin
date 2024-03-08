@@ -18,48 +18,6 @@ let DefaultPageSize = 16
 
 class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-    let filterViewModel: FilterViewModel
-
-    private let saveFilters: Bool
-    private var filterQueryTask: AnyCancellable?
-
-    init(
-        title: String,
-        filters: ItemFilterCollection = .default
-    ) {
-        self.filterViewModel = .init(currentFilters: filters)
-        self.saveFilters = false
-        super.init(parent: TitledLibraryParent(displayTitle: title))
-    }
-
-    init(
-        parent: (any LibraryParent)? = nil,
-        filters: ItemFilterCollection = .default,
-        saveFilters: Bool = false
-    ) {
-        self.filterViewModel = .init(parent: parent, currentFilters: filters)
-        self.saveFilters = saveFilters
-        super.init(parent: parent)
-
-//        filterViewModel.$currentFilters
-//            .debounce(for: 0.5, scheduler: RunLoop.main)
-//            .removeDuplicates()
-//            .sink { [weak self] newFilters in
-//                guard let self else { return }
-//
-//                print("got new filters")
-//
-//                if saveFilters, let id = parent?.id {
-//                    Defaults[.libraryFilterStore][id] = newFilters
-//                }
-//
-//                Task { @MainActor in
-//                    self.send(.refresh)
-//                }
-//            }
-//            .store(in: &cancellables)
-    }
-
     // MARK: get
 
     override func get(page: Int) async throws -> [BaseItemDto] {
@@ -95,22 +53,20 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: item parameters
 
-    /// Makes the base item parameters for this library. Does not set any filters
-    /// except for the parent and item types.
-    private final func makeBaseItemParameters() -> Paths.GetItemsByUserIDParameters {
+    func getItemParameters(for page: Int?) -> Paths.GetItemsByUserIDParameters {
 
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        var includeItemTypes: [BaseItemKind]?
+        var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
         var isRecursive: Bool? = true
 
         // TODO: fix favorites/TitledLibraryParent
+        // TODO: fix includeItemTypes
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {
             case .collectionFolder:
                 libraryID = id
-                includeItemTypes = [.movie, .series, .boxSet]
             case .folder, .userView:
                 libraryID = id
                 isRecursive = nil
@@ -132,32 +88,29 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.personIDs = personIDs
         parameters.studioIDs = studioIDs
 
-        return parameters
-    }
-
-    private func getItemParameters(for page: Int) -> Paths.GetItemsByUserIDParameters {
-
-        var parameters = makeBaseItemParameters()
-
         // Page size
-        parameters.limit = DefaultPageSize
-        parameters.startIndex = page * DefaultPageSize
+        if let page {
+            parameters.limit = DefaultPageSize
+            parameters.startIndex = page * DefaultPageSize
+        }
 
         // Filters
-        let filters = filterViewModel.currentFilters
-        parameters.filters = filters.traits
-        parameters.genres = filters.genres.map(\.value)
-        parameters.sortBy = filters.sortBy.map(\.rawValue)
-        parameters.sortOrder = filters.sortOrder
-        parameters.tags = filters.tags.map(\.value)
-        parameters.years = filters.years.compactMap { Int($0.value) }
+        if let filterViewModel {
+            let filters = filterViewModel.currentFilters
+            parameters.filters = filters.traits
+            parameters.genres = filters.genres.map(\.value)
+            parameters.sortBy = filters.sortBy.map(\.rawValue)
+            parameters.sortOrder = filters.sortOrder
+            parameters.tags = filters.tags.map(\.value)
+            parameters.years = filters.years.compactMap { Int($0.value) }
 
-        // Random sort won't take into account previous items, so
-        // manual exclusion is necessary. This could possibly be
-        // a performance issue for loading pages after already loading
-        // many items, but there's nothing we can do about that.
-        if filters.sortBy.first == ItemSortBy.random {
-            parameters.excludeItemIDs = items.compactMap(\.id)
+            // Random sort won't take into account previous items, so
+            // manual exclusion is necessary. This could possibly be
+            // a performance issue for loading pages after already loading
+            // many items, but there's nothing we can do about that.
+            if filters.sortBy.first == ItemSortBy.random {
+                parameters.excludeItemIDs = items.compactMap(\.id)
+            }
         }
 
         return parameters
@@ -167,7 +120,7 @@ class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     override func getRandomItem() async -> BaseItemDto? {
 
-        var parameters = makeBaseItemParameters()
+        var parameters = getItemParameters(for: nil)
         parameters.limit = 1
         parameters.sortBy = [ItemSortBy.random.rawValue]
 

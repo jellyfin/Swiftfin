@@ -136,6 +136,7 @@ final class HomeViewModel: ViewModel, Stateful {
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
+    // TODO: fix
     func markItemUnplayed(_ item: BaseItemDto) {
 //        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
 //
@@ -153,6 +154,7 @@ final class HomeViewModel: ViewModel, Stateful {
 //        }
     }
 
+    // TODO: fix
     func markItemPlayed(_ item: BaseItemDto) {
 //        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
 //

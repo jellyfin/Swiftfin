@@ -12,7 +12,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: implement search view result type between `PosterHStack`
-//       and `ListHStack` (3 row list columns)?
+//       and `ListHStack` (3 row list columns)? (iOS only)
 struct SearchView: View {
 
     @Default(.Customization.searchPosterType)

@@ -13,8 +13,7 @@ import VLCUI
 
 extension MediaStream {
 
-    // TODO: Localize
-    static var none: MediaStream = .init(displayTitle: "None", index: -1)
+    static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
         guard let deliveryURL else { return nil }

@@ -41,12 +41,18 @@ struct MediaView: View {
                     case .downloads:
                         router.route(to: \.downloads)
                     case .favorites:
-                        let viewModel = ItemLibraryViewModel(title: L10n.favorites, filters: .favorites)
+                        let viewModel = ItemLibraryViewModel(
+                            title: L10n.favorites,
+                            filters: .favorites
+                        )
                         router.route(to: \.library, viewModel)
                     case .liveTV:
                         router.route(to: \.liveTV)
                     case let .userView(item):
-                        let viewModel = ItemLibraryViewModel(parent: item)
+                        let viewModel = ItemLibraryViewModel(
+                            parent: item,
+                            filters: .default
+                        )
                         router.route(to: \.library, viewModel)
                     }
                 }

@@ -180,18 +180,18 @@ struct PagingLibraryView<Element: Poster>: View {
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
-//            .if(true) { view in
-//                view.navBarDrawer {
-//                    ScrollView(.horizontal, showsIndicators: false) {
-//                        FilterDrawerHStack(viewModel: viewModel.filterViewModel, types: ItemFilterType.allCases)
-//                            .onSelect {
-//                                router.route(to: \.filter, $0)
-//                            }
-//                            .padding(.horizontal)
-//                            .padding(.vertical, 1)
-//                    }
-//                }
-//            }
+        .ifLet(viewModel.filterViewModel) { view, filterViewModel in
+            view.navigationBarDrawer {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    FilterDrawerHStack(viewModel: filterViewModel, types: ItemFilterType.allCases)
+                        .onSelect {
+                            router.route(to: \.filter, $0)
+                        }
+                        .padding(.horizontal)
+                        .padding(.vertical, 1)
+                }
+            }
+        }
         .onChange(of: libraryViewType) { newValue in
             if UIDevice.isPhone {
                 layout = Self.phoneLayout(libraryViewType: newValue)
@@ -236,6 +236,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 LibraryViewTypeToggle(libraryViewType: $libraryViewType, listColumnCount: $listColumnCount)
 
                 RandomItemButton(viewModel: viewModel)
+                    .disabled(viewModel.items.isEmpty)
             } label: {
                 Image(systemName: "ellipsis.circle")
             }

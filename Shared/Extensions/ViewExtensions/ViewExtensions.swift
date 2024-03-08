@@ -20,7 +20,7 @@ extension View {
     }
 
     // TODO: rename `invertedMask`?
-    func inverseMask(alignment: Alignment = .center, _ content: @escaping () -> some View) -> some View {
+    func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
                 .foregroundColor(.black)
@@ -48,8 +48,8 @@ extension View {
     @inlinable
     func `if`<Content: View>(
         _ condition: Bool,
-        transformIf: (Self) -> Content,
-        transformElse: (Self) -> Content
+        @ViewBuilder transformIf: (Self) -> Content,
+        @ViewBuilder transformElse: (Self) -> Content
     ) -> some View {
         if condition {
             transformIf(self)
@@ -64,7 +64,7 @@ extension View {
     @inlinable
     func ifLet<Value, Content: View>(
         _ value: Value?,
-        transform: (Self, Value) -> Content
+        @ViewBuilder transform: (Self, Value) -> Content
     ) -> some View {
         if let value {
             transform(self, value)
@@ -79,8 +79,8 @@ extension View {
     @inlinable
     func ifLet<Value, Content: View>(
         _ value: Value?,
-        transformIf: (Self, Value) -> Content,
-        transformElse: (Self) -> Content
+        @ViewBuilder transformIf: (Self, Value) -> Content,
+        @ViewBuilder transformElse: (Self) -> Content
     ) -> some View {
         if let value {
             transformIf(self, value)

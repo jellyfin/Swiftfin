@@ -19,20 +19,24 @@ import UIKit
 
 // TODO: how to indicate that this is performing some kind of background action (ie: RandomItem)
 //       *without* being in an explicit state?
+// TODO: fix how `hasNextPage` is determined
+//       - some subclasses might not have "paging" and only have one call. This can be solved with
+//       - a check if elements were actually appended to the set but that requires a redundant get
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
+
+    // MARK: Event
+
+    enum Event: Equatable {
+        case gotRandomItem(Element)
+    }
 
     // MARK: Action
 
     enum Action: Equatable {
-        case cancel
         case error(LibraryError)
         case refresh
         case getNextPage
         case getRandomItem
-    }
-
-    enum Event: Equatable {
-        case gotRandomItem(Element)
     }
 
     // MARK: State
@@ -65,6 +69,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     @Published
     final var state: State = .refreshing
 
+    final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
 
     var events: AnyPublisher<Event, Never> {
@@ -76,27 +81,68 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     private(set) final var currentPage = 0
     private(set) final var hasNextPage = true
 
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-    private var isStatic: Bool
+    private let eventSubject: PassthroughSubject<Event, Never> = .init()
+    private let isStatic: Bool
 
     // tasks
 
+    private var filterQueryTask: AnyCancellable?
     private var pagingTask: AnyCancellable?
     private var randomItemTask: AnyCancellable?
 
-    init(_ data: some Collection<Element>, parent: (any LibraryParent)? = nil) {
-        isStatic = true
-        hasNextPage = false
+    // MARK: init
 
-        items = OrderedSet(data)
+    init(
+        _ data: some Collection<Element>,
+        parent: (any LibraryParent)? = nil
+    ) {
+        self.filterViewModel = nil
+        self.items = OrderedSet(data)
+        self.isStatic = true
+        self.hasNextPage = false
         self.parent = parent
     }
 
-    init(parent: (any LibraryParent)? = nil) {
-        isStatic = false
-
-        items = OrderedSet()
+    init(
+        parent: (any LibraryParent)? = nil,
+        filters: ItemFilterCollection? = nil
+    ) {
+        self.items = OrderedSet()
+        self.isStatic = false
         self.parent = parent
+
+        if let filters {
+            self.filterViewModel = .init(
+                parent: parent,
+                currentFilters: filters
+            )
+        } else {
+            self.filterViewModel = nil
+        }
+
+        super.init()
+
+        if let filterViewModel {
+            filterViewModel.$currentFilters
+                .dropFirst() // prevents a refresh on subscription
+                .debounce(for: 0.5, scheduler: RunLoop.main)
+                .removeDuplicates()
+                .sink { [weak self] _ in
+                    guard let self else { return }
+
+                    Task { @MainActor in
+                        self.send(.refresh)
+                    }
+                }
+                .store(in: &cancellables)
+        }
+    }
+
+    convenience init(
+        title: String,
+        filters: ItemFilterCollection = .default
+    ) {
+        self.init(parent: TitledLibraryParent(displayTitle: title), filters: filters)
     }
 
     // MARK: respond
@@ -109,46 +155,42 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         }
 
         switch action {
-        case .cancel:
-
-            pagingTask?.cancel()
-            randomItemTask?.cancel()
-
-            return .refreshing
         case let .error(error):
             return .error(error)
         case .refresh:
 
             print("refreshing")
 
-//            filterQueryTask?.cancel()
+            filterQueryTask?.cancel()
             pagingTask?.cancel()
             randomItemTask?.cancel()
 
-//            filterQueryTask = Task {
-//                await filterViewModel.setQueryFilters()
-//            }
-//            .asAnyCancellable()
+            filterQueryTask = Task {
+                await filterViewModel?.setQueryFilters()
+            }
+            .asAnyCancellable()
 
             pagingTask = Task { [weak self] in
+                guard let self else { return }
+
                 do {
                     // Suspension points cause references to the object. (AsyncSlab)
                     // Meaning many `LibraryViewModel's can be retained in the
                     // background even though the View is gone and handled its release.
                     // That's okay though since mechanisms throughout the app should
                     // handle whether the server can't be connected to/is too slow.
-                    try await self?.refresh()
+                    try await self.refresh()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self?.state = .content
+                        self.state = .content
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self?.send(.error(.unableToGetPage))
+                        self.send(.error(.unableToGetPage))
                     }
                 }
             }
@@ -199,6 +241,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         }
     }
 
+    // MARK: refresh
+
     final func refresh() async throws {
 
         currentPage = -1
@@ -225,15 +269,9 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         hasNextPage = !(pageItems.count < DefaultPageSize)
 
-        // Sometimes, a subclass may return a page even if it's contextually
-        // "out of pages". Check explicitly if items were duplicated.
-        let preItemCount = items.count
-
         await MainActor.run {
             items.append(contentsOf: pageItems)
         }
-
-        print("increased item size by: \(items.count - preItemCount)")
     }
 
     /// Gets the items at the given page. If the number of items
