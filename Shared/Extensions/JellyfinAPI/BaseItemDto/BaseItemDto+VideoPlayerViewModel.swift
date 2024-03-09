@@ -6,12 +6,10 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
-import SwiftUI
 
 extension BaseItemDto {
 
@@ -20,7 +18,7 @@ extension BaseItemDto {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         // TODO: fix bitrate settings
         let tempOverkillBitrate = 360_000_000
-        let profile = DeviceProfileBuilder.buildProfile(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
+        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
 
         let userSession = Container.userSession()
 

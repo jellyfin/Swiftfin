@@ -24,7 +24,7 @@ extension ItemFields {
 
 extension Array where Element == ItemFields {
 
-    static let MinimumFields: Self = {
+    static var MinimumFields: Self {
         ItemFields.MinimumFields
-    }()
+    }
 }

@@ -35,6 +35,7 @@ extension ItemView.AboutView {
                         if let subtitle {
                             Text(subtitle)
                                 .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
 
                         Spacer()

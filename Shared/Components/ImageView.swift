@@ -13,18 +13,6 @@ import NukeUI
 import SwiftUI
 import UIKit
 
-// TODO: move to separate file
-struct ImageSource: Hashable {
-
-    let url: URL?
-    let blurHash: String?
-
-    init(url: URL? = nil, blurHash: String? = nil) {
-        self.url = url
-        self.blurHash = blurHash
-    }
-}
-
 private let imagePipeline = ImagePipeline(configuration: .withDataCache)
 
 // TODO: Binding inits?

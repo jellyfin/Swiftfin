@@ -8,16 +8,16 @@
 
 import Foundation
 
-struct TextPair: Displayable, Identifiable {
+struct ImageSource: Hashable {
 
-    let title: String
-    let subtitle: String
+    let url: URL?
+    let blurHash: String?
 
-    var displayTitle: String {
-        title
-    }
-
-    var id: String {
-        displayTitle.appending(subtitle)
+    init(
+        url: URL? = nil,
+        blurHash: String? = nil
+    ) {
+        self.url = url
+        self.blurHash = blurHash
     }
 }

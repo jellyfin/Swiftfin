@@ -34,7 +34,7 @@ struct ItemOverviewView: View {
             }
             .edgePadding()
         }
-        .navigationTitle(L10n.overview)
+        .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()

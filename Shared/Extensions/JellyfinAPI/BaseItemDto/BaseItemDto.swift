@@ -254,4 +254,9 @@ extension BaseItemDto {
 
         return itemTypes
     }
+
+    /// Returns `originalTitle` if it is not the same as `displayTitle`
+    var alternateTitle: String? {
+        originalTitle != displayTitle ? originalTitle : nil
+    }
 }

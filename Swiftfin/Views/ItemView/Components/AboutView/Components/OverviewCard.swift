@@ -19,13 +19,10 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: item.displayTitle)
+            Card(title: item.displayTitle, subtitle: item.alternateTitle)
                 .content {
                     if let overview = item.overview {
                         TruncatedText(overview)
-                            .onSeeMore {
-                                router.route(to: \.itemOverview, item)
-                            }
                             .lineLimit(4)
                             .font(.footnote)
                     } else {
