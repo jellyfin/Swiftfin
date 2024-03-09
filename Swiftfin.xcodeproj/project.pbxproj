@@ -640,6 +640,8 @@
 		E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */; };
 		E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043428D1763100587289 /* SeeAllButton.swift */; };
 		E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */; };
+		E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F472B9C648E00343D2B /* MaxHeightText.swift */; };
+		E1D37F492B9C648E00343D2B /* MaxHeightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F472B9C648E00343D2B /* MaxHeightText.swift */; };
 		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
 		E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
 		E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
@@ -1195,6 +1197,7 @@
 		E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterTrack.swift; sourceTree = "<group>"; };
 		E1D3043428D1763100587289 /* SeeAllButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeAllButton.swift; sourceTree = "<group>"; };
 		E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewTypeToggle.swift; sourceTree = "<group>"; };
+		E1D37F472B9C648E00343D2B /* MaxHeightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxHeightText.swift; sourceTree = "<group>"; };
 		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
 		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
 		E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsCoordinator.swift; sourceTree = "<group>"; };
@@ -2538,6 +2541,7 @@
 				E18E0203288749200022598C /* BlurView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1047E2227E5880000CB0D4A /* InitialFailureView.swift */,
+				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
 				E1DC983F296DEBA500982F06 /* PosterIndicators */,
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
@@ -3262,6 +3266,7 @@
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
+				E1D37F492B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */,
 				E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */,
 				E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */,
@@ -3705,6 +3710,7 @@
 				E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */,
 				E11BDF972B865F550045C54A /* ItemTag.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
+				E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* UserListViewModel.swift in Sources */,
 				E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,

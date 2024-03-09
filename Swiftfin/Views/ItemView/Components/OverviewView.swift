@@ -17,34 +17,34 @@ extension ItemView {
         private var router: ItemCoordinator.Router
 
         let item: BaseItemDto
-        private var overviewLineLimit: Int
-        private var taglineLineLimit: Int
+        private var overviewLineLimit: Int?
+        private var taglineLineLimit: Int?
 
         var body: some View {
-            Button {
-                router.route(to: \.itemOverview, item)
-            } label: {
-                VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 10) {
 
-                    if let firstTagline = item.taglines?.first {
-                        Text(firstTagline)
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.leading)
-                            .lineLimit(taglineLineLimit)
-                    }
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                        .ifLet(taglineLineLimit) { view, lineLimit in
+                            view.lineLimit(lineLimit)
+                        }
+                }
 
-                    if let itemOverview = item.overview {
-                        TruncatedText(itemOverview)
-                            .seeMoreAction {
-                                router.route(to: \.itemOverview, item)
-                            }
-                            .font(.footnote)
-                            .lineLimit(overviewLineLimit)
-                    }
+                if let itemOverview = item.overview {
+                    TruncatedText(itemOverview)
+                        .onSeeMore {
+                            router.route(to: \.itemOverview, item)
+                        }
+                        .seeMoreType(.view)
+                        .font(.footnote)
+                        .ifLet(overviewLineLimit) { view, lineLimit in
+                            view.lineLimit(lineLimit)
+                        }
                 }
             }
-            .buttonStyle(.plain)
         }
     }
 }
@@ -54,8 +54,8 @@ extension ItemView.OverviewView {
     init(item: BaseItemDto) {
         self.init(
             item: item,
-            overviewLineLimit: 1000,
-            taglineLineLimit: 1000
+            overviewLineLimit: nil,
+            taglineLineLimit: nil
         )
     }
 

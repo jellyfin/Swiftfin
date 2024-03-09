@@ -60,6 +60,8 @@ extension BaseItemDto: Poster {
         switch type {
         case .episode:
             return seriesImageSource(.primary, maxWidth: maxWidth)
+        case .folder:
+            return ImageSource()
         default:
             return imageSource(.primary, maxWidth: maxWidth)
         }
@@ -77,6 +79,8 @@ extension BaseItemDto: Poster {
                     imageSource(.primary, maxWidth: maxWidth),
                 ]
             }
+        case .folder:
+            return [imageSource(.primary, maxWidth: maxWidth)]
         case .video:
             return [imageSource(.primary, maxWidth: maxWidth)]
         default:

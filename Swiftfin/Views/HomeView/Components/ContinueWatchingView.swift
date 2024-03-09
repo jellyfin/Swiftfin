@@ -23,7 +23,6 @@ extension HomeView {
 
         // TODO: see how this looks across multiple screen sizes
         //       alongside PosterHStack + landscape
-        // - see if a minWidth + fractional on CollectionHStack is desired?
         private var columnCount: CGFloat {
             if UIDevice.isPhone {
                 1.5

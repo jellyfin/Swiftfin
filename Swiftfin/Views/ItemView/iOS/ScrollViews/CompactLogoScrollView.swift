@@ -137,15 +137,13 @@ extension ItemView.CompactLogoScrollView {
                         EmptyView()
                     }
                     .failure {
-                        Text(viewModel.item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
+                        MaxHeightText(text: viewModel.item.displayTitle, maxHeight: 70)
+                            .font(.largeTitle.weight(.semibold))
                             .lineLimit(2)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                     }
                     .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: .infinity, alignment: .bottom)
                     .frame(height: 70, alignment: .bottom)
 
                 DotHStack {
@@ -176,6 +174,7 @@ extension ItemView.CompactLogoScrollView {
                     .frame(maxWidth: 300)
                     .foregroundColor(.white)
             }
+            .frame(maxWidth: .infinity, alignment: .bottom)
         }
     }
 }

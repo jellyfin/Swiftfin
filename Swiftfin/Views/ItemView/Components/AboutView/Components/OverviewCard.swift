@@ -23,7 +23,7 @@ extension ItemView.AboutView {
                 .content {
                     if let overview = item.overview {
                         TruncatedText(overview)
-                            .seeMoreAction {
+                            .onSeeMore {
                                 router.route(to: \.itemOverview, item)
                             }
                             .lineLimit(4)

@@ -18,8 +18,21 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ItemView.OverviewView(item: item)
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                }
+
+                if let itemOverview = item.overview {
+                    Text(itemOverview)
+                        .font(.body)
+                }
+            }
+            .edgePadding()
         }
         .navigationTitle(L10n.overview)
         .navigationBarTitleDisplayMode(.inline)
