@@ -142,7 +142,6 @@ extension View {
         modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
     }
 
-    // TODO: binding overload
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -153,7 +152,14 @@ extension View {
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
 
-    // TODO: binding overload
+    func frame(_ binding: Binding<CGRect>) -> some View {
+        onFrameChanged { newFrame in
+            binding.wrappedValue = newFrame
+        }
+    }
+
+    // TODO: have x/y tracked binding
+
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -167,7 +173,14 @@ extension View {
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
 
-    // TODO: binding overload
+    func location(_ binding: Binding<CGPoint>) -> some View {
+        onLocationChanged { newLocation in
+            binding.wrappedValue = newLocation
+        }
+    }
+
+    // TODO: have width/height tracked binding
+
     func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -176,6 +189,12 @@ extension View {
             }
         }
         .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+    }
+
+    func size(_ binding: Binding<CGSize>) -> some View {
+        onSizeChanged { newSize in
+            binding.wrappedValue = newSize
+        }
     }
 
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {

@@ -29,8 +29,6 @@ struct TypeSystemNameView<Item: Poster>: View {
                     .frame(width: contentSize.width / 3.5, height: contentSize.height / 3)
             }
         }
-        .onSizeChanged { newSize in
-            contentSize = newSize
-        }
+        .size($contentSize)
     }
 }
