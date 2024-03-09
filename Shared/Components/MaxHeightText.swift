@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: anchor for scaleEffect?
+// TODO: try an implementation that doesn't require passing in the height
+
 /// A `Text` wrapper that will scale down the underlying `Text` view
 /// if the height is greater than the given `maxHeight`.
 struct MaxHeightText: View {

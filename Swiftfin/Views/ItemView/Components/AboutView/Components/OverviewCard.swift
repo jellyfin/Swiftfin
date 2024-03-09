@@ -25,6 +25,7 @@ extension ItemView.AboutView {
                         TruncatedText(overview)
                             .lineLimit(4)
                             .font(.footnote)
+                            .allowsHitTesting(false)
                     } else {
                         L10n.noOverviewAvailable.text
                             .font(.footnote)
