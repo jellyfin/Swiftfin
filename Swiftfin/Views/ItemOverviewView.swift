@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: fix with shorter text
+
 struct ItemOverviewView: View {
 
     @EnvironmentObject

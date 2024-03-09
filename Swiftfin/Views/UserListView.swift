@@ -68,7 +68,7 @@ struct UserListView: View {
         }
         .navigationTitle(viewModel.server.name)
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 if viewModel.users.isNotEmpty {
                     Button {
                         router.route(to: \.userSignIn, viewModel.server)

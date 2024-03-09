@@ -11,10 +11,17 @@ import Foundation
 import JellyfinAPI
 
 // TODO: verify this properly returns pages of items in correct date-added order
+//       *when* new episodes are added to a series?
 final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-    init() {
-        super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded))
+    // Necessary because this is paginated and also used on home view
+    init(customPageSize: Int? = nil) {
+
+        if let customPageSize {
+            super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded), pageSize: customPageSize)
+        } else {
+            super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded))
+        }
     }
 
     override func get(page: Int) async throws -> [BaseItemDto] {
@@ -33,7 +40,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .series]
         parameters.isRecursive = true
-        parameters.limit = DefaultPageSize
+        parameters.limit = pageSize
         parameters.sortBy = [ItemSortBy.dateAdded.rawValue]
         parameters.sortOrder = [.descending]
         parameters.startIndex = page

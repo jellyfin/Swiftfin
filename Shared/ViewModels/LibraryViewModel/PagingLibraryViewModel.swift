@@ -13,6 +13,9 @@ import JellyfinAPI
 import OrderedCollections
 import UIKit
 
+/// Magic number for page sizes
+private let DefaultPageSize = 50
+
 // TODO: frankly this is just generic because we also view `BaseItemPerson` elements
 //       and I don't want additional views for it. Is there a way we can transform a
 //       `BaseItemPerson` into a `BaseItemDto` and just use the concrete type?
@@ -79,6 +82,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
+    let pageSize: Int
     private(set) final var currentPage = 0
     private(set) final var hasNextPage = true
 
@@ -95,21 +99,25 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     init(
         _ data: some Collection<Element>,
-        parent: (any LibraryParent)? = nil
+        parent: (any LibraryParent)? = nil,
+        pageSize: Int = DefaultPageSize
     ) {
         self.filterViewModel = nil
         self.elements = OrderedSet(data)
         self.isStatic = true
         self.hasNextPage = false
+        self.pageSize = pageSize
         self.parent = parent
     }
 
     init(
         parent: (any LibraryParent)? = nil,
-        filters: ItemFilterCollection? = nil
+        filters: ItemFilterCollection? = nil,
+        pageSize: Int = DefaultPageSize
     ) {
         self.elements = OrderedSet()
         self.isStatic = false
+        self.pageSize = pageSize
         self.parent = parent
 
         if let filters {
@@ -141,9 +149,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     convenience init(
         title: String,
-        filters: ItemFilterCollection = .default
+        filters: ItemFilterCollection = .default,
+        pageSize: Int = DefaultPageSize
     ) {
-        self.init(parent: TitledLibraryParent(displayTitle: title), filters: filters)
+        self.init(parent: TitledLibraryParent(displayTitle: title), filters: filters, pageSize: pageSize)
     }
 
     // MARK: respond

@@ -25,26 +25,28 @@ extension HomeView {
         var viewModel: NextUpLibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.nextUp,
-                type: nextUpPosterType,
-                items: $viewModel.elements
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.library, viewModel)
-                    }
-            }
-            .contextMenu { item in
-                Button {
-                    viewModel.markPlayed(item: item)
-                } label: {
-                    Label(L10n.played, systemImage: "checkmark.circle")
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.nextUp,
+                    type: nextUpPosterType,
+                    items: $viewModel.elements
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, viewModel)
+                        }
                 }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+                .contextMenu { item in
+                    Button {
+                        viewModel.markPlayed(item: item)
+                    } label: {
+                        Label(L10n.played, systemImage: "checkmark.circle")
+                    }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

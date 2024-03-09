@@ -30,7 +30,7 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var parameters = Paths.GetNextUpParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
-        parameters.limit = DefaultPageSize
+        parameters.limit = pageSize
         parameters.startIndex = page
         parameters.userID = userSession.user.id
 

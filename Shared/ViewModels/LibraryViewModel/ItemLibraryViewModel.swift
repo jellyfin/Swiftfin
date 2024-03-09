@@ -13,9 +13,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-/// Magic number for page sizes
-let DefaultPageSize = 16
-
 final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     // MARK: get
@@ -86,8 +83,8 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Page size
         if let page {
-            parameters.limit = DefaultPageSize
-            parameters.startIndex = page * DefaultPageSize
+            parameters.limit = pageSize
+            parameters.startIndex = page * pageSize
         }
 
         // Filters

@@ -115,12 +115,12 @@ struct ServerListView: View {
         innerBody
             .navigationTitle(L10n.servers)
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     trailingToolbarContent
                 }
             }
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     leadingToolbarContent
                 }
             }

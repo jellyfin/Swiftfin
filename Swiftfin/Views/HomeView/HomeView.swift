@@ -10,6 +10,8 @@ import Defaults
 import Foundation
 import SwiftUI
 
+// TODO: seems to redraw view when popped to sometimes?
+//       - similar to MediaView TODO bug?
 struct HomeView: View {
 
     @Default(.Customization.nextUpPosterType)
@@ -27,17 +29,11 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {
 
-                if viewModel.resumeItems.isNotEmpty {
-                    ContinueWatchingView(viewModel: viewModel)
-                }
+                ContinueWatchingView(viewModel: viewModel)
 
-                if viewModel.nextUpViewModel.elements.isNotEmpty {
-                    NextUpView(viewModel: viewModel.nextUpViewModel)
-                }
+                NextUpView(viewModel: viewModel.nextUpViewModel)
 
-                if viewModel.recentlyAddedViewModel.elements.isNotEmpty {
-                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-                }
+                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
 
                 ForEach(viewModel.libraries) { viewModel in
                     LatestInLibraryView(viewModel: viewModel)
@@ -73,7 +69,7 @@ struct HomeView: View {
         }
         .navigationTitle(L10n.home)
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 Button {
                     router.route(to: \.settings)
                 } label: {

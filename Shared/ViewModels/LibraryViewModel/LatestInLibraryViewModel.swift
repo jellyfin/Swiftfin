@@ -26,7 +26,7 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
         parameters.parentID = parent?.id
         parameters.fields = .MinimumFields
         parameters.enableUserData = true
-        parameters.limit = DefaultPageSize
+        parameters.limit = pageSize
 
         return parameters
     }

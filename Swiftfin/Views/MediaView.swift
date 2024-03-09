@@ -13,6 +13,8 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
+// TODO: seems to redraw view when popped to sometimes?
+//       - similar to HomeView TODO bug?
 // TODO: list view
 struct MediaView: View {
 
@@ -95,7 +97,7 @@ struct MediaView: View {
 
 extension MediaView {
 
-    // TODO: custom view for folders
+    // TODO: custom view for folders and tv (allow customization?)
     struct MediaItem: View {
 
         @Default(.Customization.Library.randomImage)

@@ -41,8 +41,8 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Page size
         if let page {
-            parameters.limit = DefaultPageSize
-            parameters.startIndex = page * DefaultPageSize
+            parameters.limit = pageSize
+            parameters.startIndex = page * pageSize
         }
 
         return parameters
