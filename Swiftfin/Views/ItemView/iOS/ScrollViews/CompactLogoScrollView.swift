@@ -59,7 +59,7 @@ extension ItemView {
                     VStack {
                         Spacer()
 
-                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
+                        OverlayView(viewModel: viewModel)
                             .padding(.horizontal)
                             .padding(.bottom)
                             .background {
@@ -126,9 +126,6 @@ extension ItemView.CompactLogoScrollView {
 
         @ObservedObject
         var viewModel: ItemViewModel
-
-        @Binding
-        var scrollViewOffset: CGFloat
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {

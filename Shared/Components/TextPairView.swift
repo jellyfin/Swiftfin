@@ -32,7 +32,7 @@ extension TextPairView {
 
     init(_ textPair: TextPair) {
         self.init(
-            leading: textPair.displayTitle,
+            leading: textPair.title,
             trailing: textPair.subtitle
         )
     }

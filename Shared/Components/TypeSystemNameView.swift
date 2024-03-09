@@ -8,28 +8,6 @@
 
 import SwiftUI
 
-// TODO: remove and replace with icon of item type instead
-struct InitialFailureView: View {
-
-    let initials: String
-
-    init(_ initials: String) {
-        self.initials = initials
-    }
-
-    var body: some View {
-        ZStack {
-            Color.secondarySystemFill
-                .opacity(0.5)
-
-            Text(initials)
-                .font(.largeTitle)
-                .foregroundColor(.secondary)
-                .accessibilityHidden(true)
-        }
-    }
-}
-
 struct TypeSystemNameView<Item: Poster>: View {
 
     @State
@@ -42,7 +20,7 @@ struct TypeSystemNameView<Item: Poster>: View {
             Color.secondarySystemFill
                 .opacity(0.5)
 
-            if let typeSystemImage = item.typeSystemImage {
+            if let typeSystemImage = item.typeSystemName {
                 Image(systemName: typeSystemImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)

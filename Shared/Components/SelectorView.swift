@@ -11,6 +11,11 @@ import SwiftUI
 // TODO: Label generic not really necessary if just restricting to `Text`
 //       - go back to `any View` implementation instead
 
+enum SelectorType {
+    case single
+    case multi
+}
+
 struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
     @Environment(\.accentColor)

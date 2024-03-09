@@ -45,7 +45,7 @@ extension ChapterInfo {
             chapterInfo.displayTitle
         }
 
-        let typeSystemImage: String? = "film"
+        let typeSystemName: String? = "film"
         var subtitle: String?
         var showTitle: Bool = true
 
