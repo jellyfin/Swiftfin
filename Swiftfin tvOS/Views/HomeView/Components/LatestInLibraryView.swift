@@ -20,11 +20,11 @@ extension HomeView {
         var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            if viewModel.items.isNotEmpty {
+            if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: .portrait,
-                    items: viewModel.items.prefix(20).asArray
+                    items: $viewModel.elements
                 )
                 //            .trailing {
                 //                SeeAllPosterButton(type: .portrait)
@@ -38,7 +38,7 @@ extension HomeView {
                 //                        )
                 //                    }
                 //            }
-                .onSelect { item in
+                    .onSelect { item in
                         router.route(to: \.item, item)
                     }
             }

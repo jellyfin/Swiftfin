@@ -23,20 +23,22 @@ extension HomeView {
         var viewModel: RecentlyAddedLibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.recentlyAdded,
-                type: recentlyAddedPosterType,
-                items: viewModel.items.prefix(20).asArray
-            )
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.recentlyAdded,
+                    type: recentlyAddedPosterType,
+                    items: $viewModel.elements
+                )
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
+                //            .trailing {
+                //                SeeAllPosterButton(type: recentlyAddedPosterType)
+                //                    .onSelect {
+                //                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
+                //                    }
+                //            }
             }
-//            .trailing {
-//                SeeAllPosterButton(type: recentlyAddedPosterType)
-//                    .onSelect {
-//                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-//                    }
-//            }
         }
     }
 }

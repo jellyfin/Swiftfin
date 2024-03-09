@@ -12,13 +12,16 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: Figure out proper tab bar handling with the collection offset
+// TODO: list columns
 
 struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
+    @Default(.Customization.Library.posterType)
+    private var posterType
     @Default(.Customization.Library.viewType)
-    private var libraryViewType
+    private var viewType
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
 
@@ -42,9 +45,15 @@ struct PagingLibraryView<Element: Poster>: View {
     init(viewModel: PagingLibraryViewModel<Element>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
 
-        let initialLibraryViewType = Defaults[.Customization.Library.viewType]
+        let initialPosterType = Defaults[.Customization.Library.posterType]
+        let initialViewType = Defaults[.Customization.Library.viewType]
 
-        self._layout = State(initialValue: Self.makeLayout(libraryViewType: initialLibraryViewType))
+        self._layout = State(
+            initialValue: Self.makeLayout(
+                posterType: initialPosterType,
+                viewType: initialViewType
+            )
+        )
     }
 
     // MARK: onSelect
@@ -77,15 +86,27 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: layout
 
-    private static func makeLayout(libraryViewType: LibraryViewType) -> CollectionVGridLayout {
-        switch libraryViewType {
-        case .landscapeGrid:
+    private static func makeLayout(
+        posterType: PosterType,
+        viewType: LibraryViewType
+    ) -> CollectionVGridLayout {
+        switch (posterType, viewType) {
+        case (.landscape, .grid):
             .columns(5)
-        case .portraitGrid:
-            .columns(7)
-        case .list:
+        case (.portrait, .grid):
+            .columns(6, itemSpacing: 50, lineSpacing: 50)
+        case (_, .list):
             .columns(1)
         }
+
+//        switch libraryViewType {
+//        case .landscapeGrid:
+//            .columns(5)
+//        case .portraitGrid:
+//            .columns(7)
+//        case .list:
+//            .columns(1)
+//        }
     }
 
     private func landscapeGridItemView(item: Element) -> some View {
@@ -126,15 +147,15 @@ struct PagingLibraryView<Element: Poster>: View {
 
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.items,
+            $viewModel.elements,
             layout: layout
         ) { item in
-            switch libraryViewType {
-            case .landscapeGrid:
+            switch (posterType, viewType) {
+            case (.landscape, .grid):
                 landscapeGridItemView(item: item)
-            case .portraitGrid:
+            case (.portrait, .grid):
                 portraitGridItemView(item: item)
-            case .list:
+            case (_, .list):
                 listItemView(item: item)
             }
         }
@@ -153,10 +174,10 @@ struct PagingLibraryView<Element: Poster>: View {
                     switch viewModel.state {
                     case let .error(error):
                         Text(error.localizedDescription)
-                    case .refreshing:
+                    case .initial, .refreshing:
                         ProgressView()
                     case .gettingNextPage, .content:
-                        if viewModel.items.isEmpty {
+                        if viewModel.elements.isEmpty {
                             L10n.noResults.text
                         } else {
                             contentView
@@ -168,8 +189,7 @@ struct PagingLibraryView<Element: Poster>: View {
         .ignoresSafeArea(edges: .bottom)
         .ignoresSafeArea(edges: .horizontal)
         .onFirstAppear {
-            // May have been passed a view model that already had a page of items
-            if viewModel.items.isEmpty {
+            if viewModel.state == .initial {
                 viewModel.send(.refresh)
             }
         }

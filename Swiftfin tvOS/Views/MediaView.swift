@@ -14,8 +14,8 @@ import SwiftUI
 
 struct MediaView: View {
 
-    @ObservedObject
-    var viewModel: MediaViewModel
+    @StateObject
+    private var viewModel = MediaViewModel()
 
     var body: some View {
         Text("Fixme")

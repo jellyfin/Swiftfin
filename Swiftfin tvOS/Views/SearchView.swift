@@ -77,7 +77,7 @@ struct SearchView: View {
                 Text(error.localizedDescription)
             case .initial:
                 Text("Fix me")
-            case .items:
+            case .content:
                 if viewModel.hasNoResults {
                     L10n.noResults.text
                 } else {

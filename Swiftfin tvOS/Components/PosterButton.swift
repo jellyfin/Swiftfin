@@ -32,17 +32,17 @@ struct PosterButton<Item: Poster>: View {
     private var onFocusChanged: ((Bool) -> Void)?
 
     @ViewBuilder
-    private func poster(from item: any Poster) -> some View {
+    private func poster(from item: Item) -> some View {
         switch type {
         case .portrait:
             ImageView(item.portraitPosterImageSource(maxWidth: 500))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         case .landscape:
             ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         }
     }
@@ -91,7 +91,7 @@ extension PosterButton {
             type: type,
             itemScale: 1,
             horizontalAlignment: .leading,
-            content: { DefaultContentView(item: item) },
+            content: { TitleSubtitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {},
@@ -132,31 +132,49 @@ extension PosterButton {
     }
 }
 
-// MARK: default content view
+// TODO: Shared default content?
 
 extension PosterButton {
 
-    struct DefaultContentView: View {
+    // MARK: Default Content
+
+    struct TitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
+        }
+    }
+
+    struct SubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    struct TitleSubtitleContentView: View {
 
         let item: Item
 
         var body: some View {
             VStack(alignment: .leading) {
                 if item.showTitle {
-                    Text(item.displayTitle)
-                        .font(.footnote)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
+                    TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
                 }
 
-                if let description = item.subtitle {
-                    Text(description)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }

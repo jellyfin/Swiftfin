@@ -98,6 +98,8 @@ extension PosterButton {
     }
 }
 
+// TODO: Shared default content?
+
 extension PosterButton {
 
     // MARK: Default Content

@@ -31,7 +31,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: $viewModel.items
+                items: $viewModel.elements
             )
 //            .trailing {
 //                if items.isEmpty {
@@ -44,7 +44,7 @@ extension ItemView {
 //                        }
 //                }
 //            }
-            .onSelect { item in
+                .onSelect { item in
                     router.route(to: \.item, item)
                 }
         }

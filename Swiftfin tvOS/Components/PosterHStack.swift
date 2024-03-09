@@ -110,7 +110,7 @@ extension PosterHStack {
             title: title,
             type: type,
             items: items,
-            content: { PosterButton.DefaultContentView(item: $0) },
+            content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
