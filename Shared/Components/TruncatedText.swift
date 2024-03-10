@@ -28,7 +28,7 @@ struct TruncatedText: View {
 
     private var isTruncatedBinding: Binding<Bool>
     private var onSeeMore: () -> Void
-    private let seeMoreText = "... See More"
+    private let seeMoreText = "\u{2026} See More"
     private var seeMoreType: SeeMoreType
     private let text: String
 

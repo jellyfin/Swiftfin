@@ -40,14 +40,16 @@ extension iPadOSCollectionItemView {
 
                 // MARK: Items
 
-//                PosterHStack(
-//                    title: L10n.items,
-//                    type: .portrait,
-//                    items: viewModel.collectionItems
-//                )
-//                .onSelect { item in
-//                    router.route(to: \.item, item)
-//                }
+                if viewModel.collectionItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.collectionItems
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

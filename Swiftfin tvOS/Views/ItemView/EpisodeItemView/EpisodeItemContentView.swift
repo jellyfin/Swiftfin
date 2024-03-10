@@ -25,14 +25,20 @@ extension EpisodeItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+                if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
 
-//                if let seriesItem = viewModel.seriesItem {
-//                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
-//                        .onSelect { item in
-//                            router.route(to: \.item, item)
-//                        }
-//                }
+                if let seriesItem = viewModel.seriesItem {
+                    PosterHStack(
+                        title: L10n.series,
+                        type: .portrait,
+                        items: [seriesItem]
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

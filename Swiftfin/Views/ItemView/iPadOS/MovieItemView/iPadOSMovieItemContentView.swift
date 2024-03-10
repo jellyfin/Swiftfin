@@ -69,5 +69,3 @@ extension iPadOSMovieItemView {
         }
     }
 }
-
-//

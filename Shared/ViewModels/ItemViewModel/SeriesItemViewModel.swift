@@ -13,6 +13,8 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: use OrderedDictionary
+
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
@@ -120,15 +122,13 @@ final class SeriesItemViewModel: ItemViewModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if let episodes = menuSections[section], episodes.isEmpty {
-            getEpisodesForSeason(section)
+        if let episodes = menuSections[section] {
+            if episodes.isEmpty {
+                getEpisodesForSeason(section)
+            } else {
+                self.currentItems = episodes
+            }
         }
-
-//        if !menuSections.keys.contains(section) {
-//
-//        } else {
-//
-//        }
     }
 
     private func getSeasons() {
@@ -141,11 +141,13 @@ final class SeriesItemViewModel: ItemViewModel {
             let response = try await userSession.client.send(request)
 
             guard let seasons = response.value.items else { return }
+
             await MainActor.run {
                 for season in seasons {
                     self.menuSections[season] = []
                 }
             }
+
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {

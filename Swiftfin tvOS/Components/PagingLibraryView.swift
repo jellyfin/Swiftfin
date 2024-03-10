@@ -13,6 +13,7 @@ import SwiftUI
 
 // TODO: Figure out proper tab bar handling with the collection offset
 // TODO: list columns
+// TODO: list row view (LibraryRow)
 
 struct PagingLibraryView<Element: Poster>: View {
 
@@ -94,7 +95,7 @@ struct PagingLibraryView<Element: Poster>: View {
         case (.landscape, .grid):
             .columns(5)
         case (.portrait, .grid):
-            .columns(7, itemSpacing: 50, lineSpacing: 50)
+            .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             .columns(1)
         }
@@ -140,10 +141,6 @@ struct PagingLibraryView<Element: Poster>: View {
 
     private func listItemView(item: Element) -> some View {
         Button(item.displayTitle)
-//        LibraryRow(item: item)
-//            .onSelect {
-//                onSelect(item)
-//            }
     }
 
     private var contentView: some View {
@@ -188,8 +185,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
         }
         .ignoresSafeArea()
-//        .ignoresSafeArea(edges: .bottom)
-//        .ignoresSafeArea(edges: .horizontal)
+        .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: make general `ErrorView` like iOS
+
 extension HomeView {
 
     struct ErrorView: View {

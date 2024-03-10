@@ -47,7 +47,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                // By design, PosterHStack requires being in a ScrollView
+                // By design, PosterHStack/CollectionHStack requires being in a ScrollView
                 ScrollView {
                     PosterHStack(type: .landscape, items: items)
                         .content(itemContent)
@@ -57,14 +57,6 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .onSelect(onSelect)
                         .focusedItem($focusedItem)
                         .size($posterHStackSize)
-                        .background {
-                            Color.red
-                                .opacity(0.5)
-                        }
-                }
-                .background {
-                    Color.green
-                        .opacity(0.5)
                 }
                 .frame(height: posterHStackSize.height)
                 .if(true) { view in

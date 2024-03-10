@@ -31,9 +31,13 @@ extension SeriesItemView {
                 SeriesEpisodeSelector(viewModel: viewModel)
                     .environmentObject(focusGuide)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+                if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
 
-                ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }
