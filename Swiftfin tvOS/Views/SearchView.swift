@@ -6,10 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct SearchView: View {
+
+    @Default(.Customization.searchPosterType)
+    private var searchPosterType
 
     @EnvironmentObject
     private var router: SearchCoordinator.Router
@@ -20,72 +24,90 @@ struct SearchView: View {
     @State
     private var searchQuery = ""
 
-    @ViewBuilder
+    private var suggestionsView: some View {
+        VStack(spacing: 20) {
+            ForEach(viewModel.suggestions) { item in
+                Button(item.displayTitle) {
+                    searchQuery = item.displayTitle
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.secondary)
+            }
+        }
+    }
+
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
                 if viewModel.movies.isNotEmpty {
-                    itemsSection(title: L10n.movies, keyPath: \.movies)
-                }
-
-                if viewModel.collections.isNotEmpty {
-                    itemsSection(title: L10n.collections, keyPath: \.collections)
+                    itemsSection(title: L10n.movies, keyPath: \.movies, posterType: searchPosterType)
                 }
 
                 if viewModel.series.isNotEmpty {
-                    itemsSection(title: L10n.tvShows, keyPath: \.series)
+                    itemsSection(title: L10n.tvShows, keyPath: \.series, posterType: searchPosterType)
+                }
+
+                if viewModel.collections.isNotEmpty {
+                    itemsSection(title: L10n.collections, keyPath: \.collections, posterType: searchPosterType)
                 }
 
                 if viewModel.episodes.isNotEmpty {
-                    itemsSection(title: L10n.episodes, keyPath: \.episodes)
+                    itemsSection(title: L10n.episodes, keyPath: \.episodes, posterType: searchPosterType)
                 }
 
                 if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people)
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
             }
-        }.ignoresSafeArea(edges: [.bottom, .horizontal])
+        }
     }
 
-    private func baseItemOnSelect(_ item: BaseItemDto) {
-//        if item.type == .person {
-//            router.route(to: \.library, .init(parent: item, type: .person, filters: .init()))
-//        } else {
-//            router.route(to: \.item, item)
-//        }
+    private func select(_ item: BaseItemDto) {
+        if item.type == .person {
+            let viewModel = ItemLibraryViewModel(parent: item)
+            router.route(to: \.library, viewModel)
+        } else {
+            router.route(to: \.item, item)
+        }
     }
 
     @ViewBuilder
     private func itemsSection(
         title: String,
-        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
+        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
+        posterType: PosterType
     ) -> some View {
         PosterHStack(
             title: title,
-            type: .portrait,
+            type: posterType,
             items: viewModel[keyPath: keyPath]
         )
-        .onSelect { item in
-            baseItemOnSelect(item)
-        }
+        .onSelect(select)
     }
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case let .error(error):
-                Text(error.localizedDescription)
-            case .initial:
-                Text("Fix me")
-            case .content:
-                if viewModel.hasNoResults {
-                    L10n.noResults.text
-                } else {
-                    resultsView
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial:
+                    suggestionsView
+                case .content:
+                    if viewModel.hasNoResults {
+                        L10n.noResults.text
+                    } else {
+                        resultsView
+                    }
+                case .searching:
+                    ProgressView()
                 }
-            case .searching:
-                ProgressView()
             }
+            .transition(.opacity.animation(.linear(duration: 0.2)))
+        }
+        .ignoresSafeArea(edges: [.bottom, .horizontal])
+        .onFirstAppear {
+            viewModel.send(.getSuggestions)
         }
         .onChange(of: searchQuery) { newValue in
             viewModel.send(.search(query: newValue))

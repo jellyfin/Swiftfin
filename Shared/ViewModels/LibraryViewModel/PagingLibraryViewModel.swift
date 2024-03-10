@@ -174,8 +174,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
             return .error(error)
         case .refresh:
 
-            print("refreshing")
-
             filterQueryTask?.cancel()
             pagingTask?.cancel()
             randomItemTask?.cancel()

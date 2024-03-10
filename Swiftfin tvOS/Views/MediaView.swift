@@ -51,15 +51,18 @@ struct MediaView: View {
     }
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .content:
-                contentView
-            case let .error(error):
-                Text(error.localizedDescription)
-            case .initial, .refreshing:
-                ProgressView()
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case .content:
+                    contentView
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial, .refreshing:
+                    ProgressView()
+                }
             }
+            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
         .ignoresSafeArea()
         .onFirstAppear {

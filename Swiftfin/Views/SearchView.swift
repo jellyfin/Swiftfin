@@ -54,12 +54,12 @@ struct SearchView: View {
                     itemsSection(title: L10n.movies, keyPath: \.movies, posterType: searchPosterType)
                 }
 
-                if viewModel.collections.isNotEmpty {
-                    itemsSection(title: L10n.collections, keyPath: \.collections, posterType: searchPosterType)
-                }
-
                 if viewModel.series.isNotEmpty {
                     itemsSection(title: L10n.tvShows, keyPath: \.series, posterType: searchPosterType)
+                }
+
+                if viewModel.collections.isNotEmpty {
+                    itemsSection(title: L10n.collections, keyPath: \.collections, posterType: searchPosterType)
                 }
 
                 if viewModel.episodes.isNotEmpty {
@@ -74,9 +74,9 @@ struct SearchView: View {
         }
     }
 
-    private func baseItemOnSelect(_ item: BaseItemDto) {
+    private func select(_ item: BaseItemDto) {
         if item.type == .person {
-            let viewModel = PagingLibraryViewModel<BaseItemDto>(parent: item)
+            let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
         } else {
             router.route(to: \.item, item)
@@ -100,9 +100,7 @@ struct SearchView: View {
                     router.route(to: \.library, .init(viewModel[keyPath: keyPath]))
                 }
         }
-        .onSelect { item in
-            baseItemOnSelect(item)
-        }
+        .onSelect(select)
     }
 
     var body: some View {
@@ -125,9 +123,6 @@ struct SearchView: View {
             }
             .transition(.opacity.animation(.linear(duration: 0.1)))
         }
-        .onFirstAppear {
-            viewModel.send(.getSuggestions)
-        }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle(L10n.search)
         .navigationBarTitleDisplayMode(.inline)
@@ -136,6 +131,9 @@ struct SearchView: View {
             types: enabledDrawerFilters
         ) {
             router.route(to: \.filter, $0)
+        }
+        .onFirstAppear {
+            viewModel.send(.getSuggestions)
         }
         .onChange(of: searchQuery) { newValue in
             viewModel.send(.search(query: newValue))
