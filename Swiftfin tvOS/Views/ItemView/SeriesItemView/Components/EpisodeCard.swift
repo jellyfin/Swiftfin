@@ -29,70 +29,70 @@ struct EpisodeCard: View {
             type: .landscape,
             singleImage: true
         )
-        .scaleItem(1.57)
+//        .scaleItem(1.57)
         .content {
-            Button {
-                router.route(to: \.item, episode)
-            } label: {
-                VStack(alignment: .leading) {
+                Button {
+                    router.route(to: \.item, episode)
+                } label: {
+                    VStack(alignment: .leading) {
 
-                    VStack(alignment: .leading, spacing: 0) {
-                        Color.clear
-                            .frame(height: 0.01)
-                            .frame(maxWidth: .infinity)
+                        VStack(alignment: .leading, spacing: 0) {
+                            Color.clear
+                                .frame(height: 0.01)
+                                .frame(maxWidth: .infinity)
 
-                        Text(episode.episodeLocator ?? L10n.unknown)
+                            Text(episode.episodeLocator ?? L10n.unknown)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Text(episode.displayTitle)
+                            .font(.footnote)
+                            .padding(.bottom, 1)
+
+                        if episode.isUnaired {
+                            Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
+                                .font(.caption)
+                                .lineLimit(1)
+                        } else {
+                            Text(episode.overview ?? L10n.noOverviewAvailable)
+                                .font(.caption)
+                                .lineLimit(3)
+                        }
+
+                        Spacer(minLength: 0)
+
+                        L10n.seeMore.text
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .fontWeight(.medium)
+                            .foregroundColor(.jellyfinPurple)
                     }
-
-                    Text(episode.displayTitle)
-                        .font(.footnote)
-                        .padding(.bottom, 1)
-
-                    if episode.isUnaired {
-                        Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-                            .font(.caption)
-                            .lineLimit(1)
+                    .frame(width: 510, height: 220)
+                    .padding()
+                }
+                .buttonStyle(.card)
+            }
+            .imageOverlay {
+                ZStack {
+                    if episode.userData?.isPlayed ?? false {
+                        WatchedIndicator(size: 45)
                     } else {
-                        Text(episode.overview ?? L10n.noOverviewAvailable)
-                            .font(.caption)
-                            .lineLimit(3)
-                    }
-
-                    Spacer(minLength: 0)
-
-                    L10n.seeMore.text
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.jellyfinPurple)
-                }
-                .frame(width: 510, height: 220)
-                .padding()
-            }
-            .buttonStyle(.card)
-        }
-        .imageOverlay {
-            ZStack {
-                if episode.userData?.isPlayed ?? false {
-                    WatchedIndicator(size: 45)
-                } else {
-                    if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
-                        LandscapePosterProgressBar(
-                            title: episode.progressLabel ?? L10n.continue,
-                            progress: (episode.userData?.playedPercentage ?? 0) / 100
-                        )
-                        .padding()
+                        if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
+                            LandscapePosterProgressBar(
+                                title: episode.progressLabel ?? L10n.continue,
+                                progress: (episode.userData?.playedPercentage ?? 0) / 100
+                            )
+                            .padding()
+                        }
                     }
                 }
             }
-        }
-        .onSelect {
-            guard let mediaSource = episode.mediaSources?.first else {
-                logger.error("No media source attached to episode", metadata: ["episode title": .string(episode.displayTitle)])
-                return
+            .onSelect {
+                guard let mediaSource = episode.mediaSources?.first else {
+                    logger.error("No media source attached to episode", metadata: ["episode title": .string(episode.displayTitle)])
+                    return
+                }
+                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
             }
-            router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
-        }
     }
 }

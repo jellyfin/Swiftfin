@@ -24,16 +24,6 @@ extension ItemView {
                 type: .portrait,
                 items: people.filter(\.isDisplayed)
             )
-            .trailing {
-                if people.isEmpty {
-                    NonePosterButton(type: .portrait)
-                } else {
-                    SeeAllPosterButton(type: .portrait)
-                        .onSelect {
-                            router.route(to: \.castAndCrew, people)
-                        }
-                }
-            }
             .onSelect { person in
                 let viewModel = ItemLibraryViewModel(parent: person)
                 router.route(to: \.library, viewModel)

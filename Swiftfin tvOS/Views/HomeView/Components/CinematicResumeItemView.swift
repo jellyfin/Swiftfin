@@ -36,39 +36,39 @@ extension HomeView {
         }
 
         var body: some View {
-            Text("FIXME")
-//            CinematicItemSelector(items: viewModel.resumeItems)
-//                .topContent { item in
-//                    ImageView(itemSelectorImageSource(for: item))
-//                        .resizingMode(.bottomLeft)
-//                        .placeholder {
-//                            EmptyView()
-//                        }
-//                        .failure {
-//                            Text(item.displayTitle)
-//                                .font(.largeTitle)
-//                                .fontWeight(.semibold)
-//                        }
-//                        .padding2(.leading)
-//                }
-//                .content { item in
-//                    if let subtitle = item.subtitle {
-//                        Text(subtitle)
-//                            .font(.caption)
-//                            .fontWeight(.medium)
-//                            .foregroundColor(.secondary)
-//                            .lineLimit(2)
-//                    }
-//                }
-//                .itemImageOverlay { item in
-//                    LandscapePosterProgressBar(
-//                        title: item.progressLabel ?? L10n.continue,
-//                        progress: (item.userData?.playedPercentage ?? 0) / 100
-//                    )
-//                }
-//                .onSelect { item in
-//                    router.route(to: \.item, item)
-//                }
+            CinematicItemSelector(items: viewModel.resumeItems.elements)
+                .topContent { item in
+                    ImageView(itemSelectorImageSource(for: item))
+                        .placeholder {
+                            EmptyView()
+                        }
+                        .failure {
+                            Text(item.displayTitle)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                        }
+                        .edgePadding(.leading)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 200, alignment: .bottomLeading)
+                }
+                .content { item in
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                            .lineLimit(2)
+                    }
+                }
+                .itemImageOverlay { item in
+                    LandscapePosterProgressBar(
+                        title: item.progressLabel ?? L10n.continue,
+                        progress: (item.userData?.playedPercentage ?? 0) / 100
+                    )
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
         }
     }
 }

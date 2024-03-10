@@ -24,33 +24,21 @@ struct HomeView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
 
-//                if viewModel.resumeItems.isEmpty {
-//                    CinematicRecentlyAddedView(viewModel: .init(
-//                        itemTypes: [.movie, .series],
-//                        filters: .init(sortOrder: [ItemSortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-//                    ))
-//
-//                    if viewModel.hasNextUp {
-//                        NextUpView(viewModel: .init())
-//                    }
-//                } else {
-//                    CinematicResumeView(viewModel: viewModel)
-//
-//                    if viewModel.hasNextUp {
-//                        NextUpView(viewModel: .init())
-//                    }
-//
-//                    if viewModel.hasRecentlyAdded {
-//                        RecentlyAddedView(viewModel: .init(
-//                            itemTypes: [.movie, .series],
-//                            filters: .init(sortOrder: [ItemSortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
-//                        ))
-//                    }
-//                }
+                if viewModel.resumeItems.isNotEmpty {
+                    CinematicResumeView(viewModel: viewModel)
 
-//                ForEach(viewModel.libraries, id: \.self) { library in
-//                    LatestInLibraryView(viewModel: .init(parent: library))
-//                }
+                    NextUpView(viewModel: viewModel.nextUpViewModel)
+
+                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                } else {
+                    CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+
+                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                }
+
+                ForEach(viewModel.libraries) { viewModel in
+                    LatestInLibraryView(viewModel: viewModel)
+                }
             }
         }
     }
@@ -67,12 +55,11 @@ struct HomeView: View {
                     ProgressView()
                 }
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
+            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .edgesIgnoringSafeArea(.top)
-        .edgesIgnoringSafeArea(.horizontal)
+        .ignoresSafeArea()
     }
 }

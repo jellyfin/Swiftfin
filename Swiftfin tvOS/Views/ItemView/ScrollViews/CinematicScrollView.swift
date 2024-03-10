@@ -67,19 +67,20 @@ extension ItemView {
                             maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
-//                        .resizingMode(.bottomLeft)
-                            .placeholder {
-                                EmptyView()
-                            }
-                            .failure {
-                                Text(viewModel.item.displayTitle)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-                                    .foregroundColor(.white)
-                            }
-                            .padding(.bottom)
+                        .placeholder {
+                            EmptyView()
+                        }
+                        .failure {
+                            Text(viewModel.item.displayTitle)
+                                .font(.largeTitle)
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .multilineTextAlignment(.leading)
+                                .foregroundColor(.white)
+                        }
+                        .aspectRatio(contentMode: .fit)
+                        .padding(.bottom)
+                        .frame(maxHeight: 250, alignment: .bottomLeading)
 
                         if let tagline = viewModel.item.taglines?.first {
                             Text(tagline)

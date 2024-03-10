@@ -28,8 +28,8 @@ struct PagingLibraryView<Element: Poster>: View {
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
-    @FocusState
-    private var focusedItem: BaseItemDto?
+    @State
+    private var focusedItem: Element?
 
     @State
     private var presentBackground = false
@@ -40,7 +40,7 @@ struct PagingLibraryView<Element: Poster>: View {
     private var viewModel: PagingLibraryViewModel<Element>
 
     @StateObject
-    private var cinematicBackgroundViewModel: CinematicBackgroundView<BaseItemDto>.ViewModel = .init()
+    private var cinematicBackgroundViewModel: CinematicBackgroundView<Element>.ViewModel = .init()
 
     init(viewModel: PagingLibraryViewModel<Element>) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -94,47 +94,48 @@ struct PagingLibraryView<Element: Poster>: View {
         case (.landscape, .grid):
             .columns(5)
         case (.portrait, .grid):
-            .columns(6, itemSpacing: 50, lineSpacing: 50)
+            .columns(7, itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             .columns(1)
         }
-
-//        switch libraryViewType {
-//        case .landscapeGrid:
-//            .columns(5)
-//        case .portraitGrid:
-//            .columns(7)
-//        case .list:
-//            .columns(1)
-//        }
     }
 
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
-//            .content {
-//                if item.showTitle {
-//                    PosterButton.TitleContentView(item: item)
-//                        .backport
-//                        .lineLimit(1, reservesSpace: true)
-//                }
-//            }
-                .onSelect {
-                    onSelect(item)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
                 }
+            }
+            .onFocusChanged { newValue in
+                if newValue {
+                    focusedItem = item
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
     }
 
     private func portraitGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .portrait)
-//            .content {
-//                if item.showTitle {
-//                    PosterButton.TitleContentView(item: item)
-//                        .backport
-//                        .lineLimit(1, reservesSpace: true)
-//                }
-//            }
-                .onSelect {
-                    onSelect(item)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
                 }
+            }
+            .onFocusChanged { newValue in
+                if newValue {
+                    focusedItem = item
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
     }
 
     private func listItemView(item: Element) -> some View {
@@ -186,8 +187,9 @@ struct PagingLibraryView<Element: Poster>: View {
                 }
             }
         }
-        .ignoresSafeArea(edges: .bottom)
-        .ignoresSafeArea(edges: .horizontal)
+        .ignoresSafeArea()
+//        .ignoresSafeArea(edges: .bottom)
+//        .ignoresSafeArea(edges: .horizontal)
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)

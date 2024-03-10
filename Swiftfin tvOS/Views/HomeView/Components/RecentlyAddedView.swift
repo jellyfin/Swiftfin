@@ -32,12 +32,6 @@ extension HomeView {
                 .onSelect { item in
                     router.route(to: \.item, item)
                 }
-                //            .trailing {
-                //                SeeAllPosterButton(type: recentlyAddedPosterType)
-                //                    .onSelect {
-                //                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                //                    }
-                //            }
             }
         }
     }

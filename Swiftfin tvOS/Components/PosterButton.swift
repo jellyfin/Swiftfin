@@ -19,7 +19,6 @@ struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
     private var content: () -> any View
     private var imageOverlay: () -> any View
@@ -89,7 +88,6 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            itemScale: 1,
             horizontalAlignment: .leading,
             content: { TitleSubtitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
@@ -105,10 +103,6 @@ extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {

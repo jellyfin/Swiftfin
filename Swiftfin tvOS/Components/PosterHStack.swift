@@ -10,6 +10,8 @@ import CollectionHStack
 import OrderedCollections
 import SwiftUI
 
+// TODO: trailing content refactor?
+
 struct PosterHStack<Item: Poster>: View {
 
     private var title: String?
@@ -25,7 +27,7 @@ struct PosterHStack<Item: Poster>: View {
     private var focusedItem: Binding<Item?>?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
 
             if let title {
                 HStack {
@@ -41,7 +43,7 @@ struct PosterHStack<Item: Poster>: View {
 
             CollectionHStack(
                 items,
-                columns: 7
+                columns: type == .landscape ? 4 : 7
             ) { item in
                 PosterButton(item: item, type: type)
                     .content { content(item).eraseToAnyView() }
@@ -54,31 +56,12 @@ struct PosterHStack<Item: Poster>: View {
                         }
                     }
             }
+            .clipsToBounds(false)
             .dataPrefix(20)
             .horizontalInset(EdgeInsets.defaultEdgePadding)
-            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+            .verticalInsets(top: 20, bottom: 20)
+            .itemSpacing(EdgeInsets.defaultEdgePadding - 20)
             .scrollBehavior(.continuousLeadingEdge)
-
-//            ScrollView(.horizontal, showsIndicators: false) {
-//                HStack(alignment: .top, spacing: 30) {
-//                    ForEach(items, id: \.hashValue) { item in
-//                        PosterButton(item: item, type: type)
-//                            .content { content(item).eraseToAnyView() }
-//                            .imageOverlay { imageOverlay(item).eraseToAnyView() }
-//                            .contextMenu { contextMenu(item).eraseToAnyView() }
-//                            .onSelect { onSelect(item) }
-//                            .if(focusedItem != nil) { view in
-//                                view.onFocusChanged { isFocused in
-//                                    if isFocused { focusedItem?.wrappedValue = item }
-//                                }
-//                            }
-//                    }
-//
-//                    trailingContent()
-//                        .eraseToAnyView()
-//                }
-//                .padding(50)
-//            }
         }
         .focusSection()
         .mask {

@@ -26,21 +26,9 @@ extension HomeView {
                     type: .portrait,
                     items: $viewModel.elements
                 )
-                //            .trailing {
-                //                SeeAllPosterButton(type: .portrait)
-                //                    .onSelect {
-                //                        router.route(
-                //                            to: \.basicLibrary,
-                //                            .init(
-                //                                title: L10n.latestWithString(viewModel.parent.displayTitle),
-                //                                viewModel: viewModel
-                //                            )
-                //                        )
-                //                    }
-                //            }
-                    .onSelect { item in
-                        router.route(to: \.item, item)
-                    }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }
