@@ -69,6 +69,11 @@ extension Defaults.Keys {
                 default: true,
                 suite: .generalSuite
             )
+            static let enabledDrawerFilters: Key<[ItemFilterType]> = .init(
+                "Library.enabledDrawerFilters",
+                default: ItemFilterType.allCases,
+                suite: .generalSuite
+            )
             static let viewType = Key<LibraryViewType>(
                 "libraryViewType",
                 default: .grid,
@@ -96,14 +101,10 @@ extension Defaults.Keys {
             )
         }
 
-        enum Filters {
-            static let libraryFilterDrawerButtons: Key<[ItemFilterType]> = .init(
-                "defaultLibraryFilterDrawerButtons",
-                default: ItemFilterType.allCases,
-                suite: .generalSuite
-            )
-            static let searchFilterDrawerButtons: Key<[ItemFilterType]> = .init(
-                "defaultSearchFilterDrawerButtons",
+        enum Search {
+
+            static let enabledDrawerFilters: Key<[ItemFilterType]> = .init(
+                "Search.enabledDrawerFilters",
                 default: ItemFilterType.allCases,
                 suite: .generalSuite
             )

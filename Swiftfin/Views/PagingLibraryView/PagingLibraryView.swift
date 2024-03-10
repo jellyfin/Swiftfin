@@ -12,13 +12,15 @@ import JellyfinAPI
 import SwiftUI
 
 // Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
-//       This is problematic due to episodes, which have their `S_E_` subtitles, and these can be
-//       alongside other items that don't have a subtitle which requires the entire library to
-//       implement subtitle content but that doesn't look appealing. Until a solution arrives
-//       grid posters will not have subtitle content.
+//       This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
+//       other items that don't have a subtitle which requires the entire library to implement
+//       subtitle content but that doesn't look appealing. Until a solution arrives grid posters
+//       will not have subtitle content.
 
 struct PagingLibraryView<Element: Poster>: View {
 
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var enabledDrawerFilters
     @Default(.Customization.Library.listColumnCount)
     private var listColumnCount
     @Default(.Customization.Library.posterType)
@@ -201,8 +203,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     }
                 }
             }
-            // TODO: this causes the navigation bar to not refresh on .content, find fix
-//            .transition(.opacity.animation(.linear(duration: 0.1)))
+            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
@@ -210,7 +211,7 @@ struct PagingLibraryView<Element: Poster>: View {
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in
             view.navigationBarFilterDrawer(
                 viewModel: filterViewModel,
-                types: ItemFilterType.allCases
+                types: enabledDrawerFilters
             ) {
                 router.route(to: \.filter, $0)
             }

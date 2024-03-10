@@ -23,17 +23,22 @@ extension View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
 
+    @ViewBuilder
     func navigationBarFilterDrawer(
         viewModel: FilterViewModel,
         types: [ItemFilterType],
         onSelect: @escaping (FilterCoordinator.Parameters) -> Void
     ) -> some View {
-        navigationBarDrawer {
-            NavigationBarFilterDrawer(
-                viewModel: viewModel,
-                types: ItemFilterType.allCases
-            )
-            .onSelect(onSelect)
+        if types.isEmpty {
+            self
+        } else {
+            navigationBarDrawer {
+                NavigationBarFilterDrawer(
+                    viewModel: viewModel,
+                    types: types
+                )
+                .onSelect(onSelect)
+            }
         }
     }
 

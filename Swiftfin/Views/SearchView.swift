@@ -16,6 +16,8 @@ import SwiftUI
 //       and `ListHStack` (3 row list columns)? (iOS only)
 struct SearchView: View {
 
+    @Default(.Customization.Search.enabledDrawerFilters)
+    private var enabledDrawerFilters
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
@@ -131,7 +133,7 @@ struct SearchView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarFilterDrawer(
             viewModel: viewModel.filterViewModel,
-            types: ItemFilterType.allCases
+            types: enabledDrawerFilters
         ) {
             router.route(to: \.filter, $0)
         }
