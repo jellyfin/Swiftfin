@@ -33,7 +33,7 @@ struct ConnectToServerView: View {
     @State
     private var isPresentingError: Bool = false
     @State
-    private var url = ""
+    private var url = "http://"
 
     private func connectToServer() {
         let task = Task {
