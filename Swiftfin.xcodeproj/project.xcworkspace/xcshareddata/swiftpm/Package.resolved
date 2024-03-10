@@ -10,6 +10,24 @@
       }
     },
     {
+      "identity" : "collectionhstack",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionHStack",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ff54c0ea655840a12e7faaabb31aa66f50cc4767"
+      }
+    },
+    {
+      "identity" : "collectionvgrid",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/CollectionVGrid",
+      "state" : {
+        "branch" : "main",
+        "revision" : "2be0988304df1ab59a3340e41c07f94eee480e66"
+      }
+    },
+    {
       "identity" : "collectionview",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/LePips/CollectionView",
