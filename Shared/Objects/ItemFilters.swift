@@ -15,6 +15,7 @@ struct ItemFilters: Codable, Defaults.Serializable, Hashable {
 
     var genres: [Filter] = []
     var filters: [Filter] = []
+    var alphaPicker: [Filter] = []
     var sortOrder: [Filter] = [APISortOrder.ascending.filter]
     var sortBy: [Filter] = [SortBy.name.filter]
 
@@ -22,6 +23,7 @@ struct ItemFilters: Codable, Defaults.Serializable, Hashable {
     static let recent: ItemFilters = .init(sortOrder: [APISortOrder.descending.filter], sortBy: [SortBy.dateAdded.filter])
     static let all: ItemFilters = .init(
         filters: ItemFilter.supportedCases.map(\.filter),
+        alphaPicker: AlphaPicker.characters.map(\.filter),
         sortOrder: APISortOrder.allCases.map(\.filter),
         sortBy: SortBy.allCases.map(\.filter)
     )

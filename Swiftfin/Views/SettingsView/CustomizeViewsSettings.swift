@@ -24,6 +24,8 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     var shouldShowMissingEpisodes
 
+    @Default(.Customization.Filters.alphaPickerOrientation)
+    var alphaPickerOrientation
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     var libraryFilterDrawerButtons
     @Default(.Customization.Filters.searchFilterDrawerButtons)
@@ -84,6 +86,8 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
+
+                EnumPicker(title: L10n.alphaPickerTitle, selection: $alphaPickerOrientation)
 
                 ChevronButton(title: L10n.library)
                     .onSelect {

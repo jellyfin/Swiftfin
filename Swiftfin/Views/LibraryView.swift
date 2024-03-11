@@ -19,6 +19,9 @@ struct LibraryView: View {
     @Default(.Customization.Filters.libraryFilterDrawerButtons)
     private var filterDrawerButtonSelection
 
+    @Default(.Customization.Filters.alphaPickerOrientation)
+    private var alphaPickerOrientation
+
     @EnvironmentObject
     private var router: LibraryCoordinator.Router
 
@@ -60,12 +63,22 @@ struct LibraryView: View {
 
     var body: some View {
         Group {
-            if viewModel.isLoading && viewModel.items.isEmpty {
-                loadingView
-            } else if viewModel.items.isEmpty {
-                noResultsView
-            } else {
-                libraryItemsView
+            if alphaPickerOrientation == .none {
+                libraryBody
+            } else if alphaPickerOrientation == .trailing {
+                HStack(spacing: 0) {
+                    libraryBody
+                        .frame(maxWidth: .infinity)
+                    AlphaPickerBar(viewModel: viewModel.filterViewModel)
+                        .padding(1)
+                }
+            } else if alphaPickerOrientation == .leading {
+                HStack(spacing: 0) {
+                    AlphaPickerBar(viewModel: viewModel.filterViewModel)
+                        .padding(1)
+                    libraryBody
+                        .frame(maxWidth: .infinity)
+                }
             }
         }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
@@ -98,6 +111,19 @@ struct LibraryView: View {
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var libraryBody: some View {
+        Group {
+            if viewModel.isLoading && viewModel.items.isEmpty {
+                loadingView
+            } else if viewModel.items.isEmpty {
+                noResultsView
+            } else {
+                libraryItemsView
             }
         }
     }

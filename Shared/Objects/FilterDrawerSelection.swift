@@ -11,6 +11,7 @@ import Foundation
 
 enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
+    case alphaPicker
     case filters
     case genres
     case order
@@ -18,6 +19,8 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
 
     var displayTitle: String {
         switch self {
+        case .alphaPicker:
+            return L10n.letter
         case .filters:
             return L10n.filters
         case .genres:
@@ -35,6 +38,8 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
 
     var itemFilter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]> {
         switch self {
+        case .alphaPicker:
+            return \.alphaPicker
         case .filters:
             return \.filters
         case .genres:
@@ -50,13 +55,15 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
         switch self {
         case .filters, .genres:
             return .multi
-        case .order, .sort:
+        case .alphaPicker, .order, .sort:
             return .single
         }
     }
 
     var itemFilterDefault: [ItemFilters.Filter] {
         switch self {
+        case .alphaPicker:
+            return []
         case .filters:
             return []
         case .genres:
@@ -70,6 +77,8 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
 
     func isItemsFilterActive(activeFilters: ItemFilters) -> Bool {
         switch self {
+        case .alphaPicker:
+            return activeFilters.alphaPicker != self.itemFilterDefault
         case .filters:
             return activeFilters.filters != self.itemFilterDefault
         case .genres:
@@ -81,12 +90,20 @@ enum FilterDrawerButtonSelection: String, CaseIterable, Defaults.Serializable, D
         }
     }
 
-    static var defaultFilterDrawerButtons: [FilterDrawerButtonSelection] {
+    static var defaultLibraryFilterDrawerButtons: [FilterDrawerButtonSelection] {
         [
             .filters,
             .genres,
             .order,
             .sort,
+        ]
+    }
+
+    static var defaultSearchFilterDrawerButtons: [FilterDrawerButtonSelection] {
+        [
+            .filters,
+            .genres,
+            .alphaPicker,
         ]
     }
 }

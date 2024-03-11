@@ -30,7 +30,11 @@ internal enum L10n {
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
-  /// Represents the Appearance setting label
+  /// Alpha Picker
+  internal static let alphaPicker = L10n.tr("Localizable", "alphaPicker", fallback: "Alpha Picker")
+  /// Letter Picker
+  internal static let alphaPickerTitle = L10n.tr("Localizable", "alphaPickerTitle", fallback: "Letter Picker")
+  /// Appearance
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
   /// App Icon
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
@@ -122,7 +126,7 @@ internal enum L10n {
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
-  /// Represents the dark theme setting
+  /// Dark
   internal static let dark = L10n.tr("Localizable", "dark", fallback: "Dark")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
@@ -220,9 +224,13 @@ internal enum L10n {
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
   }
+  /// Left
+  internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
+  /// Letter
+  internal static let letter = L10n.tr("Localizable", "letter", fallback: "Letter")
   /// Library
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
-  /// Represents the light theme setting
+  /// Light
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
@@ -442,6 +450,8 @@ internal enum L10n {
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
   /// Retry
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
+  /// Right
+  internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Scrub Current Time
@@ -556,7 +566,7 @@ internal enum L10n {
   internal static let suggestions = L10n.tr("Localizable", "suggestions", fallback: "Suggestions")
   /// Switch User
   internal static let switchUser = L10n.tr("Localizable", "switchUser", fallback: "Switch User")
-  /// Represents the system theme setting
+  /// System
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
   /// System Control Gestures Enabled
   internal static let systemControlGesturesEnabled = L10n.tr("Localizable", "systemControlGesturesEnabled", fallback: "System Control Gestures Enabled")

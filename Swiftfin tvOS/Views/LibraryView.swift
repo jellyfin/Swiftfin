@@ -19,6 +19,9 @@ struct LibraryView: View {
     @ObservedObject
     var viewModel: LibraryViewModel
 
+    @Default(.Customization.Filters.alphaPickerOrientation)
+    private var alphaPickerOrientation
+
     @ViewBuilder
     private var loadingView: some View {
         ProgressView()
@@ -54,12 +57,38 @@ struct LibraryView: View {
     }
 
     var body: some View {
-        if viewModel.isLoading && viewModel.items.isEmpty {
-            loadingView
-        } else if viewModel.items.isEmpty {
-            noResultsView
-        } else {
-            libraryItemsView
+
+        Group {
+            if alphaPickerOrientation == .none {
+                libraryBody
+            } else if alphaPickerOrientation == .trailing {
+                HStack(spacing: 0) {
+                    libraryBody
+                        .frame(maxWidth: .infinity)
+                    AlphaPickerBar(viewModel: viewModel.filterViewModel)
+                        .frame(maxHeight: .infinity)
+                }
+            } else if alphaPickerOrientation == .leading {
+                HStack(spacing: 0) {
+                    AlphaPickerBar(viewModel: viewModel.filterViewModel)
+                        .frame(maxHeight: .infinity)
+                    libraryBody
+                        .frame(maxWidth: .infinity)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var libraryBody: some View {
+        Group {
+            if viewModel.isLoading && viewModel.items.isEmpty {
+                loadingView
+            } else if viewModel.items.isEmpty {
+                noResultsView
+            } else {
+                libraryItemsView
+            }
         }
     }
 }
