@@ -99,7 +99,7 @@ struct PagingLibraryView<Element: Poster>: View {
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
         case (.landscape, .grid):
-            .minWidth(220)
+            .minWidth(200)
         case (.portrait, .grid):
             .minWidth(150)
         case (_, .list):

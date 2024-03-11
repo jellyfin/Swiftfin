@@ -27,7 +27,7 @@ struct PosterHStack<Item: Poster>: View {
     private var padHStack: some View {
         CollectionHStack(
             items,
-            minWidth: type == .portrait ? 150 : 220
+            minWidth: type == .portrait ? 140 : 220
         ) { item in
             PosterButton(
                 item: item,

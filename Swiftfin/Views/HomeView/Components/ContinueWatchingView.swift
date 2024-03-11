@@ -23,6 +23,7 @@ extension HomeView {
 
         // TODO: see how this looks across multiple screen sizes
         //       alongside PosterHStack + landscape
+        // TODO: need better handling for iPadOS + portrait orientation
         private var columnCount: CGFloat {
             if UIDevice.isPhone {
                 1.5
