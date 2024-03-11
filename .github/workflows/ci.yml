@@ -20,34 +20,34 @@ jobs:
         scheme:
           - "Swiftfin"
           - "Swiftfin tvOS"
-          
-    runs-on: macos-12
-    
+
+    runs-on: macos-13
+
     steps:    
       - name: Checkout
-        uses: actions/checkout@v1
-      
+        uses: actions/checkout@v4
+
       - name: Install SwiftGen
         run: brew install swiftgen
-      
+
       - name: Cache Carthage
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: carthage-cache
         with:
           path: Carthage
           key: ${{ runner.os }}-carthage-${{ hashFiles('**/Cartfile.resolved') }}
           restore-keys: ${{ runner.os }}-carthage-
-            
+
       - name: Update Carthage
         run: carthage update --use-xcframeworks --cache-builds
-      
+
       - name: Cache Swift packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: PackageCache
           key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
           restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
-      
+
       - name: Build
         uses: nick-fields/retry@v2
         with:
@@ -58,5 +58,4 @@ jobs:
             xcodebuild build -project "Swiftfin.xcodeproj" \
             -scheme "${{ matrix.scheme }}" \
             -clonedSourcePackagesDirPath PackageCache \
-            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO          
-      
+            CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO

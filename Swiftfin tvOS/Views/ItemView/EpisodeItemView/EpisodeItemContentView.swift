@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -25,13 +25,19 @@ extension EpisodeItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+                if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
 
                 if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
-                        .onSelect { item in
-                            router.route(to: \.item, item)
-                        }
+                    PosterHStack(
+                        title: L10n.series,
+                        type: .portrait,
+                        items: [seriesItem]
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
@@ -112,11 +118,11 @@ extension EpisodeItemView.ContentView {
                         HStack {
                             DotHStack {
                                 if let premiereYear = viewModel.item.premiereDateYear {
-                                    premiereYear.text
+                                    Text(premiereYear)
                                 }
 
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                                    runtime.text
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
                                 }
                             }
                             .font(.caption)

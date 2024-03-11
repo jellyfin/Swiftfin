@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -30,7 +30,7 @@ extension ItemView {
                     .fontWeight(.bold)
                     .accessibility(addTraits: [.isHeader])
                     .padding(.horizontal)
-                    .if(UIDevice.isIPad) { view in
+                    .if(UIDevice.isPad) { view in
                         view.padding(.horizontal)
                     }
 
@@ -55,7 +55,7 @@ extension ItemView {
                         RatingsCard(item: viewModel.item)
                     }
                     .padding(.horizontal)
-                    .if(UIDevice.isIPad) { view in
+                    .if(UIDevice.isPad) { view in
                         view.padding(.horizontal)
                     }
                 }

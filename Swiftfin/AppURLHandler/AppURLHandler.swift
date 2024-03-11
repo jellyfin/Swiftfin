@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -55,7 +55,7 @@ extension AppURLHandler {
 
     func processLaunchedURLIfNeeded() {
         guard let launchURL = launchURL,
-              !launchURL.absoluteString.isEmpty else { return }
+              launchURL.absoluteString.isNotEmpty else { return }
         if processDeepLink(url: launchURL) {
             self.launchURL = nil
         }

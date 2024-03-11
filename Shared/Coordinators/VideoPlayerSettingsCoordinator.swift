@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -26,13 +26,8 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     var actionButtonSelector = makeActionButtonSelector
     #endif
 
-    #if os(tvOS)
-
-    #endif
-
     func makeFontPicker(selection: Binding<String>) -> some View {
         FontPickerView(selection: selection)
-            .navigationTitle(L10n.subtitleFont)
     }
 
     #if os(iOS)
@@ -40,16 +35,11 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeGestureSettings() -> some View {
         GestureSettingsView()
-            .navigationTitle("Gestures")
     }
 
     func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
-        ActionButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+        ActionButtonSelectorView(selection: selectedButtonsBinding)
     }
-    #endif
-
-    #if os(tvOS)
-
     #endif
 
     @ViewBuilder

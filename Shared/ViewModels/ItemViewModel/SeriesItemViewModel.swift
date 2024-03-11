@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -11,13 +11,18 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
-final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
+// TODO: use OrderedDictionary
+
+final class SeriesItemViewModel: ItemViewModel {
 
     @Published
     var menuSelection: BaseItemDto?
     @Published
-    var menuSections: [BaseItemDto: [BaseItemDto]]
+    var currentItems: OrderedSet<BaseItemDto> = []
+
+    var menuSections: [BaseItemDto: OrderedSet<BaseItemDto>]
     var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
 
     override init(item: BaseItemDto) {
@@ -48,7 +53,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         }
 
         guard let playButtonItem = playButtonItem,
-              let episodeLocator = playButtonItem.seasonEpisodeLocator else { return L10n.play }
+              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
 
         return episodeLocator
     }
@@ -57,7 +62,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         Task {
             let parameters = Paths.GetNextUpParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 seriesID: item.id,
                 enableUserData: true
             )
@@ -77,7 +82,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
             let parameters = Paths.GetResumeItemsParameters(
                 limit: 1,
                 parentID: item.id,
-                fields: ItemFields.minimumCases
+                fields: .MinimumFields
             )
             let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
             let response = try await userSession.client.send(request)
@@ -98,7 +103,7 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
                 isRecursive: true,
                 sortOrder: [.ascending],
                 parentID: item.id,
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 includeItemTypes: [.episode]
             )
             let request = Paths.getItems(parameters: parameters)
@@ -117,8 +122,12 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
     func select(section: BaseItemDto) {
         self.menuSelection = section
 
-        if !menuSections.keys.contains(section) {
-            getEpisodesForSeason(section)
+        if let episodes = menuSections[section] {
+            if episodes.isEmpty {
+                getEpisodesForSeason(section)
+            } else {
+                self.currentItems = episodes
+            }
         }
     }
 
@@ -133,6 +142,12 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
             guard let seasons = response.value.items else { return }
 
+            await MainActor.run {
+                for season in seasons {
+                    self.menuSections[season] = []
+                }
+            }
+
             if let firstSeason = seasons.first {
                 self.getEpisodesForSeason(firstSeason)
                 await MainActor.run {
@@ -142,11 +157,12 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
         }
     }
 
+    // TODO: implement lazy loading
     private func getEpisodesForSeason(_ season: BaseItemDto) {
         Task {
             let parameters = Paths.GetEpisodesParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 seasonID: season.id!,
                 isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false,
                 enableUserData: true
@@ -156,7 +172,9 @@ final class SeriesItemViewModel: ItemViewModel, MenuPosterHStackModel {
 
             await MainActor.run {
                 if let items = response.value.items {
-                    self.menuSections[season] = items
+                    let newItems = OrderedSet(items)
+                    self.menuSections[season] = newItems
+                    self.currentItems = newItems
                 }
             }
         }

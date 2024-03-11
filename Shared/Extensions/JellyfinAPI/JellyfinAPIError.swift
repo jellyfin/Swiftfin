@@ -3,12 +3,18 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
 
-struct JellyfinAPIError: Error {
+// TODO: rename to `ErrorMessage` and remove other implementation
+
+/// A basic error that holds a message, useful for debugging.
+///
+/// - Important: Only really use for debugging. For practical errors,
+///              statically define errors for each domain/context.
+struct JellyfinAPIError: LocalizedError, Equatable {
 
     private let message: String
 
@@ -16,7 +22,7 @@ struct JellyfinAPIError: Error {
         self.message = message
     }
 
-    var localizedDescription: String {
+    var errorDescription: String? {
         message
     }
 }

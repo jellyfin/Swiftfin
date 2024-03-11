@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -29,7 +29,6 @@ struct EpisodeCard: View {
             type: .landscape,
             singleImage: true
         )
-        .scaleItem(1.57)
         .content {
             Button {
                 router.route(to: \.item, episode)
@@ -67,7 +66,7 @@ struct EpisodeCard: View {
                         .fontWeight(.medium)
                         .foregroundColor(.jellyfinPurple)
                 }
-                .frame(width: 510, height: 220)
+                .aspectRatio(510 / 220, contentMode: .fill)
                 .padding()
             }
             .buttonStyle(.card)

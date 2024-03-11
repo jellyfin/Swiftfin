@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -42,7 +42,7 @@ extension VideoPlayer {
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
-                        .if(UIDevice.isIPad) { view in
+                        .if(UIDevice.isPad) { view in
                             view.padding(.top)
                                 .padding2(.horizontal)
                         }
@@ -67,7 +67,7 @@ extension VideoPlayer {
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
-                        .if(UIDevice.isIPad) { view in
+                        .if(UIDevice.isPad) { view in
                             view.padding2(.bottom)
                                 .padding2(.horizontal)
                         }

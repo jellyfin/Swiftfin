@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import CoreData
@@ -62,7 +62,7 @@ struct SettingsView: View {
             }
 
             Section {
-                EnumPicker(
+                CaseIterablePicker(
                     title: L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
@@ -82,8 +82,7 @@ struct SettingsView: View {
             }
 
             Section {
-                EnumPicker(title: L10n.appearance, selection: $appAppearance)
-                    .longPressReset($appAppearance, to: .system)
+                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
                 // TODO: make defaults binding for current AppIcon
                 ChevronButton(title: L10n.appIcon)
@@ -130,9 +129,9 @@ struct SettingsView: View {
 
             #endif
         }
-        .navigationBarTitle(L10n.settings)
+        .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

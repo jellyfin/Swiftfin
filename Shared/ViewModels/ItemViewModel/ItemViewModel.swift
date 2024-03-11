@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: transition to `Stateful`
 class ItemViewModel: ViewModel {
 
     @Published
@@ -123,7 +124,7 @@ class ItemViewModel: ViewModel {
             let parameters = Paths.GetSimilarItemsParameters(
                 userID: userSession.user.id,
                 limit: 20,
-                fields: ItemFields.minimumCases
+                fields: .MinimumFields
             )
             let request = Paths.getSimilarItems(
                 itemID: item.id!,

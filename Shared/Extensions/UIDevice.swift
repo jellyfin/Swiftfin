@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import UIKit
@@ -14,7 +14,7 @@ extension UIDevice {
         current.identifierForVendor!.uuidString
     }
 
-    static var isIPad: Bool {
+    static var isPad: Bool {
         current.userInterfaceIdiom == .pad
     }
 
@@ -31,7 +31,7 @@ extension UIDevice {
         #if os(tvOS)
         "tvOS"
         #else
-        if UIDevice.isIPad {
+        if UIDevice.isPad {
             return "iPadOS"
         } else {
             return "iOS"
@@ -45,7 +45,7 @@ extension UIDevice {
     }
 
     static var isLandscape: Bool {
-        isIPad || current.orientation.isLandscape
+        isPad || current.orientation.isLandscape
     }
 
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {

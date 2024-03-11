@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -71,22 +71,18 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         }
     }
 
-    static var defaultBarActionButtons: [VideoPlayerActionButton] {
-        [
-            .aspectFill,
-            .autoPlay,
-            .playPreviousItem,
-            .playNextItem,
-        ]
-    }
+    static let defaultBarActionButtons: [VideoPlayerActionButton] = [
+        .aspectFill,
+        .autoPlay,
+        .playPreviousItem,
+        .playNextItem,
+    ]
 
-    static var defaultMenuActionButtons: [VideoPlayerActionButton] {
-        [
-            .audio,
-            .subtitles,
-            .playbackSpeed,
-            .chapters,
-            .advanced,
-        ]
-    }
+    static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
+        .audio,
+        .subtitles,
+        .playbackSpeed,
+        .chapters,
+        .advanced,
+    ]
 }

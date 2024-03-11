@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import CoreStore
@@ -92,7 +92,7 @@ struct ServerListView: View {
 
     @ViewBuilder
     private var trailingToolbarContent: some View {
-        if !viewModel.servers.isEmpty {
+        if viewModel.servers.isNotEmpty {
             Button {
                 router.route(to: \.connectToServer)
             } label: {
@@ -115,12 +115,12 @@ struct ServerListView: View {
         innerBody
             .navigationTitle(L10n.servers)
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     trailingToolbarContent
                 }
             }
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
+                ToolbarItemGroup(placement: .topBarLeading) {
                     leadingToolbarContent
                 }
             }

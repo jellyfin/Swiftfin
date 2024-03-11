@@ -3,9 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -23,31 +24,29 @@ extension HomeView {
         @ObservedObject
         var viewModel: NextUpLibraryViewModel
 
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
-
         var body: some View {
-            PosterHStack(
-                title: L10n.nextUp,
-                type: nextUpPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                    }
-            }
-            .contextMenu { item in
-                Button {
-                    viewModel.markPlayed(item: item)
-                } label: {
-                    Label(L10n.played, systemImage: "checkmark.circle")
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.nextUp,
+                    type: nextUpPosterType,
+                    items: $viewModel.elements
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, viewModel)
+                        }
                 }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+                .contextMenu { item in
+                    Button {
+                        viewModel.markPlayed(item: item)
+                    } label: {
+                        Label(L10n.played, systemImage: "checkmark.circle")
+                    }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

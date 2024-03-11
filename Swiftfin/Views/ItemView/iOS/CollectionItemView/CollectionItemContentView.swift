@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -24,29 +24,31 @@ extension CollectionItemView {
 
                 // MARK: Genres
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
+                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Items
 
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.collectionItems
-                )
-                .onSelect { item in
-                    router.route(to: \.item, item)
+                if viewModel.collectionItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.collectionItems
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
                 }
             }
         }

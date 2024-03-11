@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -77,7 +77,7 @@ final class LiveTVChannelsViewModel: ViewModel {
                 startIndex: 0,
                 limit: 100,
                 enableImageTypes: [.primary],
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 enableUserData: false,
                 enableFavoriteSorting: true
             )
@@ -93,7 +93,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getPrograms() {
-        guard !channels.isEmpty else {
+        guard channels.isNotEmpty else {
             logger.debug("Cannot get programs, channels list empty.")
             return
         }

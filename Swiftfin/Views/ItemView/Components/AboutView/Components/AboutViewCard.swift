@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -31,10 +31,14 @@ extension ItemView.AboutView {
                             .font(.title2)
                             .fontWeight(.semibold)
                             .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         if let subtitle {
                             Text(subtitle)
                                 .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
 
                         Spacer()

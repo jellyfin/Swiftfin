@@ -3,11 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension HomeView {
@@ -21,26 +23,24 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: LibraryViewModel
-
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
+        var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                type: latestInLibraryPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.library, viewModel.libraryCoordinatorParameters)
-                    }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                    type: latestInLibraryPosterType,
+                    items: $viewModel.elements
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, viewModel)
+                        }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

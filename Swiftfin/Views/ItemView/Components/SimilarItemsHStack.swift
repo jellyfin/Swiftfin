@@ -3,11 +3,12 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension ItemView {
@@ -20,19 +21,23 @@ extension ItemView {
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
-        let items: [BaseItemDto]
+        @StateObject
+        private var viewModel: PagingLibraryViewModel<BaseItemDto>
+
+        init(items: [BaseItemDto]) {
+            self._viewModel = StateObject(wrappedValue: PagingLibraryViewModel(items, parent: BaseItemDto(name: L10n.recommended)))
+        }
 
         var body: some View {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: items
+                items: $viewModel.elements
             )
             .trailing {
                 SeeAllButton()
                     .onSelect {
-                        let viewModel = StaticLibraryViewModel(items: items)
-                        router.route(to: \.basicLibrary, .init(title: L10n.recommended, viewModel: viewModel))
+                        router.route(to: \.library, viewModel)
                     }
             }
             .onSelect { item in

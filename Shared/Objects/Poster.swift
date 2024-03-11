@@ -3,17 +3,19 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
 
-// TODO: find way to remove special `single` handling
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
-protocol Poster: Displayable, Hashable {
+// TODO: instead of the below image functions, have variables that match `ImageType`
+//       - allows caller to choose images
+protocol Poster: Displayable, Hashable, Identifiable {
 
     var subtitle: String? { get }
     var showTitle: Bool { get }
+    var typeSystemName: String? { get }
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]

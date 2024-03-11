@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import PulseUI
@@ -34,7 +34,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
-    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
+    var itemFilterDrawerSelector = makeItemFilterDrawerSelector
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
@@ -117,8 +117,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
-    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
-        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {

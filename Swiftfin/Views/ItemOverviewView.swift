@@ -3,11 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
 import SwiftUI
+
+// TODO: fix with shorter text
 
 struct ItemOverviewView: View {
 
@@ -18,12 +20,25 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ItemView.OverviewView(item: item)
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                }
+
+                if let itemOverview = item.overview {
+                    Text(itemOverview)
+                        .font(.body)
+                }
+            }
+            .edgePadding()
         }
-        .navigationTitle(L10n.overview)
+        .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

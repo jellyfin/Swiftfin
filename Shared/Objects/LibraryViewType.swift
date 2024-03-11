@@ -3,24 +3,25 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import Foundation
+import UIKit
 
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case grid
     case list
 
-    // TODO: localize after organization
+    // TODO: localize
     var displayTitle: String {
         switch self {
         case .grid:
-            return "Grid"
+            "Grid"
         case .list:
-            return "List"
+            "List"
         }
     }
 }
