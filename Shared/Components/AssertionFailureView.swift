@@ -8,12 +8,17 @@
 
 import SwiftUI
 
-struct WrappedView<Content: View>: View {
+struct AssertionFailureView: View {
 
-    @ViewBuilder
-    let content: () -> Content
+    let message: String
+
+    init(_ message: String) {
+        self.message = message
+
+        assertionFailure(message)
+    }
 
     var body: some View {
-        content()
+        EmptyView()
     }
 }

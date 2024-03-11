@@ -66,7 +66,7 @@ struct PagingLibraryView<Element: Poster>: View {
         case let element as BaseItemPerson:
             select(person: element)
         default:
-            fatalError("Used an unexpected type within a `PagingLibaryView`?")
+            assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
         }
     }
 

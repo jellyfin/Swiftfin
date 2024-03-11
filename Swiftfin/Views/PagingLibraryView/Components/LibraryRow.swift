@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: for landscape, have thumbs come first
-
 extension PagingLibraryView {
 
     struct LibraryRow: View {
@@ -57,7 +55,7 @@ extension PagingLibraryView {
             case let element as BaseItemPerson:
                 personAccessoryView(person: element)
             default:
-                fatalError("Used an unexpected type within a `PagingLibaryView`?")
+                AssertionFailureView("Used an unexpected type within a `PagingLibaryView`?")
             }
         }
 
