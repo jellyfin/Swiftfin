@@ -47,7 +47,21 @@ struct LiveTVChannelsView: View {
                 sectionInsets: .zero
             )
         }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
+            if !viewModel.isLoading && edge == .bottom {
+                viewModel.requestNextPage()
+            }
+        }
         .ignoresSafeArea()
+        .onAppear {
+            viewModel.startScheduleCheckTimer()
+        }
+        .onDisappear {
+            viewModel.stopScheduleCheckTimer()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.livePlayerDismissed)) { _ in
+            viewModel.startScheduleCheckTimer()
+        }
     }
 
     @ViewBuilder
@@ -74,15 +88,22 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
+                guard let mediaSource = channel.mediaSources?.first else {
+                    return
+                }
+                viewModel.stopScheduleCheckTimer()
+                router.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel, mediaSource: mediaSource, program: channelProgram)
+                )
             }
         )
     }
 
     var body: some View {
-        if viewModel.isLoading && viewModel.channels.isEmpty {
+        if viewModel.isLoading && viewModel.channelPrograms.isEmpty {
             loadingView
-        } else if viewModel.channels.isEmpty {
+        } else if viewModel.channelPrograms.isEmpty {
             noResultsView
         } else {
             channelsView
@@ -98,7 +119,7 @@ struct LiveTVChannelsView: View {
     }
 }
 
-private extension BaseItemDto {
+extension BaseItemDto {
     func programDisplayText(timeFormatter: DateFormatter) -> LiveTVChannelViewProgram {
         var timeText = ""
         if let start = self.startDate {

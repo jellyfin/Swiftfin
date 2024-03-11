@@ -21,24 +21,12 @@ final class LiveTVChannelsCoordinator: NavigationCoordinatable {
 
     #if os(tvOS)
     @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
+    var liveVideoPlayer = makeLiveVideoPlayer
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        BasicNavigationViewCoordinator {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: manager)
-                        .overlay {
-                            VideoPlayer.Overlay()
-                        }
-                } else {
-                    NativeVideoPlayer(manager: manager)
-                }
-            }
-        }
-        .inNavigationViewCoordinator()
+    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
     }
     #endif
 

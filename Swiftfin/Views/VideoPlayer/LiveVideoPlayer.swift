@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -17,36 +17,7 @@ import VLCUI
 // TODO: localization necessary for toast text?
 // TODO: entire gesture layer should be separate
 
-struct VideoPlayer: View {
-
-    enum OverlayType {
-        case main
-        case chapters
-    }
-
-    @Environment(\.scenePhase)
-    private var scenePhase
-
-    class GestureStateHandler {
-
-        var beganPanWithOverlay: Bool = false
-        var beginningPanProgress: CGFloat = 0
-        var beginningHorizontalPanUnit: CGFloat = 0
-
-        var beginningAudioOffset: Int = 0
-        var beginningBrightnessValue: CGFloat = 0
-        var beginningPlaybackSpeed: Float = 0
-        var beginningSubtitleOffset: Int = 0
-        var beginningVolumeValue: Float = 0
-
-        var jumpBackwardKeyPressActive: Bool = false
-        var jumpBackwardKeyPressWorkItem: DispatchWorkItem?
-        var jumpBackwardKeyPressAmount: Int = 0
-
-        var jumpForwardKeyPressActive: Bool = false
-        var jumpForwardKeyPressWorkItem: DispatchWorkItem?
-        var jumpForwardKeyPressAmount: Int = 0
-    }
+struct LiveVideoPlayer: View {
 
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
@@ -78,14 +49,14 @@ struct VideoPlayer: View {
     private var subtitleSize
 
     @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
     @StateObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
     @State
     private var audioOffset: Int = 0
@@ -102,7 +73,7 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Int = 0
 
-    private let gestureStateHandler: GestureStateHandler = .init()
+    private let gestureStateHandler: VideoPlayer.GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
 
     @ViewBuilder
@@ -116,7 +87,10 @@ struct VideoPlayer: View {
                         .onTicksUpdated { ticks, _ in
 
                             let newSeconds = ticks / 1000
-                            let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                            var newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                            if newProgress.isInfinite || newProgress.isNaN {
+                                newProgress = 0
+                            }
                             currentProgressHandler.progress = newProgress
                             currentProgressHandler.seconds = newSeconds
 
@@ -133,8 +107,7 @@ struct VideoPlayer: View {
                                 {
                                     videoPlayerManager.selectNextViewModel()
                                 } else {
-                                    AppDelegate.leavePlaybackOrientation()
-                                    router.dismissCoordinator()
+                                    router.dismissCoordinator {}
                                 }
                             }
                         }
@@ -156,7 +129,7 @@ struct VideoPlayer: View {
                             }
                         }
 
-                    VideoPlayer.Overlay()
+                    LiveVideoPlayer.Overlay()
                         .environmentObject(splitContentViewProxy)
                         .environmentObject(videoPlayerManager)
                         .environmentObject(videoPlayerManager.currentProgressHandler)
@@ -198,6 +171,9 @@ struct VideoPlayer: View {
                 videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
+            .onDisappear {
+                NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+            }
     }
 
     var body: some View {
@@ -205,8 +181,8 @@ struct VideoPlayer: View {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-                LoadingView()
-                    .transition(.opacity)
+//                LoadingView()
+//                    .transition(.opacity)
             }
         }
         .navigationBarHidden(true)
@@ -247,22 +223,15 @@ struct VideoPlayer: View {
             audioOffset = 0
             subtitleOffset = 0
         }
-        .onScenePhase(.active) {
-            if Defaults[.VideoPlayer.Transition.playOnActive] {
-                videoPlayerManager.proxy.play()
-            }
-        }
-        .onScenePhase(.background) {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                videoPlayerManager.proxy.pause()
-            }
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
         }
     }
 }
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager
@@ -275,7 +244,7 @@ extension VideoPlayer {
 // TODO: refactor to be split into other files
 // TODO: refactor so that actions are separate from the gesture calculations, so that actions are more general
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
     private func handlePan(
         action: PanAction,
@@ -388,7 +357,7 @@ extension VideoPlayer {
 
 // MARK: Actions
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
     private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard state == .began || state == .changed else { return }

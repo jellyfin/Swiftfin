@@ -36,7 +36,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -61,7 +61,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -86,7 +86,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -111,7 +111,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -136,7 +136,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -161,7 +161,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }

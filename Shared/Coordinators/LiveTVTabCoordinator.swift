@@ -13,29 +13,17 @@ import SwiftUI
 final class LiveTVTabCoordinator: TabCoordinatable {
 
     var child = TabChild(startingItems: [
-        \LiveTVTabCoordinator.programs,
         \LiveTVTabCoordinator.channels,
+        \LiveTVTabCoordinator.programs,
         \LiveTVTabCoordinator.home,
     ])
 
-    @Route(tabItem: makeProgramsTab)
-    var programs = makePrograms
     @Route(tabItem: makeChannelsTab)
     var channels = makeChannels
+    @Route(tabItem: makeProgramsTab)
+    var programs = makePrograms
     @Route(tabItem: makeHomeTab)
     var home = makeHome
-
-    func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
-        NavigationViewCoordinator(LiveTVProgramsCoordinator())
-    }
-
-    @ViewBuilder
-    func makeProgramsTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "tv")
-            L10n.programs.text
-        }
-    }
 
     func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
         NavigationViewCoordinator(LiveTVChannelsCoordinator())
@@ -46,6 +34,18 @@ final class LiveTVTabCoordinator: TabCoordinatable {
         HStack {
             Image(systemName: "square.grid.3x3")
             L10n.channels.text
+        }
+    }
+
+    func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
+        NavigationViewCoordinator(LiveTVProgramsCoordinator())
+    }
+
+    @ViewBuilder
+    func makeProgramsTab(isActive: Bool) -> some View {
+        HStack {
+            Image(systemName: "tv")
+            L10n.programs.text
         }
     }
 

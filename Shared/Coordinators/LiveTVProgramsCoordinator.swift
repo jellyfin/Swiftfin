@@ -26,20 +26,8 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        BasicNavigationViewCoordinator {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: manager)
-                        .overlay {
-                            VideoPlayer.Overlay()
-                        }
-                } else {
-                    NativeVideoPlayer(manager: manager)
-                }
-            }
-        }
-        .inNavigationViewCoordinator()
+    func makeVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
     }
     #endif
 
