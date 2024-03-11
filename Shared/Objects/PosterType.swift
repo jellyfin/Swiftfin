@@ -9,40 +9,20 @@
 import Defaults
 import SwiftUI
 
+// TODO: Rename to `PosterDisplayType` or `PosterDisplay`?
+// TODO: in Swift 5.10, nest under `Poster` (also when GitHub CI has Xcode 15.3)
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case portrait
     case landscape
-
-    var width: CGFloat {
-        switch self {
-        case .portrait:
-            return Width.portrait
-        case .landscape:
-            return Width.landscape
-        }
-    }
+    case portrait
 
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .portrait:
-            return "Portrait"
         case .landscape:
-            return "Landscape"
+            "Landscape"
+        case .portrait:
+            "Portrait"
         }
-    }
-
-    // TODO: Make property of the enum type, not a nested type
-    enum Width {
-        #if os(tvOS)
-        static let portrait = 200.0
-
-        static let landscape = 350.0
-        #else
-        static var portrait = 100.0
-
-        static var landscape = 200.0
-        #endif
     }
 }

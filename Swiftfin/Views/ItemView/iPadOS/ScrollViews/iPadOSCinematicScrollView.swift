@@ -80,7 +80,7 @@ extension ItemView {
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.65,
                 end: UIScreen.main.bounds.height * 0.65 + 50
@@ -93,7 +93,7 @@ extension ItemView {
                 headerView
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     if viewModel.isLoading {
                         ProgressView()
                     }
@@ -121,9 +121,8 @@ extension ItemView.iPadOSCinematicScrollView {
                     ImageView(viewModel.item.imageSource(
                         .logo,
                         maxWidth: UIScreen.main.bounds.width * 0.4,
-                        maxHeight: 150
+                        maxHeight: 130
                     ))
-                    .resizingMode(.bottomLeft)
                     .placeholder {
                         EmptyView()
                     }
@@ -135,6 +134,8 @@ extension ItemView.iPadOSCinematicScrollView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                     }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
@@ -153,7 +154,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 Text(premiereYear)
                             }
 
-                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                                 Text(runtime)
                             }
                         }

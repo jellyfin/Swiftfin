@@ -21,26 +21,27 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemTypeLibraryViewModel
-
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
+        var viewModel: RecentlyAddedLibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.recentlyAdded,
-                type: recentlyAddedPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                    }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.recentlyAdded,
+                    type: recentlyAddedPosterType,
+                    items: $viewModel.elements
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            // Give a new view model becaues we don't want to
+                            // keep paginated items on the home view model
+                            let viewModel = RecentlyAddedLibraryViewModel()
+                            router.route(to: \.library, viewModel)
+                        }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

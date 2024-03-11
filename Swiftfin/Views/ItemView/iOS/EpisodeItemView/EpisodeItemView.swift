@@ -25,13 +25,13 @@ struct EpisodeItemView: View {
             ContentView(viewModel: viewModel)
         }
         .scrollViewOffset($scrollViewOffset)
-        .navBarOffset(
+        .navigationBarOffset(
             $scrollViewOffset,
             start: 0,
             end: 30
         )
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 if viewModel.isLoading {
                     ProgressView()
                 }

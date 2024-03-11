@@ -15,7 +15,6 @@ struct AppIconSelectorView: View {
     var viewModel: SettingsViewModel
 
     var body: some View {
-
         Form {
 
             Section {
@@ -87,7 +86,7 @@ extension AppIconSelectorView {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
-                            .accentSymbolRendering()
+                            .paletteOverlayRendering()
                     }
                 }
             }

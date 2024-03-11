@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+// TODO: Remove this and strongly type instances if it makes sense.
 extension String: Displayable {
 
     var displayTitle: String {
@@ -16,14 +17,11 @@ extension String: Displayable {
     }
 }
 
-extension String: Identifiable {
-
-    public var id: String {
-        self
-    }
-}
-
 extension String {
+
+    static func + (lhs: String, rhs: Character) -> String {
+        lhs.appending(rhs)
+    }
 
     func appending(_ element: String) -> String {
         self + element
@@ -63,20 +61,11 @@ extension String {
         } catch { return self }
     }
 
-    func leftPad(toWidth width: Int, withString string: String?) -> String {
-        let paddingString = string ?? " "
+    func leftPad(maxWidth width: Int, with character: Character) -> String {
+        guard count < width else { return self }
 
-        if self.count >= width {
-            return self
-        }
-
-        let remainingLength: Int = width - self.count
-        var padString = String()
-        for _ in 0 ..< remainingLength {
-            padString += paddingString
-        }
-
-        return "\(padString)\(self)"
+        let padding = String(repeating: character, count: width - count)
+        return padding + self
     }
 
     var text: Text {
@@ -84,24 +73,9 @@ extension String {
     }
 
     var initials: String {
-        let initials = self.split(separator: " ").compactMap(\.first)
-        return String(initials)
-    }
-
-    func heightOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let textSize = self.size(withAttributes: fontAttributes)
-        return textSize.height
-    }
-
-    func widthOfString(usingFont font: UIFont) -> CGFloat {
-        let fontAttributes = [NSAttributedString.Key.font: font]
-        let textSize = self.size(withAttributes: fontAttributes)
-        return textSize.width
-    }
-
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: self, id: self, filterName: self)
+        split(separator: " ")
+            .compactMap(\.first)
+            .reduce("", +)
     }
 
     static var emptyDash = "--"

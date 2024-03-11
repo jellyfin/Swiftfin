@@ -16,11 +16,10 @@ extension NameGuidPair: Displayable {
     }
 }
 
-extension NameGuidPair: LibraryParent {}
+// TODO: strong type studios and implement as `LibraryParent`
+extension NameGuidPair: LibraryParent {
 
-extension NameGuidPair {
-
-    var filter: ItemFilters.Filter {
-        .init(displayTitle: displayTitle, id: id, filterName: displayTitle)
+    var libraryType: BaseItemKind? {
+        .studio
     }
 }

@@ -17,10 +17,4 @@ extension UIScreen {
     func scale(_ x: CGFloat) -> Int {
         Int(nativeScale * x)
     }
-
-    func maxChildren(width: CGFloat, height: CGFloat) -> Int {
-        let screenSize = bounds.height * bounds.width
-        let itemSize = width * height
-        return Int(screenSize / itemSize)
-    }
 }

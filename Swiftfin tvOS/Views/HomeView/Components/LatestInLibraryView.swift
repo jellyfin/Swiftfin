@@ -16,29 +16,19 @@ extension HomeView {
         @EnvironmentObject
         private var router: HomeCoordinator.Router
 
-        @StateObject
+        @ObservedObject
         var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            PosterHStack(
-                title: L10n.latestWithString(viewModel.parent.displayTitle),
-                type: .portrait,
-                items: viewModel.items.prefix(20).asArray
-            )
-            .trailing {
-                SeeAllPosterButton(type: .portrait)
-                    .onSelect {
-                        router.route(
-                            to: \.basicLibrary,
-                            .init(
-                                title: L10n.latestWithString(viewModel.parent.displayTitle),
-                                viewModel: viewModel
-                            )
-                        )
-                    }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                    type: .portrait,
+                    items: $viewModel.elements
+                )
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

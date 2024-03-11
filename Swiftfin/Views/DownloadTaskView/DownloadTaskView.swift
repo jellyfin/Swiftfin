@@ -21,7 +21,7 @@ struct DownloadTaskView: View {
         ScrollView(showsIndicators: false) {
             ContentView(downloadTask: downloadTask)
         }
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

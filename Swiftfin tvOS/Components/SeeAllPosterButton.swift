@@ -30,7 +30,6 @@ struct SeeAllPosterButton: View {
                 }
             }
             .posterStyle(type)
-            .frame(width: type.width)
         }
         .buttonStyle(.card)
     }

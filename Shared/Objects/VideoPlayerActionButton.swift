@@ -71,22 +71,18 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         }
     }
 
-    static var defaultBarActionButtons: [VideoPlayerActionButton] {
-        [
-            .aspectFill,
-            .autoPlay,
-            .playPreviousItem,
-            .playNextItem,
-        ]
-    }
+    static let defaultBarActionButtons: [VideoPlayerActionButton] = [
+        .aspectFill,
+        .autoPlay,
+        .playPreviousItem,
+        .playNextItem,
+    ]
 
-    static var defaultMenuActionButtons: [VideoPlayerActionButton] {
-        [
-            .audio,
-            .subtitles,
-            .playbackSpeed,
-            .chapters,
-            .advanced,
-        ]
-    }
+    static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
+        .audio,
+        .subtitles,
+        .playbackSpeed,
+        .chapters,
+        .advanced,
+    ]
 }

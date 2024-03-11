@@ -6,7 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension HomeView {
@@ -19,34 +21,47 @@ extension HomeView {
         @ObservedObject
         var viewModel: HomeViewModel
 
-        var body: some View {
-            PosterHStack(
-                type: .landscape,
-                items: viewModel.resumeItems
-            )
-            .scaleItems(1.5)
-            .contextMenu { item in
-                Button {
-                    viewModel.markItemPlayed(item)
-                } label: {
-                    Label(L10n.played, systemImage: "checkmark.circle")
-                }
+        // TODO: see how this looks across multiple screen sizes
+        //       alongside PosterHStack + landscape
+        // TODO: need better handling for iPadOS + portrait orientation
+        private var columnCount: CGFloat {
+            if UIDevice.isPhone {
+                1.5
+            } else {
+                3.5
+            }
+        }
 
-                Button(role: .destructive) {
-                    viewModel.markItemUnplayed(item)
-                } label: {
-                    Label(L10n.unplayed, systemImage: "minus.circle")
-                }
+        var body: some View {
+            CollectionHStack(
+                $viewModel.resumeItems,
+                columns: columnCount
+            ) { item in
+                PosterButton(item: item, type: .landscape)
+                    .contextMenu {
+                        Button {
+                            viewModel.markItemPlayed(item)
+                        } label: {
+                            Label(L10n.played, systemImage: "checkmark.circle")
+                        }
+
+                        Button(role: .destructive) {
+                            viewModel.markItemUnplayed(item)
+                        } label: {
+                            Label(L10n.unplayed, systemImage: "minus.circle")
+                        }
+                    }
+                    .imageOverlay {
+                        LandscapePosterProgressBar(
+                            title: item.progressLabel ?? L10n.continue,
+                            progress: (item.userData?.playedPercentage ?? 0) / 100
+                        )
+                    }
+                    .onSelect {
+                        router.route(to: \.item, item)
+                    }
             }
-            .imageOverlay { item in
-                LandscapePosterProgressBar(
-                    title: item.progressLabel ?? L10n.continue,
-                    progress: (item.userData?.playedPercentage ?? 0) / 100
-                )
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
-            }
+            .scrollBehavior(.continuousLeadingEdge)
         }
     }
 }

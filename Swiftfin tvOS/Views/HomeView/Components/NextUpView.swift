@@ -13,39 +13,25 @@ extension HomeView {
 
     struct NextUpView: View {
 
-        @EnvironmentObject
-        private var router: HomeCoordinator.Router
-        @ObservedObject
-        var viewModel: NextUpLibraryViewModel
-
         @Default(.Customization.nextUpPosterType)
         private var nextUpPosterType
 
+        @EnvironmentObject
+        private var router: HomeCoordinator.Router
+
+        @ObservedObject
+        var viewModel: NextUpLibraryViewModel
+
         var body: some View {
-            PosterHStack(
-                title: L10n.nextUp,
-                type: nextUpPosterType,
-                items: viewModel.items.prefix(20).asArray
-            )
-            .trailing {
-                Button {
-                    router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                } label: {
-                    HStack {
-                        L10n.seeAll.text
-                        Image(systemName: "chevron.right")
-                    }
-                    .font(.subheadline.bold())
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.nextUp,
+                    type: nextUpPosterType,
+                    items: $viewModel.elements
+                )
+                .onSelect { item in
+                    router.route(to: \.item, item)
                 }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
-            }
-            .trailing {
-                SeeAllPosterButton(type: nextUpPosterType)
-                    .onSelect {
-                        router.route(to: \.basicLibrary, .init(title: L10n.nextUp, viewModel: viewModel))
-                    }
             }
         }
     }

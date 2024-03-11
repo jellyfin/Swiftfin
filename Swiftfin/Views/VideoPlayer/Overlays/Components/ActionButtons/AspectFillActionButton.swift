@@ -28,17 +28,7 @@ extension VideoPlayer.Overlay.ActionButtons {
         var body: some View {
             Button {
                 overlayTimer.start(5)
-                if aspectFilled {
-                    aspectFilled = false
-                    UIView.animate(withDuration: 0.2) {
-                        videoPlayerProxy.aspectFill(0)
-                    }
-                } else {
-                    aspectFilled = true
-                    UIView.animate(withDuration: 0.2) {
-                        videoPlayerProxy.aspectFill(1)
-                    }
-                }
+                aspectFilled.toggle()
             } label: {
                 content(aspectFilled).eraseToAnyView()
             }

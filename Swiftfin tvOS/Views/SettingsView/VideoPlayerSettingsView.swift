@@ -45,7 +45,7 @@ struct VideoPlayerSettingsView: View {
                 Section {
                     ChevronButton(
                         title: "Resume Offset",
-                        subtitle: resumeOffset.secondFormat
+                        subtitle: resumeOffset.secondLabel
                     )
                     .onSelect {
                         isPresentingResumeOffsetStepper = true
@@ -79,7 +79,7 @@ struct VideoPlayerSettingsView: View {
                     step: 1
                 )
                 .valueFormatter {
-                    $0.secondFormat
+                    $0.secondLabel
                 }
                 .onCloseSelected {
                     isPresentingResumeOffsetStepper = false

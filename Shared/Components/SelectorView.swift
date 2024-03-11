@@ -6,85 +6,106 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-// TODO: Implement different behavior types, where selected/unselected
-//       items can appear in different sections
+// TODO: Label generic not really necessary if just restricting to `Text`
+//       - go back to `any View` implementation instead
 
-struct SelectorView<Item: Displayable & Identifiable>: View {
+enum SelectorType {
+    case single
+    case multi
+}
 
-    @Default(.accentColor)
+struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
+
+    @Environment(\.accentColor)
     private var accentColor
 
     @Binding
-    private var selection: [Item]
+    private var selection: Set<Element>
 
-    private let allItems: [Item]
-    private var label: (Item) -> any View
+    private let sources: [Element]
+    private var label: (Element) -> Label
     private let type: SelectorType
 
     var body: some View {
-        List(allItems) { item in
+        List(sources, id: \.hashValue) { element in
             Button {
                 switch type {
                 case .single:
-                    handleSingleSelect(with: item)
+                    handleSingleSelect(with: element)
                 case .multi:
-                    handleMultiSelect(with: item)
+                    handleMultiSelect(with: element)
                 }
             } label: {
                 HStack {
-                    label(item).eraseToAnyView()
+                    label(element)
 
                     Spacer()
 
-                    if selection.contains(where: { $0.id == item.id }) {
+                    if selection.contains(element) {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
-                            .accentSymbolRendering()
+                            .paletteOverlayRendering()
                     }
                 }
             }
         }
     }
 
-    private func handleSingleSelect(with item: Item) {
-        selection = [item]
+    private func handleSingleSelect(with element: Element) {
+        selection = [element]
     }
 
-    private func handleMultiSelect(with item: Item) {
-        if selection.contains(where: { $0.id == item.id }) {
-            selection.removeAll(where: { $0.id == item.id })
+    private func handleMultiSelect(with element: Element) {
+        if selection.contains(element) {
+            selection.remove(element)
         } else {
-            selection.append(item)
+            selection.insert(element)
         }
     }
 }
 
-extension SelectorView {
+extension SelectorView where Label == Text {
 
-    init(selection: Binding<[Item]>, allItems: [Item], type: SelectorType) {
+    init(selection: Binding<[Element]>, sources: [Element], type: SelectorType) {
+
+        let selectionBinding = Binding {
+            Set(selection.wrappedValue)
+        } set: { newValue in
+            selection.wrappedValue = sources.intersection(newValue)
+        }
+
         self.init(
-            selection: selection,
-            allItems: allItems,
+            selection: selectionBinding,
+            sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: type
         )
     }
 
-    init(selection: Binding<Item>, allItems: [Item]) {
+    init(selection: Binding<Element>, sources: [Element]) {
+
+        let selectionBinding = Binding {
+            Set([selection.wrappedValue])
+        } set: { newValue in
+            selection.wrappedValue = newValue.first!
+        }
+
         self.init(
-            selection: .init(get: { [selection.wrappedValue] }, set: { selection.wrappedValue = $0[0] }),
-            allItems: allItems,
+            selection: selectionBinding,
+            sources: sources,
             label: { Text($0.displayTitle).foregroundColor(.primary) },
             type: .single
         )
     }
+}
 
-    func label(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+extension SelectorView {
+
+    func label(@ViewBuilder _ content: @escaping (Element) -> Label) -> Self {
         copy(modifying: \.label, with: content)
     }
 }

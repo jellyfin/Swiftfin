@@ -25,13 +25,17 @@ extension MovieItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                ItemView.CastAndCrewHStack(people: viewModel.item.people ?? [])
+                if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
+                    ItemView.CastAndCrewHStack(people: castAndCrew)
+                }
 
-                if !viewModel.specialFeatures.isEmpty {
+                if viewModel.specialFeatures.isNotEmpty {
                     ItemView.SpecialFeaturesHStack(items: viewModel.specialFeatures)
                 }
 
-                ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+                if viewModel.similarItems.isNotEmpty {
+                    ItemView.SimilarItemsHStack(items: viewModel.similarItems)
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

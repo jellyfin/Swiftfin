@@ -70,9 +70,9 @@ struct VideoPlayerSettingsView: View {
                     router.route(to: \.gestureSettings)
                 }
 
-            EnumPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+            CaseIterablePicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
+            CaseIterablePicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 
@@ -83,7 +83,7 @@ struct VideoPlayerSettingsView: View {
                     step: 1
                 )
                 .valueFormatter {
-                    $0.secondFormat
+                    $0.secondLabel
                 }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
@@ -91,7 +91,7 @@ struct VideoPlayerSettingsView: View {
 
             Section(L10n.buttons) {
 
-                EnumPicker(title: L10n.playbackButtons, selection: $playbackButtonType)
+                CaseIterablePicker(title: L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
@@ -119,7 +119,7 @@ struct VideoPlayerSettingsView: View {
                     Text(L10n.sliderColor)
                 }
 
-                EnumPicker(title: L10n.sliderType, selection: $sliderType)
+                CaseIterablePicker(title: L10n.sliderType, selection: $sliderType)
             }
 
             Section {
@@ -150,9 +150,9 @@ struct VideoPlayerSettingsView: View {
 
                 Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
-                EnumPicker(title: L10n.timestampType, selection: $timestampType)
+                CaseIterablePicker(title: L10n.timestampType, selection: $timestampType)
 
-                EnumPicker(title: L10n.trailingValue, selection: $trailingTimestampType)
+                CaseIterablePicker(title: L10n.trailingValue, selection: $trailingTimestampType)
             }
 
             Section(L10n.transition) {

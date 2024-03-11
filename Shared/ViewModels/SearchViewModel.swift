@@ -11,149 +11,236 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-final class SearchViewModel: ViewModel {
+final class SearchViewModel: ViewModel, Stateful {
 
-    @Published
-    var movies: [BaseItemDto] = []
+    // MARK: Action
+
+    enum Action {
+        case error(JellyfinAPIError)
+        case getSuggestions
+        case search(query: String)
+    }
+
+    // MARK: State
+
+    enum State: Equatable {
+        case content
+        case error(JellyfinAPIError)
+        case initial
+        case searching
+    }
+
     @Published
     var collections: [BaseItemDto] = []
     @Published
-    var series: [BaseItemDto] = []
-    @Published
     var episodes: [BaseItemDto] = []
+    @Published
+    var movies: [BaseItemDto] = []
     @Published
     var people: [BaseItemDto] = []
     @Published
+    var series: [BaseItemDto] = []
+    @Published
     var suggestions: [BaseItemDto] = []
 
-    let filterViewModel: FilterViewModel
-    private var searchTextSubject = CurrentValueSubject<String, Never>("")
-    private var searchCancellables = Set<AnyCancellable>()
+    @Published
+    var state: State = .initial
 
-    var noResults: Bool {
-        movies.isEmpty &&
-            collections.isEmpty &&
-            series.isEmpty &&
+    private var searchTask: AnyCancellable?
+    private var searchQuery: CurrentValueSubject<String, Never> = .init("")
+
+    let filterViewModel: FilterViewModel
+
+    var hasNoResults: Bool {
+        collections.isEmpty &&
             episodes.isEmpty &&
-            people.isEmpty
+            movies.isEmpty &&
+            people.isEmpty &&
+            series.isEmpty
     }
 
+    // MARK: init
+
     override init() {
-        self.filterViewModel = .init(parent: nil, currentFilters: .init())
+        self.filterViewModel = .init()
         super.init()
 
-        getSuggestions()
+        searchQuery
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .sink { [weak self] query in
+                guard let self, query.isNotEmpty else { return }
 
-        searchTextSubject
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .sink { newSearch in
-
-                if newSearch.isEmpty {
-                    self.movies = []
-                    self.collections = []
-                    self.series = []
-                    self.episodes = []
-                    self.people = []
-
-                    return
-                }
-
-                self._search(with: newSearch, filters: self.filterViewModel.currentFilters)
+                self.searchTask?.cancel()
+                self.search(query: query)
             }
             .store(in: &cancellables)
 
         filterViewModel.$currentFilters
-            .sink { newFilters in
-                self._search(with: self.searchTextSubject.value, filters: newFilters)
+            .debounce(for: 0.5, scheduler: RunLoop.main)
+            .filter { _ in self.searchQuery.value.isNotEmpty }
+            .sink { [weak self] _ in
+                guard let self else { return }
+
+                guard searchQuery.value.isNotEmpty else { return }
+
+                self.searchTask?.cancel()
+                self.search(query: searchQuery.value)
             }
             .store(in: &cancellables)
     }
 
-    func search(with query: String) {
-        searchTextSubject.send(query)
+    // MARK: respond
+
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case let .search(query):
+            if query.isEmpty {
+                searchTask?.cancel()
+                searchTask = nil
+                searchQuery.send(query)
+                return .initial
+            } else {
+                searchQuery.send(query)
+                return .searching
+            }
+        case .getSuggestions:
+            Task {
+                await filterViewModel.setQueryFilters()
+            }
+            .store(in: &cancellables)
+
+            Task {
+                let suggestions = try await getSuggestions()
+
+                await MainActor.run {
+                    self.suggestions = suggestions
+                }
+            }
+            .store(in: &cancellables)
+
+            return state
+        }
     }
 
-    private func _search(with query: String, filters: ItemFilters) {
-        getItems(for: query, with: filters, type: .movie, keyPath: \.movies)
-        getItems(for: query, with: filters, type: .boxSet, keyPath: \.collections)
-        getItems(for: query, with: filters, type: .series, keyPath: \.series)
-        getItems(for: query, with: filters, type: .episode, keyPath: \.episodes)
-        getPeople(for: query, with: filters)
-    }
+    // MARK: search
 
-    private func getItems(
-        for query: String,
-        with filters: ItemFilters,
-        type itemType: BaseItemKind,
-        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>
-    ) {
-        let genreIDs = filters.genres.compactMap(\.id)
-        let sortBy = filters.sortBy.map(\.filterName)
-        let sortOrder = filters.sortOrder.map { SortOrder(rawValue: $0.filterName) ?? .ascending }
-        let itemFilters: [ItemFilter] = filters.filters.compactMap { .init(rawValue: $0.filterName) }
+    private func search(query: String) {
+        searchTask = Task {
 
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 20,
-                isRecursive: true,
-                searchTerm: query,
-                sortOrder: sortOrder,
-                fields: ItemFields.allCases,
-                includeItemTypes: [itemType],
-                filters: itemFilters,
-                sortBy: sortBy,
-                enableUserData: true,
-                genreIDs: genreIDs,
-                enableImages: true
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+            do {
 
-            await MainActor.run {
-                self[keyPath: keyPath] = response.value.items ?? []
+                let items = try await withThrowingTaskGroup(
+                    of: (BaseItemKind, [BaseItemDto]).self,
+                    returning: [BaseItemKind: [BaseItemDto]].self
+                ) { group in
+
+                    // Base items
+                    let retrievingItemTypes: [BaseItemKind] = [
+                        .boxSet,
+                        .episode,
+                        .movie,
+                        .series,
+                    ]
+
+                    for type in retrievingItemTypes {
+                        group.addTask {
+                            let items = try await self.getItems(query: query, itemType: type)
+                            return (type, items)
+                        }
+                    }
+
+                    // People
+                    group.addTask {
+                        let items = try await self.getPeople(query: query)
+                        return (BaseItemKind.person, items)
+                    }
+
+                    var result: [BaseItemKind: [BaseItemDto]] = [:]
+
+                    while let items = try await group.next() {
+                        result[items.0] = items.1
+                    }
+
+                    return result
+                }
+
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.collections = items[.boxSet] ?? []
+                    self.episodes = items[.episode] ?? []
+                    self.movies = items[.movie] ?? []
+                    self.people = items[.person] ?? []
+                    self.series = items[.series] ?? []
+
+                    self.state = .content
+                }
+            } catch {
+
+                guard !Task.isCancelled else { print("search was cancelled")
+                    return
+                }
+
+                await MainActor.run {
+                    self.send(.error(.init(error.localizedDescription)))
+                }
             }
         }
+        .asAnyCancellable()
     }
 
-    private func getPeople(for query: String?, with filters: ItemFilters) {
-        guard !filters.hasFilters else {
-            self.people = []
-            return
-        }
+    private func getItems(query: String, itemType: BaseItemKind) async throws -> [BaseItemDto] {
 
-        Task {
-            let parameters = Paths.GetPersonsParameters(
-                limit: 20,
-                searchTerm: query
-            )
-            let request = Paths.getPersons(parameters: parameters)
-            let response = try await userSession.client.send(request)
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = [itemType]
+        parameters.isRecursive = true
+        parameters.limit = 20
+        parameters.searchTerm = query
 
-            await MainActor.run {
-                people = response.value.items ?? []
-            }
-        }
+        // Filters
+        let filters = filterViewModel.currentFilters
+        parameters.filters = filters.traits
+        parameters.genres = filters.genres.map(\.value)
+        parameters.sortBy = filters.sortBy.map(\.rawValue)
+        parameters.sortOrder = filters.sortOrder
+        parameters.tags = filters.tags.map(\.value)
+        parameters.years = filters.years.map(\.intValue)
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
     }
 
-    private func getSuggestions() {
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 10,
-                isRecursive: true,
-                includeItemTypes: [.movie, .series],
-                sortBy: ["IsFavoriteOrLiked", "Random"],
-                imageTypeLimit: 0,
-                enableTotalRecordCount: false,
-                enableImages: false
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+    private func getPeople(query: String) async throws -> [BaseItemDto] {
 
-            await MainActor.run {
-                suggestions = response.value.items ?? []
-            }
-        }
+        var parameters = Paths.GetPersonsParameters()
+        parameters.limit = 20
+        parameters.searchTerm = query
+
+        let request = Paths.getPersons(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    // MARK: suggestions
+
+    private func getSuggestions() async throws -> [BaseItemDto] {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.includeItemTypes = [.movie, .series]
+        parameters.isRecursive = true
+        parameters.limit = 10
+        parameters.sortBy = [ItemSortBy.random.rawValue]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
     }
 }

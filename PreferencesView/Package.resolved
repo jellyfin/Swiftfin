@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swizzleswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarioIannotta/SwizzleSwift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e2d31c646182bf94a496b173c6ee5ad191230e9a"
+      }
+    }
+  ],
+  "version" : 2
+}

@@ -29,7 +29,6 @@ extension VideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
-                        AppDelegate.leavePlaybackOrientation()
                         router.dismissCoordinator()
                     } label: {
                         Image(systemName: "xmark")

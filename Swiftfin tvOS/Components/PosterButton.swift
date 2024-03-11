@@ -19,7 +19,6 @@ struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
     private var horizontalAlignment: HorizontalAlignment
     private var content: () -> any View
     private var imageOverlay: () -> any View
@@ -31,8 +30,20 @@ struct PosterButton<Item: Poster>: View {
     // Only set if desiring focus changes
     private var onFocusChanged: ((Bool) -> Void)?
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
+    @ViewBuilder
+    private func poster(from item: Item) -> some View {
+        switch type {
+        case .portrait:
+            ImageView(item.portraitPosterImageSource(maxWidth: 500))
+                .failure {
+                    TypeSystemNameView(item: item)
+                }
+        case .landscape:
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+                .failure {
+                    TypeSystemNameView(item: item)
+                }
+        }
     }
 
     var body: some View {
@@ -40,28 +51,15 @@ struct PosterButton<Item: Poster>: View {
             Button {
                 onSelect()
             } label: {
-                Group {
-                    switch type {
-                    case .portrait:
-                        ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                            .failure {
-                                InitialFailureView(item.displayTitle.initials)
-                            }
-                    case .landscape:
-                        ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                            .failure {
-                                InitialFailureView(item.displayTitle.initials)
-                            }
-                    }
-                }
-                .posterStyle(type)
-                .frame(width: itemWidth)
-                .overlay {
+                ZStack {
+                    Color.clear
+
+                    poster(from: item)
+
                     imageOverlay()
                         .eraseToAnyView()
-                        .posterStyle(type)
-                        .frame(width: itemWidth)
                 }
+                .posterStyle(type)
             }
             .buttonStyle(.card)
             .contextMenu(menuItems: {
@@ -69,11 +67,11 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterShadow()
-            .if(onFocusChanged != nil) { view in
+            .ifLet(onFocusChanged) { view, onFocusChanged in
                 view
                     .focused($isFocused)
                     .onChange(of: isFocused) { newValue in
-                        onFocusChanged?(newValue)
+                        onFocusChanged(newValue)
                     }
             }
 
@@ -81,7 +79,6 @@ struct PosterButton<Item: Poster>: View {
                 .eraseToAnyView()
                 .zIndex(-1)
         }
-        .frame(width: itemWidth)
     }
 }
 
@@ -91,9 +88,8 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            itemScale: 1,
             horizontalAlignment: .leading,
-            content: { DefaultContentView(item: item) },
+            content: { TitleSubtitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {},
@@ -107,10 +103,6 @@ extension PosterButton {
 
     func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
         copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
     }
 
     func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
@@ -134,31 +126,49 @@ extension PosterButton {
     }
 }
 
-// MARK: default content view
+// TODO: Shared default content?
 
 extension PosterButton {
 
-    struct DefaultContentView: View {
+    // MARK: Default Content
+
+    struct TitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
+        }
+    }
+
+    struct SubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    struct TitleSubtitleContentView: View {
 
         let item: Item
 
         var body: some View {
             VStack(alignment: .leading) {
                 if item.showTitle {
-                    Text(item.displayTitle)
-                        .font(.footnote)
-                        .fontWeight(.regular)
-                        .foregroundColor(.primary)
-                        .lineLimit(2)
+                    TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
                 }
 
-                if let description = item.subtitle {
-                    Text(description)
-                        .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                }
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }

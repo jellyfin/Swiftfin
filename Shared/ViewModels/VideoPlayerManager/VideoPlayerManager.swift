@@ -115,7 +115,7 @@ class VideoPlayerManager: ViewModel {
 
             let parameters = Paths.GetEpisodesParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 adjacentTo: item.id!,
                 limit: 3
             )

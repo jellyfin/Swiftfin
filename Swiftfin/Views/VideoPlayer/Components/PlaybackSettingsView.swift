@@ -51,7 +51,7 @@ struct PlaybackSettingsView: View {
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
             BasicStepper(
@@ -61,10 +61,10 @@ struct PlaybackSettingsView: View {
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
-            if !viewModel.videoStreams.isEmpty {
+            if viewModel.videoStreams.isNotEmpty {
                 Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
@@ -75,7 +75,7 @@ struct PlaybackSettingsView: View {
                 }
             }
 
-            if !viewModel.audioStreams.isEmpty {
+            if viewModel.audioStreams.isNotEmpty {
                 Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
@@ -86,7 +86,7 @@ struct PlaybackSettingsView: View {
                 }
             }
 
-            if !viewModel.subtitleStreams.isEmpty {
+            if viewModel.subtitleStreams.isNotEmpty {
                 Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
@@ -99,7 +99,7 @@ struct PlaybackSettingsView: View {
         }
         .navigationTitle(L10n.playback)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             splitContentViewProxy.hide()
         }
     }

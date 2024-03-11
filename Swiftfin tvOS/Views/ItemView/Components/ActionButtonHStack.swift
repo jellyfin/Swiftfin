@@ -23,7 +23,7 @@ extension ItemView {
                     Group {
                         if viewModel.isPlayed {
                             Image(systemName: "checkmark.circle.fill")
-                                .accentSymbolRendering(accentColor: .white)
+                                .paletteOverlayRendering(color: .white)
                         } else {
                             Image(systemName: "checkmark.circle")
                         }

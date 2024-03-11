@@ -10,64 +10,56 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: builder methods shouldn't take the item
-
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
-    private var content: (Item) -> any View
-    private var imageOverlay: (Item) -> any View
-    private var contextMenu: (Item) -> any View
+    private var content: () -> any View
+    private var imageOverlay: () -> any View
+    private var contextMenu: () -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
-    }
-
     @ViewBuilder
-    private func poster(from item: any Poster) -> some View {
+    private func poster(from item: Item) -> some View {
         switch type {
         case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
+            ImageView(item.portraitPosterImageSource(maxWidth: 200))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
                 .failure {
-                    InitialFailureView(item.displayTitle.initials)
+                    TypeSystemNameView(item: item)
                 }
         }
     }
 
     var body: some View {
         VStack(alignment: .leading) {
-
             Button {
                 onSelect()
             } label: {
-                poster(from: item)
-                    .overlay {
-                        imageOverlay(item)
-                            .eraseToAnyView()
-                            .posterStyle(type)
-                    }
+                ZStack {
+                    Color.clear
+
+                    poster(from: item)
+
+                    imageOverlay()
+                        .eraseToAnyView()
+                }
+                .posterStyle(type)
             }
             .contextMenu(menuItems: {
-                contextMenu(item)
+                contextMenu()
                     .eraseToAnyView()
             })
-            .posterStyle(type)
-            .frame(width: itemWidth)
             .posterShadow()
 
-            content(item)
+            content()
                 .eraseToAnyView()
         }
-        .frame(width: itemWidth)
     }
 }
 
@@ -81,28 +73,23 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            itemScale: 1,
-            content: { DefaultContentView(item: $0) },
-            imageOverlay: { DefaultOverlay(item: $0) },
-            contextMenu: { _ in EmptyView() },
+            content: { TitleSubtitleContentView(item: item) },
+            imageOverlay: { DefaultOverlay(item: item) },
+            contextMenu: { EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
     }
 
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
-    }
-
-    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
@@ -111,43 +98,49 @@ extension PosterButton {
     }
 }
 
+// TODO: Shared default content?
+
 extension PosterButton {
 
     // MARK: Default Content
 
-    struct DefaultContentView: View {
+    struct TitleContentView: View {
 
         let item: Item
 
-        @ViewBuilder
-        private var title: some View {
-            if item.showTitle {
-                Text(item.displayTitle)
-                    .font(.footnote.weight(.regular))
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-            } else {
-                EmptyView()
-            }
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
         }
+    }
 
-        @ViewBuilder
-        private var subtitle: some View {
-            if let subtitle = item.subtitle {
-                Text(subtitle)
-                    .font(.caption.weight(.medium))
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
-            } else {
-                EmptyView()
-            }
+    struct SubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
         }
+    }
+
+    struct TitleSubtitleContentView: View {
+
+        let item: Item
 
         var body: some View {
             VStack(alignment: .leading) {
-                title
+                if item.showTitle {
+                    TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
 
-                subtitle
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }

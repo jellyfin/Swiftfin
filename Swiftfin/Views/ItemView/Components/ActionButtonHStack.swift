@@ -29,7 +29,7 @@ extension ItemView {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
 
-            self.downloadManager = Container.downloadManager.callAsFunction()
+            self.downloadManager = Container.downloadManager()
         }
 
         var body: some View {

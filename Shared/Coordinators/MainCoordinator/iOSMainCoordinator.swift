@@ -34,7 +34,7 @@ final class MainCoordinator: NavigationCoordinatable {
 
     init() {
 
-        if Container.userSession.callAsFunction().authenticated {
+        if Container.userSession().authenticated {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.serverList)

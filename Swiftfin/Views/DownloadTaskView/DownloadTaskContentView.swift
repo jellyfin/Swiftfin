@@ -164,7 +164,7 @@ extension DownloadTaskView.ContentView {
                         Text(productionYear)
                     }
 
-                    if let runtime = downloadTask.item.getItemRuntime() {
+                    if let runtime = downloadTask.item.runTimeLabel {
                         Text(runtime)
                     }
                 }

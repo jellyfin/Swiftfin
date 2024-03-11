@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: steal from SwiftUI, rename to something like
+//       `LabeledContentView` with `label` and `value`
+
 struct TextPairView: View {
 
     let leading: String
@@ -29,7 +32,7 @@ extension TextPairView {
 
     init(_ textPair: TextPair) {
         self.init(
-            leading: textPair.displayTitle,
+            leading: textPair.title,
             trailing: textPair.subtitle
         )
     }

@@ -14,8 +14,8 @@ extension Collection {
         Array(self)
     }
 
-    func sorted<Value: Comparable>(using keyPath: KeyPath<Element, Value>) -> [Element] {
-        sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
+    var isNotEmpty: Bool {
+        !isEmpty
     }
 
     subscript(safe index: Index) -> Element? {
