@@ -582,7 +582,6 @@
 		E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDto.swift */; };
 		E1AD104E26D96CE3003E4A08 /* BaseItemDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDto.swift */; };
 		E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */; };
-		E1B2AB9928808E150072B3B9 /* GoogleCast.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */; };
 		E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33EAF28EA890D0073B0FD /* Equatable.swift */; };
 		E1B33ECF28EB6EA90073B0FD /* OverlayMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */; };
 		E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */; };
@@ -1355,7 +1354,6 @@
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
-				E1B2AB9928808E150072B3B9 /* GoogleCast.xcframework in Frameworks */,
 				E1DC9821296DDBE600982F06 /* CollectionView in Frameworks */,
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
 				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
@@ -3025,7 +3023,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftGen installations\nexport PATH=/opt/homebrew/bin:$PATH\n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
 		};
 		6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3044,7 +3042,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew Swiftgen installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftGen installations\nexport PATH=/opt/homebrew/bin:$PATH \n\nif which swiftgen >/dev/null; then\n  swiftgen\nelse\n  echo \"error: SwiftGen not installed, check contributing.md for installation instructions.\"\n  return 1\nfi\n";
 		};
 		BD0BA2282AD64BB200306A8D /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3063,7 +3061,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=/opt/homebrew/bin:$PATH\n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
 		};
 		BD83D7852B55EEB600652C24 /* Run SwiftFormat */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3082,7 +3080,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=\"$PATH:/opt/homebrew/bin\" \n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
+			shellScript = "# Add Homebrew to the path to support Apple Silicon Homebrew SwiftFormat installations\nexport PATH=/opt/homebrew/bin:$PATH\n\n# Skip phase if the action is not build (ie. analyze, archive, etc).\nif [ \"$ACTION\" != \"build\" ]; then\n    exit 0\nfi\n\nif which swiftformat >/dev/null; then\n    swiftformat .\nelse\n    echo \"error: SwiftFormat not installed, check contributing.md for installation instructions.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
