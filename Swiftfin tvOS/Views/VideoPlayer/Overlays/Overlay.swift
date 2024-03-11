@@ -26,6 +26,8 @@ extension VideoPlayer {
         private var confirmCloseWorkItem: DispatchWorkItem?
         @State
         private var currentOverlayType: VideoPlayer.OverlayType = .main
+        @State
+        private var isPlaying = true
 
         @StateObject
         private var overlayTimer: TimerProxy = .init()
@@ -69,6 +71,15 @@ extension VideoPlayer {
                     isPresentingOverlay = true
                     overlayTimer.start(5)
                 }
+                .onPlayPauseCommand(perform: {
+                    if isPlaying {
+                        proxy.pause()
+                        isPlaying = false
+                    } else {
+                        proxy.play()
+                        isPlaying = true
+                    }
+                })
                 .onMenuPressed {
 
                     overlayTimer.start(5)
