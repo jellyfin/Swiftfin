@@ -2535,8 +2535,7 @@
 				E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */,
 				E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */,
 				E12A9EF729499E0100731C3A /* JellyfinClient.swift */,
-				E1D8428E2933F2D900D1041A /* MediaSourceInfo.swift */,
-				E18A8E7F28D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift */,
+				E1F5F9B12BA0200500BA5014 /* MediaSourceInfo */,
 				E122A9122788EAAD0060FA63 /* MediaStream.swift */,
 				E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */,
 				E148128428C15472003B8787 /* SortOrder.swift */,
@@ -2819,6 +2818,15 @@
 				E111D8F728D03BF900400001 /* PagingLibraryView.swift */,
 			);
 			path = PagingLibraryView;
+			sourceTree = "<group>";
+		};
+		E1F5F9B12BA0200500BA5014 /* MediaSourceInfo */ = {
+			isa = PBXGroup;
+			children = (
+				E1D8428E2933F2D900D1041A /* MediaSourceInfo.swift */,
+				E18A8E7F28D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift */,
+			);
+			path = MediaSourceInfo;
 			sourceTree = "<group>";
 		};
 		E1FA891C289A302600176FEB /* CollectionItemView */ = {

@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: strongly type errors
+
 extension MediaSourceInfo {
 
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
@@ -21,8 +23,8 @@ extension MediaSourceInfo {
         let streamType: StreamType
 
         if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
-            guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
-            else { throw JellyfinAPIError("Unable to construct transcoded url") }
+            guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
+            else { throw JellyfinAPIError("Unable to make transcode URL") }
             playbackURL = fullTranscodeURL
             streamType = .transcode
         } else {
@@ -39,7 +41,10 @@ extension MediaSourceInfo {
                 parameters: videoStreamParameters
             )
 
-            playbackURL = userSession.client.fullURL(with: videoStreamRequest)
+            guard let streamURL = userSession.client.fullURL(with: videoStreamRequest)
+            else { throw JellyfinAPIError("Unable to make stream URL") }
+
+            playbackURL = streamURL
             streamType = .direct
         }
 
