@@ -12,20 +12,27 @@ import SwiftUI
 extension View {
 
     func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
-        modifier(DetectOrientation(orientation: orientation))
+        onNotification(UIDevice.orientationDidChangeNotification) {
+            orientation.wrappedValue = UIDevice.current.orientation
+        }
     }
 
     func navigationBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
-        modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
+        modifier(NavigationBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
     func navigationBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
-        modifier(NavBarDrawerModifier(drawer: drawer))
+        modifier(NavigationBarDrawerModifier(drawer: drawer))
     }
-    
-    /// Use within a `Form` on a setting row to reset a `Binding` to a default value on a long press
-    func longPressReset<Value>(_ binding: Binding<Value>, to value: Value) -> some View {
-        modifier(LongPressResetModifier(binding: binding, toValue: value))
+
+    func onListRowLongPress(perform action: @escaping () -> Void) -> some View {
+        modifier(FlashingListRowLongPressModifier(action: action))
+    }
+
+    func onListRowLongPress<Value: Equatable>(reset _default: Default<Value>) -> some View {
+        onListRowLongPress {
+            _default.reset()
+        }
     }
 
     @ViewBuilder

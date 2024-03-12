@@ -31,5 +31,7 @@ extension Color {
     static let systemBackground = Color(UIColor.systemBackground)
     static let secondarySystemFill = Color(UIColor.secondarySystemFill)
     static let tertiarySystemFill = Color(UIColor.tertiarySystemFill)
+    static let secondarySystemGroupedBackground = Color(UIColor.secondarySystemGroupedBackground)
+    static let tertiarySystemGroupedBackground = Color(UIColor.tertiarySystemGroupedBackground)
     #endif
 }

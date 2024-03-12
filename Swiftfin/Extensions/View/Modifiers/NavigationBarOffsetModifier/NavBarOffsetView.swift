@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
+struct NavigationBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
     @Binding
     private var scrollViewOffset: CGFloat
@@ -29,16 +29,16 @@ struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
         self.content = content
     }
 
-    func makeUIViewController(context: Context) -> UINavBarOffsetHostingController<Content> {
-        UINavBarOffsetHostingController(rootView: content())
+    func makeUIViewController(context: Context) -> UINavigationBarOffsetModifierViewController<Content> {
+        UINavigationBarOffsetModifierViewController(rootView: content())
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController<Content>, context: Context) {
+    func updateUIViewController(_ uiViewController: UINavigationBarOffsetModifierViewController<Content>, context: Context) {
         uiViewController.scrollViewDidScroll(scrollViewOffset, start: start, end: end)
     }
 }
 
-class UINavBarOffsetHostingController<Content: View>: UIHostingController<Content> {
+class UINavigationBarOffsetModifierViewController<Content: View>: UIHostingController<Content> {
 
     private var lastScrollViewOffset: CGFloat = 0
 

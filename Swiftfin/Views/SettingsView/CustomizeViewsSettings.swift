@@ -63,23 +63,29 @@ struct CustomizeViewsSettings: View {
             if UIDevice.isPhone {
                 Section {
                     CaseIterablePicker(title: L10n.items, selection: $itemViewType)
+                        .onListRowLongPress(reset: _itemViewType)
                 }
 
                 if itemViewType == .cinematic {
                     Section {
                         Toggle(L10n.usePrimaryImage, isOn: $cinematicItemViewTypeUsePrimaryImage)
+                            .onListRowLongPress(reset: _cinematicItemViewTypeUsePrimaryImage)
                     } footer: {
                         L10n.usePrimaryImageDescription.text
                     }
                 }
 
                 Toggle(L10n.hapticFeedback, isOn: $hapticFeedback)
+                    .onListRowLongPress(reset: _hapticFeedback)
             }
 
             Section {
 
                 Toggle(L10n.favorites, isOn: $showFavorites)
+                    .onListRowLongPress(reset: _showFavorites)
+
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+                    .onListRowLongPress(reset: _libraryRandomImage)
 
             } header: {
                 L10n.library.text
@@ -91,11 +97,13 @@ struct CustomizeViewsSettings: View {
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
                     }
+                    .onListRowLongPress(reset: _libraryEnabledDrawerFilters)
 
                 ChevronButton(title: L10n.search)
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                     }
+                    .onListRowLongPress(reset: _searchEnabledDrawerFilters)
 
             } header: {
                 L10n.filters.text
@@ -103,6 +111,7 @@ struct CustomizeViewsSettings: View {
 
             Section {
                 Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
+
                 Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
             } header: {
                 L10n.missingItems.text
@@ -116,19 +125,26 @@ struct CustomizeViewsSettings: View {
                     }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
+                    .onListRowLongPress(reset: _showPosterLabels)
 
                 CaseIterablePicker(title: L10n.next, selection: $nextUpPosterType)
+                    .onListRowLongPress(reset: _nextUpPosterType)
 
                 CaseIterablePicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                    .onListRowLongPress(reset: _recentlyAddedPosterType)
 
                 CaseIterablePicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                    .onListRowLongPress(reset: _latestInLibraryPosterType)
 
                 CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
+                    .onListRowLongPress(reset: _similarPosterType)
 
                 CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
+                    .onListRowLongPress(reset: _searchPosterType)
 
                 // TODO: figure out how we can do the same Menu as the library menu picker?
                 CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
+                    .onListRowLongPress(reset: _libraryViewType)
 
                 if libraryViewType == .list, UIDevice.isPad {
                     BasicStepper(
@@ -137,6 +153,7 @@ struct CustomizeViewsSettings: View {
                         range: 1 ... 4,
                         step: 1
                     )
+                    .onListRowLongPress(reset: _listColumnCount)
                 }
 
             } header: {
@@ -145,6 +162,7 @@ struct CustomizeViewsSettings: View {
 
             Section {
                 Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
+                    .onListRowLongPress(reset: _useSeriesLandscapeBackdrop)
             } header: {
                 // TODO: think of a better name
                 L10n.episodeLandscapePoster.text

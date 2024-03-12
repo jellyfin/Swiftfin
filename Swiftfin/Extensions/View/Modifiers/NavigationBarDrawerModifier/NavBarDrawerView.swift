@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct NavBarDrawerView: UIViewControllerRepresentable {
+struct NavigationBarDrawerView: UIViewControllerRepresentable {
 
     private let buttons: () -> any View
     private let content: () -> any View
@@ -21,14 +21,14 @@ struct NavBarDrawerView: UIViewControllerRepresentable {
         self.content = content
     }
 
-    func makeUIViewController(context: Context) -> UINavBarDrawerHostingController {
-        UINavBarDrawerHostingController(buttons: buttons, content: content)
+    func makeUIViewController(context: Context) -> UINavigationBarDrawerViewController {
+        UINavigationBarDrawerViewController(buttons: buttons, content: content)
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarDrawerHostingController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavigationBarDrawerViewController, context: Context) {}
 }
 
-class UINavBarDrawerHostingController: UIViewController {
+class UINavigationBarDrawerViewController: UIViewController {
 
     private let buttons: () -> any View
     private let content: () -> any View
