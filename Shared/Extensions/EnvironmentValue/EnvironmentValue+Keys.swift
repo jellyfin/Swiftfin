@@ -32,7 +32,7 @@ extension EnvironmentValues {
     }
 
     struct PlaybackSpeedKey: EnvironmentKey {
-        static let defaultValue: Binding<Float> = .constant(1)
+        static let defaultValue: Binding<Double> = .constant(1)
     }
 
     // TODO: does this actually do anything useful?

@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Float {
+extension Double {
 
     var rateLabel: String {
         String(format: "%.2f", self).appending("x")

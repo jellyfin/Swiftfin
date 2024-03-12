@@ -35,7 +35,7 @@ struct VideoPlayer: View {
 
         var beginningAudioOffset: Int = 0
         var beginningBrightnessValue: CGFloat = 0
-        var beginningPlaybackSpeed: Float = 0
+        var beginningPlaybackSpeed: Double = 0
         var beginningSubtitleOffset: Int = 0
         var beginningVolumeValue: Float = 0
 
@@ -98,7 +98,7 @@ struct VideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
     @State
-    private var playbackSpeed: Float = 1
+    private var playbackSpeed: Double = 1
     @State
     private var subtitleOffset: Int = 0
 
@@ -485,7 +485,7 @@ extension VideoPlayer {
         }
 
         let newPlaybackSpeed = round(
-            gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
+            gestureStateHandler.beginningPlaybackSpeed - Double(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
             toNearest: 0.25
         )
         let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
@@ -493,7 +493,7 @@ extension VideoPlayer {
         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
 
         playbackSpeed = clampedPlaybackSpeed
-        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
+        videoPlayerManager.proxy.setRate(.absolute(Float(clampedPlaybackSpeed)))
     }
 
     private func scrubAction(
