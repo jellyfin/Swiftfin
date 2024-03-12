@@ -6,18 +6,46 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import PreferencesView
 import SwiftUI
+import VLCUI
 
 extension View {
 
     func videoPlayerKeyCommands(
-        isAspectFilled: Binding<Bool>,
         gestureStateHandler: VideoPlayer.GestureStateHandler,
-        videoPlayerManager: VideoPlayerManager,
         updateViewProxy: UpdateViewProxy
     ) -> some View {
-        keyCommands {
+        modifier(
+            VideoPlayerKeyCommandsModifier(
+                gestureStateHandler: gestureStateHandler,
+                updateViewProxy: updateViewProxy
+            )
+        )
+    }
+}
+
+struct VideoPlayerKeyCommandsModifier: ViewModifier {
+    
+    @Default(.VideoPlayer.jumpBackwardLength)
+    private var jumpBackwardLength
+    @Default(.VideoPlayer.jumpForwardLength)
+    private var jumpForwardLength
+    
+    @Environment(\.aspectFilled)
+    private var isAspectFilled
+    
+    @EnvironmentObject
+    private var videoPlayerManager: VideoPlayerManager
+    @EnvironmentObject
+    private var videoPlayerProxy: VLCVideoPlayer.Proxy
+    
+    let gestureStateHandler: VideoPlayer.GestureStateHandler
+    let updateViewProxy: UpdateViewProxy
+    
+    func body(content: Content) -> some View {
+        content.keyCommands {
 
             // MARK: play/pause
 
@@ -44,7 +72,7 @@ extension View {
                     gestureStateHandler.jumpForwardKeyPressAmount += 1
                     gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
                     
-//                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
 
                     let task = DispatchWorkItem {
                         gestureStateHandler.jumpForwardKeyPressActive = false
@@ -57,6 +85,8 @@ extension View {
                 } else {
                     gestureStateHandler.jumpForwardKeyPressActive = true
                     gestureStateHandler.jumpForwardKeyPressAmount += 1
+                    
+                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
 
                     let task = DispatchWorkItem {
                         gestureStateHandler.jumpForwardKeyPressActive = false
@@ -78,6 +108,8 @@ extension View {
                 if gestureStateHandler.jumpBackwardKeyPressActive {
                     gestureStateHandler.jumpBackwardKeyPressAmount += 1
                     gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
+                    
+                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
 
                     let task = DispatchWorkItem {
                         gestureStateHandler.jumpBackwardKeyPressActive = false
@@ -90,6 +122,8 @@ extension View {
                 } else {
                     gestureStateHandler.jumpBackwardKeyPressActive = true
                     gestureStateHandler.jumpBackwardKeyPressAmount += 1
+                    
+                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
 
                     let task = DispatchWorkItem {
                         gestureStateHandler.jumpBackwardKeyPressActive = false
@@ -114,7 +148,7 @@ extension View {
                 }
             }
 
-            // MARK: Decrease Playback Speed
+            // MARK: decrease playback speed
 
             KeyCommandAction(
                 title: "Decrease Playback Speed",
@@ -133,6 +167,8 @@ extension View {
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
+            
+            // MARK: increase playback speed
 
             KeyCommandAction(
                 title: "Increase Playback Speed",
@@ -151,6 +187,8 @@ extension View {
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
+            
+            // MARK: reset playback speed
 
             KeyCommandAction(
                 title: "Reset Playback Speed",
@@ -164,6 +202,8 @@ extension View {
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
+            
+            // MARK: next item
 
             KeyCommandAction(
                 title: L10n.nextItem,
@@ -172,6 +212,8 @@ extension View {
             ) {
                 videoPlayerManager.selectNextViewModel()
             }
+            
+            // MARK: previous item
 
             KeyCommandAction(
                 title: L10n.previousItem,

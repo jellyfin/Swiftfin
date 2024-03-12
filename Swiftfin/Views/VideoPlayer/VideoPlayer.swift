@@ -156,15 +156,6 @@ struct VideoPlayer: View {
                         }
 
                     VideoPlayer.Overlay()
-                        .environmentObject(splitContentViewProxy)
-                        .environmentObject(videoPlayerManager)
-                        .environmentObject(videoPlayerManager.currentProgressHandler)
-                        .environmentObject(videoPlayerManager.currentViewModel!)
-                        .environmentObject(videoPlayerManager.proxy)
-                        .environment(\.aspectFilled, $isAspectFilled)
-                        .environment(\.isPresentingOverlay, $isPresentingOverlay)
-                        .environment(\.isScrubbing, $isScrubbing)
-                        .environment(\.playbackSpeed, $playbackSpeed)
                 }
             }
             .splitContent {
@@ -190,11 +181,18 @@ struct VideoPlayer: View {
                     .padding(.top)
             }
             .videoPlayerKeyCommands(
-                isAspectFilled: $isAspectFilled,
                 gestureStateHandler: gestureStateHandler,
-                videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
+            .environmentObject(splitContentViewProxy)
+            .environmentObject(videoPlayerManager)
+            .environmentObject(videoPlayerManager.currentProgressHandler)
+            .environmentObject(videoPlayerManager.currentViewModel!)
+            .environmentObject(videoPlayerManager.proxy)
+            .environment(\.aspectFilled, $isAspectFilled)
+            .environment(\.isPresentingOverlay, $isPresentingOverlay)
+            .environment(\.isScrubbing, $isScrubbing)
+            .environment(\.playbackSpeed, $playbackSpeed)
     }
 
     var body: some View {
