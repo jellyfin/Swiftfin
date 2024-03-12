@@ -27,23 +27,23 @@ extension View {
 }
 
 struct VideoPlayerKeyCommandsModifier: ViewModifier {
-    
+
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
-    
+
     @Environment(\.aspectFilled)
     private var isAspectFilled
-    
+
     @EnvironmentObject
     private var videoPlayerManager: VideoPlayerManager
     @EnvironmentObject
     private var videoPlayerProxy: VLCVideoPlayer.Proxy
-    
+
     let gestureStateHandler: VideoPlayer.GestureStateHandler
     let updateViewProxy: UpdateViewProxy
-    
+
     func body(content: Content) -> some View {
         content.keyCommands {
 
@@ -71,7 +71,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 if gestureStateHandler.jumpForwardKeyPressActive {
                     gestureStateHandler.jumpForwardKeyPressAmount += 1
                     gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-                    
+
                     videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
 
                     let task = DispatchWorkItem {
@@ -85,7 +85,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 } else {
                     gestureStateHandler.jumpForwardKeyPressActive = true
                     gestureStateHandler.jumpForwardKeyPressAmount += 1
-                    
+
                     videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
 
                     let task = DispatchWorkItem {
@@ -108,7 +108,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 if gestureStateHandler.jumpBackwardKeyPressActive {
                     gestureStateHandler.jumpBackwardKeyPressAmount += 1
                     gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-                    
+
                     videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
 
                     let task = DispatchWorkItem {
@@ -122,7 +122,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 } else {
                     gestureStateHandler.jumpBackwardKeyPressActive = true
                     gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                    
+
                     videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
 
                     let task = DispatchWorkItem {
@@ -167,7 +167,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
-            
+
             // MARK: increase playback speed
 
             KeyCommandAction(
@@ -187,7 +187,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
-            
+
             // MARK: reset playback speed
 
             KeyCommandAction(
@@ -196,13 +196,13 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 modifierFlags: .command
             ) {
                 let newPlaybackSpeed = PlaybackSpeed.one
-                
+
                 videoPlayerManager.playbackSpeed = newPlaybackSpeed
                 videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
-            
+
             // MARK: next item
 
             KeyCommandAction(
@@ -212,7 +212,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             ) {
                 videoPlayerManager.selectNextViewModel()
             }
-            
+
             // MARK: previous item
 
             KeyCommandAction(
