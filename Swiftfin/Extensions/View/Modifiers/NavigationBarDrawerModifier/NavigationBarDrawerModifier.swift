@@ -8,16 +8,19 @@
 
 import SwiftUI
 
-struct NavBarOffsetModifier: ViewModifier {
+struct NavigationBarDrawerModifier<Drawer: View>: ViewModifier {
 
-    @Binding
-    var scrollViewOffset: CGFloat
+    private let drawer: () -> Drawer
 
-    let start: CGFloat
-    let end: CGFloat
+    init(@ViewBuilder drawer: @escaping () -> Drawer) {
+        self.drawer = drawer
+    }
 
     func body(content: Content) -> some View {
-        NavBarOffsetView(scrollViewOffset: $scrollViewOffset, start: start, end: end) {
+        NavigationBarDrawerView {
+            drawer()
+                .ignoresSafeArea()
+        } content: {
             content
         }
         .ignoresSafeArea()

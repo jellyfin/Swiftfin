@@ -66,6 +66,7 @@ struct SettingsView: View {
                     title: L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
+                .onListRowLongPress(reset: _videoPlayerType)
 
                 ChevronButton(title: L10n.nativePlayer)
                     .onSelect {
@@ -82,7 +83,9 @@ struct SettingsView: View {
 
             Section {
                 CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
+                    .onListRowLongPress(reset: _appAppearance)
 
+                // TODO: make defaults binding for current AppIcon
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector)
@@ -103,6 +106,7 @@ struct SettingsView: View {
 
             Section {
                 ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
+                    .onListRowLongPress(reset: _accentColor)
             } footer: {
                 Text(L10n.accentColorDescription)
             }
@@ -130,6 +134,8 @@ struct SettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
+
+            _accentColor.reset()
         }
     }
 }

@@ -27,12 +27,16 @@ struct IndicatorSettingsView: View {
             Section {
 
                 Toggle(L10n.favorited, isOn: $showFavorited)
+                    .onListRowLongPress(reset: _showFavorited)
 
                 Toggle(L10n.progress, isOn: $showProgress)
+                    .onListRowLongPress(reset: _showProgress)
 
                 Toggle(L10n.unplayed, isOn: $showUnplayed)
+                    .onListRowLongPress(reset: _showUnplayed)
 
                 Toggle(L10n.played, isOn: $showPlayed)
+                    .onListRowLongPress(reset: _showPlayed)
             }
         }
         .navigationTitle(L10n.indicators)

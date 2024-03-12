@@ -71,8 +71,10 @@ struct VideoPlayerSettingsView: View {
                 }
 
             CaseIterablePicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                .onListRowLongPress(reset: _jumpBackwardLength)
 
             CaseIterablePicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
+                .onListRowLongPress(reset: _jumpForwardLength)
 
             Section {
 
@@ -85,6 +87,7 @@ struct VideoPlayerSettingsView: View {
                 .valueFormatter {
                     $0.secondLabel
                 }
+                .onListRowLongPress(reset: _resumeOffset)
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }
@@ -92,6 +95,7 @@ struct VideoPlayerSettingsView: View {
             Section(L10n.buttons) {
 
                 CaseIterablePicker(title: L10n.playbackButtons, selection: $playbackButtonType)
+                    .onListRowLongPress(reset: _playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
@@ -99,6 +103,7 @@ struct VideoPlayerSettingsView: View {
                         Text(L10n.jump)
                     }
                 }
+                .onListRowLongPress(reset: _showJumpButtons)
 
                 ChevronButton(title: L10n.barButtons)
                     .onSelect {
@@ -114,12 +119,15 @@ struct VideoPlayerSettingsView: View {
             Section(L10n.slider) {
 
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
+                    .onListRowLongPress(reset: _chapterSlider)
 
                 ColorPicker(selection: $sliderColor, supportsOpacity: false) {
                     Text(L10n.sliderColor)
                 }
+                .onListRowLongPress(reset: _sliderColor)
 
                 CaseIterablePicker(title: L10n.sliderType, selection: $sliderType)
+                    .onListRowLongPress(reset: _sliderType)
             }
 
             Section {
@@ -135,10 +143,12 @@ struct VideoPlayerSettingsView: View {
                     range: 8 ... 24,
                     step: 1
                 )
+                .onListRowLongPress(reset: _subtitleSize)
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
                     Text(L10n.subtitleColor)
                 }
+                .onListRowLongPress(reset: _subtitleColor)
             } header: {
                 Text(L10n.subtitle)
             } footer: {
@@ -149,16 +159,22 @@ struct VideoPlayerSettingsView: View {
             Section(L10n.timestamp) {
 
                 Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
+                    .onListRowLongPress(reset: _showCurrentTimeWhileScrubbing)
 
                 CaseIterablePicker(title: L10n.timestampType, selection: $timestampType)
+                    .onListRowLongPress(reset: _timestampType)
 
                 CaseIterablePicker(title: L10n.trailingValue, selection: $trailingTimestampType)
+                    .onListRowLongPress(reset: _trailingTimestampType)
             }
 
             Section(L10n.transition) {
 
                 Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
+                    .onListRowLongPress(reset: _pauseOnBackground)
+
                 Toggle(L10n.playOnActive, isOn: $playOnActive)
+                    .onListRowLongPress(reset: _playOnActive)
             }
         }
         .navigationTitle(L10n.videoPlayer)

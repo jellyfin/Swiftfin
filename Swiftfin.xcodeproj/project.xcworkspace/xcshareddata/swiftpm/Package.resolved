@@ -1,4 +1,5 @@
 {
+  "originHash" : "81f9a7ebce2bd660003b4b48d7d884cd66b769dc3f21984dcdeda83a8ced4a6b",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -217,5 +218,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
