@@ -77,7 +77,7 @@ final class LiveTVChannelsViewModel: ViewModel {
                 startIndex: 0,
                 limit: 100,
                 enableImageTypes: [.primary],
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 enableUserData: false,
                 enableFavoriteSorting: true
             )
@@ -93,7 +93,7 @@ final class LiveTVChannelsViewModel: ViewModel {
     }
 
     private func getPrograms() {
-        guard !channels.isEmpty else {
+        guard channels.isNotEmpty else {
             logger.debug("Cannot get programs, channels list empty.")
             return
         }

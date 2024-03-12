@@ -80,7 +80,7 @@ class DownloadTask: NSObject, ObservableObject {
                 await MainActor.run {
                     self.state = .error(error)
 
-                    Container.downloadManager.callAsFunction()
+                    Container.downloadManager()
                         .remove(task: self)
                 }
                 return
@@ -284,7 +284,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
         DispatchQueue.main.async {
             self.state = .error(error)
 
-            Container.downloadManager.callAsFunction()
+            Container.downloadManager()
                 .remove(task: self)
         }
     }
@@ -295,7 +295,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
         DispatchQueue.main.async {
             self.state = .error(error)
 
-            Container.downloadManager.callAsFunction()
+            Container.downloadManager()
                 .remove(task: self)
         }
     }

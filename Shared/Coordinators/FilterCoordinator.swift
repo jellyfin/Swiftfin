@@ -14,10 +14,8 @@ import SwiftUI
 final class FilterCoordinator: NavigationCoordinatable {
 
     struct Parameters {
-        let title: String
+        let type: ItemFilterType
         let viewModel: FilterViewModel
-        let filter: WritableKeyPath<ItemFilters, [ItemFilters.Filter]>
-        let selectorType: SelectorType
     }
 
     let stack = NavigationStack(initial: \FilterCoordinator.start)
@@ -36,12 +34,7 @@ final class FilterCoordinator: NavigationCoordinatable {
         #if os(tvOS)
         Text(verbatim: .emptyDash)
         #else
-        FilterView(
-            title: parameters.title,
-            viewModel: parameters.viewModel,
-            filter: parameters.filter,
-            selectorType: parameters.selectorType
-        )
+        FilterView(viewModel: parameters.viewModel, type: parameters.type)
         #endif
     }
 }

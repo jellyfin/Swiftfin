@@ -9,21 +9,30 @@
 import Defaults
 import SwiftUI
 
+// TODO: only allow `view` selection when truncated?
+
 struct TruncatedText: View {
 
-    @Default(.accentColor)
+    enum SeeMoreType {
+        case button
+        case view
+    }
+
+    @Environment(\.accentColor)
     private var accentColor
 
     @State
     private var isTruncated: Bool = false
     @State
-    private var fullSize: CGFloat = 0
+    private var fullheight: CGFloat = 0
 
+    private var isTruncatedBinding: Binding<Bool>
+    private var onSeeMore: () -> Void
+    private let seeMoreText = "\u{2026} See More"
+    private var seeMoreType: SeeMoreType
     private let text: String
-    private var seeMoreAction: () -> Void
-    private let seeMoreText = "... See More"
 
-    var body: some View {
+    private var textView: some View {
         ZStack(alignment: .bottomTrailing) {
             Text(text)
                 .inverseMask(alignment: .bottomTrailing) {
@@ -54,9 +63,14 @@ struct TruncatedText: View {
                 Text(seeMoreText)
                     .foregroundColor(accentColor)
                 #else
-                Button {
-                    seeMoreAction()
-                } label: {
+                if seeMoreType == .button {
+                    Button {
+                        onSeeMore()
+                    } label: {
+                        Text(seeMoreText)
+                            .foregroundColor(accentColor)
+                    }
+                } else {
                     Text(seeMoreText)
                         .foregroundColor(accentColor)
                 }
@@ -66,16 +80,11 @@ struct TruncatedText: View {
         .background {
             ZStack {
                 if !isTruncated {
-                    if fullSize != 0 {
+                    if fullheight != 0 {
                         Text(text)
-                            .background {
-                                GeometryReader { proxy in
-                                    Color.clear
-                                        .onAppear {
-                                            if fullSize > proxy.size.height {
-                                                self.isTruncated = true
-                                            }
-                                        }
+                            .onSizeChanged { newSize in
+                                if fullheight > newSize.height {
+                                    isTruncated = true
                                 }
                             }
                     }
@@ -83,17 +92,28 @@ struct TruncatedText: View {
                     Text(text)
                         .lineLimit(10)
                         .fixedSize(horizontal: false, vertical: true)
-                        .background {
-                            GeometryReader { proxy in
-                                Color.clear
-                                    .onAppear {
-                                        self.fullSize = proxy.size.height
-                                    }
-                            }
+                        .onSizeChanged { newSize in
+                            fullheight = newSize.height
                         }
                 }
             }
             .hidden()
+        }
+        .onChange(of: isTruncated) { newValue in
+            isTruncatedBinding.wrappedValue = newValue
+        }
+    }
+
+    var body: some View {
+        if seeMoreType == .button {
+            textView
+        } else {
+            Button {
+                onSeeMore()
+            } label: {
+                textView
+            }
+            .buttonStyle(.plain)
         }
     }
 }
@@ -102,12 +122,22 @@ extension TruncatedText {
 
     init(_ text: String) {
         self.init(
-            text: text,
-            seeMoreAction: {}
+            isTruncatedBinding: .constant(false),
+            onSeeMore: {},
+            seeMoreType: .button,
+            text: text
         )
     }
 
-    func seeMoreAction(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.seeMoreAction, with: action)
+    func isTruncated(_ isTruncated: Binding<Bool>) -> Self {
+        copy(modifying: \.isTruncatedBinding, with: isTruncated)
+    }
+
+    func onSeeMore(_ action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSeeMore, with: action)
+    }
+
+    func seeMoreType(_ type: SeeMoreType) -> Self {
+        copy(modifying: \.seeMoreType, with: type)
     }
 }

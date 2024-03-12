@@ -80,7 +80,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            if !viewModel.chapters.isEmpty {
+            if viewModel.chapters.isNotEmpty {
                 ActionButtons.Chapters {
                     Image(systemName: "list.dash")
                         .frame(width: 45, height: 45)
@@ -160,7 +160,7 @@ extension VideoPlayer.Overlay {
                     }
                 }
 
-                if !menuActionButtons.isEmpty {
+                if menuActionButtons.isNotEmpty {
                     OverlayMenu()
                 }
             }

@@ -42,7 +42,7 @@ extension VideoPlayer {
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
-                        .if(UIDevice.isIPad) { view in
+                        .if(UIDevice.isPad) { view in
                             view.padding(.top)
                                 .padding2(.horizontal)
                         }
@@ -67,7 +67,7 @@ extension VideoPlayer {
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
-                        .if(UIDevice.isIPad) { view in
+                        .if(UIDevice.isPad) { view in
                             view.padding2(.bottom)
                                 .padding2(.horizontal)
                         }

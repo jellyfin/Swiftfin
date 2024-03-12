@@ -6,17 +6,22 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
 
 extension View {
 
     func videoPlayerKeyCommands(
+        isAspectFilled: Binding<Bool>,
         gestureStateHandler: VideoPlayer.GestureStateHandler,
         videoPlayerManager: VideoPlayerManager,
         updateViewProxy: UpdateViewProxy
     ) -> some View {
-        self
-            .addingKeyCommand(
+        keyCommands {
+
+            // MARK: play/pause
+
+            KeyCommandAction(
                 title: L10n.playAndPause,
                 input: " "
             ) {
@@ -28,7 +33,10 @@ extension View {
                     updateViewProxy.present(systemName: "play.fill", title: "Play")
                 }
             }
-            .addingKeyCommand(
+
+            // MARK: jump forward
+
+            KeyCommandAction(
                 title: L10n.jumpForward,
                 input: UIKeyCommand.inputRightArrow
             ) {
@@ -57,41 +65,85 @@ extension View {
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
                 }
-
-//                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
             }
-            .addingKeyCommand(
-                title: L10n.jumpBackward,
-                input: UIKeyCommand.inputLeftArrow
+
+            // MARK: aspect fill
+
+            KeyCommandAction(
+                title: "Aspect Fill",
+                input: "f",
+                modifierFlags: .command
             ) {
-                if gestureStateHandler.jumpBackwardKeyPressActive {
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                } else {
-                    gestureStateHandler.jumpBackwardKeyPressActive = true
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                DispatchQueue.main.async {
+                    isAspectFilled.wrappedValue.toggle()
                 }
-
-//                    jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
             }
+        }
+
+//            .addingKeyCommand(
+//                title: L10n.jumpForward,
+//                input: UIKeyCommand.inputRightArrow
+//            ) {
+//                if gestureStateHandler.jumpForwardKeyPressActive {
+//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpForwardKeyPressActive = false
+//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                } else {
+//                    gestureStateHandler.jumpForwardKeyPressActive = true
+//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpForwardKeyPressActive = false
+//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                }
+//
+//                    jumpAction(unitPoint: .init(x: 1, y: 0), amount: gestureStateHandler.jumpForwardKeyPressAmount)
+//            }
+//            .addingKeyCommand(
+//                title: L10n.jumpBackward,
+//                input: UIKeyCommand.inputLeftArrow
+//            ) {
+//                if gestureStateHandler.jumpBackwardKeyPressActive {
+//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpBackwardKeyPressActive = false
+//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                } else {
+//                    gestureStateHandler.jumpBackwardKeyPressActive = true
+//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpBackwardKeyPressActive = false
+//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                }
+//
+        ////                    jumpAction(unitPoint: .init(x: 0, y: 0), amount: gestureStateHandler.jumpBackwardKeyPressAmount)
+//            }
 
 //        self.keyCommands([
 //            .init(

@@ -22,10 +22,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people
-                    .filter(\.isDisplayed)
-                    .prefix(20)
-                    .asArray
+                items: people.filter(\.isDisplayed)
             )
             .trailing {
                 SeeAllButton()
@@ -34,7 +31,8 @@ extension ItemView {
                     }
             }
             .onSelect { person in
-                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                let viewModel = ItemLibraryViewModel(parent: person)
+                router.route(to: \.library, viewModel)
             }
         }
     }

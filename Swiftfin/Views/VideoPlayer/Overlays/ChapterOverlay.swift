@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -41,7 +42,7 @@ extension VideoPlayer.Overlay {
         var body: some View {
             VStack {
 
-                Spacer()
+                Spacer(minLength: 0)
                     .allowsHitTesting(false)
 
                 HStack {
@@ -65,72 +66,102 @@ extension VideoPlayer.Overlay {
                             .foregroundColor(accentColor)
                     }
                 }
-                .padding(.leading, safeAreaInsets.leading)
-                .padding(.trailing, safeAreaInsets.trailing)
-                .if(UIDevice.isIPad) { view in
+                .padding(.horizontal, safeAreaInsets.leading)
+                .if(UIDevice.isPad) { view in
                     view.padding(.horizontal)
                 }
 
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(alignment: .top, spacing: 15) {
-                            ForEach(viewModel.chapters, id: \.self) { chapter in
-                                PosterButton(
-                                    item: chapter,
-                                    type: .landscape
-                                )
-                                .imageOverlay { info in
-                                    if info.secondsRange.contains(currentProgressHandler.seconds) {
-                                        RoundedRectangle(cornerRadius: 6)
-                                            .stroke(accentColor, lineWidth: 8)
-                                    }
-                                }
-                                .content { info in
-                                    VStack(alignment: .leading, spacing: 5) {
-                                        Text(info.chapterInfo.displayTitle)
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .lineLimit(1)
-                                            .foregroundColor(.white)
+//                ScrollViewReader { proxy in
+                CollectionHStack(
+                    viewModel.chapters,
+                    minWidth: 200
+                ) { chapter in
+                    PosterButton(
+                        item: chapter,
+                        type: .landscape
+                    )
+                    .content {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(chapter.chapterInfo.displayTitle)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .lineLimit(1)
+                                .foregroundColor(.white)
 
-                                        Text(info.chapterInfo.timestampLabel)
-                                            .font(.subheadline)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color(UIColor.systemBlue))
-                                            .padding(.vertical, 2)
-                                            .padding(.horizontal, 4)
-                                            .background {
-                                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
-                                            }
-                                    }
+                            Text(chapter.chapterInfo.timestampLabel)
+                                .font(.subheadline)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(UIColor.systemBlue))
+                                .padding(.vertical, 2)
+                                .padding(.horizontal, 4)
+                                .background {
+                                    Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
                                 }
-                                .onSelect {
-                                    let seconds = chapter.chapterInfo.startTimeSeconds
-                                    videoPlayerProxy.setTime(.seconds(seconds))
-
-                                    if videoPlayerManager.state != .playing {
-                                        videoPlayerProxy.play()
-                                    }
-                                }
-                            }
                         }
-                        .padding(.leading, safeAreaInsets.leading)
-                        .padding(.trailing, safeAreaInsets.trailing)
-                        .padding(.bottom)
-                        .if(UIDevice.isIPad) { view in
-                            view.padding(.horizontal)
-                        }
-                    }
-                    .onChange(of: currentOverlayType) { newValue in
-                        guard newValue == .chapters else { return }
-                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-                            scrollViewProxy?.scrollTo(currentChapter.hashValue, anchor: .center)
-                        }
-                    }
-                    .onAppear {
-                        scrollViewProxy = proxy
                     }
                 }
+                .scrollBehavior(.continuousLeadingEdge)
+                .horizontalInset(safeAreaInsets.leading)
+
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        HStack(alignment: .top, spacing: 15) {
+//                            ForEach(viewModel.chapters, id: \.self) { chapter in
+//                                PosterButton(
+//                                    item: chapter,
+//                                    type: .landscape
+//                                )
+//                                .imageOverlay {
+//                                    if chapter.secondsRange.contains(currentProgressHandler.seconds) {
+//                                        RoundedRectangle(cornerRadius: 6)
+//                                            .stroke(accentColor, lineWidth: 8)
+//                                    }
+//                                }
+//                                .content {
+//                                    VStack(alignment: .leading, spacing: 5) {
+//                                        Text(chapter.chapterInfo.displayTitle)
+//                                            .font(.subheadline)
+//                                            .fontWeight(.semibold)
+//                                            .lineLimit(1)
+//                                            .foregroundColor(.white)
+//
+//                                        Text(chapter.chapterInfo.timestampLabel)
+//                                            .font(.subheadline)
+//                                            .fontWeight(.semibold)
+//                                            .foregroundColor(Color(UIColor.systemBlue))
+//                                            .padding(.vertical, 2)
+//                                            .padding(.horizontal, 4)
+//                                            .background {
+//                                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
+//                                            }
+//                                    }
+//                                }
+//                                .onSelect {
+//                                    let seconds = chapter.chapterInfo.startTimeSeconds
+//                                    videoPlayerProxy.setTime(.seconds(seconds))
+//
+//                                    if videoPlayerManager.state != .playing {
+//                                        videoPlayerProxy.play()
+//                                    }
+//                                }
+//                            }
+//                        }
+//                        .padding(.leading, safeAreaInsets.leading)
+//                        .padding(.trailing, safeAreaInsets.trailing)
+//                        .padding(.bottom)
+//                        .if(UIDevice.isPad) { view in
+//                            view.padding(.horizontal)
+//                        }
+//                    }
+//                    .onChange(of: currentOverlayType) { newValue in
+//                        guard newValue == .chapters else { return }
+//                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
+//                            scrollViewProxy?.scrollTo(currentChapter.hashValue, anchor: .center)
+//                        }
+//                    }
+//                    .onAppear {
+//                        scrollViewProxy = proxy
+//                    }
+//                }
             }
             .background {
                 LinearGradient(

@@ -15,49 +15,53 @@ extension View {
         modifier(DetectOrientation(orientation: orientation))
     }
 
-    func navBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
+    func navigationBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
         modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
-    func navBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
+    func navigationBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
         modifier(NavBarDrawerModifier(drawer: drawer))
     }
 
+    @ViewBuilder
+    func navigationBarFilterDrawer(
+        viewModel: FilterViewModel,
+        types: [ItemFilterType],
+        onSelect: @escaping (FilterCoordinator.Parameters) -> Void
+    ) -> some View {
+        if types.isEmpty {
+            self
+        } else {
+            navigationBarDrawer {
+                NavigationBarFilterDrawer(
+                    viewModel: viewModel,
+                    types: types
+                )
+                .onSelect(onSelect)
+            }
+        }
+    }
+
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                notification: UIApplication.didEnterBackgroundNotification,
-                onReceive: action
-            )
-        )
+        onNotification(UIApplication.didEnterBackgroundNotification, perform: action)
     }
 
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                notification: UIApplication.willResignActiveNotification,
-                onReceive: action
-            )
-        )
+        onNotification(UIApplication.willResignActiveNotification, perform: action)
     }
 
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        modifier(
-            OnReceiveNotificationModifier(
-                notification: UIApplication.willTerminateNotification,
-                onReceive: action
-            )
-        )
+        onNotification(UIApplication.willTerminateNotification, perform: action)
     }
 
-    func navigationCloseButton(accentColor: Color = Defaults[.accentColor], _ action: @escaping () -> Void) -> some View {
+    func navigationBarCloseButton(_ action: @escaping () -> Void) -> some View {
         toolbar {
-            ToolbarItemGroup(placement: .navigationBarLeading) {
+            ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
                     action()
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .accentSymbolRendering(accentColor: accentColor)
+                        .paletteOverlayRendering()
                 }
             }
         }

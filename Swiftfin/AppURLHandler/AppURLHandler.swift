@@ -55,7 +55,7 @@ extension AppURLHandler {
 
     func processLaunchedURLIfNeeded() {
         guard let launchURL = launchURL,
-              !launchURL.absoluteString.isEmpty else { return }
+              launchURL.absoluteString.isNotEmpty else { return }
         if processDeepLink(url: launchURL) {
             self.launchURL = nil
         }

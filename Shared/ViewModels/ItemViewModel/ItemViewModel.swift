@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: transition to `Stateful`
 class ItemViewModel: ViewModel {
 
     @Published
@@ -123,7 +124,7 @@ class ItemViewModel: ViewModel {
             let parameters = Paths.GetSimilarItemsParameters(
                 userID: userSession.user.id,
                 limit: 20,
-                fields: ItemFields.minimumCases
+                fields: .MinimumFields
             )
             let request = Paths.getSimilarItems(
                 itemID: item.id!,

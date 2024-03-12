@@ -9,6 +9,8 @@
 import Defaults
 import Foundation
 
+// TODO: split out into separate files under folder `GestureAction`
+
 // Optional values aren't yet supported in Defaults
 // https://github.com/sindresorhus/Defaults/issues/54
 

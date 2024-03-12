@@ -84,7 +84,7 @@ extension ItemView {
             }
             .edgesIgnoringSafeArea(.top)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.28,
                 end: UIScreen.main.bounds.height * 0.28 + 50
@@ -97,7 +97,7 @@ extension ItemView {
                 headerView
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarTrailing) {
                     if viewModel.isLoading {
                         ProgressView()
                     }
@@ -154,7 +154,7 @@ extension ItemView.CompactPosterScrollView {
                         }
                     }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                         Text(runtime)
                     }
                 }
@@ -173,7 +173,7 @@ extension ItemView.CompactPosterScrollView {
                     // MARK: Portrait Image
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .posterStyle(.portrait)
+                        .aspectRatio(2 / 3, contentMode: .fit)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 

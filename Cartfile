@@ -1,3 +1,3 @@
 binary "https://code.videolan.org/videolan/VLCKit/raw/master/Packaging/MobileVLCKit.json" ~> 3.4.0
 binary "https://code.videolan.org/videolan/VLCKit/raw/master/Packaging/TVVLCKit.json" ~> 3.3.0
-binary "ChromeCastFramework.json"  
+# binary "ChromeCastFramework.json"  

@@ -12,7 +12,7 @@ import SwiftUI
 struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
-    var itemViewType
+    private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
 
@@ -20,32 +20,34 @@ struct CustomizeViewsSettings: View {
     private var hapticFeedback
 
     @Default(.Customization.shouldShowMissingSeasons)
-    var shouldShowMissingSeasons
+    private var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
-    var shouldShowMissingEpisodes
+    private var shouldShowMissingEpisodes
 
-    @Default(.Customization.Filters.libraryFilterDrawerButtons)
-    var libraryFilterDrawerButtons
-    @Default(.Customization.Filters.searchFilterDrawerButtons)
-    var searchFilterDrawerButtons
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var libraryEnabledDrawerFilters
+    @Default(.Customization.Search.enabledDrawerFilters)
+    private var searchEnabledDrawerFilters
 
     @Default(.Customization.showPosterLabels)
-    var showPosterLabels
+    private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
-    var nextUpPosterType
+    private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
-    var recentlyAddedPosterType
+    private var recentlyAddedPosterType
     @Default(.Customization.latestInLibraryPosterType)
-    var latestInLibraryPosterType
+    private var latestInLibraryPosterType
     @Default(.Customization.similarPosterType)
-    var similarPosterType
+    private var similarPosterType
     @Default(.Customization.searchPosterType)
-    var searchPosterType
-    @Default(.Customization.Library.gridPosterType)
-    var libraryGridPosterType
+    private var searchPosterType
+    @Default(.Customization.Library.viewType)
+    private var libraryViewType
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
-    var useSeriesLandscapeBackdrop
+    private var useSeriesLandscapeBackdrop
 
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
@@ -60,7 +62,7 @@ struct CustomizeViewsSettings: View {
 
             if UIDevice.isPhone {
                 Section {
-                    EnumPicker(title: L10n.items, selection: $itemViewType)
+                    CaseIterablePicker(title: L10n.items, selection: $itemViewType)
                 }
 
                 if itemViewType == .cinematic {
@@ -87,12 +89,12 @@ struct CustomizeViewsSettings: View {
 
                 ChevronButton(title: L10n.library)
                     .onSelect {
-                        router.route(to: \.filterDrawerButtonSelector, $libraryFilterDrawerButtons)
+                        router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
                     }
 
                 ChevronButton(title: L10n.search)
                     .onSelect {
-                        router.route(to: \.filterDrawerButtonSelector, $searchFilterDrawerButtons)
+                        router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                     }
 
             } header: {
@@ -115,17 +117,28 @@ struct CustomizeViewsSettings: View {
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                EnumPicker(title: L10n.next, selection: $nextUpPosterType)
+                CaseIterablePicker(title: L10n.next, selection: $nextUpPosterType)
 
-                EnumPicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                CaseIterablePicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                EnumPicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                CaseIterablePicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                EnumPicker(title: L10n.recommended, selection: $similarPosterType)
+                CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
 
-                EnumPicker(title: L10n.search, selection: $searchPosterType)
+                CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
 
-                EnumPicker(title: L10n.library, selection: $libraryGridPosterType)
+                // TODO: figure out how we can do the same Menu as the library menu picker?
+                CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
+
+                if libraryViewType == .list, UIDevice.isPad {
+                    BasicStepper(
+                        title: "Columns",
+                        value: $listColumnCount,
+                        range: 1 ... 4,
+                        step: 1
+                    )
+                }
+
             } header: {
                 L10n.posters.text
             }

@@ -32,6 +32,8 @@ class UINavBarDrawerHostingController: UIViewController {
 
     private let buttons: () -> any View
     private let content: () -> any View
+
+    // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
 
     private lazy var navBarBlurView: UIVisualEffectView = {

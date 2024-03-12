@@ -16,6 +16,8 @@ struct CinematicItemSelector<Item: Poster>: View {
 
     @State
     private var focusedItem: Item?
+    @State
+    private var posterHStackSize: CGSize = .zero
 
     @StateObject
     private var viewModel: CinematicBackgroundView<Item>.ViewModel = .init()
@@ -32,9 +34,43 @@ struct CinematicItemSelector<Item: Poster>: View {
     var body: some View {
         ZStack(alignment: .bottomLeading) {
 
+            Color.clear
+
+            VStack(alignment: .leading, spacing: 10) {
+
+                Spacer()
+
+                if let currentItem = viewModel.currentItem {
+                    topContent(currentItem)
+                        .eraseToAnyView()
+                        .id(currentItem.hashValue)
+                        .transition(.opacity)
+                }
+
+                // By design, PosterHStack/CollectionHStack requires being in a ScrollView
+                ScrollView {
+                    PosterHStack(type: .landscape, items: items)
+                        .content(itemContent)
+                        .imageOverlay(itemImageOverlay)
+                        .contextMenu(itemContextMenu)
+                        .trailing(trailingContent)
+                        .onSelect(onSelect)
+                        .focusedItem($focusedItem)
+                        .size($posterHStackSize)
+                }
+                .frame(height: posterHStackSize.height)
+                .if(true) { view in
+                    if #available(tvOS 16, *) {
+                        view.scrollDisabled(true)
+                    } else {
+                        view
+                    }
+                }
+            }
+        }
+        .background(alignment: .top) {
             ZStack {
                 CinematicBackgroundView(viewModel: viewModel, initialItem: items.first)
-                    .ignoresSafeArea()
 
                 LinearGradient(
                     stops: [
@@ -46,6 +82,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                     endPoint: .bottom
                 )
             }
+            .frame(height: UIScreen.main.bounds.height)
             .mask {
                 LinearGradient(
                     stops: [
@@ -55,23 +92,6 @@ struct CinematicItemSelector<Item: Poster>: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
-            }
-
-            VStack(alignment: .leading, spacing: 10) {
-                if let currentItem = viewModel.currentItem {
-                    topContent(currentItem)
-                        .eraseToAnyView()
-                        .id(currentItem.hashValue)
-                        .transition(.opacity)
-                }
-
-                PosterHStack(type: .landscape, items: items)
-                    .content(itemContent)
-                    .imageOverlay(itemImageOverlay)
-                    .contextMenu(itemContextMenu)
-                    .trailing(trailingContent)
-                    .onSelect(onSelect)
-                    .focusedItem($focusedItem)
             }
         }
         .frame(height: UIScreen.main.bounds.height - 75)

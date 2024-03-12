@@ -62,7 +62,7 @@ struct SettingsView: View {
             }
 
             Section {
-                EnumPicker(
+                CaseIterablePicker(
                     title: L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
@@ -81,7 +81,7 @@ struct SettingsView: View {
             }
 
             Section {
-                EnumPicker(title: L10n.appearance, selection: $appAppearance)
+                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
@@ -126,9 +126,9 @@ struct SettingsView: View {
 
             #endif
         }
-        .navigationBarTitle(L10n.settings)
+        .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

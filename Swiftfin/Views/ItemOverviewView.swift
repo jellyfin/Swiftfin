@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: fix with shorter text
+
 struct ItemOverviewView: View {
 
     @EnvironmentObject
@@ -18,12 +20,25 @@ struct ItemOverviewView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ItemView.OverviewView(item: item)
-                .padding()
+            VStack(alignment: .leading, spacing: 10) {
+
+                if let firstTagline = item.taglines?.first {
+                    Text(firstTagline)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .multilineTextAlignment(.leading)
+                }
+
+                if let itemOverview = item.overview {
+                    Text(itemOverview)
+                        .font(.body)
+                }
+            }
+            .edgePadding()
         }
-        .navigationTitle(L10n.overview)
+        .navigationTitle(item.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

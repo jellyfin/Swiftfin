@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -18,22 +19,66 @@ struct SeriesEpisodeSelector: View {
     @ObservedObject
     var viewModel: SeriesItemViewModel
 
+    @ViewBuilder
+    private var selectorMenu: some View {
+        Menu {
+            ForEach(viewModel.menuSections.keys.sorted(by: { viewModel.menuSectionSort($0, $1) }), id: \.displayTitle) { section in
+                Button {
+                    viewModel.select(section: section)
+                } label: {
+                    if section == viewModel.menuSelection {
+                        Label(section.displayTitle, systemImage: "checkmark")
+                    } else {
+                        Text(section.displayTitle)
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 5) {
+                Group {
+                    Text(viewModel.menuSelection?.displayTitle ?? L10n.unknown)
+                        .fixedSize()
+                    Image(systemName: "chevron.down")
+                }
+                .font(.title3.weight(.semibold))
+            }
+        }
+        .padding(.bottom)
+        .fixedSize()
+    }
+
     var body: some View {
-        MenuPosterHStack(
-            type: .landscape,
-            manager: viewModel,
-            singleImage: true
-        )
-        .scaleItems(1.2)
-        .imageOverlay { type in
-            EpisodeOverlay(episode: type)
-        }
-        .content { type in
-            EpisodeContent(episode: type)
-        }
-        .onSelect { item in
-            guard let mediaSource = item.mediaSources?.first else { return }
-            mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+        VStack(alignment: .leading) {
+            selectorMenu
+                .edgePadding(.horizontal)
+
+            if viewModel.currentItems.isEmpty {
+                EmptyView()
+            } else {
+                CollectionHStack(
+                    $viewModel.currentItems,
+                    columns: UIDevice.isPhone ? 1.5 : 3.5
+                ) { item in
+                    PosterButton(
+                        item: item,
+                        type: .landscape,
+                        singleImage: true
+                    )
+                    .content {
+                        EpisodeContent(episode: item)
+                    }
+                    .imageOverlay {
+                        EpisodeOverlay(episode: item)
+                    }
+                    .onSelect {
+                        guard let mediaSource = item.mediaSources?.first else { return }
+                        mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                    }
+                }
+                .scrollBehavior(.continuousLeadingEdge)
+                .horizontalInset(16)
+                .itemSpacing(8)
+            }
         }
     }
 }
@@ -57,7 +102,7 @@ extension SeriesEpisodeSelector {
                     Image(systemName: "checkmark.circle.fill")
                         .resizable()
                         .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .accentSymbolRendering(accentColor: .white)
+                        .paletteOverlayRendering(color: .white)
                         .padding()
                 }
             }
@@ -93,6 +138,7 @@ extension SeriesEpisodeSelector {
                 .multilineTextAlignment(.leading)
         }
 
+        // TODO: why the static overview height?
         @ViewBuilder
         private var content: some View {
             Group {
@@ -114,7 +160,7 @@ extension SeriesEpisodeSelector {
             }
             .font(.caption.weight(.light))
             .foregroundColor(.secondary)
-            .lineLimit(4)
+            .lineLimit(3)
             .multilineTextAlignment(.leading)
         }
 

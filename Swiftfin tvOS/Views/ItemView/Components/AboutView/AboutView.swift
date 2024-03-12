@@ -33,7 +33,7 @@ extension ItemView {
                             .imageOverlay {
                                 EmptyView()
                             }
-                            .scaleItem(1.35)
+                            .frame(height: 405)
 
                         OverviewCard(item: viewModel.item)
 

@@ -8,19 +8,20 @@
 
 import Defaults
 import Foundation
+import UIKit
 
 enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case grid
     case list
 
-    // TODO: localize after organization
+    // TODO: localize
     var displayTitle: String {
         switch self {
         case .grid:
-            return "Grid"
+            "Grid"
         case .list:
-            return "List"
+            "List"
         }
     }
 }

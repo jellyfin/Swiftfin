@@ -26,13 +26,8 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     var actionButtonSelector = makeActionButtonSelector
     #endif
 
-    #if os(tvOS)
-
-    #endif
-
     func makeFontPicker(selection: Binding<String>) -> some View {
         FontPickerView(selection: selection)
-            .navigationTitle(L10n.subtitleFont)
     }
 
     #if os(iOS)
@@ -40,16 +35,11 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeGestureSettings() -> some View {
         GestureSettingsView()
-            .navigationTitle("Gestures")
     }
 
     func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
-        ActionButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+        ActionButtonSelectorView(selection: selectedButtonsBinding)
     }
-    #endif
-
-    #if os(tvOS)
-
     #endif
 
     @ViewBuilder

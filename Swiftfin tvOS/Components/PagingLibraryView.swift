@@ -6,54 +6,156 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
 
 // TODO: Figure out proper tab bar handling with the collection offset
+// TODO: list columns
+// TODO: list row view (LibraryRow)
 
-struct PagingLibraryView: View {
+struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryPosterType
+    @Default(.Customization.Library.posterType)
+    private var posterType
+    @Default(.Customization.Library.viewType)
+    private var viewType
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
 
-    @FocusState
-    private var focusedItem: BaseItemDto?
+    @EnvironmentObject
+    private var router: LibraryCoordinator<Element>.Router
 
-    @ObservedObject
-    private var viewModel: PagingLibraryViewModel
+    @State
+    private var focusedItem: Element?
 
     @State
     private var presentBackground = false
     @State
-    private var scrollViewOffset: CGPoint = .zero
+    private var layout: CollectionVGridLayout
 
     @StateObject
-    private var cinematicBackgroundViewModel: CinematicBackgroundView<BaseItemDto>.ViewModel = .init()
+    private var viewModel: PagingLibraryViewModel<Element>
 
-    private var onSelect: (BaseItemDto) -> Void
+    @StateObject
+    private var cinematicBackgroundViewModel: CinematicBackgroundView<Element>.ViewModel = .init()
 
-    private func layout(layoutEnvironment: NSCollectionLayoutEnvironment) -> NSCollectionLayoutSection {
-        switch libraryPosterType {
-        case .portrait:
-            return .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(7),
-                lineSpacing: 50
+    init(viewModel: PagingLibraryViewModel<Element>) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+
+        let initialPosterType = Defaults[.Customization.Library.posterType]
+        let initialViewType = Defaults[.Customization.Library.viewType]
+
+        self._layout = State(
+            initialValue: Self.makeLayout(
+                posterType: initialPosterType,
+                viewType: initialViewType
             )
-        case .landscape:
-            return .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 400),
-                lineSpacing: 50,
-                itemSize: .estimated(400),
-                sectionInsets: .zero
-            )
+        )
+    }
+
+    // MARK: onSelect
+
+    private func onSelect(_ element: Element) {
+        switch element {
+        case let element as BaseItemDto:
+            select(item: element)
+        case let element as BaseItemPerson:
+            select(person: element)
+        default:
+            assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
+        }
+    }
+
+    private func select(item: BaseItemDto) {
+        switch item.type {
+        case .collectionFolder, .folder:
+            let viewModel = ItemLibraryViewModel(parent: item)
+            router.route(to: \.library, viewModel)
+        default:
+            router.route(to: \.item, item)
+        }
+    }
+
+    private func select(person: BaseItemPerson) {
+        let viewModel = ItemLibraryViewModel(parent: person)
+        router.route(to: \.library, viewModel)
+    }
+
+    // MARK: layout
+
+    private static func makeLayout(
+        posterType: PosterType,
+        viewType: LibraryViewType
+    ) -> CollectionVGridLayout {
+        switch (posterType, viewType) {
+        case (.landscape, .grid):
+            .columns(5)
+        case (.portrait, .grid):
+            .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
+        case (_, .list):
+            .columns(1)
+        }
+    }
+
+    private func landscapeGridItemView(item: Element) -> some View {
+        PosterButton(item: item, type: .landscape)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
+            }
+            .onFocusChanged { newValue in
+                if newValue {
+                    focusedItem = item
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
+    }
+
+    private func portraitGridItemView(item: Element) -> some View {
+        PosterButton(item: item, type: .portrait)
+            .content {
+                if item.showTitle {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
+            }
+            .onFocusChanged { newValue in
+                if newValue {
+                    focusedItem = item
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
+    }
+
+    private func listItemView(item: Element) -> some View {
+        Button(item.displayTitle)
+    }
+
+    private var contentView: some View {
+        CollectionVGrid(
+            $viewModel.elements,
+            layout: layout
+        ) { item in
+            switch (posterType, viewType) {
+            case (.landscape, .grid):
+                landscapeGridItemView(item: item)
+            case (.portrait, .grid):
+                portraitGridItemView(item: item)
+            case (_, .list):
+                listItemView(item: item)
+            }
         }
     }
 
@@ -65,25 +167,30 @@ struct PagingLibraryView: View {
                     .blurred()
             }
 
-            CollectionView(items: viewModel.items.elements) { _, item, _ in
-                PosterButton(item: item, type: libraryPosterType)
-                    .onSelect {
-                        onSelect(item)
+            WrappedView {
+                Group {
+                    switch viewModel.state {
+                    case let .error(error):
+                        Text(error.localizedDescription)
+                    case .initial, .refreshing:
+                        ProgressView()
+                    case .gettingNextPage, .content:
+                        if viewModel.elements.isEmpty {
+                            L10n.noResults.text
+                        } else {
+                            contentView
+                        }
                     }
-                    .focused($focusedItem, equals: item)
-            }
-            .layout { _, layoutEnvironment in
-                layout(layoutEnvironment: layoutEnvironment)
-            }
-            .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
-                if !viewModel.isLoading && edge == .bottom {
-                    viewModel.requestNextPage()
                 }
             }
-            .scrollViewOffset($scrollViewOffset)
         }
-        .id(libraryPosterType.hashValue)
-        .id(showPosterLabels)
+        .ignoresSafeArea()
+        .navigationTitle(viewModel.parent?.displayTitle ?? "")
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.send(.refresh)
+            }
+        }
         .onChange(of: focusedItem) { newValue in
             guard let newValue else {
                 withAnimation {
@@ -100,19 +207,5 @@ struct PagingLibraryView: View {
                 }
             }
         }
-    }
-}
-
-extension PagingLibraryView {
-
-    init(viewModel: PagingLibraryViewModel) {
-        self.init(
-            viewModel: viewModel,
-            onSelect: { _ in }
-        )
-    }
-
-    func onSelect(_ action: @escaping (BaseItemDto) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

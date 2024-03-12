@@ -38,24 +38,25 @@ struct GestureSettingsView: View {
 
             Section {
 
-                EnumPicker(title: "Horizontal Pan", selection: $horizontalPanGesture)
+                CaseIterablePicker(title: "Horizontal Pan", selection: $horizontalPanGesture)
                     .disabled(horizontalSwipeGesture != .none && horizontalPanGesture == .none)
 
-                EnumPicker(title: "Horizontal Swipe", selection: $horizontalSwipeGesture)
+                CaseIterablePicker(title: "Horizontal Swipe", selection: $horizontalSwipeGesture)
                     .disabled(horizontalPanGesture != .none && horizontalSwipeGesture == .none)
 
-                EnumPicker(title: "Long Press", selection: $longPressGesture)
+                CaseIterablePicker(title: "Long Press", selection: $longPressGesture)
 
-                EnumPicker(title: "Multi Tap", selection: $multiTapGesture)
+                CaseIterablePicker(title: "Multi Tap", selection: $multiTapGesture)
 
-                EnumPicker(title: "Double Touch", selection: $doubleTouchGesture)
+                CaseIterablePicker(title: "Double Touch", selection: $doubleTouchGesture)
 
-                EnumPicker(title: "Pinch", selection: $pinchGesture)
+                CaseIterablePicker(title: "Pinch", selection: $pinchGesture)
 
-                EnumPicker(title: "Left Vertical Pan", selection: $verticalPanGestureLeft)
+                CaseIterablePicker(title: "Left Vertical Pan", selection: $verticalPanGestureLeft)
 
-                EnumPicker(title: "Right Vertical Pan", selection: $verticalPanGestureRight)
+                CaseIterablePicker(title: "Right Vertical Pan", selection: $verticalPanGestureRight)
             }
         }
+        .navigationTitle("Gestures")
     }
 }

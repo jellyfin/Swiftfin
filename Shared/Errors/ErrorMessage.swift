@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 
+// TODO: remove
 struct ErrorMessage: Hashable, Identifiable {
 
     let code: Int?

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: make general `ErrorView` like iOS
+
 extension HomeView {
 
     struct ErrorView: View {
@@ -37,7 +39,7 @@ extension HomeView {
                     .multilineTextAlignment(.center)
 
                 Button {
-                    viewModel.refresh()
+//                    viewModel.refresh()
                 } label: {
                     L10n.retry.text
                         .bold()

@@ -133,7 +133,6 @@ struct VideoPlayer: View {
                                 {
                                     videoPlayerManager.selectNextViewModel()
                                 } else {
-                                    AppDelegate.leavePlaybackOrientation()
                                     router.dismissCoordinator()
                                 }
                             }
@@ -191,6 +190,7 @@ struct VideoPlayer: View {
                     .padding(.top)
             }
             .videoPlayerKeyCommands(
+                isAspectFilled: $isAspectFilled,
                 gestureStateHandler: gestureStateHandler,
                 videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
@@ -211,6 +211,11 @@ struct VideoPlayer: View {
         .ignoresSafeArea()
         .onChange(of: audioOffset) { newValue in
             videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
+        }
+        .onChange(of: isAspectFilled) { newValue in
+            UIView.animate(withDuration: 0.2) {
+                videoPlayerManager.proxy.aspectFill(newValue ? 1 : 0)
+            }
         }
         .onChange(of: isGestureLocked) { newValue in
             if newValue {
@@ -374,7 +379,6 @@ extension VideoPlayer {
         case .none:
             return
         case .aspectFill: ()
-//            aspectFillAction(state: state, unitPoint: unitPoint, scale: <#T##CGFloat#>)
         case .gestureLock:
             guard !isPresentingOverlay else { return }
             isGestureLocked.toggle()
@@ -391,14 +395,8 @@ extension VideoPlayer {
         guard state == .began || state == .changed else { return }
         if scale > 1, !isAspectFilled {
             isAspectFilled = true
-            UIView.animate(withDuration: 0.2) {
-                videoPlayerManager.proxy.aspectFill(1)
-            }
         } else if scale < 1, isAspectFilled {
             isAspectFilled = false
-            UIView.animate(withDuration: 0.2) {
-                videoPlayerManager.proxy.aspectFill(0)
-            }
         }
     }
 
@@ -421,7 +419,7 @@ extension VideoPlayer {
             toNearest: 100
         )
 
-        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondLabel)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
 
@@ -545,7 +543,7 @@ extension VideoPlayer {
         )
         let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
 
-        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondLabel)
 
         subtitleOffset = clampedOffset
     }

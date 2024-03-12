@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// NOTE: All settings *MUST* be surrounded by DEBUG compiler conditional as usage site
+
 #if DEBUG
 struct DebugSettingsView: View {
 

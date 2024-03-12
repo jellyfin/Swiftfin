@@ -13,35 +13,53 @@ import SwiftUI
 final class FilterViewModel: ViewModel {
 
     @Published
-    var allFilters: ItemFilters = .all
-    @Published
-    var currentFilters: ItemFilters
+    var currentFilters: ItemFilterCollection
 
-    let parent: LibraryParent?
+    @Published
+    var allFilters: ItemFilterCollection = .all
+
+    private let parent: (any LibraryParent)?
 
     init(
-        parent: LibraryParent?,
-        currentFilters: ItemFilters
+        parent: (any LibraryParent)? = nil,
+        currentFilters: ItemFilterCollection = .default
     ) {
         self.parent = parent
         self.currentFilters = currentFilters
         super.init()
-
-        getQueryFilters()
     }
 
-    private func getQueryFilters() {
-        Task {
-            let parameters = Paths.GetQueryFiltersParameters(
-                userID: userSession.user.id,
-                parentID: parent?.id
-            )
-            let request = Paths.getQueryFilters(parameters: parameters)
-            let response = try await userSession.client.send(request)
+    /// Sets the query filters from the parent
+    func setQueryFilters() async {
+        let queryFilters = await getQueryFilters()
 
-            await MainActor.run {
-                allFilters.genres = response.value.genres?.map(\.filter) ?? []
-            }
+        await MainActor.run {
+            allFilters.genres = queryFilters.genres
+            allFilters.tags = queryFilters.tags
+            allFilters.years = queryFilters.years
         }
+    }
+
+    private func getQueryFilters() async -> (genres: [ItemGenre], tags: [ItemTag], years: [ItemYear]) {
+        let parameters = Paths.GetQueryFiltersLegacyParameters(
+            userID: userSession.user.id,
+            parentID: parent?.id as? String
+        )
+
+        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+        guard let response = try? await userSession.client.send(request) else { return ([], [], []) }
+
+        let genres: [ItemGenre] = (response.value.genres ?? [])
+            .map(ItemGenre.init)
+
+        let tags = (response.value.tags ?? [])
+            .map(ItemTag.init)
+
+        // Manually sort so that most recent years are "first"
+        let years = (response.value.years ?? [])
+            .sorted(by: >)
+            .map(ItemYear.init)
+
+        return (genres, tags, years)
     }
 }

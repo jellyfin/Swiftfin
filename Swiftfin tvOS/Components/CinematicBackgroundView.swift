@@ -33,6 +33,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
                         .failure {
                             Color.clear
                         }
+                        .aspectRatio(contentMode: .fill)
                 }
             }
     }

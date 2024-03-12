@@ -6,8 +6,10 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension HomeView {
@@ -23,30 +25,22 @@ extension HomeView {
         @ObservedObject
         var viewModel: LatestInLibraryViewModel
 
-        private var items: [BaseItemDto] {
-            viewModel.items.prefix(20).asArray
-        }
-
         var body: some View {
-            PosterHStack(
-                title: L10n.latestWithString(viewModel.parent.displayTitle),
-                type: latestInLibraryPosterType,
-                items: items
-            )
-            .trailing {
-                SeeAllButton()
-                    .onSelect {
-                        router.route(
-                            to: \.basicLibrary,
-                            .init(
-                                title: L10n.latestWithString(viewModel.parent.displayTitle),
-                                viewModel: viewModel
-                            )
-                        )
-                    }
-            }
-            .onSelect { item in
-                router.route(to: \.item, item)
+            if viewModel.elements.isNotEmpty {
+                PosterHStack(
+                    title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
+                    type: latestInLibraryPosterType,
+                    items: $viewModel.elements
+                )
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, viewModel)
+                        }
+                }
+                .onSelect { item in
+                    router.route(to: \.item, item)
+                }
             }
         }
     }

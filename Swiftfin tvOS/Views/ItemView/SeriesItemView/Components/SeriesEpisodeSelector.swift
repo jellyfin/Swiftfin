@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Introspect
 import JellyfinAPI
 import SwiftUI
@@ -50,8 +51,8 @@ extension SeriesEpisodeSelector {
                     ForEach(viewModel.menuSections.keys.sorted(by: { viewModel.menuSectionSort($0, $1) }), id: \.self) { season in
                         Button {
                             Text(season.displayTitle)
+                                .font(.headline)
                                 .fontWeight(.semibold)
-                                .fixedSize()
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 20)
                                 .if(viewModel.menuSelection == season) { text in
@@ -60,8 +61,7 @@ extension SeriesEpisodeSelector {
                                         .foregroundColor(.black)
                                 }
                         }
-                        .buttonStyle(.plain)
-                        .id(season)
+                        .buttonStyle(.card)
                         .focused($focusedSeason, equals: season)
                     }
                 }
@@ -103,35 +103,15 @@ extension SeriesEpisodeSelector {
         @State
         private var wrappedScrollView: UIScrollView?
 
-        private var items: [BaseItemDto] {
-            guard let selection = viewModel.menuSelection,
-                  let items = viewModel.menuSections[selection] else { return [.noResults] }
-            return items
-        }
-
-        var body: some View {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 40) {
-                    if !items.isEmpty {
-                        ForEach(items, id: \.self) { episode in
-                            EpisodeCard(episode: episode)
-                                .focused($focusedEpisodeID, equals: episode.id)
-                        }
-                    } else if viewModel.isLoading {
-                        ForEach(1 ..< 10) { i in
-                            EpisodeCard(episode: .placeHolder)
-                                .redacted(reason: .placeholder)
-                                .focused($focusedEpisodeID, equals: "\(i)")
-                        }
-                    } else {
-                        EpisodeCard(episode: .noResults)
-                            .focused($focusedEpisodeID, equals: "no-results")
-                    }
-                }
-                .padding(.horizontal, 50)
-                .padding(.bottom, 50)
-                .padding(.top)
+        var contentView: some View {
+            CollectionHStack(
+                $viewModel.currentItems,
+                columns: 3.5
+            ) { item in
+                EpisodeCard(episode: item)
+                    .focused($focusedEpisodeID, equals: item.id)
             }
+            .verticalInsets(top: 20, bottom: 20)
             .mask {
                 VStack(spacing: 0) {
                     Color.white
@@ -148,24 +128,30 @@ extension SeriesEpisodeSelector {
                 }
             }
             .transition(.opacity)
+            .focusSection()
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
                 onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
                 top: "seasons"
             )
-            .introspectScrollView { scrollView in
-                wrappedScrollView = scrollView
-            }
             .onChange(of: viewModel.menuSelection) { _ in
-                lastFocusedEpisodeID = items.first?.id
+                lastFocusedEpisodeID = viewModel.currentItems.first?.id
             }
             .onChange(of: focusedEpisodeID) { episodeIndex in
                 guard let episodeIndex = episodeIndex else { return }
                 lastFocusedEpisodeID = episodeIndex
             }
-            .onChange(of: viewModel.menuSections) { _ in
-                lastFocusedEpisodeID = items.first?.id
+            .onChange(of: viewModel.currentItems) { _ in
+                lastFocusedEpisodeID = viewModel.currentItems.first?.id
+            }
+        }
+
+        var body: some View {
+            if viewModel.currentItems.isEmpty {
+                EmptyView()
+            } else {
+                contentView
             }
         }
     }

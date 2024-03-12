@@ -9,6 +9,7 @@
 import CoreStore
 import Defaults
 import Logging
+import PreferencesView
 import Pulse
 import PulseLogHandler
 import SwiftUI
@@ -25,7 +26,6 @@ struct SwiftfinApp: App {
         Task {
             for await newValue in Defaults.updates(.accentColor) {
                 UIApplication.shared.setAccentColor(newValue.uiColor)
-                UIApplication.shared.setNavigationBackButtonAccentColor(newValue.uiColor)
             }
         }
 
@@ -56,10 +56,10 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            PreferenceUIHostingControllerView {
+            PreferencesView {
                 MainCoordinator()
                     .view()
-                    .supportedOrientations(.portrait)
+                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
             .ignoresSafeArea()
             .onOpenURL { url in

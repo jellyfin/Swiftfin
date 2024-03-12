@@ -25,10 +25,16 @@ extension CollectionItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                PosterHStack(title: L10n.items, type: .portrait, items: viewModel.collectionItems)
+                if viewModel.collectionItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.collectionItems
+                    )
                     .onSelect { item in
                         router.route(to: \.item, item)
                     }
+                }
 
                 ItemView.AboutView(viewModel: viewModel)
             }

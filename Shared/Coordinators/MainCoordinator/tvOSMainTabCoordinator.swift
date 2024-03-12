@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -45,12 +46,9 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeTVShows() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
-        let parameters = BasicLibraryCoordinator.Parameters(
-            title: nil,
-            viewModel: ItemTypeLibraryViewModel(itemTypes: [.series], filters: .init())
-        )
-        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
+    func makeTVShows() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        let viewModel = ItemTypeLibraryViewModel(itemTypes: [.series])
+        return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder
@@ -61,12 +59,9 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeMovies() -> NavigationViewCoordinator<BasicLibraryCoordinator> {
-        let parameters = BasicLibraryCoordinator.Parameters(
-            title: nil,
-            viewModel: ItemTypeLibraryViewModel(itemTypes: [.movie], filters: .init())
-        )
-        return NavigationViewCoordinator(BasicLibraryCoordinator(parameters: parameters))
+    func makeMovies() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        let viewModel = ItemTypeLibraryViewModel(itemTypes: [.movie])
+        return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
     @ViewBuilder
