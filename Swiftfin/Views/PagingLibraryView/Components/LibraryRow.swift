@@ -81,7 +81,7 @@ extension PagingLibraryView {
 
                             imageView(from: item)
                                 .failure {
-                                    SystemImageContentView(systemName: item.typeSystemName)
+                                    SystemImageContentView(systemName: item.typeSystemImage)
                                 }
                         }
                         .posterStyle(posterType)
