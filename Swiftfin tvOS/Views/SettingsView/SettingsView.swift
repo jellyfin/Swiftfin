@@ -25,7 +25,7 @@ struct SettingsView: View {
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image("jellyfin-blob-blue")
+                Image(.jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 400)

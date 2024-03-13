@@ -103,7 +103,7 @@ struct LiveTVChannelItemWideElement: View {
                         programLabel(
                             timeText: currentProgramText.timeDisplay,
                             titleText: currentProgramText.title,
-                            color: Color("TextHighlightColor")
+                            color: Color(.textHighlight)
                         )
                         if nextProgramsText.isNotEmpty {
                             let nextItem = nextProgramsText[0]
@@ -132,7 +132,7 @@ struct LiveTVChannelItemWideElement: View {
         .background {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(Color("BackgroundColor"))
-                .shadow(color: Color("ShadowColor"), radius: 4, x: 0, y: 0)
+                .shadow(color: Color(.shadow), radius: 4, x: 0, y: 0)
         }
     }
 

@@ -75,7 +75,7 @@ struct ServerListView: View {
         SplitFormWindowView()
             .descriptionView {
                 VStack {
-                    Image("jellyfin-blob-blue")
+                    Image(.jellyfinBlobBlue)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 400)
