@@ -49,13 +49,6 @@ extension EnvironmentValues {
         self[SafeAreaInsetsKey.self]
     }
 
-    // TODO: remove and make a parameter instead, isn't necessarily an
-    //       environment value
-    var showsLibraryFilters: Bool {
-        get { self[ShowsLibraryFiltersKey.self] }
-        set { self[ShowsLibraryFiltersKey.self] = newValue }
-    }
-
     var subtitleOffset: Binding<Int> {
         get { self[SubtitleOffsetKey.self] }
         set { self[SubtitleOffsetKey.self] = newValue }

@@ -30,19 +30,12 @@ struct PosterButton<Item: Poster>: View {
     // Only set if desiring focus changes
     private var onFocusChanged: ((Bool) -> Void)?
 
-    @ViewBuilder
-    private func poster(from item: Item) -> some View {
+    private func imageView(from item: Item) -> ImageView {
         switch type {
         case .portrait:
             ImageView(item.portraitPosterImageSource(maxWidth: 500))
-                .failure {
-                    TypeSystemNameView(item: item)
-                }
         case .landscape:
             ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
-                .failure {
-                    TypeSystemNameView(item: item)
-                }
         }
     }
 
@@ -54,7 +47,10 @@ struct PosterButton<Item: Poster>: View {
                 ZStack {
                     Color.clear
 
-                    poster(from: item)
+                    imageView(from: item)
+                        .failure {
+                            SystemImageContentView(systemName: item.typeSystemImage)
+                        }
 
                     imageOverlay()
                         .eraseToAnyView()

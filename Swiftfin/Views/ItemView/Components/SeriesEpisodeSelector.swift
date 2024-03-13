@@ -76,7 +76,7 @@ struct SeriesEpisodeSelector: View {
                     }
                 }
                 .scrollBehavior(.continuousLeadingEdge)
-                .horizontalInset(16)
+                .insets(horizontal: EdgeInsets.defaultEdgePadding)
                 .itemSpacing(8)
             }
         }

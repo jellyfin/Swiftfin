@@ -8,26 +8,28 @@
 
 import SwiftUI
 
-struct TypeSystemNameView<Item: Poster>: View {
+struct SystemImageContentView: View {
 
     @State
     private var contentSize: CGSize = .zero
 
-    let item: Item
+    private let systemName: String
+
+    init(systemName: String?) {
+        self.systemName = systemName ?? "circle"
+    }
 
     var body: some View {
         ZStack {
             Color.secondarySystemFill
                 .opacity(0.5)
 
-            if let typeSystemImage = item.typeSystemName {
-                Image(systemName: typeSystemImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.secondary)
-                    .accessibilityHidden(true)
-                    .frame(width: contentSize.width / 3.5, height: contentSize.height / 3)
-            }
+            Image(systemName: systemName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .foregroundColor(.secondary)
+                .accessibilityHidden(true)
+                .frame(width: contentSize.width / 3.5, height: contentSize.height / 3)
         }
         .size($contentSize)
     }

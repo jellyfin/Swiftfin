@@ -41,7 +41,7 @@ struct PosterHStack<Item: Poster>: View {
         }
         .clipsToBounds(false)
         .dataPrefix(20)
-        .horizontalInset(EdgeInsets.defaultEdgePadding)
+        .insets(horizontal: EdgeInsets.defaultEdgePadding)
         .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
         .scrollBehavior(.continuousLeadingEdge)
     }
@@ -64,7 +64,7 @@ struct PosterHStack<Item: Poster>: View {
         }
         .clipsToBounds(false)
         .dataPrefix(20)
-        .horizontalInset(EdgeInsets.defaultEdgePadding)
+        .insets(horizontal: EdgeInsets.defaultEdgePadding)
         .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
         .scrollBehavior(.continuousLeadingEdge)
     }
