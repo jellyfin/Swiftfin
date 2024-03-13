@@ -40,7 +40,7 @@ extension EnvironmentValues {
         set { self[IsScrubbingKey.self] = newValue }
     }
 
-    var playbackSpeed: Binding<Float> {
+    var playbackSpeed: Binding<Double> {
         get { self[PlaybackSpeedKey.self] }
         set { self[PlaybackSpeedKey.self] = newValue }
     }
