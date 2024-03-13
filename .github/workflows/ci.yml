@@ -21,7 +21,7 @@ jobs:
           - "Swiftfin"
           - "Swiftfin tvOS"
 
-    runs-on: macos-14
+    runs-on: macos-13
 
     steps:    
       - name: Checkout
@@ -44,12 +44,14 @@ jobs:
       - name: Update Carthage
         run: carthage update --use-xcframeworks --cache-builds
 
-      - name: Cache Swift packages
-        uses: actions/cache@v4
-        with:
-          path: PackageCache
-          key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
+      # FIXME: caches would keep failed compiles?
+
+      # - name: Cache Swift packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: PackageCache
+      #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
+      #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
 
       - name: Build
         uses: nick-fields/retry@v2
