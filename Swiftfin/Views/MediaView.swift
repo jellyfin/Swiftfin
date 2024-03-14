@@ -154,10 +154,18 @@ extension MediaView {
 
                     ImageView(imageSources)
                         .image { image in
-                            if useRandomImage {
-                                image.overlay {
+                            if useRandomImage ||
+                                mediaType == .downloads ||
+                                mediaType == .favorites
+                            {
+                                ZStack {
+                                    image
+
                                     Color.black
                                         .opacity(0.5)
+
+                                    titleLabel
+                                        .foregroundStyle(.white)
                                 }
                             } else {
                                 image
@@ -165,19 +173,12 @@ extension MediaView {
                         }
                         .failure {
                             ImageView.DefaultFailureView()
-                                .if(!useRandomImage) { view in
-                                    view.overlay {
-                                        titleLabel
-                                            .foregroundColor(.primary)
-                                    }
+                                .overlay {
+                                    titleLabel
+                                        .foregroundColor(.primary)
                                 }
                         }
                         .id(imageSources.hashValue)
-
-                    if useRandomImage {
-                        titleLabel
-                            .foregroundColor(.white)
-                    }
                 }
                 .posterStyle(.landscape)
             }
