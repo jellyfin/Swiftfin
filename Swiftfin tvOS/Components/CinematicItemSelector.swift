@@ -16,8 +16,6 @@ struct CinematicItemSelector<Item: Poster>: View {
 
     @State
     private var focusedItem: Item?
-    @State
-    private var posterHStackSize: CGSize = .zero
 
     @StateObject
     private var viewModel: CinematicBackgroundView<Item>.ViewModel = .init()
@@ -47,25 +45,13 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                // By design, PosterHStack/CollectionHStack requires being in a ScrollView
-                ScrollView {
-                    PosterHStack(type: .landscape, items: items)
-                        .content(itemContent)
-                        .imageOverlay(itemImageOverlay)
-                        .contextMenu(itemContextMenu)
-                        .trailing(trailingContent)
-                        .onSelect(onSelect)
-                        .focusedItem($focusedItem)
-                        .size($posterHStackSize)
-                }
-                .frame(height: posterHStackSize.height)
-                .if(true) { view in
-                    if #available(tvOS 16, *) {
-                        view.scrollDisabled(true)
-                    } else {
-                        view
-                    }
-                }
+                PosterHStack(type: .landscape, items: items)
+                    .content(itemContent)
+                    .imageOverlay(itemImageOverlay)
+                    .contextMenu(itemContextMenu)
+                    .trailing(trailingContent)
+                    .onSelect(onSelect)
+                    .focusedItem($focusedItem)
             }
         }
         .background(alignment: .top) {

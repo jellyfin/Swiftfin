@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: image aspect fill/fit
+
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
@@ -20,19 +22,12 @@ struct PosterButton<Item: Poster>: View {
     private var onSelect: () -> Void
     private var singleImage: Bool
 
-    @ViewBuilder
-    private func poster(from item: Item) -> some View {
+    private func imageView(from item: Item) -> ImageView {
         switch type {
         case .portrait:
             ImageView(item.portraitPosterImageSource(maxWidth: 200))
-                .failure {
-                    TypeSystemNameView(item: item)
-                }
         case .landscape:
             ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
-                .failure {
-                    TypeSystemNameView(item: item)
-                }
         }
     }
 
@@ -44,7 +39,10 @@ struct PosterButton<Item: Poster>: View {
                 ZStack {
                     Color.clear
 
-                    poster(from: item)
+                    imageView(from: item)
+                        .failure {
+                            SystemImageContentView(systemName: item.typeSystemImage)
+                        }
 
                     imageOverlay()
                         .eraseToAnyView()

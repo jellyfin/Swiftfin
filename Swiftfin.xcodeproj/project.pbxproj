@@ -180,9 +180,7 @@
 		E1047E2327E5880000CB0D4A /* TypeSystemNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1047E2227E5880000CB0D4A /* TypeSystemNameView.swift */; };
 		E104C870296E087200C1C3F9 /* IndicatorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */; };
 		E104C873296E0D0A00C1C3F9 /* IndicatorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104C872296E0D0A00C1C3F9 /* IndicatorSettingsView.swift */; };
-		E104DC8D2B9D8979008F506D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E104DC8C2B9D8979008F506D /* CollectionHStack */; };
 		E104DC902B9D8995008F506D /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E104DC8F2B9D8995008F506D /* CollectionVGrid */; };
-		E104DC922B9D89A2008F506D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E104DC912B9D89A2008F506D /* CollectionHStack */; };
 		E104DC942B9D89A2008F506D /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E104DC932B9D89A2008F506D /* CollectionVGrid */; };
 		E104DC962B9E7E29008F506D /* AssertionFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104DC952B9E7E29008F506D /* AssertionFailureView.swift */; };
 		E104DC972B9E7E29008F506D /* AssertionFailureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104DC952B9E7E29008F506D /* AssertionFailureView.swift */; };
@@ -288,6 +286,9 @@
 		E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A40293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift */; };
 		E1388A43293F0AAD009721B1 /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */; };
 		E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E1388A45293F0ABA009721B1 /* SwizzleSwift */; };
+		E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FEC2BA218A80034110D /* SwiftUIIntrospect */; };
+		E1392FF22BA21B360034110D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FF12BA21B360034110D /* CollectionHStack */; };
+		E1392FF42BA21B470034110D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FF32BA21B470034110D /* CollectionHStack */; };
 		E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */; };
 		E139CC1F28EC83E400688DE2 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1E28EC83E400688DE2 /* Int.swift */; };
 		E13AF3B628A0C598009093AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B528A0C598009093AB /* Nuke */; };
@@ -429,6 +430,8 @@
 		E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F062B1B12C300442DB8 /* Backport.swift */; };
 		E15D4F0A2B1BD88900442DB8 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F092B1BD88900442DB8 /* Edge.swift */; };
 		E15D4F0B2B1BD88900442DB8 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F092B1BD88900442DB8 /* Edge.swift */; };
+		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
+		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
 		E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */; };
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
@@ -1303,6 +1306,7 @@
 				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
+				E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */,
 				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
@@ -1311,7 +1315,6 @@
 				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
 				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
-				E104DC922B9D89A2008F506D /* CollectionHStack in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
@@ -1325,6 +1328,7 @@
 				E104DC942B9D89A2008F506D /* CollectionVGrid in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
+				E1392FF42BA21B470034110D /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
@@ -1372,10 +1376,12 @@
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
+				E1392FF22BA21B360034110D /* CollectionHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
 				E1DC9821296DDBE600982F06 /* CollectionView in Frameworks */,
-				E104DC8D2B9D8979008F506D /* CollectionHStack in Frameworks */,
+				E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */,
+				E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */,
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
 				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
@@ -2897,8 +2903,9 @@
 				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
 				E14CB6872A9FF71F001586C6 /* JellyfinAPI */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
-				E104DC912B9D89A2008F506D /* CollectionHStack */,
 				E104DC932B9D89A2008F506D /* CollectionVGrid */,
+				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
+				E1392FF32BA21B470034110D /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2946,8 +2953,10 @@
 				E15D4F042B1B0C3C00442DB8 /* PreferencesView */,
 				E113A2A62B5A178D009CAAAA /* CollectionHStack */,
 				E113A2A92B5A179A009CAAAA /* CollectionVGrid */,
-				E104DC8C2B9D8979008F506D /* CollectionHStack */,
 				E104DC8F2B9D8995008F506D /* CollectionVGrid */,
+				E15EFA832BA167350080E926 /* CollectionHStack */,
+				E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */,
+				E1392FF12BA21B360034110D /* CollectionHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3017,8 +3026,8 @@
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
-				E104DC8B2B9D8979008F506D /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E104DC8E2B9D8995008F506D /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
+				E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4261,14 +4270,6 @@
 				minimumVersion = 1.0.0;
 			};
 		};
-		E104DC8B2B9D8979008F506D /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E104DC8E2B9D8995008F506D /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionVGrid";
@@ -4283,6 +4284,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
+			};
+		};
+		E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionHStack";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
@@ -4427,20 +4436,10 @@
 			package = E1002B662793CFBA00E47059 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
 		};
-		E104DC8C2B9D8979008F506D /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E104DC8B2B9D8979008F506D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
 		E104DC8F2B9D8995008F506D /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E104DC8E2B9D8995008F506D /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
-		};
-		E104DC912B9D89A2008F506D /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E104DC8B2B9D8979008F506D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
 		};
 		E104DC932B9D89A2008F506D /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4483,6 +4482,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */;
 			productName = SwizzleSwift;
+		};
+		E1392FEC2BA218A80034110D /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
+		};
+		E1392FF12BA21B360034110D /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
+		};
+		E1392FF32BA21B470034110D /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
 		};
 		E13AF3B528A0C598009093AB /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -4566,6 +4580,15 @@
 		E15D4F042B1B0C3C00442DB8 /* PreferencesView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = PreferencesView;
+		};
+		E15EFA832BA167350080E926 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionHStack;
+		};
+		E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
+			productName = SwiftUIIntrospect;
 		};
 		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -30,6 +30,9 @@ jobs:
       - name: Install SwiftGen
         run: brew install swiftgen
 
+      - name: Set Xcode Version
+        run: sudo xcode-select -s "/Applications/Xcode_15.2.app"
+
       - name: Cache Carthage
         uses: actions/cache@v4
         id: carthage-cache
@@ -41,12 +44,14 @@ jobs:
       - name: Update Carthage
         run: carthage update --use-xcframeworks --cache-builds
 
-      - name: Cache Swift packages
-        uses: actions/cache@v4
-        with:
-          path: PackageCache
-          key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
+      # FIXME: caches would keep failed compiles?
+
+      # - name: Cache Swift packages
+      #   uses: actions/cache@v4
+      #   with:
+      #     path: PackageCache
+      #     key: ${{ runner.os }}-${{ matrix.scheme }}-spm-${{ hashFiles('**/Package.resolved') }}
+      #     restore-keys: ${{ runner.os }}-${{ matrix.scheme }}-spm-
 
       - name: Build
         uses: nick-fields/retry@v2

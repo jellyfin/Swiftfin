@@ -21,6 +21,15 @@ extension PagingLibraryView {
         private var onSelect: () -> Void
         private let posterType: PosterType
 
+        private func imageView(from element: Element) -> ImageView {
+            switch posterType {
+            case .portrait:
+                ImageView(element.portraitPosterImageSource(maxWidth: 60))
+            case .landscape:
+                ImageView(element.landscapePosterImageSources(maxWidth: 110, single: false))
+            }
+        }
+
         @ViewBuilder
         private func itemAccessoryView(item: BaseItemDto) -> some View {
             DotHStack {
@@ -70,18 +79,10 @@ extension PagingLibraryView {
                         ZStack {
                             Color.clear
 
-                            switch posterType {
-                            case .portrait:
-                                ImageView(item.portraitPosterImageSource(maxWidth: 60))
-                                    .failure {
-                                        TypeSystemNameView(item: item)
-                                    }
-                            case .landscape:
-                                ImageView(item.landscapePosterImageSources(maxWidth: 110, single: false))
-                                    .failure {
-                                        TypeSystemNameView(item: item)
-                                    }
-                            }
+                            imageView(from: item)
+                                .failure {
+                                    SystemImageContentView(systemName: item.typeSystemImage)
+                                }
                         }
                         .posterStyle(posterType)
                         .frame(width: posterType == .landscape ? 110 : 60)

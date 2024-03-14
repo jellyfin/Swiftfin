@@ -35,16 +35,11 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Double> = .constant(1)
     }
 
-    // TODO: does this actually do anything useful?
-    //       should instead use view safe area?
+    // TODO: See if we can use a root `GeometryReader` that sets the environment value
     struct SafeAreaInsetsKey: EnvironmentKey {
         static var defaultValue: EdgeInsets {
             UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
         }
-    }
-
-    struct ShowsLibraryFiltersKey: EnvironmentKey {
-        static let defaultValue: Bool = true
     }
 
     struct SubtitleOffsetKey: EnvironmentKey {

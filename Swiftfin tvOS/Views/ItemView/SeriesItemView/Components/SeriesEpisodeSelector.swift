@@ -111,7 +111,7 @@ extension SeriesEpisodeSelector {
                 EpisodeCard(episode: item)
                     .focused($focusedEpisodeID, equals: item.id)
             }
-            .verticalInsets(top: 20, bottom: 20)
+            .insets(vertical: 20)
             .mask {
                 VStack(spacing: 0) {
                     Color.white

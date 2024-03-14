@@ -44,7 +44,7 @@ extension BaseItemDto: Poster {
         }
     }
 
-    var typeSystemName: String? {
+    var typeSystemImage: String? {
         switch type {
         case .episode, .movie, .series:
             "film"

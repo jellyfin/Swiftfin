@@ -21,7 +21,7 @@ extension BaseItemPerson: Poster {
         true
     }
 
-    var typeSystemName: String? {
+    var typeSystemImage: String? {
         "person.fill"
     }
 
