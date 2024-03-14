@@ -29,14 +29,5 @@ extension MediaViewModel {
                 return L10n.liveTV
             }
         }
-
-        var hasServerImageSource: Bool {
-            switch self {
-            case .collectionFolder, .liveTV:
-                true
-            case .downloads, .favorites:
-                false
-            }
-        }
     }
 }

@@ -636,6 +636,8 @@
 		E1CAF65E2BA345830087D991 /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CAF65A2BA345830087D991 /* MediaType.swift */; };
 		E1CAF65F2BA345830087D991 /* MediaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CAF65B2BA345830087D991 /* MediaViewModel.swift */; };
 		E1CAF6602BA345830087D991 /* MediaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CAF65B2BA345830087D991 /* MediaViewModel.swift */; };
+		E1CAF6622BA363840087D991 /* UIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CAF6612BA363840087D991 /* UIHostingController.swift */; };
+		E1CAF6632BA363840087D991 /* UIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CAF6612BA363840087D991 /* UIHostingController.swift */; };
 		E1CCC3D228C858A50020ED54 /* UserProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCC3D128C858A50020ED54 /* UserProfileButton.swift */; };
 		E1CCF12E28ABF989006CAC9E /* PosterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterType.swift */; };
 		E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */; };
@@ -680,7 +682,6 @@
 		E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
 		E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
 		E1DC981E296DD91900982F06 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC981D296DD91900982F06 /* CollectionView */; };
-		E1DC9821296DDBE600982F06 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9820296DDBE600982F06 /* CollectionView */; };
 		E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */; };
 		E1DC983E296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */; };
 		E1DC9841296DEBD800982F06 /* WatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9840296DEBD800982F06 /* WatchedIndicator.swift */; };
@@ -1203,6 +1204,7 @@
 		E1C92619288756BD002A7A66 /* PosterHStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
 		E1CAF65A2BA345830087D991 /* MediaType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
 		E1CAF65B2BA345830087D991 /* MediaViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaViewModel.swift; sourceTree = "<group>"; };
+		E1CAF6612BA363840087D991 /* UIHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHostingController.swift; sourceTree = "<group>"; };
 		E1CCC3D128C858A50020ED54 /* UserProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileButton.swift; sourceTree = "<group>"; };
 		E1CCF12D28ABF989006CAC9E /* PosterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterType.swift; sourceTree = "<group>"; };
 		E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
@@ -1382,7 +1384,6 @@
 				E1392FF22BA21B360034110D /* CollectionHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
-				E1DC9821296DDBE600982F06 /* CollectionView in Frameworks */,
 				E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */,
 				E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */,
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
@@ -1848,6 +1849,7 @@
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
 				E13DD3C727164B1E009D4DAF /* UIDevice.swift */,
 				E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */,
+				E1CAF6612BA363840087D991 /* UIHostingController.swift */,
 				E1937A3D288F0D3D00CB80AA /* UIScreen.swift */,
 				62E1DCC2273CE19800C9AE76 /* URL.swift */,
 				E1C812C4277A90B200918266 /* URLComponents.swift */,
@@ -2957,7 +2959,6 @@
 				E15210572946DF1B00375CC2 /* PulseUI */,
 				E19DDEC62948EF9900954E10 /* OrderedCollections */,
 				E1DC9813296DC06200982F06 /* PulseLogHandler */,
-				E1DC9820296DDBE600982F06 /* CollectionView */,
 				E1FAD1C52A0375BA007F5521 /* UDPBroadcast */,
 				E14CB6852A9FF62A001586C6 /* JellyfinAPI */,
 				E1523F812B132C350062821A /* CollectionHStack */,
@@ -3452,6 +3453,7 @@
 				E1C926152887565C002A7A66 /* EpisodeCard.swift in Sources */,
 				E1A1528E28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift in Sources */,
 				E18E021D2887492B0022598C /* AttributeStyleModifier.swift in Sources */,
+				E1CAF6632BA363840087D991 /* UIHostingController.swift in Sources */,
 				E193D53227193F7B00900D82 /* ConnectToServerCoodinator.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
@@ -3675,6 +3677,7 @@
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E170D105294D21FA0017224C /* MediaSourceInfoView.swift in Sources */,
 				E1D37F4B2B9CEA5C00343D2B /* ImageSource.swift in Sources */,
+				E1CAF6622BA363840087D991 /* UIHostingController.swift in Sources */,
 				E11895AC289383EE0042947B /* NavBarOffsetModifier.swift in Sources */,
 				E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */,
 				E157563029355B7900976E1F /* UpdateView.swift in Sources */,
@@ -4676,11 +4679,6 @@
 		};
 		E1DC981D296DD91900982F06 /* CollectionView */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CollectionView;
-		};
-		E1DC9820296DDBE600982F06 /* CollectionView */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */;
 			productName = CollectionView;
 		};
 		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
