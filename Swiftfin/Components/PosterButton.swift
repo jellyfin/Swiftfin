@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: image aspect fill/fit
+// TODO: expose `ImageView.image` modifier for image aspect fill/fit
 
 struct PosterButton<Item: Poster>: View {
 

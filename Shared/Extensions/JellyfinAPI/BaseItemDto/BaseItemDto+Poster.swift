@@ -52,6 +52,8 @@ extension BaseItemDto: Poster {
             "folder.fill"
         case .person:
             "person.fill"
+        case .boxSet:
+            "film.stack"
         default: nil
         }
     }
