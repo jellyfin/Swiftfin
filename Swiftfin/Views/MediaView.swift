@@ -40,6 +40,12 @@ struct MediaView: View {
             MediaItem(viewModel: viewModel, type: mediaType)
                 .onSelect {
                     switch mediaType {
+                    case let .collectionFolder(item):
+                        let viewModel = ItemLibraryViewModel(
+                            parent: item,
+                            filters: .default
+                        )
+                        router.route(to: \.library, viewModel)
                     case .downloads:
                         router.route(to: \.downloads)
                     case .favorites:
@@ -50,12 +56,6 @@ struct MediaView: View {
                         router.route(to: \.library, viewModel)
                     case .liveTV:
                         router.route(to: \.liveTV)
-                    case let .userView(item):
-                        let viewModel = ItemLibraryViewModel(
-                            parent: item,
-                            filters: .default
-                        )
-                        router.route(to: \.library, viewModel)
                     }
                 }
         }
@@ -98,6 +98,9 @@ struct MediaView: View {
 extension MediaView {
 
     // TODO: custom view for folders and tv (allow customization?)
+    //       - differentiate between what media types are Swiftfin only
+    //         which would allow some cleanup
+    //       - allow server or random view per library?
     struct MediaItem: View {
 
         @Default(.Customization.Library.randomImage)
@@ -125,10 +128,21 @@ extension MediaView {
                     return
                 }
 
-                if case let MediaViewModel.MediaType.userView(item) = mediaType {
+                if case let MediaViewModel.MediaType.collectionFolder(item) = mediaType {
+                    self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
+                } else if case let MediaViewModel.MediaType.liveTV(item) = mediaType {
                     self.imageSources = [item.imageSource(.primary, maxWidth: 500)]
                 }
             }
+        }
+
+        private var titleLabel: some View {
+            Text(mediaType.displayTitle)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .lineLimit(1)
+                .multilineTextAlignment(.center)
+                .frame(alignment: .center)
         }
 
         var body: some View {
@@ -139,25 +153,32 @@ extension MediaView {
                     Color.clear
 
                     ImageView(imageSources)
-                        .id(imageSources.hashValue)
+                        .image { image in
+                            if useRandomImage ||
+                                mediaType == .downloads ||
+                                mediaType == .favorites
+                            {
+                                ZStack {
+                                    image
 
-                    if useRandomImage ||
-                        mediaType == .favorites ||
-                        mediaType == .downloads
-                    {
-                        ZStack {
-                            Color.black
-                                .opacity(0.5)
+                                    Color.black
+                                        .opacity(0.5)
 
-                            Text(mediaType.displayTitle)
-                                .foregroundColor(.white)
-                                .font(.title2)
-                                .fontWeight(.semibold)
-                                .lineLimit(1)
-                                .multilineTextAlignment(.center)
-                                .frame(alignment: .center)
+                                    titleLabel
+                                        .foregroundStyle(.white)
+                                }
+                            } else {
+                                image
+                            }
                         }
-                    }
+                        .failure {
+                            ImageView.DefaultFailureView()
+                                .overlay {
+                                    titleLabel
+                                        .foregroundColor(.primary)
+                                }
+                        }
+                        .id(imageSources.hashValue)
                 }
                 .posterStyle(.landscape)
             }

@@ -42,8 +42,8 @@ struct ImageView: View {
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
-                    _image
-                        .resizable()
+                    image(_image.resizable())
+                        .eraseToAnyView()
                 } else if state.error != nil {
                     failure()
                         .eraseToAnyView()
@@ -128,6 +128,7 @@ extension ImageView {
 
         var body: some View {
             Color.secondarySystemFill
+                .opacity(0.75)
         }
     }
 
@@ -140,6 +141,7 @@ extension ImageView {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
             } else {
                 Color.secondarySystemFill
+                    .opacity(0.75)
             }
         }
     }

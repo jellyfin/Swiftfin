@@ -16,26 +16,6 @@ final class MediaViewModel: ViewModel, Stateful {
     // TODO: remove once collection types become an enum
     static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
-    enum MediaType: Displayable, Hashable {
-        case downloads
-        case favorites
-        case liveTV
-        case userView(BaseItemDto)
-
-        var displayTitle: String {
-            switch self {
-            case .downloads:
-                return L10n.downloads
-            case .favorites:
-                return L10n.favorites
-            case .liveTV:
-                return L10n.liveTV
-            case let .userView(item):
-                return item.displayTitle
-            }
-        }
-    }
-
     // MARK: Action
 
     enum Action {
@@ -90,8 +70,14 @@ final class MediaViewModel: ViewModel, Stateful {
             mediaItems.removeAll()
         }
 
-        let media = try await getUserViews()
-            .map(MediaType.userView)
+        let media: [MediaType] = try await getUserViews()
+            .map { userView in
+                if userView.collectionType == "livetv" {
+                    return .liveTV(userView)
+                }
+
+                return .collectionFolder(userView)
+            }
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
 
         await MainActor.run {
@@ -132,9 +118,19 @@ final class MediaViewModel: ViewModel, Stateful {
 
     func randomItemImageSources(for mediaType: MediaType) async throws -> [ImageSource] {
 
+        // live tv doesn't have random
+        if case MediaType.liveTV = mediaType {
+            return []
+        }
+
+        // downloads doesn't have random
+        if mediaType == .downloads {
+            return []
+        }
+
         var parentID: String?
 
-        if case let MediaType.userView(item) = mediaType {
+        if case let MediaType.collectionFolder(item) = mediaType {
             parentID = item.id
         }
 

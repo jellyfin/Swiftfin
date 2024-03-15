@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -53,41 +53,34 @@ struct LiveTVChannelsView: View {
     }
 
     var body: some View {
-
-        if viewModel.isLoading {
-            ProgressView()
-        } else if viewModel.channelPrograms.isNotEmpty {
-
-            CollectionView(items: viewModel.channelPrograms) { _, program, _ in
-                channelCell(for: program)
-            }
-            .layout { _, layoutEnvironment in
-                .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .adaptive(withMinItemSize: 250),
-                    itemSpacing: 16,
-                    lineSpacing: 4,
-                    itemSize: .fractionalWidth(1 / 3)
-                )
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea()
-            .onAppear {
-                viewModel.startScheduleCheckTimer()
-            }
-            .onDisappear {
-                viewModel.stopScheduleCheckTimer()
-            }
-        } else {
-            VStack {
-                Text(L10n.noResults)
-                Button {
-                    viewModel.getChannels()
-                } label: {
-                    Text(L10n.reload)
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.channelPrograms.isNotEmpty {
+                CollectionVGrid(
+                    viewModel.channelPrograms,
+                    layout: .minWidth(250, itemSpacing: 16, lineSpacing: 4)
+                ) { program in
+                    channelCell(for: program)
+                }
+                .onAppear {
+                    viewModel.startScheduleCheckTimer()
+                }
+                .onDisappear {
+                    viewModel.stopScheduleCheckTimer()
+                }
+            } else {
+                VStack {
+                    Text(L10n.noResults)
+                    Button {
+                        viewModel.getChannels()
+                    } label: {
+                        Text(L10n.reload)
+                    }
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {

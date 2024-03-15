@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import SwiftUI
 
 struct UserListView: View {
@@ -34,26 +34,19 @@ struct UserListView: View {
 
     @ViewBuilder
     private var gridView: some View {
-        CollectionView(items: viewModel.users) { _, user, _ in
+        CollectionVGrid(
+            viewModel.users,
+            layout: .minWidth(120, itemSpacing: 30, lineSpacing: 30)
+        ) { user in
             UserProfileButton(user: user, client: viewModel.client)
                 .onSelect {
                     viewModel.signIn(user: user)
                 }
-                .contextMenu {
-                    Button(role: .destructive) {
+                .contextMenu(menuItems: {
+                    Button(L10n.remove, systemImage: "trash", role: .destructive) {
                         viewModel.remove(user: user)
-                    } label: {
-                        Label(L10n.remove, systemImage: "trash")
                     }
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 120),
-                itemSpacing: 30,
-                lineSpacing: 30
-            )
+                })
         }
     }
 

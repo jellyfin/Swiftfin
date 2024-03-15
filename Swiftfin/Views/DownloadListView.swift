@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
 import SwiftUI
 
 struct DownloadListView: View {
