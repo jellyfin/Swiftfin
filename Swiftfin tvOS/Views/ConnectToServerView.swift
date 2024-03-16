@@ -33,7 +33,7 @@ struct ConnectToServerView: View {
     @State
     private var isPresentingError: Bool = false
     @State
-    private var url = "http://"
+    private var url = ""
 
     private func connectToServer(at url: String) {
         let task = Task {
@@ -87,6 +87,9 @@ struct ConnectToServerView: View {
                 .buttonStyle(.card)
             } else {
                 Button {
+                    if !url.contains("://") {
+                        url = "http://" + url
+                    }
                     connectToServer(at: url)
                 } label: {
                     L10n.connect.text
