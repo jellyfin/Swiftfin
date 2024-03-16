@@ -22,8 +22,6 @@ final class EpisodeItemViewModel: ItemViewModel {
         getSeriesItem()
     }
 
-    override func updateItem() {}
-
     private func getSeriesItem() {
         guard let seriesID = item.seriesID else { return }
         Task {

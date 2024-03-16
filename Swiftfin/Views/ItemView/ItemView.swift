@@ -15,35 +15,44 @@ struct ItemView: View {
 
     let item: BaseItemDto
 
+    @ViewBuilder
+    private var padView: some View {
+        switch item.type {
+        case .boxSet:
+            iPadOSCollectionItemView(viewModel: .init(item: item))
+        case .episode:
+            iPadOSEpisodeItemView(viewModel: .init(item: item))
+        case .movie:
+            iPadOSMovieItemView(item: item)
+        case .series:
+            iPadOSSeriesItemView(viewModel: .init(item: item))
+        default:
+            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+        }
+    }
+
+    @ViewBuilder
+    private var phoneView: some View {
+        switch item.type {
+        case .boxSet:
+            CollectionItemView(viewModel: .init(item: item))
+        case .episode:
+            EpisodeItemView(viewModel: .init(item: item))
+        case .movie:
+            MovieItemView(item: item)
+        case .series:
+            SeriesItemView(viewModel: .init(item: item))
+        default:
+            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+        }
+    }
+
     var body: some View {
-        Group {
-            switch item.type {
-            case .movie:
-                if UIDevice.isPad {
-                    iPadOSMovieItemView(viewModel: .init(item: item))
-                } else {
-                    MovieItemView(viewModel: .init(item: item))
-                }
-            case .series:
-                if UIDevice.isPad {
-                    iPadOSSeriesItemView(viewModel: .init(item: item))
-                } else {
-                    SeriesItemView(viewModel: .init(item: item))
-                }
-            case .episode:
-                if UIDevice.isPad {
-                    iPadOSEpisodeItemView(viewModel: .init(item: item))
-                } else {
-                    EpisodeItemView(viewModel: .init(item: item))
-                }
-            case .boxSet:
-                if UIDevice.isPad {
-                    iPadOSCollectionItemView(viewModel: .init(item: item))
-                } else {
-                    CollectionItemView(viewModel: .init(item: item))
-                }
-            default:
-                Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+        WrappedView {
+            if UIDevice.isPad {
+                padView
+            } else {
+                phoneView
             }
         }
         .navigationBarTitleDisplayMode(.inline)

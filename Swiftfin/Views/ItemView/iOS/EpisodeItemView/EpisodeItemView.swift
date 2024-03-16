@@ -23,6 +23,7 @@ struct EpisodeItemView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             ContentView(viewModel: viewModel)
+                .edgePadding(.bottom)
         }
         .scrollViewOffset($scrollViewOffset)
         .navigationBarOffset(

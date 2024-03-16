@@ -42,81 +42,81 @@ final class SeriesItemViewModel: ItemViewModel {
         getFirstAvailableItem()
     }
 
-    override func playButtonText() -> String {
-
-        if item.isUnaired {
-            return L10n.unaired
-        }
-
-        if item.isMissing {
-            return L10n.missing
-        }
-
-        guard let playButtonItem = playButtonItem,
-              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
-
-        return episodeLocator
-    }
+//    override func playButtonText() -> String {
+//
+//        if item.isUnaired {
+//            return L10n.unaired
+//        }
+//
+//        if item.isMissing {
+//            return L10n.missing
+//        }
+//
+//        guard let playButtonItem = playButtonItem,
+//              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
+//
+//        return episodeLocator
+//    }
 
     private func getNextUp() {
-        Task {
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                fields: .MinimumFields,
-                seriesID: item.id,
-                enableUserData: true
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first, !item.isMissing {
-                await MainActor.run {
-                    self.playButtonItem = item
-                }
-            }
-        }
+//        Task {
+//            let parameters = Paths.GetNextUpParameters(
+//                userID: userSession.user.id,
+//                fields: .MinimumFields,
+//                seriesID: item.id,
+//                enableUserData: true
+//            )
+//            let request = Paths.getNextUp(parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            if let item = response.value.items?.first, !item.isMissing {
+//                await MainActor.run {
+//                    self.playButtonItem = item
+//                }
+//            }
+//        }
     }
 
     private func getResumeItem() {
-        Task {
-            let parameters = Paths.GetResumeItemsParameters(
-                limit: 1,
-                parentID: item.id,
-                fields: .MinimumFields
-            )
-            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first {
-                await MainActor.run {
-                    self.playButtonItem = item
-                }
-            }
-        }
+//        Task {
+//            let parameters = Paths.GetResumeItemsParameters(
+//                limit: 1,
+//                parentID: item.id,
+//                fields: .MinimumFields
+//            )
+//            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            if let item = response.value.items?.first {
+//                await MainActor.run {
+//                    self.playButtonItem = item
+//                }
+//            }
+//        }
     }
 
     private func getFirstAvailableItem() {
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 1,
-                isRecursive: true,
-                sortOrder: [.ascending],
-                parentID: item.id,
-                fields: .MinimumFields,
-                includeItemTypes: [.episode]
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first {
-                if self.playButtonItem == nil {
-                    await MainActor.run {
-                        self.playButtonItem = item
-                    }
-                }
-            }
-        }
+//        Task {
+//            let parameters = Paths.GetItemsParameters(
+//                userID: userSession.user.id,
+//                limit: 1,
+//                isRecursive: true,
+//                sortOrder: [.ascending],
+//                parentID: item.id,
+//                fields: .MinimumFields,
+//                includeItemTypes: [.episode]
+//            )
+//            let request = Paths.getItems(parameters: parameters)
+//            let response = try await userSession.client.send(request)
+//
+//            if let item = response.value.items?.first {
+//                if self.playButtonItem == nil {
+//                    await MainActor.run {
+//                        self.playButtonItem = item
+//                    }
+//                }
+//            }
+//        }
     }
 
     func select(section: BaseItemDto) {

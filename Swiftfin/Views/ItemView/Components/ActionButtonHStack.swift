@@ -36,9 +36,9 @@ extension ItemView {
             HStack(alignment: .center, spacing: 15) {
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.toggleWatchState()
+//                    viewModel.toggleWatchState()
                 } label: {
-                    if viewModel.isPlayed {
+                    if viewModel.item.userData?.isPlayed ?? false {
                         Image(systemName: "checkmark.circle.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(
@@ -56,9 +56,9 @@ extension ItemView {
 
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.toggleFavoriteState()
+//                    viewModel.toggleFavoriteState()
                 } label: {
-                    if viewModel.isFavorited {
+                    if viewModel.item.userData?.isFavorite ?? false {
                         Image(systemName: "heart.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(Color.red)
@@ -78,7 +78,7 @@ extension ItemView {
                     Menu {
                         ForEach(mediaSources, id: \.hashValue) { mediaSource in
                             Button {
-                                viewModel.selectedMediaSource = mediaSource
+//                                viewModel.selectedMediaSource = mediaSource
                             } label: {
                                 if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
                                     Label(selectedMediaSource.displayTitle, systemImage: "checkmark")

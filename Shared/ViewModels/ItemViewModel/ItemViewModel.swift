@@ -9,14 +9,32 @@
 import Combine
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
 import UIKit
 
 // TODO: transition to `Stateful`
-class ItemViewModel: ViewModel {
+class ItemViewModel: ViewModel, Stateful {
+
+    // MARK: Action
+
+    enum Action {
+        case error(JellyfinAPIError)
+        case refresh
+        case toggleFavorite
+        case toggleWatched
+    }
+
+    // MARK: State
+
+    enum State: Equatable {
+        case error(JellyfinAPIError)
+        case item
+        case refreshing
+    }
 
     @Published
-    var item: BaseItemDto {
+    private(set) var item: BaseItemDto {
         willSet {
             switch item.type {
             case .episode, .movie:
@@ -28,7 +46,7 @@ class ItemViewModel: ViewModel {
     }
 
     @Published
-    var playButtonItem: BaseItemDto? {
+    private(set) var playButtonItem: BaseItemDto? {
         willSet {
             if let newValue {
                 selectedMediaSource = newValue.mediaSources?.first
@@ -36,123 +54,152 @@ class ItemViewModel: ViewModel {
         }
     }
 
+//    @Published
+//    var isFavorited = false
+//    @Published
+//    var isPlayed = false
     @Published
-    var isFavorited = false
+    private(set) var selectedMediaSource: MediaSourceInfo?
     @Published
-    var isPlayed = false
+    private(set) var similarItems: [BaseItemDto] = []
     @Published
-    var selectedMediaSource: MediaSourceInfo?
+    private(set) var specialFeatures: [BaseItemDto] = []
+
     @Published
-    var similarItems: [BaseItemDto] = []
-    @Published
-    var specialFeatures: [BaseItemDto] = []
+    var state: State = .item
+
+    private var refreshTask: AnyCancellable?
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
 
-        getFullItem()
+//        getFullItem()
 
-        isFavorited = item.userData?.isFavorite ?? false
-        isPlayed = item.userData?.isPlayed ?? false
+//        isFavorited = item.userData?.isFavorite ?? false
+//        isPlayed = item.userData?.isPlayed ?? false
 
-        getSimilarItems()
-        getSpecialFeatures()
-
-        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+//        Notifications[.didEndPlayback].publiser
+//            .sink { [weak self] notification in
+//                guard let userInfo = notification.userInfo else { return }
+//
+//                if let playbackItem = userInfo["playbackItem"] as? BaseItemDto {
+//
+//                }
+//            }
+//            .store(in: &cancellables)
     }
 
-    private func getFullItem() {
-        Task {
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
 
-            await MainActor.run {
-                isLoading = true
+            refreshTask?.cancel()
+
+            refreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+                    async let fullItem = getFullItem()
+                    async let similarItems = getSimilarItems()
+                    async let specialFeatures = getSpecialFeatures()
+
+                    let results = try await (
+                        fullItem: fullItem,
+                        similarItems: similarItems,
+                        specialFeatures: specialFeatures
+                    )
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.item = results.fullItem
+                        self.similarItems = results.similarItems
+                        self.specialFeatures = results.specialFeatures
+
+                        self.state = .item
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    // TODO: error
+                }
             }
+            .asAnyCancellable()
 
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                fields: ItemFields.allCases,
-                enableUserData: true,
-                ids: [item.id!]
-            )
-
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            guard let fullItem = response.value.items?.first else { return }
-
-            await MainActor.run {
-                self.item = fullItem
-                isLoading = false
-            }
+            return .refreshing
+        case .toggleFavorite:
+            return state
+        case .toggleWatched:
+            return state
         }
     }
 
-    @objc
-    private func receivedStopReport(_ notification: NSNotification) {
-        guard let itemID = notification.object as? String else { return }
+    private func getFullItem() async throws -> BaseItemDto {
 
-        if itemID == item.id {
-            updateItem()
-        } else {
-            // Remove if necessary. Note that this cannot be in deinit as
-            // holding as an observer won't allow the object to be deinit-ed
-            Notifications[.didSendStopReport].unsubscribe(self)
-        }
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.allCases
+        parameters.ids = [item.id!]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
+
+        return fullItem
     }
 
-    // TODO: remove and have views handle
-    func playButtonText() -> String {
+    private func getSimilarItems() async -> [BaseItemDto] {
 
-        if item.isUnaired {
-            return L10n.unaired
-        }
+        var parameters = Paths.GetSimilarItemsParameters()
+        parameters.fields = .MinimumFields
+        parameters.limit = 20
+        parameters.userID = userSession.user.id
 
-        if item.isMissing {
-            return L10n.missing
-        }
+        let request = Paths.getSimilarItems(
+            itemID: item.id!,
+            parameters: parameters
+        )
 
-        if let itemProgressString = item.progressLabel {
-            return itemProgressString
-        }
+        let response = try? await userSession.client.send(request)
 
-        return L10n.play
+        return response?.value.items ?? []
     }
 
-    func getSimilarItems() {
-        Task {
-            let parameters = Paths.GetSimilarItemsParameters(
-                userID: userSession.user.id,
-                limit: 20,
-                fields: .MinimumFields
-            )
-            let request = Paths.getSimilarItems(
-                itemID: item.id!,
-                parameters: parameters
-            )
-            let response = try await userSession.client.send(request)
+    private func getSpecialFeatures() async -> [BaseItemDto] {
 
-            await MainActor.run {
-                similarItems = response.value.items ?? []
-            }
-        }
+        let request = Paths.getSpecialFeatures(
+            userID: userSession.user.id,
+            itemID: item.id!
+        )
+        let response = try? await userSession.client.send(request)
+
+        return (response?.value ?? [])
+            .filter { $0.extraType?.isVideo ?? false }
     }
 
-    func getSpecialFeatures() {
-        Task {
-            let request = Paths.getSpecialFeatures(
+    private func toggleWatchState() async throws {
+
+        guard let isPlayed = item.userData?.isPlayed else { throw JellyfinAPIError("Item doesn't have expected user data") }
+
+        let request: Request<UserItemDataDto>
+
+        if isPlayed {
+            request = Paths.markUnplayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                specialFeatures = response.value.filter { $0.extraType?.isVideo ?? false }
-            }
+        } else {
+            request = Paths.markPlayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
         }
-    }
 
-    func toggleWatchState() {
+        let response = try await userSession.client.send(request)
+
 //        let current = isPlayed
 //        isPlayed.toggle()
 //        let request: AnyPublisher<UserItemDataDto, Error>
@@ -176,7 +223,26 @@ class ItemViewModel: ViewModel {
 //            .store(in: &cancellables)
     }
 
-    func toggleFavoriteState() {
+    private func toggleFavoriteState() async throws {
+
+        guard let isFavorite = item.userData?.isFavorite else { throw JellyfinAPIError("Item doesn't have expected user data") }
+
+        let request: Request<UserItemDataDto>
+
+        if isFavorite {
+            request = Paths.unmarkFavoriteItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        } else {
+            request = Paths.markFavoriteItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        }
+
+        let response = try await userSession.client.send(request)
+
 //        let current = isFavorited
 //        isFavorited.toggle()
 //        let request: AnyPublisher<UserItemDataDto, Error>
@@ -199,7 +265,4 @@ class ItemViewModel: ViewModel {
 //            }, receiveValue: { _ in })
 //            .store(in: &cancellables)
     }
-
-    // Overridden by subclasses
-    func updateItem() {}
 }
