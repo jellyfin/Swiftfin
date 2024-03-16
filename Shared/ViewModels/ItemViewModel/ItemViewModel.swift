@@ -21,8 +21,8 @@ class ItemViewModel: ViewModel, Stateful {
     enum Action {
         case error(JellyfinAPIError)
         case refresh
-        case toggleFavorite
-        case toggleWatched
+        case toggleIsFavorite
+        case toggleIsPlayed
     }
 
     // MARK: State
@@ -68,6 +68,7 @@ class ItemViewModel: ViewModel, Stateful {
     @Published
     var state: State = .item
 
+    private var toggleFavoriteTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
     init(item: BaseItemDto) {
@@ -129,9 +130,31 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return .refreshing
-        case .toggleFavorite:
+        case .toggleIsFavorite:
+
+            toggleFavoriteTask?.cancel()
+
+            toggleFavoriteTask = Task {
+
+                let beforeIsFavorite = item.userData?.isFavorite ?? false
+
+                await MainActor.run {
+                    item.userData?.isFavorite?.toggle()
+                }
+
+                do {
+                    try await setIsFavorite(!beforeIsFavorite)
+                } catch {
+                    await MainActor.run {
+                        item.userData?.isFavorite = beforeIsFavorite
+                        // emit event that toggle unsuccessful
+                    }
+                }
+            }
+            .asAnyCancellable()
+
             return state
-        case .toggleWatched:
+        case .toggleIsPlayed:
             return state
         }
     }
@@ -180,89 +203,41 @@ class ItemViewModel: ViewModel, Stateful {
             .filter { $0.extraType?.isVideo ?? false }
     }
 
-    private func toggleWatchState() async throws {
-
-        guard let isPlayed = item.userData?.isPlayed else { throw JellyfinAPIError("Item doesn't have expected user data") }
+    private func setIsPlayed(_ isPlayed: Bool) async throws {
 
         let request: Request<UserItemDataDto>
 
         if isPlayed {
-            request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-        } else {
             request = Paths.markPlayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
+        } else {
+            request = Paths.markUnplayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
         }
 
-        let response = try await userSession.client.send(request)
-
-//        let current = isPlayed
-//        isPlayed.toggle()
-//        let request: AnyPublisher<UserItemDataDto, Error>
-
-//        if current {
-//            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
-//        } else {
-//            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
-//        }
-
-//        request
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { [weak self] completion in
-//                switch completion {
-//                case .failure:
-//                    self?.isPlayed = !current
-//                case .finished: ()
-//                }
-//                self?.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { _ in })
-//            .store(in: &cancellables)
+        let _ = try await userSession.client.send(request)
     }
 
-    private func toggleFavoriteState() async throws {
-
-        guard let isFavorite = item.userData?.isFavorite else { throw JellyfinAPIError("Item doesn't have expected user data") }
+    private func setIsFavorite(_ isFavorite: Bool) async throws {
 
         let request: Request<UserItemDataDto>
 
         if isFavorite {
-            request = Paths.unmarkFavoriteItem(
+            request = Paths.markFavoriteItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
         } else {
-            request = Paths.markFavoriteItem(
+            request = Paths.unmarkFavoriteItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
         }
 
-        let response = try await userSession.client.send(request)
-
-//        let current = isFavorited
-//        isFavorited.toggle()
-//        let request: AnyPublisher<UserItemDataDto, Error>
-
-//        if current {
-//            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
-//        } else {
-//            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
-//        }
-
-//        request
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { [weak self] completion in
-//                switch completion {
-//                case .failure:
-//                    self?.isFavorited = !current
-//                case .finished: ()
-//                }
-//                self?.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { _ in })
-//            .store(in: &cancellables)
+        let _ = try await userSession.client.send(request)
     }
 }

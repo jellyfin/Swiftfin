@@ -56,6 +56,7 @@ extension ItemView {
 
                 Button {
                     UIDevice.impact(.light)
+                    viewModel.send(.toggleIsFavorite)
 //                    viewModel.toggleFavoriteState()
                 } label: {
                     if viewModel.item.userData?.isFavorite ?? false {
