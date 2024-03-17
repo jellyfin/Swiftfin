@@ -198,9 +198,6 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    /// Subclasses can override this method to perform additional actions
-    func onRefresh() async throws {}
-
     private func getFullItem() async throws -> BaseItemDto {
 
         var parameters = Paths.GetItemsByUserIDParameters()

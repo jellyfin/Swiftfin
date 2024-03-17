@@ -16,6 +16,31 @@ final class EpisodeItemViewModel: ItemViewModel {
     @Published
     private(set) var seriesItem: BaseItemDto?
 
+    private var seriesItemTask: AnyCancellable?
+
+    override init(item: BaseItemDto) {
+        super.init(item: item)
+
+        $lastAction
+            .sink { [weak self] action in
+                guard let self else { return }
+
+                if action == .refresh {
+                    seriesItemTask?.cancel()
+
+                    seriesItemTask = Task {
+                        let seriesItem = try await self.getSeriesItem()
+
+                        await MainActor.run {
+                            self.seriesItem = seriesItem
+                        }
+                    }
+                    .asAnyCancellable()
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     private func getSeriesItem() async throws -> BaseItemDto {
 
         guard let seriesID = item.seriesID else { throw JellyfinAPIError("Expected series ID missing") }

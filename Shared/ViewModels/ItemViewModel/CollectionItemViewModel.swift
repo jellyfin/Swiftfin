@@ -23,6 +23,7 @@ final class CollectionItemViewModel: ItemViewModel {
         $lastAction
             .sink { [weak self] action in
                 guard let self else { return }
+
                 if action == .refresh {
                     collectionItemsTask?.cancel()
 
