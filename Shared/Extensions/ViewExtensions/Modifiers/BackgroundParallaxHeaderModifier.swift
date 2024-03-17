@@ -13,6 +13,9 @@ struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
     @Binding
     private var scrollViewOffset: CGFloat
 
+    @State
+    private var contentSize: CGSize = .zero
+
     private let height: CGFloat
     private let multiplier: CGFloat
     private let header: () -> Header
@@ -30,15 +33,18 @@ struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.background(alignment: .top) {
-            header()
-                .offset(y: scrollViewOffset > 0 ? -scrollViewOffset * multiplier : 0)
-                .scaleEffect(scrollViewOffset < 0 ? (height - scrollViewOffset) / height : 1, anchor: .top)
-                .mask(alignment: .top) {
-                    Color.black
-                        .frame(height: max(0, height - scrollViewOffset))
-                }
-                .ignoresSafeArea()
-        }
+        content
+            .size($contentSize)
+            .background(alignment: .top) {
+                header()
+                    .offset(y: scrollViewOffset > 0 ? -scrollViewOffset * multiplier : 0)
+                    .scaleEffect(scrollViewOffset < 0 ? (height - scrollViewOffset) / height : 1, anchor: .top)
+                    .frame(width: contentSize.width)
+                    .mask(alignment: .top) {
+                        Color.black
+                            .frame(height: max(0, height - scrollViewOffset))
+                    }
+                    .ignoresSafeArea()
+            }
     }
 }
