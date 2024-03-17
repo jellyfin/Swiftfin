@@ -101,15 +101,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     init(
         _ data: some Collection<Element>,
-        parent: (any LibraryParent)? = nil,
-        pageSize: Int = DefaultPageSize
+        parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
         self.elements = OrderedSet(data)
         self.isStatic = true
         self.hasNextPage = false
-        self.pageSize = pageSize
+        self.pageSize = DefaultPageSize
         self.parent = parent
+    }
+
+    convenience init(
+        title: String,
+        _ data: some Collection<Element>
+    ) {
+        self.init(data, parent: TitledLibraryParent(displayTitle: title))
     }
 
     init(

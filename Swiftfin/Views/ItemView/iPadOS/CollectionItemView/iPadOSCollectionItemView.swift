@@ -6,12 +6,17 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct iPadOSCollectionItemView: View {
 
-    @ObservedObject
-    var viewModel: CollectionItemViewModel
+    @StateObject
+    private var viewModel: CollectionItemViewModel
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: CollectionItemViewModel(item: item))
+    }
 
     var body: some View {
         ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {

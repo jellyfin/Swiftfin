@@ -20,7 +20,7 @@ final class CollectionItemViewModel: ItemViewModel {
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        lastAction.publisher
+        $lastAction
             .sink { [weak self] action in
                 guard let self else { return }
                 if action == .refresh {

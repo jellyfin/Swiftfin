@@ -14,8 +14,12 @@ struct iPadOSEpisodeItemView: View {
     @EnvironmentObject
     private var router: ItemCoordinator.Router
 
-    @ObservedObject
-    var viewModel: EpisodeItemViewModel
+    @StateObject
+    private var viewModel: EpisodeItemViewModel
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: EpisodeItemViewModel(item: item))
+    }
 
     var body: some View {
         ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {

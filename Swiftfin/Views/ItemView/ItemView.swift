@@ -19,13 +19,13 @@ struct ItemView: View {
     private var padView: some View {
         switch item.type {
         case .boxSet:
-            iPadOSCollectionItemView(viewModel: .init(item: item))
+            iPadOSCollectionItemView(item: item)
         case .episode:
-            iPadOSEpisodeItemView(viewModel: .init(item: item))
+            iPadOSEpisodeItemView(item: item)
         case .movie:
             iPadOSMovieItemView(item: item)
         case .series:
-            iPadOSSeriesItemView(viewModel: .init(item: item))
+            iPadOSSeriesItemView(item: item)
         default:
             Text(L10n.notImplementedYetWithType(item.type ?? "--"))
         }
