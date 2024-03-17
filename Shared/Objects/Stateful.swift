@@ -12,10 +12,11 @@ import Foundation
 
 protocol Stateful: AnyObject {
 
-    associatedtype Action
+    associatedtype Action: Equatable
     associatedtype State: Equatable
 
     var state: State { get set }
+    var lastAction: Action? { get set }
 
     /// Send an action to the `Stateful` object, which will
     /// `respond` to the action and set the new state.
@@ -32,5 +33,6 @@ extension Stateful {
     @MainActor
     func send(_ action: Action) {
         state = respond(to: action)
+        lastAction = action
     }
 }

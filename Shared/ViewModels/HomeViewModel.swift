@@ -16,7 +16,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case error(JellyfinAPIError)
         case refresh
     }
@@ -31,12 +31,14 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     @Published
-    var libraries: [LatestInLibraryViewModel] = []
+    private(set) var libraries: [LatestInLibraryViewModel] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
     @Published
-    var state: State = .initial
+    final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
     private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()

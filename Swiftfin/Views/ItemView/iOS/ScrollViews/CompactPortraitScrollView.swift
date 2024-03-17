@@ -37,8 +37,19 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .onAppear {
+                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                        blurHashBottomEdgeColor = Color(
+                            red: Double(bottomRGB.0),
+                            green: Double(bottomRGB.1),
+                            blue: Double(bottomRGB.2)
+                        )
+                    }
+                }
         }
 
         var body: some View {
@@ -96,21 +107,9 @@ extension ItemView {
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }
-            .onAppear {
-                if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                    let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                    blurHashBottomEdgeColor = Color(
-                        red: Double(bottomRGB.0),
-                        green: Double(bottomRGB.1),
-                        blue: Double(bottomRGB.2)
-                    )
+            .topBarTrailing {
+                if viewModel.state == .refreshing {
+                    ProgressView()
                 }
             }
         }
@@ -173,7 +172,10 @@ extension ItemView.CompactPosterScrollView {
                     // MARK: Portrait Image
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .aspectRatio(2 / 3, contentMode: .fit)
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.typeSystemImage)
+                        }
+                        .posterStyle(.portrait, contentMode: .fit)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 

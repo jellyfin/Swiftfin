@@ -14,16 +14,20 @@ import JellyfinAPI
 import UIKit
 
 // TODO: transition to `Stateful`
-class ItemViewModel: ViewModel, Stateful {
+class ItemViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case error(JellyfinAPIError)
         case refresh
         case toggleIsFavorite
         case toggleIsPlayed
     }
+
+    // MARK: Event
+
+    enum Event {}
 
     // MARK: State
 
@@ -54,10 +58,6 @@ class ItemViewModel: ViewModel, Stateful {
         }
     }
 
-//    @Published
-//    var isFavorited = false
-//    @Published
-//    var isPlayed = false
     @Published
     private(set) var selectedMediaSource: MediaSourceInfo?
     @Published
@@ -66,10 +66,25 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
 
     @Published
-    var state: State = .item
+    final var state: State = .item
+    @Published
+    final var lastAction: Action? = nil
 
-    private var toggleFavoriteTask: AnyCancellable?
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    private let eventSubject: PassthroughSubject<Event, Never> = .init()
+
+    // tasks
+
+    private var toggleIsFavoriteTask: AnyCancellable?
+    private var toggleIsPlayedTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
+
+    // MARK: init
 
     init(item: BaseItemDto) {
         self.item = item
@@ -90,6 +105,8 @@ class ItemViewModel: ViewModel, Stateful {
 //            }
 //            .store(in: &cancellables)
     }
+
+    // MARK: respond
 
     func respond(to action: Action) -> State {
         switch action {
@@ -132,9 +149,9 @@ class ItemViewModel: ViewModel, Stateful {
             return .refreshing
         case .toggleIsFavorite:
 
-            toggleFavoriteTask?.cancel()
+            toggleIsFavoriteTask?.cancel()
 
-            toggleFavoriteTask = Task {
+            toggleIsFavoriteTask = Task {
 
                 let beforeIsFavorite = item.userData?.isFavorite ?? false
 
@@ -155,9 +172,34 @@ class ItemViewModel: ViewModel, Stateful {
 
             return state
         case .toggleIsPlayed:
+
+            toggleIsPlayedTask?.cancel()
+
+            toggleIsPlayedTask = Task {
+
+                let beforeIsPlayed = item.userData?.isPlayed ?? false
+
+                await MainActor.run {
+                    item.userData?.isPlayed?.toggle()
+                }
+
+                do {
+                    try await setIsPlayed(!beforeIsPlayed)
+                } catch {
+                    await MainActor.run {
+                        item.userData?.isPlayed = beforeIsPlayed
+                        // emit event that toggle unsuccessful
+                    }
+                }
+            }
+            .asAnyCancellable()
+
             return state
         }
     }
+
+    /// Subclasses can override this method to perform additional actions
+    func onRefresh() async throws {}
 
     private func getFullItem() async throws -> BaseItemDto {
 

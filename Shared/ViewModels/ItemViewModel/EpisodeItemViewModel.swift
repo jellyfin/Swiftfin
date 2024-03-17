@@ -14,30 +14,26 @@ import Stinsen
 final class EpisodeItemViewModel: ItemViewModel {
 
     @Published
-    var seriesItem: BaseItemDto?
+    private(set) var seriesItem: BaseItemDto?
 
-    override init(item: BaseItemDto) {
-        super.init(item: item)
+    private func getSeriesItem() async throws -> BaseItemDto {
 
-        getSeriesItem()
-    }
+        guard let seriesID = item.seriesID else { throw JellyfinAPIError("Expected series ID missing") }
 
-    private func getSeriesItem() {
-        guard let seriesID = item.seriesID else { return }
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 1,
-                fields: ItemFields.allCases,
-                enableUserData: true,
-                ids: [seriesID]
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.ids = [seriesID]
+        parameters.limit = 1
 
-            await MainActor.run {
-                seriesItem = response.value.items?.first
-            }
-        }
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        guard let seriesItem = response.value.items?.first else { throw JellyfinAPIError("Expected series item missing") }
+
+        return seriesItem
     }
 }

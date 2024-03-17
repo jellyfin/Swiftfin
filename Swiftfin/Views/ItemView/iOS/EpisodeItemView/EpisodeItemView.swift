@@ -14,8 +14,12 @@ struct EpisodeItemView: View {
     @EnvironmentObject
     private var router: ItemCoordinator.Router
 
-    @ObservedObject
-    var viewModel: EpisodeItemViewModel
+    @StateObject
+    private var viewModel: EpisodeItemViewModel
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: EpisodeItemViewModel(item: item))
+    }
 
     @State
     private var scrollViewOffset: CGFloat = 0
@@ -29,14 +33,15 @@ struct EpisodeItemView: View {
         .navigationBarOffset(
             $scrollViewOffset,
             start: 0,
-            end: 30
+            end: 10
         )
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                if viewModel.isLoading {
-                    ProgressView()
-                }
+        .topBarTrailing {
+            if viewModel.state == .refreshing {
+                ProgressView()
             }
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
         }
     }
 }

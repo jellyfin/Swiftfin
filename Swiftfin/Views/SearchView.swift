@@ -85,7 +85,7 @@ struct SearchView: View {
     @ViewBuilder
     private func itemsSection(
         title: String,
-        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
+        keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
         posterType: PosterType
     ) -> some View {
         PosterHStack(

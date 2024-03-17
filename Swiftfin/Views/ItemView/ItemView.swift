@@ -35,13 +35,13 @@ struct ItemView: View {
     private var phoneView: some View {
         switch item.type {
         case .boxSet:
-            CollectionItemView(viewModel: .init(item: item))
+            CollectionItemView(item: item)
         case .episode:
-            EpisodeItemView(viewModel: .init(item: item))
+            EpisodeItemView(item: item)
         case .movie:
             MovieItemView(item: item)
         case .series:
-            SeriesItemView(viewModel: .init(item: item))
+            SeriesItemView(item: item)
         default:
             Text(L10n.notImplementedYetWithType(item.type ?? "--"))
         }

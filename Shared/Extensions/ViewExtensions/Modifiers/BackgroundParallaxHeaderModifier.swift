@@ -11,11 +11,11 @@ import SwiftUI
 struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
 
     @Binding
-    var scrollViewOffset: CGFloat
+    private var scrollViewOffset: CGFloat
 
-    let height: CGFloat
-    let multiplier: CGFloat
-    let header: () -> Header
+    private let height: CGFloat
+    private let multiplier: CGFloat
+    private let header: () -> Header
 
     init(
         _ scrollViewOffset: Binding<CGFloat>,

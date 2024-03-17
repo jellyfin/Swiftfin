@@ -13,27 +13,44 @@ import JellyfinAPI
 final class CollectionItemViewModel: ItemViewModel {
 
     @Published
-    var collectionItems: [BaseItemDto] = []
+    private(set) var collectionItems: [BaseItemDto] = []
+
+    private var collectionItemsTask: AnyCancellable?
 
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        getCollectionItems()
+        lastAction.publisher
+            .sink { [weak self] action in
+                guard let self else { return }
+                if action == .refresh {
+                    collectionItemsTask?.cancel()
+
+                    collectionItemsTask = Task {
+                        let collectionItems = try await self.getCollectionItems()
+
+                        await MainActor.run {
+                            self.collectionItems = collectionItems
+                        }
+                    }
+                    .asAnyCancellable()
+                }
+            }
+            .store(in: &cancellables)
     }
 
-    private func getCollectionItems() {
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                parentID: item.id,
-                fields: ItemFields.allCases
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+    private func getCollectionItems() async throws -> [BaseItemDto] {
 
-            await MainActor.run {
-                collectionItems = response.value.items ?? []
-            }
-        }
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.parentID = item.id
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
     }
 }

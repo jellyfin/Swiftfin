@@ -72,6 +72,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     final var elements: OrderedSet<Element>
     @Published
     final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?

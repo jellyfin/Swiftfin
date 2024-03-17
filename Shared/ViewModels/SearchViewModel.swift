@@ -15,7 +15,7 @@ final class SearchViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case error(JellyfinAPIError)
         case getSuggestions
         case search(query: String)
@@ -31,20 +31,22 @@ final class SearchViewModel: ViewModel, Stateful {
     }
 
     @Published
-    var collections: [BaseItemDto] = []
+    private(set) var collections: [BaseItemDto] = []
     @Published
-    var episodes: [BaseItemDto] = []
+    private(set) var episodes: [BaseItemDto] = []
     @Published
-    var movies: [BaseItemDto] = []
+    private(set) var movies: [BaseItemDto] = []
     @Published
-    var people: [BaseItemDto] = []
+    private(set) var people: [BaseItemDto] = []
     @Published
-    var series: [BaseItemDto] = []
+    private(set) var series: [BaseItemDto] = []
     @Published
-    var suggestions: [BaseItemDto] = []
+    private(set) var suggestions: [BaseItemDto] = []
 
     @Published
-    var state: State = .initial
+    final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     private var searchTask: AnyCancellable?
     private var searchQuery: CurrentValueSubject<String, Never> = .init("")
