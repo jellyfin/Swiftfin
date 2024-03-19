@@ -91,11 +91,9 @@ extension ItemView {
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
+            .topBarTrailing {
+                if viewModel.isLoading {
+                    ProgressView()
                 }
             }
         }
