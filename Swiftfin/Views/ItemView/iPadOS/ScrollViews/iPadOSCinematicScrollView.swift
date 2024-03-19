@@ -50,8 +50,7 @@ extension ItemView {
                         Spacer()
 
                         OverlayView(viewModel: viewModel)
-                            .padding2(.horizontal)
-                            .padding2(.bottom)
+                            .edgePadding()
                     }
                     .frame(height: UIScreen.main.bounds.height * 0.8)
                     .background {

@@ -22,26 +22,23 @@ struct SeriesEpisodeSelector: View {
     @ViewBuilder
     private var selectorMenu: some View {
         Menu {
-            ForEach(viewModel.menuSections.keys.sorted(by: { viewModel.menuSectionSort($0, $1) }), id: \.displayTitle) { section in
+            ForEach(viewModel.seasons.keys) { season in
                 Button {
-                    viewModel.select(section: section)
+                    // TODO: select
                 } label: {
-                    if section == viewModel.menuSelection {
-                        Label(section.displayTitle, systemImage: "checkmark")
+                    if season == viewModel.selection {
+                        Label(season.displayTitle, systemImage: "checkmark")
                     } else {
-                        Text(section.displayTitle)
+                        Text(season.displayTitle)
                     }
                 }
             }
         } label: {
-            HStack(spacing: 5) {
-                Group {
-                    Text(viewModel.menuSelection?.displayTitle ?? L10n.unknown)
-                        .fixedSize()
-                    Image(systemName: "chevron.down")
-                }
-                .font(.title3.weight(.semibold))
-            }
+            Label(
+                viewModel.selection?.displayTitle ?? L10n.unknown,
+                systemImage: "chevron.down"
+            )
+            .font(.title3.weight(.semibold))
         }
         .padding(.bottom)
         .fixedSize()
@@ -52,27 +49,28 @@ struct SeriesEpisodeSelector: View {
             selectorMenu
                 .edgePadding(.horizontal)
 
-            if viewModel.currentItems.isEmpty {
+            if viewModel.seasons.keys.isEmpty {
                 EmptyView()
             } else {
                 CollectionHStack(
-                    $viewModel.currentItems,
+                    //                    viewModel.seasons[viewModel.selection!]!,
+                    $viewModel.seasons.values[0],
                     columns: UIDevice.isPhone ? 1.5 : 3.5
-                ) { item in
+                ) { episode in
                     PosterButton(
-                        item: item,
+                        item: episode,
                         type: .landscape,
                         singleImage: true
                     )
                     .content {
-                        EpisodeContent(episode: item)
+                        EpisodeContent(episode: episode)
                     }
                     .imageOverlay {
-                        EpisodeOverlay(episode: item)
+                        EpisodeOverlay(episode: episode)
                     }
                     .onSelect {
-                        guard let mediaSource = item.mediaSources?.first else { return }
-                        mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
+                        guard let mediaSource = episode.mediaSources?.first else { return }
+                        mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
                     }
                 }
                 .scrollBehavior(.continuousLeadingEdge)

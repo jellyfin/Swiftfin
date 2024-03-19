@@ -50,7 +50,7 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    private(set) var playButtonItem: BaseItemDto? {
+    var playButtonItem: BaseItemDto? {
         willSet {
             if let newValue {
                 selectedMediaSource = newValue.mediaSources?.first
@@ -131,6 +131,10 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
 
                     guard !Task.isCancelled else { return }
 
+                    try await onRefresh()
+
+                    guard !Task.isCancelled else { return }
+
                     await MainActor.run {
                         self.item = results.fullItem
                         self.similarItems = results.similarItems
@@ -197,6 +201,8 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
             return state
         }
     }
+
+    func onRefresh() async throws {}
 
     private func getFullItem() async throws -> BaseItemDto {
 
