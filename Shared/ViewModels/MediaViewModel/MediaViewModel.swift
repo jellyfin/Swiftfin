@@ -27,6 +27,7 @@ final class MediaViewModel: ViewModel, Stateful {
 
     enum State: Equatable {
         case content
+        case offlineContent
         case error(JellyfinAPIError)
         case initial
         case refreshing
@@ -47,14 +48,20 @@ final class MediaViewModel: ViewModel, Stateful {
 
             Task {
                 do {
-                    try await refresh()
+//                    try await refresh()
+                    throw NSError(domain: "", code: NSURLErrorNotConnectedToInternet)
 
                     await MainActor.run {
                         self.state = .content
                     }
                 } catch {
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
+                        if (error as NSError).code == NSURLErrorNotConnectedToInternet {
+                            self.state = .offlineContent
+                            self.mediaItems.append(.downloads)
+                        } else {
+                            self.state = .error(.init(error.localizedDescription))
+                        }
                     }
                 }
             }
@@ -79,6 +86,7 @@ final class MediaViewModel: ViewModel, Stateful {
                 return .collectionFolder(userView)
             }
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+            .prepending(.downloads)
 
         await MainActor.run {
             mediaItems.elements = media
