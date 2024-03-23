@@ -48,8 +48,8 @@ final class MediaViewModel: ViewModel, Stateful {
 
             Task {
                 do {
-//                    try await refresh()
-                    throw NSError(domain: "", code: NSURLErrorNotConnectedToInternet)
+                    try await refresh()
+//                    throw NSError(domain: "", code: NSURLErrorNotConnectedToInternet)
 
                     await MainActor.run {
                         self.state = .content
