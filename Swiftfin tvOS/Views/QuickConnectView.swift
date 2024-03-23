@@ -10,9 +10,11 @@ import SwiftUI
 
 struct QuickConnectView: View {
     @ObservedObject
-    var viewModel: UserSignInViewModel
+    var viewModel: QuickConnectViewModel
     @Binding
     var isPresentingQuickConnect: Bool
+    // Once the auth secret is fetched, run this and dismiss this view
+    var signIn: @MainActor (_: String) -> Void
 
     func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         Text(quickConnectCode)
@@ -37,10 +39,10 @@ struct QuickConnectView: View {
 
     @ViewBuilder
     var quickConnectBody: some View {
-        switch viewModel.quickConnectStatus {
+        switch viewModel.state {
         case let .awaitingAuthentication(code):
             quickConnectWaitingAuthentication(quickConnectCode: code)
-        case nil, .fetchingSecret, .authorized:
+        case .initial, .fetchingSecret, .authenticated:
             quickConnectLoading
         case .error:
             quickConnectFailed
@@ -75,13 +77,17 @@ struct QuickConnectView: View {
             }
             .buttonStyle(.plain)
         }
-        .onAppear {
-            Task {
-                await viewModel.signInWithQuickConnect()
+        .onChange(of: viewModel.state) { newState in
+            if case let .authenticated(secret: secret) = newState {
+                signIn(secret)
+                isPresentingQuickConnect = false
             }
         }
+        .onAppear {
+            viewModel.send(.startQuickConnect)
+        }
         .onDisappear {
-            viewModel.stopQuickConnectAuthCheck()
+            viewModel.send(.cancelQuickConnect)
         }
     }
 }

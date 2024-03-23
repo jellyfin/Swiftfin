@@ -25,6 +25,8 @@ final class QuickConnectCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        QuickConnectView(viewModel: viewModel)
+        QuickConnectView(viewModel: viewModel.quickConnectViewModel, signIn: { authSecret in
+            self.viewModel.send(.signInWithQuickConnect(authSecret: authSecret))
+        })
     }
 }

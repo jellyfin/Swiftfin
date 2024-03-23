@@ -13,7 +13,10 @@ struct QuickConnectView: View {
     private var router: QuickConnectCoordinator.Router
 
     @ObservedObject
-    var viewModel: UserSignInViewModel
+    var viewModel: QuickConnectViewModel
+
+    // Once the auth secret is fetched, run this and dismiss this view
+    var signIn: @MainActor (_: String) -> Void
 
     func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         Text(quickConnectCode)
@@ -42,10 +45,10 @@ struct QuickConnectView: View {
 
     @ViewBuilder
     var quickConnectBody: some View {
-        switch viewModel.quickConnectStatus {
+        switch viewModel.state {
         case let .awaitingAuthentication(code):
             quickConnectWaitingAuthentication(quickConnectCode: code)
-        case nil, .fetchingSecret, .authorized:
+        case .initial, .fetchingSecret, .authenticated:
             quickConnectLoading
         case .error:
             quickConnectFailed
@@ -67,17 +70,19 @@ struct QuickConnectView: View {
         }
         .padding(.horizontal)
         .navigationTitle(L10n.quickConnect)
-        .onAppear {
-            Task {
-                if await viewModel.signInWithQuickConnect() {
-                    router.dismissCoordinator()
-                }
+        .onChange(of: viewModel.state) { newState in
+            if case let .authenticated(secret: secret) = newState {
+                signIn(secret)
+                router.dismissCoordinator()
             }
         }
-        .onDisappear {
-            viewModel.stopQuickConnectAuthCheck()
+        .onAppear {
+            viewModel.send(.startQuickConnect)
         }
-        .navigationCloseButton {
+        .onDisappear {
+            viewModel.send(.cancelQuickConnect)
+        }
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

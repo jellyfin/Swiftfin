@@ -26,11 +26,9 @@ struct UserSignInView: View {
     @State
     private var isPresentingQuickConnect: Bool = false
     @State
+    private var isPresentingSignInError: Bool = false
+    @State
     private var password: String = ""
-    @State
-    private var signInError: Error?
-    @State
-    private var signInTask: Task<Void, Never>?
     @State
     private var username: String = ""
 
@@ -49,22 +47,10 @@ struct UserSignInView: View {
                     .focused($focusedField, equals: .password)
 
                 Button {
-                    let task = Task {
-                        viewModel.isLoading = true
-
-                        do {
-                            try await viewModel.signIn(username: username, password: password)
-                        } catch {
-                            signInError = error
-                        }
-
-                        viewModel.isLoading = false
-                    }
-
-                    signInTask = task
+                    viewModel.send(.signInWithUserPass(username: username, password: password))
                 } label: {
                     HStack {
-                        if viewModel.isLoading {
+                        if case viewModel.state = .signingIn {
                             ProgressView()
                         }
 
@@ -129,6 +115,14 @@ struct UserSignInView: View {
         }
     }
 
+    var errorText: some View {
+        var text: String?
+        if case let .error(error) = viewModel.state {
+            text = error.localizedDescription
+        }
+        return Text(text ?? .emptyDash)
+    }
+
     var body: some View {
         ZStack {
             ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
@@ -148,15 +142,29 @@ struct UserSignInView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .navigationTitle(L10n.signIn)
-//        .alert(item: $viewModel.errorMessage) { _ in
-//            Alert(
-//                title: Text(viewModel.alertTitle),
-//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-//                dismissButton: .cancel()
-//            )
-//        }
+        .onChange(of: viewModel.state) { _ in
+            // If we encountered the error as we switched from quick connect cover to this view,
+            // it's possible that the alert doesn't show, so wait a little bit
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                isPresentingSignInError = true
+            }
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingSignInError
+        ) {
+            Button(L10n.dismiss, role: .cancel)
+        } message: {
+            errorText
+        }
         .blurFullScreenCover(isPresented: $isPresentingQuickConnect) {
-            QuickConnectView(viewModel: viewModel, isPresentingQuickConnect: $isPresentingQuickConnect)
+            QuickConnectView(
+                viewModel: viewModel.quickConnectViewModel,
+                isPresentingQuickConnect: $isPresentingQuickConnect,
+                signIn: { authSecret in
+                    self.viewModel.send(.signInWithQuickConnect(authSecret: authSecret))
+                }
+            )
         }
         .onAppear {
             Task {
@@ -165,8 +173,7 @@ struct UserSignInView: View {
             }
         }
         .onDisappear {
-            viewModel.isLoading = false
-            viewModel.stopQuickConnectAuthCheck()
+            viewModel.send(.cancelSignIn)
         }
     }
 }
