@@ -69,28 +69,37 @@ struct MediaView: View {
     }
 
     var body: some View {
-        WrappedView {
-            Group {
-                switch viewModel.state {
-                case .content:
-                    contentView
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
+        VStack(alignment: .center) {
+            WrappedView {
+                Group {
+                    switch viewModel.state {
+                    case .content, .offlineContent:
+                        contentView
+                    case let .error(error):
+                        errorView(with: error)
+                    case .initial, .refreshing:
+                        ProgressView()
+                    }
+                }
+                .transition(.opacity.animation(.linear(duration: 0.1)))
+            }
+            .ignoresSafeArea()
+            .navigationTitle(viewModel.state == .offlineContent ? "Downloaded Media" : L10n.allMedia)
+            .topBarTrailing {
+                if viewModel.isLoading {
                     ProgressView()
                 }
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
-        }
-        .ignoresSafeArea()
-        .navigationTitle(L10n.allMedia)
-        .topBarTrailing {
-            if viewModel.isLoading {
-                ProgressView()
+            .onFirstAppear {
+                viewModel.send(.refresh)
             }
-        }
-        .onFirstAppear {
-            viewModel.send(.refresh)
+
+            if viewModel.state == .offlineContent {
+                Text("You are offline. Only media that you have downloaded locally is visible.")
+                    .frame(maxWidth: .infinity, minHeight: 44, maxHeight: 44)
+                    .background(Color.jellyfinPurple, ignoresSafeAreaEdges: [])
+                    .foregroundStyle(Color.white)
+            }
         }
     }
 }

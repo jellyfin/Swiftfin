@@ -223,7 +223,7 @@ extension Defaults.Keys {
     // Experimental settings
     enum Experimental {
 
-        static let downloads: Key<Bool> = .init("experimentalDownloads", default: false, suite: .generalSuite)
+        static let downloads: Key<Bool> = .init("experimentalDownloads", default: true, suite: .generalSuite)
         static let syncSubtitleStateWithAdjacent = Key<Bool>(
             "experimentalSyncSubtitleState",
             default: false,
