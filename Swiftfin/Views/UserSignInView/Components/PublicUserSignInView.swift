@@ -10,9 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension UserSignInView {
-
     struct PublicUserSignInView: View {
-
         @ObservedObject
         var viewModel: UserSignInViewModel
 
@@ -25,10 +23,8 @@ extension UserSignInView {
             DisclosureGroup {
                 SecureField(L10n.password, text: $password)
                 Button {
-                    Task {
-                        guard let username = publicUser.name else { return }
-                        try? await viewModel.signIn(username: username, password: password)
-                    }
+                    guard let username = publicUser.name else { return }
+                    viewModel.send(.signInWithUserPass(username: username, password: password))
                 } label: {
                     L10n.signIn.text
                 }

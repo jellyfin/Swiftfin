@@ -9,19 +9,17 @@
 import SwiftUI
 
 struct QuickConnectView: View {
-    @EnvironmentObject
-    private var router: QuickConnectCoordinator.Router
-
     @ObservedObject
     var viewModel: QuickConnectViewModel
-
+    @Binding
+    var isPresentingQuickConnect: Bool
     // Once the auth secret is fetched, run this and dismiss this view
     var signIn: @MainActor (_: String) -> Void
 
     func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         Text(quickConnectCode)
             .tracking(10)
-            .font(.largeTitle)
+            .font(.title)
             .monospacedDigit()
             .frame(maxWidth: .infinity)
     }
@@ -36,11 +34,7 @@ struct QuickConnectView: View {
     }
 
     var quickConnectLoading: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-            Spacer()
-        }
+        ProgressView()
     }
 
     @ViewBuilder
@@ -56,24 +50,37 @@ struct QuickConnectView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            L10n.quickConnectStep1.text
+        VStack(alignment: .center) {
+            L10n.quickConnect.text
+                .font(.title3)
+                .fontWeight(.semibold)
 
-            L10n.quickConnectStep2.text
+            Group {
+                VStack(alignment: .leading, spacing: 20) {
+                    L10n.quickConnectStep1.text
 
-            L10n.quickConnectStep3.text
-                .padding(.bottom)
+                    L10n.quickConnectStep2.text
 
-            quickConnectBody
+                    L10n.quickConnectStep3.text
+                }
+                .padding(.vertical)
 
-            Spacer()
+                quickConnectBody
+            }
+            .padding(.bottom)
+
+            Button {
+                isPresentingQuickConnect = false
+            } label: {
+                L10n.close.text
+                    .frame(width: 400, height: 75)
+            }
+            .buttonStyle(.plain)
         }
-        .padding(.horizontal)
-        .navigationTitle(L10n.quickConnect)
         .onChange(of: viewModel.state) { newState in
             if case let .authenticated(secret: secret) = newState {
                 signIn(secret)
-                router.dismissCoordinator()
+                isPresentingQuickConnect = false
             }
         }
         .onAppear {
@@ -81,9 +88,6 @@ struct QuickConnectView: View {
         }
         .onDisappear {
             viewModel.send(.cancelQuickConnect)
-        }
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
         }
     }
 }
