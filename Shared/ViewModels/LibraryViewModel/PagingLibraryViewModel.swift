@@ -25,6 +25,8 @@ private let DefaultPageSize = 50
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
+// TODO: this doesn't allow "scrolling" to an item if index > pageSize
+//       on refresh. Should make bidirectional/offset index start?
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -72,6 +74,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     final var elements: OrderedSet<Element>
     @Published
     final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
@@ -99,15 +103,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     init(
         _ data: some Collection<Element>,
-        parent: (any LibraryParent)? = nil,
-        pageSize: Int = DefaultPageSize
+        parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
         self.elements = OrderedSet(data)
         self.isStatic = true
         self.hasNextPage = false
-        self.pageSize = pageSize
+        self.pageSize = DefaultPageSize
         self.parent = parent
+    }
+
+    convenience init(
+        title: String,
+        _ data: some Collection<Element>
+    ) {
+        self.init(data, parent: TitledLibraryParent(displayTitle: title))
     }
 
     init(

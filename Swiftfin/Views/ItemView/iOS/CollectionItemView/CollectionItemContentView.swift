@@ -46,6 +46,16 @@ extension CollectionItemView {
                         type: .portrait,
                         items: viewModel.collectionItems
                     )
+                    .trailing {
+                        SeeAllButton()
+                            .onSelect {
+                                let viewModel = ItemLibraryViewModel(
+                                    title: viewModel.item.displayTitle,
+                                    viewModel.collectionItems
+                                )
+                                router.route(to: \.library, viewModel)
+                            }
+                    }
                     .onSelect { item in
                         router.route(to: \.item, item)
                     }

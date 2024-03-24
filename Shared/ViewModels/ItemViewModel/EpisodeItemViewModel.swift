@@ -14,32 +14,51 @@ import Stinsen
 final class EpisodeItemViewModel: ItemViewModel {
 
     @Published
-    var seriesItem: BaseItemDto?
+    private(set) var seriesItem: BaseItemDto?
+
+    private var seriesItemTask: AnyCancellable?
 
     override init(item: BaseItemDto) {
         super.init(item: item)
 
-        getSeriesItem()
+        $lastAction
+            .sink { [weak self] action in
+                guard let self else { return }
+
+                if action == .refresh {
+                    seriesItemTask?.cancel()
+
+                    seriesItemTask = Task {
+                        let seriesItem = try await self.getSeriesItem()
+
+                        await MainActor.run {
+                            self.seriesItem = seriesItem
+                        }
+                    }
+                    .asAnyCancellable()
+                }
+            }
+            .store(in: &cancellables)
     }
 
-    override func updateItem() {}
+    private func getSeriesItem() async throws -> BaseItemDto {
 
-    private func getSeriesItem() {
-        guard let seriesID = item.seriesID else { return }
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 1,
-                fields: ItemFields.allCases,
-                enableUserData: true,
-                ids: [seriesID]
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+        guard let seriesID = item.seriesID else { throw JellyfinAPIError("Expected series ID missing") }
 
-            await MainActor.run {
-                seriesItem = response.value.items?.first
-            }
-        }
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.ids = [seriesID]
+        parameters.limit = 1
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        guard let seriesItem = response.value.items?.first else { throw JellyfinAPIError("Expected series item missing") }
+
+        return seriesItem
     }
 }

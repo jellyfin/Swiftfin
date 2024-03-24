@@ -9,14 +9,36 @@
 import Combine
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
 import UIKit
 
 // TODO: transition to `Stateful`
-class ItemViewModel: ViewModel {
+class ItemViewModel: ViewModel, Eventful, Stateful {
+
+    // MARK: Action
+
+    enum Action: Equatable {
+        case error(JellyfinAPIError)
+        case refresh
+        case toggleIsFavorite
+        case toggleIsPlayed
+    }
+
+    // MARK: Event
+
+    enum Event {}
+
+    // MARK: State
+
+    enum State: Equatable {
+        case error(JellyfinAPIError)
+        case item
+        case refreshing
+    }
 
     @Published
-    var item: BaseItemDto {
+    private(set) var item: BaseItemDto {
         willSet {
             switch item.type {
             case .episode, .movie:
@@ -37,169 +59,230 @@ class ItemViewModel: ViewModel {
     }
 
     @Published
-    var isFavorited = false
+    private(set) var selectedMediaSource: MediaSourceInfo?
     @Published
-    var isPlayed = false
+    private(set) var similarItems: [BaseItemDto] = []
     @Published
-    var selectedMediaSource: MediaSourceInfo?
+    private(set) var specialFeatures: [BaseItemDto] = []
+
     @Published
-    var similarItems: [BaseItemDto] = []
+    final var state: State = .item
     @Published
-    var specialFeatures: [BaseItemDto] = []
+    final var lastAction: Action? = nil
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    private let eventSubject: PassthroughSubject<Event, Never> = .init()
+
+    // tasks
+
+    private var toggleIsFavoriteTask: AnyCancellable?
+    private var toggleIsPlayedTask: AnyCancellable?
+    private var refreshTask: AnyCancellable?
+
+    // MARK: init
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
 
-        getFullItem()
+//        getFullItem()
 
-        isFavorited = item.userData?.isFavorite ?? false
-        isPlayed = item.userData?.isPlayed ?? false
+//        isFavorited = item.userData?.isFavorite ?? false
+//        isPlayed = item.userData?.isPlayed ?? false
 
-        getSimilarItems()
-        getSpecialFeatures()
-
-        Notifications[.didSendStopReport].subscribe(self, selector: #selector(receivedStopReport(_:)))
+//        Notifications[.didEndPlayback].publiser
+//            .sink { [weak self] notification in
+//                guard let userInfo = notification.userInfo else { return }
+//
+//                if let playbackItem = userInfo["playbackItem"] as? BaseItemDto {
+//
+//                }
+//            }
+//            .store(in: &cancellables)
     }
 
-    private func getFullItem() {
-        Task {
+    // MARK: respond
 
-            await MainActor.run {
-                isLoading = true
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
+
+            refreshTask?.cancel()
+
+            refreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+                    async let fullItem = getFullItem()
+                    async let similarItems = getSimilarItems()
+                    async let specialFeatures = getSpecialFeatures()
+
+                    let results = try await (
+                        fullItem: fullItem,
+                        similarItems: similarItems,
+                        specialFeatures: specialFeatures
+                    )
+
+                    guard !Task.isCancelled else { return }
+
+                    try await onRefresh()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.item = results.fullItem
+                        self.similarItems = results.similarItems
+                        self.specialFeatures = results.specialFeatures
+
+                        self.state = .item
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    // TODO: error
+                }
             }
+            .asAnyCancellable()
 
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                fields: ItemFields.allCases,
-                enableUserData: true,
-                ids: [item.id!]
-            )
+            return .refreshing
+        case .toggleIsFavorite:
 
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
+            toggleIsFavoriteTask?.cancel()
 
-            guard let fullItem = response.value.items?.first else { return }
+            toggleIsFavoriteTask = Task {
 
-            await MainActor.run {
-                self.item = fullItem
-                isLoading = false
+                let beforeIsFavorite = item.userData?.isFavorite ?? false
+
+                await MainActor.run {
+                    item.userData?.isFavorite?.toggle()
+                }
+
+                do {
+                    try await setIsFavorite(!beforeIsFavorite)
+                } catch {
+                    await MainActor.run {
+                        item.userData?.isFavorite = beforeIsFavorite
+                        // emit event that toggle unsuccessful
+                    }
+                }
             }
-        }
-    }
+            .asAnyCancellable()
 
-    @objc
-    private func receivedStopReport(_ notification: NSNotification) {
-        guard let itemID = notification.object as? String else { return }
+            return state
+        case .toggleIsPlayed:
 
-        if itemID == item.id {
-            updateItem()
-        } else {
-            // Remove if necessary. Note that this cannot be in deinit as
-            // holding as an observer won't allow the object to be deinit-ed
-            Notifications[.didSendStopReport].unsubscribe(self)
-        }
-    }
+            toggleIsPlayedTask?.cancel()
 
-    // TODO: remove and have views handle
-    func playButtonText() -> String {
+            toggleIsPlayedTask = Task {
 
-        if item.isUnaired {
-            return L10n.unaired
-        }
+                let beforeIsPlayed = item.userData?.isPlayed ?? false
 
-        if item.isMissing {
-            return L10n.missing
-        }
+                await MainActor.run {
+                    item.userData?.isPlayed?.toggle()
+                }
 
-        if let itemProgressString = item.progressLabel {
-            return itemProgressString
-        }
-
-        return L10n.play
-    }
-
-    func getSimilarItems() {
-        Task {
-            let parameters = Paths.GetSimilarItemsParameters(
-                userID: userSession.user.id,
-                limit: 20,
-                fields: .MinimumFields
-            )
-            let request = Paths.getSimilarItems(
-                itemID: item.id!,
-                parameters: parameters
-            )
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                similarItems = response.value.items ?? []
+                do {
+                    try await setIsPlayed(!beforeIsPlayed)
+                } catch {
+                    await MainActor.run {
+                        item.userData?.isPlayed = beforeIsPlayed
+                        // emit event that toggle unsuccessful
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
-    func getSpecialFeatures() {
-        Task {
-            let request = Paths.getSpecialFeatures(
+    func onRefresh() async throws {}
+
+    private func getFullItem() async throws -> BaseItemDto {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.allCases
+        parameters.ids = [item.id!]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
+
+        return fullItem
+    }
+
+    private func getSimilarItems() async -> [BaseItemDto] {
+
+        var parameters = Paths.GetSimilarItemsParameters()
+        parameters.fields = .MinimumFields
+        parameters.limit = 20
+        parameters.userID = userSession.user.id
+
+        let request = Paths.getSimilarItems(
+            itemID: item.id!,
+            parameters: parameters
+        )
+
+        let response = try? await userSession.client.send(request)
+
+        return response?.value.items ?? []
+    }
+
+    private func getSpecialFeatures() async -> [BaseItemDto] {
+
+        let request = Paths.getSpecialFeatures(
+            userID: userSession.user.id,
+            itemID: item.id!
+        )
+        let response = try? await userSession.client.send(request)
+
+        return (response?.value ?? [])
+            .filter { $0.extraType?.isVideo ?? false }
+    }
+
+    private func setIsPlayed(_ isPlayed: Bool) async throws {
+
+        let request: Request<UserItemDataDto>
+
+        if isPlayed {
+            request = Paths.markPlayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                specialFeatures = response.value.filter { $0.extraType?.isVideo ?? false }
-            }
+        } else {
+            request = Paths.markUnplayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
         }
+
+        let _ = try await userSession.client.send(request)
     }
 
-    func toggleWatchState() {
-//        let current = isPlayed
-//        isPlayed.toggle()
-//        let request: AnyPublisher<UserItemDataDto, Error>
+    private func setIsFavorite(_ isFavorite: Bool) async throws {
 
-//        if current {
-//            request = PlaystateAPI.markUnplayedItem(userId: "123abc", itemId: item.id!)
-//        } else {
-//            request = PlaystateAPI.markPlayedItem(userId: "123abc", itemId: item.id!)
-//        }
+        let request: Request<UserItemDataDto>
 
-//        request
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { [weak self] completion in
-//                switch completion {
-//                case .failure:
-//                    self?.isPlayed = !current
-//                case .finished: ()
-//                }
-//                self?.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { _ in })
-//            .store(in: &cancellables)
+        if isFavorite {
+            request = Paths.markFavoriteItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        } else {
+            request = Paths.unmarkFavoriteItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        }
+
+        let _ = try await userSession.client.send(request)
     }
-
-    func toggleFavoriteState() {
-//        let current = isFavorited
-//        isFavorited.toggle()
-//        let request: AnyPublisher<UserItemDataDto, Error>
-
-//        if current {
-//            request = UserLibraryAPI.unmarkFavoriteItem(userId: "123abc", itemId: item.id!)
-//        } else {
-//            request = UserLibraryAPI.markFavoriteItem(userId: "123abc", itemId: item.id!)
-//        }
-
-//        request
-//            .trackActivity(loading)
-//            .sink(receiveCompletion: { [weak self] completion in
-//                switch completion {
-//                case .failure:
-//                    self?.isFavorited = !current
-//                case .finished: ()
-//                }
-//                self?.handleAPIRequestError(completion: completion)
-//            }, receiveValue: { _ in })
-//            .store(in: &cancellables)
-    }
-
-    // Overridden by subclasses
-    func updateItem() {}
 }

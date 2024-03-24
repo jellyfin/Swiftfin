@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 import SwiftUI
 
 struct CollectionItemView: View {
@@ -14,23 +15,32 @@ struct CollectionItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @ObservedObject
-    var viewModel: CollectionItemViewModel
+    @StateObject
+    private var viewModel: CollectionItemViewModel
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: CollectionItemViewModel(item: item))
+    }
 
     var body: some View {
-        switch itemViewType {
-        case .compactPoster:
-            ItemView.CompactPosterScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
+        WrappedView {
+            switch itemViewType {
+            case .compactPoster:
+                ItemView.CompactPosterScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
+            case .compactLogo:
+                ItemView.CompactLogoScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
+            case .cinematic:
+                ItemView.CinematicScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
             }
-        case .compactLogo:
-            ItemView.CompactLogoScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .cinematic:
-            ItemView.CinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
         }
     }
 }

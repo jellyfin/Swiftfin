@@ -44,6 +44,7 @@ extension ItemView {
                 cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
                 maxWidth: UIScreen.main.bounds.width
             ))
+            .aspectRatio(contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
             .onAppear {
@@ -108,11 +109,9 @@ extension ItemView {
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
+            .topBarTrailing {
+                if viewModel.state == .refreshing {
+                    ProgressView()
                 }
             }
         }
@@ -137,20 +136,19 @@ extension ItemView.CinematicScrollView {
                 VStack(alignment: .center, spacing: 10) {
                     if !cinematicItemViewTypeUsePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-//                            .resizingMode(.aspectFit)
-                                .placeholder {
-                                    EmptyView()
-                                }
-                                .failure {
-                                    MaxHeightText(text: viewModel.item.displayTitle, maxHeight: 100)
-                                        .font(.largeTitle.weight(.semibold))
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(.white)
-                                }
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 100)
-                                .frame(maxWidth: .infinity)
+                            .placeholder {
+                                EmptyView()
+                            }
+                            .failure {
+                                MaxHeightText(text: viewModel.item.displayTitle, maxHeight: 100)
+                                    .font(.largeTitle.weight(.semibold))
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.center)
+                                    .foregroundColor(.white)
+                            }
+                            .aspectRatio(contentMode: .fit)
+                            .frame(height: 100)
+                            .frame(maxWidth: .infinity)
                     } else {
                         Spacer()
                             .frame(height: 50)

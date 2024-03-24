@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-protocol LibraryParent: Displayable, Identifiable<String?> {
+protocol LibraryParent: Displayable, Hashable, Identifiable<String?> {
 
     // Only called `libraryType` because `BaseItemPerson` has
     // a different `type` property. However, people should have

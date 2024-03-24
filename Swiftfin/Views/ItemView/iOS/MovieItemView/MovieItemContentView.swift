@@ -64,6 +64,7 @@ extension MovieItemView {
 
                 ItemView.AboutView(viewModel: viewModel)
             }
+            .animation(.linear(duration: 0.2), value: viewModel.item)
         }
     }
 }

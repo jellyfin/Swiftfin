@@ -15,23 +15,32 @@ struct MovieItemView: View {
     @Default(.Customization.itemViewType)
     private var itemViewType
 
-    @ObservedObject
-    var viewModel: MovieItemViewModel
+    @StateObject
+    private var viewModel: MovieItemViewModel
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: MovieItemViewModel(item: item))
+    }
 
     var body: some View {
-        switch itemViewType {
-        case .compactPoster:
-            ItemView.CompactPosterScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
+        WrappedView {
+            switch itemViewType {
+            case .compactPoster:
+                ItemView.CompactPosterScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
+            case .compactLogo:
+                ItemView.CompactLogoScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
+            case .cinematic:
+                ItemView.CinematicScrollView(viewModel: viewModel) {
+                    ContentView(viewModel: viewModel)
+                }
             }
-        case .compactLogo:
-            ItemView.CompactLogoScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .cinematic:
-            ItemView.CinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
         }
     }
 }

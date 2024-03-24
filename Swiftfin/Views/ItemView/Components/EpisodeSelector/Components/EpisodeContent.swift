@@ -6,82 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionHStack
 import Defaults
 import JellyfinAPI
 import SwiftUI
-
-struct SeriesEpisodeSelector: View {
-
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
-
-    @ObservedObject
-    var viewModel: SeriesItemViewModel
-
-    @ViewBuilder
-    private var selectorMenu: some View {
-        Menu {
-            ForEach(viewModel.menuSections.keys.sorted(by: { viewModel.menuSectionSort($0, $1) }), id: \.displayTitle) { section in
-                Button {
-                    viewModel.select(section: section)
-                } label: {
-                    if section == viewModel.menuSelection {
-                        Label(section.displayTitle, systemImage: "checkmark")
-                    } else {
-                        Text(section.displayTitle)
-                    }
-                }
-            }
-        } label: {
-            HStack(spacing: 5) {
-                Group {
-                    Text(viewModel.menuSelection?.displayTitle ?? L10n.unknown)
-                        .fixedSize()
-                    Image(systemName: "chevron.down")
-                }
-                .font(.title3.weight(.semibold))
-            }
-        }
-        .padding(.bottom)
-        .fixedSize()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            selectorMenu
-                .edgePadding(.horizontal)
-
-            if viewModel.currentItems.isEmpty {
-                EmptyView()
-            } else {
-                CollectionHStack(
-                    $viewModel.currentItems,
-                    columns: UIDevice.isPhone ? 1.5 : 3.5
-                ) { item in
-                    PosterButton(
-                        item: item,
-                        type: .landscape,
-                        singleImage: true
-                    )
-                    .content {
-                        EpisodeContent(episode: item)
-                    }
-                    .imageOverlay {
-                        EpisodeOverlay(episode: item)
-                    }
-                    .onSelect {
-                        guard let mediaSource = item.mediaSources?.first else { return }
-                        mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
-                    }
-                }
-                .scrollBehavior(.continuousLeadingEdge)
-                .insets(horizontal: EdgeInsets.defaultEdgePadding)
-                .itemSpacing(8)
-            }
-        }
-    }
-}
 
 extension SeriesEpisodeSelector {
 

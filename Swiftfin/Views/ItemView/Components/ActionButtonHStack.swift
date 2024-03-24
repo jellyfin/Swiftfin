@@ -15,11 +15,12 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        @Injected(Container.downloadManager)
+        private var downloadManager: DownloadManager
+
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
-        @ObservedObject
-        private var downloadManager: DownloadManager
         @ObservedObject
         private var viewModel: ItemViewModel
 
@@ -28,17 +29,15 @@ extension ItemView {
         init(viewModel: ItemViewModel, equalSpacing: Bool = true) {
             self.viewModel = viewModel
             self.equalSpacing = equalSpacing
-
-            self.downloadManager = Container.downloadManager()
         }
 
         var body: some View {
             HStack(alignment: .center, spacing: 15) {
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.toggleWatchState()
+                    viewModel.send(.toggleIsPlayed)
                 } label: {
-                    if viewModel.isPlayed {
+                    if viewModel.item.userData?.isPlayed ?? false {
                         Image(systemName: "checkmark.circle.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(
@@ -56,9 +55,9 @@ extension ItemView {
 
                 Button {
                     UIDevice.impact(.light)
-                    viewModel.toggleFavoriteState()
+                    viewModel.send(.toggleIsFavorite)
                 } label: {
-                    if viewModel.isFavorited {
+                    if viewModel.item.userData?.isFavorite ?? false {
                         Image(systemName: "heart.fill")
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(Color.red)
@@ -78,7 +77,7 @@ extension ItemView {
                     Menu {
                         ForEach(mediaSources, id: \.hashValue) { mediaSource in
                             Button {
-                                viewModel.selectedMediaSource = mediaSource
+//                                viewModel.selectedMediaSource = mediaSource
                             } label: {
                                 if let selectedMediaSource = viewModel.selectedMediaSource, selectedMediaSource == mediaSource {
                                     Label(selectedMediaSource.displayTitle, systemImage: "checkmark")
