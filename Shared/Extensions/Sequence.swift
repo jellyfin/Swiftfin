@@ -31,6 +31,11 @@ extension Sequence {
     func zipped<Other: Sequence>(with other: Other) -> Zip2Sequence<Self, Other> {
         zip(self, other)
     }
+
+    func zipped<Value>(map: (Element) -> Value) -> Zip2Sequence<Self, some Sequence<Value>> {
+        let other = self.map(map)
+        return zip(self, other)
+    }
 }
 
 extension Sequence where Element: Equatable {

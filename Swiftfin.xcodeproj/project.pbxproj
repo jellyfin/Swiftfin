@@ -285,8 +285,6 @@
 		E1388A43293F0AAD009721B1 /* PreferenceUIHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1388A41293F0AAD009721B1 /* PreferenceUIHostingController.swift */; };
 		E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E1388A45293F0ABA009721B1 /* SwizzleSwift */; };
 		E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FEC2BA218A80034110D /* SwiftUIIntrospect */; };
-		E1392FF22BA21B360034110D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FF12BA21B360034110D /* CollectionHStack */; };
-		E1392FF42BA21B470034110D /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1392FF32BA21B470034110D /* CollectionHStack */; };
 		E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1C28EC836F00688DE2 /* ChapterOverlay.swift */; };
 		E139CC1F28EC83E400688DE2 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = E139CC1E28EC83E400688DE2 /* Int.swift */; };
 		E13AF3B628A0C598009093AB /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E13AF3B528A0C598009093AB /* Nuke */; };
@@ -446,6 +444,9 @@
 		E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */; };
 		E1722DB129491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
 		E1722DB229491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
+		E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */; };
+		E172D3AE2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */; };
+		E172D3B22BACA569007B4647 /* EpisodeContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E172D3B12BACA569007B4647 /* EpisodeContent.swift */; };
 		E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */; };
 		E173DA5226D04AAF00CC4EB7 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5126D04AAF00CC4EB7 /* Color.swift */; };
 		E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
@@ -496,6 +497,7 @@
 		E18CE0B228A229E70092E7F1 /* UserDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B128A229E70092E7F1 /* UserDto.swift */; };
 		E18CE0B428A22EDA0092E7F1 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */; };
 		E18CE0B928A2322D0092E7F1 /* QuickConnectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B828A2322D0092E7F1 /* QuickConnectCoordinator.swift */; };
+		E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E18D6AA52BAA96F000A0D167 /* CollectionHStack */; };
 		E18E01AB288746AF0022598C /* PillHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01A5288746AF0022598C /* PillHStack.swift */; };
 		E18E01AD288746AF0022598C /* DotHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01A7288746AF0022598C /* DotHStack.swift */; };
 		E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01B6288747230022598C /* iPadOSEpisodeContentView.swift */; };
@@ -674,7 +676,7 @@
 		E1D8429529346C6400D1041A /* BasicStepper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D8429429346C6400D1041A /* BasicStepper.swift */; };
 		E1D9F475296E86D400129AF3 /* NativeVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D9F474296E86D400129AF3 /* NativeVideoPlayer.swift */; };
 		E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */; };
-		E1DA656F28E78C9900592A73 /* SeriesEpisodeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA656E28E78C9900592A73 /* SeriesEpisodeSelector.swift */; };
+		E1DA656F28E78C9900592A73 /* EpisodeSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA656E28E78C9900592A73 /* EpisodeSelector.swift */; };
 		E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAF92A270E62008AC34A /* OverviewCard.swift */; };
 		E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */; };
 		E1DABAFE2A27B982008AC34A /* RatingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFD2A27B982008AC34A /* RatingsCard.swift */; };
@@ -1069,6 +1071,8 @@
 		E1721FA928FB7CAC00762992 /* CompactTimeStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactTimeStamp.swift; sourceTree = "<group>"; };
 		E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPlaybackButtons.swift; sourceTree = "<group>"; };
 		E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBlurHashes.swift; sourceTree = "<group>"; };
+		E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemViewModel.swift; sourceTree = "<group>"; };
+		E172D3B12BACA569007B4647 /* EpisodeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeContent.swift; sourceTree = "<group>"; };
 		E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E173DA5126D04AAF00CC4EB7 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
@@ -1234,7 +1238,7 @@
 		E1D8429429346C6400D1041A /* BasicStepper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicStepper.swift; sourceTree = "<group>"; };
 		E1D9F474296E86D400129AF3 /* NativeVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeVideoPlayer.swift; sourceTree = "<group>"; };
 		E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFeatureType.swift; sourceTree = "<group>"; };
-		E1DA656E28E78C9900592A73 /* SeriesEpisodeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeriesEpisodeSelector.swift; sourceTree = "<group>"; };
+		E1DA656E28E78C9900592A73 /* EpisodeSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeSelector.swift; sourceTree = "<group>"; };
 		E1DABAF92A270E62008AC34A /* OverviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCard.swift; sourceTree = "<group>"; };
 		E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourcesCard.swift; sourceTree = "<group>"; };
 		E1DABAFD2A27B982008AC34A /* RatingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingsCard.swift; sourceTree = "<group>"; };
@@ -1333,7 +1337,6 @@
 				E104DC942B9D89A2008F506D /* CollectionVGrid in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
-				E1392FF42BA21B470034110D /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
@@ -1372,6 +1375,7 @@
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
 				E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */,
+				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
@@ -1381,7 +1385,6 @@
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
-				E1392FF22BA21B360034110D /* CollectionHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
 				E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */,
@@ -1935,6 +1938,7 @@
 				62E632E5267D3F5B0063E547 /* EpisodeItemViewModel.swift */,
 				62E632F2267D54030063E547 /* ItemViewModel.swift */,
 				62E632E2267D3BA60063E547 /* MovieItemViewModel.swift */,
+				E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */,
 				62E632EB267D410B0063E547 /* SeriesItemViewModel.swift */,
 			);
 			path = ItemViewModel;
@@ -2275,6 +2279,23 @@
 			path = PlaybackButtons;
 			sourceTree = "<group>";
 		};
+		E172D3AF2BACA54A007B4647 /* EpisodeSelector */ = {
+			isa = PBXGroup;
+			children = (
+				E1DA656E28E78C9900592A73 /* EpisodeSelector.swift */,
+				E172D3B02BACA560007B4647 /* Components */,
+			);
+			path = EpisodeSelector;
+			sourceTree = "<group>";
+		};
+		E172D3B02BACA560007B4647 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E172D3B12BACA569007B4647 /* EpisodeContent.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E178859C2780F5300094FBCF /* tvOSSLider */ = {
 			isa = PBXGroup;
 			children = (
@@ -2466,10 +2487,10 @@
 				E18E01D7288747230022598C /* AttributeHStack.swift */,
 				E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */,
 				E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */,
+				E172D3AF2BACA54A007B4647 /* EpisodeSelector */,
 				E17FB55A28C1266400311DFE /* GenresHStack.swift */,
 				E1D8424E2932F7C400D1041A /* OverviewView.swift */,
 				E18E01D8288747230022598C /* PlayButton.swift */,
-				E1DA656E28E78C9900592A73 /* SeriesEpisodeSelector.swift */,
 				E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */,
 				E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */,
 				E17FB55828C125E900311DFE /* StudiosHStack.swift */,
@@ -2919,7 +2940,6 @@
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E104DC932B9D89A2008F506D /* CollectionVGrid */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
-				E1392FF32BA21B470034110D /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2969,7 +2989,7 @@
 				E104DC8F2B9D8995008F506D /* CollectionVGrid */,
 				E15EFA832BA167350080E926 /* CollectionHStack */,
 				E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */,
-				E1392FF12BA21B360034110D /* CollectionHStack */,
+				E18D6AA52BAA96F000A0D167 /* CollectionHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3040,7 +3060,7 @@
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E104DC8E2B9D8995008F506D /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
-				E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */,
+				E18D6AA42BAA96F000A0D167 /* XCLocalSwiftPackageReference "../CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3249,6 +3269,7 @@
 				E1575E85293E7A00001665B1 /* DarkAppIcon.swift in Sources */,
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				E1575E95293E7B1E001665B1 /* Font.swift in Sources */,
+				E172D3AE2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				E11E374D293E7EC9009EF240 /* ItemFields.swift in Sources */,
 				E1575E6E293E77B5001665B1 /* SpecialFeatureType.swift in Sources */,
 				E12CC1C528D12D9B00678D5D /* SeeAllPosterButton.swift in Sources */,
@@ -3559,6 +3580,7 @@
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
 				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
+				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				C45942C627F695FB00C54FE7 /* LiveTVProgramsCoordinator.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
@@ -3661,7 +3683,7 @@
 				E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E1A1528528FD191A00600579 /* TextPair.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectSettingsViewModel.swift in Sources */,
-				E1DA656F28E78C9900592A73 /* SeriesEpisodeSelector.swift in Sources */,
+				E1DA656F28E78C9900592A73 /* EpisodeSelector.swift in Sources */,
 				E18E01E0288747230022598C /* iPadOSMovieItemContentView.swift in Sources */,
 				E13DD3E127176BD3009D4DAF /* ServerListViewModel.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
@@ -3812,6 +3834,7 @@
 				E148128528C15472003B8787 /* SortOrder.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
+				E172D3B22BACA569007B4647 /* EpisodeContent.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,
 				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,
@@ -4150,7 +4173,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4165,7 +4188,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4189,7 +4212,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4204,7 +4227,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4251,6 +4274,10 @@
 		E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PreferencesView;
+		};
+		E18D6AA42BAA96F000A0D167 /* XCLocalSwiftPackageReference "../CollectionHStack" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../CollectionHStack;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -4301,14 +4328,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
@@ -4505,16 +4524,6 @@
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
 		};
-		E1392FF12BA21B360034110D /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
-		E1392FF32BA21B470034110D /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
 		E13AF3B528A0C598009093AB /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E19E6E0328A0B958005C10C8 /* XCRemoteSwiftPackageReference "Nuke" */;
@@ -4616,6 +4625,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */;
 			productName = VLCUI;
+		};
+		E18D6AA52BAA96F000A0D167 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionHStack;
 		};
 		E192608228D2D0DB002314B4 /* Factory */ = {
 			isa = XCSwiftPackageProductDependency;

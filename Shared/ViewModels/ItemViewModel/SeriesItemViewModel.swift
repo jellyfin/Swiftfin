@@ -16,30 +16,13 @@ import OrderedCollections
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var seasons: OrderedDictionary<BaseItemDto, OrderedSet<BaseItemDto>> = [:]
-    @Published
-    var selection: BaseItemDto? = nil
-
-    override init(item: BaseItemDto) {
-        super.init(item: item)
-
-//        getSeasons()
-
-        // The server won't have both a next up item
-        // and a resume item at the same time, so they
-        // control the button first. Also fetch first available
-        // item, which may be overwritten by next up or resume.
-//        getNextUp()
-//        getResumeItem()
-//        getFirstAvailableItem()
-    }
+    var seasons: OrderedSet<SeasonItemViewModel> = []
 
     // TODO: find season that determined playbutton item is a part of
     override func onRefresh() async throws {
 
         await MainActor.run {
             self.seasons.removeAll()
-            self.selection = nil
         }
 
         async let nextUp = getNextUp()
@@ -57,27 +40,15 @@ final class SeriesItemViewModel: ItemViewModel {
             }
         }
 
-//        let newSeasons: [BaseItemDto: [BaseItemDto]] = try await seasons
-//            .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-//            .reduce(into: [:]) { partialResult, season in
-//                partialResult[season] = []
-//            }
+//        let newSeasons = try await seasons
 
-        let s = try await seasons
-
-        let newSeasons = s
-            .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) }
-            .zipped(with: Array(repeating: OrderedSet<BaseItemDto>(), count: s.count))
+        let newSeasons = try await seasons
+            .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) } // sort just in case
+            .map(SeasonItemViewModel.init)
 
         await MainActor.run {
-            self.seasons.merge(newSeasons) { _, new in new }
-            self.selection = s.first
-        }
-
-        let episodes = try await episodes(for: s.first!)
-
-        await MainActor.run {
-            self.seasons[s.first!]?.append(contentsOf: episodes)
+            self.seasons.append(contentsOf: newSeasons)
+//            self.seasons.merge(zippedSeasons, uniquingKeysWith: { _, e in e })
         }
     }
 
@@ -146,18 +117,6 @@ final class SeriesItemViewModel: ItemViewModel {
         return response.value.items?.first
     }
 
-//    func select(section: BaseItemDto) {
-//        self.menuSelection = section
-//
-//        if let episodes = menuSections[section] {
-//            if episodes.isEmpty {
-//                getEpisodesForSeason(section)
-//            } else {
-//                self.currentItems = episodes
-//            }
-//        }
-//    }
-
     private func getSeasons() async throws -> [BaseItemDto] {
 
         var parameters = Paths.GetSeasonsParameters()
@@ -165,25 +124,6 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.userID = userSession.user.id
 
         let request = Paths.getSeasons(
-            seriesID: item.id!,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
-    }
-
-    // TODO: lazy loading
-    private func episodes(for season: BaseItemDto) async throws -> [BaseItemDto] {
-
-        var parameters = Paths.GetEpisodesParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.isMissing = Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false
-        parameters.seasonID = season.id
-        parameters.userID = userSession.user.id
-
-        let request = Paths.getEpisodes(
             seriesID: item.id!,
             parameters: parameters
         )
