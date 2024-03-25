@@ -27,6 +27,7 @@ private let DefaultPageSize = 50
 //         a check if elements were actually appended to the set but that requires a redundant get
 // TODO: this doesn't allow "scrolling" to an item if index > pageSize
 //       on refresh. Should make bidirectional/offset index start?
+//       - use startIndex/index ranges instead of pages
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
