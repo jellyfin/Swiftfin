@@ -23,7 +23,7 @@ final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
         case error(JellyfinAPIError)
         case initial
@@ -36,9 +36,9 @@ final class HomeViewModel: ViewModel, Stateful {
     var resumeItems: OrderedSet<BaseItemDto> = []
 
     @Published
-    final var state: State = .initial
+    var lastAction: Action? = nil
     @Published
-    final var lastAction: Action? = nil
+    var state: State = .initial
 
     private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
     private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
@@ -126,8 +126,7 @@ final class HomeViewModel: ViewModel, Stateful {
             .map { LatestInLibraryViewModel(parent: $0) }
     }
 
-    // TODO: eventually a more robust user/server information retrieval system
-    //       will be in place. Replace with using the data from the remove user
+    // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)

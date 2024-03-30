@@ -12,9 +12,16 @@ import JellyfinAPI
 
 // TODO: after figuring out how to do bidirectional/offset in PagingLibraryViewModel,
 //       implement paginating
+
+// Since we don't view care to view seasons directly, this doesn't *have* to subclass
+// instead from `ItemViewModel`. If we ever care for viewing seasons directly, subclass
+// from that and have the paging library for episodes be held.
 final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto> {
 
+    let season: BaseItemDto
+
     init(season: BaseItemDto) {
+        self.season = season
         super.init(parent: season)
     }
 

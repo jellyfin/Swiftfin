@@ -70,18 +70,16 @@ struct MediaView: View {
 
     var body: some View {
         WrappedView {
-            Group {
-                switch viewModel.state {
-                case .content:
-                    contentView
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
-                    ProgressView()
-                }
+            switch viewModel.state {
+            case .content:
+                contentView
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
         .topBarTrailing {

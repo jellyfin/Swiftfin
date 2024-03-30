@@ -9,101 +9,78 @@
 import CollectionHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
+// This also changes views based on parent series item state.
+// TODO: should just have fade in item after getting full item successful?
+//       - for all items and would allow this to be cleaner
 struct SeriesEpisodeSelector: View {
-
-    @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
 
     @ObservedObject
     var viewModel: SeriesItemViewModel
 
     @State
-    private var selection: BaseItemDto?
+    private var didSelectPlayButtonSeason = false
+    @State
+    private var selection: SeasonItemViewModel?
 
-    var body: some View {
-        Text("")
+    @ViewBuilder
+    private var seasonSelectorMenu: some View {
+        Menu {
+            ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
+                Button {
+                    selection = seasonViewModel
+                } label: {
+                    if seasonViewModel == selection {
+                        Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
+                    } else {
+                        Text(seasonViewModel.season.displayTitle)
+                    }
+                }
+            }
+        } label: {
+            Label(
+                selection?.season.displayTitle ?? .emptyDash,
+                systemImage: "chevron.down"
+            )
+            .labelStyle(.episodeSelector)
+        }
+        .fixedSize()
     }
 
-//    @ViewBuilder
-//    private var selectorMenu: some View {
-//        Menu {
-//            ForEach(viewModel.seasons, id: \.hashValue) { seasonViewModel in
-//                Button {
-//                    selection = seasonViewModel
-//                } label: {
-//                    if seasonViewModel == selection {
-//                        Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
-//                    } else {
-//                        Text(seasonViewModel.season.displayTitle)
-//                    }
-//                }
-//            }
-//        } label: {
-//            Label(
-//                selection?.season.displayTitle ?? .emptyDash,
-//                systemImage: "chevron.down"
-//            )
-//            .font(.title3.weight(.semibold))
-//        }
-//        .padding(.bottom)
-//        .fixedSize()
-//    }
-//
-//    var body: some View {
-//        VStack(alignment: .leading) {
-//            selectorMenu
-//                .edgePadding(.horizontal)
-//
-//            if let selection {
-//                TestView(viewModel: selection)
-//            }
-//        }
-//        .onChange(of: viewModel.seasons) { newValue in
-//            selection = newValue.first
-//        }
-//        .onChange(of: selection) { newValue in
-//            guard let newValue else { return }
-//
-//            if newValue.state == .initial {
-//                newValue.send(.refresh)
-//            }
-//        }
-//    }
-}
-
-struct TestView: View {
-
-    @ObservedObject
-    var viewModel: SeasonItemViewModel
-
     var body: some View {
-        CollectionHStack(
-            $viewModel.elements,
-            columns: UIDevice.isPhone ? 1.5 : 3.5
-        ) { episode in
-            PosterButton(
-                item: episode,
-                type: .landscape,
-                singleImage: true
-            )
-            .content {
-                SeriesEpisodeSelector.EpisodeContent(episode: episode)
+        VStack(alignment: .leading) {
+
+            seasonSelectorMenu
+                .edgePadding([.bottom, .horizontal])
+
+            Group {
+                if let selection {
+                    EpisodeHStack(viewModel: selection, playButtonItem: viewModel.playButtonItem)
+                } else {
+                    LoadingHStack()
+                }
             }
-            .imageOverlay {
-                SeriesEpisodeSelector.EpisodeOverlay(episode: episode)
-            }
-//            .onSelect {
-//                guard let mediaSource = episode.mediaSources?.first else { return }
-//                mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
-//            }
+            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
-        .scrollBehavior(.continuousLeadingEdge)
-        .insets(horizontal: EdgeInsets.defaultEdgePadding)
-        .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
-        .onFirstAppear {
-            print("here")
+        .onReceive(viewModel.playButtonItem.publisher) { newValue in
+
+            guard !didSelectPlayButtonSeason else { return }
+            didSelectPlayButtonSeason = true
+
+            if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
+                selection = season
+            } else {
+                selection = viewModel.seasons.first
+            }
+        }
+        .onChange(of: selection) { newValue in
+            guard let newValue else { return }
+
+            if newValue.state == .initial {
+                newValue.send(.refresh)
+            }
         }
     }
 }

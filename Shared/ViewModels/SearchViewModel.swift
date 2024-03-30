@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 final class SearchViewModel: ViewModel, Stateful {
@@ -23,7 +24,7 @@ final class SearchViewModel: ViewModel, Stateful {
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
         case error(JellyfinAPIError)
         case initial

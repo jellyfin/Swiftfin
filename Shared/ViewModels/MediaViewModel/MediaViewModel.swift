@@ -25,7 +25,7 @@ final class MediaViewModel: ViewModel, Stateful {
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
         case error(JellyfinAPIError)
         case initial

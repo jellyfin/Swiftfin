@@ -11,15 +11,8 @@ import SwiftUI
 
 struct iPadOSEpisodeItemView: View {
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
-
-    @StateObject
-    private var viewModel: EpisodeItemViewModel
-
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: EpisodeItemViewModel(item: item))
-    }
+    @ObservedObject
+    var viewModel: EpisodeItemViewModel
 
     var body: some View {
         ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {

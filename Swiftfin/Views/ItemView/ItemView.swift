@@ -13,49 +13,86 @@ import WidgetKit
 
 struct ItemView: View {
 
-    let item: BaseItemDto
+    @StateObject
+    private var viewModel: ItemViewModel
+
+    private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
+        switch item.type {
+        case .boxSet:
+            return CollectionItemViewModel(item: item)
+        case .episode:
+            return EpisodeItemViewModel(item: item)
+        case .movie:
+            return MovieItemViewModel(item: item)
+        case .series:
+            return SeriesItemViewModel(item: item)
+        default:
+            assertionFailure("Unsupported item")
+            return ItemViewModel(item: item)
+        }
+    }
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+    }
 
     @ViewBuilder
     private var padView: some View {
-        switch item.type {
+        switch viewModel.item.type {
         case .boxSet:
-            iPadOSCollectionItemView(item: item)
+            iPadOSCollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
         case .episode:
-            iPadOSEpisodeItemView(item: item)
+            iPadOSEpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
-            iPadOSMovieItemView(item: item)
+            iPadOSMovieItemView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
-            iPadOSSeriesItemView(item: item)
+            iPadOSSeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
         default:
-            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
         }
     }
 
     @ViewBuilder
     private var phoneView: some View {
-        switch item.type {
+        switch viewModel.item.type {
         case .boxSet:
-            CollectionItemView(item: item)
+            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
         case .episode:
-            EpisodeItemView(item: item)
+            EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
         case .movie:
-            MovieItemView(item: item)
+            MovieItemView(viewModel: viewModel as! MovieItemViewModel)
         case .series:
-            SeriesItemView(item: item)
+            SeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
         default:
-            Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if UIDevice.isPad {
+            padView
+        } else {
+            phoneView
         }
     }
 
     var body: some View {
         WrappedView {
-            if UIDevice.isPad {
-                padView
-            } else {
-                phoneView
+            switch viewModel.state {
+            case .content:
+                contentView
+                    .navigationTitle(viewModel.item.displayTitle)
+            case let .error(error):
+                ErrorView(error: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(item.displayTitle)
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
     }
 }

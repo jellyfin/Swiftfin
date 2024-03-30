@@ -11,12 +11,8 @@ import SwiftUI
 
 struct iPadOSCollectionItemView: View {
 
-    @StateObject
-    private var viewModel: CollectionItemViewModel
-
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: CollectionItemViewModel(item: item))
-    }
+    @ObservedObject
+    var viewModel: CollectionItemViewModel
 
     var body: some View {
         ItemView.iPadOSCinematicScrollView(viewModel: viewModel) {

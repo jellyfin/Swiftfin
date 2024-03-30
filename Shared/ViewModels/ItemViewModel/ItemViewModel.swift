@@ -11,10 +11,10 @@ import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import OrderedCollections
 import UIKit
 
-// TODO: transition to `Stateful`
-class ItemViewModel: ViewModel, Eventful, Stateful {
+class ItemViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
@@ -25,15 +25,12 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
         case toggleIsPlayed
     }
 
-    // MARK: Event
-
-    enum Event {}
-
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
+        case content
         case error(JellyfinAPIError)
-        case item
+        case initial
         case refreshing
     }
 
@@ -66,17 +63,9 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
 
     @Published
-    final var state: State = .item
-    @Published
     final var lastAction: Action? = nil
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private let eventSubject: PassthroughSubject<Event, Never> = .init()
+    @Published
+    final var state: State = .initial
 
     // tasks
 
@@ -89,11 +78,6 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
     init(item: BaseItemDto) {
         self.item = item
         super.init()
-
-//        getFullItem()
-
-//        isFavorited = item.userData?.isFavorite ?? false
-//        isPlayed = item.userData?.isPlayed ?? false
 
 //        Notifications[.didEndPlayback].publiser
 //            .sink { [weak self] notification in
@@ -140,12 +124,14 @@ class ItemViewModel: ViewModel, Eventful, Stateful {
                         self.similarItems = results.similarItems
                         self.specialFeatures = results.specialFeatures
 
-                        self.state = .item
+                        self.state = .content
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
 
-                    // TODO: error
+                    await MainActor.run {
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
                 }
             }
             .asAnyCancellable()

@@ -13,12 +13,14 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: care for one long episodes list?
+//       - after SeasonItemViewModel is bidirectional
+//       - would have to see if server returns right amount of episodes/season
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
     var seasons: OrderedSet<SeasonItemViewModel> = []
 
-    // TODO: find season that determined playbutton item is a part of
     override func onRefresh() async throws {
 
         await MainActor.run {
@@ -30,25 +32,24 @@ final class SeriesItemViewModel: ItemViewModel {
         async let firstAvailable = getFirstAvailableItem()
         async let seasons = getSeasons()
 
-        if let seriesItem = try await [nextUp, resume].first {
-            await MainActor.run {
-                self.playButtonItem = seriesItem
-            }
-        } else if let firstAvailable = try await firstAvailable {
-            await MainActor.run {
-                self.playButtonItem = firstAvailable
-            }
-        }
-
-//        let newSeasons = try await seasons
-
         let newSeasons = try await seasons
             .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) } // sort just in case
             .map(SeasonItemViewModel.init)
 
         await MainActor.run {
             self.seasons.append(contentsOf: newSeasons)
-//            self.seasons.merge(zippedSeasons, uniquingKeysWith: { _, e in e })
+        }
+
+        if let episodeItem = try await [nextUp, resume].first {
+            await MainActor.run {
+                print("setting playButtonItem 1")
+                self.playButtonItem = episodeItem
+            }
+        } else if let firstAvailable = try await firstAvailable {
+            await MainActor.run {
+                print("setting playButtonItem 2")
+                self.playButtonItem = firstAvailable
+            }
         }
     }
 

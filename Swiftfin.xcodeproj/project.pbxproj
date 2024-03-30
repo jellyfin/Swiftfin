@@ -576,6 +576,12 @@
 		E1A1529128FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528F28FD23D600600579 /* PlaybackSettingsCoordinator.swift */; };
 		E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A16C9C2889AF1E00EA4679 /* AboutView.swift */; };
 		E1A2C154279A7D5A005EC829 /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A2C153279A7D5A005EC829 /* UIApplication.swift */; };
+		E1A3E4C72BB74E50005C59F8 /* EpisodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4C62BB74E50005C59F8 /* EpisodeCard.swift */; };
+		E1A3E4C92BB74EA3005C59F8 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4C82BB74EA3005C59F8 /* LoadingCard.swift */; };
+		E1A3E4CB2BB74EFD005C59F8 /* EpisodeHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4CA2BB74EFD005C59F8 /* EpisodeHStack.swift */; };
+		E1A3E4CD2BB7D8C8005C59F8 /* iOSLabelExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4CC2BB7D8C8005C59F8 /* iOSLabelExtensions.swift */; };
+		E1A3E4CF2BB7E02B005C59F8 /* DelayedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */; };
+		E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A3E4D02BB7F5BF005C59F8 /* ErrorCard.swift */; };
 		E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */; };
 		E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */; };
 		E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */; };
@@ -1159,6 +1165,12 @@
 		E1A1528F28FD23D600600579 /* PlaybackSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackSettingsCoordinator.swift; sourceTree = "<group>"; };
 		E1A16C9C2889AF1E00EA4679 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		E1A2C153279A7D5A005EC829 /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
+		E1A3E4C62BB74E50005C59F8 /* EpisodeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCard.swift; sourceTree = "<group>"; };
+		E1A3E4C82BB74EA3005C59F8 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
+		E1A3E4CA2BB74EFD005C59F8 /* EpisodeHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeHStack.swift; sourceTree = "<group>"; };
+		E1A3E4CC2BB7D8C8005C59F8 /* iOSLabelExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSLabelExtensions.swift; sourceTree = "<group>"; };
+		E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelayedProgressView.swift; sourceTree = "<group>"; };
+		E1A3E4D02BB7F5BF005C59F8 /* ErrorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCard.swift; sourceTree = "<group>"; };
 		E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicItemSelector.swift; sourceTree = "<group>"; };
 		E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeErrorView.swift; sourceTree = "<group>"; };
 		E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
@@ -1804,6 +1816,7 @@
 				E1D8429429346C6400D1041A /* BasicStepper.swift */,
 				E1A1528728FD229500600579 /* ChevronButton.swift */,
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
+				E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
 				E1DE2B492B97ECB900F6715F /* ErrorView.swift */,
 				E1921B7528E63306003A5238 /* GestureView.swift */,
@@ -2019,6 +2032,7 @@
 		E11CEB85289984F5003E74C7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				E1A3E4CC2BB7D8C8005C59F8 /* iOSLabelExtensions.swift */,
 				E11CEB8828998522003E74C7 /* View */,
 			);
 			path = Extensions;
@@ -2282,8 +2296,8 @@
 		E172D3AF2BACA54A007B4647 /* EpisodeSelector */ = {
 			isa = PBXGroup;
 			children = (
-				E1DA656E28E78C9900592A73 /* EpisodeSelector.swift */,
 				E172D3B02BACA560007B4647 /* Components */,
+				E1DA656E28E78C9900592A73 /* EpisodeSelector.swift */,
 			);
 			path = EpisodeSelector;
 			sourceTree = "<group>";
@@ -2291,7 +2305,11 @@
 		E172D3B02BACA560007B4647 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E1A3E4C62BB74E50005C59F8 /* EpisodeCard.swift */,
 				E172D3B12BACA569007B4647 /* EpisodeContent.swift */,
+				E1A3E4CA2BB74EFD005C59F8 /* EpisodeHStack.swift */,
+				E1A3E4D02BB7F5BF005C59F8 /* ErrorCard.swift */,
+				E1A3E4C82BB74EA3005C59F8 /* LoadingCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3531,6 +3549,7 @@
 				E1BDF2E92951490400CC0294 /* ActionButtonSelectorView.swift in Sources */,
 				E170D0E2294CC8000017224C /* VideoPlayer+Actions.swift in Sources */,
 				E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
+				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
 				C400DB6D27FE8E65007B65FE /* LiveTVChannelItemWideElement.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,
@@ -3562,6 +3581,7 @@
 				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E18A8E8528D60D0000333B9A /* VideoPlayerCoordinator.swift in Sources */,
 				E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */,
+				E1A3E4CD2BB7D8C8005C59F8 /* iOSLabelExtensions.swift in Sources */,
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */,
 				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
@@ -3612,6 +3632,7 @@
 				E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */,
 				E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */,
 				E18ACA922A15A32F00BB4F35 /* (null) in Sources */,
+				E1A3E4C92BB74EA3005C59F8 /* LoadingCard.swift in Sources */,
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E15756322935642A00976E1F /* Double.swift in Sources */,
@@ -3676,6 +3697,7 @@
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
+				E1A3E4CB2BB74EFD005C59F8 /* EpisodeHStack.swift in Sources */,
 				E1E0BEB729EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */,
 				E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */,
 				E18CE0B928A2322D0092E7F1 /* QuickConnectCoordinator.swift in Sources */,
@@ -3711,6 +3733,7 @@
 				E1D37F4E2B9CEDC400343D2B /* DeviceProfile.swift in Sources */,
 				E1EF4C412911B783008CC695 /* StreamType.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
+				E1A3E4CF2BB7E02B005C59F8 /* DelayedProgressView.swift in Sources */,
 				E1921B7628E63306003A5238 /* GestureView.swift in Sources */,
 				E18A8E8028D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,
 				E18E01DC288747230022598C /* iPadOSCinematicScrollView.swift in Sources */,
@@ -3833,6 +3856,7 @@
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E148128528C15472003B8787 /* SortOrder.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
+				E1A3E4C72BB74E50005C59F8 /* EpisodeCard.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
 				E172D3B22BACA569007B4647 /* EpisodeContent.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,

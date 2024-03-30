@@ -14,12 +14,8 @@ struct EpisodeItemView: View {
     @EnvironmentObject
     private var router: ItemCoordinator.Router
 
-    @StateObject
-    private var viewModel: EpisodeItemViewModel
-
-    init(item: BaseItemDto) {
-        self._viewModel = StateObject(wrappedValue: EpisodeItemViewModel(item: item))
-    }
+    @ObservedObject
+    var viewModel: EpisodeItemViewModel
 
     @State
     private var scrollViewOffset: CGFloat = 0
@@ -39,9 +35,6 @@ struct EpisodeItemView: View {
             if viewModel.state == .refreshing {
                 ProgressView()
             }
-        }
-        .onFirstAppear {
-            viewModel.send(.refresh)
         }
     }
 }

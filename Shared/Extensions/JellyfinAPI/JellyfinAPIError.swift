@@ -14,7 +14,7 @@ import Foundation
 ///
 /// - Important: Only really use for debugging. For practical errors,
 ///              statically define errors for each domain/context.
-struct JellyfinAPIError: LocalizedError, Equatable {
+struct JellyfinAPIError: LocalizedError, Hashable {
 
     private let message: String
 

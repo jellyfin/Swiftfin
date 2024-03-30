@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Algorithms
 import Foundation
 import SwiftUI
 
@@ -18,6 +19,8 @@ extension String: Displayable {
 }
 
 extension String {
+
+    static let alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
     static func + (lhs: String, rhs: Character) -> String {
         lhs.appending(rhs)
@@ -83,6 +86,16 @@ extension String {
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
             .replacingOccurrences(of: ".swift", with: "")
+    }
+
+    static func random(count: Int) -> String {
+        let characters = Self.alphanumeric.randomSample(count: count)
+        return String(characters)
+    }
+
+    static func random(count range: Range<Int>) -> String {
+        let characters = Self.alphanumeric.randomSample(count: Int.random(in: range))
+        return String(characters)
     }
 }
 

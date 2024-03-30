@@ -189,22 +189,20 @@ struct PagingLibraryView<Element: Poster>: View {
 
     var body: some View {
         WrappedView {
-            Group {
-                switch viewModel.state {
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
-                    ProgressView()
-                case .gettingNextPage, .content:
-                    if viewModel.elements.isEmpty {
-                        L10n.noResults.text
-                    } else {
-                        contentView
-                    }
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    L10n.noResults.text
+                } else {
+                    contentView
                 }
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
@@ -282,7 +280,7 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .topBarTrailing {
 
-            if viewModel.state == .gettingNextPage {
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
                 ProgressView()
             }
 

@@ -12,52 +12,27 @@ import SwiftUI
 
 extension SeriesEpisodeSelector {
 
-    struct EpisodeOverlay: View {
-
-        let episode: BaseItemDto
-
-        var body: some View {
-            if let progressLabel = episode.progressLabel {
-                LandscapePosterProgressBar(
-                    title: progressLabel,
-                    progress: (episode.userData?.playedPercentage ?? 0) / 100
-                )
-            } else if episode.userData?.isPlayed ?? false {
-                ZStack(alignment: .bottomTrailing) {
-                    Color.clear
-
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30, alignment: .bottomTrailing)
-                        .paletteOverlayRendering(color: .white)
-                        .padding()
-                }
-            }
-        }
-    }
-
     struct EpisodeContent: View {
 
         @Default(.accentColor)
         private var accentColor
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
-        @ScaledMetric
-        private var staticOverviewHeight: CGFloat = 50
+        private var onSelect: () -> Void
 
-        let episode: BaseItemDto
+        let subHeader: String
+        let header: String
+        let content: String
 
         @ViewBuilder
-        private var subHeader: some View {
-            Text(episode.episodeLocator ?? L10n.unknown)
+        private var subHeaderView: some View {
+            Text(subHeader)
                 .font(.footnote)
                 .foregroundColor(.secondary)
         }
 
         @ViewBuilder
-        private var header: some View {
-            Text(episode.displayTitle)
+        private var headerView: some View {
+            Text(header)
                 .font(.body)
                 .foregroundColor(.primary)
                 .padding(.bottom, 1)
@@ -65,44 +40,56 @@ extension SeriesEpisodeSelector {
                 .multilineTextAlignment(.leading)
         }
 
-        // TODO: why the static overview height?
         @ViewBuilder
-        private var content: some View {
-            Group {
-                ZStack(alignment: .topLeading) {
-                    Color.clear
-                        .frame(height: staticOverviewHeight)
+        private var contentView: some View {
+            // TODO: clean up when TruncatedText works properly
+            //       with `reservesSpace`
+            ZStack(alignment: .topLeading) {
+                Color.clear
 
-                    if episode.isUnaired {
-                        Text(episode.airDateLabel ?? L10n.noOverviewAvailable)
-                    } else {
-                        Text(episode.overview ?? L10n.noOverviewAvailable)
-                    }
-                }
+                Text("fixme")
+                    .hidden()
+                    .backport
+                    .lineLimit(3, reservesSpace: true)
 
-                L10n.seeMore.text
-                    .font(.footnote)
-                    .fontWeight(.medium)
-                    .foregroundColor(accentColor)
+                TruncatedText(content)
+                    .lineLimit(3)
             }
             .font(.caption.weight(.light))
             .foregroundColor(.secondary)
-            .lineLimit(3)
             .multilineTextAlignment(.leading)
         }
 
         var body: some View {
             Button {
-                router.route(to: \.item, episode)
+                onSelect()
             } label: {
                 VStack(alignment: .leading) {
-                    subHeader
+                    subHeaderView
 
-                    header
+                    headerView
 
-                    content
+                    contentView
                 }
             }
         }
+    }
+}
+
+extension SeriesEpisodeSelector.EpisodeContent {
+
+    init(
+        subHeader: String,
+        header: String,
+        content: String
+    ) {
+        self.subHeader = subHeader
+        self.header = header
+        self.content = content
+        self.onSelect = {}
+    }
+
+    func onSelect(perform action: @escaping () -> Void) -> Self {
+        copy(modifying: \.onSelect, with: action)
     }
 }

@@ -7,25 +7,32 @@
 //
 
 import Foundation
+import OrderedCollections
 
 // TODO: documentation
 
 protocol Stateful: AnyObject {
 
     associatedtype Action: Equatable
-    associatedtype State: Equatable
+    associatedtype BackgroundState: Hashable = Never
+    associatedtype State: Hashable
 
-    var state: State { get set }
+    /// Background states that the conformer can be in.
+    /// Usually used to indicate background events that shouldn't
+    /// set the conformer to a primary state.
+    var backgroundStates: OrderedSet<BackgroundState> { get set }
+
     var lastAction: Action? { get set }
+    var state: State { get set }
+
+    /// Respond to a sent action and return the new state
+    @MainActor
+    func respond(to action: Action) -> State
 
     /// Send an action to the `Stateful` object, which will
     /// `respond` to the action and set the new state.
     @MainActor
     func send(_ action: Action)
-
-    /// Respond to a sent action and return the new state
-    @MainActor
-    func respond(to action: Action) -> State
 }
 
 extension Stateful {
@@ -34,5 +41,16 @@ extension Stateful {
     func send(_ action: Action) {
         state = respond(to: action)
         lastAction = action
+    }
+}
+
+extension Stateful where BackgroundState == Never {
+
+    var backgroundStates: OrderedSet<Never> {
+        get {
+            assertionFailure("Attempted to access `backgroundStates` when there are none")
+            return []
+        }
+        set { assertionFailure("Attempted to set `backgroundStates` when there are none") }
     }
 }
