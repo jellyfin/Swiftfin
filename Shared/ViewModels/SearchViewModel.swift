@@ -182,9 +182,7 @@ final class SearchViewModel: ViewModel, Stateful {
                 }
             } catch {
 
-                guard !Task.isCancelled else { print("search was cancelled")
-                    return
-                }
+                guard !Task.isCancelled else { return }
 
                 await MainActor.run {
                     self.send(.error(.init(error.localizedDescription)))

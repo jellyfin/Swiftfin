@@ -152,6 +152,7 @@ extension View {
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
 
+    // TODO: probably rename since this doesn't set the frame but tracks it
     func frame(_ binding: Binding<CGRect>) -> some View {
         onFrameChanged { newFrame in
             binding.wrappedValue = newFrame
@@ -173,6 +174,7 @@ extension View {
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
 
+    // TODO: probably rename since this doesn't set the location but tracks it
     func location(_ binding: Binding<CGPoint>) -> some View {
         onLocationChanged { newLocation in
             binding.wrappedValue = newLocation
@@ -191,6 +193,7 @@ extension View {
         .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
 
+    // TODO: probably rename since this doesn't set the size but tracks it
     func size(_ binding: Binding<CGSize>) -> some View {
         onSizeChanged { newSize in
             binding.wrappedValue = newSize

@@ -261,12 +261,17 @@ extension BaseItemDto {
     }
 
     var playButtonLabel: String {
+
         if isUnaired {
             return L10n.unaired
         }
 
         if isMissing {
             return L10n.missing
+        }
+
+        if type == .episode, let seasonEpisodeLabel {
+            return seasonEpisodeLabel
         }
 
         if let progressLabel {

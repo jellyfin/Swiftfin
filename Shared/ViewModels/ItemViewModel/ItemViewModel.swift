@@ -19,10 +19,17 @@ class ItemViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
+        case backgroundRefresh
         case error(JellyfinAPIError)
         case refresh
         case toggleIsFavorite
         case toggleIsPlayed
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
+        case refresh
     }
 
     // MARK: State
@@ -63,6 +70,8 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
 
     @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
     final var lastAction: Action? = nil
     @Published
     final var state: State = .initial
@@ -79,21 +88,72 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-//        Notifications[.didEndPlayback].publiser
-//            .sink { [weak self] notification in
-//                guard let userInfo = notification.userInfo else { return }
-//
-//                if let playbackItem = userInfo["playbackItem"] as? BaseItemDto {
-//
-//                }
-//            }
-//            .store(in: &cancellables)
+        // TODO: should replace with a more robust "PlaybackManager"?
+        Notifications[.didEndPlayback].publiser
+            .sink { [weak self] notification in
+
+                print("here")
+
+                guard let userInfo = notification.object as? [String: String] else { return }
+
+                if let itemID = userInfo["itemID"], itemID == item.id {
+                    Task { [weak self] in
+                        await self?.send(.backgroundRefresh)
+                    }
+                } else if let seriesID = userInfo["seriesID"], seriesID == item.id {
+                    Task { [weak self] in
+                        await self?.send(.backgroundRefresh)
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: respond
 
     func respond(to action: Action) -> State {
         switch action {
+        case .backgroundRefresh:
+
+            backgroundStates.append(.refresh)
+
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    async let fullItem = getFullItem()
+                    async let similarItems = getSimilarItems()
+                    async let specialFeatures = getSpecialFeatures()
+
+                    let results = try await (
+                        fullItem: fullItem,
+                        similarItems: similarItems,
+                        specialFeatures: specialFeatures
+                    )
+
+                    guard !Task.isCancelled else { return }
+
+                    try await onRefresh()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.item = results.fullItem
+                        self.similarItems = results.similarItems
+                        self.specialFeatures = results.specialFeatures
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+            return state
         case let .error(error):
             return .error(error)
         case .refresh:

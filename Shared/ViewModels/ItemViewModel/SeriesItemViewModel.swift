@@ -42,12 +42,10 @@ final class SeriesItemViewModel: ItemViewModel {
 
         if let episodeItem = try await [nextUp, resume].first {
             await MainActor.run {
-                print("setting playButtonItem 1")
                 self.playButtonItem = episodeItem
             }
         } else if let firstAvailable = try await firstAvailable {
             await MainActor.run {
-                print("setting playButtonItem 2")
                 self.playButtonItem = firstAvailable
             }
         }

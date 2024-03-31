@@ -94,5 +94,10 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.refresh) {
+                ProgressView()
+            }
+        }
     }
 }

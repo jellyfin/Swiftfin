@@ -10,6 +10,8 @@ import Foundation
 import OrderedCollections
 
 // TODO: documentation
+// TODO: find a better way to handle backgroundStates on action/state transitions
+//       so that conformers don't have to manually insert/remove them
 
 protocol Stateful: AnyObject {
 

@@ -9,12 +9,11 @@
 import Combine
 import SwiftUI
 
-// TODO: allow "intervals" of times for other views to appear
-//       - retry
+// TODO: retry button and/or loading text after a few more seconds
 struct DelayedProgressView: View {
 
     @State
-    private var didLapse = false
+    private var interval = 0
 
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
@@ -24,13 +23,13 @@ struct DelayedProgressView: View {
 
     var body: some View {
         VStack {
-            if didLapse {
+            if interval > 0 {
                 ProgressView()
             }
         }
         .onReceive(timer) { _ in
             withAnimation {
-                didLapse = true
+                interval += 1
             }
         }
     }

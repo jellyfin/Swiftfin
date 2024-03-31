@@ -43,7 +43,7 @@ extension ItemView {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
 
-                        Text(viewModel.item.playButtonLabel)
+                        Text(viewModel.playButtonItem?.playButtonLabel ?? viewModel.item.playButtonLabel)
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
