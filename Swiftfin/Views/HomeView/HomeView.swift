@@ -83,5 +83,11 @@ struct HomeView: View {
                     .accessibilityLabel(L10n.settings)
             }
         }
+        .afterLastDisappear { interval in
+            if interval > 600 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+                viewModel.send(.backgroundRefresh)
+                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+            }
+        }
     }
 }

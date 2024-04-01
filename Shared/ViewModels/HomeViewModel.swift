@@ -51,6 +51,11 @@ final class HomeViewModel: ViewModel, Stateful {
     @Published
     var state: State = .initial
 
+    // TODO: replace with views checking what notifications were
+    //       posted since last disappear
+    @Published
+    var notificationsReceived: Set<Notifications.Key> = []
+
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
@@ -62,10 +67,11 @@ final class HomeViewModel: ViewModel, Stateful {
 
         Notifications[.itemMetadataDidChange].publisher
             .sink { _ in
-                // Necessary because when this notification is posted the view will
-                // be in landscape, causing layout issues with CollectionHStack
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { @MainActor in
-                    self.send(.backgroundRefresh)
+                // Necessary because when this notification is posted, even with asyncAfter,
+                // the view will cause layout issues since it will redraw while in landscape.
+                // TODO: look for better solution
+                DispatchQueue.main.async {
+                    self.notificationsReceived.insert(Notifications.Key.itemMetadataDidChange)
                 }
             }
             .store(in: &cancellables)

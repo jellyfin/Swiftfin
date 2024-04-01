@@ -16,6 +16,7 @@ import SwiftUI
 // TODO: seems to redraw view when popped to sometimes?
 //       - similar to HomeView TODO bug?
 // TODO: list view
+// TODO: `afterLastDisappear` with `backgroundRefresh`
 struct MediaView: View {
 
     @EnvironmentObject

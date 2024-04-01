@@ -41,7 +41,16 @@ enum Notifications {
 
     static let service = Factory(scope: .singleton) { NotificationCenter() }
 
-    final class Key {
+    struct Key: Hashable {
+
+        static func == (lhs: Notifications.Key, rhs: Notifications.Key) -> Bool {
+            lhs.key == rhs.key
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(key)
+        }
+
         typealias NotificationKey = Notifications.Key
 
         let key: String
