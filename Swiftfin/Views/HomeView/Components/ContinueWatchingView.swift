@@ -40,13 +40,13 @@ extension HomeView {
                 PosterButton(item: item, type: .landscape)
                     .contextMenu {
                         Button {
-                            viewModel.markItemPlayed(item)
+                            viewModel.send(.setIsPlayed(true, item))
                         } label: {
                             Label(L10n.played, systemImage: "checkmark.circle")
                         }
 
                         Button(role: .destructive) {
-                            viewModel.markItemUnplayed(item)
+                            viewModel.send(.setIsPlayed(false, item))
                         } label: {
                             Label(L10n.unplayed, systemImage: "minus.circle")
                         }

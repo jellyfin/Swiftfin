@@ -18,10 +18,10 @@ extension ItemView {
         var body: some View {
             HStack {
                 Button {
-                    viewModel.toggleWatchState()
+                    viewModel.send(.toggleIsPlayed)
                 } label: {
                     Group {
-                        if viewModel.isPlayed {
+                        if viewModel.item.userData?.isPlayed ?? false {
                             Image(systemName: "checkmark.circle.fill")
                                 .paletteOverlayRendering(color: .white)
                         } else {
@@ -35,10 +35,10 @@ extension ItemView {
                 .buttonStyle(.plain)
 
                 Button {
-                    viewModel.toggleFavoriteState()
+                    viewModel.send(.toggleIsFavorite)
                 } label: {
                     Group {
-                        if viewModel.isFavorited {
+                        if viewModel.item.userData?.isFavorite ?? false {
                             Image(systemName: "heart.circle.fill")
                                 .symbolRenderingMode(.palette)
                                 .foregroundStyle(.white, .pink)

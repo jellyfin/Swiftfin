@@ -13,170 +13,121 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-// TODO: use OrderedDictionary
-
+// TODO: care for one long episodes list?
+//       - after SeasonItemViewModel is bidirectional
+//       - would have to see if server returns right amount of episodes/season
 final class SeriesItemViewModel: ItemViewModel {
 
     @Published
-    var menuSelection: BaseItemDto?
-    @Published
-    var currentItems: OrderedSet<BaseItemDto> = []
+    var seasons: OrderedSet<SeasonItemViewModel> = []
 
-    var menuSections: [BaseItemDto: OrderedSet<BaseItemDto>]
-    var menuSectionSort: (BaseItemDto, BaseItemDto) -> Bool
+    override func onRefresh() async throws {
 
-    override init(item: BaseItemDto) {
-        self.menuSections = [:]
-        self.menuSectionSort = { i, j in i.indexNumber ?? -1 < j.indexNumber ?? -1 }
-
-        super.init(item: item)
-
-        getSeasons()
-
-        // The server won't have both a next up item
-        // and a resume item at the same time, so they
-        // control the button first. Also fetch first available
-        // item, which may be overwritten by next up or resume.
-        getNextUp()
-        getResumeItem()
-        getFirstAvailableItem()
-    }
-
-    override func playButtonText() -> String {
-
-        if item.isUnaired {
-            return L10n.unaired
+        await MainActor.run {
+            self.seasons.removeAll()
         }
 
-        if item.isMissing {
-            return L10n.missing
+        async let nextUp = getNextUp()
+        async let resume = getResumeItem()
+        async let firstAvailable = getFirstAvailableItem()
+        async let seasons = getSeasons()
+
+        let newSeasons = try await seasons
+            .sorted { ($0.indexNumber ?? -1) < ($1.indexNumber ?? -1) } // sort just in case
+            .map(SeasonItemViewModel.init)
+
+        await MainActor.run {
+            self.seasons.append(contentsOf: newSeasons)
         }
 
-        guard let playButtonItem = playButtonItem,
-              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
-
-        return episodeLocator
-    }
-
-    private func getNextUp() {
-        Task {
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                fields: .MinimumFields,
-                seriesID: item.id,
-                enableUserData: true
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first, !item.isMissing {
-                await MainActor.run {
-                    self.playButtonItem = item
-                }
-            }
-        }
-    }
-
-    private func getResumeItem() {
-        Task {
-            let parameters = Paths.GetResumeItemsParameters(
-                limit: 1,
-                parentID: item.id,
-                fields: .MinimumFields
-            )
-            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first {
-                await MainActor.run {
-                    self.playButtonItem = item
-                }
-            }
-        }
-    }
-
-    private func getFirstAvailableItem() {
-        Task {
-            let parameters = Paths.GetItemsParameters(
-                userID: userSession.user.id,
-                limit: 1,
-                isRecursive: true,
-                sortOrder: [.ascending],
-                parentID: item.id,
-                fields: .MinimumFields,
-                includeItemTypes: [.episode]
-            )
-            let request = Paths.getItems(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            if let item = response.value.items?.first {
-                if self.playButtonItem == nil {
-                    await MainActor.run {
-                        self.playButtonItem = item
-                    }
-                }
-            }
-        }
-    }
-
-    func select(section: BaseItemDto) {
-        self.menuSelection = section
-
-        if let episodes = menuSections[section] {
-            if episodes.isEmpty {
-                getEpisodesForSeason(section)
-            } else {
-                self.currentItems = episodes
-            }
-        }
-    }
-
-    private func getSeasons() {
-        Task {
-            let parameters = Paths.GetSeasonsParameters(
-                userID: userSession.user.id,
-                isMissing: Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
-            )
-            let request = Paths.getSeasons(seriesID: item.id!, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            guard let seasons = response.value.items else { return }
-
+        if let episodeItem = try await [nextUp, resume].compacted().first {
             await MainActor.run {
-                for season in seasons {
-                    self.menuSections[season] = []
-                }
+                self.playButtonItem = episodeItem
             }
-
-            if let firstSeason = seasons.first {
-                self.getEpisodesForSeason(firstSeason)
-                await MainActor.run {
-                    self.menuSelection = firstSeason
-                }
+        } else if let firstAvailable = try await firstAvailable {
+            await MainActor.run {
+                self.playButtonItem = firstAvailable
             }
         }
     }
 
-    // TODO: implement lazy loading
-    private func getEpisodesForSeason(_ season: BaseItemDto) {
-        Task {
-            let parameters = Paths.GetEpisodesParameters(
-                userID: userSession.user.id,
-                fields: .MinimumFields,
-                seasonID: season.id!,
-                isMissing: Defaults[.Customization.shouldShowMissingEpisodes] ? nil : false,
-                enableUserData: true
-            )
-            let request = Paths.getEpisodes(seriesID: item.id!, parameters: parameters)
-            let response = try await userSession.client.send(request)
+//    override func playButtonText() -> String {
+//
+//        if item.isUnaired {
+//            return L10n.unaired
+//        }
+//
+//        if item.isMissing {
+//            return L10n.missing
+//        }
+//
+//        guard let playButtonItem = playButtonItem,
+//              let episodeLocator = playButtonItem.seasonEpisodeLabel else { return L10n.play }
+//
+//        return episodeLocator
+//    }
 
-            await MainActor.run {
-                if let items = response.value.items {
-                    let newItems = OrderedSet(items)
-                    self.menuSections[season] = newItems
-                    self.currentItems = newItems
-                }
-            }
+    private func getNextUp() async throws -> BaseItemDto? {
+
+        var parameters = Paths.GetNextUpParameters()
+        parameters.fields = .MinimumFields
+        parameters.seriesID = item.id
+        parameters.userID = userSession.user.id
+
+        let request = Paths.getNextUp(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        guard let item = response.value.items?.first, !item.isMissing else {
+            return nil
         }
+
+        return item
+    }
+
+    private func getResumeItem() async throws -> BaseItemDto? {
+
+        var parameters = Paths.GetResumeItemsParameters()
+        parameters.fields = .MinimumFields
+        parameters.limit = 1
+        parameters.parentID = item.id
+
+        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.first
+    }
+
+    private func getFirstAvailableItem() async throws -> BaseItemDto? {
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = [.episode]
+        parameters.isRecursive = true
+        parameters.limit = 1
+        parameters.parentID = item.id
+        parameters.sortOrder = [.ascending]
+
+        let request = Paths.getItemsByUserID(
+            userID: userSession.user.id,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items?.first
+    }
+
+    private func getSeasons() async throws -> [BaseItemDto] {
+
+        var parameters = Paths.GetSeasonsParameters()
+        parameters.isMissing = Defaults[.Customization.shouldShowMissingSeasons] ? nil : false
+        parameters.userID = userSession.user.id
+
+        let request = Paths.getSeasons(
+            seriesID: item.id!,
+            parameters: parameters
+        )
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
     }
 }

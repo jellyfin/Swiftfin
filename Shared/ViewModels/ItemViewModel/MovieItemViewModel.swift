@@ -10,7 +10,4 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class MovieItemViewModel: ItemViewModel {
-
-    override func updateItem() {}
-}
+final class MovieItemViewModel: ItemViewModel {}

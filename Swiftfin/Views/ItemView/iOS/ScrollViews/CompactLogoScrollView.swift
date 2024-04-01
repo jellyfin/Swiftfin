@@ -85,11 +85,10 @@ extension ItemView {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.top)
-                        .padding(.horizontal)
+                        .edgePadding()
 
                     content()
-                        .padding(.vertical)
+                        .edgePadding(.bottom)
                 }
             }
             .edgesIgnoringSafeArea(.top)
@@ -105,13 +104,6 @@ extension ItemView {
                 multiplier: 0.3
             ) {
                 headerView
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
             }
         }
     }

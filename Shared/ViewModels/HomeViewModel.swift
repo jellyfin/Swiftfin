@@ -9,6 +9,7 @@
 import Combine
 import CoreStore
 import Factory
+import Get
 import JellyfinAPI
 import OrderedCollections
 
@@ -16,14 +17,22 @@ final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
+        case backgroundRefresh
         case error(JellyfinAPIError)
+        case setIsPlayed(Bool, BaseItemDto)
+        case refresh
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
         case refresh
     }
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
         case error(JellyfinAPIError)
         case initial
@@ -31,26 +40,93 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     @Published
-    var libraries: [LatestInLibraryViewModel] = []
+    private(set) var libraries: [LatestInLibraryViewModel] = []
     @Published
     var resumeItems: OrderedSet<BaseItemDto> = []
 
     @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
+    var lastAction: Action? = nil
+    @Published
     var state: State = .initial
 
-    private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
-    private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    // TODO: replace with views checking what notifications were
+    //       posted since last disappear
+    @Published
+    var notificationsReceived: Set<Notifications.Key> = []
 
+    private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
+
+    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+
+    override init() {
+        super.init()
+
+        Notifications[.itemMetadataDidChange].publisher
+            .sink { _ in
+                // Necessary because when this notification is posted, even with asyncAfter,
+                // the view will cause layout issues since it will redraw while in landscape.
+                // TODO: look for better solution
+                DispatchQueue.main.async {
+                    self.notificationsReceived.insert(Notifications.Key.itemMetadataDidChange)
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     func respond(to action: Action) -> State {
         switch action {
+        case .backgroundRefresh:
+
+            backgroundRefreshTask?.cancel()
+            backgroundStates.append(.refresh)
+
+            backgroundRefreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+
+                    nextUpViewModel.send(.refresh)
+                    recentlyAddedViewModel.send(.refresh)
+
+                    let resumeItems = try await getResumeItems()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.resumeItems.elements = resumeItems
+                        self.backgroundStates.remove(.refresh)
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         case let .error(error):
             return .error(error)
-        case .refresh:
-            cancellables.removeAll()
+        case let .setIsPlayed(isPlayed, item): ()
+            Task {
+                try await setIsPlayed(isPlayed, for: item)
 
-            Task { [weak self] in
+                self.send(.backgroundRefresh)
+            }
+            .store(in: &cancellables)
+
+            return state
+        case .refresh:
+            backgroundRefreshTask?.cancel()
+            refreshTask?.cancel()
+
+            refreshTask = Task { [weak self] in
                 guard let self else { return }
                 do {
 
@@ -69,7 +145,7 @@ final class HomeViewModel: ViewModel, Stateful {
                     }
                 }
             }
-            .store(in: &cancellables)
+            .asAnyCancellable()
 
             return .refreshing
         }
@@ -77,13 +153,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func refresh() async throws {
 
-        Task {
-            await nextUpViewModel.send(.refresh)
-        }
-
-        Task {
-            await recentlyAddedViewModel.send(.refresh)
-        }
+        await nextUpViewModel.send(.refresh)
+        await recentlyAddedViewModel.send(.refresh)
 
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
@@ -124,8 +195,7 @@ final class HomeViewModel: ViewModel, Stateful {
             .map { LatestInLibraryViewModel(parent: $0) }
     }
 
-    // TODO: eventually a more robust user/server information retrieval system
-    //       will be in place. Replace with using the data from the remove user
+    // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)
@@ -133,38 +203,21 @@ final class HomeViewModel: ViewModel, Stateful {
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
-    // TODO: fix
-    func markItemUnplayed(_ item: BaseItemDto) {
-//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-//
-//        Task {
-//            let request = Paths.markUnplayedItem(
-//                userID: userSession.user.id,
-//                itemID: item.id!
-//            )
-//            let _ = try await userSession.client.send(request)
-//
-        ////            refreshResumeItems()
-//
-//            try await nextUpViewModel.refresh()
-//            try await recentlyAddedViewModel.refresh()
-//        }
-    }
+    private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        let request: Request<UserItemDataDto>
 
-    // TODO: fix
-    func markItemPlayed(_ item: BaseItemDto) {
-//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-//
-//        Task {
-//            let request = Paths.markPlayedItem(
-//                userID: userSession.user.id,
-//                itemID: item.id!
-//            )
-//            let _ = try await userSession.client.send(request)
-//
-        ////            refreshResumeItems()
-//            try await nextUpViewModel.refresh()
-//            try await recentlyAddedViewModel.refresh()
-//        }
+        if isPlayed {
+            request = Paths.markPlayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        } else {
+            request = Paths.markUnplayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        }
+
+        let _ = try await userSession.client.send(request)
     }
 }

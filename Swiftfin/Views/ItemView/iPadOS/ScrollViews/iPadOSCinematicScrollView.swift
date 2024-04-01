@@ -19,13 +19,15 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @State
+        private var globalSize: CGSize = .zero
+        @State
         private var scrollViewOffset: CGFloat = 0
 
         let content: () -> Content
 
         private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.45
-            let end = UIScreen.main.bounds.height * 0.65
+            let start = globalSize.isLandscape ? globalSize.height * 0.45 : globalSize.height * 0.25
+            let end = globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30
             let diff = end - start
             let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
@@ -40,7 +42,8 @@ extension ItemView {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
                 }
             }
-            .frame(height: UIScreen.main.bounds.height * 0.8)
+            .aspectRatio(contentMode: .fill)
+            .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
         }
 
         var body: some View {
@@ -50,10 +53,9 @@ extension ItemView {
                         Spacer()
 
                         OverlayView(viewModel: viewModel)
-                            .padding2(.horizontal)
-                            .padding2(.bottom)
+                            .edgePadding()
                     }
-                    .frame(height: UIScreen.main.bounds.height * 0.8)
+                    .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
                     .background {
                         BlurView(style: .systemThinMaterialDark)
                             .mask {
@@ -82,23 +84,17 @@ extension ItemView {
             .scrollViewOffset($scrollViewOffset)
             .navigationBarOffset(
                 $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.65,
-                end: UIScreen.main.bounds.height * 0.65 + 50
+                start: globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30,
+                end: globalSize.isLandscape ? globalSize.height * 0.65 + 50 : globalSize.height * 0.30 + 50
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.8,
+                height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4,
                 multiplier: 0.3
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }
+            .size($globalSize)
         }
     }
 }

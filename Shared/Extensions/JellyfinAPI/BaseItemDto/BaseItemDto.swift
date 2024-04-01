@@ -259,4 +259,21 @@ extension BaseItemDto {
     var alternateTitle: String? {
         originalTitle != displayTitle ? originalTitle : nil
     }
+
+    var playButtonLabel: String {
+
+        if isUnaired {
+            return L10n.unaired
+        }
+
+        if isMissing {
+            return L10n.missing
+        }
+
+        if let progressLabel {
+            return progressLabel
+        }
+
+        return L10n.play
+    }
 }

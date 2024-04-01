@@ -114,8 +114,8 @@ extension EpisodeItemView.ContentView {
                     .padding(.horizontal)
 
                 DotHStack {
-                    if let episodeLocation = viewModel.item.episodeLocator {
-                        Text(episodeLocation)
+                    if let seasonEpisodeLabel = viewModel.item.seasonEpisodeLabel {
+                        Text(seasonEpisodeLabel)
                     }
 
                     if let productionYear = viewModel.item.premiereDateYear {

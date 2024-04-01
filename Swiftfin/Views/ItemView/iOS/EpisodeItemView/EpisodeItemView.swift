@@ -23,19 +23,13 @@ struct EpisodeItemView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             ContentView(viewModel: viewModel)
+                .edgePadding(.bottom)
         }
         .scrollViewOffset($scrollViewOffset)
         .navigationBarOffset(
             $scrollViewOffset,
             start: 0,
-            end: 30
+            end: 10
         )
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                if viewModel.isLoading {
-                    ProgressView()
-                }
-            }
-        }
     }
 }

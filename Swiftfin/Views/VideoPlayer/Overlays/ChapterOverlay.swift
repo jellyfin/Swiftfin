@@ -12,6 +12,8 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
+// TODO: figure out why `continuousLeadingEdge` scroll behavior has different
+//       insets than default continuous
 extension VideoPlayer.Overlay {
 
     struct ChapterOverlay: View {
@@ -56,8 +58,7 @@ extension VideoPlayer.Overlay {
 
                     Button {
                         if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-                            let index = viewModel.chapters.firstIndex(of: currentChapter)!
-                            collectionHStackProxy.scrollTo(index: index)
+                            collectionHStackProxy.scrollTo(element: currentChapter, animated: true)
                         }
                     } label: {
                         Text(L10n.current)
@@ -80,8 +81,7 @@ extension VideoPlayer.Overlay {
                     guard newValue == .chapters else { return }
 
                     if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-                        let index = viewModel.chapters.firstIndex(of: currentChapter)!
-                        collectionHStackProxy.scrollTo(index: index, animated: false)
+                        collectionHStackProxy.scrollTo(element: currentChapter, animated: false)
                     }
                 }
             }

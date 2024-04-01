@@ -16,6 +16,8 @@ import SwiftUI
 //       other items that don't have a subtitle which requires the entire library to implement
 //       subtitle content but that doesn't look appealing. Until a solution arrives grid posters
 //       will not have subtitle content.
+//       There should be a solution since there are contexts where subtitles are desirable and/or
+//       we can have subtitle content for other items.
 
 struct PagingLibraryView<Element: Poster>: View {
 
@@ -79,6 +81,9 @@ struct PagingLibraryView<Element: Poster>: View {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
+            router.route(to: \.library, viewModel)
+        case .person:
+            let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
         default:
             router.route(to: \.item, item)
@@ -179,32 +184,33 @@ struct PagingLibraryView<Element: Poster>: View {
                 listItemView(item: item)
             }
         }
-        .onReachedBottomEdge(offset: 300) {
+        .onReachedTopEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
     }
 
     // MARK: body
 
     var body: some View {
         WrappedView {
-            Group {
-                switch viewModel.state {
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
-                    ProgressView()
-                case .gettingNextPage, .content:
-                    if viewModel.elements.isEmpty {
-                        L10n.noResults.text
-                    } else {
-                        contentView
-                    }
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    L10n.noResults.text
+                } else {
+                    contentView
                 }
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
@@ -282,7 +288,7 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .topBarTrailing {
 
-            if viewModel.state == .gettingNextPage {
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
                 ProgressView()
             }
 

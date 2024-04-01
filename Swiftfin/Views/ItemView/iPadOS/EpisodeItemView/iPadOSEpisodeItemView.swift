@@ -11,9 +11,6 @@ import SwiftUI
 
 struct iPadOSEpisodeItemView: View {
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
-
     @ObservedObject
     var viewModel: EpisodeItemViewModel
 

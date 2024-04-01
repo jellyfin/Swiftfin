@@ -20,11 +20,13 @@ private let DefaultPageSize = 50
 //       and I don't want additional views for it. Is there a way we can transform a
 //       `BaseItemPerson` into a `BaseItemDto` and just use the concrete type?
 
-// TODO: how to indicate that this is performing some kind of background action (ie: RandomItem)
-//       *without* being in an explicit state?
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
+// TODO: this doesn't allow "scrolling" to an item if index > pageSize
+//       on refresh. Should make bidirectional/offset index start?
+//       - use startIndex/index ranges instead of pages
+//       - source of data doesn't guarantee that all items in 0 ..< startIndex exist
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -36,42 +38,35 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case error(LibraryError)
+        case error(JellyfinAPIError)
         case refresh
         case getNextPage
         case getRandomItem
     }
 
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
+        case gettingNextPage
+    }
+
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
-        case error(LibraryError)
-        case gettingNextPage
+        case error(JellyfinAPIError)
         case initial
         case refreshing
     }
 
-    // TODO: wrap Get HTTP and NSURL errors either here
-    //       or in a general implementation
-    enum LibraryError: LocalizedError {
-        case unableToGetPage
-        case unableToGetRandomItem
-
-        var errorDescription: String? {
-            switch self {
-            case .unableToGetPage:
-                "Unable to get page"
-            case .unableToGetRandomItem:
-                "Unable to get random item"
-            }
-        }
-    }
-
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var elements: OrderedSet<Element>
     @Published
     final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     final let filterViewModel: FilterViewModel?
     final let parent: (any LibraryParent)?
@@ -97,19 +92,27 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
+    // static
     init(
         _ data: some Collection<Element>,
-        parent: (any LibraryParent)? = nil,
-        pageSize: Int = DefaultPageSize
+        parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
         self.elements = OrderedSet(data)
         self.isStatic = true
         self.hasNextPage = false
-        self.pageSize = pageSize
+        self.pageSize = DefaultPageSize
         self.parent = parent
     }
 
+    convenience init(
+        title: String,
+        _ data: some Collection<Element>
+    ) {
+        self.init(data, parent: TitledLibraryParent(displayTitle: title))
+    }
+
+    // paging
     init(
         parent: (any LibraryParent)? = nil,
         filters: ItemFilterCollection? = nil,
@@ -152,7 +155,11 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         filters: ItemFilterCollection = .default,
         pageSize: Int = DefaultPageSize
     ) {
-        self.init(parent: TitledLibraryParent(displayTitle: title), filters: filters, pageSize: pageSize)
+        self.init(
+            parent: TitledLibraryParent(displayTitle: title),
+            filters: filters,
+            pageSize: pageSize
+        )
     }
 
     // MARK: respond
@@ -198,7 +205,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self.send(.error(.unableToGetPage))
+                        self.send(.error(.init(error.localizedDescription)))
                     }
                 }
             }
@@ -209,6 +216,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
             guard hasNextPage else { return state }
 
+            backgroundStates.append(.gettingNextPage)
+
             pagingTask = Task { [weak self] in
                 do {
                     try await self?.getNextPage()
@@ -216,19 +225,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
+                        self?.backgroundStates.remove(.gettingNextPage)
                         self?.state = .content
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self?.state = .error(.unableToGetPage)
+                        self?.backgroundStates.remove(.gettingNextPage)
+                        self?.state = .error(.init(error.localizedDescription))
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .gettingNextPage
+            return .content
         case .getRandomItem:
 
             randomItemTask = Task { [weak self] in

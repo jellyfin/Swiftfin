@@ -174,7 +174,7 @@ struct PagingLibraryView<Element: Poster>: View {
                         Text(error.localizedDescription)
                     case .initial, .refreshing:
                         ProgressView()
-                    case .gettingNextPage, .content:
+                    case .content:
                         if viewModel.elements.isEmpty {
                             L10n.noResults.text
                         } else {

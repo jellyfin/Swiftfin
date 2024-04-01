@@ -61,5 +61,11 @@ struct HomeView: View {
             viewModel.send(.refresh)
         }
         .ignoresSafeArea()
+        .afterLastDisappear { interval in
+            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+                viewModel.send(.backgroundRefresh)
+                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+            }
+        }
     }
 }

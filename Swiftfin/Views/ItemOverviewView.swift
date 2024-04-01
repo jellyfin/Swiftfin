@@ -10,6 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: fix with shorter text
+//       - seems to center align
 
 struct ItemOverviewView: View {
 
