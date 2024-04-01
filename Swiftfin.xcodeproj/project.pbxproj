@@ -212,6 +212,10 @@
 		E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E113A2A62B5A178D009CAAAA /* CollectionHStack */; };
 		E113A2AA2B5A179A009CAAAA /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E113A2A92B5A179A009CAAAA /* CollectionVGrid */; };
 		E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E114DB322B1944FA00B75FB3 /* CollectionVGrid */; };
+		E1153DC42BBB622600424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DC32BBB622600424D36 /* FastSVGView.swift */; };
+		E1153DC52BBB622600424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DC32BBB622600424D36 /* FastSVGView.swift */; };
+		E1153DC82BBB624400424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DC72BBB624400424D36 /* SVGKit */; };
+		E1153DCA2BBB624D00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DC92BBB624D00424D36 /* SVGKit */; };
 		E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -951,6 +955,7 @@
 		E113133528BE98AA00930F75 /* FilterDrawerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterDrawerButton.swift; sourceTree = "<group>"; };
 		E113133728BEADBA00930F75 /* LibraryParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryParent.swift; sourceTree = "<group>"; };
 		E113133928BEB71D00930F75 /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
+		E1153DC32BBB622600424D36 /* FastSVGView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastSVGView.swift; sourceTree = "<group>"; };
 		E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 		E118959C289312020042947B /* BaseItemPerson+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+Poster.swift"; sourceTree = "<group>"; };
 		E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffsetModifier.swift; sourceTree = "<group>"; };
@@ -1331,6 +1336,7 @@
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
 				E104DC942B9D89A2008F506D /* CollectionVGrid in Frameworks */,
+				E1153DCA2BBB624D00424D36 /* SVGKit in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				E1392FF42BA21B470034110D /* CollectionHStack in Frameworks */,
@@ -1361,6 +1367,7 @@
 				62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */,
 				E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */,
 				E10706102942F57D00646DAF /* Pulse in Frameworks */,
+				E1153DC82BBB624400424D36 /* SVGKit in Frameworks */,
 				E192608328D2D0DB002314B4 /* Factory in Frameworks */,
 				E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */,
 				E1523F822B132C350062821A /* CollectionHStack in Frameworks */,
@@ -2560,6 +2567,7 @@
 			children = (
 				E104DC952B9E7E29008F506D /* AssertionFailureView.swift */,
 				E18E0203288749200022598C /* BlurView.swift */,
+				E1153DC32BBB622600424D36 /* FastSVGView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
@@ -2920,6 +2928,7 @@
 				E104DC932B9D89A2008F506D /* CollectionVGrid */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1392FF32BA21B470034110D /* CollectionHStack */,
+				E1153DC92BBB624D00424D36 /* SVGKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -2970,6 +2979,7 @@
 				E15EFA832BA167350080E926 /* CollectionHStack */,
 				E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */,
 				E1392FF12BA21B360034110D /* CollectionHStack */,
+				E1153DC72BBB624400424D36 /* SVGKit */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3041,6 +3051,7 @@
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E104DC8E2B9D8995008F506D /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */,
+				E1153DC62BBB624400424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3330,6 +3341,7 @@
 				E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */,
 				E154966F296CA2EF00C4EF88 /* LogManager.swift in Sources */,
 				E1D37F562B9CEF4600343D2B /* DeviceProfile+NativeProfile.swift in Sources */,
+				E1153DC52BBB622600424D36 /* FastSVGView.swift in Sources */,
 				E1575E75293E77B5001665B1 /* LibraryViewType.swift in Sources */,
 				E193D53427193F7F00900D82 /* HomeCoordinator.swift in Sources */,
 				E193D5502719430400900D82 /* ServerDetailView.swift in Sources */,
@@ -3620,6 +3632,7 @@
 				E129428828F0831F00796AC6 /* SplitTimestamp.swift in Sources */,
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
+				E1153DC42BBB622600424D36 /* FastSVGView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */,
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
@@ -4150,7 +4163,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4165,7 +4178,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4189,7 +4202,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				EXCLUDED_ARCHS = "";
@@ -4204,7 +4217,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4301,6 +4314,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
+			};
+		};
+		E1153DC62BBB624400424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVGKit/SVGKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
 			};
 		};
 		E1392FF02BA21B360034110D /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
@@ -4489,6 +4510,16 @@
 		E114DB322B1944FA00B75FB3 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionVGrid;
+		};
+		E1153DC72BBB624400424D36 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DC62BBB624400424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
+		};
+		E1153DC92BBB624D00424D36 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DC62BBB624400424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
 		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
