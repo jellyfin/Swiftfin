@@ -41,6 +41,9 @@ struct HomeView: View {
             }
             .edgePadding(.vertical)
         }
+        .refreshable {
+            viewModel.send(.refresh)
+        }
     }
 
     private func errorView(with error: some Error) -> some View {
@@ -66,14 +69,17 @@ struct HomeView: View {
             viewModel.send(.refresh)
         }
         .navigationTitle(L10n.home)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
-                    router.route(to: \.settings)
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .accessibilityLabel(L10n.settings)
-                }
+        .topBarTrailing {
+
+            if viewModel.backgroundStates.contains(.refresh) {
+                ProgressView()
+            }
+
+            Button {
+                router.route(to: \.settings)
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .accessibilityLabel(L10n.settings)
             }
         }
     }

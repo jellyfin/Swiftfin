@@ -184,10 +184,13 @@ struct PagingLibraryView<Element: Poster>: View {
                 listItemView(item: item)
             }
         }
-        .onReachedBottomEdge(offset: 300) {
+        .onReachedTopEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
+        .refreshable {
+            viewModel.send(.refresh)
+        }
     }
 
     // MARK: body

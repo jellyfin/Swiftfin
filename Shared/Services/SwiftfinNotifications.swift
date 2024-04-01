@@ -32,7 +32,7 @@ class SwiftfinNotification {
         notificationService.removeObserver(self, name: name, object: nil)
     }
 
-    var publiser: NotificationCenter.Publisher {
+    var publisher: NotificationCenter.Publisher {
         notificationService.publisher(for: name)
     }
 }
@@ -68,5 +68,5 @@ extension Notifications.Key {
     static let didSendStopReport = NotificationKey("didSendStopReport")
     static let didRequestGlobalRefresh = NotificationKey("didRequestGlobalRefresh")
 
-    static let didEndPlayback = NotificationKey("didEndPlayback")
+    static let itemMetadataDidChange = NotificationKey("itemMetadataDidChange")
 }

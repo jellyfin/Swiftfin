@@ -203,7 +203,7 @@ class VideoPlayerManager: ViewModel {
     func sendStopReport() {
 
         let ids = ["itemID": currentViewModel.item.id, "seriesID": currentViewModel.item.parentID]
-        Notifications[.didEndPlayback].post(object: ids)
+        Notifications[.itemMetadataDidChange].post(object: ids)
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }

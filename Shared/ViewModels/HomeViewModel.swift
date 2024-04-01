@@ -17,7 +17,14 @@ final class HomeViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
+        case backgroundRefresh
         case error(JellyfinAPIError)
+        case refresh
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
         case refresh
     }
 
@@ -36,23 +43,71 @@ final class HomeViewModel: ViewModel, Stateful {
     var resumeItems: OrderedSet<BaseItemDto> = []
 
     @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
     var lastAction: Action? = nil
     @Published
     var state: State = .initial
 
+    private var backgroundRefreshTask: AnyCancellable?
+    private var refreshTask: AnyCancellable?
+
     private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
     private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
-    private var refreshTask: AnyCancellable?
+    override init() {
+        super.init()
+
+        Notifications[.itemMetadataDidChange].publisher
+            .sink { _ in
+                Task {
+                    await self.send(.backgroundRefresh)
+                }
+            }
+            .store(in: &cancellables)
+    }
 
     func respond(to action: Action) -> State {
         switch action {
+        case .backgroundRefresh:
+
+            backgroundRefreshTask?.cancel()
+            backgroundStates.append(.refresh)
+
+            backgroundRefreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+
+                    nextUpViewModel.send(.refresh)
+                    recentlyAddedViewModel.send(.refresh)
+
+                    let resumeItems = try await getResumeItems()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.resumeItems.elements = resumeItems
+                        self.backgroundStates.remove(.refresh)
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         case let .error(error):
             return .error(error)
         case .refresh:
-            cancellables.removeAll()
+            backgroundRefreshTask?.cancel()
+            refreshTask?.cancel()
 
-            Task { [weak self] in
+            refreshTask = Task { [weak self] in
                 guard let self else { return }
                 do {
 
@@ -71,7 +126,7 @@ final class HomeViewModel: ViewModel, Stateful {
                     }
                 }
             }
-            .store(in: &cancellables)
+            .asAnyCancellable()
 
             return .refreshing
         }
@@ -79,13 +134,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func refresh() async throws {
 
-        Task {
-            await nextUpViewModel.send(.refresh)
-        }
-
-        Task {
-            await recentlyAddedViewModel.send(.refresh)
-        }
+        await nextUpViewModel.send(.refresh)
+        await recentlyAddedViewModel.send(.refresh)
 
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()

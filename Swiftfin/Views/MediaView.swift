@@ -59,6 +59,9 @@ struct MediaView: View {
                     }
                 }
         }
+        .refreshable {
+            viewModel.send(.refresh)
+        }
     }
 
     private func errorView(with error: some Error) -> some View {

@@ -14,6 +14,8 @@ import OrderedCollections
 //       so that conformers don't have to manually insert/remove them
 // TODO: better/official way for subclasses of conformers to perform actions during
 //       parent class actions
+// TODO: official way for a cleaner `respond` method so it doesn't have all Task
+//       construction and get bloated
 
 protocol Stateful: AnyObject {
 

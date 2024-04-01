@@ -70,7 +70,7 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var specialFeatures: [BaseItemDto] = []
 
     @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var lastAction: Action? = nil
     @Published
@@ -88,11 +88,9 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        // TODO: should replace with a more robust "PlaybackManager"?
-        Notifications[.didEndPlayback].publiser
+        // TODO: should replace with a more robust "PlaybackManager"
+        Notifications[.itemMetadataDidChange].publisher
             .sink { [weak self] notification in
-
-                print("here")
 
                 guard let userInfo = notification.object as? [String: String] else { return }
 
@@ -311,6 +309,9 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         let _ = try await userSession.client.send(request)
+
+        let ids = ["itemID": item.id]
+        Notifications[.itemMetadataDidChange].post(object: ids)
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {

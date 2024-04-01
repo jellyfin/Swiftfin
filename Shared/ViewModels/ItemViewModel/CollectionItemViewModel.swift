@@ -15,29 +15,12 @@ final class CollectionItemViewModel: ItemViewModel {
     @Published
     private(set) var collectionItems: [BaseItemDto] = []
 
-    private var collectionItemsTask: AnyCancellable?
+    override func onRefresh() async throws {
+        let collectionItems = try await self.getCollectionItems()
 
-    override init(item: BaseItemDto) {
-        super.init(item: item)
-
-        $lastAction
-            .sink { [weak self] action in
-                guard let self else { return }
-
-                if action == .refresh {
-                    collectionItemsTask?.cancel()
-
-                    collectionItemsTask = Task {
-                        let collectionItems = try await self.getCollectionItems()
-
-                        await MainActor.run {
-                            self.collectionItems = collectionItems
-                        }
-                    }
-                    .asAnyCancellable()
-                }
-            }
-            .store(in: &cancellables)
+        await MainActor.run {
+            self.collectionItems = collectionItems
+        }
     }
 
     private func getCollectionItems() async throws -> [BaseItemDto] {
