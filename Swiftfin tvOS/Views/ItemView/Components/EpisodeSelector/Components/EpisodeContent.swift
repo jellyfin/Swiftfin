@@ -26,15 +26,14 @@ extension SeriesEpisodeSelector {
         @ViewBuilder
         private var subHeaderView: some View {
             Text(subHeader)
-                .font(.footnote)
+                .font(.caption)
                 .foregroundColor(.secondary)
-                .lineLimit(1)
         }
 
         @ViewBuilder
         private var headerView: some View {
             Text(header)
-                .font(.body)
+                .font(.footnote)
                 .foregroundColor(.primary)
                 .lineLimit(1)
                 .multilineTextAlignment(.leading)
@@ -66,7 +65,9 @@ extension SeriesEpisodeSelector {
                         .font(.caption.weight(.light))
                         .foregroundStyle(accentColor)
                 }
+                .padding(5)
             }
+            .buttonStyle(.card)
         }
     }
 }

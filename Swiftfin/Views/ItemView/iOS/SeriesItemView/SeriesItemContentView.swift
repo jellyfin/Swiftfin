@@ -22,7 +22,9 @@ extension SeriesItemView {
 
                 // MARK: Episodes
 
-                SeriesEpisodeSelector(viewModel: viewModel)
+                if viewModel.seasons.isNotEmpty {
+                    SeriesEpisodeSelector(viewModel: viewModel)
+                }
 
                 // MARK: Genres
 

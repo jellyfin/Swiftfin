@@ -17,8 +17,8 @@ struct DelayedProgressView: View {
 
     private let timer: Publishers.Autoconnect<Timer.TimerPublisher>
 
-    init(delay: Double = 1) {
-        self.timer = Timer.publish(every: delay, on: .main, in: .common).autoconnect()
+    init(interval: Double = 0.5) {
+        self.timer = Timer.publish(every: interval, on: .main, in: .common).autoconnect()
     }
 
     var body: some View {
