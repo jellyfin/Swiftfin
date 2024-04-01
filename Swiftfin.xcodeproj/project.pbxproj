@@ -214,11 +214,12 @@
 		E1153D962BBA3E2F00424D36 /* EpisodeHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D952BBA3E2F00424D36 /* EpisodeHStack.swift */; };
 		E1153D9A2BBA3E9800424D36 /* ErrorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D992BBA3E9800424D36 /* ErrorCard.swift */; };
 		E1153D9C2BBA3E9D00424D36 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */; };
-		E1153D9F2BBA582500424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153D9E2BBA582500424D36 /* CollectionHStack */; };
-		E1153DA12BBA582F00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA02BBA582F00424D36 /* CollectionHStack */; };
 		E1153DA42BBA614F00424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA32BBA614F00424D36 /* CollectionVGrid */; };
 		E1153DA72BBA641000424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA62BBA641000424D36 /* CollectionVGrid */; };
 		E1153DA92BBA642A00424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA82BBA642A00424D36 /* CollectionVGrid */; };
+		E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAB2BBA6AD200424D36 /* CollectionHStack */; };
+		E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAE2BBA734200424D36 /* CollectionHStack */; };
+		E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DB02BBA734C00424D36 /* CollectionHStack */; };
 		E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -1360,7 +1361,7 @@
 				E1153DA92BBA642A00424D36 /* CollectionVGrid in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
-				E1153DA12BBA582F00424D36 /* CollectionHStack in Frameworks */,
+				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
@@ -1408,8 +1409,8 @@
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
+				E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
-				E1153D9F2BBA582500424D36 /* CollectionHStack in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
@@ -1418,6 +1419,7 @@
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
 				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
+				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
@@ -2983,8 +2985,8 @@
 				E14CB6872A9FF71F001586C6 /* JellyfinAPI */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
-				E1153DA02BBA582F00424D36 /* CollectionHStack */,
 				E1153DA82BBA642A00424D36 /* CollectionVGrid */,
+				E1153DB02BBA734C00424D36 /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3034,9 +3036,10 @@
 				E15EFA832BA167350080E926 /* CollectionHStack */,
 				E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */,
 				E18D6AA52BAA96F000A0D167 /* CollectionHStack */,
-				E1153D9E2BBA582500424D36 /* CollectionHStack */,
 				E1153DA32BBA614F00424D36 /* CollectionVGrid */,
 				E1153DA62BBA641000424D36 /* CollectionVGrid */,
+				E1153DAB2BBA6AD200424D36 /* CollectionHStack */,
+				E1153DAE2BBA734200424D36 /* CollectionHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3106,8 +3109,8 @@
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
-				E1153D9D2BBA582500424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
+				E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4375,17 +4378,17 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		E1153D9D2BBA582500424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
+		E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack";
+			repositoryURL = "https://github.com/LePips/CollectionVGrid";
 			requirement = {
 				branch = main;
 				kind = branch;
 			};
 		};
-		E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
+		E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionVGrid";
+			repositoryURL = "https://github.com/LePips/CollectionHStack";
 			requirement = {
 				branch = main;
 				kind = branch;
@@ -4560,16 +4563,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionVGrid;
 		};
-		E1153D9E2BBA582500424D36 /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153D9D2BBA582500424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
-		E1153DA02BBA582F00424D36 /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153D9D2BBA582500424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
 		E1153DA32BBA614F00424D36 /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionVGrid;
@@ -4583,6 +4576,20 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
+		};
+		E1153DAB2BBA6AD200424D36 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionHStack;
+		};
+		E1153DAE2BBA734200424D36 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
+		};
+		E1153DB02BBA734C00424D36 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
 		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;

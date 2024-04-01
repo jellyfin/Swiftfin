@@ -9,6 +9,7 @@
 import Combine
 import CoreStore
 import Factory
+import Get
 import JellyfinAPI
 import OrderedCollections
 
@@ -19,6 +20,7 @@ final class HomeViewModel: ViewModel, Stateful {
     enum Action: Equatable {
         case backgroundRefresh
         case error(JellyfinAPIError)
+        case setIsPlayed(Bool, BaseItemDto)
         case refresh
     }
 
@@ -52,16 +54,18 @@ final class HomeViewModel: ViewModel, Stateful {
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
-    private(set) var nextUpViewModel: NextUpLibraryViewModel = .init()
-    private(set) var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
+    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
         super.init()
 
         Notifications[.itemMetadataDidChange].publisher
             .sink { _ in
-                Task {
-                    await self.send(.backgroundRefresh)
+                // Necessary because when this notification is posted the view will
+                // be in landscape, causing layout issues with CollectionHStack
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { @MainActor in
+                    self.send(.backgroundRefresh)
                 }
             }
             .store(in: &cancellables)
@@ -103,6 +107,15 @@ final class HomeViewModel: ViewModel, Stateful {
             return state
         case let .error(error):
             return .error(error)
+        case let .setIsPlayed(isPlayed, item): ()
+            Task {
+                try await setIsPlayed(isPlayed, for: item)
+
+                self.send(.backgroundRefresh)
+            }
+            .store(in: &cancellables)
+
+            return state
         case .refresh:
             backgroundRefreshTask?.cancel()
             refreshTask?.cancel()
@@ -184,38 +197,21 @@ final class HomeViewModel: ViewModel, Stateful {
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
-    // TODO: fix
-    func markItemUnplayed(_ item: BaseItemDto) {
-//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-//
-//        Task {
-//            let request = Paths.markUnplayedItem(
-//                userID: userSession.user.id,
-//                itemID: item.id!
-//            )
-//            let _ = try await userSession.client.send(request)
-//
-        ////            refreshResumeItems()
-//
-//            try await nextUpViewModel.refresh()
-//            try await recentlyAddedViewModel.refresh()
-//        }
-    }
+    private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        let request: Request<UserItemDataDto>
 
-    // TODO: fix
-    func markItemPlayed(_ item: BaseItemDto) {
-//        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-//
-//        Task {
-//            let request = Paths.markPlayedItem(
-//                userID: userSession.user.id,
-//                itemID: item.id!
-//            )
-//            let _ = try await userSession.client.send(request)
-//
-        ////            refreshResumeItems()
-//            try await nextUpViewModel.refresh()
-//            try await recentlyAddedViewModel.refresh()
-//        }
+        if isPlayed {
+            request = Paths.markPlayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        } else {
+            request = Paths.markUnplayedItem(
+                userID: userSession.user.id,
+                itemID: item.id!
+            )
+        }
+
+        let _ = try await userSession.client.send(request)
     }
 }

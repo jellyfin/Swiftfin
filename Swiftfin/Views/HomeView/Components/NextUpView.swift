@@ -22,24 +22,24 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: NextUpLibraryViewModel
+        var homeViewModel: HomeViewModel
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
+            if homeViewModel.nextUpViewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.nextUp,
                     type: nextUpPosterType,
-                    items: $viewModel.elements
+                    items: $homeViewModel.nextUpViewModel.elements
                 )
                 .trailing {
                     SeeAllButton()
                         .onSelect {
-                            router.route(to: \.library, viewModel)
+                            router.route(to: \.library, homeViewModel.nextUpViewModel)
                         }
                 }
                 .contextMenu { item in
                     Button {
-                        viewModel.markPlayed(item: item)
+                        homeViewModel.send(.setIsPlayed(true, item))
                     } label: {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }

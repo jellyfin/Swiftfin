@@ -12,6 +12,7 @@ import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
 //       - similar to MediaView TODO bug?
+//       - indicated by snapping to the top
 struct HomeView: View {
 
     @Default(.Customization.nextUpPosterType)
@@ -31,7 +32,7 @@ struct HomeView: View {
 
                 ContinueWatchingView(viewModel: viewModel)
 
-                NextUpView(viewModel: viewModel.nextUpViewModel)
+                NextUpView(homeViewModel: viewModel)
 
                 RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
 
