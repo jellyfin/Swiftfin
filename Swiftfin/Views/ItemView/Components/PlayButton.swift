@@ -26,6 +26,14 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        private var title: String {
+            if let seriesViewModel = viewModel as? SeriesItemViewModel {
+                return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
+            } else {
+                return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
+            }
+        }
+
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
@@ -43,13 +51,14 @@ extension ItemView {
                         Image(systemName: "play.fill")
                             .font(.system(size: 20))
 
-                        Text(viewModel.playButtonText())
+                        Text(title)
                             .font(.callout)
                             .fontWeight(.semibold)
                     }
                     .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : accentColor.overlayColor)
                 }
             }
+            .disabled(viewModel.playButtonItem == nil)
 //            .contextMenu {
 //                if viewModel.playButtonItem != nil, viewModel.item.userData?.playbackPositionTicks ?? 0 > 0 {
 //                    Button {

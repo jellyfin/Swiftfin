@@ -12,6 +12,7 @@ import SwiftUI
 
 // TODO: seems to redraw view when popped to sometimes?
 //       - similar to MediaView TODO bug?
+//       - indicated by snapping to the top
 struct HomeView: View {
 
     @Default(.Customization.nextUpPosterType)
@@ -31,7 +32,7 @@ struct HomeView: View {
 
                 ContinueWatchingView(viewModel: viewModel)
 
-                NextUpView(viewModel: viewModel.nextUpViewModel)
+                NextUpView(homeViewModel: viewModel)
 
                 RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
 
@@ -40,6 +41,9 @@ struct HomeView: View {
                 }
             }
             .edgePadding(.vertical)
+        }
+        .refreshable {
+            viewModel.send(.refresh)
         }
     }
 
@@ -52,30 +56,37 @@ struct HomeView: View {
 
     var body: some View {
         WrappedView {
-            Group {
-                switch viewModel.state {
-                case .content:
-                    contentView
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
-                    ProgressView()
-                }
+            switch viewModel.state {
+            case .content:
+                contentView
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .onFirstAppear {
             viewModel.send(.refresh)
         }
         .navigationTitle(L10n.home)
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                Button {
-                    router.route(to: \.settings)
-                } label: {
-                    Image(systemName: "gearshape.fill")
-                        .accessibilityLabel(L10n.settings)
-                }
+        .topBarTrailing {
+
+            if viewModel.backgroundStates.contains(.refresh) {
+                ProgressView()
+            }
+
+            Button {
+                router.route(to: \.settings)
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .accessibilityLabel(L10n.settings)
+            }
+        }
+        .afterLastDisappear { interval in
+            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+                viewModel.send(.backgroundRefresh)
+                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
             }
         }
     }

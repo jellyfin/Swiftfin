@@ -18,14 +18,14 @@ final class MediaViewModel: ViewModel, Stateful {
 
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case error(JellyfinAPIError)
         case refresh
     }
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case content
         case error(JellyfinAPIError)
         case initial
@@ -36,7 +36,9 @@ final class MediaViewModel: ViewModel, Stateful {
     var mediaItems: OrderedSet<MediaType> = []
 
     @Published
-    var state: State = .initial
+    final var state: State = .initial
+    @Published
+    final var lastAction: Action? = nil
 
     func respond(to action: Action) -> State {
         switch action {

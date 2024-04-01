@@ -16,6 +16,7 @@ import SwiftUI
 // TODO: seems to redraw view when popped to sometimes?
 //       - similar to HomeView TODO bug?
 // TODO: list view
+// TODO: `afterLastDisappear` with `backgroundRefresh`
 struct MediaView: View {
 
     @EnvironmentObject
@@ -59,6 +60,9 @@ struct MediaView: View {
                     }
                 }
         }
+        .refreshable {
+            viewModel.send(.refresh)
+        }
     }
 
     private func errorView(with error: some Error) -> some View {
@@ -70,18 +74,16 @@ struct MediaView: View {
 
     var body: some View {
         WrappedView {
-            Group {
-                switch viewModel.state {
-                case .content:
-                    contentView
-                case let .error(error):
-                    errorView(with: error)
-                case .initial, .refreshing:
-                    ProgressView()
-                }
+            switch viewModel.state {
+            case .content:
+                contentView
+            case let .error(error):
+                errorView(with: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
-            .transition(.opacity.animation(.linear(duration: 0.1)))
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
         .topBarTrailing {
@@ -101,6 +103,7 @@ extension MediaView {
     //       - differentiate between what media types are Swiftfin only
     //         which would allow some cleanup
     //       - allow server or random view per library?
+    // TODO: if local label on image, also needs to be in blurhash placeholder
     struct MediaItem: View {
 
         @Default(.Customization.Library.randomImage)

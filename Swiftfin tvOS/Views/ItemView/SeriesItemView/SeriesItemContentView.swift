@@ -28,8 +28,10 @@ extension SeriesItemView {
                     .frame(height: UIScreen.main.bounds.height - 150)
                     .padding(.bottom, 50)
 
-                SeriesEpisodeSelector(viewModel: viewModel)
-                    .environmentObject(focusGuide)
+                if viewModel.seasons.isNotEmpty {
+                    SeriesEpisodeSelector(viewModel: viewModel)
+                        .environmentObject(focusGuide)
+                }
 
                 if let castAndCrew = viewModel.item.people, castAndCrew.isNotEmpty {
                     ItemView.CastAndCrewHStack(people: castAndCrew)

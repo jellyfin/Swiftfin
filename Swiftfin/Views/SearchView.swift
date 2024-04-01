@@ -85,7 +85,7 @@ struct SearchView: View {
     @ViewBuilder
     private func itemsSection(
         title: String,
-        keyPath: ReferenceWritableKeyPath<SearchViewModel, [BaseItemDto]>,
+        keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
         posterType: PosterType
     ) -> some View {
         PosterHStack(
@@ -96,7 +96,8 @@ struct SearchView: View {
         .trailing {
             SeeAllButton()
                 .onSelect {
-                    router.route(to: \.library, .init(viewModel[keyPath: keyPath]))
+                    let viewModel = PagingLibraryViewModel(title: title, viewModel[keyPath: keyPath])
+                    router.route(to: \.library, viewModel)
                 }
         }
         .onSelect(select)

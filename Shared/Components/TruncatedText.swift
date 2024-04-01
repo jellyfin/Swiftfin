@@ -10,6 +10,7 @@ import Defaults
 import SwiftUI
 
 // TODO: only allow `view` selection when truncated?
+// TODO: fix when also using `lineLimit(reserveSpace > 1)`
 
 struct TruncatedText: View {
 

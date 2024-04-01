@@ -13,4 +13,12 @@ extension CGSize {
     static func Square(length: CGFloat) -> CGSize {
         CGSize(width: length, height: length)
     }
+
+    var isLandscape: Bool {
+        width >= height
+    }
+
+    var isPortrait: Bool {
+        height >= width
+    }
 }
