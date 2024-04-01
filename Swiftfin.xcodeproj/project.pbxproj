@@ -220,6 +220,7 @@
 		E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAB2BBA6AD200424D36 /* CollectionHStack */; };
 		E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAE2BBA734200424D36 /* CollectionHStack */; };
 		E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DB02BBA734C00424D36 /* CollectionHStack */; };
+		E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DB22BBA80B400424D36 /* EmptyCard.swift */; };
 		E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -971,6 +972,7 @@
 		E1153D952BBA3E2F00424D36 /* EpisodeHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeHStack.swift; sourceTree = "<group>"; };
 		E1153D992BBA3E9800424D36 /* ErrorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCard.swift; sourceTree = "<group>"; };
 		E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
+		E1153DB22BBA80B400424D36 /* EmptyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCard.swift; sourceTree = "<group>"; };
 		E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 		E118959C289312020042947B /* BaseItemPerson+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+Poster.swift"; sourceTree = "<group>"; };
 		E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffsetModifier.swift; sourceTree = "<group>"; };
@@ -2342,6 +2344,7 @@
 		E172D3B02BACA560007B4647 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				E1153DB22BBA80B400424D36 /* EmptyCard.swift */,
 				E1A3E4C62BB74E50005C59F8 /* EpisodeCard.swift */,
 				E172D3B12BACA569007B4647 /* EpisodeContent.swift */,
 				E1A3E4CA2BB74EFD005C59F8 /* EpisodeHStack.swift */,
@@ -3893,6 +3896,7 @@
 				E148128528C15472003B8787 /* SortOrder.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
 				E1A3E4C72BB74E50005C59F8 /* EpisodeCard.swift in Sources */,
+				E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
 				E172D3B22BACA569007B4647 /* EpisodeContent.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryViewType.swift in Sources */,

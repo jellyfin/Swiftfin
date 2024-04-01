@@ -103,6 +103,7 @@ extension MediaView {
     //       - differentiate between what media types are Swiftfin only
     //         which would allow some cleanup
     //       - allow server or random view per library?
+    // TODO: if local label on image, also needs to be in blurhash placeholder
     struct MediaItem: View {
 
         @Default(.Customization.Library.randomImage)

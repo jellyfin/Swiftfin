@@ -54,7 +54,11 @@ extension SeriesEpisodeSelector {
         var body: some View {
             switch viewModel.state {
             case .content:
-                contentView(viewModel: viewModel)
+                if viewModel.elements.isEmpty {
+                    EmptyHStack()
+                } else {
+                    contentView(viewModel: viewModel)
+                }
             case let .error(error):
                 ErrorHStack(viewModel: viewModel, error: error)
             case .initial, .refreshing:
@@ -63,6 +67,22 @@ extension SeriesEpisodeSelector {
         }
     }
 
+    struct EmptyHStack: View {
+
+        var body: some View {
+            CollectionHStack(
+                0 ..< 1,
+                columns: UIDevice.isPhone ? 1.5 : 3.5
+            ) { _ in
+                SeriesEpisodeSelector.EmptyCard()
+            }
+            .allowScrolling(false)
+            .insets(horizontal: EdgeInsets.defaultEdgePadding)
+            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+        }
+    }
+
+    // TODO: better refresh design
     struct ErrorHStack: View {
 
         @ObservedObject
