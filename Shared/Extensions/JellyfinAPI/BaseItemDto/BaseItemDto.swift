@@ -270,10 +270,6 @@ extension BaseItemDto {
             return L10n.missing
         }
 
-        if type == .episode, let seasonEpisodeLabel {
-            return seasonEpisodeLabel
-        }
-
         if let progressLabel {
             return progressLabel
         }

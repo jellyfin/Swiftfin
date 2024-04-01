@@ -40,7 +40,7 @@ final class SeriesItemViewModel: ItemViewModel {
             self.seasons.append(contentsOf: newSeasons)
         }
 
-        if let episodeItem = try await [nextUp, resume].first {
+        if let episodeItem = try await [nextUp, resume].compacted().first {
             await MainActor.run {
                 self.playButtonItem = episodeItem
             }

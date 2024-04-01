@@ -27,15 +27,6 @@ extension Sequence {
     func subtracting<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
         filter { !other.contains($0[keyPath: keyPath]) }
     }
-
-    func zipped<Other: Sequence>(with other: Other) -> Zip2Sequence<Self, Other> {
-        zip(self, other)
-    }
-
-    func zipped<Value>(map: (Element) -> Value) -> Zip2Sequence<Self, some Sequence<Value>> {
-        let other = self.map(map)
-        return zip(self, other)
-    }
 }
 
 extension Sequence where Element: Equatable {

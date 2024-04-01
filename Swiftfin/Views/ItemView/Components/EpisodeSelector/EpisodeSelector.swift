@@ -12,9 +12,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// This also changes views based on parent series item state.
-// TODO: should just have fade in item after getting full item successful?
-//       - for all items and would allow this to be cleaner
 struct SeriesEpisodeSelector: View {
 
     @ObservedObject

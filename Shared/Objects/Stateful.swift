@@ -12,6 +12,8 @@ import OrderedCollections
 // TODO: documentation
 // TODO: find a better way to handle backgroundStates on action/state transitions
 //       so that conformers don't have to manually insert/remove them
+// TODO: better/official way for subclasses of conformers to perform actions during
+//       parent class actions
 
 protocol Stateful: AnyObject {
 

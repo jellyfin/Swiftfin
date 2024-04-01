@@ -16,6 +16,8 @@ import SwiftUI
 //       other items that don't have a subtitle which requires the entire library to implement
 //       subtitle content but that doesn't look appealing. Until a solution arrives grid posters
 //       will not have subtitle content.
+//       There should be a solution since there are contexts where subtitles are desirable and/or
+//       we can have subtitle content for other items.
 
 struct PagingLibraryView<Element: Poster>: View {
 
@@ -79,6 +81,9 @@ struct PagingLibraryView<Element: Poster>: View {
         switch item.type {
         case .collectionFolder, .folder:
             let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
+            router.route(to: \.library, viewModel)
+        case .person:
+            let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
         default:
             router.route(to: \.item, item)

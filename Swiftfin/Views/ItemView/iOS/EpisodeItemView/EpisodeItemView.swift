@@ -31,10 +31,5 @@ struct EpisodeItemView: View {
             start: 0,
             end: 10
         )
-        .topBarTrailing {
-            if viewModel.state == .refreshing {
-                ProgressView()
-            }
-        }
     }
 }
