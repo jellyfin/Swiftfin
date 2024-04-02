@@ -56,10 +56,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didSignIn() {
         logger.info("Signed in")
-
-        DispatchQueue.main.async {
-            self.root(\.mainTab)
-        }
+        root(\.mainTab)
     }
 
     @objc
