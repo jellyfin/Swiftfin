@@ -80,7 +80,7 @@ struct UnmaskSecureField: UIViewRepresentable {
     }
 }
 
-extension UITextField {
+private extension UITextField {
 
     // https://stackoverflow.com/a/48115361
     func toggleSecureEntry() {
