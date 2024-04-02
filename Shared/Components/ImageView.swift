@@ -7,16 +7,24 @@
 //
 
 import BlurHashKit
-import JellyfinAPI
 import Nuke
 import NukeUI
 import SwiftUI
-import UIKit
 
-private let imagePipeline = ImagePipeline(configuration: .withDataCache)
+private let imagePipeline = {
+
+    ImageDecoderRegistry.shared.register { context in
+        guard let mimeType = context.urlResponse?.mimeType else { return nil }
+        return mimeType.contains("svg") ? ImageDecoders.Empty() : nil
+    }
+
+    return ImagePipeline(configuration: .withDataCache)
+}()
 
 // TODO: Binding inits?
 //       - instead of removing first source on failure, just safe index into sources
+// TODO: currently SVGs are only supported for logos, which are only used in a few places.
+//       make it so when displaying an SVG there is a unified `image` caller modifier
 struct ImageView: View {
 
     @State
@@ -42,8 +50,12 @@ struct ImageView: View {
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
-                    image(_image.resizable())
-                        .eraseToAnyView()
+                    if let data = state.imageContainer?.data {
+                        FastSVGView(data: data)
+                    } else {
+                        image(_image.resizable())
+                            .eraseToAnyView()
+                    }
                 } else if state.error != nil {
                     failure()
                         .eraseToAnyView()
@@ -103,7 +115,7 @@ extension ImageView {
     }
 }
 
-// MARK: Extensions
+// MARK: Modifiers
 
 extension ImageView {
 
