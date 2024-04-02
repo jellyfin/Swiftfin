@@ -73,7 +73,7 @@ extension Notifications.Key {
     static let didSignOut = NotificationKey("didSignOut")
     static let processDeepLink = NotificationKey("processDeepLink")
     static let didPurge = NotificationKey("didPurge")
-    static let didChangeServerCurrentURI = NotificationKey("didChangeCurrentLoginURI")
+    static let didChangeCurrentServerURL = NotificationKey("didChangeCurrentServerURL")
     static let didSendStopReport = NotificationKey("didSendStopReport")
     static let didRequestGlobalRefresh = NotificationKey("didRequestGlobalRefresh")
 

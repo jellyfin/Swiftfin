@@ -107,7 +107,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail(server: ServerState) -> some View {
-        ServerDetailView(viewModel: .init(server: server))
+        ServerDetailView(server: server)
     }
 
     #if DEBUG

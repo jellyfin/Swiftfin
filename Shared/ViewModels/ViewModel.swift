@@ -28,5 +28,13 @@ class ViewModel: ObservableObject {
 
     var cancellables = Set<AnyCancellable>()
 
-    init() {}
+    private var userSessionResolverCancellable: AnyCancellable?
+
+    init() {
+        userSessionResolverCancellable = Notifications[.didChangeCurrentServerURL]
+            .publisher
+            .sink { [weak self] _ in
+                self?.$userSession.resolve(reset: .scope)
+            }
+    }
 }

@@ -14,8 +14,12 @@ struct UserListView: View {
     @EnvironmentObject
     private var router: UserListCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserListViewModel
+    @StateObject
+    private var viewModel: UserListViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserListViewModel(server: server))
+    }
 
     private var noUserView: some View {
         VStack {
