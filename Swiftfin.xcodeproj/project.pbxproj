@@ -221,7 +221,10 @@
 		E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAE2BBA734200424D36 /* CollectionHStack */; };
 		E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DB02BBA734C00424D36 /* CollectionHStack */; };
 		E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DB22BBA80B400424D36 /* EmptyCard.swift */; };
-		E1153DD42BBB6D3C00424D36 /* UnmaskSecureField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DD32BBB6D3C00424D36 /* UnmaskSecureField.swift */; };
+		E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DCB2BBB633B00424D36 /* FastSVGView.swift */; };
+		E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DCB2BBB633B00424D36 /* FastSVGView.swift */; };
+		E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DCF2BBB634F00424D36 /* SVGKit */; };
+		E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DD12BBB649C00424D36 /* SVGKit */; };
 		E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -662,6 +665,7 @@
 		E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */; };
 		E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */; };
 		E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */; };
+		E1D27EE72BBC955F00152D16 /* UnmaskSecureField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D27EE62BBC955F00152D16 /* UnmaskSecureField.swift */; };
 		E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3043428D1763100587289 /* SeeAllButton.swift */; };
 		E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */; };
 		E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F472B9C648E00343D2B /* MaxHeightText.swift */; };
@@ -974,7 +978,7 @@
 		E1153D992BBA3E9800424D36 /* ErrorCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorCard.swift; sourceTree = "<group>"; };
 		E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
 		E1153DB22BBA80B400424D36 /* EmptyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCard.swift; sourceTree = "<group>"; };
-		E1153DD32BBB6D3C00424D36 /* UnmaskSecureField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnmaskSecureField.swift; sourceTree = "<group>"; };
+		E1153DCB2BBB633B00424D36 /* FastSVGView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastSVGView.swift; sourceTree = "<group>"; };
 		E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 		E118959C289312020042947B /* BaseItemPerson+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+Poster.swift"; sourceTree = "<group>"; };
 		E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffsetModifier.swift; sourceTree = "<group>"; };
@@ -1243,6 +1247,7 @@
 		E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectOrientationModifier.swift; sourceTree = "<group>"; };
 		E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterTrack.swift; sourceTree = "<group>"; };
+		E1D27EE62BBC955F00152D16 /* UnmaskSecureField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnmaskSecureField.swift; sourceTree = "<group>"; };
 		E1D3043428D1763100587289 /* SeeAllButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeeAllButton.swift; sourceTree = "<group>"; };
 		E1D3044328D1991900587289 /* LibraryViewTypeToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewTypeToggle.swift; sourceTree = "<group>"; };
 		E1D37F472B9C648E00343D2B /* MaxHeightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxHeightText.swift; sourceTree = "<group>"; };
@@ -1363,6 +1368,7 @@
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
 				E1153DA92BBA642A00424D36 /* CollectionVGrid in Frameworks */,
+				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
@@ -1404,6 +1410,7 @@
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
 				E1FAD1C62A0375BA007F5521 /* UDPBroadcast in Frameworks */,
+				E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */,
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */,
@@ -1850,7 +1857,7 @@
 				E1D3043428D1763100587289 /* SeeAllButton.swift */,
 				E1D5C39728DF914100CDBEFB /* Slider */,
 				E1581E26291EF59800D6C640 /* SplitContentView.swift */,
-				E1153DD32BBB6D3C00424D36 /* UnmaskSecureField.swift */,
+				E1D27EE62BBC955F00152D16 /* UnmaskSecureField.swift */,
 				E157562F29355B7900976E1F /* UpdateView.swift */,
 				E192607F28D28AAD002314B4 /* UserProfileButton.swift */,
 			);
@@ -2642,6 +2649,7 @@
 			children = (
 				E104DC952B9E7E29008F506D /* AssertionFailureView.swift */,
 				E18E0203288749200022598C /* BlurView.swift */,
+				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */,
@@ -2993,6 +3001,7 @@
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
 				E1153DA82BBA642A00424D36 /* CollectionVGrid */,
 				E1153DB02BBA734C00424D36 /* CollectionHStack */,
+				E1153DD12BBB649C00424D36 /* SVGKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3046,6 +3055,7 @@
 				E1153DA62BBA641000424D36 /* CollectionVGrid */,
 				E1153DAB2BBA6AD200424D36 /* CollectionHStack */,
 				E1153DAE2BBA734200424D36 /* CollectionHStack */,
+				E1153DCF2BBB634F00424D36 /* SVGKit */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3117,6 +3127,7 @@
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
 				E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
+				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3438,6 +3449,7 @@
 				E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */,
 				E1575E72293E77B5001665B1 /* Utilities.swift in Sources */,
 				E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */,
+				E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
 				E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E1A1528B28FD22F600600579 /* TextPairView.swift in Sources */,
@@ -3681,6 +3693,7 @@
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
+				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */,
 				E14EDEC52B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */,
 				E11245B728D97ED200D8A977 /* TopBarView.swift in Sources */,
@@ -3706,7 +3719,6 @@
 				E1171A1928A2212600FA1AF5 /* QuickConnectView.swift in Sources */,
 				E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */,
-				E1153DD42BBB6D3C00424D36 /* UnmaskSecureField.swift in Sources */,
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */,
@@ -3864,6 +3876,7 @@
 				E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* ItemFilterCollection.swift in Sources */,
+				E1D27EE72BBC955F00152D16 /* UnmaskSecureField.swift in Sources */,
 				E1CAF65D2BA345830087D991 /* MediaType.swift in Sources */,
 				E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */,
 				E18A8E7D28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
@@ -4402,6 +4415,14 @@
 				kind = branch;
 			};
 		};
+		E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SVGKit/SVGKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/JohnEstropia/CoreStore.git";
@@ -4598,6 +4619,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
 			productName = CollectionHStack;
+		};
+		E1153DCF2BBB634F00424D36 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
+		};
+		E1153DD12BBB649C00424D36 /* SVGKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
+			productName = SVGKit;
 		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
