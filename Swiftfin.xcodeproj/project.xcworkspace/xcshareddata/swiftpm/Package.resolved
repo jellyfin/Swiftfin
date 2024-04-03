@@ -1,4 +1,5 @@
 {
+  "originHash" : "014f7f9b582fe941e86e045d02b91ba05b36a8317ab6be0cd706443a529fc2da",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -104,8 +105,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "ecc338b4ac0a817df36e087799d7077252489ccc",
-        "version" : "0.3.2"
+        "revision" : "30957ea3fe007eaecb203d16217c0c07dc3bcd8e",
+        "version" : "0.3.3"
       }
     },
     {
@@ -113,8 +114,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "8ecbfc886da39bccb01c34abef5f2ff4073ad633",
-        "version" : "12.4.0"
+        "revision" : "4625c73ea00a9fb4b4f3e28d95d0021a44af7e59",
+        "version" : "12.5.0"
       }
     },
     {
@@ -141,7 +142,7 @@
       "location" : "https://github.com/rundfunk47/stinsen",
       "state" : {
         "branch" : "master",
-        "revision" : "6dda57096e16020342b36ebea86dc4bdf6783426"
+        "revision" : "d6ad23f4c68212fed8ac64c739bef224628776e3"
       }
     },
     {
@@ -235,5 +236,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
