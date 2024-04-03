@@ -28,8 +28,8 @@ final class ServerListCoordinator: NavigationCoordinatable {
         ConnectToServerCoodinator()
     }
 
-    func makeUserList(server: SwiftfinStore.State.Server) -> UserListCoordinator {
-        UserListCoordinator(viewModel: .init(server: server))
+    func makeUserList(server: ServerState) -> UserListCoordinator {
+        UserListCoordinator(server: server)
     }
 
     func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {

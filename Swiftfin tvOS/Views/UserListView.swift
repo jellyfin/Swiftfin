@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -16,15 +16,27 @@ struct UserListView: View {
     @EnvironmentObject
     private var router: UserListCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserListViewModel
-
     @State
     private var longPressedUser: SwiftfinStore.State.User?
 
+    @StateObject
+    private var viewModel: UserListViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserListViewModel(server: server))
+    }
+
     @ViewBuilder
     private var listView: some View {
-        CollectionView(items: viewModel.users) { _, user, _ in
+        CollectionVGrid(
+            viewModel.users,
+            layout: .minWidth(
+                250,
+                insets: EdgeInsets.DefaultEdgeInsets,
+                itemSpacing: EdgeInsets.defaultEdgePadding,
+                lineSpacing: EdgeInsets.defaultEdgePadding
+            )
+        ) { user in
             UserProfileButton(user: user)
                 .onSelect {
                     viewModel.signIn(user: user)
@@ -33,16 +45,6 @@ struct UserListView: View {
                     longPressedUser = user
                 }
         }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 250),
-                itemSpacing: 20,
-                lineSpacing: 20,
-                sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20)
-            )
-        }
-        .padding(50)
     }
 
     @ViewBuilder
