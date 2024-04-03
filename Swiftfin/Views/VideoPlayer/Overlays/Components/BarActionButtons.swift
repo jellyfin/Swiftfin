@@ -139,8 +139,8 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 0) {
                 ForEach(barActionButtons) { actionButton in
                     switch actionButton {
-                    case .advanced:
-                        advancedButton
+//                    case .advanced:
+//                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:
