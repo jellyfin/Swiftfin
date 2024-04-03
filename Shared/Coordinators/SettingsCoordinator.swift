@@ -155,7 +155,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
-                ServerDetailView(viewModel: .init(server: server))
+                ServerDetailView(server: server)
             }
         )
     }
