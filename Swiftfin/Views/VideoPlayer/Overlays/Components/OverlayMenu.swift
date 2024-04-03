@@ -151,8 +151,8 @@ extension VideoPlayer.Overlay {
             Menu {
                 ForEach(menuActionButtons) { actionButton in
                     switch actionButton {
-                    case .advanced:
-                        advancedButton
+//                    case .advanced:
+//                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:

@@ -72,10 +72,14 @@ final class MediaViewModel: ViewModel, Stateful {
             mediaItems.removeAll()
         }
 
+        // TODO: atow, liveTV is removed because it wasn't fixed in time
+        //       after a giant refactor and to push an update
         let media: [MediaType] = try await getUserViews()
-            .map { userView in
+            .compactMap { userView in
                 if userView.collectionType == "livetv" {
-                    return .liveTV(userView)
+//                    return .liveTV(userView)
+
+                    return nil
                 }
 
                 return .collectionFolder(userView)
