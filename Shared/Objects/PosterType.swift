@@ -10,7 +10,8 @@ import Defaults
 import SwiftUI
 
 // TODO: Rename to `PosterDisplayType` or `PosterDisplay`?
-// TODO: in Swift 5.10, nest under `Poster` (also when GitHub CI has Xcode 15.3)
+// TODO: after no longer experimental, nest under `Poster`
+//       tracker: https://github.com/apple/swift-evolution/blob/main/proposals/0404-nested-protocols.md
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case landscape
