@@ -17,7 +17,11 @@ struct NavBarOffsetModifier: ViewModifier {
     let end: CGFloat
 
     func body(content: Content) -> some View {
-        NavBarOffsetView(scrollViewOffset: $scrollViewOffset, start: start, end: end) {
+        NavBarOffsetView(
+            scrollViewOffset: $scrollViewOffset,
+            start: start,
+            end: end
+        ) {
             content
         }
         .ignoresSafeArea()

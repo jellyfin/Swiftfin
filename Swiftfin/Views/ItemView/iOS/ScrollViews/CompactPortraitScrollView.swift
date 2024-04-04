@@ -107,11 +107,6 @@ extension ItemView {
             ) {
                 headerView
             }
-            .topBarTrailing {
-                if viewModel.state == .refreshing {
-                    ProgressView()
-                }
-            }
         }
     }
 }

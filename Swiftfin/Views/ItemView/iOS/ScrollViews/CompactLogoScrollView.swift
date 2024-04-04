@@ -53,58 +53,90 @@ extension ItemView {
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-
-                    VStack {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .background {
-                                BlurView(style: .systemThinMaterialDark)
-                                    .mask {
-                                        LinearGradient(
-                                            stops: [
-                                                .init(color: .clear, location: 0),
-                                                .init(color: .black, location: 0.3),
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    }
-                            }
-                            .overlay {
-                                Color.systemBackground
-                                    .opacity(topOpacity)
-                            }
-                    }
-                    .frame(height: UIScreen.main.bounds.height * 0.5)
-
-                    ItemView.OverviewView(item: viewModel.item)
-                        .overviewLineLimit(4)
-                        .taglineLineLimit(2)
-                        .edgePadding()
-
-                    content()
-                        .edgePadding(.bottom)
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .scrollViewOffset($scrollViewOffset)
-            .navigationBarOffset(
-                $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.42 - 50,
-                end: UIScreen.main.bounds.height * 0.42
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.5,
-                multiplier: 0.3
-            ) {
+            ItemViewOffsetScrollView(headerHeight: 0.5) {
                 headerView
+            } overlay: {
+                VStack {
+                    Spacer()
+
+                    OverlayView(viewModel: viewModel)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .clear, location: 0),
+                                            .init(color: .black, location: 0.3),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
+                        .overlay {
+                            Color.systemBackground
+                                .opacity(topOpacity)
+                        }
+                }
+            } content: {
+                content()
+                    .edgePadding(.bottom)
             }
+
+//            ScrollView(showsIndicators: false) {
+//                VStack(alignment: .leading, spacing: 0) {
+//
+//                    VStack {
+//                        Spacer()
+//
+//                        OverlayView(viewModel: viewModel)
+//                            .padding(.horizontal)
+//                            .padding(.bottom)
+//                            .background {
+//                                BlurView(style: .systemThinMaterialDark)
+//                                    .mask {
+//                                        LinearGradient(
+//                                            stops: [
+//                                                .init(color: .clear, location: 0),
+//                                                .init(color: .black, location: 0.3),
+//                                            ],
+//                                            startPoint: .top,
+//                                            endPoint: .bottom
+//                                        )
+//                                    }
+//                            }
+//                            .overlay {
+//                                Color.systemBackground
+//                                    .opacity(topOpacity)
+//                            }
+//                    }
+//                    .frame(height: UIScreen.main.bounds.height * 0.5)
+//
+//                    ItemView.OverviewView(item: viewModel.item)
+//                        .overviewLineLimit(4)
+//                        .taglineLineLimit(2)
+//                        .edgePadding()
+//
+//                    content()
+//                        .edgePadding(.bottom)
+//                }
+//            }
+//            .edgesIgnoringSafeArea(.top)
+//            .scrollViewOffset($scrollViewOffset)
+//            .navigationBarOffset(
+//                $scrollViewOffset,
+//                start: UIScreen.main.bounds.height * 0.42 - 50,
+//                end: UIScreen.main.bounds.height * 0.42
+//            )
+//            .backgroundParallaxHeader(
+//                $scrollViewOffset,
+//                height: UIScreen.main.bounds.height * 0.5,
+//                multiplier: 0.3
+//            ) {
+//                headerView
+//            }
         }
     }
 }

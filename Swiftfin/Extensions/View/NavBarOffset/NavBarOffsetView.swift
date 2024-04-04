@@ -40,7 +40,7 @@ struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
 class UINavBarOffsetHostingController<Content: View>: UIHostingController<Content> {
 
-    private var lastScrollViewOffset: CGFloat = 0
+    private var lastAlpha: CGFloat = 0
 
     private lazy var navBarBlurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
@@ -67,24 +67,26 @@ class UINavBarOffsetHostingController<Content: View>: UIHostingController<Conten
     func scrollViewDidScroll(_ offset: CGFloat, start: CGFloat, end: CGFloat) {
         let diff = end - start
         let currentProgress = (offset - start) / diff
-        let offset = min(max(currentProgress, 0), 1)
+        let alpha = clamp(currentProgress, min: 0, max: 1)
 
         navigationController?.navigationBar
-            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(offset)]
-        navBarBlurView.alpha = offset
-        lastScrollViewOffset = offset
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(alpha)]
+        navBarBlurView.alpha = alpha
+        lastAlpha = alpha
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         navigationController?.navigationBar
-            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastScrollViewOffset)]
+            .titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label.withAlphaComponent(lastAlpha)]
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.label]
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil

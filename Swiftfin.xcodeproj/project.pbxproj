@@ -618,6 +618,7 @@
 		E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7A829577BCE004B26CF /* PulseLogHandler */; };
 		E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AA29577BCE004B26CF /* PulseUI */; };
 		E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1B5F7AC29577BDD004B26CF /* OrderedCollections */; };
+		E1B90C6A2BBE68D5007027C8 /* ItemViewOffsetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B90C692BBE68D5007027C8 /* ItemViewOffsetView.swift */; };
 		E1BA6FC529D25DBD007D98DC /* LandscapeItemElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */; };
 		E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
 		E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */; };
@@ -1203,6 +1204,7 @@
 		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B5784028F8AFCB00D42911 /* WrappedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrappedView.swift; sourceTree = "<group>"; };
 		E1B5861129E32EEF00E45D6E /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		E1B90C692BBE68D5007027C8 /* ItemViewOffsetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViewOffsetView.swift; sourceTree = "<group>"; };
 		E1BA6FC429D25DBD007D98DC /* LandscapeItemElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapeItemElement.swift; sourceTree = "<group>"; };
 		E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
@@ -2553,6 +2555,7 @@
 				E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */,
 				E172D3AF2BACA54A007B4647 /* EpisodeSelector */,
 				E17FB55A28C1266400311DFE /* GenresHStack.swift */,
+				E1B90C692BBE68D5007027C8 /* ItemViewOffsetView.swift */,
 				E1D8424E2932F7C400D1041A /* OverviewView.swift */,
 				E18E01D8288747230022598C /* PlayButton.swift */,
 				E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */,
@@ -3578,6 +3581,7 @@
 				E1A1528828FD229500600579 /* ChevronButton.swift in Sources */,
 				E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
+				E1B90C6A2BBE68D5007027C8 /* ItemViewOffsetView.swift in Sources */,
 				E18E01DB288747230022598C /* iPadOSEpisodeItemView.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* String.swift in Sources */,
