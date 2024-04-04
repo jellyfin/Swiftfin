@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -80,7 +80,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            if !viewModel.chapters.isEmpty {
+            if viewModel.chapters.isNotEmpty {
                 ActionButtons.Chapters {
                     Image(systemName: "list.dash")
                         .frame(width: 45, height: 45)
@@ -139,8 +139,8 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 0) {
                 ForEach(barActionButtons) { actionButton in
                     switch actionButton {
-                    case .advanced:
-                        advancedButton
+//                    case .advanced:
+//                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:
@@ -160,7 +160,7 @@ extension VideoPlayer.Overlay {
                     }
                 }
 
-                if !menuActionButtons.isEmpty {
+                if menuActionButtons.isNotEmpty {
                     OverlayMenu()
                 }
             }

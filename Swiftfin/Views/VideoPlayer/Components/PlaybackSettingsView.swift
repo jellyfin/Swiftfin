@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -45,27 +45,27 @@ struct PlaybackSettingsView: View {
             }
 
             BasicStepper(
-                title: "Audio Offset",
+                title: L10n.audioOffset,
                 value: _audioOffset.wrappedValue,
                 range: -30000 ... 30000,
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
             BasicStepper(
-                title: "Subtitle Offset",
+                title: L10n.subtitleOffset,
                 value: _subtitleOffset.wrappedValue,
                 range: -30000 ... 30000,
                 step: 100
             )
             .valueFormatter {
-                $0.millisecondFormat
+                $0.millisecondLabel
             }
 
-            if !viewModel.videoStreams.isEmpty {
-                Section("Video") {
+            if viewModel.videoStreams.isNotEmpty {
+                Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -75,8 +75,8 @@ struct PlaybackSettingsView: View {
                 }
             }
 
-            if !viewModel.audioStreams.isEmpty {
-                Section("Audio") {
+            if viewModel.audioStreams.isNotEmpty {
+                Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -86,8 +86,8 @@ struct PlaybackSettingsView: View {
                 }
             }
 
-            if !viewModel.subtitleStreams.isEmpty {
-                Section("Subtitle") {
+            if viewModel.subtitleStreams.isNotEmpty {
+                Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
                         ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
@@ -97,9 +97,9 @@ struct PlaybackSettingsView: View {
                 }
             }
         }
-        .navigationTitle("Playback")
+        .navigationTitle(L10n.playback)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             splitContentViewProxy.hide()
         }
     }

@@ -3,10 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -57,50 +57,34 @@ struct LiveTVChannelsView: View {
     }
 
     var body: some View {
-
-        if viewModel.isLoading {
-            ProgressView()
-        } else if !viewModel.channelPrograms.isEmpty {
-
-            CollectionView(items: viewModel.channelPrograms) { _, program, _ in
-                channelCell(for: program)
-            }
-            .layout { _, layoutEnvironment in
-                .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .adaptive(withMinItemSize: 300),
-                    itemSpacing: 16,
-                    lineSpacing: 16,
-                    itemSize: .absolute(100)
-                )
-            }
-            .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
-                if !viewModel.isLoading && edge == .bottom {
-                    viewModel.requestNextPage()
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.channelPrograms.isNotEmpty {
+                CollectionVGrid(
+                    viewModel.channelPrograms,
+                    layout: .minWidth(250, itemSpacing: 16, lineSpacing: 4)
+                ) { program in
+                    channelCell(for: program)
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea()
-            .onAppear {
-                viewModel.startScheduleCheckTimer()
-            }
-            .onDisappear {
-                viewModel.stopScheduleCheckTimer()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: Notification.Name.livePlayerDismissed)) { _ in
-                viewModel.startScheduleCheckTimer()
-            }
-        } else {
-            VStack {
-                Text("No results.")
-                Button {
-                    viewModel.refresh()
-                    viewModel.requestNextPage()
-                } label: {
-                    Text("Reload")
+                .onAppear {
+                    viewModel.startScheduleCheckTimer()
+                }
+                .onDisappear {
+                    viewModel.stopScheduleCheckTimer()
+                }
+            } else {
+                VStack {
+                    Text(L10n.noResults)
+                    Button {
+                        viewModel.getChannels()
+                    } label: {
+                        Text(L10n.reload)
+                    }
                 }
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {

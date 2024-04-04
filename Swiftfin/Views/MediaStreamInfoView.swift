@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -21,7 +21,7 @@ struct MediaStreamInfoView: View {
                 }
             }
 
-            if !mediaStream.colorProperties.isEmpty {
+            if mediaStream.colorProperties.isNotEmpty {
                 Section(L10n.color) {
                     ForEach(mediaStream.colorProperties) { property in
                         TextPairView(property)
@@ -29,7 +29,7 @@ struct MediaStreamInfoView: View {
                 }
             }
 
-            if !mediaStream.deliveryProperties.isEmpty {
+            if mediaStream.deliveryProperties.isNotEmpty {
                 Section(L10n.delivery) {
                     ForEach(mediaStream.deliveryProperties) { property in
                         TextPairView(property)

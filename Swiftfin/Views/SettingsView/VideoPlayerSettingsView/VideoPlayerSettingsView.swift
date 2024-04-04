@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -65,61 +65,61 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(title: "Gestures")
+            ChevronButton(title: L10n.gestures)
                 .onSelect {
                     router.route(to: \.gestureSettings)
                 }
 
-            EnumPicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+            CaseIterablePicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            EnumPicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
+            CaseIterablePicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 
                 BasicStepper(
-                    title: "Resume Offset",
+                    title: L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
                     step: 1
                 )
                 .valueFormatter {
-                    $0.secondFormat
+                    $0.secondLabel
                 }
             } footer: {
-                Text("Resume content seconds before the recorded resume time")
+                Text(L10n.resumeOffsetDescription)
             }
 
-            Section("Buttons") {
+            Section(L10n.buttons) {
 
-                EnumPicker(title: "Playback Buttons", selection: $playbackButtonType)
+                CaseIterablePicker(title: L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
                         Image(systemName: "goforward")
-                        Text("Jump")
+                        Text(L10n.jump)
                     }
                 }
 
-                ChevronButton(title: "Bar Buttons")
+                ChevronButton(title: L10n.barButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $barActionButtons)
                     }
 
-                ChevronButton(title: "Menu Buttons")
+                ChevronButton(title: L10n.menuButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $menuActionButtons)
                     }
             }
 
-            Section("Slider") {
+            Section(L10n.slider) {
 
-                Toggle("Chapter Slider", isOn: $chapterSlider)
+                Toggle(L10n.chapterSlider, isOn: $chapterSlider)
 
                 ColorPicker(selection: $sliderColor, supportsOpacity: false) {
-                    Text("Slider Color")
+                    Text(L10n.sliderColor)
                 }
 
-                EnumPicker(title: "Slider Type", selection: $sliderType)
+                CaseIterablePicker(title: L10n.sliderType, selection: $sliderType)
             }
 
             Section {
@@ -137,31 +137,31 @@ struct VideoPlayerSettingsView: View {
                 )
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text("Subtitle Color")
+                    Text(L10n.subtitleColor)
                 }
             } header: {
-                Text("Subtitle")
+                Text(L10n.subtitle)
             } footer: {
                 // TODO: better wording
                 Text("Settings only affect some subtitle types")
             }
 
-            Section("Timestamp") {
+            Section(L10n.timestamp) {
 
-                Toggle("Scrub Current Time", isOn: $showCurrentTimeWhileScrubbing)
+                Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
-                EnumPicker(title: "Timestamp Type", selection: $timestampType)
+                CaseIterablePicker(title: L10n.timestampType, selection: $timestampType)
 
-                EnumPicker(title: "Trailing Value", selection: $trailingTimestampType)
+                CaseIterablePicker(title: L10n.trailingValue, selection: $trailingTimestampType)
             }
 
-            Section("Transition") {
+            Section(L10n.transition) {
 
-                Toggle("Pause on background", isOn: $pauseOnBackground)
-                Toggle("Play on active", isOn: $playOnActive)
+                Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
+                Toggle(L10n.playOnActive, isOn: $playOnActive)
             }
         }
-        .navigationTitle("Video Player")
+        .navigationTitle(L10n.videoPlayer)
         .onChange(of: barActionButtons) { newValue in
             autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
         }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -44,6 +44,7 @@ extension ItemView {
                 cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
                 maxWidth: UIScreen.main.bounds.width
             ))
+            .aspectRatio(contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
             .onAppear {
@@ -96,7 +97,7 @@ extension ItemView {
             }
             .edgesIgnoringSafeArea(.top)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.66,
                 end: UIScreen.main.bounds.height * 0.66 + 50
@@ -108,11 +109,9 @@ extension ItemView {
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
+            .topBarTrailing {
+                if viewModel.state == .refreshing {
+                    ProgressView()
                 }
             }
         }
@@ -137,17 +136,17 @@ extension ItemView.CinematicScrollView {
                 VStack(alignment: .center, spacing: 10) {
                     if !cinematicItemViewTypeUsePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
-                            .resizingMode(.aspectFit)
                             .placeholder {
                                 EmptyView()
                             }
                             .failure {
-                                Text(viewModel.item.displayTitle)
-                                    .font(.largeTitle)
-                                    .fontWeight(.semibold)
+                                MaxHeightText(text: viewModel.item.displayTitle, maxHeight: 100)
+                                    .font(.largeTitle.weight(.semibold))
+                                    .lineLimit(2)
                                     .multilineTextAlignment(.center)
                                     .foregroundColor(.white)
                             }
+                            .aspectRatio(contentMode: .fit)
                             .frame(height: 100)
                             .frame(maxWidth: .infinity)
                     } else {
@@ -164,7 +163,7 @@ extension ItemView.CinematicScrollView {
                             Text(premiereYear)
                         }
 
-                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                        if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                             Text(runtime)
                         }
                     }

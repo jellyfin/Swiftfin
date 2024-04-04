@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Introspect
@@ -13,42 +13,91 @@ import WidgetKit
 
 struct ItemView: View {
 
-    let item: BaseItemDto
+    @StateObject
+    private var viewModel: ItemViewModel
+
+    private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
+        switch item.type {
+        case .boxSet:
+            return CollectionItemViewModel(item: item)
+        case .episode:
+            return EpisodeItemViewModel(item: item)
+        case .movie:
+            return MovieItemViewModel(item: item)
+        case .series:
+            return SeriesItemViewModel(item: item)
+        default:
+            assertionFailure("Unsupported item")
+            return ItemViewModel(item: item)
+        }
+    }
+
+    init(item: BaseItemDto) {
+        self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+    }
+
+    @ViewBuilder
+    private var padView: some View {
+        switch viewModel.item.type {
+        case .boxSet:
+            iPadOSCollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+        case .episode:
+            iPadOSEpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
+        case .movie:
+            iPadOSMovieItemView(viewModel: viewModel as! MovieItemViewModel)
+        case .series:
+            iPadOSSeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
+        default:
+            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
+        }
+    }
+
+    @ViewBuilder
+    private var phoneView: some View {
+        switch viewModel.item.type {
+        case .boxSet:
+            CollectionItemView(viewModel: viewModel as! CollectionItemViewModel)
+        case .episode:
+            EpisodeItemView(viewModel: viewModel as! EpisodeItemViewModel)
+        case .movie:
+            MovieItemView(viewModel: viewModel as! MovieItemViewModel)
+        case .series:
+            SeriesItemView(viewModel: viewModel as! SeriesItemViewModel)
+        default:
+            Text(L10n.notImplementedYetWithType(viewModel.item.type ?? "--"))
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if UIDevice.isPad {
+            padView
+        } else {
+            phoneView
+        }
+    }
 
     var body: some View {
-        Group {
-            switch item.type {
-            case .movie:
-                if UIDevice.isIPad {
-                    iPadOSMovieItemView(viewModel: .init(item: item))
-                } else {
-                    MovieItemView(viewModel: .init(item: item))
-                }
-            case .series:
-                if UIDevice.isIPad {
-                    iPadOSSeriesItemView(viewModel: .init(item: item))
-                } else {
-                    SeriesItemView(viewModel: .init(item: item))
-                }
-            case .episode:
-                if UIDevice.isIPad {
-                    iPadOSEpisodeItemView(viewModel: .init(item: item))
-                } else {
-                    EpisodeItemView(viewModel: .init(item: item))
-                }
-            case .boxSet:
-                if UIDevice.isIPad {
-                    iPadOSCollectionItemView(viewModel: .init(item: item))
-                } else {
-                    CollectionItemView(viewModel: .init(item: item))
-                }
-            case .person:
-                LibraryView(viewModel: .init(parent: item, type: .person))
-            default:
-                Text(L10n.notImplementedYetWithType(item.type ?? "--"))
+        WrappedView {
+            switch viewModel.state {
+            case .content:
+                contentView
+                    .navigationTitle(viewModel.item.displayTitle)
+            case let .error(error):
+                ErrorView(error: error)
+            case .initial, .refreshing:
+                DelayedProgressView()
             }
         }
+        .transition(.opacity.animation(.linear(duration: 0.2)))
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(item.displayTitle)
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.refresh) {
+                ProgressView()
+            }
+        }
     }
 }

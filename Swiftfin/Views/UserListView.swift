@@ -3,10 +3,10 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import SwiftUI
 
 struct UserListView: View {
@@ -14,8 +14,12 @@ struct UserListView: View {
     @EnvironmentObject
     private var router: UserListCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserListViewModel
+    @StateObject
+    private var viewModel: UserListViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserListViewModel(server: server))
+    }
 
     private var noUserView: some View {
         VStack {
@@ -34,26 +38,19 @@ struct UserListView: View {
 
     @ViewBuilder
     private var gridView: some View {
-        CollectionView(items: viewModel.users) { _, user, _ in
+        CollectionVGrid(
+            viewModel.users,
+            layout: .minWidth(120, itemSpacing: 30, lineSpacing: 30)
+        ) { user in
             UserProfileButton(user: user, client: viewModel.client)
                 .onSelect {
                     viewModel.signIn(user: user)
                 }
-                .contextMenu {
-                    Button(role: .destructive) {
+                .contextMenu(menuItems: {
+                    Button(L10n.remove, systemImage: "trash", role: .destructive) {
                         viewModel.remove(user: user)
-                    } label: {
-                        Label(L10n.remove, systemImage: "trash")
                     }
-                }
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .adaptive(withMinItemSize: 120),
-                itemSpacing: 30,
-                lineSpacing: 30
-            )
+                })
         }
     }
 
@@ -68,8 +65,8 @@ struct UserListView: View {
         }
         .navigationTitle(viewModel.server.name)
         .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                if !viewModel.users.isEmpty {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if viewModel.users.isNotEmpty {
                     Button {
                         router.route(to: \.userSignIn, viewModel.server)
                     } label: {

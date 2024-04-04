@@ -6,7 +6,7 @@
 
 ## Setup
 
-Fork the Swiftfin repo and install the necessary dependencies with Xcode 14:
+Fork the Swiftfin repo and install the necessary dependencies with Xcode 15:
 
 ```bash
 # install Carthage, SwiftFormat, and SwiftGen with homebrew

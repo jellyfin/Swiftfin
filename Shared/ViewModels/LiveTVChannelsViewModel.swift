@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -87,16 +87,32 @@ final class LiveTVChannelsViewModel: ViewModel {
         }
     }
 
-    private func getChannelPrograms() async throws -> [LiveTVChannelProgram] {
-        let _ = try await getGuideInfo()
-        let channelsResponse = try await getChannels()
-        guard let channels = channelsResponse.value.items, !channels.isEmpty else {
-            return []
+    func getChannels() {
+        Task {
+            let parameters = Paths.GetLiveTvChannelsParameters(
+                userID: userSession.user.id,
+                startIndex: 0,
+                limit: 100,
+                enableImageTypes: [.primary],
+                fields: .MinimumFields,
+                enableUserData: false,
+                enableFavoriteSorting: true
+            )
+
+            let request = Paths.getLiveTvChannels(parameters: parameters)
+            guard let response = try? await userSession.client.send(request) else { return }
+
+            await MainActor.run {
+                self.channels = response.value.items ?? []
+                self.getPrograms()
+            }
         }
-        let programsResponse = try await getPrograms(channelIds: channels.compactMap(\.id))
-        let fetchedPrograms = programsResponse.value.items ?? []
-        await MainActor.run {
-            self.programs.append(contentsOf: fetchedPrograms)
+    }
+
+    private func getPrograms() {
+        guard channels.isNotEmpty else {
+            logger.debug("Cannot get programs, channels list empty.")
+            return
         }
         var newChannelPrograms = [LiveTVChannelProgram]()
         let now = Date()

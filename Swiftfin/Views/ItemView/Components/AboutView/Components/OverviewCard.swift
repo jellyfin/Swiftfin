@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -19,15 +19,13 @@ extension ItemView.AboutView {
         let item: BaseItemDto
 
         var body: some View {
-            Card(title: item.displayTitle)
+            Card(title: item.displayTitle, subtitle: item.alternateTitle)
                 .content {
                     if let overview = item.overview {
                         TruncatedText(overview)
-                            .seeMoreAction {
-                                router.route(to: \.itemOverview, item)
-                            }
                             .lineLimit(4)
                             .font(.footnote)
+                            .allowsHitTesting(false)
                     } else {
                         L10n.noOverviewAvailable.text
                             .font(.footnote)

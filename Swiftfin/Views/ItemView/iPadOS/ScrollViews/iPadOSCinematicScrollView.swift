@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -19,13 +19,15 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         @State
+        private var globalSize: CGSize = .zero
+        @State
         private var scrollViewOffset: CGFloat = 0
 
         let content: () -> Content
 
         private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.45
-            let end = UIScreen.main.bounds.height * 0.65
+            let start = globalSize.isLandscape ? globalSize.height * 0.45 : globalSize.height * 0.25
+            let end = globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30
             let diff = end - start
             let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
             return opacity
@@ -40,7 +42,8 @@ extension ItemView {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
                 }
             }
-            .frame(height: UIScreen.main.bounds.height * 0.8)
+            .aspectRatio(contentMode: .fill)
+            .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
         }
 
         var body: some View {
@@ -50,10 +53,9 @@ extension ItemView {
                         Spacer()
 
                         OverlayView(viewModel: viewModel)
-                            .padding2(.horizontal)
-                            .padding2(.bottom)
+                            .edgePadding()
                     }
-                    .frame(height: UIScreen.main.bounds.height * 0.8)
+                    .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
                     .background {
                         BlurView(style: .systemThinMaterialDark)
                             .mask {
@@ -80,25 +82,19 @@ extension ItemView {
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.horizontal)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.65,
-                end: UIScreen.main.bounds.height * 0.65 + 50
+                start: globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30,
+                end: globalSize.isLandscape ? globalSize.height * 0.65 + 50 : globalSize.height * 0.30 + 50
             )
             .backgroundParallaxHeader(
                 $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.8,
+                height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4,
                 multiplier: 0.3
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }
+            .size($globalSize)
         }
     }
 }
@@ -121,9 +117,8 @@ extension ItemView.iPadOSCinematicScrollView {
                     ImageView(viewModel.item.imageSource(
                         .logo,
                         maxWidth: UIScreen.main.bounds.width * 0.4,
-                        maxHeight: 150
+                        maxHeight: 130
                     ))
-                    .resizingMode(.bottomLeft)
                     .placeholder {
                         EmptyView()
                     }
@@ -135,6 +130,8 @@ extension ItemView.iPadOSCinematicScrollView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                     }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
@@ -153,7 +150,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 Text(premiereYear)
                             }
 
-                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                                 Text(runtime)
                             }
                         }

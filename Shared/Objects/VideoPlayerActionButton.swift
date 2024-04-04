@@ -3,15 +3,16 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import Foundation
 
+// TODO: atow, advanced was removed to be redesigned before being released
 enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
-    case advanced
+//    case advanced
     case aspectFill
     case audio
     case autoPlay
@@ -23,8 +24,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var displayTitle: String {
         switch self {
-        case .advanced:
-            return "Advanced"
+//        case .advanced:
+//            return "Advanced"
         case .aspectFill:
             return "Aspect Fill"
         case .audio:
@@ -50,8 +51,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var settingsSystemImage: String {
         switch self {
-        case .advanced:
-            return "gearshape.fill"
+//        case .advanced:
+//            return "gearshape.fill"
         case .aspectFill:
             return "arrow.up.left.and.arrow.down.right"
         case .audio:
@@ -71,22 +72,18 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         }
     }
 
-    static var defaultBarActionButtons: [VideoPlayerActionButton] {
-        [
-            .aspectFill,
-            .autoPlay,
-            .playPreviousItem,
-            .playNextItem,
-        ]
-    }
+    static let defaultBarActionButtons: [VideoPlayerActionButton] = [
+        .aspectFill,
+        .autoPlay,
+        .playPreviousItem,
+        .playNextItem,
+    ]
 
-    static var defaultMenuActionButtons: [VideoPlayerActionButton] {
-        [
-            .audio,
-            .subtitles,
-            .playbackSpeed,
-            .chapters,
-            .advanced,
-        ]
-    }
+    static let defaultMenuActionButtons: [VideoPlayerActionButton] = [
+        .audio,
+        .subtitles,
+        .playbackSpeed,
+        .chapters,
+//        .advanced,
+    ]
 }

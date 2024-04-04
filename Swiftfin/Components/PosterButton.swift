@@ -3,134 +3,91 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Look at something better for accomadating loading/noResults/other types
+// TODO: expose `ImageView.image` modifier for image aspect fill/fit
 
 struct PosterButton<Item: Poster>: View {
 
-    private var state: PosterButtonType<Item>
+    private var item: Item
     private var type: PosterType
-    private var itemScale: CGFloat
-    private var horizontalAlignment: HorizontalAlignment
-    private var content: (PosterButtonType<Item>) -> any View
-    private var imageOverlay: (PosterButtonType<Item>) -> any View
-    private var contextMenu: (PosterButtonType<Item>) -> any View
+    private var content: () -> any View
+    private var imageOverlay: () -> any View
+    private var contextMenu: () -> any View
     private var onSelect: () -> Void
     private var singleImage: Bool
 
-    private var itemWidth: CGFloat {
-        type.width * itemScale
-    }
-
-    @ViewBuilder
-    private var loadingPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
-    }
-
-    @ViewBuilder
-    private var noResultsPoster: some View {
-        Color.secondarySystemFill
-            .posterStyle(type: type, width: itemWidth)
-    }
-
-    @ViewBuilder
-    private func poster(from item: any Poster) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                ImageView(item.portraitPosterImageSource(maxWidth: itemWidth))
-                    .failure {
-                        InitialFailureView(item.displayTitle.initials)
-                    }
-            case .landscape:
-                ImageView(item.landscapePosterImageSources(maxWidth: itemWidth, single: singleImage))
-                    .failure {
-                        InitialFailureView(item.displayTitle.initials)
-                    }
-            }
+    private func imageView(from item: Item) -> ImageView {
+        switch type {
+        case .portrait:
+            ImageView(item.portraitPosterImageSource(maxWidth: 200))
+        case .landscape:
+            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
         }
     }
 
     var body: some View {
-        VStack(alignment: horizontalAlignment) {
-
+        VStack(alignment: .leading) {
             Button {
                 onSelect()
             } label: {
-                Group {
-                    switch state {
-                    case .loading:
-                        loadingPoster
-                    case .noResult:
-                        noResultsPoster
-                    case let .item(item):
-                        poster(from: item)
-                    }
-                }
-                .overlay {
-                    imageOverlay(state)
+                ZStack {
+                    Color.clear
+
+                    imageView(from: item)
+                        .failure {
+                            SystemImageContentView(systemName: item.typeSystemImage)
+                        }
+
+                    imageOverlay()
                         .eraseToAnyView()
-                        .posterStyle(type: type, width: itemWidth)
                 }
+                .posterStyle(type)
             }
             .contextMenu(menuItems: {
-                contextMenu(state)
+                contextMenu()
                     .eraseToAnyView()
             })
-            .posterStyle(type: type, width: itemWidth)
             .posterShadow()
 
-            content(state)
+            content()
                 .eraseToAnyView()
         }
-        .frame(width: itemWidth)
     }
 }
 
 extension PosterButton {
 
     init(
-        state: PosterButtonType<Item>,
+        item: Item,
         type: PosterType,
         singleImage: Bool = false
     ) {
         self.init(
-            state: state,
+            item: item,
             type: type,
-            itemScale: 1,
-            horizontalAlignment: .leading,
-            content: { DefaultContentView(state: $0) },
-            imageOverlay: { DefaultOverlay(state: $0) },
-            contextMenu: { _ in EmptyView() },
+            content: { TitleSubtitleContentView(item: item) },
+            imageOverlay: { DefaultOverlay(item: item) },
+            contextMenu: { EmptyView() },
             onSelect: {},
             singleImage: singleImage
         )
     }
 
-    func horizontalAlignment(_ alignment: HorizontalAlignment) -> Self {
-        copy(modifying: \.horizontalAlignment, with: alignment)
-    }
-
-    func scaleItem(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
-    }
-
-    func content(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (PosterButtonType<Item>) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
@@ -139,63 +96,49 @@ extension PosterButton {
     }
 }
 
+// TODO: Shared default content?
+
 extension PosterButton {
 
     // MARK: Default Content
 
-    struct DefaultContentView: View {
+    struct TitleContentView: View {
 
-        let state: PosterButtonType<Item>
+        let item: Item
 
-        @ViewBuilder
-        private var title: some View {
-            Group {
-                switch state {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 5 ..< 8)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noResults.text
-                case let .item(item):
-                    if item.showTitle {
-                        Text(item.displayTitle)
-                    } else {
-                        EmptyView()
-                    }
-                }
-            }
-            .font(.footnote.weight(.regular))
-            .foregroundColor(.primary)
-            .lineLimit(2)
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.footnote.weight(.regular))
+                .foregroundColor(.primary)
         }
+    }
 
-        @ViewBuilder
-        private var subtitle: some View {
-            Group {
-                switch state {
-                case .loading:
-                    String(repeating: "a", count: Int.random(in: 8 ..< 15)).text
-                        .redacted(reason: .placeholder)
-                case .noResult:
-                    L10n.noResults.text
-                case let .item(item):
-                    if let subtitle = item.subtitle {
-                        Text(subtitle)
-                    } else {
-                        EmptyView()
-                    }
-                }
-            }
-            .font(.caption.weight(.medium))
-            .foregroundColor(.secondary)
-            .lineLimit(2)
+    struct SubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
         }
+    }
+
+    struct TitleSubtitleContentView: View {
+
+        let item: Item
 
         var body: some View {
             VStack(alignment: .leading) {
-                title
+                if item.showTitle {
+                    TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
 
-                subtitle
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
             }
         }
     }
@@ -215,30 +158,28 @@ extension PosterButton {
         @Default(.Customization.Indicators.showPlayed)
         private var showPlayed
 
-        let state: PosterButtonType<Item>
+        let item: Item
 
         var body: some View {
-            if case let PosterButtonType.item(item) = state {
-                ZStack {
-                    if let item = item as? BaseItemDto {
-                        if item.userData?.isPlayed ?? false {
-                            WatchedIndicator(size: 25)
-                                .visible(showPlayed)
+            ZStack {
+                if let item = item as? BaseItemDto {
+                    if item.userData?.isPlayed ?? false {
+                        WatchedIndicator(size: 25)
+                            .visible(showPlayed)
+                    } else {
+                        if (item.userData?.playbackPositionTicks ?? 0) > 0 {
+                            ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
+                                .visible(showProgress)
                         } else {
-                            if (item.userData?.playbackPositionTicks ?? 0) > 0 {
-                                ProgressIndicator(progress: (item.userData?.playedPercentage ?? 0) / 100, height: 5)
-                                    .visible(showProgress)
-                            } else {
-                                UnwatchedIndicator(size: 25)
-                                    .foregroundColor(accentColor)
-                                    .visible(showUnplayed)
-                            }
+                            UnwatchedIndicator(size: 25)
+                                .foregroundColor(accentColor)
+                                .visible(showUnplayed)
                         }
+                    }
 
-                        if item.userData?.isFavorite ?? false {
-                            FavoriteIndicator(size: 25)
-                                .visible(showFavorited)
-                        }
+                    if item.userData?.isFavorite ?? false {
+                        FavoriteIndicator(size: 25)
+                            .visible(showFavorited)
                     }
                 }
             }

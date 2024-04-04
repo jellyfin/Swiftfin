@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -14,22 +14,26 @@ class SwiftfinNotification {
     @Injected(Notifications.service)
     private var notificationService
 
-    private let notificationName: Notification.Name
+    private let name: Notification.Name
 
     fileprivate init(_ notificationName: Notification.Name) {
-        self.notificationName = notificationName
+        self.name = notificationName
     }
 
     func post(object: Any? = nil) {
-        notificationService.post(name: notificationName, object: object)
+        notificationService.post(name: name, object: object)
     }
 
     func subscribe(_ observer: Any, selector: Selector) {
-        notificationService.addObserver(observer, selector: selector, name: notificationName, object: nil)
+        notificationService.addObserver(observer, selector: selector, name: name, object: nil)
     }
 
     func unsubscribe(_ observer: Any) {
-        notificationService.removeObserver(self, name: notificationName, object: nil)
+        notificationService.removeObserver(self, name: name, object: nil)
+    }
+
+    var publisher: NotificationCenter.Publisher {
+        notificationService.publisher(for: name)
     }
 }
 
@@ -37,7 +41,16 @@ enum Notifications {
 
     static let service = Factory(scope: .singleton) { NotificationCenter() }
 
-    final class Key {
+    struct Key: Hashable {
+
+        static func == (lhs: Notifications.Key, rhs: Notifications.Key) -> Bool {
+            lhs.key == rhs.key
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(key)
+        }
+
         typealias NotificationKey = Notifications.Key
 
         let key: String
@@ -60,7 +73,9 @@ extension Notifications.Key {
     static let didSignOut = NotificationKey("didSignOut")
     static let processDeepLink = NotificationKey("processDeepLink")
     static let didPurge = NotificationKey("didPurge")
-    static let didChangeServerCurrentURI = NotificationKey("didChangeCurrentLoginURI")
+    static let didChangeCurrentServerURL = NotificationKey("didChangeCurrentServerURL")
     static let didSendStopReport = NotificationKey("didSendStopReport")
     static let didRequestGlobalRefresh = NotificationKey("didRequestGlobalRefresh")
+
+    static let itemMetadataDidChange = NotificationKey("itemMetadataDidChange")
 }

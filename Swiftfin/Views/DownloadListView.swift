@@ -3,10 +3,9 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
 import SwiftUI
 
 struct DownloadListView: View {
@@ -20,7 +19,7 @@ struct DownloadListView: View {
                 DownloadTaskRow(downloadTask: item)
             }
         }
-        .navigationTitle("Downloads")
+        .navigationTitle(L10n.downloads)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -44,7 +43,7 @@ extension DownloadListView {
                             Color.secondary
                                 .opacity(0.8)
                         }
-                        .posterStyle(type: .portrait, width: 60)
+//                        .posterStyle(type: .portrait, width: 60)
                         .posterShadow()
 
                     VStack(alignment: .leading) {

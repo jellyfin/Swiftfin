@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Foundation
@@ -21,22 +21,22 @@ final class UserListCoordinator: NavigationCoordinatable {
     @Route(.push)
     var serverDetail = makeServerDetail
 
-    let viewModel: UserListViewModel
+    let serverState: ServerState
 
-    init(viewModel: UserListViewModel) {
-        self.viewModel = viewModel
+    init(server: ServerState) {
+        self.serverState = server
     }
 
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         UserSignInCoordinator(viewModel: .init(server: server))
     }
 
-    func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
-        ServerDetailCoordinator(viewModel: .init(server: server))
+    func makeServerDetail(server: SwiftfinStore.State.Server) -> some View {
+        ServerDetailView(server: server)
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        UserListView(viewModel: viewModel)
+        UserListView(server: serverState)
     }
 }

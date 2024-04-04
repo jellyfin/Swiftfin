@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Combine
@@ -26,13 +26,14 @@ struct CinematicBackgroundView<Item: Poster>: View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { newItem in
                 proxy.update {
-                    ImageView(newItem?.landscapePosterImageSources(maxWidth: UIScreen.main.bounds.width, single: false) ?? [])
+                    ImageView(newItem?.cinematicPosterImageSources() ?? [])
                         .placeholder {
                             Color.clear
                         }
                         .failure {
                             Color.clear
                         }
+                        .aspectRatio(contentMode: .fill)
                 }
             }
     }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -30,7 +30,7 @@ extension VideoPlayer.Overlay {
                 HStack {
                     Image(systemName: "gearshape.fill")
 
-                    Text("Advanced")
+                    Text(L10n.advanced)
                 }
             }
         }
@@ -45,7 +45,7 @@ extension VideoPlayer.Overlay {
                         Image(systemName: "arrow.up.left.and.arrow.down.right")
                     }
 
-                    Text("Aspect Fill")
+                    Text(L10n.aspectFill)
                 }
             }
         }
@@ -84,7 +84,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var chaptersButton: some View {
-            if !viewModel.chapters.isEmpty {
+            if viewModel.chapters.isNotEmpty {
                 ActionButtons.Chapters {
                     HStack {
                         Image(systemName: "list.dash")
@@ -113,7 +113,7 @@ extension VideoPlayer.Overlay {
                     HStack {
                         Image(systemName: "chevron.right.circle")
 
-                        Text("Play Next Item")
+                        Text(L10n.playNextItem)
                     }
                 }
             }
@@ -126,7 +126,7 @@ extension VideoPlayer.Overlay {
                     HStack {
                         Image(systemName: "chevron.left.circle")
 
-                        Text("Play Previous Item")
+                        Text(L10n.playPreviousItem)
                     }
                 }
             }
@@ -151,8 +151,8 @@ extension VideoPlayer.Overlay {
             Menu {
                 ForEach(menuActionButtons) { actionButton in
                     switch actionButton {
-                    case .advanced:
-                        advancedButton
+//                    case .advanced:
+//                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:

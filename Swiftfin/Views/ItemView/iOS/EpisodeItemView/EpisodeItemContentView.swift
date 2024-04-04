@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -41,37 +41,43 @@ extension EpisodeItemView {
 
                 // MARK: Genres
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
+                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Cast and Crew
 
                 if let castAndCrew = viewModel.item.people,
-                   !castAndCrew.isEmpty
+                   castAndCrew.isNotEmpty
                 {
                     ItemView.CastAndCrewHStack(people: castAndCrew)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Series
 
+                // TODO: have different way to get to series item
+                //       - about view poster?
                 if let seriesItem = viewModel.seriesItem {
-                    PosterHStack(title: L10n.series, type: .portrait, items: [seriesItem])
-                        .onSelect { item in
-                            router.route(to: \.item, item)
-                        }
+                    PosterHStack(
+                        title: L10n.series,
+                        type: .portrait,
+                        items: [seriesItem]
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)
@@ -108,15 +114,15 @@ extension EpisodeItemView.ContentView {
                     .padding(.horizontal)
 
                 DotHStack {
-                    if let episodeLocation = viewModel.item.episodeLocator {
-                        Text(episodeLocation)
+                    if let seasonEpisodeLabel = viewModel.item.seasonEpisodeLabel {
+                        Text(seasonEpisodeLabel)
                     }
 
                     if let productionYear = viewModel.item.premiereDateYear {
                         Text(productionYear)
                     }
 
-                    if let runtime = viewModel.item.getItemRuntime() {
+                    if let runtime = viewModel.item.runTimeLabel {
                         Text(runtime)
                     }
                 }

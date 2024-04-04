@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Factory
@@ -25,6 +25,14 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
+        private var title: String {
+            if let seriesViewModel = viewModel as? SeriesItemViewModel {
+                return seriesViewModel.playButtonItem?.seasonEpisodeLabel ?? L10n.play
+            } else {
+                return viewModel.playButtonItem?.playButtonLabel ?? L10n.play
+            }
+        }
+
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
@@ -37,7 +45,8 @@ extension ItemView {
                     Image(systemName: "play.fill")
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .font(.title3)
-                    Text(viewModel.playButtonText())
+
+                    Text(title)
                         .foregroundColor(viewModel.playButtonItem == nil ? Color(UIColor.secondaryLabel) : Color.black)
                         .fontWeight(.semibold)
                 }

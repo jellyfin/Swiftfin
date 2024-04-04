@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -37,8 +37,19 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .onAppear {
+                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                        blurHashBottomEdgeColor = Color(
+                            red: Double(bottomRGB.0),
+                            green: Double(bottomRGB.1),
+                            blue: Double(bottomRGB.2)
+                        )
+                    }
+                }
         }
 
         var body: some View {
@@ -84,7 +95,7 @@ extension ItemView {
             }
             .edgesIgnoringSafeArea(.top)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.28,
                 end: UIScreen.main.bounds.height * 0.28 + 50
@@ -96,21 +107,9 @@ extension ItemView {
             ) {
                 headerView
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }
-            .onAppear {
-                if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                    let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                    blurHashBottomEdgeColor = Color(
-                        red: Double(bottomRGB.0),
-                        green: Double(bottomRGB.1),
-                        blue: Double(bottomRGB.2)
-                    )
+            .topBarTrailing {
+                if viewModel.state == .refreshing {
+                    ProgressView()
                 }
             }
         }
@@ -154,7 +153,7 @@ extension ItemView.CompactPosterScrollView {
                         }
                     }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                         Text(runtime)
                     }
                 }
@@ -173,7 +172,11 @@ extension ItemView.CompactPosterScrollView {
                     // MARK: Portrait Image
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .posterStyle(type: .portrait, width: 130)
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.typeSystemImage)
+                        }
+                        .posterStyle(.portrait, contentMode: .fit)
+                        .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 
                     rightShelfView

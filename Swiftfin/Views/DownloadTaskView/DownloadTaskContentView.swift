@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -75,7 +75,7 @@ extension DownloadTaskView {
                         .padding(.horizontal)
                     case let .error(error):
                         VStack {
-                            PrimaryButton(title: "Retry")
+                            PrimaryButton(title: L10n.retry)
                                 .onSelect {
                                     downloadManager.download(task: downloadTask)
                                 }
@@ -86,7 +86,7 @@ extension DownloadTaskView {
                                 .padding(.horizontal)
                         }
                     case .complete:
-                        PrimaryButton(title: "Play")
+                        PrimaryButton(title: L10n.play)
                             .onSelect {
                                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                                     router.dismissCoordinator {
@@ -113,7 +113,7 @@ extension DownloadTaskView {
                 Button {
                     isPresentingVideoPlayerTypeError = false
                 } label: {
-                    Text("Dismiss")
+                    Text(L10n.dismiss)
                 }
             } message: {
                 Text("Downloaded items are only playable through the Swiftfin video player.")
@@ -164,7 +164,7 @@ extension DownloadTaskView.ContentView {
                         Text(productionYear)
                     }
 
-                    if let runtime = downloadTask.item.getItemRuntime() {
+                    if let runtime = downloadTask.item.runTimeLabel {
                         Text(runtime)
                     }
                 }

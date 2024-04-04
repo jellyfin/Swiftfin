@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -39,7 +39,7 @@ struct BasicAppSettingsView: View {
                 }
 
             Section {
-                EnumPicker(title: L10n.appearance, selection: $appAppearance)
+                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
@@ -55,7 +55,7 @@ struct BasicAppSettingsView: View {
                 L10n.accentColorDescription.text
             }
 
-            ChevronButton(title: "Logs")
+            ChevronButton(title: L10n.logs)
                 .onSelect {
                     router.route(to: \.log)
                 }
@@ -70,7 +70,7 @@ struct BasicAppSettingsView: View {
                 Button {
                     removeAllServersSelected = true
                 } label: {
-                    Text("Remove All Servers")
+                    Text(L10n.removeAllServers)
                 }
             }
         }
@@ -79,16 +79,16 @@ struct BasicAppSettingsView: View {
                 viewModel.resetUserSettings()
             }
         } message: {
-            Text("Reset all settings back to defaults.")
+            Text(L10n.resetAllSettings)
         }
-        .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+        .alert(L10n.removeAllServers, isPresented: $removeAllServersSelected) {
             Button(L10n.reset, role: .destructive) {
                 viewModel.removeAllServers()
             }
         }
-        .navigationBarTitle(L10n.settings)
+        .navigationTitle(L10n.settings)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -45,7 +45,7 @@ struct AboutAppView: View {
 
                 ChevronButton(title: L10n.sourceCode)
                     .leadingView {
-                        Image("logo.github")
+                        Image(.logoGithub)
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundColor(.primary)

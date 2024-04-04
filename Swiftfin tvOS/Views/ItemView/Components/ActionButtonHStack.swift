@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
@@ -18,12 +18,12 @@ extension ItemView {
         var body: some View {
             HStack {
                 Button {
-                    viewModel.toggleWatchState()
+                    viewModel.send(.toggleIsPlayed)
                 } label: {
                     Group {
-                        if viewModel.isPlayed {
+                        if viewModel.item.userData?.isPlayed ?? false {
                             Image(systemName: "checkmark.circle.fill")
-                                .accentSymbolRendering(accentColor: .white)
+                                .paletteOverlayRendering(color: .white)
                         } else {
                             Image(systemName: "checkmark.circle")
                         }
@@ -35,10 +35,10 @@ extension ItemView {
                 .buttonStyle(.plain)
 
                 Button {
-                    viewModel.toggleFavoriteState()
+                    viewModel.send(.toggleIsFavorite)
                 } label: {
                     Group {
-                        if viewModel.isFavorited {
+                        if viewModel.item.userData?.isFavorite ?? false {
                             Image(systemName: "heart.circle.fill")
                                 .symbolRenderingMode(.palette)
                                 .foregroundStyle(.white, .pink)

@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -16,23 +16,56 @@ struct HomeView: View {
 
     @EnvironmentObject
     private var router: HomeCoordinator.Router
-    @ObservedObject
-    var viewModel: HomeViewModel
 
-    var body: some View {
-        Group {
-            if let errorMessage = viewModel.errorMessage {
-                ErrorView(
-                    viewModel: viewModel,
-                    errorMessage: .init(message: errorMessage)
-                )
-            } else if viewModel.isLoading {
-                ProgressView()
-            } else {
-                ContentView(viewModel: viewModel)
+    @StateObject
+    private var viewModel = HomeViewModel()
+
+    private var contentView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+
+                if viewModel.resumeItems.isNotEmpty {
+                    CinematicResumeView(viewModel: viewModel)
+
+                    NextUpView(viewModel: viewModel.nextUpViewModel)
+
+                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                } else {
+                    CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+
+                    NextUpView(viewModel: viewModel.nextUpViewModel)
+                }
+
+                ForEach(viewModel.libraries) { viewModel in
+                    LatestInLibraryView(viewModel: viewModel)
+                }
             }
         }
-        .edgesIgnoringSafeArea(.top)
-        .edgesIgnoringSafeArea(.horizontal)
+    }
+
+    var body: some View {
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case .content:
+                    contentView
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial, .refreshing:
+                    ProgressView()
+                }
+            }
+            .transition(.opacity.animation(.linear(duration: 0.2)))
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .ignoresSafeArea()
+        .afterLastDisappear { interval in
+            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+                viewModel.send(.backgroundRefresh)
+                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+            }
+        }
     }
 }

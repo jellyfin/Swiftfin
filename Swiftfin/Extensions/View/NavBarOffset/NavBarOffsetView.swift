@@ -3,25 +3,25 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import SwiftUI
 
-struct NavBarOffsetView: UIViewControllerRepresentable {
+struct NavBarOffsetView<Content: View>: UIViewControllerRepresentable {
 
     @Binding
     private var scrollViewOffset: CGFloat
 
     private let start: CGFloat
     private let end: CGFloat
-    private let content: () -> any View
+    private let content: () -> Content
 
     init(
         scrollViewOffset: Binding<CGFloat>,
         start: CGFloat,
         end: CGFloat,
-        @ViewBuilder content: @escaping () -> any View
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self._scrollViewOffset = scrollViewOffset
         self.start = start
@@ -29,29 +29,16 @@ struct NavBarOffsetView: UIViewControllerRepresentable {
         self.content = content
     }
 
-    init(
-        start: CGFloat,
-        end: CGFloat,
-        @ViewBuilder body: @escaping () -> any View
-    ) {
-        self._scrollViewOffset = Binding(get: { 0 }, set: { _ in })
-        self.start = start
-        self.end = end
-        self.content = body
+    func makeUIViewController(context: Context) -> UINavBarOffsetHostingController<Content> {
+        UINavBarOffsetHostingController(rootView: content())
     }
 
-    func makeUIViewController(context: Context) -> UINavBarOffsetHostingController {
-        let a = UINavBarOffsetHostingController(rootView: content().eraseToAnyView())
-        a.additionalSafeAreaInsets = .zero
-        return a
-    }
-
-    func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController, context: Context) {
+    func updateUIViewController(_ uiViewController: UINavBarOffsetHostingController<Content>, context: Context) {
         uiViewController.scrollViewDidScroll(scrollViewOffset, start: start, end: end)
     }
 }
 
-class UINavBarOffsetHostingController: UIHostingController<AnyView> {
+class UINavBarOffsetHostingController<Content: View>: UIHostingController<Content> {
 
     private var lastScrollViewOffset: CGFloat = 0
 

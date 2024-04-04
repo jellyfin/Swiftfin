@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import JellyfinAPI
@@ -22,20 +22,11 @@ extension ItemView {
             PosterHStack(
                 title: L10n.castAndCrew,
                 type: .portrait,
-                items: people.filter(\.isDisplayed).prefix(20).asArray
+                items: people.filter(\.isDisplayed)
             )
-            .trailing {
-                if people.isEmpty {
-                    NonePosterButton(type: .portrait)
-                } else {
-                    SeeAllPosterButton(type: .portrait)
-                        .onSelect {
-                            router.route(to: \.castAndCrew, people)
-                        }
-                }
-            }
             .onSelect { person in
-                router.route(to: \.library, .init(parent: person, type: .person, filters: .init()))
+                let viewModel = ItemLibraryViewModel(parent: person)
+                router.route(to: \.library, viewModel)
             }
         }
     }

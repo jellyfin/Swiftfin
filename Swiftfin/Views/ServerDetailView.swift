@@ -3,61 +3,58 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import SwiftUI
 
 struct ServerDetailView: View {
 
-    @ObservedObject
-    var viewModel: ServerDetailViewModel
-
     @State
-    private var currentServerURI: String
+    private var currentServerURL: URL
 
-    init(viewModel: ServerDetailViewModel) {
-        self.viewModel = viewModel
-        self._currentServerURI = State(initialValue: viewModel.server.currentURL.absoluteString)
+    @StateObject
+    private var viewModel: ServerDetailViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: ServerDetailViewModel(server: server))
+        self._currentServerURL = State(initialValue: server.currentURL)
     }
 
     var body: some View {
         Form {
             Section {
-                HStack {
-                    L10n.name.text
-                    Spacer()
-                    Text(viewModel.server.name)
-                        .foregroundColor(.secondary)
-                }
 
-                Picker(L10n.url, selection: $currentServerURI) {
+                TextPairView(
+                    leading: L10n.name,
+                    trailing: viewModel.server.name
+                )
+
+                Picker(L10n.url, selection: $currentServerURL) {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
                         Text(url.absoluteString)
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
-                    .onChange(of: currentServerURI) { _ in
+                    .onChange(of: currentServerURL) { _ in
                         // TODO: change server url
+                        viewModel.setCurrentServerURL(to: currentServerURL)
                     }
                 }
 
-                HStack {
-                    L10n.version.text
-                    Spacer()
-                    Text(viewModel.server.version)
-                        .foregroundColor(.secondary)
-                }
+                TextPairView(
+                    leading: L10n.version,
+                    trailing: viewModel.server.version
+                )
 
-                HStack {
-                    L10n.operatingSystem.text
-                    Spacer()
-                    Text(viewModel.server.os)
-                        .foregroundColor(.secondary)
-                }
+                TextPairView(
+                    leading: L10n.operatingSystem,
+                    trailing: viewModel.server.os
+                )
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(L10n.serverDetails.text)
+        .navigationTitle(L10n.server)
     }
 }

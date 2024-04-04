@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -19,7 +19,8 @@ extension View {
         AnyView(self)
     }
 
-    func inverseMask(alignment: Alignment = .center, _ content: @escaping () -> some View) -> some View {
+    // TODO: rename `invertedMask`?
+    func inverseMask(alignment: Alignment = .center, @ViewBuilder _ content: @escaping () -> some View) -> some View {
         mask(alignment: alignment) {
             content()
                 .foregroundColor(.black)
@@ -29,10 +30,11 @@ extension View {
         }
     }
 
-    // From: https://www.avanderlee.com/swiftui/conditional-view-modifier/
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if` statement.
     @ViewBuilder
     @inlinable
-    func `if`<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
+    func `if`<Content: View>(_ condition: Bool, @ViewBuilder transform: (Self) -> Content) -> some View {
         if condition {
             transform(self)
         } else {
@@ -40,9 +42,15 @@ extension View {
         }
     }
 
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if/else` statement.
     @ViewBuilder
     @inlinable
-    func `if`<Content: View>(_ condition: Bool, transformIf: (Self) -> Content, transformElse: (Self) -> Content) -> some View {
+    func `if`<Content: View>(
+        _ condition: Bool,
+        @ViewBuilder transformIf: (Self) -> Content,
+        @ViewBuilder transformElse: (Self) -> Content
+    ) -> some View {
         if condition {
             transformIf(self)
         } else {
@@ -50,52 +58,55 @@ extension View {
         }
     }
 
-    // TODO: Simplify plethora of calls
-    // TODO: Centralize math
-    // TODO: Move poster stuff to own file
-    // TODO: Figure out proper handling of corner radius for tvOS buttons
-    func posterStyle(type: PosterType, width: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(width: width)
-            case .landscape:
-                self.landscapePoster(width: width)
-            }
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if let` statement.
+    @ViewBuilder
+    @inlinable
+    func ifLet<Value, Content: View>(
+        _ value: Value?,
+        @ViewBuilder transform: (Self, Value) -> Content
+    ) -> some View {
+        if let value {
+            transform(self, value)
+        } else {
+            self
         }
     }
 
-    func posterStyle(type: PosterType, height: CGFloat) -> some View {
-        Group {
-            switch type {
-            case .portrait:
-                self.portraitPoster(height: height)
-            case .landscape:
-                self.landscapePoster(height: height)
-            }
+    /// - Important: Do *not* use this modifier for dynamically showing/hiding views.
+    ///              Instead, use a native `if let/else` statement.
+    @ViewBuilder
+    @inlinable
+    func ifLet<Value, Content: View>(
+        _ value: Value?,
+        @ViewBuilder transformIf: (Self, Value) -> Content,
+        @ViewBuilder transformElse: (Self) -> Content
+    ) -> some View {
+        if let value {
+            transformIf(self, value)
+        } else {
+            transformElse(self)
         }
     }
 
-    private func portraitPoster(width: CGFloat) -> some View {
-        frame(width: width, height: width * 1.5)
-            .cornerRadius((width * 1.5) / 40)
+    /// Applies the aspect ratio and corner radius for the given `PosterType`
+    @ViewBuilder
+    func posterStyle(_ type: PosterType, contentMode: ContentMode = .fill) -> some View {
+        switch type {
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+            #if !os(tvOS)
+                .cornerRadius(ratio: 0.0375, of: \.width)
+            #endif
+        case .landscape:
+            aspectRatio(1.77, contentMode: contentMode)
+            #if !os(tvOS)
+                .cornerRadius(ratio: 1 / 30, of: \.width)
+            #endif
+        }
     }
 
-    private func landscapePoster(width: CGFloat) -> some View {
-        frame(width: width, height: width / 1.77)
-        #if !os(tvOS)
-            .cornerRadius(width / 30)
-        #endif
-    }
-
-    private func portraitPoster(height: CGFloat) -> some View {
-        portraitPoster(width: height / 1.5)
-    }
-
-    private func landscapePoster(height: CGFloat) -> some View {
-        landscapePoster(width: height * 1.77)
-    }
-
+    // TODO: remove
     @inlinable
     func padding2(_ edges: Edge.Set = .all) -> some View {
         padding(edges).padding(edges)
@@ -126,6 +137,11 @@ extension View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 
+    /// Apply a corner radius as a ratio of a view's side
+    func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
+        modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
+    }
+
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -135,6 +151,15 @@ extension View {
         }
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
+
+    // TODO: probably rename since this doesn't set the frame but tracks it
+    func frame(_ binding: Binding<CGRect>) -> some View {
+        onFrameChanged { newFrame in
+            binding.wrappedValue = newFrame
+        }
+    }
+
+    // TODO: have x/y tracked binding
 
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
@@ -149,6 +174,15 @@ extension View {
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
 
+    // TODO: probably rename since this doesn't set the location but tracks it
+    func location(_ binding: Binding<CGPoint>) -> some View {
+        onLocationChanged { newLocation in
+            binding.wrappedValue = newLocation
+        }
+    }
+
+    // TODO: have width/height tracked binding
+
     func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -159,21 +193,23 @@ extension View {
         .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
     }
 
+    // TODO: probably rename since this doesn't set the size but tracks it
+    func size(_ binding: Binding<CGSize>) -> some View {
+        onSizeChanged { newSize in
+            binding.wrappedValue = newSize
+        }
+    }
+
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue
         return copy
     }
 
-    @ViewBuilder
-    func hideSystemOverlays() -> some View {
-        if #available(iOS 16, tvOS 16, *) {
-            persistentSystemOverlays(.hidden)
-        } else {
-            self
-        }
-    }
+    // TODO: rename isVisible
 
+    /// - Important: Do not use this to add or remove a view from the view heirarchy.
+    ///              Use a conditional statement instead.
     @inlinable
     func visible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
@@ -185,9 +221,13 @@ extension View {
         }
     }
 
-    func accentSymbolRendering(accentColor: Color = Defaults[.accentColor]) -> some View {
-        symbolRenderingMode(.palette)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
+    /// Applies the `.palette` symbol rendering mode and a foreground style
+    /// where the primary style is the passed `Color`'s `overlayColor` and the
+    /// secondary style is the passed `Color`.
+    ///
+    /// If `color == nil`, then `accentColor` from the environment is used.
+    func paletteOverlayRendering(color: Color? = nil) -> some View {
+        modifier(PaletteOverlayRenderingModifier(color: color))
     }
 
     @ViewBuilder
@@ -203,6 +243,7 @@ extension View {
         modifier(AttributeViewModifier(style: style))
     }
 
+    // TODO: rename `blurredFullScreenCover`
     func blurFullScreenCover(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
@@ -221,5 +262,46 @@ extension View {
 
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
         modifier(ScenePhaseChangeModifier(phase: phase, action: action))
+    }
+
+    func edgePadding(_ edges: Edge.Set = .all) -> some View {
+        padding(edges, EdgeInsets.defaultEdgePadding)
+    }
+
+    var backport: Backport<Self> {
+        Backport(content: self)
+    }
+
+    /// Perform an action on the final disappearance of a `View`.
+    func onFinalDisappear(perform action: @escaping () -> Void) -> some View {
+        modifier(OnFinalDisappearModifier(action: action))
+    }
+
+    /// Perform an action before the first appearance of a `View`.
+    func onFirstAppear(perform action: @escaping () -> Void) -> some View {
+        modifier(OnFirstAppearModifier(action: action))
+    }
+
+    /// Perform an action as a view appears given the time interval
+    /// from when this view last disappeared.
+    func afterLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
+        modifier(AfterLastDisappearModifier(action: action))
+    }
+
+    func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {
+        toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                content()
+            }
+        }
+    }
+
+    func onNotification(_ name: NSNotification.Name, perform action: @escaping () -> Void) -> some View {
+        modifier(
+            OnReceiveNotificationModifier(
+                notification: name,
+                onReceive: action
+            )
+        )
     }
 }

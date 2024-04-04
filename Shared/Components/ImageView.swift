@@ -3,57 +3,59 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
-import JellyfinAPI
 import Nuke
 import NukeUI
 import SwiftUI
-import UIKit
 
-struct ImageSource: Hashable {
+private let imagePipeline = {
 
-    let url: URL?
-    let blurHash: String?
-
-    init(url: URL? = nil, blurHash: String? = nil) {
-        self.url = url
-        self.blurHash = blurHash
+    ImageDecoderRegistry.shared.register { context in
+        guard let mimeType = context.urlResponse?.mimeType else { return nil }
+        return mimeType.contains("svg") ? ImageDecoders.Empty() : nil
     }
-}
 
+    return ImagePipeline(configuration: .withDataCache)
+}()
+
+// TODO: Binding inits?
+//       - instead of removing first source on failure, just safe index into sources
+// TODO: currently SVGs are only supported for logos, which are only used in a few places.
+//       make it so when displaying an SVG there is a unified `image` caller modifier
 struct ImageView: View {
 
     @State
     private var sources: [ImageSource]
 
-    private var image: (NukeUI.Image) -> any View
+    private var image: (Image) -> any View
     private var placeholder: (() -> any View)?
     private var failure: () -> any View
-    private var resizingMode: ImageResizingMode
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
             placeholder()
                 .eraseToAnyView()
-        } else if let blurHash = currentSource.blurHash {
-            BlurHashView(blurHash: blurHash, size: .Square(length: 16))
         } else {
-            DefaultPlaceholderView()
+            DefaultPlaceholderView(blurHash: currentSource.blurHash)
         }
     }
 
     var body: some View {
         if let currentSource = sources.first {
-            LazyImage(url: currentSource.url) { state in
+            LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
-                    image(_image.resizingMode(resizingMode))
-                        .eraseToAnyView()
+                    if let data = state.imageContainer?.data {
+                        FastSVGView(data: data)
+                    } else {
+                        image(_image.resizable())
+                            .eraseToAnyView()
+                    }
                 } else if state.error != nil {
                     failure()
                         .eraseToAnyView()
@@ -62,8 +64,7 @@ struct ImageView: View {
                         }
                 }
             }
-            .pipeline(ImagePipeline(configuration: .withDataCache))
-            .id(currentSource)
+            .pipeline(imagePipeline)
         } else {
             failure()
                 .eraseToAnyView()
@@ -72,52 +73,53 @@ struct ImageView: View {
 }
 
 extension ImageView {
+
     init(_ source: ImageSource) {
         self.init(
-            sources: [source],
+            sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
     init(_ sources: [ImageSource]) {
         self.init(
-            sources: sources,
+            sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
     init(_ source: URL?) {
         self.init(
-            sources: [ImageSource(url: source, blurHash: nil)],
+            sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 
     init(_ sources: [URL?]) {
+        let imageSources = sources
+            .compactMap { $0 }
+            .map { ImageSource(url: $0) }
+
         self.init(
-            sources: sources.map { ImageSource(url: $0, blurHash: nil) },
+            sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() },
-            resizingMode: .aspectFill
+            failure: { DefaultFailureView() }
         )
     }
 }
 
-// MARK: Extensions
+// MARK: Modifiers
 
 extension ImageView {
 
-    func image(@ViewBuilder _ content: @escaping (NukeUI.Image) -> any View) -> Self {
+    func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
     }
 
@@ -127,10 +129,6 @@ extension ImageView {
 
     func failure(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.failure, with: content)
-    }
-
-    func resizingMode(_ resizingMode: ImageResizingMode) -> Self {
-        copy(modifying: \.resizingMode, with: resizingMode)
     }
 }
 
@@ -142,14 +140,21 @@ extension ImageView {
 
         var body: some View {
             Color.secondarySystemFill
+                .opacity(0.75)
         }
     }
 
     struct DefaultPlaceholderView: View {
 
+        let blurHash: String?
+
         var body: some View {
-            Color.secondarySystemFill
-                .opacity(0.5)
+            if let blurHash {
+                BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+            } else {
+                Color.secondarySystemFill
+                    .opacity(0.75)
+            }
         }
     }
 }

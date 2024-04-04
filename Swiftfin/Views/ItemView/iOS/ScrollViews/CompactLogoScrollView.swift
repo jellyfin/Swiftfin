@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import BlurHashKit
@@ -36,7 +36,8 @@ extension ItemView {
 
         @ViewBuilder
         private var headerView: some View {
-            ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+            ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
+                .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
                 .onAppear {
@@ -58,7 +59,7 @@ extension ItemView {
                     VStack {
                         Spacer()
 
-                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
+                        OverlayView(viewModel: viewModel)
                             .padding(.horizontal)
                             .padding(.bottom)
                             .background {
@@ -84,16 +85,15 @@ extension ItemView {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.top)
-                        .padding(.horizontal)
+                        .edgePadding()
 
                     content()
-                        .padding(.vertical)
+                        .edgePadding(.bottom)
                 }
             }
             .edgesIgnoringSafeArea(.top)
             .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
+            .navigationBarOffset(
                 $scrollViewOffset,
                 start: UIScreen.main.bounds.height * 0.42 - 50,
                 end: UIScreen.main.bounds.height * 0.42
@@ -104,13 +104,6 @@ extension ItemView {
                 multiplier: 0.3
             ) {
                 headerView
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
             }
         }
     }
@@ -126,25 +119,21 @@ extension ItemView.CompactLogoScrollView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @Binding
-        var scrollViewOffset: CGFloat
-
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
-                ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width, maxHeight: 100))
-                    .resizingMode(.aspectFit)
+                ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
                     .placeholder {
                         EmptyView()
                     }
                     .failure {
-                        Text(viewModel.item.displayTitle)
-                            .font(.largeTitle)
-                            .fontWeight(.semibold)
+                        MaxHeightText(text: viewModel.item.displayTitle, maxHeight: 70)
+                            .font(.largeTitle.weight(.semibold))
+                            .lineLimit(2)
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                     }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 70, alignment: .bottom)
 
                 DotHStack {
                     if let firstGenre = viewModel.item.genres?.first {
@@ -155,7 +144,7 @@ extension ItemView.CompactLogoScrollView {
                         Text(premiereYear)
                     }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                         Text(runtime)
                     }
                 }
@@ -174,6 +163,7 @@ extension ItemView.CompactLogoScrollView {
                     .frame(maxWidth: 300)
                     .foregroundColor(.white)
             }
+            .frame(maxWidth: .infinity, alignment: .bottom)
         }
     }
 }
