@@ -3,12 +3,13 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
 import Foundation
 import JellyfinAPI
+import PreferencesView
 import Stinsen
 import SwiftUI
 
@@ -29,7 +30,7 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         #if os(iOS)
 
-        PreferenceUIHostingControllerView {
+        PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     LiveVideoPlayer(manager: self.videoPlayerManager)
@@ -37,14 +38,12 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
                     LiveNativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
-            .overrideViewPreference(.dark)
         }
         .ignoresSafeArea()
-        .hideSystemOverlays()
 
         #else
 
-        PreferenceUIHostingControllerView {
+        PreferencesView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     LiveVideoPlayer(manager: self.videoPlayerManager)

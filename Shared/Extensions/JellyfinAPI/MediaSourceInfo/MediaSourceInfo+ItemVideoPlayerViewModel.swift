@@ -28,7 +28,6 @@ extension MediaSourceInfo {
             playbackURL = fullTranscodeURL
             streamType = .transcode
         } else {
-
             let videoStreamParameters = Paths.GetVideoStreamParameters(
                 isStatic: true,
                 tag: item.etag,
@@ -93,7 +92,10 @@ extension MediaSourceInfo {
                 parameters: videoStreamParameters
             )
 
-            playbackURL = userSession.client.fullURL(with: videoStreamRequest)
+            guard let fullURL = userSession.client.fullURL(with: videoStreamRequest) else {
+                throw JellyfinAPIError("Unable to construct transcoded url")
+            }
+            playbackURL = fullURL
             streamType = .direct
         }
 

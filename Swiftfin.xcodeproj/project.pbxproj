@@ -201,7 +201,6 @@
 		E10706102942F57D00646DAF /* Pulse in Frameworks */ = {isa = PBXBuildFile; productRef = E107060F2942F57D00646DAF /* Pulse */; };
 		E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E10706112942F57D00646DAF /* PulseLogHandler */; };
 		E10706142942F57D00646DAF /* PulseUI in Frameworks */ = {isa = PBXBuildFile; productRef = E10706132942F57D00646DAF /* PulseUI */; };
-		E10706172943F2F900646DAF /* (null) in Sources */ = {isa = PBXBuildFile; };
 		E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
 		E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E107BB9227880A8F00354E07 /* CollectionItemViewModel.swift */; };
 		E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1092F4B29106F9F00163F57 /* GestureAction.swift */; };
@@ -3377,7 +3376,8 @@
 				53ABFDE9267974EF00886593 /* HomeViewModel.swift in Sources */,
 				E1575E99293E7B1E001665B1 /* UIColor.swift in Sources */,
 				E1575E92293E7B1E001665B1 /* CGSize.swift in Sources */,
-				E1575E7E293E77B5001665B1 /* ItemFilters.swift in Sources */,
+				E1575E7E293E77B5001665B1 /* ItemFilterCollection.swift in Sources */,
+				E1575E7E293E77B5001665B1 /* ItemFilterCollection.swift in Sources */,
 				C46DD8EF2A8FB56E0046A504 /* LiveBottomBarView.swift in Sources */,
 				C46DD8EA2A8FB45C0046A504 /* LiveOverlay.swift in Sources */,
 				E1575E96293E7B1E001665B1 /* UIScrollView.swift in Sources */,
@@ -3683,7 +3683,6 @@
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
 				621338932660107500A81A2A /* String.swift in Sources */,
 				E17AC96F2954EE4B003D2BC2 /* DownloadListViewModel.swift in Sources */,
-				E10706172943F2F900646DAF /* (null) in Sources */,
 				62C83B08288C6A630004ED0C /* FontPickerView.swift in Sources */,
 				E122A9132788EAAD0060FA63 /* MediaStream.swift in Sources */,
 				E1E9017F28DAB15F001B1594 /* BarActionButtons.swift in Sources */,
@@ -3853,7 +3852,7 @@
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
-				E148128B28C15526003B8787 /* SortBy.swift in Sources */,
+				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
 				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
 				E1A3E4CB2BB74EFD005C59F8 /* EpisodeHStack.swift in Sources */,

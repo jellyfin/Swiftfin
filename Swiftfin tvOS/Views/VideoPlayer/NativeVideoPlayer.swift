@@ -37,8 +37,7 @@ struct NativeVideoPlayer: View {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-//                VideoPlayer.LoadingView()
-                Text("Loading")
+                VideoPlayer.LoadingView()
             }
         }
         .navigationBarHidden(true)

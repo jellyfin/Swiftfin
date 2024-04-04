@@ -8,7 +8,6 @@
 
 import Factory
 import Foundation
-import Get
 import JellyfinAPI
 
 struct LiveTVChannelProgram: Hashable {
@@ -27,14 +26,25 @@ final class LiveTVChannelsViewModel: ViewModel {
     @Published
     var channels: [BaseItemDto] = []
     @Published
-    var programs: [BaseItemDto] = []
-    @Published
     var channelPrograms: [LiveTVChannelProgram] = []
-    private var timer: Timer?
 
-    var currentPage = 0
-    var hasNextPage = true
-    private let pageSize = 100
+//    @Published
+//    var channelPrograms = [LiveTVChannelProgram]() {
+//        didSet {
+//            rows = []
+//            let rowChannels = channelPrograms.chunked(into: 4)
+//            for (index, rowChans) in rowChannels.enumerated() {
+//                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
+//            }
+//        }
+//    }
+
+//    @Published
+//    var rows = [LiveTVChannelRow]()
+
+    private var programs = [BaseItemDto]()
+    private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
+    private var timer: Timer?
 
     var timeFormatter: DateFormatter {
         let df = DateFormatter()
@@ -44,45 +54,22 @@ final class LiveTVChannelsViewModel: ViewModel {
 
     override init() {
         super.init()
-        requestItems(replaceCurrentItems: true)
+
+        getChannels()
+        startScheduleCheckTimer()
     }
 
     deinit {
         stopScheduleCheckTimer()
     }
 
-    func refresh() {
-        currentPage = 0
-        hasNextPage = true
-        channels = []
-        programs = []
-        channelPrograms = []
-    }
-
-    func requestNextPage() {
-        guard hasNextPage else { return }
-
-        currentPage += 1
-        requestItems(replaceCurrentItems: false)
-    }
-
-    private func requestItems(replaceCurrentItems: Bool = false) {
-        if replaceCurrentItems {
-            // Only set isLoading on a replace / full load
-            // Otherwise fetching next page will reset the scroll position
-            // as the CollectionView is removed and redrawn after loading state is toggled
-            isLoading = true
-            self.channels = []
-            self.programs = []
-            self.channelPrograms = []
-        }
-
+    private func getGuideInfo() {
         Task {
-            let newChannelPrograms = try await getChannelPrograms()
+            let request = Paths.getGuideInfo
+            guard let _ = try? await userSession.client.send(request) else { return }
 
             await MainActor.run {
-                self.isLoading = false
-                self.channelPrograms.append(contentsOf: newChannelPrograms)
+                self.getChannels()
             }
         }
     }
@@ -114,11 +101,44 @@ final class LiveTVChannelsViewModel: ViewModel {
             logger.debug("Cannot get programs, channels list empty.")
             return
         }
-        var newChannelPrograms = [LiveTVChannelProgram]()
+        let channelIds = channels.compactMap(\.id)
+
+        let minEndDate = Date.now.addComponentsToDate(hours: -1)
+        let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
+
+        Task {
+            let parameters = Paths.GetLiveTvProgramsParameters(
+                channelIDs: channelIds,
+                userID: userSession.user.id,
+                maxStartDate: maxStartDate,
+                minEndDate: minEndDate,
+                sortBy: ["StartDate"]
+            )
+
+            let request = Paths.getLiveTvPrograms(parameters: parameters)
+
+            do {
+                let response = try await userSession.client.send(request)
+
+                await MainActor.run {
+                    self.programs = response.value.items ?? []
+                    self.channelPrograms = self.processChannelPrograms()
+                }
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+
+    private func processChannelPrograms() -> [LiveTVChannelProgram] {
+        var channelPrograms = [LiveTVChannelProgram]()
         let now = Date()
-        for channel in channels {
-            let prgs = programs.filter { item in
+        for channel in self.channels {
+            let prgs = self.programs.filter { item in
                 item.channelID == channel.id
+            }
+            DispatchQueue.main.async {
+                self.channelProgramsList[channel] = prgs
             }
 
             var currentPrg: BaseItemDto?
@@ -132,46 +152,9 @@ final class LiveTVChannelsViewModel: ViewModel {
                 }
             }
 
-            newChannelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
+            channelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
         }
-
-        return newChannelPrograms
-    }
-
-    private func getGuideInfo() async throws -> Response<GuideInfo> {
-        let request = Paths.getGuideInfo
-        return try await userSession.client.send(request)
-    }
-
-    func getChannels() async throws -> Response<BaseItemDtoQueryResult> {
-        let parameters = Paths.GetLiveTvChannelsParameters(
-            userID: userSession.user.id,
-            startIndex: currentPage * pageSize,
-            limit: pageSize,
-            enableImageTypes: [.primary],
-            fields: ItemFields.minimumCases,
-            enableUserData: false,
-            enableFavoriteSorting: true
-        )
-
-        let request = Paths.getLiveTvChannels(parameters: parameters)
-        return try await userSession.client.send(request)
-    }
-
-    private func getPrograms(channelIds: [String]) async throws -> Response<BaseItemDtoQueryResult> {
-        let minEndDate = Date.now.addComponentsToDate(hours: -1)
-        let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-
-        let parameters = Paths.GetLiveTvProgramsParameters(
-            channelIDs: channelIds,
-            userID: userSession.user.id,
-            maxStartDate: maxStartDate,
-            minEndDate: minEndDate,
-            sortBy: ["StartDate"]
-        )
-
-        let request = Paths.getLiveTvPrograms(parameters: parameters)
-        return try await userSession.client.send(request)
+        return channelPrograms
     }
 
     func startScheduleCheckTimer() {
@@ -179,45 +162,23 @@ final class LiveTVChannelsViewModel: ViewModel {
         let calendar = Calendar.current
         var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
 
-        // Run every minute
+        // Run on 10th min of every hour
         guard let minute = components.minute else { return }
         components.second = 0
-        components.minute = minute + (1 - (minute % 1))
+        components.minute = minute + (10 - (minute % 10))
 
         guard let nextMinute = calendar.date(from: components) else { return }
 
         if let existingTimer = timer {
             existingTimer.invalidate()
         }
-        timer = Timer(fire: nextMinute, interval: 60, repeats: true) { [weak self] _ in
+        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.logger.debug("LiveTVChannels schedule check...")
-
-            Task {
-                await MainActor.run {
-                    let channelProgramsCopy = self.channelPrograms
-                    var refreshedChannelPrograms: [LiveTVChannelProgram] = []
-                    for channelProgram in channelProgramsCopy {
-                        var currentPrg: BaseItemDto?
-                        let now = Date()
-                        for prg in channelProgram.programs {
-                            if let startDate = prg.startDate,
-                               let endDate = prg.endDate,
-                               now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
-                               now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
-                            {
-                                currentPrg = prg
-                            }
-                        }
-
-                        refreshedChannelPrograms
-                            .append(LiveTVChannelProgram(
-                                channel: channelProgram.channel,
-                                currentProgram: currentPrg,
-                                programs: channelProgram.programs
-                            ))
-                    }
-                    self.channelPrograms = refreshedChannelPrograms
+            DispatchQueue.global(qos: .background).async {
+                let newChanPrgs = self.processChannelPrograms()
+                DispatchQueue.main.async {
+                    self.channelPrograms = newChanPrgs
                 }
             }
         }

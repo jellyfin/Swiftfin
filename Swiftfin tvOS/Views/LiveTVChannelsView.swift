@@ -47,10 +47,10 @@ struct LiveTVChannelsView: View {
                 sectionInsets: .zero
             )
         }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { edge in
-            if !viewModel.isLoading && edge == .bottom {
-                viewModel.requestNextPage()
-            }
+        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { _ in
+//            if !viewModel.isLoading && edge == .bottom {
+//                viewModel.requestNextPage()
+//            }
         }
         .ignoresSafeArea()
         .onAppear {

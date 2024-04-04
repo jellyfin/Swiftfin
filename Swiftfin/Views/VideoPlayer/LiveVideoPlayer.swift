@@ -3,7 +3,7 @@
 // License, v2.0. If a copy of the MPL was not distributed with this
 // file, you can obtain one at https://mozilla.org/MPL/2.0/.
 //
-// Copyright (c) 2023 Jellyfin & Jellyfin Contributors
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
 import Defaults
@@ -69,7 +69,7 @@ struct LiveVideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
     @State
-    private var playbackSpeed: Float = 1
+    private var playbackSpeed: Double = 1
     @State
     private var subtitleOffset: Int = 0
 
@@ -168,7 +168,6 @@ struct LiveVideoPlayer: View {
             }
             .videoPlayerKeyCommands(
                 gestureStateHandler: gestureStateHandler,
-                videoPlayerManager: videoPlayerManager,
                 updateViewProxy: updateViewProxy
             )
             .onDisappear {
@@ -181,8 +180,7 @@ struct LiveVideoPlayer: View {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-//                LoadingView()
-//                    .transition(.opacity)
+                VideoPlayer.LoadingView()
             }
         }
         .navigationBarHidden(true)
@@ -393,7 +391,7 @@ extension LiveVideoPlayer {
             toNearest: 100
         )
 
-        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "speaker.wave.2.fill", title: newOffset.millisecondLabel)
         audioOffset = clamp(newOffset, min: -30000, max: 30000)
     }
 
@@ -459,7 +457,7 @@ extension LiveVideoPlayer {
         }
 
         let newPlaybackSpeed = round(
-            gestureStateHandler.beginningPlaybackSpeed - Float(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
+            gestureStateHandler.beginningPlaybackSpeed - Double(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
             toNearest: 0.25
         )
         let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
@@ -467,7 +465,7 @@ extension LiveVideoPlayer {
         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
 
         playbackSpeed = clampedPlaybackSpeed
-        videoPlayerManager.proxy.setRate(.absolute(clampedPlaybackSpeed))
+        videoPlayerManager.proxy.setRate(.absolute(Float(clampedPlaybackSpeed)))
     }
 
     private func scrubAction(
@@ -517,7 +515,7 @@ extension LiveVideoPlayer {
         )
         let clampedOffset = clamp(newOffset, min: -30000, max: 30000)
 
-        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondFormat)
+        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondLabel)
 
         subtitleOffset = clampedOffset
     }
