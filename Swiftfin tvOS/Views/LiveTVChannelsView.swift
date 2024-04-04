@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -34,34 +34,34 @@ struct LiveTVChannelsView: View {
 
     @ViewBuilder
     private var channelsView: some View {
-        CollectionView(items: viewModel.channelPrograms) { _, channelProgram, _ in
-            channelCell(for: channelProgram)
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(4),
-                itemSpacing: 8,
-                lineSpacing: 16,
-                itemSize: .estimated(400),
-                sectionInsets: .zero
-            )
-        }
-        .willReachEdge(insets: .init(top: 0, leading: 0, bottom: 600, trailing: 0)) { _ in
-//            if !viewModel.isLoading && edge == .bottom {
-//                viewModel.requestNextPage()
-//            }
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.channelPrograms.isNotEmpty {
+                CollectionVGrid(
+                    viewModel.channelPrograms,
+                    layout: .minWidth(400, itemSpacing: 16, lineSpacing: 4)
+                ) { program in
+                    channelCell(for: program)
+                }
+                .onAppear {
+                    viewModel.startScheduleCheckTimer()
+                }
+                .onDisappear {
+                    viewModel.stopScheduleCheckTimer()
+                }
+            } else {
+                VStack {
+                    Text(L10n.noResults)
+                    Button {
+                        viewModel.getChannels()
+                    } label: {
+                        Text(L10n.reload)
+                    }
+                }
+            }
         }
         .ignoresSafeArea()
-        .onAppear {
-            viewModel.startScheduleCheckTimer()
-        }
-        .onDisappear {
-            viewModel.stopScheduleCheckTimer()
-        }
-        .onReceive(NotificationCenter.default.publisher(for: Notification.Name.livePlayerDismissed)) { _ in
-            viewModel.startScheduleCheckTimer()
-        }
     }
 
     @ViewBuilder
