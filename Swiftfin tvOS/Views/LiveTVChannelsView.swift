@@ -37,12 +37,15 @@ struct LiveTVChannelsView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView()
-            } else if viewModel.channelPrograms.isNotEmpty {
+            } else if viewModel.elements.isNotEmpty {
                 CollectionVGrid(
-                    viewModel.channelPrograms,
+                    $viewModel.elements,
                     layout: .minWidth(400, itemSpacing: 16, lineSpacing: 4)
                 ) { program in
                     channelCell(for: program)
+                }
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.send(.getNextPage)
                 }
                 .onAppear {
                     viewModel.startScheduleCheckTimer()
@@ -54,7 +57,7 @@ struct LiveTVChannelsView: View {
                 VStack {
                     Text(L10n.noResults)
                     Button {
-                        viewModel.getChannels()
+                        viewModel.send(.refresh)
                     } label: {
                         Text(L10n.reload)
                     }
@@ -101,12 +104,19 @@ struct LiveTVChannelsView: View {
     }
 
     var body: some View {
-        if viewModel.isLoading && viewModel.channelPrograms.isEmpty {
-            loadingView
-        } else if viewModel.channelPrograms.isEmpty {
-            noResultsView
-        } else {
-            channelsView
+        Group {
+            if viewModel.isLoading && viewModel.elements.isEmpty {
+                loadingView
+            } else if viewModel.elements.isEmpty {
+                noResultsView
+            } else {
+                channelsView
+            }
+        }
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.send(.refresh)
+            }
         }
     }
 

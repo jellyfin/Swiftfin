@@ -174,6 +174,8 @@
 		C46DD8EA2A8FB45C0046A504 /* LiveOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8E92A8FB45C0046A504 /* LiveOverlay.swift */; };
 		C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */; };
 		C46DD8EF2A8FB56E0046A504 /* LiveBottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */; };
+		C49AE1182BC191BB004562B2 /* LiveTVChannelProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49AE1172BC191BB004562B2 /* LiveTVChannelProgram.swift */; };
+		C49AE1192BC191BB004562B2 /* LiveTVChannelProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = C49AE1172BC191BB004562B2 /* LiveTVChannelProgram.swift */; };
 		C4AE2C3027498D2300AE13CF /* LiveTVHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */; };
 		C4AE2C3227498D6A00AE13CF /* LiveTVProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4AE2C3127498D6A00AE13CF /* LiveTVProgramsView.swift */; };
 		C4BE076F2720FEFF003F4AD1 /* PlainNavigationLinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690F9267AD6EC005D8AB9 /* PlainNavigationLinkButton.swift */; };
@@ -967,6 +969,7 @@
 		C46DD8E92A8FB45C0046A504 /* LiveOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveOverlay.swift; sourceTree = "<group>"; };
 		C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMainOverlay.swift; sourceTree = "<group>"; };
 		C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveBottomBarView.swift; sourceTree = "<group>"; };
+		C49AE1172BC191BB004562B2 /* LiveTVChannelProgram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVChannelProgram.swift; sourceTree = "<group>"; };
 		C4AE2C2F27498D2300AE13CF /* LiveTVHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVHomeView.swift; sourceTree = "<group>"; };
 		C4AE2C3127498D6A00AE13CF /* LiveTVProgramsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVProgramsView.swift; sourceTree = "<group>"; };
 		C4BE07702725EB06003F4AD1 /* LiveTVProgramsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveTVProgramsCoordinator.swift; sourceTree = "<group>"; };
@@ -1631,6 +1634,7 @@
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 				E15756352936856700976E1F /* VideoPlayerType.swift */,
+				C49AE1172BC191BB004562B2 /* LiveTVChannelProgram.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -3407,6 +3411,7 @@
 				E1E6C45429B1304E0064123F /* ChaptersActionButton.swift in Sources */,
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
 				E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */,
+				C49AE1192BC191BB004562B2 /* LiveTVChannelProgram.swift in Sources */,
 				C4BE07772725EBEA003F4AD1 /* LiveTVProgramsViewModel.swift in Sources */,
 				E11CEB9128999D84003E74C7 /* EpisodeItemView.swift in Sources */,
 				E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */,
@@ -3804,6 +3809,7 @@
 				6264E88C273850380081A12A /* Strings.swift in Sources */,
 				C4AE2C3227498D6A00AE13CF /* LiveTVProgramsView.swift in Sources */,
 				E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */,
+				C49AE1182BC191BB004562B2 /* LiveTVChannelProgram.swift in Sources */,
 				E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
