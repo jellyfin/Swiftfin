@@ -53,59 +53,42 @@ extension ItemView {
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
+            ItemViewOffsetScrollView(headerHeight: 0.45) {
+                headerView
+            } overlay: {
+                VStack {
+                    Spacer()
 
-                    VStack {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .background {
-                                BlurView(style: .systemThinMaterialDark)
-                                    .mask {
-                                        LinearGradient(
-                                            stops: [
-                                                .init(color: .white.opacity(0), location: 0.2),
-                                                .init(color: .white.opacity(0.5), location: 0.3),
-                                                .init(color: .white, location: 0.55),
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    }
-                            }
-                            .overlay {
-                                Color.systemBackground
-                                    .opacity(topOpacity)
-                            }
-                    }
-                    .frame(height: UIScreen.main.bounds.height * 0.45)
-
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding(.horizontal)
+                        .edgePadding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .white.opacity(0), location: 0.2),
+                                            .init(color: .white.opacity(0.5), location: 0.3),
+                                            .init(color: .white, location: 0.55),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
+                }
+            } content: {
+                VStack(alignment: .leading, spacing: 10) {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.top)
-                        .padding(.horizontal)
+                        .edgePadding(.horizontal)
+
+                    RowDivider()
 
                     content()
-                        .padding(.vertical)
                 }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .scrollViewOffset($scrollViewOffset)
-            .navigationBarOffset(
-                $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.28,
-                end: UIScreen.main.bounds.height * 0.28 + 50
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.45,
-                multiplier: 0.8
-            ) {
-                headerView
+                .edgePadding(.vertical)
             }
         }
     }
@@ -121,21 +104,14 @@ extension ItemView.CompactPosterScrollView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @Binding
-        var scrollViewOffset: CGFloat
-
         @ViewBuilder
         private var rightShelfView: some View {
             VStack(alignment: .leading) {
-
-                // MARK: Name
 
                 Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
-
-                // MARK: Details
 
                 DotHStack {
                     if viewModel.item.isUnaired {
@@ -164,8 +140,6 @@ extension ItemView.CompactPosterScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .bottom, spacing: 12) {
 
-                    // MARK: Portrait Image
-
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
                         .failure {
                             SystemImageContentView(systemName: viewModel.item.typeSystemImage)
@@ -177,8 +151,6 @@ extension ItemView.CompactPosterScrollView {
                     rightShelfView
                         .padding(.bottom)
                 }
-
-                // MARK: Play
 
                 HStack(alignment: .center) {
 

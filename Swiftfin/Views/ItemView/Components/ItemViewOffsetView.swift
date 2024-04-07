@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: given height or height ratio options
+
 struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: View {
 
     @State
@@ -35,8 +37,8 @@ struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: Vie
     }
 
     private var headerOpacity: CGFloat {
-        let start = size.height * heightRatio - safeAreaInsets.top - 120
-        let end = size.height * heightRatio - safeAreaInsets.top - 50
+        let start = (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 100
+        let end = (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top - 50
         let diff = end - start
         let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
         return opacity
@@ -47,6 +49,14 @@ struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: Vie
             VStack(spacing: 0) {
                 overlay()
                     .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)
+                    .overlay {
+                        ZStack {
+                            Color.white
+
+                            BlurView(style: .systemThinMaterial)
+                        }
+                        .opacity(headerOpacity)
+                    }
 
                 content()
             }
@@ -59,8 +69,8 @@ struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: Vie
         .scrollViewOffset($scrollViewOffset)
         .navigationBarOffset(
             $scrollViewOffset,
-            start: size.height * heightRatio - 50 - safeAreaInsets.top,
-            end: size.height * heightRatio - safeAreaInsets.top
+            start: (size.height + safeAreaInsets.vertical) * heightRatio - 50 - safeAreaInsets.top,
+            end: (size.height + safeAreaInsets.vertical) * heightRatio - safeAreaInsets.top
         )
         .backgroundParallaxHeader(
             $scrollViewOffset,

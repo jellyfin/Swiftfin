@@ -26,14 +26,6 @@ extension ItemView {
 
         let content: () -> Content
 
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.25
-            let end = UIScreen.main.bounds.height * 0.42 - 50
-            let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
-        }
-
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
@@ -75,75 +67,18 @@ extension ItemView {
                                     )
                                 }
                         }
-                        .overlay {
-                            Color.systemBackground
-                                .opacity(topOpacity)
-                        }
                 }
             } content: {
                 VStack(alignment: .leading, spacing: 0) {
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .edgePadding()
+                        .edgePadding(.horizontal)
 
                     content()
-                        .edgePadding(.bottom)
                 }
+                .edgePadding(.vertical)
             }
-
-//            ScrollView(showsIndicators: false) {
-//                VStack(alignment: .leading, spacing: 0) {
-//
-//                    VStack {
-//                        Spacer()
-//
-//                        OverlayView(viewModel: viewModel)
-//                            .padding(.horizontal)
-//                            .padding(.bottom)
-//                            .background {
-//                                BlurView(style: .systemThinMaterialDark)
-//                                    .mask {
-//                                        LinearGradient(
-//                                            stops: [
-//                                                .init(color: .clear, location: 0),
-//                                                .init(color: .black, location: 0.3),
-//                                            ],
-//                                            startPoint: .top,
-//                                            endPoint: .bottom
-//                                        )
-//                                    }
-//                            }
-//                            .overlay {
-//                                Color.systemBackground
-//                                    .opacity(topOpacity)
-//                            }
-//                    }
-//                    .frame(height: UIScreen.main.bounds.height * 0.5)
-//
-//                    ItemView.OverviewView(item: viewModel.item)
-//                        .overviewLineLimit(4)
-//                        .taglineLineLimit(2)
-//                        .edgePadding()
-//
-//                    content()
-//                        .edgePadding(.bottom)
-//                }
-//            }
-//            .edgesIgnoringSafeArea(.top)
-//            .scrollViewOffset($scrollViewOffset)
-//            .navigationBarOffset(
-//                $scrollViewOffset,
-//                start: UIScreen.main.bounds.height * 0.42 - 50,
-//                end: UIScreen.main.bounds.height * 0.42
-//            )
-//            .backgroundParallaxHeader(
-//                $scrollViewOffset,
-//                height: UIScreen.main.bounds.height * 0.5,
-//                multiplier: 0.3
-//            ) {
-//                headerView
-//            }
         }
     }
 }
