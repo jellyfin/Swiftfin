@@ -81,8 +81,15 @@ extension ItemView {
                         }
                 }
             } content: {
-                content()
-                    .edgePadding(.bottom)
+                VStack(alignment: .leading, spacing: 0) {
+                    ItemView.OverviewView(item: viewModel.item)
+                        .overviewLineLimit(4)
+                        .taglineLineLimit(2)
+                        .edgePadding()
+
+                    content()
+                        .edgePadding(.bottom)
+                }
             }
 
 //            ScrollView(showsIndicators: false) {

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: custom back button enabled passing
+
 struct NavBarOffsetModifier: ViewModifier {
 
     @Binding

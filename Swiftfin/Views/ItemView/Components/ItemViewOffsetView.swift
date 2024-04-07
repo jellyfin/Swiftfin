@@ -44,14 +44,19 @@ struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: Vie
 
     var body: some View {
         ScrollView {
-            VStack {
+            VStack(spacing: 0) {
                 overlay()
-                    .frame(height: size.height * heightRatio)
+                    .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)
 
                 content()
             }
         }
         .edgesIgnoringSafeArea(.top)
+        .onSizeChanged { size, safeAreaInsets in
+            self.size = size
+            self.safeAreaInsets = safeAreaInsets
+        }
+        .scrollViewOffset($scrollViewOffset)
         .navigationBarOffset(
             $scrollViewOffset,
             start: size.height * heightRatio - 50 - safeAreaInsets.top,
@@ -59,16 +64,11 @@ struct ItemViewOffsetScrollView<Header: View, Overlay: View, Content: View>: Vie
         )
         .backgroundParallaxHeader(
             $scrollViewOffset,
-            height: size.height * heightRatio,
+            height: (size.height + safeAreaInsets.vertical) * heightRatio,
             multiplier: 0.3
         ) {
             header()
-                .frame(height: size.height * heightRatio)
+                .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)
         }
-        .onSizeChanged { size, safeAreaInsets in
-            self.size = size
-            self.safeAreaInsets = safeAreaInsets
-        }
-        .scrollViewOffset($scrollViewOffset)
     }
 }
