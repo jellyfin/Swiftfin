@@ -13,7 +13,7 @@ extension NavigationBarFilterDrawer {
 
     struct FilterDrawerButton: View {
 
-        @Environment(\.accentColor)
+        @Default(.accentColor)
         private var accentColor
 
         private let systemName: String?

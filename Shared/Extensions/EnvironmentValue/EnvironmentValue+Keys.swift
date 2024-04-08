@@ -11,10 +11,6 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    struct AccentColorKey: EnvironmentKey {
-        static let defaultValue: Color = Defaults[.accentColor]
-    }
-
     struct AudioOffsetKey: EnvironmentKey {
         static let defaultValue: Binding<Int> = .constant(0)
     }
