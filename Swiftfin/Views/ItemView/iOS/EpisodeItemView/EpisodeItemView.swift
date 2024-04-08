@@ -11,14 +11,8 @@ import SwiftUI
 
 struct EpisodeItemView: View {
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
-
     @ObservedObject
     var viewModel: EpisodeItemViewModel
-
-    @State
-    private var scrollViewOffset: CGFloat = 0
 
     var body: some View {
         ScrollView {

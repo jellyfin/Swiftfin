@@ -12,9 +12,6 @@ import SwiftUI
 
 struct CollectionItemView: View {
 
-    @Default(.Customization.itemViewType)
-    private var itemViewType
-
     @ObservedObject
     var viewModel: CollectionItemViewModel
 
