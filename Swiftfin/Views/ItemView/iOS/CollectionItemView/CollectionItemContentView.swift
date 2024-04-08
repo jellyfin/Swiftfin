@@ -44,14 +44,12 @@ extension CollectionItemView {
 
                 // MARK: Overview
 
-                if let _ = viewModel.item.overview, let taglines = viewModel.item.taglines, taglines.isNotEmpty {
-                    ItemView.OverviewView(item: viewModel.item)
-                        .overviewLineLimit(4)
-                        .taglineLineLimit(2)
-                        .padding(.horizontal)
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
+                    .taglineLineLimit(2)
+                    .padding(.horizontal)
 
-                    RowDivider()
-                }
+                RowDivider()
 
                 // MARK: Genres
 

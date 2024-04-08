@@ -109,7 +109,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
-                        .taglineLineLimit(1)
+                        .taglineLineLimit(2)
                         .foregroundColor(.white)
 
                     HStack(spacing: 30) {

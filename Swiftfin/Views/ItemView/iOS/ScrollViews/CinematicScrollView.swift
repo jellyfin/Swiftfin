@@ -45,7 +45,7 @@ extension ItemView {
                 maxWidth: UIScreen.main.bounds.width
             ))
             .aspectRatio(contentMode: .fill)
-            .frame(height: UIScreen.main.bounds.height * 0.4)
+            .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
             .onAppear {
                 if let headerBlurHash = viewModel.item.blurHash(.backdrop) {
@@ -60,7 +60,7 @@ extension ItemView {
         }
 
         var body: some View {
-            OffsetScrollView(headerHeight: 0.6) {
+            OffsetScrollView(headerHeight: 0.75) {
                 headerView
             } overlay: {
                 VStack {
@@ -151,12 +151,10 @@ extension ItemView.CinematicScrollView {
                 }
                 .frame(maxWidth: .infinity)
 
-                if let _ = viewModel.item.overview, let taglines = viewModel.item.taglines, taglines.isNotEmpty {
-                    ItemView.OverviewView(item: viewModel.item)
-                        .overviewLineLimit(3)
-                        .taglineLineLimit(2)
-                        .foregroundColor(.white)
-                }
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(3)
+                    .taglineLineLimit(2)
+                    .foregroundColor(.white)
 
                 ItemView.AttributesHStack(viewModel: viewModel)
             }
