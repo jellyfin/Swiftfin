@@ -21,15 +21,9 @@ struct EpisodeItemView: View {
     private var scrollViewOffset: CGFloat = 0
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView {
             ContentView(viewModel: viewModel)
                 .edgePadding(.bottom)
         }
-        .scrollViewOffset($scrollViewOffset)
-        .navigationBarOffset(
-            $scrollViewOffset,
-            start: 0,
-            end: 10
-        )
     }
 }

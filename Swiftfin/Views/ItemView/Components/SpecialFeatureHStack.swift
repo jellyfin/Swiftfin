@@ -23,7 +23,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.specialFeatures,
                 type: .landscape,
-                items: .constant(OrderedSet(items))
+                items: items
             )
             .onSelect { item in
                 guard let mediaSource = item.mediaSources?.first else { return }

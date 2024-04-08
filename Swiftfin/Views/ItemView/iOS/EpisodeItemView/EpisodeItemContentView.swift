@@ -39,6 +39,8 @@ extension EpisodeItemView {
                     .overviewLineLimit(4)
                     .padding(.horizontal)
 
+                RowDivider()
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {

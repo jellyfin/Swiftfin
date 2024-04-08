@@ -8,22 +8,19 @@
 
 import SwiftUI
 
-// TODO: custom back button enabled passing
+struct NavigationBarDrawerModifier<Drawer: View>: ViewModifier {
 
-struct NavBarOffsetModifier: ViewModifier {
+    private let drawer: () -> Drawer
 
-    @Binding
-    var scrollViewOffset: CGFloat
-
-    let start: CGFloat
-    let end: CGFloat
+    init(@ViewBuilder drawer: @escaping () -> Drawer) {
+        self.drawer = drawer
+    }
 
     func body(content: Content) -> some View {
-        NavBarOffsetView(
-            scrollViewOffset: $scrollViewOffset,
-            start: start,
-            end: end
-        ) {
+        NavigationBarDrawerView {
+            drawer()
+                .ignoresSafeArea()
+        } content: {
             content
         }
         .ignoresSafeArea()

@@ -45,7 +45,7 @@ extension ItemView {
         }
 
         var body: some View {
-            ItemViewOffsetScrollView(headerHeight: 0.5) {
+            OffsetScrollView(headerHeight: 0.5) {
                 headerView
             } overlay: {
                 VStack {
@@ -69,11 +69,16 @@ extension ItemView {
                         }
                 }
             } content: {
-                VStack(alignment: .leading, spacing: 0) {
-                    ItemView.OverviewView(item: viewModel.item)
-                        .overviewLineLimit(4)
-                        .taglineLineLimit(2)
-                        .edgePadding(.horizontal)
+                VStack(alignment: .leading, spacing: 10) {
+
+                    if let _ = viewModel.item.overview, let taglines = viewModel.item.taglines, taglines.isNotEmpty {
+                        ItemView.OverviewView(item: viewModel.item)
+                            .overviewLineLimit(4)
+                            .taglineLineLimit(2)
+                            .padding(.horizontal)
+
+                        RowDivider()
+                    }
 
                     content()
                 }

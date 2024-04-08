@@ -19,19 +19,9 @@ struct CollectionItemView: View {
     var viewModel: CollectionItemViewModel
 
     var body: some View {
-        switch itemViewType {
-        case .compactPoster:
-            ItemView.CompactPosterScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .compactLogo:
-            ItemView.CompactLogoScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
-        case .cinematic:
-            ItemView.CinematicScrollView(viewModel: viewModel) {
-                ContentView(viewModel: viewModel)
-            }
+        ScrollView {
+            ContentView(viewModel: viewModel)
+                .edgePadding(.bottom)
         }
     }
 }

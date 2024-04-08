@@ -11,6 +11,8 @@ import SwiftUI
 
 // Note: Keep all of the ItemFilterCollection/ItemFilter/AnyItemFilter KeyPath wackiness in this file
 
+// TODO: multiple filter types?
+//       - for sort order and sort by combined
 struct FilterView: View {
 
     @Binding

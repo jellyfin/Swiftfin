@@ -16,11 +16,11 @@ extension View {
     }
 
     func navigationBarOffset(_ scrollViewOffset: Binding<CGFloat>, start: CGFloat, end: CGFloat) -> some View {
-        modifier(NavBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
+        modifier(NavigationBarOffsetModifier(scrollViewOffset: scrollViewOffset, start: start, end: end))
     }
 
     func navigationBarDrawer<Drawer: View>(@ViewBuilder _ drawer: @escaping () -> Drawer) -> some View {
-        modifier(NavBarDrawerModifier(drawer: drawer))
+        modifier(NavigationBarDrawerModifier(drawer: drawer))
     }
 
     @ViewBuilder
