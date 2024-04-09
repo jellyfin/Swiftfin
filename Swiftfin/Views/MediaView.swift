@@ -61,7 +61,9 @@ struct MediaView: View {
                 }
         }
         .refreshable {
-            viewModel.send(.refresh)
+            Task {
+                viewModel.send(.refresh)
+            }
         }
     }
 
