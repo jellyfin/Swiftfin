@@ -11,6 +11,10 @@ import JellyfinAPI
 import SwiftUI
 import WidgetKit
 
+// TODO: try to make views simpler so there isn't one per media type, but per view type
+//       - basic (episodes, collection) vs more fancy (rest)
+//       - think about future for other media types
+
 struct ItemView: View {
 
     @StateObject

@@ -28,9 +28,7 @@ extension ItemView {
                         .font(.body)
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.leading)
-                        .ifLet(taglineLineLimit) { view, lineLimit in
-                            view.lineLimit(lineLimit)
-                        }
+                        .lineLimit(taglineLineLimit)
                 }
 
                 if let itemOverview = item.overview {
@@ -40,9 +38,7 @@ extension ItemView {
                         }
                         .seeMoreType(.view)
                         .font(.footnote)
-                        .ifLet(overviewLineLimit) { view, lineLimit in
-                            view.lineLimit(lineLimit)
-                        }
+                        .lineLimit(overviewLineLimit)
                 }
             }
         }

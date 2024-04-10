@@ -8,61 +8,55 @@
 
 import SwiftUI
 
-struct NavBarDrawerView: UIViewControllerRepresentable {
+struct NavigationBarDrawerView<Content: View, Drawer: View>: UIViewControllerRepresentable {
 
-    private let buttons: () -> any View
-    private let content: () -> any View
+    private let buttons: () -> Drawer
+    private let content: () -> Content
 
     init(
-        @ViewBuilder buttons: @escaping () -> any View,
-        @ViewBuilder content: @escaping () -> any View
+        @ViewBuilder buttons: @escaping () -> Drawer,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.buttons = buttons
         self.content = content
     }
 
-    func makeUIViewController(context: Context) -> UINavBarDrawerHostingController {
-        UINavBarDrawerHostingController(buttons: buttons, content: content)
+    func makeUIViewController(context: Context) -> UINavigationBarDrawerHostingController<Content, Drawer> {
+        UINavigationBarDrawerHostingController<Content, Drawer>(buttons: buttons, content: content)
     }
 
-    func updateUIViewController(_ uiViewController: UINavBarDrawerHostingController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UINavigationBarDrawerHostingController<Content, Drawer>, context: Context) {}
 }
 
-class UINavBarDrawerHostingController: UIViewController {
+class UINavigationBarDrawerHostingController<Content: View, Drawer: View>: UIHostingController<Content> {
 
-    private let buttons: () -> any View
-    private let content: () -> any View
+    private let drawer: () -> Drawer
+    private let content: () -> Content
 
     // TODO: see if we can get the height instead from the view passed in
     private let drawerHeight: CGFloat = 36
 
-    private lazy var navBarBlurView: UIVisualEffectView = {
+    private lazy var blurView: UIVisualEffectView = {
         let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemThinMaterial))
         blurView.translatesAutoresizingMaskIntoConstraints = false
         return blurView
     }()
 
-    private lazy var contentView: UIHostingController<AnyView> = {
-        let contentView = UIHostingController(rootView: content().eraseToAnyView())
-        contentView.view.translatesAutoresizingMaskIntoConstraints = false
-        contentView.view.backgroundColor = nil
-        return contentView
-    }()
-
-    private lazy var drawerButtonsView: UIHostingController<AnyView> = {
-        let drawerButtonsView = UIHostingController(rootView: buttons().eraseToAnyView())
+    private lazy var drawerButtonsView: UIHostingController<Drawer> = {
+        let drawerButtonsView = UIHostingController(rootView: drawer())
         drawerButtonsView.view.translatesAutoresizingMaskIntoConstraints = false
         drawerButtonsView.view.backgroundColor = nil
         return drawerButtonsView
     }()
 
     init(
-        buttons: @escaping () -> any View,
-        content: @escaping () -> any View
+        buttons: @escaping () -> Drawer,
+        content: @escaping () -> Content
     ) {
-        self.buttons = buttons
+        self.drawer = buttons
         self.content = content
-        super.init(nibName: nil, bundle: nil)
+
+        super.init(rootView: content())
     }
 
     @available(*, unavailable)
@@ -75,11 +69,7 @@ class UINavBarDrawerHostingController: UIViewController {
 
         view.backgroundColor = nil
 
-        addChild(contentView)
-        view.addSubview(contentView.view)
-        contentView.didMove(toParent: self)
-
-        view.addSubview(navBarBlurView)
+        view.addSubview(blurView)
 
         addChild(drawerButtonsView)
         view.addSubview(drawerButtonsView.view)
@@ -91,17 +81,12 @@ class UINavBarDrawerHostingController: UIViewController {
             drawerButtonsView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             drawerButtonsView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
+
         NSLayoutConstraint.activate([
-            navBarBlurView.topAnchor.constraint(equalTo: view.topAnchor),
-            navBarBlurView.bottomAnchor.constraint(equalTo: drawerButtonsView.view.bottomAnchor),
-            navBarBlurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navBarBlurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
-        NSLayoutConstraint.activate([
-            contentView.view.topAnchor.constraint(equalTo: view.topAnchor),
-            contentView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            contentView.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            contentView.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            blurView.topAnchor.constraint(equalTo: view.topAnchor),
+            blurView.bottomAnchor.constraint(equalTo: drawerButtonsView.view.bottomAnchor),
+            blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
     }
 

@@ -15,7 +15,7 @@ struct PillHStack<Item: Displayable>: View {
     private var onSelect: (Item) -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.title2)
                 .fontWeight(.semibold)

@@ -8,30 +8,24 @@
 
 import SwiftUI
 
+// TODO: remove rest occurrences of `UIDevice.main` sizings
+// TODO: overlay spacing between overview and play button should be dynamic
+//       - smaller spacing on smaller widths (iPad Mini, portrait)
+
+// landscape vs portrait ratios just "feel right". Adjust if necessary
+// or if a concrete design comes along.
+
 extension ItemView {
 
     struct iPadOSCinematicScrollView<Content: View>: View {
-
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
 
         @ObservedObject
         var viewModel: ItemViewModel
 
         @State
         private var globalSize: CGSize = .zero
-        @State
-        private var scrollViewOffset: CGFloat = 0
 
         let content: () -> Content
-
-        private var topOpacity: CGFloat {
-            let start = globalSize.isLandscape ? globalSize.height * 0.45 : globalSize.height * 0.25
-            let end = globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30
-            let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
-        }
 
         @ViewBuilder
         private var headerView: some View {
@@ -43,56 +37,36 @@ extension ItemView {
                 }
             }
             .aspectRatio(contentMode: .fill)
-            .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    VStack(spacing: 0) {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel)
-                            .edgePadding()
-                    }
-                    .frame(height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4)
-                    .background {
-                        BlurView(style: .systemThinMaterialDark)
-                            .mask {
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: .clear, location: 0.4),
-                                        .init(color: .white, location: 0.8),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            }
-                    }
-                    .overlay {
-                        Color.systemBackground
-                            .opacity(topOpacity)
-                    }
-
-                    content()
-                        .padding(.vertical)
-                        .background(Color.systemBackground)
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
-            .scrollViewOffset($scrollViewOffset)
-            .navigationBarOffset(
-                $scrollViewOffset,
-                start: globalSize.isLandscape ? globalSize.height * 0.65 : globalSize.height * 0.30,
-                end: globalSize.isLandscape ? globalSize.height * 0.65 + 50 : globalSize.height * 0.30 + 50
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: globalSize.isLandscape ? globalSize.height * 0.8 : globalSize.height * 0.4,
-                multiplier: 0.3
+            OffsetScrollView(
+                headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
                 headerView
+            } overlay: {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding()
+                }
+                .background {
+                    BlurView(style: .systemThinMaterialDark)
+                        .mask {
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0.4),
+                                    .init(color: .white, location: 0.8),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                }
+            } content: {
+                content()
+                    .edgePadding(.vertical)
             }
             .size($globalSize)
         }
@@ -135,7 +109,7 @@ extension ItemView.iPadOSCinematicScrollView {
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
-                        .taglineLineLimit(1)
+                        .taglineLineLimit(2)
                         .foregroundColor(.white)
 
                     HStack(spacing: 30) {
@@ -162,15 +136,22 @@ extension ItemView.iPadOSCinematicScrollView {
 
                 Spacer()
 
-                VStack(spacing: 10) {
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(height: 50)
+                // TODO: remove when/if collections have a different view
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .foregroundColor(.white)
+                if !(viewModel is CollectionItemViewModel) {
+                    VStack(spacing: 10) {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(height: 50)
+
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 250)
+                } else {
+                    Color.clear
+                        .frame(width: 250)
                 }
-                .frame(width: 250)
             }
         }
     }

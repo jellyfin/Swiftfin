@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 // TODO: Label generic not really necessary if just restricting to `Text`
@@ -18,7 +19,7 @@ enum SelectorType {
 
 struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
-    @Environment(\.accentColor)
+    @Default(.accentColor)
     private var accentColor
 
     @Binding
