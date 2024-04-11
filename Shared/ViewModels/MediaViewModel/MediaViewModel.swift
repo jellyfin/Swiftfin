@@ -77,9 +77,9 @@ final class MediaViewModel: ViewModel, Stateful {
         let media: [MediaType] = try await getUserViews()
             .compactMap { userView in
                 if userView.collectionType == "livetv" {
-//                    return .liveTV(userView)
+                    return .liveTV(userView)
 
-                    return nil
+//                    return nil
                 }
 
                 return .collectionFolder(userView)

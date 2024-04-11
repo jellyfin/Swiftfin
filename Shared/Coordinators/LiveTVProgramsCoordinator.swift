@@ -41,25 +41,14 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
         }
         .inNavigationViewCoordinator()
     }
-    #endif
 
-//    @ViewBuilder
     func makeStart() -> some View {
         let viewModel = LiveTVProgramsViewModel()
-
-//        let channels = (1 ..< 20).map { _ in BaseItemDto.randomItem() }
-//
-//        for channel in channels {
-//            viewModel.channels[channel.id!] = channel
-//        }
-//
-//        viewModel.recommendedItems = channels.randomSample(count: 5)
-//        viewModel.seriesItems = channels.randomSample(count: 5)
-//        viewModel.movieItems = channels.randomSample(count: 5)
-//        viewModel.sportsItems = channels.randomSample(count: 5)
-//        viewModel.kidsItems = channels.randomSample(count: 5)
-//        viewModel.newsItems = channels.randomSample(count: 5)
-
         return LiveTVProgramsView(viewModel: viewModel)
+    }
+    #endif
+
+    func makeStart() -> some View {
+        AssertionFailureView("Not implemented")
     }
 }

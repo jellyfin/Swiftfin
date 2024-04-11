@@ -24,6 +24,18 @@ protocol Poster: Displayable, Hashable, Identifiable {
 
 extension Poster {
 
+    var showTitle: Bool {
+        true
+    }
+
+    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
+        .init()
+    }
+
+    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+        []
+    }
+
     func cinematicPosterImageSources() -> [ImageSource] {
         []
     }

@@ -97,6 +97,16 @@ extension BaseItemDto {
         return " "
     }
 
+    var programProgress: Double? {
+        guard let startDate, let endDate else { return nil }
+
+        let now = Date()
+        let length = endDate.timeIntervalSince(startDate)
+        let progress = now.timeIntervalSince(startDate)
+
+        return progress / length
+    }
+
     func getLiveProgressPercentage() -> Double {
         if let startDate,
            let endDate
@@ -275,5 +285,10 @@ extension BaseItemDto {
         }
 
         return L10n.play
+    }
+
+    var channelLabel: String? {
+        let raw = "\(number ?? "")\(name ?? "")"
+        return raw.isEmpty ? nil : raw
     }
 }

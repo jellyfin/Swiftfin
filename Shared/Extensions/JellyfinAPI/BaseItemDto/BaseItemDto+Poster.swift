@@ -17,6 +17,8 @@ extension BaseItemDto: Poster {
 
     var title: String {
         switch type {
+        case .channel:
+            return channelLabel ?? displayTitle
         case .episode:
             return seriesName ?? displayTitle
         default:

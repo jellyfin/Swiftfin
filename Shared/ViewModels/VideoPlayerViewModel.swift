@@ -64,6 +64,7 @@ class VideoPlayerViewModel: ViewModel {
         return hlsStreamComponents.url!
     }
 
+    // TODO: should start time be from the media source instead?
     var vlcVideoPlayerConfiguration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
