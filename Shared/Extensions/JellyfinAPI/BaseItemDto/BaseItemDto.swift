@@ -100,9 +100,8 @@ extension BaseItemDto {
     var programProgress: Double? {
         guard let startDate, let endDate else { return nil }
 
-        let now = Date()
         let length = endDate.timeIntervalSince(startDate)
-        let progress = now.timeIntervalSince(startDate)
+        let progress = Date.now.timeIntervalSince(startDate)
 
         return progress / length
     }
