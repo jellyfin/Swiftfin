@@ -32,6 +32,6 @@ final class LiveTVChannelsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        LiveTVChannelsView()
+        ChannelsView()
     }
 }

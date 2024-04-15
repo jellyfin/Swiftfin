@@ -20,6 +20,6 @@ final class LiveTVCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        LiveTVChannelsView()
+        ChannelsView()
     }
 }

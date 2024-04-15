@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-// TODO: Rename to `PosterDisplayType` or `PosterDisplay`?
+// TODO: Rename to `PosterDisplayType`, `PosterDisplay`, `ItemDisplayType`?
 // TODO: after no longer experimental, nest under `Poster`
 //       tracker: https://github.com/apple/swift-evolution/blob/main/proposals/0404-nested-protocols.md
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
