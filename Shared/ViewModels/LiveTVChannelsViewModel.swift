@@ -8,35 +8,19 @@
 
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
 
-struct LiveTVChannelProgram: Hashable {
-    let id = UUID()
-    let channel: BaseItemDto
-    let currentProgram: BaseItemDto?
-    let programs: [BaseItemDto]
+extension Notification.Name {
+    static let livePlayerDismissed = Notification.Name("livePlayerDismissed")
 }
 
-final class LiveTVChannelsViewModel: ViewModel {
+final class LiveTVChannelsViewModel: PagingLibraryViewModel<LiveTVChannelProgram> {
 
     @Published
     var channels: [BaseItemDto] = []
     @Published
     var channelPrograms: [LiveTVChannelProgram] = []
-
-//    @Published
-//    var channelPrograms = [LiveTVChannelProgram]() {
-//        didSet {
-//            rows = []
-//            let rowChannels = channelPrograms.chunked(into: 4)
-//            for (index, rowChans) in rowChannels.enumerated() {
-//                rows.append(LiveTVChannelRow(section: index, items: rowChans.map { LiveTVChannelRowCell(item: $0) }))
-//            }
-//        }
-//    }
-
-//    @Published
-//    var rows = [LiveTVChannelRow]()
 
     private var programs = [BaseItemDto]()
     private var channelProgramsList = [BaseItemDto: [BaseItemDto]]()
@@ -48,93 +32,34 @@ final class LiveTVChannelsViewModel: ViewModel {
         return df
     }
 
-    override init() {
+    init() {
         super.init()
+    }
 
-        getChannels()
-        startScheduleCheckTimer()
+    override func get(page: Int) async throws -> [LiveTVChannelProgram] {
+        try await getChannelPrograms()
     }
 
     deinit {
         stopScheduleCheckTimer()
     }
 
-    private func getGuideInfo() {
-        Task {
-            let request = Paths.getGuideInfo
-            guard let _ = try? await userSession.client.send(request) else { return }
-
-            await MainActor.run {
-                self.getChannels()
-            }
+    private func getChannelPrograms() async throws -> [LiveTVChannelProgram] {
+        let _ = try await getGuideInfo()
+        let channelsResponse = try await getChannels()
+        guard let channels = channelsResponse.value.items, !channels.isEmpty else {
+            return []
         }
-    }
-
-    func getChannels() {
-        Task {
-            let parameters = Paths.GetLiveTvChannelsParameters(
-                userID: userSession.user.id,
-                startIndex: 0,
-                limit: 100,
-                enableImageTypes: [.primary],
-                fields: .MinimumFields,
-                enableUserData: false,
-                enableFavoriteSorting: true
-            )
-
-            let request = Paths.getLiveTvChannels(parameters: parameters)
-            guard let response = try? await userSession.client.send(request) else { return }
-
-            await MainActor.run {
-                self.channels = response.value.items ?? []
-                self.getPrograms()
-            }
+        let programsResponse = try await getPrograms(channelIds: channels.compactMap(\.id))
+        let fetchedPrograms = programsResponse.value.items ?? []
+        await MainActor.run {
+            self.programs.append(contentsOf: fetchedPrograms)
         }
-    }
-
-    private func getPrograms() {
-        guard channels.isNotEmpty else {
-            logger.debug("Cannot get programs, channels list empty.")
-            return
-        }
-        let channelIds = channels.compactMap(\.id)
-
-        let minEndDate = Date.now.addComponentsToDate(hours: -1)
-        let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
-
-        Task {
-            let parameters = Paths.GetLiveTvProgramsParameters(
-                channelIDs: channelIds,
-                userID: userSession.user.id,
-                maxStartDate: maxStartDate,
-                minEndDate: minEndDate,
-                sortBy: ["StartDate"]
-            )
-
-            let request = Paths.getLiveTvPrograms(parameters: parameters)
-
-            do {
-                let response = try await userSession.client.send(request)
-
-                await MainActor.run {
-                    self.programs = response.value.items ?? []
-                    self.channelPrograms = self.processChannelPrograms()
-                }
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
-
-    private func processChannelPrograms() -> [LiveTVChannelProgram] {
-        var channelPrograms = [LiveTVChannelProgram]()
+        var newChannelPrograms = [LiveTVChannelProgram]()
         let now = Date()
-        for channel in self.channels {
-            let prgs = self.programs.filter { item in
+        for channel in channels {
+            let prgs = programs.filter { item in
                 item.channelID == channel.id
-            }
-            DispatchQueue.main.async {
-                self.channelProgramsList[channel] = prgs
             }
 
             var currentPrg: BaseItemDto?
@@ -148,33 +73,86 @@ final class LiveTVChannelsViewModel: ViewModel {
                 }
             }
 
-            channelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
+            newChannelPrograms.append(LiveTVChannelProgram(channel: channel, currentProgram: currentPrg, programs: prgs))
         }
-        return channelPrograms
+
+        return newChannelPrograms
+    }
+
+    private func getGuideInfo() async throws -> Response<GuideInfo> {
+        let request = Paths.getGuideInfo
+        return try await userSession.client.send(request)
+    }
+
+    func getChannels() async throws -> Response<BaseItemDtoQueryResult> {
+        let parameters = Paths.GetLiveTvChannelsParameters(
+            userID: userSession.user.id,
+            startIndex: currentPage * pageSize,
+            limit: pageSize,
+            enableImageTypes: [.primary],
+            fields: ItemFields.MinimumFields,
+            enableUserData: false,
+            enableFavoriteSorting: true
+        )
+        let request = Paths.getLiveTvChannels(parameters: parameters)
+        return try await userSession.client.send(request)
+    }
+
+    private func getPrograms(channelIds: [String]) async throws -> Response<BaseItemDtoQueryResult> {
+        let minEndDate = Date.now.addComponentsToDate(hours: -1)
+        let maxStartDate = minEndDate.addComponentsToDate(hours: 6)
+        let parameters = Paths.GetLiveTvProgramsParameters(
+            channelIDs: channelIds,
+            userID: userSession.user.id,
+            maxStartDate: maxStartDate,
+            minEndDate: minEndDate,
+            sortBy: ["StartDate"]
+        )
+        let request = Paths.getLiveTvPrograms(parameters: parameters)
+        return try await userSession.client.send(request)
     }
 
     func startScheduleCheckTimer() {
         let date = Date()
         let calendar = Calendar.current
         var components = calendar.dateComponents([.era, .year, .month, .day, .hour, .minute], from: date)
-
-        // Run on 10th min of every hour
+        // Run every minute
         guard let minute = components.minute else { return }
         components.second = 0
-        components.minute = minute + (10 - (minute % 10))
-
+        components.minute = minute + (1 - (minute % 1))
         guard let nextMinute = calendar.date(from: components) else { return }
-
         if let existingTimer = timer {
             existingTimer.invalidate()
         }
-        timer = Timer(fire: nextMinute, interval: 60 * 10, repeats: true) { [weak self] _ in
+        timer = Timer(fire: nextMinute, interval: 60, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             self.logger.debug("LiveTVChannels schedule check...")
-            DispatchQueue.global(qos: .background).async {
-                let newChanPrgs = self.processChannelPrograms()
-                DispatchQueue.main.async {
-                    self.channelPrograms = newChanPrgs
+
+            Task {
+                await MainActor.run {
+                    let channelProgramsCopy = self.channelPrograms
+                    var refreshedChannelPrograms: [LiveTVChannelProgram] = []
+                    for channelProgram in channelProgramsCopy {
+                        var currentPrg: BaseItemDto?
+                        let now = Date()
+                        for prg in channelProgram.programs {
+                            if let startDate = prg.startDate,
+                               let endDate = prg.endDate,
+                               now.timeIntervalSinceReferenceDate > startDate.timeIntervalSinceReferenceDate &&
+                               now.timeIntervalSinceReferenceDate < endDate.timeIntervalSinceReferenceDate
+                            {
+                                currentPrg = prg
+                            }
+                        }
+
+                        refreshedChannelPrograms
+                            .append(LiveTVChannelProgram(
+                                channel: channelProgram.channel,
+                                currentProgram: currentPrg,
+                                programs: channelProgram.programs
+                            ))
+                    }
+                    self.channelPrograms = refreshedChannelPrograms
                 }
             }
         }

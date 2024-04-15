@@ -47,7 +47,11 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
-                mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
+                guard let mediaSource = channel.mediaSources?.first else {
+                    return
+                }
+                viewModel.stopScheduleCheckTimer()
+                mainRouter.route(to: \.liveVideoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
             }
         )
     }
@@ -56,12 +60,15 @@ struct LiveTVChannelsView: View {
         Group {
             if viewModel.isLoading {
                 ProgressView()
-            } else if viewModel.channelPrograms.isNotEmpty {
+            } else if viewModel.elements.isNotEmpty {
                 CollectionVGrid(
-                    viewModel.channelPrograms,
+                    $viewModel.elements,
                     layout: .minWidth(250, itemSpacing: 16, lineSpacing: 4)
                 ) { program in
                     channelCell(for: program)
+                }
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.send(.getNextPage)
                 }
                 .onAppear {
                     viewModel.startScheduleCheckTimer()
@@ -73,11 +80,16 @@ struct LiveTVChannelsView: View {
                 VStack {
                     Text(L10n.noResults)
                     Button {
-                        viewModel.getChannels()
+                        viewModel.send(.refresh)
                     } label: {
                         Text(L10n.reload)
                     }
                 }
+            }
+        }
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.send(.refresh)
             }
         }
         .navigationBarTitleDisplayMode(.inline)

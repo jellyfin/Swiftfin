@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-struct VideoPlayer: View {
+struct LiveVideoPlayer: View {
 
     enum OverlayType {
         case chapters
@@ -19,16 +19,13 @@ struct VideoPlayer: View {
         case smallMenu
     }
 
-    @Environment(\.scenePhase)
-    private var scenePhase
-
     @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
     @State
     private var isPresentingOverlay: Bool = false
@@ -65,7 +62,7 @@ struct VideoPlayer: View {
                     }
                 }
 
-            VideoPlayer.Overlay()
+            LiveVideoPlayer.Overlay()
                 .eraseToAnyView()
                 .environmentObject(videoPlayerManager)
                 .environmentObject(videoPlayerManager.currentProgressHandler)
@@ -83,11 +80,14 @@ struct VideoPlayer: View {
                     .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
             }
         }
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+        }
     }
 
     @ViewBuilder
     private var loadingView: some View {
-        Text("Retrieving media information")
+        VideoPlayer.LoadingView()
     }
 
     var body: some View {
@@ -106,22 +106,12 @@ struct VideoPlayer: View {
             guard !newValue else { return }
             videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
         }
-        .onScenePhase(.active) {
-            if Defaults[.VideoPlayer.Transition.playOnActive] {
-                videoPlayerManager.proxy.play()
-            }
-        }
-        .onScenePhase(.background) {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                videoPlayerManager.proxy.pause()
-            }
-        }
     }
 }
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager

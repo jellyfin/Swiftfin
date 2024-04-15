@@ -62,77 +62,100 @@ struct LiveTVChannelItemWideElement: View {
 
     var body: some View {
         ZStack {
-            ZStack {
-                HStack {
+            HStack(spacing: 0) {
+                VStack(spacing: 0) {
                     ZStack(alignment: .center) {
-                        ImageView(channel.imageURL(.primary, maxWidth: 128))
+                        ImageView(channel.imageURL(.primary, maxWidth: 56))
                             .aspectRatio(contentMode: .fit)
-                            .padding(.init(top: 0, leading: 0, bottom: 8, trailing: 0))
-                        VStack(alignment: .center) {
-                            Spacer()
-                                .frame(maxHeight: .infinity)
-                            GeometryReader { gp in
-                                ZStack(alignment: .leading) {
-                                    RoundedRectangle(cornerRadius: 3)
-                                        .fill(Color.gray)
-                                        .opacity(0.4)
-                                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 6, maxHeight: 6)
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(Color.jellyfinPurple)
-                                        .frame(width: CGFloat(progressPercent * gp.size.width), height: 6)
-                                }
-                            }
-                            .frame(height: 6, alignment: .center)
-                            .padding(.init(top: 0, leading: 4, bottom: 0, trailing: 4))
-                        }
+                            .frame(width: 56, height: 56)
+
                         if loading {
 
                             ProgressView()
                         }
                     }
-                    .aspectRatio(1.0, contentMode: .fit)
+                    .padding(.top, 4)
+                    .padding(.leading, 4)
+
                     VStack(alignment: .leading) {
-                        let channelNumber = channel.number != nil ? "\(channel.number ?? "") " : ""
-                        let channelName = "\(channelNumber)\(channel.name ?? "?")"
-                        Text(channelName)
+                        Text(channel.number != nil ? "\(channel.number ?? "") " : "")
                             .font(.body)
                             .lineLimit(1)
                             .foregroundColor(Color.jellyfinPurple)
                             .frame(alignment: .leading)
                             .padding(.init(top: 0, leading: 0, bottom: 4, trailing: 0))
-                        programLabel(
-                            timeText: currentProgramText.timeDisplay,
-                            titleText: currentProgramText.title,
-                            color: Color(.textHighlight)
-                        )
-                        if nextProgramsText.isNotEmpty {
-                            let nextItem = nextProgramsText[0]
-                            programLabel(timeText: nextItem.timeDisplay, titleText: nextItem.title, color: Color.gray)
-                        }
-                        if nextProgramsText.count > 1 {
-                            let nextItem2 = nextProgramsText[1]
-                            programLabel(timeText: nextItem2.timeDisplay, titleText: nextItem2.title, color: Color.gray)
-                        }
-                        Spacer()
                     }
-                    Spacer()
+                    .padding(.top, 4)
                 }
                 .frame(alignment: .leading)
-                .padding()
                 .opacity(loading ? 0.5 : 1.0)
-            }
-            .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color("BackgroundSecondaryColor")))
-            .frame(height: 128)
-            .onTapGesture {
-                onSelect { loadingState in
-                    loading = loadingState
+
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("\(channel.name ?? "")")
+                        .font(.body)
+                        .bold()
+                        .lineLimit(1)
+                        .foregroundColor(Color.jellyfinPurple)
+                        .frame(alignment: .leading)
+
+                    progressBar()
+                        .padding(.top, 4)
+
+                    HStack {
+                        Text(currentProgramText.timeDisplay)
+                            .font(.footnote)
+                            .bold()
+                            .lineLimit(1)
+                            .foregroundColor(Color("TextHighlightColor"))
+                            .frame(width: 38, alignment: .leading)
+
+                        Text(currentProgramText.title)
+                            .font(.footnote)
+                            .bold()
+                            .lineLimit(1)
+                            .foregroundColor(Color("TextHighlightColor"))
+                    }
+                    .padding(.top, 4)
+
+                    if !nextProgramsText.isEmpty {
+                        let nextItem = nextProgramsText[0]
+                        programLabel(timeText: nextItem.timeDisplay, titleText: nextItem.title, color: Color.gray)
+                    }
+                    if nextProgramsText.count > 1 {
+                        let nextItem2 = nextProgramsText[1]
+                        programLabel(timeText: nextItem2.timeDisplay, titleText: nextItem2.title, color: Color.gray)
+                    }
+
+                    Spacer()
                 }
+                .padding(8)
+
+                Spacer()
             }
         }
-        .background {
-            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .fill(Color("BackgroundColor"))
-                .shadow(color: Color(.shadow), radius: 4, x: 0, y: 0)
+        .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.secondarySystemFill))
+        .onTapGesture {
+            onSelect { loadingState in
+                loading = loadingState
+            }
+        }
+    }
+
+    @ViewBuilder
+    func progressBar() -> some View {
+        VStack(alignment: .center) {
+            GeometryReader { gp in
+                ZStack(alignment: .leading) {
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Color.gray)
+                        .opacity(0.4)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 6, maxHeight: 6)
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.jellyfinPurple)
+                        .frame(width: CGFloat(progressPercent * gp.size.width), height: 6)
+                }
+            }
+            .frame(height: 6, alignment: .center)
         }
     }
 
@@ -141,12 +164,12 @@ struct LiveTVChannelItemWideElement: View {
         HStack(alignment: .top) {
             Text(timeText)
                 .font(.footnote)
-                .lineLimit(2)
+                .lineLimit(1)
                 .foregroundColor(color)
                 .frame(width: 38, alignment: .leading)
             Text(titleText)
                 .font(.footnote)
-                .lineLimit(2)
+                .lineLimit(1)
                 .foregroundColor(color)
         }
     }

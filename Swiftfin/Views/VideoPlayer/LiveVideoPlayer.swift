@@ -17,36 +17,7 @@ import VLCUI
 // TODO: localization necessary for toast text?
 // TODO: entire gesture layer should be separate
 
-struct VideoPlayer: View {
-
-    enum OverlayType {
-        case main
-        case chapters
-    }
-
-    @Environment(\.scenePhase)
-    private var scenePhase
-
-    class GestureStateHandler {
-
-        var beganPanWithOverlay: Bool = false
-        var beginningPanProgress: CGFloat = 0
-        var beginningHorizontalPanUnit: CGFloat = 0
-
-        var beginningAudioOffset: Int = 0
-        var beginningBrightnessValue: CGFloat = 0
-        var beginningPlaybackSpeed: Double = 0
-        var beginningSubtitleOffset: Int = 0
-        var beginningVolumeValue: Float = 0
-
-        var jumpBackwardKeyPressActive: Bool = false
-        var jumpBackwardKeyPressWorkItem: DispatchWorkItem?
-        var jumpBackwardKeyPressAmount: Int = 0
-
-        var jumpForwardKeyPressActive: Bool = false
-        var jumpForwardKeyPressWorkItem: DispatchWorkItem?
-        var jumpForwardKeyPressAmount: Int = 0
-    }
+struct LiveVideoPlayer: View {
 
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
@@ -78,14 +49,14 @@ struct VideoPlayer: View {
     private var subtitleSize
 
     @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
     @StateObject
     private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
     @State
     private var audioOffset: Int = 0
@@ -102,7 +73,7 @@ struct VideoPlayer: View {
     @State
     private var subtitleOffset: Int = 0
 
-    private let gestureStateHandler: GestureStateHandler = .init()
+    private let gestureStateHandler: VideoPlayer.GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
 
     @ViewBuilder
@@ -116,7 +87,10 @@ struct VideoPlayer: View {
                         .onTicksUpdated { ticks, _ in
 
                             let newSeconds = ticks / 1000
-                            let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                            var newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                            if newProgress.isInfinite || newProgress.isNaN {
+                                newProgress = 0
+                            }
                             currentProgressHandler.progress = newProgress
                             currentProgressHandler.seconds = newSeconds
 
@@ -133,7 +107,7 @@ struct VideoPlayer: View {
                                 {
                                     videoPlayerManager.selectNextViewModel()
                                 } else {
-                                    router.dismissCoordinator()
+                                    router.dismissCoordinator {}
                                 }
                             }
                         }
@@ -155,7 +129,16 @@ struct VideoPlayer: View {
                             }
                         }
 
-                    VideoPlayer.Overlay()
+                    LiveVideoPlayer.Overlay()
+                        .environmentObject(splitContentViewProxy)
+                        .environmentObject(videoPlayerManager)
+                        .environmentObject(videoPlayerManager.currentProgressHandler)
+                        .environmentObject(videoPlayerManager.currentViewModel!)
+                        .environmentObject(videoPlayerManager.proxy)
+                        .environment(\.aspectFilled, $isAspectFilled)
+                        .environment(\.isPresentingOverlay, $isPresentingOverlay)
+                        .environment(\.isScrubbing, $isScrubbing)
+                        .environment(\.playbackSpeed, $playbackSpeed)
                 }
             }
             .splitContent {
@@ -187,15 +170,9 @@ struct VideoPlayer: View {
                 gestureStateHandler: gestureStateHandler,
                 updateViewProxy: updateViewProxy
             )
-            .environmentObject(splitContentViewProxy)
-            .environmentObject(videoPlayerManager)
-            .environmentObject(videoPlayerManager.currentProgressHandler)
-            .environmentObject(videoPlayerManager.currentViewModel!)
-            .environmentObject(videoPlayerManager.proxy)
-            .environment(\.aspectFilled, $isAspectFilled)
-            .environment(\.isPresentingOverlay, $isPresentingOverlay)
-            .environment(\.isScrubbing, $isScrubbing)
-            .environment(\.playbackSpeed, $playbackSpeed)
+            .onDisappear {
+                NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+            }
     }
 
     var body: some View {
@@ -203,8 +180,7 @@ struct VideoPlayer: View {
             if let _ = videoPlayerManager.currentViewModel {
                 playerView
             } else {
-                LoadingView()
-                    .transition(.opacity)
+                VideoPlayer.LoadingView()
             }
         }
         .navigationBarHidden(true)
@@ -212,11 +188,6 @@ struct VideoPlayer: View {
         .ignoresSafeArea()
         .onChange(of: audioOffset) { newValue in
             videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
-        }
-        .onChange(of: isAspectFilled) { newValue in
-            UIView.animate(withDuration: 0.2) {
-                videoPlayerManager.proxy.aspectFill(newValue ? 1 : 0)
-            }
         }
         .onChange(of: isGestureLocked) { newValue in
             if newValue {
@@ -250,22 +221,15 @@ struct VideoPlayer: View {
             audioOffset = 0
             subtitleOffset = 0
         }
-        .onScenePhase(.active) {
-            if Defaults[.VideoPlayer.Transition.playOnActive] {
-                videoPlayerManager.proxy.play()
-            }
-        }
-        .onScenePhase(.background) {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                videoPlayerManager.proxy.pause()
-            }
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
         }
     }
 }
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager
@@ -278,7 +242,7 @@ extension VideoPlayer {
 // TODO: refactor to be split into other files
 // TODO: refactor so that actions are separate from the gesture calculations, so that actions are more general
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
     private func handlePan(
         action: PanAction,
@@ -380,6 +344,7 @@ extension VideoPlayer {
         case .none:
             return
         case .aspectFill: ()
+//            aspectFillAction(state: state, unitPoint: unitPoint, scale: <#T##CGFloat#>)
         case .gestureLock:
             guard !isPresentingOverlay else { return }
             isGestureLocked.toggle()
@@ -390,14 +355,20 @@ extension VideoPlayer {
 
 // MARK: Actions
 
-extension VideoPlayer {
+extension LiveVideoPlayer {
 
     private func aspectFillAction(state: UIGestureRecognizer.State, unitPoint: UnitPoint, scale: CGFloat) {
         guard state == .began || state == .changed else { return }
         if scale > 1, !isAspectFilled {
             isAspectFilled = true
+            UIView.animate(withDuration: 0.2) {
+                videoPlayerManager.proxy.aspectFill(1)
+            }
         } else if scale < 1, isAspectFilled {
             isAspectFilled = false
+            UIView.animate(withDuration: 0.2) {
+                videoPlayerManager.proxy.aspectFill(0)
+            }
         }
     }
 

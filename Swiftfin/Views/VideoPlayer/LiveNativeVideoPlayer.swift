@@ -12,24 +12,21 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct NativeVideoPlayer: View {
-
-    @Environment(\.scenePhase)
-    var scenePhase
+struct LiveNativeVideoPlayer: View {
 
     @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
+    private var router: LiveVideoPlayerCoordinator.Router
 
     @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: LiveVideoPlayerManager
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
         self.videoPlayerManager = manager
     }
 
     @ViewBuilder
     private var playerView: some View {
-        NativeVideoPlayerView(videoPlayerManager: videoPlayerManager)
+        LiveNativeVideoPlayerView(videoPlayerManager: videoPlayerManager)
     }
 
     var body: some View {
@@ -40,42 +37,47 @@ struct NativeVideoPlayer: View {
                 VideoPlayer.LoadingView()
             }
         }
-        .navigationBarHidden(true)
+        .navigationBarHidden()
+        .statusBarHidden()
         .ignoresSafeArea()
+        .onDisappear {
+            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
+        }
     }
 }
 
-struct NativeVideoPlayerView: UIViewControllerRepresentable {
+struct LiveNativeVideoPlayerView: UIViewControllerRepresentable {
 
-    let videoPlayerManager: VideoPlayerManager
+    let videoPlayerManager: LiveVideoPlayerManager
 
-    func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-        UINativeVideoPlayerViewController(manager: videoPlayerManager)
+    func makeUIViewController(context: Context) -> UILiveNativeVideoPlayerViewController {
+        UILiveNativeVideoPlayerViewController(manager: videoPlayerManager)
     }
 
-    func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UILiveNativeVideoPlayerViewController, context: Context) {}
 }
 
-// TODO: Refactor such that this does not subclass AVPlayerViewController. Subclassing is not
-// supported according to the apple docs.
-class UINativeVideoPlayerViewController: AVPlayerViewController {
+class UILiveNativeVideoPlayerViewController: AVPlayerViewController {
 
-    let videoPlayerManager: VideoPlayerManager
+    let videoPlayerManager: LiveVideoPlayerManager
 
     private var rateObserver: NSKeyValueObservation!
     private var timeObserverToken: Any!
 
-    init(manager: VideoPlayerManager) {
+    init(manager: LiveVideoPlayerManager) {
 
         self.videoPlayerManager = manager
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.playbackURL)
+        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.hlsPlaybackURL)
 
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
+
+        // enable pip
+        allowsPictureInPicturePlayback = true
 
         rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
             guard let newValue = change.newValue else { return }
@@ -96,7 +98,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             if time.seconds >= 0 {
                 let newSeconds = Int(time.seconds)
                 let progress = CGFloat(newSeconds) / CGFloat(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
-
                 self.videoPlayerManager.currentProgressHandler.progress = progress
                 self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
                 self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
