@@ -27,8 +27,8 @@ extension ChannelsView {
         var body: some View {
 
             Button {} label: {
-                HStack {
-                    ImageView(channel.portraitPosterImageSource(maxWidth: 120))
+                VStack(alignment: .leading) {
+                    ImageView(channel.portraitPosterImageSource(maxWidth: 130))
                         .overlay {
                             if let progress = channel.currentProgram?.programProgress {
                                 ProgressBar(progress: progress)
@@ -36,13 +36,11 @@ extension ChannelsView {
                         }
                         .aspectRatio(1.0, contentMode: .fit)
 
-                    VStack(alignment: .leading) {
-                        Text(channel.displayTitle)
-                            .font(.body)
-                            .lineLimit(1)
-                            .foregroundColor(Color.jellyfinPurple)
-                            .frame(alignment: .leading)
-                    }
+                    Text(channel.displayTitle)
+                        .font(.body)
+                        .lineLimit(1)
+                        .foregroundColor(Color.jellyfinPurple)
+                        .frame(alignment: .leading)
                 }
                 .frame(height: 130)
             }
