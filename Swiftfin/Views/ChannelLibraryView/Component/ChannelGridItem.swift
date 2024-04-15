@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 extension ChannelsView {
@@ -14,39 +15,78 @@ extension ChannelsView {
 
         let channel: ChannelProgram
 
-//        private var programLabel: some View {
-//            HStack(alignment: .top) {
-//                Text()
-//
-//                Text(titleText)
-//            }
-//            .font(.footnote)
-//            .lineLimit(2)
-//        }
+        @ViewBuilder
+        private func currentProgramView(_ currentProgram: BaseItemDto) -> some View {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(currentProgram.displayTitle)
+                    .font(.footnote)
+                    .fontWeight(.bold)
+                    .lineLimit(1)
+
+                ProgressBar(progress: currentProgram.programProgress ?? 0)
+                    .frame(height: 5)
+
+                if let startDate = currentProgram.startDate, let endDate = currentProgram.endDate {
+                    HStack {
+                        Text(startDate, style: .time)
+
+                        Spacer()
+
+                        Text(endDate, style: .time)
+                    }
+                    .font(.footnote.weight(.bold))
+                    .foregroundStyle(.secondary)
+                }
+            }
+        }
 
         var body: some View {
-
             Button {} label: {
-                VStack(alignment: .leading) {
-                    ImageView(channel.portraitPosterImageSource(maxWidth: 130))
-                        .overlay {
-                            if let progress = channel.currentProgram?.programProgress {
-                                ProgressBar(progress: progress)
+                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
+                    VStack {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(channel.portraitPosterImageSource(maxWidth: 80))
+                                .failure {
+                                    SystemImageContentView(systemName: channel.typeSystemImage)
+                                        .background(color: .clear)
+                                        .imageFrameRatio(width: 1, height: 1)
+                                }
+                        }
+                        .aspectRatio(1.0, contentMode: .fill)
+
+                        Text(channel.channel.number ?? "")
+                            .font(.body)
+                            .lineLimit(1)
+                            .foregroundColor(Color.jellyfinPurple)
+                    }
+                    .frame(width: 80)
+                    .padding(.vertical, 8)
+
+                    HStack {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(channel.displayTitle)
+                                .font(.body)
+                                .fontWeight(.bold)
+                                .lineLimit(1)
+                                .foregroundColor(Color.jellyfinPurple)
+
+                            if let currentProgram = channel.currentProgram {
+                                currentProgramView(currentProgram)
                             }
                         }
-                        .aspectRatio(1.0, contentMode: .fit)
 
-                    Text(channel.displayTitle)
-                        .font(.body)
-                        .lineLimit(1)
-                        .foregroundColor(Color.jellyfinPurple)
-                        .frame(alignment: .leading)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(height: 130)
+                .padding(.horizontal, 8)
             }
+            .buttonStyle(.plain)
             .background {
-                Color.red
-                    .opacity(0.5)
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.secondarySystemFill)
             }
         }
     }

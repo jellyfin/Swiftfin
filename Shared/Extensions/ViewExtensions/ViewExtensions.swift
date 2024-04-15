@@ -315,4 +315,14 @@ extension View {
             )
         )
     }
+
+    #if DEBUG
+    // Useful modifier during development
+    func debugBackground(_ color: Color = Color.red, opacity: CGFloat = 0.5) -> some View {
+        background {
+            color
+                .opacity(opacity)
+        }
+    }
+    #endif
 }

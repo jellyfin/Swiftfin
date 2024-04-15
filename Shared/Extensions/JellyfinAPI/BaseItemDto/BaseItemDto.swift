@@ -12,6 +12,8 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: clean up
+
 extension BaseItemDto: Displayable {
 
     var displayTitle: String {
@@ -104,20 +106,6 @@ extension BaseItemDto {
         let progress = Date.now.timeIntervalSince(startDate)
 
         return progress / length
-    }
-
-    func getLiveProgressPercentage() -> Double {
-        if let startDate,
-           let endDate
-        {
-            let start = startDate.timeIntervalSinceReferenceDate
-            let end = endDate.timeIntervalSinceReferenceDate
-            let now = Date().timeIntervalSinceReferenceDate
-            let length = end - start
-            let progress = now - start
-            return progress / length
-        }
-        return 0
     }
 
     var subtitleStreams: [MediaStream] {

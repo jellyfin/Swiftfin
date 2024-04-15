@@ -8,9 +8,6 @@
 
 import SwiftUI
 
-// TODO: Replace scaling with size so that the Capsule corner radius
-//       is not affected
-
 struct ProgressBar: View {
 
     let progress: CGFloat
@@ -18,12 +15,14 @@ struct ProgressBar: View {
     var body: some View {
         ZStack(alignment: .leading) {
             Capsule()
-                .foregroundColor(.white)
+                .foregroundColor(.secondary)
                 .opacity(0.2)
 
             Capsule()
-                .scaleEffect(x: progress, y: 1, anchor: .leading)
+                .mask(alignment: .leading) {
+                    Rectangle()
+                        .scaleEffect(x: progress, anchor: .leading)
+                }
         }
-        .frame(maxWidth: .infinity)
     }
 }
