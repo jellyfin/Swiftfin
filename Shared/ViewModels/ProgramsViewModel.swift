@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-// TODO: is current program-channel coupling best way to do it?
+// TODO: is current program-channel requesting best way to do it?
 
 // Note: section item limit is low so that total channel amount is not too much
 
@@ -139,8 +139,8 @@ final class ProgramsViewModel: ViewModel, Stateful {
 
             // get channels for all programs at once to
             // avoid going back and forth too much
-
             let channels = try await Set(self.getChannels(for: programs.values.flatMap { $0 }))
+            
             let result: [ProgramSection: [ChannelProgram]] = programs.mapValues { programs in
                 programs.compactMap { program in
                     guard let channel = channels.first(where: { channel in channel.id == program.channelID }) else { return nil }

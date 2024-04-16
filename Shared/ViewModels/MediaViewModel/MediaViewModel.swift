@@ -76,8 +76,6 @@ final class MediaViewModel: ViewModel, Stateful {
             .compactMap { userView in
                 if userView.collectionType == "livetv" {
                     return .liveTV(userView)
-
-//                    return nil
                 }
 
                 return .collectionFolder(userView)

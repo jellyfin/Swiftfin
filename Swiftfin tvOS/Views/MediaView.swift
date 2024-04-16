@@ -34,14 +34,15 @@ struct MediaView: View {
                             filters: .default
                         )
                         router.route(to: \.library, viewModel)
-                    case .downloads: ()
+                    case .downloads:
+                        assertionFailure("Downloads unavailable on tvOS")
                     case .favorites:
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
                             filters: .favorites
                         )
                         router.route(to: \.library, viewModel)
-                    case .liveTV: ()
+                    case .liveTV:
                         router.route(to: \.liveTV)
                     }
                 }
