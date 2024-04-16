@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// TODO: see if animation is right here or should be in caller views
+// TODO: see if animation is correct here or should be in caller views
 
 struct ProgressBar: View {
 
