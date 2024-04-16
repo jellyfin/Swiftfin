@@ -17,6 +17,13 @@ extension ProgramsView {
 
         var body: some View {
             VStack(alignment: .leading) {
+
+                Text(program.channelName ?? .emptyDash)
+                    .font(.footnote.weight(.semibold))
+                    .foregroundColor(.primary)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
+
                 Text(program.displayTitle)
                     .font(.footnote.weight(.regular))
                     .foregroundColor(.primary)

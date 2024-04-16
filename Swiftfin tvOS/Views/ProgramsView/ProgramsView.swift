@@ -11,6 +11,8 @@ import SwiftUI
 
 // TODO: background refresh for programs with timer?
 
+// Note: there are some unsafe first element accesses, but `ChannelProgram` data should always have a single program
+
 struct ProgramsView: View {
 
 //    @EnvironmentObject
@@ -52,15 +54,19 @@ struct ProgramsView: View {
     @ViewBuilder
     private func programsSection(
         title: String,
-        keyPath: KeyPath<ProgramsViewModel, [BaseItemDto]>
+        keyPath: KeyPath<ProgramsViewModel, [ChannelProgram]>
     ) -> some View {
         PosterHStack(
             title: title,
             type: .landscape,
             items: programsViewModel[keyPath: keyPath]
         )
-        .content(ProgramButtonContent.init)
-        .imageOverlay(ProgramProgressOverlay.init)
+        .content {
+            ProgramButtonContent(program: $0.programs[0])
+        }
+        .imageOverlay {
+            ProgramProgressOverlay(program: $0.programs[0])
+        }
     }
 
     var body: some View {

@@ -6,12 +6,16 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ChannelLibraryView {
 
     struct WideChannelGridItem: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @State
         private var now: Date = .now
@@ -21,14 +25,46 @@ extension ChannelLibraryView {
         private var onSelect: () -> Void
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
+        private var channelLogo: some View {
+            VStack {
+                ZStack {
+                    Color.clear
+
+                    ImageView(channel.portraitPosterImageSource(maxWidth: 110))
+                        .image {
+                            $0.aspectRatio(contentMode: .fit)
+                        }
+                        .failure {
+                            SystemImageContentView(systemName: channel.typeSystemImage)
+                                .background(color: .clear)
+                                .imageFrameRatio(width: 1.5, height: 1.5)
+                        }
+                        .placeholder {
+                            EmptyView()
+                        }
+                }
+                .aspectRatio(1.0, contentMode: .fit)
+
+                Text(channel.channel.number ?? "")
+                    .font(.body)
+                    .lineLimit(1)
+                    .foregroundStyle(.primary)
+            }
+        }
+
         @ViewBuilder
         private func programLabel(for program: BaseItemDto) -> some View {
-            HStack(alignment: .top) {
-                if let startDate = program.startDate {
-                    Text(startDate, style: .time)
+            HStack(alignment: .top, spacing: EdgeInsets.defaultEdgePadding / 2) {
+                AlternateLayoutView(alignment: .leading) {
+                    Text("00:00 AM")
                         .monospacedDigit()
-                } else {
-                    Text(String.emptyDash)
+                } content: {
+                    if let startDate = program.startDate {
+                        Text(startDate, style: .time)
+                            .monospacedDigit()
+                    } else {
+                        Text(String.emptyTime)
+                    }
                 }
 
                 Text(program.displayTitle)
@@ -41,22 +77,23 @@ extension ChannelLibraryView {
             VStack(alignment: .leading, spacing: 0) {
                 if let currentProgram = channel.currentProgram {
                     ProgressBar(progress: currentProgram.programProgress(relativeTo: now) ?? 0)
-                        .frame(height: 5)
-                        .padding(.bottom, 5)
+                        .frame(height: 8)
+                        .padding(.bottom, 8)
+                        .foregroundStyle(accentColor)
 
                     programLabel(for: currentProgram)
-                        .font(.footnote.weight(.bold))
+                        .font(.caption.weight(.bold))
                 }
 
                 if let nextProgram = channel.programAfterCurrent(offset: 0) {
                     programLabel(for: nextProgram)
-                        .font(.footnote)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 if let futureProgram = channel.programAfterCurrent(offset: 1) {
                     programLabel(for: futureProgram)
-                        .font(.footnote)
+                        .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             }
@@ -67,32 +104,10 @@ extension ChannelLibraryView {
             Button {
                 onSelect()
             } label: {
-                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
-                    VStack {
-                        ZStack {
-                            Color.clear
+                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding / 2) {
 
-                            ImageView(channel.portraitPosterImageSource(maxWidth: 80))
-                                .image {
-                                    $0.aspectRatio(contentMode: .fit)
-                                }
-                                .failure {
-                                    SystemImageContentView(systemName: channel.typeSystemImage)
-                                        .background(color: .clear)
-                                        .imageFrameRatio(width: 1.5, height: 1.5)
-                                }
-                                .placeholder {
-                                    EmptyView()
-                                }
-                        }
-                        .aspectRatio(1.0, contentMode: .fill)
-
-                        Text(channel.channel.number ?? "")
-                            .font(.body)
-                            .lineLimit(1)
-                            .foregroundColor(Color.jellyfinPurple)
-                    }
-                    .frame(width: 80)
+                    channelLogo
+                        .frame(width: 110)
 
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
@@ -100,7 +115,7 @@ extension ChannelLibraryView {
                                 .font(.body)
                                 .fontWeight(.bold)
                                 .lineLimit(1)
-                                .foregroundColor(Color.jellyfinPurple)
+                                .foregroundStyle(.primary)
 
                             if channel.programs.isNotEmpty {
                                 programListView
@@ -111,9 +126,11 @@ extension ChannelLibraryView {
                     }
                     .frame(maxWidth: .infinity)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.horizontal, EdgeInsets.defaultEdgePadding / 2)
             }
             .buttonStyle(.card)
-            .frame(height: 220)
+            .frame(height: 200)
             .onReceive(timer) { newValue in
                 now = newValue
             }

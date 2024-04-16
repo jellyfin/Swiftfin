@@ -19,7 +19,7 @@ struct ChannelLibraryView: View {
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,
-            layout: .columns(2, insets: .init(30), itemSpacing: 30, lineSpacing: 30)
+            layout: .columns(3, insets: .init(0), itemSpacing: 25, lineSpacing: 25)
         ) { channel in
             WideChannelGridItem(channel: channel)
         }
@@ -29,22 +29,18 @@ struct ChannelLibraryView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.clear
-
-            WrappedView {
-                switch viewModel.state {
-                case .content:
-                    if viewModel.elements.isEmpty {
-                        L10n.noResults.text
-                    } else {
-                        contentView
-                    }
-                case let .error(error):
-                    Text(error.localizedDescription)
-                case .initial, .refreshing:
-                    ProgressView()
+        WrappedView {
+            switch viewModel.state {
+            case .content:
+                if viewModel.elements.isEmpty {
+                    L10n.noResults.text
+                } else {
+                    contentView
                 }
+            case let .error(error):
+                Text(error.localizedDescription)
+            case .initial, .refreshing:
+                ProgressView()
             }
         }
         .ignoresSafeArea()
