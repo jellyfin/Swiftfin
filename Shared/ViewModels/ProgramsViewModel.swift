@@ -140,7 +140,7 @@ final class ProgramsViewModel: ViewModel, Stateful {
             // get channels for all programs at once to
             // avoid going back and forth too much
             let channels = try await Set(self.getChannels(for: programs.values.flatMap { $0 }))
-            
+
             let result: [ProgramSection: [ChannelProgram]] = programs.mapValues { programs in
                 programs.compactMap { program in
                     guard let channel = channels.first(where: { channel in channel.id == program.channelID }) else { return nil }
