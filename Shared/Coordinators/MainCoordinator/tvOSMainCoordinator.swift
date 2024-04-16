@@ -23,8 +23,6 @@ final class MainCoordinator: NavigationCoordinatable {
     var mainTab = makeMainTab
     @Root
     var serverList = makeServerList
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
 
     init() {
 
@@ -62,9 +60,5 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
         NavigationViewCoordinator(ServerListCoordinator())
-    }
-
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
     }
 }
