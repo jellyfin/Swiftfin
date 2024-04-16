@@ -49,8 +49,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         .ignoresSafeArea()
         .backport
         .persistentSystemOverlays(.hidden)
-        .backport
-        .defersSystemGestures(on: .all)
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {

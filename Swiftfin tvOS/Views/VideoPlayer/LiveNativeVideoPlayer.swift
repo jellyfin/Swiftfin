@@ -44,9 +44,6 @@ struct LiveNativeVideoPlayer: View {
         }
         .navigationBarHidden(true)
         .ignoresSafeArea()
-        .onDisappear {
-            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
-        }
     }
 }
 

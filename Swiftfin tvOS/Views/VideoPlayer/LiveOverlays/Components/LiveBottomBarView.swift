@@ -53,14 +53,14 @@ extension LiveVideoPlayer.Overlay {
         var body: some View {
             VStack(alignment: .VideoPlayerTitleAlignmentGuide, spacing: 10) {
 
-                if let subtitle = videoPlayerManager.program?.currentProgram?.programDisplayText(timeFormatter: DateFormatter()) {
-                    Text(subtitle.title)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-                            dimensions[.leading]
-                        }
-                }
+//                if let subtitle = videoPlayerManager.program?.currentProgram?.programDisplayText(timeFormatter: DateFormatter()) {
+//                    Text(subtitle.title)
+//                        .font(.subheadline)
+//                        .foregroundColor(.white)
+//                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
+//                            dimensions[.leading]
+//                        }
+//                }
 
                 HStack {
 

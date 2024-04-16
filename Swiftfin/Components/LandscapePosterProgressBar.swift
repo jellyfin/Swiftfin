@@ -14,14 +14,19 @@ struct LandscapePosterProgressBar: View {
     @Default(.accentColor)
     private var accentColor
 
-    let title: String
-    let progress: CGFloat
-
     // Scale padding depending on view width
     @State
     private var paddingScale: CGFloat = 1.0
     @State
     private var width: CGFloat = 0
+
+    let title: String?
+    let progress: Double
+
+    init(title: String? = nil, progress: Double) {
+        self.title = title
+        self.progress = progress
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -39,9 +44,11 @@ struct LandscapePosterProgressBar: View {
 
                 Spacer()
 
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                if let title {
+                    Text(title)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                }
 
                 ProgressBar(progress: progress)
                     .foregroundColor(accentColor)

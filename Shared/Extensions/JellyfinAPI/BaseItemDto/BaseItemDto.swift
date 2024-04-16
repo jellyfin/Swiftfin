@@ -99,11 +99,25 @@ extension BaseItemDto {
         return " "
     }
 
+    var programDuration: TimeInterval? {
+        guard let startDate, let endDate else { return nil }
+        return endDate.timeIntervalSince(startDate)
+    }
+
     var programProgress: Double? {
         guard let startDate, let endDate else { return nil }
 
         let length = endDate.timeIntervalSince(startDate)
         let progress = Date.now.timeIntervalSince(startDate)
+
+        return progress / length
+    }
+
+    func programProgress(relativeTo other: Date) -> Double? {
+        guard let startDate, let endDate else { return nil }
+
+        let length = endDate.timeIntervalSince(startDate)
+        let progress = other.timeIntervalSince(startDate)
 
         return progress / length
     }

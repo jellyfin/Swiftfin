@@ -18,8 +18,15 @@ final class LiveTVCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    @Route(.push)
+    var channels = makeChannels
+
+    func makeChannels() -> LiveTVChannelsCoordinator {
+        LiveTVChannelsCoordinator()
+    }
+
     @ViewBuilder
     func makeStart() -> some View {
-        ChannelsView()
+        LiveTVHomeView()
     }
 }

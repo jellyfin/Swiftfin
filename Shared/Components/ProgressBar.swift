@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: see if animation is right here or should be in caller views
+
 struct ProgressBar: View {
 
     let progress: CGFloat
@@ -24,5 +26,6 @@ struct ProgressBar: View {
                         .scaleEffect(x: progress, anchor: .leading)
                 }
         }
+        .animation(.linear(duration: 0.1), value: progress)
     }
 }

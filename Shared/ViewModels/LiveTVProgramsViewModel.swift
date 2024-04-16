@@ -6,209 +6,159 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Foundation
 import JellyfinAPI
 
-final class LiveTVProgramsViewModel: ViewModel {
+final class LiveTVProgramsViewModel: ViewModel, Stateful {
+
+    enum ProgramSection: CaseIterable {
+        case kids
+        case movies
+        case news
+        case recommended
+        case series
+        case sports
+    }
+
+    // MARK: Action
+
+    enum Action: Equatable {
+        case error(JellyfinAPIError)
+        case refresh
+    }
+
+    // MARK: State
+
+    enum State: Hashable {
+        case content
+        case error(JellyfinAPIError)
+        case initial
+        case refreshing
+    }
 
     @Published
-    var recommendedItems = [BaseItemDto]()
+    private(set) var kids: [BaseItemDto] = []
     @Published
-    var seriesItems = [BaseItemDto]()
+    private(set) var movies: [BaseItemDto] = []
     @Published
-    var movieItems = [BaseItemDto]()
+    private(set) var news: [BaseItemDto] = []
     @Published
-    var sportsItems = [BaseItemDto]()
+    private(set) var recommended: [BaseItemDto] = []
     @Published
-    var kidsItems = [BaseItemDto]()
+    private(set) var series: [BaseItemDto] = []
     @Published
-    var newsItems = [BaseItemDto]()
+    private(set) var sports: [BaseItemDto] = []
 
-    var channels = [String: BaseItemDto]()
+    @Published
+    final var lastAction: Action? = nil
+    @Published
+    final var state: State = .initial
 
-    override init() {
-        super.init()
+    private var currentRefreshTask: AnyCancellable?
 
-//        getChannels()
-    }
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .refresh:
+            currentRefreshTask?.cancel()
 
-    func findChannel(id: String) -> BaseItemDto? {
-        channels[id]
-    }
+            currentRefreshTask = Task { [weak self] in
+                guard let self else { return }
 
-    private func getChannels() {
-        Task {
-            let parameters = Paths.GetLiveTvChannelsParameters(
-                userID: userSession.user.id,
-                startIndex: 0,
-                limit: 1000,
-                enableImageTypes: [.primary],
-                enableUserData: false,
-                enableFavoriteSorting: true
-            )
-            let request = Paths.getLiveTvChannels(parameters: parameters)
-            let response = try await userSession.client.send(request)
+                do {
+                    let sections = try await getItemSections()
 
-            guard let channels = response.value.items else { return }
+                    guard !Task.isCancelled else { return }
 
-            for channel in channels {
-                guard let channelID = channel.id else { continue }
-                self.channels[channelID] = channel
+                    await MainActor.run {
+                        self.kids = sections[.kids] ?? []
+                        self.movies = sections[.movies] ?? []
+                        self.news = sections[.news] ?? []
+                        self.recommended = sections[.recommended] ?? []
+                        self.series = sections[.series] ?? []
+                        self.sports = sections[.sports] ?? []
+
+                        self.state = .content
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
             }
+            .asAnyCancellable()
 
-            getRecommendedPrograms()
-            getSeries()
-            getMovies()
-            getSports()
-            getKids()
-            getNews()
+            return .refreshing
         }
     }
 
-    private func getRecommendedPrograms() {
-        Task {
-            let parameters = Paths.GetRecommendedProgramsParameters(
-                userID: userSession.user.id,
-                limit: 9,
-                isAiring: true,
-                imageTypeLimit: 1,
-                enableImageTypes: [.primary, .thumb],
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                enableTotalRecordCount: false
-            )
-            let request = Paths.getRecommendedPrograms(parameters: parameters)
-            let response = try await userSession.client.send(request)
+    private func getItemSections() async throws -> [ProgramSection: [BaseItemDto]] {
+        try await withThrowingTaskGroup(
+            of: (ProgramSection, [BaseItemDto]).self,
+            returning: [ProgramSection: [BaseItemDto]].self
+        ) { group in
 
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                self.recommendedItems = items
+            // sections
+            for section in ProgramSection.allCases {
+                group.addTask {
+                    let items = try await self.getPrograms(for: section)
+                    return (section, items)
+                }
             }
+
+            // recommended
+            group.addTask {
+                let items = try await self.getRecommendedPrograms()
+                return (ProgramSection.recommended, items)
+            }
+
+            var result: [ProgramSection: [BaseItemDto]] = [:]
+
+            while let items = try await group.next() {
+                result[items.0] = items.1
+            }
+
+            return result
         }
     }
 
-    private func getSeries() {
-        Task {
-            let request = Paths.getPrograms(.init(
-                enableImageTypes: [.primary, .thumb],
-                enableTotalRecordCount: false,
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                hasAired: false,
-                isKids: false,
-                isMovie: false,
-                isNews: false,
-                isSeries: true,
-                isSports: false,
-                limit: 9,
-                userID: userSession.user.id
-            ))
-            let response = try await userSession.client.send(request)
+    private func getRecommendedPrograms() async throws -> [BaseItemDto] {
 
-            guard let items = response.value.items else { return }
+        var parameters = Paths.GetRecommendedProgramsParameters()
+        parameters.fields = .MinimumFields
+            .appending(.channelInfo)
+        parameters.isAiring = true
+        parameters.limit = 20
+        parameters.userID = userSession.user.id
 
-            await MainActor.run {
-                self.seriesItems = items
-            }
-        }
+        let request = Paths.getRecommendedPrograms(parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
     }
 
-    private func getMovies() {
-        Task {
-            let request = Paths.getPrograms(.init(
-                enableImageTypes: [.primary, .thumb],
-                enableTotalRecordCount: false,
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                hasAired: false,
-                isKids: false,
-                isMovie: true,
-                isNews: false,
-                isSeries: false,
-                isSports: false,
-                limit: 9,
-                userID: userSession.user.id
-            ))
-            let response = try await userSession.client.send(request)
+    private func getPrograms(for section: ProgramSection) async throws -> [BaseItemDto] {
 
-            guard let items = response.value.items else { return }
+        var parameters = Paths.GetLiveTvProgramsParameters()
+        parameters.fields = .MinimumFields
+            .appending(.channelInfo)
+        parameters.hasAired = false
+        parameters.limit = 20
+        parameters.userID = userSession.user.id
 
-            await MainActor.run {
-                self.movieItems = items
-            }
-        }
-    }
+        parameters.isKids = section == .kids
+        parameters.isMovie = section == .movies
+        parameters.isNews = section == .news
+        parameters.isSeries = section == .series
+        parameters.isSports = section == .sports
 
-    private func getSports() {
-        Task {
-            let request = Paths.getPrograms(.init(
-                enableImageTypes: [.primary, .thumb],
-                enableTotalRecordCount: false,
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                hasAired: false,
-                isKids: false,
-                isMovie: false,
-                isNews: false,
-                isSeries: false,
-                isSports: true,
-                limit: 9,
-                userID: userSession.user.id
-            ))
-            let response = try await userSession.client.send(request)
+        let request = Paths.getLiveTvPrograms(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                self.sportsItems = items
-            }
-        }
-    }
-
-    private func getKids() {
-        Task {
-            let request = Paths.getPrograms(.init(
-                enableImageTypes: [.primary, .thumb],
-                enableTotalRecordCount: false,
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                hasAired: false,
-                isKids: true,
-                isMovie: false,
-                isNews: false,
-                isSeries: false,
-                isSports: false,
-                limit: 9,
-                userID: userSession.user.id
-            ))
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                self.kidsItems = items
-            }
-        }
-    }
-
-    private func getNews() {
-        Task {
-            let request = Paths.getPrograms(.init(
-                enableImageTypes: [.primary, .thumb],
-                enableTotalRecordCount: false,
-                fields: [.channelInfo, .primaryImageAspectRatio],
-                hasAired: false,
-                isKids: false,
-                isMovie: false,
-                isNews: true,
-                isSeries: false,
-                isSports: false,
-                limit: 9,
-                userID: userSession.user.id
-            ))
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                self.seriesItems = items
-            }
-        }
+        return response.value.items ?? []
     }
 }

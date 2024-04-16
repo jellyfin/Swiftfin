@@ -15,8 +15,6 @@ import SwiftUI
 struct MediaView: View {
 
     @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
-    @EnvironmentObject
     private var router: MediaCoordinator.Router
 
     @StateObject
@@ -43,8 +41,9 @@ struct MediaView: View {
                             filters: .favorites
                         )
                         router.route(to: \.library, viewModel)
-                    case .liveTV:
-                        mainRouter.root(\.liveTV)
+                    case .liveTV: ()
+                        router.route(to: \.liveTV)
+//                        mainRouter.root(\.liveTV)
                     }
                 }
         }

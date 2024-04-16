@@ -80,9 +80,6 @@ struct LiveVideoPlayer: View {
                     .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
             }
         }
-        .onDisappear {
-            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
-        }
     }
 
     @ViewBuilder

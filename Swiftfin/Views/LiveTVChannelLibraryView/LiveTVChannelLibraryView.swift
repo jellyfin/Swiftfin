@@ -13,8 +13,12 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: wide + narrow view toggling
+//       - after `PosterType` has been refactored and with customizable toggle button
 
-struct ChannelsView: View {
+struct LiveTVChannelLibraryView: View {
+
+    @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
 
     @State
     private var layout: CollectionVGridLayout
@@ -30,18 +34,19 @@ struct ChannelsView: View {
         }
     }
 
-    // MARK: item view
-
-    private static func gridView(channel: ChannelProgram) -> some View {
-        ChannelGridItem(channel: channel)
-    }
-
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,
             layout: layout
-        ) { item in
-            ChannelGridItem(channel: item)
+        ) { channel in
+            WideChannelGridItem(channel: channel)
+                .onSelect {
+                    guard let mediaSource = channel.channel.mediaSources?.first else { return }
+                    mainRouter.route(
+                        to: \.liveVideoPlayer,
+                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                    )
+                }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)
@@ -74,6 +79,12 @@ struct ChannelsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             if viewModel.state == .initial {
+                viewModel.send(.refresh)
+            }
+        }
+        .afterLastDisappear { interval in
+            // refresh after 3 hours
+            if interval >= 10800 {
                 viewModel.send(.refresh)
             }
         }

@@ -20,6 +20,8 @@ final class MediaCoordinator: NavigationCoordinatable {
     #if os(tvOS)
     @Route(.modal)
     var library = makeLibrary
+    @Route(.modal)
+    var liveTV = makeLiveTV
     #else
     @Route(.push)
     var library = makeLibrary
@@ -34,6 +36,9 @@ final class MediaCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
 
+    func makeLiveTV() -> LiveTVTabCoordinator {
+        LiveTVTabCoordinator()
+    }
     #else
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
         LibraryCoordinator(viewModel: viewModel)

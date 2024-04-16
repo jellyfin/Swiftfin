@@ -25,13 +25,13 @@ struct ChannelProgram: Hashable, Identifiable {
         }
     }
 
-    var nextProgram: BaseItemDto? {
+    func programAfterCurrent(offset: Int) -> BaseItemDto? {
         guard let currentStart = currentProgram?.startDate else { return nil }
 
-        return programs.first { program in
+        return programs.filter { program in
             guard let start = program.startDate else { return false }
             return start > currentStart
-        }
+        }[safe: offset]
     }
 
     var id: String? {

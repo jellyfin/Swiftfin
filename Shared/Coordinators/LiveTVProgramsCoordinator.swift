@@ -31,12 +31,11 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     }
 
     func makeStart() -> some View {
-        let viewModel = LiveTVProgramsViewModel()
-        return LiveTVProgramsView(viewModel: viewModel)
+        LiveTVProgramsView()
     }
-    #endif
-
+    #else
     func makeStart() -> some View {
         AssertionFailureView("Not implemented")
     }
+    #endif
 }
