@@ -469,6 +469,8 @@
 		E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */; };
 		E1748B6F2BCEEE27008F6860 /* AlternateLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1748B6E2BCEEE27008F6860 /* AlternateLayoutView.swift */; };
 		E1748B702BCEEE27008F6860 /* AlternateLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1748B6E2BCEEE27008F6860 /* AlternateLayoutView.swift */; };
+		E1748B722BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1748B712BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift */; };
+		E1748B732BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1748B712BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift */; };
 		E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */; };
 		E1765BA62BCD8B18007E0C33 /* WideChannelGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1765BA22BCD8B18007E0C33 /* WideChannelGridItem.swift */; };
 		E1765BA72BCD8B18007E0C33 /* ChannelLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1765BA42BCD8B18007E0C33 /* ChannelLibraryView.swift */; };
@@ -1125,6 +1127,7 @@
 		E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailViewModel.swift; sourceTree = "<group>"; };
 		E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationCoordinatable.swift; sourceTree = "<group>"; };
 		E1748B6E2BCEEE27008F6860 /* AlternateLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlternateLayoutView.swift; sourceTree = "<group>"; };
+		E1748B712BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerWrapperCoordinator.swift; sourceTree = "<group>"; };
 		E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSettingsView.swift; sourceTree = "<group>"; };
 		E1765BA22BCD8B18007E0C33 /* WideChannelGridItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WideChannelGridItem.swift; sourceTree = "<group>"; };
 		E1765BA42BCD8B18007E0C33 /* ChannelLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelLibraryView.swift; sourceTree = "<group>"; };
@@ -1975,6 +1978,7 @@
 				E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */,
 				E18A8E8428D60D0000333B9A /* VideoPlayerCoordinator.swift */,
 				E1A1528C28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift */,
+				E1748B712BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift */,
 			);
 			path = Coordinators;
 			sourceTree = "<group>";
@@ -3676,6 +3680,7 @@
 				E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */,
 				E1D37F532B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift in Sources */,
 				E1153D9C2BBA3E9D00424D36 /* LoadingCard.swift in Sources */,
+				E1748B732BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
 				E1575E68293E77B5001665B1 /* LibraryParent.swift in Sources */,
 				E1C9260D2887565C002A7A66 /* CinematicScrollView.swift in Sources */,
@@ -4092,6 +4097,7 @@
 				6220D0B726D5EE1100B8E046 /* SearchCoordinator.swift in Sources */,
 				E148128528C15472003B8787 /* SortOrder.swift in Sources */,
 				E1765BA72BCD8B18007E0C33 /* ChannelLibraryView.swift in Sources */,
+				E1748B722BCF0D46008F6860 /* VideoPlayerWrapperCoordinator.swift in Sources */,
 				E1D842172932AB8F00D1041A /* NativeVideoPlayer.swift in Sources */,
 				E1A3E4C72BB74E50005C59F8 /* EpisodeCard.swift in Sources */,
 				E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */,
@@ -4439,7 +4445,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -4455,7 +4461,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4479,7 +4485,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -4495,7 +4501,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

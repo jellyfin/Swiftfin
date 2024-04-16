@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-// TODO: fix
+// TODO: fix relative padding, or remove?
 // TODO: gradient should grow/shrink with content, not relative to container
 
 struct LandscapePosterProgressBar<Content: View>: View {

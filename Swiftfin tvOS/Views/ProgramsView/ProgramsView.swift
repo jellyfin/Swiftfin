@@ -15,8 +15,8 @@ import SwiftUI
 
 struct ProgramsView: View {
 
-//    @EnvironmentObject
-//    private var router: LiveTVCoordinator.Router
+    @EnvironmentObject
+    private var router: VideoPlayerWrapperCoordinator.Router
 
     @StateObject
     private var programsViewModel = ProgramsViewModel()
@@ -66,6 +66,13 @@ struct ProgramsView: View {
         }
         .imageOverlay {
             ProgramProgressOverlay(program: $0.programs[0])
+        }
+        .onSelect { channelProgram in
+            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
+            router.route(
+                to: \.liveVideoPlayer,
+                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
+            )
         }
     }
 
