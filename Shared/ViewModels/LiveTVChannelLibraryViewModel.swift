@@ -10,7 +10,7 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-final class ChannelsViewModel: PagingLibraryViewModel<ChannelProgram> {
+final class LiveTVChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
 
     override func get(page: Int) async throws -> [ChannelProgram] {
 

@@ -20,8 +20,8 @@ struct LandscapePosterProgressBar: View {
     @State
     private var width: CGFloat = 0
 
-    let title: String?
-    let progress: Double
+    private let title: String?
+    private let progress: Double
 
     init(title: String? = nil, progress: Double) {
         self.title = title

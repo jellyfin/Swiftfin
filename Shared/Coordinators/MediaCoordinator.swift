@@ -35,23 +35,19 @@ final class MediaCoordinator: NavigationCoordinatable {
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
         NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
     }
-
-    func makeLiveTV() -> LiveTVTabCoordinator {
-        LiveTVTabCoordinator()
-    }
     #else
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
         LibraryCoordinator(viewModel: viewModel)
-    }
-
-    func makeLiveTV() -> LiveTVCoordinator {
-        LiveTVCoordinator()
     }
 
     func makeDownloads() -> DownloadListCoordinator {
         DownloadListCoordinator()
     }
     #endif
+
+    func makeLiveTV() -> LiveTVCoordinator {
+        LiveTVCoordinator()
+    }
 
     @ViewBuilder
     func makeStart() -> some View {

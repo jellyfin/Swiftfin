@@ -57,6 +57,15 @@ final class LiveTVProgramsViewModel: ViewModel, Stateful {
 
     private var currentRefreshTask: AnyCancellable?
 
+    var hasNoResults: Bool {
+        kids.isEmpty &&
+            movies.isEmpty &&
+            news.isEmpty &&
+            recommended.isEmpty &&
+            series.isEmpty &&
+            sports.isEmpty
+    }
+
     func respond(to action: Action) -> State {
         switch action {
         case let .error(error):

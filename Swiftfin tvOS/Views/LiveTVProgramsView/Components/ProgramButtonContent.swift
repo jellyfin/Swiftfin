@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension LiveTVHomeView {
+extension LiveTVProgramsView {
 
     struct ProgramButtonContent: View {
 

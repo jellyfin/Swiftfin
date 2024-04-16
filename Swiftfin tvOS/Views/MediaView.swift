@@ -43,7 +43,6 @@ struct MediaView: View {
                         router.route(to: \.library, viewModel)
                     case .liveTV: ()
                         router.route(to: \.liveTV)
-//                        mainRouter.root(\.liveTV)
                     }
                 }
         }

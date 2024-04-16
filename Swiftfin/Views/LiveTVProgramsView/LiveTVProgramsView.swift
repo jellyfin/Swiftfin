@@ -10,8 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: background refresh for programs with timer?
+// TODO: no programs view
 
-struct LiveTVHomeView: View {
+struct LiveTVProgramsView: View {
 
     @EnvironmentObject
     private var router: LiveTVCoordinator.Router

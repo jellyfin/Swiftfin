@@ -10,11 +10,11 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class LiveTVTabCoordinator: TabCoordinatable {
+final class LiveTVCoordinator: TabCoordinatable {
 
     var child = TabChild(startingItems: [
-        \LiveTVTabCoordinator.programs,
-        \LiveTVTabCoordinator.channels,
+        \LiveTVCoordinator.programs,
+        \LiveTVCoordinator.channels,
     ])
 
     @Route(tabItem: makeProgramsTab)
@@ -22,8 +22,8 @@ final class LiveTVTabCoordinator: TabCoordinatable {
     @Route(tabItem: makeChannelsTab)
     var channels = makeChannels
 
-    func makePrograms() -> NavigationViewCoordinator<LiveTVProgramsCoordinator> {
-        NavigationViewCoordinator(LiveTVProgramsCoordinator())
+    func makePrograms() -> LiveTVProgramsView {
+        LiveTVProgramsView()
     }
 
     @ViewBuilder
@@ -31,8 +31,8 @@ final class LiveTVTabCoordinator: TabCoordinatable {
         Label(L10n.programs, systemImage: "tv")
     }
 
-    func makeChannels() -> NavigationViewCoordinator<LiveTVChannelsCoordinator> {
-        NavigationViewCoordinator(LiveTVChannelsCoordinator())
+    func makeChannels() -> LiveTVChannelLibraryView {
+        LiveTVChannelLibraryView()
     }
 
     @ViewBuilder

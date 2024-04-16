@@ -24,7 +24,7 @@ struct LiveTVChannelLibraryView: View {
     private var layout: CollectionVGridLayout
 
     @StateObject
-    private var viewModel = ChannelsViewModel()
+    private var viewModel = LiveTVChannelLibraryViewModel()
 
     init() {
         if UIDevice.isPhone {
