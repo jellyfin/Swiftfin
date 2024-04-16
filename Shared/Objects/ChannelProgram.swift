@@ -11,6 +11,7 @@ import JellyfinAPI
 
 // Note: assumes programs are sorted by start date
 
+/// Structure that has a channel and associated programs.
 struct ChannelProgram: Hashable, Identifiable {
 
     let channel: BaseItemDto

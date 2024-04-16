@@ -14,8 +14,10 @@ import SwiftUI
 
 // TODO: wide + narrow view toggling
 //       - after `PosterType` has been refactored and with customizable toggle button
+// TODO: sorting by number/filtering
+//       - should be able to use normal filter view model, but how to add custom filters for data context?
 
-struct LiveTVChannelLibraryView: View {
+struct ChannelLibraryView: View {
 
     @EnvironmentObject
     private var mainRouter: MainCoordinator.Router
@@ -24,7 +26,7 @@ struct LiveTVChannelLibraryView: View {
     private var layout: CollectionVGridLayout
 
     @StateObject
-    private var viewModel = LiveTVChannelLibraryViewModel()
+    private var viewModel = ChannelLibraryViewModel()
 
     init() {
         if UIDevice.isPhone {

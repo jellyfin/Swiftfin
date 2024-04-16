@@ -10,7 +10,7 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-final class LiveTVChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
+final class ChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram> {
 
     override func get(page: Int) async throws -> [ChannelProgram] {
 
@@ -55,7 +55,7 @@ final class LiveTVChannelLibraryViewModel: PagingLibraryViewModel<ChannelProgram
                 partialResult[channel] = (groupedPrograms[channel] ?? [])
                     .sorted(using: \.startDate)
             }
-            .map { ChannelProgram(channel: $0, programs: $1) }
+            .map(ChannelProgram.init)
             .sorted(using: \.channel.name)
 
         return channelPrograms

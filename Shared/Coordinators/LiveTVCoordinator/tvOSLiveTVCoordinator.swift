@@ -22,8 +22,8 @@ final class LiveTVCoordinator: TabCoordinatable {
     @Route(tabItem: makeChannelsTab)
     var channels = makeChannels
 
-    func makePrograms() -> LiveTVProgramsView {
-        LiveTVProgramsView()
+    func makePrograms() -> ProgramsView {
+        ProgramsView()
     }
 
     @ViewBuilder
@@ -31,8 +31,8 @@ final class LiveTVCoordinator: TabCoordinatable {
         Label(L10n.programs, systemImage: "tv")
     }
 
-    func makeChannels() -> LiveTVChannelLibraryView {
-        LiveTVChannelLibraryView()
+    func makeChannels() -> ChannelLibraryView {
+        ChannelLibraryView()
     }
 
     @ViewBuilder

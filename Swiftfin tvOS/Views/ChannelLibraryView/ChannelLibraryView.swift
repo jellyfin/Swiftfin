@@ -11,10 +11,10 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct LiveTVChannelLibraryView: View {
+struct ChannelLibraryView: View {
 
     @StateObject
-    private var viewModel = LiveTVChannelLibraryViewModel()
+    private var viewModel = ChannelLibraryViewModel()
 
     private var contentView: some View {
         CollectionVGrid(

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension LiveTVChannelLibraryView {
+extension ChannelLibraryView {
 
     struct WideChannelGridItem: View {
 
@@ -93,7 +93,6 @@ extension LiveTVChannelLibraryView {
                             .foregroundColor(Color.jellyfinPurple)
                     }
                     .frame(width: 80)
-                    .padding(.vertical, 8)
 
                     HStack {
                         VStack(alignment: .leading, spacing: 5) {
@@ -112,13 +111,9 @@ extension LiveTVChannelLibraryView {
                     }
                     .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal, 8)
-                .background {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.secondarySystemFill)
-                }
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.card)
+            .frame(height: 220)
             .onReceive(timer) { newValue in
                 now = newValue
             }
@@ -127,7 +122,7 @@ extension LiveTVChannelLibraryView {
     }
 }
 
-extension LiveTVChannelLibraryView.WideChannelGridItem {
+extension ChannelLibraryView.WideChannelGridItem {
 
     init(channel: ChannelProgram) {
         self.init(

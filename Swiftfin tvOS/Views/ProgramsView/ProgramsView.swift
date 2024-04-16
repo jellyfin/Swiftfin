@@ -10,60 +10,18 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: background refresh for programs with timer?
-// TODO: no programs view
 
-struct LiveTVProgramsView: View {
+struct ProgramsView: View {
 
-    @EnvironmentObject
-    private var router: LiveTVCoordinator.Router
+//    @EnvironmentObject
+//    private var router: LiveTVCoordinator.Router
 
     @StateObject
-    private var programsViewModel = LiveTVProgramsViewModel()
-
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                programsViewModel.send(.refresh)
-            }
-    }
-
-    private var liveTVSectionScrollView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                liveTVSectionPill(
-                    title: L10n.channels,
-                    systemImage: "play.square.stack"
-                ) {
-                    router.route(to: \.channels)
-                }
-            }
-            .edgePadding(.horizontal)
-        }
-    }
-
-    // TODO: probably make own pill view
-    //       - see if could merge with item view pills
-    private func liveTVSectionPill(title: String, systemImage: String, onSelect: @escaping () -> Void) -> some View {
-        Button {
-            onSelect()
-        } label: {
-            Label(title, systemImage: systemImage)
-                .font(.callout.weight(.semibold))
-                .foregroundColor(.primary)
-                .padding(8)
-                .background {
-                    Color.systemFill
-                        .cornerRadius(10)
-                }
-        }
-    }
+    private var programsViewModel = ProgramsViewModel()
 
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
-
-                liveTVSectionScrollView
-
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
                 }
@@ -94,7 +52,7 @@ struct LiveTVProgramsView: View {
     @ViewBuilder
     private func programsSection(
         title: String,
-        keyPath: KeyPath<LiveTVProgramsViewModel, [BaseItemDto]>
+        keyPath: KeyPath<ProgramsViewModel, [BaseItemDto]>
     ) -> some View {
         PosterHStack(
             title: title,
@@ -109,15 +67,18 @@ struct LiveTVProgramsView: View {
         WrappedView {
             switch programsViewModel.state {
             case .content:
-                contentView
+                if programsViewModel.hasNoResults {
+                    L10n.noResults.text
+                } else {
+                    contentView
+                }
             case let .error(error):
-                errorView(with: error)
+                Text(error.localizedDescription)
             case .initial, .refreshing:
-                DelayedProgressView()
+                ProgressView()
             }
         }
-        .navigationTitle(L10n.liveTV)
-        .navigationBarTitleDisplayMode(.inline)
+        .ignoresSafeArea(edges: [.bottom, .horizontal])
         .onFirstAppear {
             if programsViewModel.state == .initial {
                 programsViewModel.send(.refresh)

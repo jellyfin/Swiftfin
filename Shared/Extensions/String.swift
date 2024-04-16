@@ -81,7 +81,9 @@ extension String {
             .reduce("", +)
     }
 
-    static var emptyDash = "--"
+    static let emptyDash = "--"
+
+    static let emptyTime = "--:--"
 
     var shortFileName: String {
         (split(separator: "/").last?.description ?? self)
