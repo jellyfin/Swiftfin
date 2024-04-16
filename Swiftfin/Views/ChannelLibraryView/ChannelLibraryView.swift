@@ -90,5 +90,11 @@ struct ChannelLibraryView: View {
                 viewModel.send(.refresh)
             }
         }
+        .topBarTrailing {
+
+            if viewModel.backgroundStates.contains(.gettingNextPage) {
+                ProgressView()
+            }
+        }
     }
 }
