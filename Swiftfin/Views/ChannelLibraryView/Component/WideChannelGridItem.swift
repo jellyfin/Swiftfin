@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: can look busy with 3 programs, probably just do 2?
+
 extension ChannelLibraryView {
 
     struct WideChannelGridItem: View {

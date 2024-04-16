@@ -287,9 +287,4 @@ extension BaseItemDto {
 
         return L10n.play
     }
-
-    var channelLabel: String? {
-        let raw = "\(number ?? "")\(name ?? "")"
-        return raw.isEmpty ? nil : raw
-    }
 }
