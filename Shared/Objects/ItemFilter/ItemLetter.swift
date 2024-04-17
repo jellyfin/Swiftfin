@@ -32,10 +32,3 @@ struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, 
             .map(Self.init)
     }
 }
-
-extension [ItemLetter] {
-
-    func contains(_ letter: Character) -> ItemLetter? {
-        first { $0.value == String(letter) }
-    }
-}
