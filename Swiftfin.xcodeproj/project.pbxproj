@@ -356,6 +356,8 @@
 		E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */; };
 		E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6852A9FF62A001586C6 /* JellyfinAPI */; };
 		E14CB6882A9FF71F001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6872A9FF71F001586C6 /* JellyfinAPI */; };
+		E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
+		E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
 		E14EDEC52B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */; };
 		E14EDEC62B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */; };
 		E14EDEC82B8FB65F000F00A4 /* ItemFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */; };
@@ -1089,6 +1091,7 @@
 		E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemFilter+ItemTrait.swift"; sourceTree = "<group>"; };
 		E148128A28C15526003B8787 /* ItemSortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSortBy.swift; sourceTree = "<group>"; };
 		E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
+		E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLetter.swift; sourceTree = "<group>"; };
 		E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyItemFilter.swift; sourceTree = "<group>"; };
 		E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFilterType.swift; sourceTree = "<group>"; };
 		E14EDECB2B8FB709000F00A4 /* ItemYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemYear.swift; sourceTree = "<group>"; };
@@ -2314,6 +2317,7 @@
 				535870AC2669D8DD00D05A09 /* ItemFilterCollection.swift */,
 				E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */,
 				E11BDF762B8513B40045C54A /* ItemGenre.swift */,
+				E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */,
 				E148128A28C15526003B8787 /* ItemSortBy.swift */,
 				E11BDF962B865F550045C54A /* ItemTag.swift */,
 				E14EDECB2B8FB709000F00A4 /* ItemYear.swift */,
@@ -3388,7 +3392,6 @@
 				E1575E7E293E77B5001665B1 /* ItemFilterCollection.swift in Sources */,
 				C46DD8EF2A8FB56E0046A504 /* LiveBottomBarView.swift in Sources */,
 				C46DD8EA2A8FB45C0046A504 /* LiveOverlay.swift in Sources */,
-				E1575E96293E7B1E001665B1 /* UIScrollView.swift in Sources */,
 				E11E376D293E9CC1009EF240 /* VideoPlayerCoordinator.swift in Sources */,
 				E1575E6F293E77B5001665B1 /* GestureAction.swift in Sources */,
 				E18A8E7E28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
@@ -3418,6 +3421,7 @@
 				C49AE1192BC191BB004562B2 /* LiveTVChannelProgram.swift in Sources */,
 				C4BE07772725EBEA003F4AD1 /* LiveTVProgramsViewModel.swift in Sources */,
 				E11CEB9128999D84003E74C7 /* EpisodeItemView.swift in Sources */,
+				E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */,
 				E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */,
 				E1E6C45629B130F50064123F /* ChapterOverlay.swift in Sources */,
@@ -3750,7 +3754,6 @@
 				E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
 				C4BE07852728446F003F4AD1 /* LiveTVChannelsViewModel.swift in Sources */,
 				E133328829538D8D00EE76AB /* Files.swift in Sources */,
-				E1D3043228D175CE00587289 /* StaticLibraryViewModel.swift in Sources */,
 				C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */,
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
@@ -3762,6 +3765,7 @@
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E187F7672B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
+				E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
@@ -3849,7 +3853,6 @@
 				E18E0207288749200022598C /* AttributeStyleModifier.swift in Sources */,
 				E1002B642793CEE800E47059 /* ChapterInfo.swift in Sources */,
 				C46DD8E52A8FA6510046A504 /* LiveTopBarView.swift in Sources */,
-				E1D3043A28D189C500587289 /* CastAndCrewLibraryView.swift in Sources */,
 				E18E01AD288746AF0022598C /* DotHStack.swift in Sources */,
 				E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */,
 				E1937A61288F32DB00CB80AA /* Poster.swift in Sources */,
@@ -3989,7 +3992,6 @@
 				E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */,
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,
 				E13DD3C827164B1E009D4DAF /* UIDevice.swift in Sources */,
-				E1D3044228D1976600587289 /* CastAndCrewItemRow.swift in Sources */,
 				C46DD8DD2A8DC3420046A504 /* LiveNativeVideoPlayer.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,

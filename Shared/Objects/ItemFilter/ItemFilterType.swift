@@ -12,6 +12,7 @@ import Foundation
 enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
 
     case genres
+    case letter
     case sortBy
     case sortOrder
     case tags
@@ -23,7 +24,7 @@ enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
         switch self {
         case .genres, .tags, .traits, .years:
             return .multi
-        case .sortBy, .sortOrder:
+        case .letter, .sortBy, .sortOrder:
             return .single
         }
     }
@@ -32,6 +33,8 @@ enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
         switch self {
         case .genres:
             \ItemFilterCollection.genres.asAnyItemFilter
+        case .letter:
+            \ItemFilterCollection.letter.asAnyItemFilter
         case .sortBy:
             \ItemFilterCollection.sortBy.asAnyItemFilter
         case .sortOrder:
@@ -52,6 +55,8 @@ extension ItemFilterType: Displayable {
         switch self {
         case .genres:
             L10n.genres
+        case .letter:
+            "Letter"
         case .sortBy:
             L10n.sort
         case .sortOrder:

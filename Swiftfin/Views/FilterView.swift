@@ -42,6 +42,8 @@ struct FilterView: View {
                 switch type {
                 case .genres:
                     viewModel.currentFilters.genres = ItemFilterCollection.default.genres
+                case .letter:
+                    viewModel.currentFilters.letter = ItemFilterCollection.default.letter
                 case .sortBy:
                     viewModel.currentFilters.sortBy = ItemFilterCollection.default.sortBy
                 case .sortOrder:
@@ -78,6 +80,8 @@ extension FilterView {
             switch type {
             case .genres:
                 viewModel.currentFilters.genres = newValue.map(ItemGenre.init)
+            case .letter:
+                viewModel.currentFilters.letter = newValue.map(ItemLetter.init)
             case .sortBy:
                 viewModel.currentFilters.sortBy = newValue.map(ItemSortBy.init)
             case .sortOrder:

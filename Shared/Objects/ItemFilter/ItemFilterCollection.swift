@@ -14,6 +14,7 @@ import JellyfinAPI
 struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
 
     var genres: [ItemGenre] = []
+    var letter: [ItemLetter] = []
     var sortBy: [ItemSortBy] = [ItemSortBy.name]
     var sortOrder: [ItemSortOrder] = [ItemSortOrder.ascending]
     var tags: [ItemTag] = []
@@ -33,6 +34,7 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
 
     /// A collection that has all statically available values
     static let all: ItemFilterCollection = .init(
+        letter: ItemLetter.allCases,
         sortBy: ItemSortBy.allCases,
         sortOrder: ItemSortOrder.allCases,
         traits: ItemTrait.supportedCases
