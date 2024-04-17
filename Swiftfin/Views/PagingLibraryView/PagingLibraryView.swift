@@ -188,11 +188,6 @@ struct PagingLibraryView<Element: Poster>: View {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
-        .refreshable {
-            Task {
-                viewModel.send(.refresh)
-            }
-        }
     }
 
     // MARK: body
