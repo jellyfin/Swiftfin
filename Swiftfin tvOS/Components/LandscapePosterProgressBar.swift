@@ -10,8 +10,13 @@ import SwiftUI
 
 struct LandscapePosterProgressBar: View {
 
-    let title: String
-    let progress: CGFloat
+    private let title: String?
+    private let progress: Double
+
+    init(title: String? = nil, progress: Double) {
+        self.title = title
+        self.progress = progress
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -26,15 +31,16 @@ struct LandscapePosterProgressBar: View {
 
             VStack(alignment: .leading, spacing: 3) {
 
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                if let title {
+                    Text(title)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                }
 
                 ProgressBar(progress: progress)
                     .frame(height: 5)
             }
-            .padding(.horizontal, 5)
-            .padding(.bottom, 7)
+            .padding(10)
         }
     }
 }

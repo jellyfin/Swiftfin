@@ -38,18 +38,20 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
                     LiveNativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
+            .preferredColorScheme(.dark)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
         .ignoresSafeArea()
+        .backport
+        .persistentSystemOverlays(.hidden)
 
         #else
 
         PreferencesView {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    LiveVideoPlayer(manager: self.videoPlayerManager)
-                } else {
-                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-                }
+            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                LiveVideoPlayer(manager: self.videoPlayerManager)
+            } else {
+                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
             }
         }
         .ignoresSafeArea()

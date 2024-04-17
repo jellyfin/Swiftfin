@@ -6,32 +6,36 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Foundation
-import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class LiveTVChannelsCoordinator: NavigationCoordinatable {
+// TODO: add normal video player
+// TODO: replace current instances of video player on other coordinators, if able
 
-    let stack = NavigationStack(initial: \LiveTVChannelsCoordinator.start)
+/// A coordinator used on tvOS to present video players due to differences in view controller presentation.
+final class VideoPlayerWrapperCoordinator: NavigationCoordinatable {
+
+    let stack = NavigationStack(initial: \VideoPlayerWrapperCoordinator.start)
 
     @Root
     var start = makeStart
 
-    #if os(tvOS)
     @Route(.fullScreen)
     var liveVideoPlayer = makeLiveVideoPlayer
-    #endif
 
-    #if os(tvOS)
+    private let content: () -> any View
+
+    init(@ViewBuilder _ content: @escaping () -> any View) {
+        self.content = content
+    }
+
     func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
         NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
     }
-    #endif
 
     @ViewBuilder
-    func makeStart() -> some View {
-        LiveTVChannelsView()
+    private func makeStart() -> some View {
+        content()
+            .eraseToAnyView()
     }
 }

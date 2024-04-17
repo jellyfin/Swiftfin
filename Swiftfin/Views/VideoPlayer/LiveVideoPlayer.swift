@@ -170,9 +170,6 @@ struct LiveVideoPlayer: View {
                 gestureStateHandler: gestureStateHandler,
                 updateViewProxy: updateViewProxy
             )
-            .onDisappear {
-                NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
-            }
     }
 
     var body: some View {
@@ -220,9 +217,6 @@ struct LiveVideoPlayer: View {
             isAspectFilled = false
             audioOffset = 0
             subtitleOffset = 0
-        }
-        .onDisappear {
-            NotificationCenter.default.post(name: .livePlayerDismissed, object: nil)
         }
     }
 }
