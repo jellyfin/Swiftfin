@@ -10,6 +10,8 @@ import Defaults
 import Factory
 import SwiftUI
 
+// TODO: fix play from beginning
+
 extension ItemView {
 
     struct PlayButton: View {

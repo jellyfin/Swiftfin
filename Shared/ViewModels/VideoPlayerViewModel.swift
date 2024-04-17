@@ -64,11 +64,14 @@ class VideoPlayerViewModel: ViewModel {
         return hlsStreamComponents.url!
     }
 
+    // TODO: should start time be from the media source instead?
     var vlcVideoPlayerConfiguration: VLCVideoPlayer.Configuration {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
         configuration.startTime = .seconds(max(0, item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]))
-        configuration.audioIndex = .absolute(selectedAudioStreamIndex)
+        if self.audioStreams[0].path != nil {
+            configuration.audioIndex = .absolute(selectedAudioStreamIndex)
+        }
         configuration.subtitleIndex = .absolute(selectedSubtitleStreamIndex)
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)

@@ -9,13 +9,13 @@
 import Defaults
 import SwiftUI
 
-struct LandscapePosterProgressBar: View {
+// TODO: fix relative padding, or remove?
+// TODO: gradient should grow/shrink with content, not relative to container
+
+struct LandscapePosterProgressBar<Content: View>: View {
 
     @Default(.accentColor)
     private var accentColor
-
-    let title: String
-    let progress: CGFloat
 
     // Scale padding depending on view width
     @State
@@ -23,8 +23,14 @@ struct LandscapePosterProgressBar: View {
     @State
     private var width: CGFloat = 0
 
+    private let content: () -> Content
+    private let progress: Double
+
     var body: some View {
         ZStack(alignment: .bottom) {
+
+            Color.clear
+
             LinearGradient(
                 stops: [
                     .init(color: .clear, location: 0),
@@ -37,11 +43,7 @@ struct LandscapePosterProgressBar: View {
 
             VStack(alignment: .leading, spacing: 3 * paddingScale) {
 
-                Spacer()
-
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                content()
 
                 ProgressBar(progress: progress)
                     .foregroundColor(accentColor)
@@ -53,5 +55,45 @@ struct LandscapePosterProgressBar: View {
         .onSizeChanged { newSize in
             width = newSize.width
         }
+    }
+}
+
+extension LandscapePosterProgressBar where Content == Text {
+
+    init(
+        title: String,
+        progress: Double
+    ) {
+        self.init(
+            content: {
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+            },
+            progress: progress
+        )
+    }
+}
+
+extension LandscapePosterProgressBar where Content == EmptyView {
+
+    init(progress: Double) {
+        self.init(
+            content: { EmptyView() },
+            progress: progress
+        )
+    }
+}
+
+extension LandscapePosterProgressBar {
+
+    init(
+        progress: Double,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
+        self.init(
+            content: content,
+            progress: progress
+        )
     }
 }

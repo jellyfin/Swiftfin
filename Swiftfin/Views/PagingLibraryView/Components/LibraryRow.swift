@@ -93,7 +93,7 @@ extension PagingLibraryView {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(item.displayTitle)
                                     .font(posterType == .landscape ? .subheadline : .callout)
-                                    .fontWeight(.regular)
+                                    .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(2)
                                     .multilineTextAlignment(.leading)

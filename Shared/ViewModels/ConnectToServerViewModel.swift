@@ -48,6 +48,7 @@ final class ConnectToServerViewModel: ViewModel {
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
+            .prepending("http://", if: !url.contains("://"))
 
         guard let url = URL(string: formattedURL) else { throw JellyfinAPIError("Invalid URL") }
 
@@ -66,9 +67,13 @@ final class ConnectToServerViewModel: ViewModel {
             throw JellyfinAPIError("Missing server data from network call")
         }
 
+        // in case of redirects, we must process the new URL
+
+        let connectionURL = processConnectionURL(initial: url, response: response.response.url)
+
         let newServerState = ServerState(
-            urls: [url],
-            currentURL: url,
+            urls: [connectionURL],
+            currentURL: connectionURL,
             name: name,
             id: id,
             os: os,
@@ -77,6 +82,27 @@ final class ConnectToServerViewModel: ViewModel {
         )
 
         return (newServerState, url)
+    }
+
+    // TODO: this probably isn't the best way to properly handle this, fix if necessary
+    private func processConnectionURL(initial url: URL, response: URL?) -> URL {
+
+        guard let response else { return url }
+
+        if url.scheme != response.scheme ||
+            url.host != response.host
+        {
+            var newURL = response.absoluteString.trimmingSuffix(Paths.getPublicSystemInfo.url?.absoluteString ?? "")
+
+            // if ended in a "/"
+            if url.absoluteString.last == "/" {
+                newURL.append("/")
+            }
+
+            return URL(string: newURL) ?? url
+        }
+
+        return url
     }
 
     func isDuplicate(server: ServerState) -> Bool {

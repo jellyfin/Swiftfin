@@ -29,10 +29,7 @@ extension ItemView {
                     .font(.title2)
                     .fontWeight(.bold)
                     .accessibility(addTraits: [.isHeader])
-                    .padding(.horizontal)
-                    .if(UIDevice.isPad) { view in
-                        view.padding(.horizontal)
-                    }
+                    .edgePadding(.horizontal)
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
@@ -41,6 +38,7 @@ extension ItemView {
                                 .item.imageSource(.primary, maxWidth: 300)
                         )
                         .posterStyle(.portrait)
+                        .posterShadow()
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 
@@ -54,10 +52,7 @@ extension ItemView {
 
                         RatingsCard(item: viewModel.item)
                     }
-                    .padding(.horizontal)
-                    .if(UIDevice.isPad) { view in
-                        view.padding(.horizontal)
-                    }
+                    .edgePadding(.horizontal)
                 }
             }
         }

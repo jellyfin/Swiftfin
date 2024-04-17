@@ -6,11 +6,12 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct PaletteOverlayRenderingModifier: ViewModifier {
 
-    @Environment(\.accentColor)
+    @Default(.accentColor)
     private var accentColor
 
     let color: Color?

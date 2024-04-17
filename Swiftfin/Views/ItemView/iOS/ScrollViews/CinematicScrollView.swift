@@ -15,7 +15,7 @@ extension ItemView {
     struct CinematicScrollView<Content: View>: View {
 
         @Default(.Customization.CinematicItemViewType.usePrimaryImage)
-        private var cinematicItemViewTypeUsePrimaryImage
+        private var usePrimaryImage
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
@@ -41,7 +41,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(
-                cinematicItemViewTypeUsePrimaryImage ? .primary : .backdrop,
+                usePrimaryImage ? .primary : .backdrop,
                 maxWidth: UIScreen.main.bounds.width
             ))
             .aspectRatio(contentMode: .fill)
@@ -60,59 +60,33 @@ extension ItemView {
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-
-                    VStack(spacing: 0) {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .background {
-                                BlurView(style: .systemThinMaterialDark)
-                                    .mask {
-                                        LinearGradient(
-                                            stops: [
-                                                .init(color: .white.opacity(0), location: 0),
-                                                .init(color: .white, location: 0.3),
-                                                .init(color: .white, location: 1),
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    }
-                            }
-                            .overlay {
-                                Color.systemBackground
-                                    .opacity(topOpacity)
-                            }
-                    }
-                    .frame(height: UIScreen.main.bounds.height * 0.8)
-
-                    content()
-                        .padding(.vertical)
-                        .background(Color.systemBackground)
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .scrollViewOffset($scrollViewOffset)
-            .navigationBarOffset(
-                $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.66,
-                end: UIScreen.main.bounds.height * 0.66 + 50
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.8,
-                multiplier: 0.3
-            ) {
+            OffsetScrollView(headerHeight: 0.75) {
                 headerView
-            }
-            .topBarTrailing {
-                if viewModel.state == .refreshing {
-                    ProgressView()
+            } overlay: {
+                VStack {
+                    Spacer()
+
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding(.horizontal)
+                        .padding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .white.opacity(0), location: 0),
+                                            .init(color: .white, location: 0.3),
+                                            .init(color: .white, location: 1),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
                 }
+            } content: {
+                content()
+                    .edgePadding(.vertical)
             }
         }
     }
@@ -132,10 +106,9 @@ extension ItemView.CinematicScrollView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
-
                 VStack(alignment: .center, spacing: 10) {
                     if !cinematicItemViewTypeUsePrimaryImage {
-                        ImageView(viewModel.item.imageURL(.logo, maxWidth: UIScreen.main.bounds.width))
+                        ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
                             .placeholder {
                                 EmptyView()
                             }
@@ -147,11 +120,7 @@ extension ItemView.CinematicScrollView {
                                     .foregroundColor(.white)
                             }
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 100)
-                            .frame(maxWidth: .infinity)
-                    } else {
-                        Spacer()
-                            .frame(height: 50)
+                            .frame(height: 100, alignment: .bottom)
                     }
 
                     DotHStack {
@@ -183,7 +152,7 @@ extension ItemView.CinematicScrollView {
                 .frame(maxWidth: .infinity)
 
                 ItemView.OverviewView(item: viewModel.item)
-                    .overviewLineLimit(4)
+                    .overviewLineLimit(3)
                     .taglineLineLimit(2)
                     .foregroundColor(.white)
 

@@ -22,6 +22,35 @@ extension CollectionItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
+                VStack(alignment: .center) {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 600))
+                        .posterStyle(.landscape, contentMode: .fill)
+                        .frame(maxHeight: 300)
+                        .posterShadow()
+                        .edgePadding(.horizontal)
+
+                    Text(viewModel.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal)
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .frame(maxWidth: 300)
+                        .foregroundStyle(.primary)
+                }
+
+                // MARK: Overview
+
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
+                    .taglineLineLimit(2)
+                    .padding(.horizontal)
+
+                RowDivider()
+
                 // MARK: Genres
 
                 if let genres = viewModel.item.itemGenres, genres.isNotEmpty {

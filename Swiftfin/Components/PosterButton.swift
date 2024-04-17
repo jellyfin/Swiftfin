@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
+// TODO: allow `content` to trigger `onSelect`?
 
 struct PosterButton<Item: Poster>: View {
 

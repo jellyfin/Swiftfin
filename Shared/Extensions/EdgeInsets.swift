@@ -36,6 +36,10 @@ extension EdgeInsets {
     }
 
     static let zero: EdgeInsets = .init()
+
+    var vertical: CGFloat {
+        top + bottom
+    }
 }
 
 extension NSDirectionalEdgeInsets {

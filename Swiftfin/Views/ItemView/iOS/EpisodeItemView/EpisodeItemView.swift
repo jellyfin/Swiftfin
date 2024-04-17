@@ -11,25 +11,13 @@ import SwiftUI
 
 struct EpisodeItemView: View {
 
-    @EnvironmentObject
-    private var router: ItemCoordinator.Router
-
     @ObservedObject
     var viewModel: EpisodeItemViewModel
 
-    @State
-    private var scrollViewOffset: CGFloat = 0
-
     var body: some View {
-        ScrollView(showsIndicators: false) {
+        ScrollView {
             ContentView(viewModel: viewModel)
                 .edgePadding(.bottom)
         }
-        .scrollViewOffset($scrollViewOffset)
-        .navigationBarOffset(
-            $scrollViewOffset,
-            start: 0,
-            end: 10
-        )
     }
 }

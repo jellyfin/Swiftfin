@@ -46,14 +46,16 @@ extension BaseItemDto: Poster {
 
     var typeSystemImage: String? {
         switch type {
+        case .boxSet:
+            "film.stack"
         case .episode, .movie, .series:
             "film"
         case .folder:
             "folder.fill"
         case .person:
             "person.fill"
-        case .boxSet:
-            "film.stack"
+        case .program:
+            "tv"
         default: nil
         }
     }
@@ -82,6 +84,8 @@ extension BaseItemDto: Poster {
                 ]
             }
         case .folder:
+            return [imageSource(.primary, maxWidth: maxWidth)]
+        case .program:
             return [imageSource(.primary, maxWidth: maxWidth)]
         case .video:
             return [imageSource(.primary, maxWidth: maxWidth)]

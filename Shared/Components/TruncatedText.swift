@@ -19,7 +19,7 @@ struct TruncatedText: View {
         case view
     }
 
-    @Environment(\.accentColor)
+    @Default(.accentColor)
     private var accentColor
 
     @State

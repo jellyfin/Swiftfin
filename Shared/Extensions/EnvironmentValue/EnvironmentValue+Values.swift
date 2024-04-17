@@ -10,11 +10,6 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    var accentColor: Color {
-        get { self[AccentColorKey.self] }
-        set { self[AccentColorKey.self] = newValue }
-    }
-
     var audioOffset: Binding<Int> {
         get { self[AudioOffsetKey.self] }
         set { self[AudioOffsetKey.self] = newValue }

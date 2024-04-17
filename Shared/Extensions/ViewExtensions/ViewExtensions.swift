@@ -183,14 +183,25 @@ extension View {
 
     // TODO: have width/height tracked binding
 
-    func onSizeChanged(_ onChange: @escaping (CGSize) -> Void) -> some View {
+    func onSizeChanged(perform action: @escaping (CGSize) -> Void) -> some View {
+        onSizeChanged { size, _ in
+            action(size)
+        }
+    }
+
+    func onSizeChanged(perform action: @escaping (CGSize, EdgeInsets) -> Void) -> some View {
         background {
             GeometryReader { reader in
                 Color.clear
-                    .preference(key: SizePreferenceKey.self, value: reader.size)
+                    .preference(
+                        key: GeometryPrefenceKey.self,
+                        value: GeometryPrefenceKey.Value(size: reader.size, safeAreaInsets: reader.safeAreaInsets)
+                    )
             }
         }
-        .onPreferenceChange(SizePreferenceKey.self, perform: onChange)
+        .onPreferenceChange(GeometryPrefenceKey.self) { value in
+            action(value.size, value.safeAreaInsets)
+        }
     }
 
     // TODO: probably rename since this doesn't set the size but tracks it
@@ -304,4 +315,14 @@ extension View {
             )
         )
     }
+
+    #if DEBUG
+    // Useful modifier during development
+    func debugBackground(_ color: Color = Color.red, opacity: CGFloat = 0.5) -> some View {
+        background {
+            color
+                .opacity(opacity)
+        }
+    }
+    #endif
 }

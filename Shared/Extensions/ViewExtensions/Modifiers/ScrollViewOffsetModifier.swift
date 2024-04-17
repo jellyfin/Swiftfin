@@ -6,34 +6,34 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Introspect
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ScrollViewOffsetModifier: ViewModifier {
 
-    @Binding
-    var scrollViewOffset: CGFloat
-
-    private let scrollViewDelegate: ScrollViewDelegate?
+    @StateObject
+    private var scrollViewDelegate: ScrollViewDelegate
 
     init(scrollViewOffset: Binding<CGFloat>) {
-        self._scrollViewOffset = scrollViewOffset
-        self.scrollViewDelegate = ScrollViewDelegate()
-        self.scrollViewDelegate?.parent = self
+        self._scrollViewDelegate = StateObject(wrappedValue: ScrollViewDelegate(scrollViewOffset: scrollViewOffset))
     }
 
     func body(content: Content) -> some View {
-        content.introspectScrollView { scrollView in
+        content.introspect(.scrollView, on: .iOS(.v15), .iOS(.v16), .iOS(.v17)) { scrollView in
             scrollView.delegate = scrollViewDelegate
         }
     }
 
-    private class ScrollViewDelegate: NSObject, UIScrollViewDelegate {
+    private class ScrollViewDelegate: NSObject, ObservableObject, UIScrollViewDelegate {
 
-        var parent: ScrollViewOffsetModifier?
+        let scrollViewOffset: Binding<CGFloat>
+
+        init(scrollViewOffset: Binding<CGFloat>) {
+            self.scrollViewOffset = scrollViewOffset
+        }
 
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            parent?._scrollViewOffset.wrappedValue = scrollView.contentOffset.y
+            scrollViewOffset.wrappedValue = scrollView.contentOffset.y
         }
     }
 }
