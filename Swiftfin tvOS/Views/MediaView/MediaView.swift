@@ -15,8 +15,6 @@ import SwiftUI
 struct MediaView: View {
 
     @EnvironmentObject
-    private var mainRouter: MainCoordinator.Router
-    @EnvironmentObject
     private var router: MediaCoordinator.Router
 
     @StateObject
@@ -36,7 +34,8 @@ struct MediaView: View {
                             filters: .default
                         )
                         router.route(to: \.library, viewModel)
-                    case .downloads: ()
+                    case .downloads:
+                        assertionFailure("Downloads unavailable on tvOS")
                     case .favorites:
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
@@ -44,7 +43,7 @@ struct MediaView: View {
                         )
                         router.route(to: \.library, viewModel)
                     case .liveTV:
-                        mainRouter.root(\.liveTV)
+                        router.route(to: \.liveTV)
                     }
                 }
         }
