@@ -16,9 +16,9 @@ extension FixedWidthInteger {
         let seconds = self % 3600 % 60
 
         let hourText = hours > 0 ? String(hours).appending(":") : ""
-        let minutesText = hours > 0 ? String(minutes).leftPad(toWidth: 2, withString: "0").appending(":") : String(minutes)
+        let minutesText = hours > 0 ? String(minutes).leftPad(maxWidth: 2, with: "0").appending(":") : String(minutes)
             .appending(":")
-        let secondsText = String(seconds).leftPad(toWidth: 2, withString: "0")
+        let secondsText = String(seconds).leftPad(maxWidth: 2, with: "0")
 
         return hourText
             .appending(minutesText)
@@ -28,8 +28,8 @@ extension FixedWidthInteger {
 
 extension Int {
 
-    /// Format if the current value represents milliseconds
-    var millisecondFormat: String {
+    /// Label if the current value represents milliseconds
+    var millisecondLabel: String {
         let isNegative = self < 0
         let value = abs(self)
         let seconds = "\(value / 1000)"
@@ -42,8 +42,8 @@ extension Int {
             .prepending("-", if: isNegative)
     }
 
-    // Format if the current value represents seconds
-    var secondFormat: String {
+    /// Label if the current value represents seconds
+    var secondLabel: String {
         let isNegative = self < 0
         let value = abs(self)
         let seconds = "\(value)"
@@ -51,5 +51,13 @@ extension Int {
         return seconds
             .appending("s")
             .prepending("-", if: isNegative)
+    }
+
+    init?(_ source: CGFloat?) {
+        if let source = source {
+            self.init(source)
+        } else {
+            return nil
+        }
     }
 }

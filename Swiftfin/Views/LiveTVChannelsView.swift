@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -47,47 +47,52 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
-                mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
+                guard let mediaSource = channel.mediaSources?.first else {
+                    return
+                }
+                viewModel.stopScheduleCheckTimer()
+                mainRouter.route(to: \.liveVideoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
             }
         )
     }
 
     var body: some View {
-
-        if viewModel.isLoading {
-            ProgressView()
-        } else if !viewModel.channelPrograms.isEmpty {
-
-            CollectionView(items: viewModel.channelPrograms) { _, program, _ in
-                channelCell(for: program)
-            }
-            .layout { _, layoutEnvironment in
-                .grid(
-                    layoutEnvironment: layoutEnvironment,
-                    layoutMode: .adaptive(withMinItemSize: 250),
-                    itemSpacing: 16,
-                    lineSpacing: 4,
-                    itemSize: .fractionalWidth(1 / 3)
-                )
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .ignoresSafeArea()
-            .onAppear {
-                viewModel.startScheduleCheckTimer()
-            }
-            .onDisappear {
-                viewModel.stopScheduleCheckTimer()
-            }
-        } else {
-            VStack {
-                Text(L10n.noResults)
-                Button {
-                    viewModel.getChannels()
-                } label: {
-                    Text(L10n.reload)
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.elements.isNotEmpty {
+                CollectionVGrid(
+                    $viewModel.elements,
+                    layout: .minWidth(250, itemSpacing: 16, lineSpacing: 4)
+                ) { program in
+                    channelCell(for: program)
+                }
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.send(.getNextPage)
+                }
+                .onAppear {
+                    viewModel.startScheduleCheckTimer()
+                }
+                .onDisappear {
+                    viewModel.stopScheduleCheckTimer()
+                }
+            } else {
+                VStack {
+                    Text(L10n.noResults)
+                    Button {
+                        viewModel.send(.refresh)
+                    } label: {
+                        Text(L10n.reload)
+                    }
                 }
             }
         }
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.send(.refresh)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private func nextProgramsDisplayText(nextItems: [BaseItemDto], timeFormatter: DateFormatter) -> [LiveTVChannelViewProgram] {

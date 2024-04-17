@@ -8,28 +8,24 @@
 
 import SwiftUI
 
+// TODO: remove rest occurrences of `UIDevice.main` sizings
+// TODO: overlay spacing between overview and play button should be dynamic
+//       - smaller spacing on smaller widths (iPad Mini, portrait)
+
+// landscape vs portrait ratios just "feel right". Adjust if necessary
+// or if a concrete design comes along.
+
 extension ItemView {
 
     struct iPadOSCinematicScrollView<Content: View>: View {
-
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
 
         @ObservedObject
         var viewModel: ItemViewModel
 
         @State
-        private var scrollViewOffset: CGFloat = 0
+        private var globalSize: CGSize = .zero
 
         let content: () -> Content
-
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.45
-            let end = UIScreen.main.bounds.height * 0.65
-            let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
-        }
 
         @ViewBuilder
         private var headerView: some View {
@@ -40,65 +36,39 @@ extension ItemView {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
                 }
             }
-            .frame(height: UIScreen.main.bounds.height * 0.8)
+            .aspectRatio(contentMode: .fill)
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    VStack(spacing: 0) {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel)
-                            .padding2(.horizontal)
-                            .padding2(.bottom)
-                    }
-                    .frame(height: UIScreen.main.bounds.height * 0.8)
-                    .background {
-                        BlurView(style: .systemThinMaterialDark)
-                            .mask {
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: .clear, location: 0.4),
-                                        .init(color: .white, location: 0.8),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            }
-                    }
-                    .overlay {
-                        Color.systemBackground
-                            .opacity(topOpacity)
-                    }
-
-                    content()
-                        .padding(.vertical)
-                        .background(Color.systemBackground)
-                }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.horizontal)
-            .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
-                $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.65,
-                end: UIScreen.main.bounds.height * 0.65 + 50
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.8,
-                multiplier: 0.3
+            OffsetScrollView(
+                headerHeight: globalSize.isLandscape ? 0.75 : 0.6
             ) {
                 headerView
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
+            } overlay: {
+                VStack(spacing: 0) {
+                    Spacer()
+
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding()
                 }
+                .background {
+                    BlurView(style: .systemThinMaterialDark)
+                        .mask {
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .clear, location: 0.4),
+                                    .init(color: .white, location: 0.8),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        }
+                }
+            } content: {
+                content()
+                    .edgePadding(.vertical)
             }
+            .size($globalSize)
         }
     }
 }
@@ -121,9 +91,8 @@ extension ItemView.iPadOSCinematicScrollView {
                     ImageView(viewModel.item.imageSource(
                         .logo,
                         maxWidth: UIScreen.main.bounds.width * 0.4,
-                        maxHeight: 150
+                        maxHeight: 130
                     ))
-                    .resizingMode(.bottomLeft)
                     .placeholder {
                         EmptyView()
                     }
@@ -135,10 +104,12 @@ extension ItemView.iPadOSCinematicScrollView {
                             .multilineTextAlignment(.leading)
                             .foregroundColor(.white)
                     }
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: UIScreen.main.bounds.width * 0.4, maxHeight: 130, alignment: .bottomLeading)
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(3)
-                        .taglineLineLimit(1)
+                        .taglineLineLimit(2)
                         .foregroundColor(.white)
 
                     HStack(spacing: 30) {
@@ -153,7 +124,7 @@ extension ItemView.iPadOSCinematicScrollView {
                                 Text(premiereYear)
                             }
 
-                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                            if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                                 Text(runtime)
                             }
                         }
@@ -165,15 +136,22 @@ extension ItemView.iPadOSCinematicScrollView {
 
                 Spacer()
 
-                VStack(spacing: 10) {
-                    ItemView.PlayButton(viewModel: viewModel)
-                        .frame(height: 50)
+                // TODO: remove when/if collections have a different view
 
-                    ItemView.ActionButtonHStack(viewModel: viewModel)
-                        .font(.title)
-                        .foregroundColor(.white)
+                if !(viewModel is CollectionItemViewModel) {
+                    VStack(spacing: 10) {
+                        ItemView.PlayButton(viewModel: viewModel)
+                            .frame(height: 50)
+
+                        ItemView.ActionButtonHStack(viewModel: viewModel)
+                            .font(.title)
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 250)
+                } else {
+                    Color.clear
+                        .frame(width: 250)
                 }
-                .frame(width: 250)
             }
         }
     }

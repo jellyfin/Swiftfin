@@ -9,183 +9,215 @@
 import Combine
 import CoreStore
 import Factory
-import Foundation
+import Get
 import JellyfinAPI
-import UIKit
+import OrderedCollections
 
-final class HomeViewModel: ViewModel {
+final class HomeViewModel: ViewModel, Stateful {
+
+    // MARK: Action
+
+    enum Action: Equatable {
+        case backgroundRefresh
+        case error(JellyfinAPIError)
+        case setIsPlayed(Bool, BaseItemDto)
+        case refresh
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
+        case refresh
+    }
+
+    // MARK: State
+
+    enum State: Hashable {
+        case content
+        case error(JellyfinAPIError)
+        case initial
+        case refreshing
+    }
 
     @Published
-    var errorMessage: String?
+    private(set) var libraries: [LatestInLibraryViewModel] = []
     @Published
-    var hasNextUp: Bool = false
+    var resumeItems: OrderedSet<BaseItemDto> = []
+
     @Published
-    var hasRecentlyAdded: Bool = false
+    var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    var libraries: [BaseItemDto] = []
+    var lastAction: Action? = nil
     @Published
-    var resumeItems: [BaseItemDto] = []
+    var state: State = .initial
+
+    // TODO: replace with views checking what notifications were
+    //       posted since last disappear
+    @Published
+    var notificationsReceived: Set<Notifications.Key> = []
+
+    private var backgroundRefreshTask: AnyCancellable?
+    private var refreshTask: AnyCancellable?
+
+    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
         super.init()
 
-        refresh()
-    }
-
-    @objc
-    func refresh() {
-
-        hasNextUp = false
-        hasRecentlyAdded = false
-        libraries = []
-        resumeItems = []
-
-        Task {
-            logger.debug("Refreshing home screen")
-
-            await MainActor.run {
-                isLoading = true
-            }
-
-            refreshHasRecentlyAddedItems()
-            refreshResumeItems()
-            refreshHasNextUp()
-
-            do {
-                try await refreshLibrariesLatest()
-            } catch {
-                await MainActor.run {
-                    isLoading = false
-                    errorMessage = error.localizedDescription
+        Notifications[.itemMetadataDidChange].publisher
+            .sink { _ in
+                // Necessary because when this notification is posted, even with asyncAfter,
+                // the view will cause layout issues since it will redraw while in landscape.
+                // TODO: look for better solution
+                DispatchQueue.main.async {
+                    self.notificationsReceived.insert(Notifications.Key.itemMetadataDidChange)
                 }
-
-                return
             }
+            .store(in: &cancellables)
+    }
 
-            await MainActor.run {
-                isLoading = false
-                errorMessage = nil
+    func respond(to action: Action) -> State {
+        switch action {
+        case .backgroundRefresh:
+
+            backgroundRefreshTask?.cancel()
+            backgroundStates.append(.refresh)
+
+            backgroundRefreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+
+                    nextUpViewModel.send(.refresh)
+                    recentlyAddedViewModel.send(.refresh)
+
+                    let resumeItems = try await getResumeItems()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.resumeItems.elements = resumeItems
+                        self.backgroundStates.remove(.refresh)
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
+        case let .error(error):
+            return .error(error)
+        case let .setIsPlayed(isPlayed, item): ()
+            Task {
+                try await setIsPlayed(isPlayed, for: item)
+
+                self.send(.backgroundRefresh)
+            }
+            .store(in: &cancellables)
+
+            return state
+        case .refresh:
+            backgroundRefreshTask?.cancel()
+            refreshTask?.cancel()
+
+            refreshTask = Task { [weak self] in
+                guard let self else { return }
+                do {
+
+                    try await self.refresh()
+
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.state = .content
+                    }
+                } catch {
+                    guard !Task.isCancelled else { return }
+
+                    await MainActor.run {
+                        self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .refreshing
         }
     }
 
-    // MARK: Libraries Latest Items
+    private func refresh() async throws {
 
-    private func refreshLibrariesLatest() async throws {
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        let response = try await userSession.client.send(userViewsPath)
+        await nextUpViewModel.send(.refresh)
+        await recentlyAddedViewModel.send(.refresh)
 
-        guard let allLibraries = response.value.items else {
-            await MainActor.run {
-                libraries = []
-            }
+        let resumeItems = try await getResumeItems()
+        let libraries = try await getLibraries()
 
-            return
+        for library in libraries {
+            await library.send(.refresh)
         }
-
-        let excludedLibraryIDs = await getExcludedLibraries()
-
-        let newLibraries = allLibraries
-            .filter { $0.collectionType == "movies" || $0.collectionType == "tvshows" }
-            .filter { library in
-                !excludedLibraryIDs.contains(where: { $0 == library.id ?? "" })
-            }
 
         await MainActor.run {
-            libraries = newLibraries
+            self.resumeItems.elements = resumeItems
+            self.libraries = libraries
         }
     }
 
-    private func getExcludedLibraries() async -> [String] {
+    private func getResumeItems() async throws -> [BaseItemDto] {
+        var parameters = Paths.GetResumeItemsParameters()
+        parameters.enableUserData = true
+        parameters.fields = .MinimumFields
+        parameters.includeItemTypes = [.movie, .episode]
+        parameters.limit = 20
+
+        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        return response.value.items ?? []
+    }
+
+    private func getLibraries() async throws -> [LatestInLibraryViewModel] {
+
+        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        async let userViews = userSession.client.send(userViewsPath)
+
+        async let excludedLibraryIDs = getExcludedLibraries()
+
+        return try await (userViews.value.items ?? [])
+            .intersection(["movies", "tvshows"], using: \.collectionType)
+            .subtracting(excludedLibraryIDs, using: \.id)
+            .map { LatestInLibraryViewModel(parent: $0) }
+    }
+
+    // TODO: use the more updated server/user data when implemented
+    private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
-        let response = try? await userSession.client.send(currentUserPath)
+        let response = try await userSession.client.send(currentUserPath)
 
-        return response?.value.configuration?.latestItemsExcludes ?? []
+        return response.value.configuration?.latestItemsExcludes ?? []
     }
 
-    // MARK: Recently Added Items
+    private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
+        let request: Request<UserItemDataDto>
 
-    private func refreshHasRecentlyAddedItems() {
-        Task {
-            let parameters = Paths.GetLatestMediaParameters(
-                includeItemTypes: [.movie, .series],
-                limit: 1
-            )
-            let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasRecentlyAdded = !response.value.isEmpty
-            }
-        }
-    }
-
-    // MARK: Resume Items
-
-    private func refreshResumeItems() {
-        Task {
-            let resumeParameters = Paths.GetResumeItemsParameters(
-                limit: 20,
-                fields: ItemFields.minimumCases,
-                enableUserData: true,
-                includeItemTypes: [.movie, .episode]
-            )
-
-            let request = Paths.getResumeItems(userID: userSession.user.id, parameters: resumeParameters)
-            let response = try await userSession.client.send(request)
-
-            guard let items = response.value.items else { return }
-
-            await MainActor.run {
-                resumeItems = items
-            }
-        }
-    }
-
-    func markItemUnplayed(_ item: BaseItemDto) {
-        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-
-        Task {
-            let request = Paths.markUnplayedItem(
+        if isPlayed {
+            request = Paths.markPlayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
-            let _ = try await userSession.client.send(request)
-
-            refreshResumeItems()
-            refreshHasNextUp()
-        }
-    }
-
-    func markItemPlayed(_ item: BaseItemDto) {
-        guard resumeItems.contains(where: { $0.id == item.id! }) else { return }
-
-        Task {
-            let request = Paths.markPlayedItem(
+        } else {
+            request = Paths.markUnplayedItem(
                 userID: userSession.user.id,
                 itemID: item.id!
             )
-            let _ = try await userSession.client.send(request)
-
-            refreshResumeItems()
-            refreshHasNextUp()
         }
-    }
 
-    // MARK: Next Up Items
-
-    private func refreshHasNextUp() {
-        Task {
-            let parameters = Paths.GetNextUpParameters(
-                userID: userSession.user.id,
-                limit: 1
-            )
-            let request = Paths.getNextUp(parameters: parameters)
-            let response = try await userSession.client.send(request)
-
-            await MainActor.run {
-                hasNextUp = !(response.value.items?.isEmpty ?? true)
-            }
-        }
+        let _ = try await userSession.client.send(request)
     }
 }

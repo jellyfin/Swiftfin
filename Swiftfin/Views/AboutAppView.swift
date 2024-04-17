@@ -45,7 +45,7 @@ struct AboutAppView: View {
 
                 ChevronButton(title: L10n.sourceCode)
                     .leadingView {
-                        Image("logo.github")
+                        Image(.logoGithub)
                             .resizable()
                             .frame(width: 20, height: 20)
                             .foregroundColor(.primary)

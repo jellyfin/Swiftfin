@@ -28,8 +28,8 @@ struct CustomizeViewsSettings: View {
     private var similarPosterType
     @Default(.Customization.searchPosterType)
     private var searchPosterType
-    @Default(.Customization.Library.gridPosterType)
-    private var libraryGridPosterType
+    @Default(.Customization.Library.viewType)
+    private var libraryViewType
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
@@ -79,7 +79,7 @@ struct CustomizeViewsSettings: View {
 
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
-                    InlineEnumToggle(title: L10n.library, selection: $libraryGridPosterType)
+                    InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
 
                 } header: {
                     Text("Posters")

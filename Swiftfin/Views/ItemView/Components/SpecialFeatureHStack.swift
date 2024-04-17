@@ -7,6 +7,7 @@
 //
 
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 extension ItemView {

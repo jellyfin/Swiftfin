@@ -21,7 +21,7 @@ struct LiveTVProgramsView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading) {
-                if !viewModel.recommendedItems.isEmpty {
+                if viewModel.recommendedItems.isNotEmpty {
                     let items = viewModel.recommendedItems
                     Text("On Now")
                         .font(.headline)
@@ -36,7 +36,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -46,7 +46,7 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.seriesItems.isEmpty {
+                if viewModel.seriesItems.isNotEmpty {
                     let items = viewModel.seriesItems
                     Text("Shows")
                         .font(.headline)
@@ -61,7 +61,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -71,7 +71,7 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.movieItems.isEmpty {
+                if viewModel.movieItems.isNotEmpty {
                     let items = viewModel.movieItems
                     Text("Movies")
                         .font(.headline)
@@ -86,7 +86,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -96,7 +96,7 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.sportsItems.isEmpty {
+                if viewModel.sportsItems.isNotEmpty {
                     let items = viewModel.sportsItems
                     Text("Sports")
                         .font(.headline)
@@ -111,7 +111,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -121,7 +121,7 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.kidsItems.isEmpty {
+                if viewModel.kidsItems.isNotEmpty {
                     let items = viewModel.kidsItems
                     Text("Kids")
                         .font(.headline)
@@ -136,7 +136,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }
@@ -146,7 +146,7 @@ struct LiveTVProgramsView: View {
                         }
                     }.frame(height: 350)
                 }
-                if !viewModel.newsItems.isEmpty {
+                if viewModel.newsItems.isNotEmpty {
                     let items = viewModel.newsItems
                     Text("News")
                         .font(.headline)
@@ -161,7 +161,7 @@ struct LiveTVProgramsView: View {
                                           let channel = viewModel.findChannel(id: channelID),
                                           let mediaSource = channel.mediaSources?.first else { return }
 
-                                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: mediaSource))
+                                    router.route(to: \.videoPlayer, LiveVideoPlayerManager(item: channel, mediaSource: mediaSource))
                                 } label: {
                                     LandscapeItemElement(item: item)
                                 }

@@ -26,20 +26,8 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        BasicNavigationViewCoordinator {
-            Group {
-                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: manager)
-                        .overlay {
-                            VideoPlayer.Overlay()
-                        }
-                } else {
-                    NativeVideoPlayer(manager: manager)
-                }
-            }
-        }
-        .inNavigationViewCoordinator()
+    func makeVideoPlayer(manager: LiveVideoPlayerManager) -> NavigationViewCoordinator<LiveVideoPlayerCoordinator> {
+        NavigationViewCoordinator(LiveVideoPlayerCoordinator(manager: manager))
     }
     #endif
 
@@ -47,18 +35,18 @@ final class LiveTVProgramsCoordinator: NavigationCoordinatable {
     func makeStart() -> some View {
         let viewModel = LiveTVProgramsViewModel()
 
-        let channels = (1 ..< 20).map { _ in BaseItemDto.randomItem() }
-
-        for channel in channels {
-            viewModel.channels[channel.id!] = channel
-        }
-
-        viewModel.recommendedItems = channels.randomSample(count: 5)
-        viewModel.seriesItems = channels.randomSample(count: 5)
-        viewModel.movieItems = channels.randomSample(count: 5)
-        viewModel.sportsItems = channels.randomSample(count: 5)
-        viewModel.kidsItems = channels.randomSample(count: 5)
-        viewModel.newsItems = channels.randomSample(count: 5)
+//        let channels = (1 ..< 20).map { _ in BaseItemDto.randomItem() }
+//
+//        for channel in channels {
+//            viewModel.channels[channel.id!] = channel
+//        }
+//
+//        viewModel.recommendedItems = channels.randomSample(count: 5)
+//        viewModel.seriesItems = channels.randomSample(count: 5)
+//        viewModel.movieItems = channels.randomSample(count: 5)
+//        viewModel.sportsItems = channels.randomSample(count: 5)
+//        viewModel.kidsItems = channels.randomSample(count: 5)
+//        viewModel.newsItems = channels.randomSample(count: 5)
 
         return LiveTVProgramsView(viewModel: viewModel)
     }

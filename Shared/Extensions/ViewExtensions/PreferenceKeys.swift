@@ -13,12 +13,18 @@ struct FramePreferenceKey: PreferenceKey {
     static func reduce(value: inout CGRect, nextValue: () -> CGRect) {}
 }
 
+struct GeometryPrefenceKey: PreferenceKey {
+
+    static var defaultValue: Value = Value(size: .zero, safeAreaInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))
+    static func reduce(value: inout Value, nextValue: () -> Value) {}
+
+    struct Value: Equatable {
+        let size: CGSize
+        let safeAreaInsets: EdgeInsets
+    }
+}
+
 struct LocationPreferenceKey: PreferenceKey {
     static var defaultValue: CGPoint = .zero
     static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {}
-}
-
-struct SizePreferenceKey: PreferenceKey {
-    static var defaultValue: CGSize = .zero
-    static func reduce(value: inout CGSize, nextValue: () -> CGSize) {}
 }

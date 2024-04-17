@@ -30,7 +30,7 @@ class VideoPlayerViewModel: ViewModel {
 
     var hlsPlaybackURL: URL {
 
-        let userSession = Container.userSession.callAsFunction()
+        let userSession = Container.userSession()
 
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
@@ -57,7 +57,8 @@ class VideoPlayerViewModel: ViewModel {
             parameters: parameters
         )
 
-        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request), resolvingAgainstBaseURL: false)!
+        // TODO: don't force unwrap
+        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request)!, resolvingAgainstBaseURL: false)!
             .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
 
         return hlsStreamComponents.url!
@@ -67,7 +68,9 @@ class VideoPlayerViewModel: ViewModel {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
         configuration.startTime = .seconds(max(0, item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]))
-        configuration.audioIndex = .absolute(selectedAudioStreamIndex)
+        if self.audioStreams[0].path != nil {
+            configuration.audioIndex = .absolute(selectedAudioStreamIndex)
+        }
         configuration.subtitleIndex = .absolute(selectedSubtitleStreamIndex)
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)

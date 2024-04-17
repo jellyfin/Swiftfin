@@ -64,39 +64,39 @@ extension VideoPlayer {
                         isPresentingOverlay = false
                     }
                 }
-                .onSelectPressed {
-                    currentOverlayType = .main
-                    isPresentingOverlay = true
-                    overlayTimer.start(5)
-                }
-                .onMenuPressed {
-
-                    overlayTimer.start(5)
-                    confirmCloseWorkItem?.cancel()
-
-                    if isPresentingOverlay && currentOverlayType == .confirmClose {
-                        proxy.stop()
-                        router.dismissCoordinator()
-                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
-                        currentOverlayType = .main
-                    } else {
-                        withAnimation {
-                            currentOverlayType = .confirmClose
-                            isPresentingOverlay = true
-                        }
-
-                        let task = DispatchWorkItem {
-                            withAnimation {
-                                isPresentingOverlay = false
-                                overlayTimer.stop()
-                            }
-                        }
-
-                        confirmCloseWorkItem = task
-
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                    }
-                }
+//                .onSelectPressed {
+//                    currentOverlayType = .main
+//                    isPresentingOverlay = true
+//                    overlayTimer.start(5)
+//                }
+//                .onMenuPressed {
+//
+//                    overlayTimer.start(5)
+//                    confirmCloseWorkItem?.cancel()
+//
+//                    if isPresentingOverlay && currentOverlayType == .confirmClose {
+//                        proxy.stop()
+//                        router.dismissCoordinator()
+//                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
+//                        currentOverlayType = .main
+//                    } else {
+//                        withAnimation {
+//                            currentOverlayType = .confirmClose
+//                            isPresentingOverlay = true
+//                        }
+//
+//                        let task = DispatchWorkItem {
+//                            withAnimation {
+//                                isPresentingOverlay = false
+//                                overlayTimer.stop()
+//                            }
+//                        }
+//
+//                        confirmCloseWorkItem = task
+//
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                    }
+//                }
         }
     }
 }

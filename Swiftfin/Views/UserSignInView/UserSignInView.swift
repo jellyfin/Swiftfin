@@ -32,12 +32,12 @@ struct UserSignInView: View {
     private var signInSection: some View {
         Section {
             TextField(L10n.username, text: $username)
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
 
-            SecureField(L10n.password, text: $password)
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
+            UnmaskSecureField(L10n.password, text: $password)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
 
             if viewModel.isLoading {
                 Button(role: .destructive) {

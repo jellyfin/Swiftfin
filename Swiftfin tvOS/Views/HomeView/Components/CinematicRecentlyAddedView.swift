@@ -17,7 +17,7 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var viewModel: ItemTypeLibraryViewModel
+        var viewModel: RecentlyAddedLibraryViewModel
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
@@ -36,10 +36,9 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.items.prefix(20).asArray)
+            CinematicItemSelector(items: viewModel.elements.elements)
                 .topContent { item in
                     ImageView(itemSelectorImageSource(for: item))
-                        .resizingMode(.bottomLeft)
                         .placeholder {
                             EmptyView()
                         }
@@ -48,16 +47,10 @@ extension HomeView {
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                         }
-                        .padding2(.leading)
+                        .edgePadding(.leading)
                 }
                 .onSelect { item in
                     router.route(to: \.item, item)
-                }
-                .trailingContent {
-                    SeeAllPosterButton(type: .landscape)
-                        .onSelect {
-                            router.route(to: \.basicLibrary, .init(title: L10n.recentlyAdded, viewModel: viewModel))
-                        }
                 }
         }
     }

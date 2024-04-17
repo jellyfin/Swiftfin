@@ -37,81 +37,59 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
+                .aspectRatio(contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
+                .onAppear {
+                    if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
+                        let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
+                        blurHashBottomEdgeColor = Color(
+                            red: Double(bottomRGB.0),
+                            green: Double(bottomRGB.1),
+                            blue: Double(bottomRGB.2)
+                        )
+                    }
+                }
         }
 
         var body: some View {
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
+            OffsetScrollView(headerHeight: 0.45) {
+                headerView
+            } overlay: {
+                VStack {
+                    Spacer()
 
-                    VStack {
-                        Spacer()
-
-                        OverlayView(viewModel: viewModel, scrollViewOffset: $scrollViewOffset)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .background {
-                                BlurView(style: .systemThinMaterialDark)
-                                    .mask {
-                                        LinearGradient(
-                                            stops: [
-                                                .init(color: .white.opacity(0), location: 0.2),
-                                                .init(color: .white.opacity(0.5), location: 0.3),
-                                                .init(color: .white, location: 0.55),
-                                            ],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    }
-                            }
-                            .overlay {
-                                Color.systemBackground
-                                    .opacity(topOpacity)
-                            }
-                    }
-                    .frame(height: UIScreen.main.bounds.height * 0.45)
+                    OverlayView(viewModel: viewModel)
+                        .edgePadding(.horizontal)
+                        .edgePadding(.bottom)
+                        .background {
+                            BlurView(style: .systemThinMaterialDark)
+                                .mask {
+                                    LinearGradient(
+                                        stops: [
+                                            .init(color: .white.opacity(0), location: 0.2),
+                                            .init(color: .white.opacity(0.5), location: 0.3),
+                                            .init(color: .white, location: 0.55),
+                                        ],
+                                        startPoint: .top,
+                                        endPoint: .bottom
+                                    )
+                                }
+                        }
+                }
+            } content: {
+                VStack(alignment: .leading, spacing: 10) {
 
                     ItemView.OverviewView(item: viewModel.item)
                         .overviewLineLimit(4)
                         .taglineLineLimit(2)
-                        .padding(.top)
                         .padding(.horizontal)
 
+                    RowDivider()
+
                     content()
-                        .padding(.vertical)
                 }
-            }
-            .edgesIgnoringSafeArea(.top)
-            .scrollViewOffset($scrollViewOffset)
-            .navBarOffset(
-                $scrollViewOffset,
-                start: UIScreen.main.bounds.height * 0.28,
-                end: UIScreen.main.bounds.height * 0.28 + 50
-            )
-            .backgroundParallaxHeader(
-                $scrollViewOffset,
-                height: UIScreen.main.bounds.height * 0.45,
-                multiplier: 0.8
-            ) {
-                headerView
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                    }
-                }
-            }
-            .onAppear {
-                if let backdropBlurHash = viewModel.item.blurHash(.backdrop) {
-                    let bottomRGB = BlurHash(string: backdropBlurHash)!.averageLinearRGB
-                    blurHashBottomEdgeColor = Color(
-                        red: Double(bottomRGB.0),
-                        green: Double(bottomRGB.1),
-                        blue: Double(bottomRGB.2)
-                    )
-                }
+                .edgePadding(.vertical)
             }
         }
     }
@@ -127,21 +105,14 @@ extension ItemView.CompactPosterScrollView {
         @ObservedObject
         var viewModel: ItemViewModel
 
-        @Binding
-        var scrollViewOffset: CGFloat
-
         @ViewBuilder
         private var rightShelfView: some View {
             VStack(alignment: .leading) {
-
-                // MARK: Name
 
                 Text(viewModel.item.displayTitle)
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
-
-                // MARK: Details
 
                 DotHStack {
                     if viewModel.item.isUnaired {
@@ -154,7 +125,7 @@ extension ItemView.CompactPosterScrollView {
                         }
                     }
 
-                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
+                    if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
                         Text(runtime)
                     }
                 }
@@ -170,18 +141,17 @@ extension ItemView.CompactPosterScrollView {
             VStack(alignment: .leading, spacing: 10) {
                 HStack(alignment: .bottom, spacing: 12) {
 
-                    // MARK: Portrait Image
-
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
-                        .posterStyle(.portrait)
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.typeSystemImage)
+                        }
+                        .posterStyle(.portrait, contentMode: .fit)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 
                     rightShelfView
                         .padding(.bottom)
                 }
-
-                // MARK: Play
 
                 HStack(alignment: .center) {
 

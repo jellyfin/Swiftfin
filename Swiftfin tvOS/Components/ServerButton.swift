@@ -35,7 +35,9 @@ struct ServerButton: View {
 
                 Spacer()
             }
+            .padding(10)
         }
+        .buttonStyle(.card)
     }
 }
 

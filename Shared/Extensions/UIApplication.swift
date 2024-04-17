@@ -36,14 +36,4 @@ extension UIApplication {
     func setAppearance(_ newAppearance: UIUserInterfaceStyle) {
         keyWindow?.overrideUserInterfaceStyle = newAppearance
     }
-
-    #if os(iOS)
-    func setNavigationBackButtonAccentColor(_ newColor: UIColor) {
-        let config = UIImage.SymbolConfiguration(paletteColors: [newColor.overlayColor, newColor])
-        let backButtonBackgroundImage = UIImage(systemName: "chevron.backward.circle.fill", withConfiguration: config)
-        let barAppearance = UINavigationBar.appearance()
-        barAppearance.backIndicatorImage = backButtonBackgroundImage
-        barAppearance.backIndicatorTransitionMaskImage = backButtonBackgroundImage
-    }
-    #endif
 }

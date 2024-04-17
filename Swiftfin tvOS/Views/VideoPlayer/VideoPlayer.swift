@@ -75,6 +75,9 @@ struct VideoPlayer: View {
                 .environment(\.isScrubbing, $isScrubbing)
         }
         .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
+            guard !newValue.isNaN && !newValue.isInfinite else {
+                return
+            }
             DispatchQueue.main.async {
                 videoPlayerManager.currentProgressHandler
                     .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)

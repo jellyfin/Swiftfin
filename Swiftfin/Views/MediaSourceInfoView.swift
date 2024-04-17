@@ -20,7 +20,7 @@ struct MediaSourceInfoView: View {
     var body: some View {
         Form {
             if let videoStreams = source.videoStreams,
-               !videoStreams.isEmpty
+               videoStreams.isNotEmpty
             {
                 Section(L10n.video) {
                     ForEach(videoStreams, id: \.self) { stream in
@@ -33,7 +33,7 @@ struct MediaSourceInfoView: View {
             }
 
             if let audioStreams = source.audioStreams,
-               !audioStreams.isEmpty
+               audioStreams.isNotEmpty
             {
                 Section(L10n.audio) {
                     ForEach(audioStreams, id: \.self) { stream in
@@ -46,7 +46,7 @@ struct MediaSourceInfoView: View {
             }
 
             if let subtitleStreams = source.subtitleStreams,
-               !subtitleStreams.isEmpty
+               subtitleStreams.isNotEmpty
             {
                 Section(L10n.subtitle) {
                     ForEach(subtitleStreams, id: \.self) { stream in
@@ -60,7 +60,7 @@ struct MediaSourceInfoView: View {
         }
         .navigationTitle(source.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationCloseButton {
+        .navigationBarCloseButton {
             router.dismissCoordinator()
         }
     }

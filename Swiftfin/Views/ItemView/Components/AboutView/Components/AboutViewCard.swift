@@ -31,10 +31,14 @@ extension ItemView.AboutView {
                             .font(.title2)
                             .fontWeight(.semibold)
                             .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
 
                         if let subtitle {
                             Text(subtitle)
                                 .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
 
                         Spacer()

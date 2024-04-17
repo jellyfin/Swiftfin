@@ -95,7 +95,7 @@ struct LiveTVChannelItemElement: View {
                         color: Color.primary,
                         font: Font.system(size: 20, weight: .bold, design: .default)
                     )
-                    if !nextProgramsText.isEmpty {
+                    if nextProgramsText.isNotEmpty {
                         let nextItem = nextProgramsText[0]
                         programLabel(
                             timeText: nextItem.timeDisplay,

@@ -11,11 +11,20 @@ import JellyfinAPI
 
 extension ItemFields {
 
-    static let minimumCases: [ItemFields] = [
-        .chapters,
+    /// The minimum cases to use when retrieving an item or items
+    /// for basic presentation. Depending on the context, using
+    /// more fields and including user data may also be necessary.
+    static let MinimumFields: [ItemFields] = [
         .mediaSources,
         .overview,
         .parentID,
         .taglines,
     ]
+}
+
+extension Array where Element == ItemFields {
+
+    static var MinimumFields: Self {
+        ItemFields.MinimumFields
+    }
 }

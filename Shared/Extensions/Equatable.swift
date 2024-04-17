@@ -10,14 +10,6 @@ import Foundation
 
 extension Equatable {
 
-    func random(in range: Range<Int>) -> [Self] {
-        Array(repeating: self, count: Int.random(in: range))
-    }
-
-    func repeating(count: Int) -> [Self] {
-        Array(repeating: self, count: count)
-    }
-
     func mutating<Value>(_ keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue

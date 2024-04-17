@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct DotHStack: View {
+struct DotHStack<Content: View>: View {
 
     @ViewBuilder
-    var content: () -> any View
+    var content: () -> Content
 
     var body: some View {
         SeparatorHStack(content)

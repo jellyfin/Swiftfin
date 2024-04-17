@@ -8,12 +8,14 @@
 
 import Foundation
 
-// TODO: find way to remove special `single` handling
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
-protocol Poster: Displayable, Hashable {
+// TODO: instead of the below image functions, have functions that match `ImageType`
+//       - allows caller to choose images
+protocol Poster: Displayable, Hashable, Identifiable {
 
     var subtitle: String? { get }
     var showTitle: Bool { get }
+    var typeSystemImage: String? { get }
 
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]

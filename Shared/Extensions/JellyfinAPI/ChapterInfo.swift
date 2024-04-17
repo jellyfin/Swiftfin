@@ -31,7 +31,11 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Hashable {
+    struct FullInfo: Poster, Equatable {
+
+        var id: Int {
+            chapterInfo.hashValue
+        }
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
@@ -41,6 +45,7 @@ extension ChapterInfo {
             chapterInfo.displayTitle
         }
 
+        let typeSystemImage: String? = "film"
         var subtitle: String?
         var showTitle: Bool = true
 

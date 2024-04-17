@@ -15,15 +15,12 @@ struct PillHStack<Item: Displayable>: View {
     private var onSelect: (Item) -> Void
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(title)
                 .font(.title2)
                 .fontWeight(.semibold)
                 .accessibility(addTraits: [.isHeader])
-                .padding(.leading)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.leading)
-                }
+                .edgePadding(.leading)
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
@@ -43,10 +40,7 @@ struct PillHStack<Item: Displayable>: View {
                         }
                     }
                 }
-                .padding(.horizontal)
-                .if(UIDevice.isIPad) { view in
-                    view.padding(.horizontal)
-                }
+                .edgePadding(.horizontal)
             }
         }
     }

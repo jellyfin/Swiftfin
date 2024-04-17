@@ -21,7 +21,7 @@ struct MediaStreamInfoView: View {
                 }
             }
 
-            if !mediaStream.colorProperties.isEmpty {
+            if mediaStream.colorProperties.isNotEmpty {
                 Section(L10n.color) {
                     ForEach(mediaStream.colorProperties) { property in
                         TextPairView(property)
@@ -29,7 +29,7 @@ struct MediaStreamInfoView: View {
                 }
             }
 
-            if !mediaStream.deliveryProperties.isEmpty {
+            if mediaStream.deliveryProperties.isNotEmpty {
                 Section(L10n.delivery) {
                     ForEach(mediaStream.deliveryProperties) { property in
                         TextPairView(property)

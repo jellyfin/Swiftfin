@@ -21,22 +21,22 @@ final class UserListCoordinator: NavigationCoordinatable {
     @Route(.push)
     var serverDetail = makeServerDetail
 
-    let viewModel: UserListViewModel
+    let serverState: ServerState
 
-    init(viewModel: UserListViewModel) {
-        self.viewModel = viewModel
+    init(server: ServerState) {
+        self.serverState = server
     }
 
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         UserSignInCoordinator(viewModel: .init(server: server))
     }
 
-    func makeServerDetail(server: SwiftfinStore.State.Server) -> ServerDetailCoordinator {
-        ServerDetailCoordinator(viewModel: .init(server: server))
+    func makeServerDetail(server: SwiftfinStore.State.Server) -> some View {
+        ServerDetailView(server: server)
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        UserListView(viewModel: viewModel)
+        UserListView(server: serverState)
     }
 }

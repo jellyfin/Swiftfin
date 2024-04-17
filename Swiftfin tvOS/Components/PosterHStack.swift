@@ -6,14 +6,17 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
+import OrderedCollections
 import SwiftUI
+
+// TODO: trailing content refactor?
 
 struct PosterHStack<Item: Poster>: View {
 
     private var title: String?
     private var type: PosterType
-    private var items: [Item]
-    private var itemScale: CGFloat
+    private var items: Binding<OrderedSet<Item>>
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -24,9 +27,9 @@ struct PosterHStack<Item: Poster>: View {
     private var focusedItem: Binding<Item?>?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
 
-            if let title = title {
+            if let title {
                 HStack {
                     Text(title)
                         .font(.title2)
@@ -38,27 +41,26 @@ struct PosterHStack<Item: Poster>: View {
                 }
             }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .top, spacing: 30) {
-                    ForEach(items, id: \.hashValue) { item in
-                        PosterButton(item: item, type: type)
-                            .scaleItem(itemScale)
-                            .content { content(item).eraseToAnyView() }
-                            .imageOverlay { imageOverlay(item).eraseToAnyView() }
-                            .contextMenu { contextMenu(item).eraseToAnyView() }
-                            .onSelect { onSelect(item) }
-                            .if(focusedItem != nil) { view in
-                                view.onFocusChanged { isFocused in
-                                    if isFocused { focusedItem?.wrappedValue = item }
-                                }
-                            }
+            CollectionHStack(
+                items,
+                columns: type == .landscape ? 4 : 7
+            ) { item in
+                PosterButton(item: item, type: type)
+                    .content { content(item).eraseToAnyView() }
+                    .imageOverlay { imageOverlay(item).eraseToAnyView() }
+                    .contextMenu { contextMenu(item).eraseToAnyView() }
+                    .onSelect { onSelect(item) }
+                    .ifLet(focusedItem) { view, focusedItem in
+                        view.onFocusChanged { isFocused in
+                            if isFocused { focusedItem.wrappedValue = item }
+                        }
                     }
-
-                    trailingContent()
-                        .eraseToAnyView()
-                }
-                .padding(50)
             }
+            .clipsToBounds(false)
+            .dataPrefix(20)
+            .insets(horizontal: EdgeInsets.defaultEdgePadding, vertical: 20)
+            .itemSpacing(EdgeInsets.defaultEdgePadding - 20)
+            .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
         .mask {
@@ -84,14 +86,13 @@ extension PosterHStack {
     init(
         title: String? = nil,
         type: PosterType,
-        items: [Item]
+        items: Binding<OrderedSet<Item>>
     ) {
         self.init(
             title: title,
             type: type,
             items: items,
-            itemScale: 1,
-            content: { PosterButton.DefaultContentView(item: $0) },
+            content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -99,12 +100,17 @@ extension PosterHStack {
             focusedItem: nil
         )
     }
-}
 
-extension PosterHStack {
-
-    func scaleItems(_ scale: CGFloat) -> Self {
-        copy(modifying: \.itemScale, with: scale)
+    init<S: Sequence<Item>>(
+        title: String? = nil,
+        type: PosterType,
+        items: S
+    ) {
+        self.init(
+            title: title,
+            type: type,
+            items: .constant(OrderedSet(items))
+        )
     }
 
     func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {

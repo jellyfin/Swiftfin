@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import Foundation
 import JellyfinAPI
 import SwiftUI
@@ -34,18 +34,35 @@ struct LiveTVChannelsView: View {
 
     @ViewBuilder
     private var channelsView: some View {
-        CollectionView(items: viewModel.channelPrograms) { _, channelProgram, _ in
-            channelCell(for: channelProgram)
-        }
-        .layout { _, layoutEnvironment in
-            .grid(
-                layoutEnvironment: layoutEnvironment,
-                layoutMode: .fixedNumberOfColumns(4),
-                itemSpacing: 8,
-                lineSpacing: 16,
-                itemSize: .estimated(400),
-                sectionInsets: .zero
-            )
+        Group {
+            if viewModel.isLoading {
+                ProgressView()
+            } else if viewModel.elements.isNotEmpty {
+                CollectionVGrid(
+                    $viewModel.elements,
+                    layout: .minWidth(400, itemSpacing: 16, lineSpacing: 4)
+                ) { program in
+                    channelCell(for: program)
+                }
+                .onReachedBottomEdge(offset: .offset(300)) {
+                    viewModel.send(.getNextPage)
+                }
+                .onAppear {
+                    viewModel.startScheduleCheckTimer()
+                }
+                .onDisappear {
+                    viewModel.stopScheduleCheckTimer()
+                }
+            } else {
+                VStack {
+                    Text(L10n.noResults)
+                    Button {
+                        viewModel.send(.refresh)
+                    } label: {
+                        Text(L10n.reload)
+                    }
+                }
+            }
         }
         .ignoresSafeArea()
     }
@@ -74,18 +91,32 @@ struct LiveTVChannelsView: View {
                 timeFormatter: viewModel.timeFormatter
             ),
             onSelect: { _ in
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: channel, mediaSource: channel.mediaSources!.first!))
+                guard let mediaSource = channel.mediaSources?.first else {
+                    return
+                }
+                viewModel.stopScheduleCheckTimer()
+                router.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel, mediaSource: mediaSource, program: channelProgram)
+                )
             }
         )
     }
 
     var body: some View {
-        if viewModel.isLoading && viewModel.channels.isEmpty {
-            loadingView
-        } else if viewModel.channels.isEmpty {
-            noResultsView
-        } else {
-            channelsView
+        Group {
+            if viewModel.isLoading && viewModel.elements.isEmpty {
+                loadingView
+            } else if viewModel.elements.isEmpty {
+                noResultsView
+            } else {
+                channelsView
+            }
+        }
+        .onFirstAppear {
+            if viewModel.state == .initial {
+                viewModel.send(.refresh)
+            }
         }
     }
 
@@ -98,7 +129,7 @@ struct LiveTVChannelsView: View {
     }
 }
 
-private extension BaseItemDto {
+extension BaseItemDto {
     func programDisplayText(timeFormatter: DateFormatter) -> LiveTVChannelViewProgram {
         var timeText = ""
         if let start = self.startDate {

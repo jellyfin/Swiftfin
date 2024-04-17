@@ -16,14 +16,15 @@ extension ItemView {
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
-        let genres: [NameGuidPair]
+        let genres: [ItemGenre]
 
         var body: some View {
             PillHStack(
                 title: L10n.genres,
                 items: genres
             ).onSelect { genre in
-                router.route(to: \.library, .init(filters: .init(genres: [genre.filter])))
+                let viewModel = ItemLibraryViewModel(title: genre.displayTitle, filters: .init(genres: [genre]))
+                router.route(to: \.library, viewModel)
             }
         }
     }

@@ -67,7 +67,6 @@ extension ItemView {
                             maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
-                        .resizingMode(.bottomLeft)
                         .placeholder {
                             EmptyView()
                         }
@@ -79,7 +78,9 @@ extension ItemView {
                                 .multilineTextAlignment(.leading)
                                 .foregroundColor(.white)
                         }
+                        .aspectRatio(contentMode: .fit)
                         .padding(.bottom)
+                        .frame(maxHeight: 250, alignment: .bottomLeading)
 
                         if let tagline = viewModel.item.taglines?.first {
                             Text(tagline)
@@ -97,15 +98,15 @@ extension ItemView {
 
                             DotHStack {
                                 if let firstGenre = viewModel.item.genres?.first {
-                                    firstGenre.text
+                                    Text(firstGenre)
                                 }
 
                                 if let premiereYear = viewModel.item.premiereDateYear {
-                                    premiereYear.text
+                                    Text(premiereYear)
                                 }
 
-                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.getItemRuntime() {
-                                    runtime.text
+                                if let playButtonitem = viewModel.playButtonItem, let runtime = playButtonitem.runTimeLabel {
+                                    Text(runtime)
                                 }
                             }
                             .font(.caption)

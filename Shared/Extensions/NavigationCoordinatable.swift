@@ -7,10 +7,18 @@
 //
 
 import Stinsen
+import SwiftUI
 
 extension NavigationCoordinatable {
 
     func inNavigationViewCoordinator() -> NavigationViewCoordinator<Self> {
         NavigationViewCoordinator(self)
+    }
+}
+
+extension NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+
+    convenience init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
+        self.init(BasicNavigationViewCoordinator(content))
     }
 }

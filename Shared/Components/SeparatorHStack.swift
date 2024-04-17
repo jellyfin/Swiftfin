@@ -10,25 +10,28 @@ import SwiftUI
 
 // https://movingparts.io/variadic-views-in-swiftui
 
-struct SeparatorHStack: View {
+/// An `HStack` that inserts an optional `separator` between views.
+///
+/// - Note: Default spacing is removed. The separator view is responsible
+///         for spacing.
+struct SeparatorHStack<Content: View>: View {
 
-    private var content: () -> any View
+    private var content: () -> Content
     private var separator: () -> any View
 
     var body: some View {
         _VariadicView.Tree(SeparatorHStackLayout(separator: separator)) {
             content()
-                .eraseToAnyView()
         }
     }
 }
 
 extension SeparatorHStack {
 
-    init(@ViewBuilder _ content: @escaping () -> any View) {
+    init(@ViewBuilder _ content: @escaping () -> Content) {
         self.init(
             content: content,
-            separator: { Divider() }
+            separator: { RowDivider() }
         )
     }
 
@@ -37,37 +40,34 @@ extension SeparatorHStack {
     }
 }
 
-struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
+extension SeparatorHStack {
 
-    var separator: () -> any View
+    struct SeparatorHStackLayout: _VariadicView_UnaryViewRoot {
 
-    @ViewBuilder
-    func body(children: _VariadicView.Children) -> some View {
+        var separator: () -> any View
 
-        let last = children.last?.id
+        @ViewBuilder
+        func body(children: _VariadicView.Children) -> some View {
 
-        localHStack {
-            ForEach(children) { child in
-                child
+            let last = children.last?.id
 
-                if child.id != last {
-                    separator()
-                        .eraseToAnyView()
+            localHStack {
+                ForEach(children) { child in
+                    child
+
+                    if child.id != last {
+                        separator()
+                            .eraseToAnyView()
+                    }
                 }
             }
         }
-    }
 
-    @ViewBuilder
-    private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-        #if os(tvOS)
-        HStack(spacing: 0) {
-            content()
+        @ViewBuilder
+        private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
+            HStack(spacing: 0) {
+                content()
+            }
         }
-        #else
-        HStack {
-            content()
-        }
-        #endif
     }
 }

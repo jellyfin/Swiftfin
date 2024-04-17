@@ -18,32 +18,36 @@ class UserListViewModel: ViewModel {
 
     @Published
     private(set) var users: [UserState] = []
+    @Published
+    private(set) var server: ServerState
 
-    let client: JellyfinClient
-    let server: ServerState
-
-    init(server: ServerState) {
-        self.client = JellyfinClient(
+    var client: JellyfinClient {
+        JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             sessionDelegate: URLSessionProxyDelegate()
         )
+    }
+
+    init(server: ServerState) {
         self.server = server
         super.init()
 
-//        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeCurrentLoginURI(_:)))
-    }
-
-    @objc
-    func didChangeCurrentLoginURI(_ notification: Notification) {
-//        guard let newServerState = notification.object as? SwiftfinStore.State.Server else { fatalError("Need to have new state server") }
-//        self.server = newServerState
+        Notifications[.didChangeCurrentServerURL]
+            .publisher
+            .sink { [weak self] notification in
+                guard let serverState = notification.object as? SwiftfinStore.State.Server else {
+                    return
+                }
+                self?.server = serverState
+            }
+            .store(in: &cancellables)
     }
 
     func fetchUsers() {
 
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
-            From<SwiftfinStore.Models.StoredServer>(),
-            Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)
+            From<ServerModel>(),
+            Where<ServerModel>("id == %@", server.id)
         )
         else { fatalError("No stored server associated with given state server?") }
 
@@ -58,7 +62,23 @@ class UserListViewModel: ViewModel {
         Notifications[.didSignIn].post()
     }
 
-    func remove(user: SwiftfinStore.State.User) {
-        fetchUsers()
+    func remove(user: UserState) {
+        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(
+            From<SwiftfinStore.Models.StoredUser>(),
+            [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)]
+        ) else {
+            logger.error("Unable to find user to delete")
+            return
+        }
+
+        let transaction = SwiftfinStore.dataStack.beginUnsafe()
+        transaction.delete(storedUser)
+
+        do {
+            try transaction.commitAndWait()
+            fetchUsers()
+        } catch {
+            logger.error("Unable to delete user")
+        }
     }
 }

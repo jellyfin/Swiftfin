@@ -26,11 +26,11 @@ extension ItemView.AboutView {
                             VStack {
                                 Group {
                                     if criticRating >= 60 {
-                                        Image("tomato.fresh")
+                                        Image(.tomatoFresh)
                                             .symbolRenderingMode(.multicolor)
                                             .foregroundStyle(.green, .red)
                                     } else {
-                                        Image("tomato.rotten")
+                                        Image(.tomatoRotten)
                                             .symbolRenderingMode(.monochrome)
                                             .foregroundColor(.green)
                                     }

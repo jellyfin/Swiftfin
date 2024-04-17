@@ -34,7 +34,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
-    var filterDrawerButtonSelector = makeFilterDrawerButtonSelector
+    var itemFilterDrawerSelector = makeItemFilterDrawerSelector
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
@@ -107,7 +107,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail(server: ServerState) -> some View {
-        ServerDetailView(viewModel: .init(server: server))
+        ServerDetailView(server: server)
     }
 
     #if DEBUG
@@ -117,8 +117,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
-    func makeFilterDrawerButtonSelector(selectedButtonsBinding: Binding<[FilterDrawerButtonSelection]>) -> some View {
-        FilterDrawerButtonSelectorView(selectedButtonsBinding: selectedButtonsBinding)
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
@@ -155,7 +155,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator(
             BasicNavigationViewCoordinator {
-                ServerDetailView(viewModel: .init(server: server))
+                ServerDetailView(server: server)
             }
         )
     }

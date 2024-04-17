@@ -24,29 +24,31 @@ extension iPadOSCollectionItemView {
 
                 // MARK: Genres
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
+                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Items
 
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.collectionItems
-                )
-                .onSelect { item in
-                    router.route(to: \.item, item)
+                if viewModel.collectionItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.collectionItems
+                    )
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
                 }
 
                 ItemView.AboutView(viewModel: viewModel)

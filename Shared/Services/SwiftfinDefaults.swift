@@ -27,7 +27,7 @@ extension Defaults.Keys {
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
 
     // TODO: Replace with a cache
-    static let libraryFilterStore = Key<[String: ItemFilters]>("libraryFilterStore", default: [:], suite: .generalSuite)
+    static let libraryFilterStore = Key<[String: ItemFilterCollection]>("libraryFilterStore", default: [:], suite: .generalSuite)
 
     enum Customization {
 
@@ -40,6 +40,8 @@ extension Defaults.Keys {
         static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
         static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
         static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
+
+        // TODO: have search poster type by types of items if applicable
         static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum CinematicItemViewType {
@@ -62,26 +64,48 @@ extension Defaults.Keys {
 
         enum Library {
 
-            static let gridPosterType = Key<PosterType>("libraryGridPosterType", default: .portrait, suite: .generalSuite)
             static let cinematicBackground: Key<Bool> = .init(
                 "Customization.Library.cinematicBackground",
                 default: true,
                 suite: .generalSuite
             )
-            static let randomImage: Key<Bool> = .init("libraryRandomImage", default: true, suite: .generalSuite)
-            static let showFavorites: Key<Bool> = .init("libraryShowFavorites", default: true, suite: .generalSuite)
-            static let viewType = Key<LibraryViewType>("libraryViewType", default: .grid, suite: .generalSuite)
-        }
-
-        enum Filters {
-            static let libraryFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-                "defaultLibraryFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+            static let enabledDrawerFilters: Key<[ItemFilterType]> = .init(
+                "Library.enabledDrawerFilters",
+                default: ItemFilterType.allCases,
                 suite: .generalSuite
             )
-            static let searchFilterDrawerButtons: Key<[FilterDrawerButtonSelection]> = .init(
-                "defaultSearchFilterDrawerButtons",
-                default: FilterDrawerButtonSelection.defaultFilterDrawerButtons,
+            static let viewType = Key<LibraryViewType>(
+                "libraryViewType",
+                default: .grid,
+                suite: .generalSuite
+            )
+            static let posterType = Key<PosterType>(
+                "libraryPosterType",
+                default: .portrait,
+                suite: .generalSuite
+            )
+            static let listColumnCount = Key<Int>(
+                "listColumnCount",
+                default: 1,
+                suite: .generalSuite
+            )
+            static let randomImage: Key<Bool> = .init(
+                "libraryRandomImage",
+                default: true,
+                suite: .generalSuite
+            )
+            static let showFavorites: Key<Bool> = .init(
+                "libraryShowFavorites",
+                default: true,
+                suite: .generalSuite
+            )
+        }
+
+        enum Search {
+
+            static let enabledDrawerFilters: Key<[ItemFilterType]> = .init(
+                "Search.enabledDrawerFilters",
+                default: ItemFilterType.allCases,
                 suite: .generalSuite
             )
         }
@@ -207,7 +231,6 @@ extension Defaults.Keys {
         )
         static let forceDirectPlay = Key<Bool>("forceDirectPlay", default: false, suite: .generalSuite)
 
-        static let liveTVAlphaEnabled = Key<Bool>("liveTVAlphaEnabled", default: false, suite: .generalSuite)
         static let liveTVForceDirectPlay = Key<Bool>("liveTVForceDirectPlay", default: false, suite: .generalSuite)
     }
 

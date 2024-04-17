@@ -17,4 +17,12 @@ extension HorizontalAlignment {
     }
 
     static let VideoPlayerTitleAlignmentGuide = HorizontalAlignment(VideoPlayerTitleAlignment.self)
+
+    struct LibraryRowContentAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[HorizontalAlignment.leading]
+        }
+    }
+
+    static let LeadingLibraryRowContentAlignmentGuide = HorizontalAlignment(LibraryRowContentAlignment.self)
 }

@@ -13,15 +13,14 @@ import VLCUI
 
 extension MediaStream {
 
-    // TODO: Localize
-    static var none: MediaStream = .init(displayTitle: "None", index: -1)
+    static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
         guard let deliveryURL else { return nil }
-        let client = Container.userSession.callAsFunction().client
+        let client = Container.userSession().client
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
 
-        let fullURL = client.fullURL(with: deliveryPath)
+        guard let fullURL = client.fullURL(with: deliveryPath) else { return nil }
 
         return .init(
             url: fullURL,
@@ -46,122 +45,117 @@ extension MediaStream {
         (width ?? 0) > 1900 && type == .video
     }
 
-    var size: String? {
-        guard let height, let width else { return nil }
-        return "\(width)x\(height)"
-    }
-
     // MARK: Property groups
 
     var metadataProperties: [TextPair] {
         var properties: [TextPair] = []
 
         if let value = type {
-            properties.append(.init(displayTitle: "Type", subtitle: value.rawValue))
+            properties.append(.init(title: "Type", subtitle: value.rawValue))
         }
 
         if let value = codec {
-            properties.append(.init(displayTitle: "Codec", subtitle: value))
+            properties.append(.init(title: "Codec", subtitle: value))
         }
 
         if let value = codecTag {
-            properties.append(.init(displayTitle: "Codec Tag", subtitle: value))
+            properties.append(.init(title: "Codec Tag", subtitle: value))
         }
 
         if let value = language {
-            properties.append(.init(displayTitle: "Language", subtitle: value))
+            properties.append(.init(title: "Language", subtitle: value))
         }
 
         if let value = timeBase {
-            properties.append(.init(displayTitle: "Time Base", subtitle: value))
+            properties.append(.init(title: "Time Base", subtitle: value))
         }
 
         if let value = codecTimeBase {
-            properties.append(.init(displayTitle: "Codec Time Base", subtitle: value))
+            properties.append(.init(title: "Codec Time Base", subtitle: value))
         }
 
         if let value = videoRange {
-            properties.append(.init(displayTitle: "Video Range", subtitle: value))
+            properties.append(.init(title: "Video Range", subtitle: value))
         }
 
         if let value = isInterlaced {
-            properties.append(.init(displayTitle: "Interlaced", subtitle: value.description))
+            properties.append(.init(title: "Interlaced", subtitle: value.description))
         }
 
         if let value = isAVC {
-            properties.append(.init(displayTitle: "AVC", subtitle: value.description))
+            properties.append(.init(title: "AVC", subtitle: value.description))
         }
 
         if let value = channelLayout {
-            properties.append(.init(displayTitle: "Channel Layout", subtitle: value))
+            properties.append(.init(title: "Channel Layout", subtitle: value))
         }
 
         if let value = bitRate {
-            properties.append(.init(displayTitle: "Bitrate", subtitle: value.description))
+            properties.append(.init(title: "Bitrate", subtitle: value.description))
         }
 
         if let value = bitDepth {
-            properties.append(.init(displayTitle: "Bit Depth", subtitle: value.description))
+            properties.append(.init(title: "Bit Depth", subtitle: value.description))
         }
 
         if let value = refFrames {
-            properties.append(.init(displayTitle: "Reference Frames", subtitle: value.description))
+            properties.append(.init(title: "Reference Frames", subtitle: value.description))
         }
 
         if let value = packetLength {
-            properties.append(.init(displayTitle: "Packet Length", subtitle: value.description))
+            properties.append(.init(title: "Packet Length", subtitle: value.description))
         }
 
         if let value = channels {
-            properties.append(.init(displayTitle: "Channels", subtitle: value.description))
+            properties.append(.init(title: "Channels", subtitle: value.description))
         }
 
         if let value = sampleRate {
-            properties.append(.init(displayTitle: "Sample Rate", subtitle: value.description))
+            properties.append(.init(title: "Sample Rate", subtitle: value.description))
         }
 
         if let value = isDefault {
-            properties.append(.init(displayTitle: "Default", subtitle: value.description))
+            properties.append(.init(title: "Default", subtitle: value.description))
         }
 
         if let value = isForced {
-            properties.append(.init(displayTitle: "Forced", subtitle: value.description))
+            properties.append(.init(title: "Forced", subtitle: value.description))
         }
 
         if let value = averageFrameRate {
-            properties.append(.init(displayTitle: "Average Frame Rate", subtitle: value.description))
+            properties.append(.init(title: "Average Frame Rate", subtitle: value.description))
         }
 
         if let value = realFrameRate {
-            properties.append(.init(displayTitle: "Real Frame Rate", subtitle: value.description))
+            properties.append(.init(title: "Real Frame Rate", subtitle: value.description))
         }
 
         if let value = profile {
-            properties.append(.init(displayTitle: "Profile", subtitle: value))
+            properties.append(.init(title: "Profile", subtitle: value))
         }
 
         if let value = aspectRatio {
-            properties.append(.init(displayTitle: "Aspect Ratio", subtitle: value))
+            properties.append(.init(title: "Aspect Ratio", subtitle: value))
         }
 
         if let value = index {
-            properties.append(.init(displayTitle: "Index", subtitle: value.description))
+            properties.append(.init(title: "Index", subtitle: value.description))
         }
 
         if let value = score {
-            properties.append(.init(displayTitle: "Score", subtitle: value.description))
+            properties.append(.init(title: "Score", subtitle: value.description))
         }
 
         if let value = pixelFormat {
-            properties.append(.init(displayTitle: "Pixel Format", subtitle: value))
+            properties.append(.init(title: "Pixel Format", subtitle: value))
         }
 
         if let value = level {
-            properties.append(.init(displayTitle: "Level", subtitle: value.description))
+            properties.append(.init(title: "Level", subtitle: value.description))
         }
 
         if let value = isAnamorphic {
-            properties.append(.init(displayTitle: "Anamorphic", subtitle: value.description))
+            properties.append(.init(title: "Anamorphic", subtitle: value.description))
         }
 
         return properties
@@ -171,19 +165,19 @@ extension MediaStream {
         var properties: [TextPair] = []
 
         if let value = colorRange {
-            properties.append(.init(displayTitle: "Range", subtitle: value))
+            properties.append(.init(title: "Range", subtitle: value))
         }
 
         if let value = colorSpace {
-            properties.append(.init(displayTitle: "Space", subtitle: value))
+            properties.append(.init(title: "Space", subtitle: value))
         }
 
         if let value = colorTransfer {
-            properties.append(.init(displayTitle: "Transfer", subtitle: value))
+            properties.append(.init(title: "Transfer", subtitle: value))
         }
 
         if let value = colorPrimaries {
-            properties.append(.init(displayTitle: "Primaries", subtitle: value))
+            properties.append(.init(title: "Primaries", subtitle: value))
         }
 
         return properties
@@ -193,27 +187,27 @@ extension MediaStream {
         var properties: [TextPair] = []
 
         if let value = isExternal {
-            properties.append(.init(displayTitle: "External", subtitle: value.description))
+            properties.append(.init(title: "External", subtitle: value.description))
         }
 
         if let value = deliveryMethod {
-            properties.append(.init(displayTitle: "Delivery Method", subtitle: value.rawValue))
+            properties.append(.init(title: "Delivery Method", subtitle: value.rawValue))
         }
 
         if let value = deliveryURL {
-            properties.append(.init(displayTitle: "URL", subtitle: value))
+            properties.append(.init(title: "URL", subtitle: value))
         }
 
         if let value = deliveryURL {
-            properties.append(.init(displayTitle: "External URL", subtitle: value.description))
+            properties.append(.init(title: "External URL", subtitle: value.description))
         }
 
         if let value = isTextSubtitleStream {
-            properties.append(.init(displayTitle: "Text Subtitle", subtitle: value.description))
+            properties.append(.init(title: "Text Subtitle", subtitle: value.description))
         }
 
         if let value = path {
-            properties.append(.init(displayTitle: "Path", subtitle: value))
+            properties.append(.init(title: "Path", subtitle: value))
         }
 
         return properties
@@ -222,6 +216,7 @@ extension MediaStream {
 
 extension [MediaStream] {
 
+    // TODO: explain why adjustment is necessary
     func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
         guard allSatisfy({ $0.type == .subtitle }) else { return self }
         let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
@@ -239,6 +234,7 @@ extension [MediaStream] {
         return mediaStreams
     }
 
+    // TODO: explain why adjustment is necessary
     func adjustAudioForExternalSubtitles(externalMediaStreamCount: Int) -> [MediaStream] {
         guard allSatisfy({ $0.type == .audio }) else { return self }
 
@@ -254,22 +250,22 @@ extension [MediaStream] {
     }
 
     var has4KVideo: Bool {
-        first(where: { $0.is4kVideo }) != nil
+        oneSatisfies { $0.is4kVideo }
     }
 
     var has51AudioChannelLayout: Bool {
-        first(where: { $0.is51AudioChannelLayout }) != nil
+        oneSatisfies { $0.is51AudioChannelLayout }
     }
 
     var has71AudioChannelLayout: Bool {
-        first(where: { $0.is71AudioChannelLayout }) != nil
+        oneSatisfies { $0.is71AudioChannelLayout }
     }
 
     var hasHDVideo: Bool {
-        first(where: { $0.isHDVideo }) != nil
+        oneSatisfies { $0.isHDVideo }
     }
 
     var hasSubtitles: Bool {
-        first(where: { $0.type == .subtitle }) != nil
+        oneSatisfies { $0.type == .subtitle }
     }
 }

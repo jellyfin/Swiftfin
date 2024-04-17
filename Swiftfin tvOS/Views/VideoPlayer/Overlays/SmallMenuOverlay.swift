@@ -104,7 +104,7 @@ extension VideoPlayer {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        if !viewModel.subtitleStreams.isEmpty {
+                        if viewModel.subtitleStreams.isNotEmpty {
                             SectionButton(
                                 section: .subtitles,
                                 focused: $focusedSection,
@@ -112,7 +112,7 @@ extension VideoPlayer {
                             )
                         }
 
-                        if !viewModel.audioStreams.isEmpty {
+                        if viewModel.audioStreams.isNotEmpty {
                             SectionButton(
                                 section: .audio,
                                 focused: $focusedSection,

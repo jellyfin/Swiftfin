@@ -8,12 +8,14 @@
 
 import Foundation
 
-// TODO: better context naming than for "display" purposes
-
 struct TextPair: Displayable, Identifiable {
 
-    let displayTitle: String
+    let title: String
     let subtitle: String
+
+    var displayTitle: String {
+        title
+    }
 
     var id: String {
         displayTitle.appending(subtitle)

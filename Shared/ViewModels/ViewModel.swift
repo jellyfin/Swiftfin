@@ -18,13 +18,23 @@ class ViewModel: ObservableObject {
     @Injected(Container.userSession)
     var userSession
 
+    // TODO: remove on transition to Stateful
     @Published
     var error: ErrorMessage? = nil
 
+    // TODO: remove on transition to Stateful
     @Published
     var isLoading = false
 
     var cancellables = Set<AnyCancellable>()
 
-    init() {}
+    private var userSessionResolverCancellable: AnyCancellable?
+
+    init() {
+        userSessionResolverCancellable = Notifications[.didChangeCurrentServerURL]
+            .publisher
+            .sink { [weak self] _ in
+                self?.$userSession.resolve(reset: .scope)
+            }
+    }
 }

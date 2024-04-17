@@ -29,12 +29,14 @@ final class MainCoordinator: NavigationCoordinatable {
     var serverList = makeServerList
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
+    @Route(.fullScreen)
+    var liveVideoPlayer = makeLiveVideoPlayer
 
     private var cancellables = Set<AnyCancellable>()
 
     init() {
 
-        if Container.userSession.callAsFunction().authenticated {
+        if Container.userSession().authenticated {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.serverList)
@@ -50,18 +52,18 @@ final class MainCoordinator: NavigationCoordinatable {
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
         Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
-        Notifications[.didChangeServerCurrentURI].subscribe(self, selector: #selector(didChangeServerCurrentURI(_:)))
+        Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
     }
 
     @objc
     func didSignIn() {
-        logger.info("Received `didSignIn` from SwiftfinNotificationCenter.")
+        logger.info("Signed in")
         root(\.mainTab)
     }
 
     @objc
     func didSignOut() {
-        logger.info("Received `didSignOut` from SwiftfinNotificationCenter.")
+        logger.info("Signed out")
         root(\.serverList)
     }
 
@@ -80,13 +82,12 @@ final class MainCoordinator: NavigationCoordinatable {
     }
 
     @objc
-    func didChangeServerCurrentURI(_ notification: Notification) {
-//        guard let newCurrentServerState = notification.object as? SwiftfinStore.State.Server
-//        else { fatalError("Need to have new current login state server") }
-//        guard SessionManager.main.currentLogin != nil else { return }
-//        if newCurrentServerState.id == SessionManager.main.currentLogin.server.id {
-//            SessionManager.main.signInUser(server: newCurrentServerState, user: SessionManager.main.currentLogin.user)
-//        }
+    func didChangeCurrentServerURL(_ notification: Notification) {
+
+        guard Container.userSession().authenticated else { return }
+
+        Container.userSession.reset()
+        Notifications[.didSignIn].post()
     }
 
     func makeMainTab() -> MainTabCoordinator {
@@ -99,5 +100,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
         VideoPlayerCoordinator(manager: manager)
+    }
+
+    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
+        LiveVideoPlayerCoordinator(manager: manager)
     }
 }

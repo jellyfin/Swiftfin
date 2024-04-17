@@ -17,8 +17,8 @@ extension ItemView {
         private var router: ItemCoordinator.Router
 
         let item: BaseItemDto
-        private var overviewLineLimit: Int
-        private var taglineLineLimit: Int
+        private var overviewLineLimit: Int?
+        private var taglineLineLimit: Int?
 
         var body: some View {
             VStack(alignment: .leading, spacing: 10) {
@@ -33,9 +33,10 @@ extension ItemView {
 
                 if let itemOverview = item.overview {
                     TruncatedText(itemOverview)
-                        .seeMoreAction {
+                        .onSeeMore {
                             router.route(to: \.itemOverview, item)
                         }
+                        .seeMoreType(.view)
                         .font(.footnote)
                         .lineLimit(overviewLineLimit)
                 }
@@ -49,8 +50,8 @@ extension ItemView.OverviewView {
     init(item: BaseItemDto) {
         self.init(
             item: item,
-            overviewLineLimit: 1000,
-            taglineLineLimit: 1000
+            overviewLineLimit: nil,
+            taglineLineLimit: nil
         )
     }
 

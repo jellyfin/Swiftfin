@@ -36,10 +36,9 @@ extension HomeView {
         }
 
         var body: some View {
-            CinematicItemSelector(items: viewModel.resumeItems)
+            CinematicItemSelector(items: viewModel.resumeItems.elements)
                 .topContent { item in
                     ImageView(itemSelectorImageSource(for: item))
-                        .resizingMode(.bottomLeft)
                         .placeholder {
                             EmptyView()
                         }
@@ -48,7 +47,9 @@ extension HomeView {
                                 .font(.largeTitle)
                                 .fontWeight(.semibold)
                         }
-                        .padding2(.leading)
+                        .edgePadding(.leading)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 200, alignment: .bottomLeading)
                 }
                 .content { item in
                     if let subtitle = item.subtitle {

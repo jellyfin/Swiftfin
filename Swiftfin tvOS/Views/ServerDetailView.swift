@@ -10,8 +10,12 @@ import SwiftUI
 
 struct ServerDetailView: View {
 
-    @ObservedObject
-    var viewModel: ServerDetailViewModel
+    @StateObject
+    private var viewModel: ServerDetailViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: ServerDetailViewModel(server: server))
+    }
 
     var body: some View {
         SplitFormWindowView()

@@ -115,7 +115,7 @@ class VideoPlayerManager: ViewModel {
 
             let parameters = Paths.GetEpisodesParameters(
                 userID: userSession.user.id,
-                fields: ItemFields.minimumCases,
+                fields: .MinimumFields,
                 adjacentTo: item.id!,
                 limit: 3
             )
@@ -201,6 +201,9 @@ class VideoPlayerManager: ViewModel {
     }
 
     func sendStopReport() {
+
+        let ids = ["itemID": currentViewModel.item.id, "seriesID": currentViewModel.item.parentID]
+        Notifications[.itemMetadataDidChange].post(object: ids)
 
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }

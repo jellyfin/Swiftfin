@@ -20,38 +20,38 @@ struct LandscapePosterProgressBar: View {
     // Scale padding depending on view width
     @State
     private var paddingScale: CGFloat = 1.0
+    @State
+    private var width: CGFloat = 0
 
     var body: some View {
-        GeometryReader { reader in
-            ZStack(alignment: .bottom) {
-                LinearGradient(
-                    stops: [
-                        .init(color: .clear, location: 0),
-                        .init(color: .black.opacity(0.7), location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 40)
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                stops: [
+                    .init(color: .clear, location: 0),
+                    .init(color: .black.opacity(0.7), location: 1),
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 40)
 
-                VStack(alignment: .leading, spacing: 3 * paddingScale) {
+            VStack(alignment: .leading, spacing: 3 * paddingScale) {
 
-                    Spacer()
+                Spacer()
 
-                    Text(title)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
 
-                    ProgressBar(progress: progress)
-                        .foregroundColor(accentColor)
-                        .frame(height: 3)
-                }
-                .padding(.horizontal, 5 * paddingScale)
-                .padding(.bottom, 7 * paddingScale)
-                .onAppear {
-                    paddingScale = reader.size.width / 300
-                }
+                ProgressBar(progress: progress)
+                    .foregroundColor(accentColor)
+                    .frame(height: 3)
             }
+            .padding(.horizontal, 5 * paddingScale)
+            .padding(.bottom, 7 * paddingScale)
+        }
+        .onSizeChanged { newSize in
+            width = newSize.width
         }
     }
 }

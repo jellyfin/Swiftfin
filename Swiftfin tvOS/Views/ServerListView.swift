@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import SwiftUI
 
 struct ServerListView: View {
@@ -22,22 +22,23 @@ struct ServerListView: View {
 
     @ViewBuilder
     private var listView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(viewModel.servers, id: \.id) { server in
-                    ServerButton(server: server)
-                        .onSelect {
-                            router.route(to: \.userList, server)
-                        }
-                        .onLongPressGesture {
-                            longPressedServer = server
-                        }
-                        .padding(.horizontal, 100)
+        CollectionVGrid(
+            viewModel.servers,
+            layout: .columns(
+                1,
+                insets: EdgeInsets.DefaultEdgeInsets,
+                itemSpacing: EdgeInsets.defaultEdgePadding,
+                lineSpacing: EdgeInsets.defaultEdgePadding
+            )
+        ) { server in
+            ServerButton(server: server)
+                .onSelect {
+                    router.route(to: \.userList, server)
                 }
-            }
-            .padding(.top, 50)
+                .onLongPressGesture {
+                    longPressedServer = server
+                }
         }
-        .padding(.top, 50)
     }
 
     @ViewBuilder
@@ -72,35 +73,40 @@ struct ServerListView: View {
     }
 
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                VStack {
-                    Image("jellyfin-blob-blue")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 400)
+        HStack {
+            VStack {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: 400)
 
-                    Button {
-                        router.route(to: \.connectToServer)
-                    } label: {
-                        L10n.connect.text
-                            .bold()
-                            .font(.callout)
-                            .frame(width: 400, height: 75)
-                            .background(Color.jellyfinPurple)
-                    }
-                    .buttonStyle(.card)
+                Button {
+                    router.route(to: \.connectToServer)
+                } label: {
+                    L10n.connect.text
+                        .bold()
+                        .font(.callout)
+                        .frame(width: 400, height: 75)
+                        .background(Color.jellyfinPurple)
                 }
+                .buttonStyle(.card)
             }
-            .contentView {}
+            .frame(maxWidth: .infinity)
+
+            innerBody
+                .frame(maxWidth: .infinity)
+        }
+        .onAppear {
+            viewModel.fetchServers()
+        }
     }
 
 //    var body: some View {
 //        innerBody
 //            .navigationTitle(L10n.servers)
-//            .if(!viewModel.servers.isEmpty) { view in
+//            .if(viewModel.servers.isNotEmpty) { view in
 //                view.toolbar {
-//                    ToolbarItem(placement: .navigationBarTrailing) {
+//                    ToolbarItem(placement: .topBarTrailing) {
 //                        SFSymbolButton(systemName: "plus.circle.fill")
 //                            .onSelect {
 //                                router.route(to: \.connectToServer)

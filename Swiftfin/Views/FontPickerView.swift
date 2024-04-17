@@ -26,7 +26,7 @@ struct FontPickerView: View {
     var body: some View {
         SelectorView(
             selection: $updateSelection,
-            allItems: UIFont.familyNames
+            sources: UIFont.familyNames
         )
         .label { fontFamily in
             Text(fontFamily)
@@ -36,5 +36,6 @@ struct FontPickerView: View {
         .onChange(of: updateSelection) { newValue in
             selection = newValue
         }
+        .navigationTitle("Font")
     }
 }

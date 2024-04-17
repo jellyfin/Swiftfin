@@ -22,31 +22,72 @@ extension CollectionItemView {
         var body: some View {
             VStack(alignment: .leading, spacing: 20) {
 
+                VStack(alignment: .center) {
+                    ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 600))
+                        .posterStyle(.landscape, contentMode: .fill)
+                        .frame(maxHeight: 300)
+                        .posterShadow()
+                        .edgePadding(.horizontal)
+
+                    Text(viewModel.item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .padding(.horizontal)
+
+                    ItemView.ActionButtonHStack(viewModel: viewModel)
+                        .font(.title)
+                        .frame(maxWidth: 300)
+                        .foregroundStyle(.primary)
+                }
+
+                // MARK: Overview
+
+                ItemView.OverviewView(item: viewModel.item)
+                    .overviewLineLimit(4)
+                    .taglineLineLimit(2)
+                    .padding(.horizontal)
+
+                RowDivider()
+
                 // MARK: Genres
 
-                if let genres = viewModel.item.genreItems, !genres.isEmpty {
+                if let genres = viewModel.item.itemGenres, genres.isNotEmpty {
                     ItemView.GenresHStack(genres: genres)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Studios
 
-                if let studios = viewModel.item.studios, !studios.isEmpty {
+                if let studios = viewModel.item.studios, studios.isNotEmpty {
                     ItemView.StudiosHStack(studios: studios)
 
-                    Divider()
+                    RowDivider()
                 }
 
                 // MARK: Items
 
-                PosterHStack(
-                    title: L10n.items,
-                    type: .portrait,
-                    items: viewModel.collectionItems
-                )
-                .onSelect { item in
-                    router.route(to: \.item, item)
+                if viewModel.collectionItems.isNotEmpty {
+                    PosterHStack(
+                        title: L10n.items,
+                        type: .portrait,
+                        items: viewModel.collectionItems
+                    )
+                    .trailing {
+                        SeeAllButton()
+                            .onSelect {
+                                let viewModel = ItemLibraryViewModel(
+                                    title: viewModel.item.displayTitle,
+                                    viewModel.collectionItems
+                                )
+                                router.route(to: \.library, viewModel)
+                            }
+                    }
+                    .onSelect { item in
+                        router.route(to: \.item, item)
+                    }
                 }
             }
         }
