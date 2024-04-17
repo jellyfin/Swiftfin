@@ -6,17 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
-import Factory
-import JellyfinAPI
-import Stinsen
 import SwiftUI
 
-// TODO: seems to redraw view when popped to sometimes?
-//       - similar to HomeView TODO bug?
-// TODO: list view
-// TODO: `afterLastDisappear` with `backgroundRefresh`
 struct MediaView: View {
 
     @EnvironmentObject
@@ -25,18 +17,10 @@ struct MediaView: View {
     @StateObject
     private var viewModel = MediaViewModel()
 
-    private var padLayout: CollectionVGridLayout {
-        .minWidth(200)
-    }
-
-    private var phoneLayout: CollectionVGridLayout {
-        .columns(2)
-    }
-
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.mediaItems,
-            layout: UIDevice.isPhone ? phoneLayout : padLayout
+            layout: .columns(4, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         ) { mediaType in
             MediaItem(viewModel: viewModel, type: mediaType)
                 .onSelect {
@@ -48,7 +32,7 @@ struct MediaView: View {
                         )
                         router.route(to: \.library, viewModel)
                     case .downloads:
-                        router.route(to: \.downloads)
+                        assertionFailure("Downloads unavailable on tvOS")
                     case .favorites:
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
@@ -60,37 +44,23 @@ struct MediaView: View {
                     }
                 }
         }
-        .refreshable {
-            viewModel.send(.refresh)
-        }
-    }
-
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
     }
 
     var body: some View {
         WrappedView {
-            switch viewModel.state {
-            case .content:
-                contentView
-            case let .error(error):
-                errorView(with: error)
-            case .initial, .refreshing:
-                DelayedProgressView()
+            Group {
+                switch viewModel.state {
+                case .content:
+                    contentView
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial, .refreshing:
+                    ProgressView()
+                }
             }
+            .transition(.opacity.animation(.linear(duration: 0.2)))
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
         .ignoresSafeArea()
-        .navigationTitle(L10n.allMedia)
-        .topBarTrailing {
-            if viewModel.isLoading {
-                ProgressView()
-            }
-        }
         .onFirstAppear {
             viewModel.send(.refresh)
         }
@@ -100,10 +70,6 @@ struct MediaView: View {
 extension MediaView {
 
     // TODO: custom view for folders and tv (allow customization?)
-    //       - differentiate between what media types are Swiftfin only
-    //         which would allow some cleanup
-    //       - allow server or random view per library?
-    // TODO: if local label on image, also needs to be in blurhash placeholder
     struct MediaItem: View {
 
         @Default(.Customization.Library.randomImage)
@@ -122,6 +88,12 @@ extension MediaView {
             self.viewModel = viewModel
             self.onSelect = {}
             self.mediaType = type
+        }
+
+        private var useTitleLabel: Bool {
+            useRandomImage ||
+                mediaType == .downloads ||
+                mediaType == .favorites
         }
 
         private func setImageSources() {
@@ -148,6 +120,18 @@ extension MediaView {
                 .frame(alignment: .center)
         }
 
+        private func titleLabelOverlay<Content: View>(with content: Content) -> some View {
+            ZStack {
+                content
+
+                Color.black
+                    .opacity(0.5)
+
+                titleLabel
+                    .foregroundStyle(.white)
+            }
+        }
+
         var body: some View {
             Button {
                 onSelect()
@@ -157,22 +141,14 @@ extension MediaView {
 
                     ImageView(imageSources)
                         .image { image in
-                            if useRandomImage ||
-                                mediaType == .downloads ||
-                                mediaType == .favorites
-                            {
-                                ZStack {
-                                    image
-
-                                    Color.black
-                                        .opacity(0.5)
-
-                                    titleLabel
-                                        .foregroundStyle(.white)
-                                }
+                            if useTitleLabel {
+                                titleLabelOverlay(with: image)
                             } else {
                                 image
                             }
+                        }
+                        .placeholder { imageSource in
+                            titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
                         }
                         .failure {
                             ImageView.DefaultFailureView()
@@ -185,6 +161,7 @@ extension MediaView {
                 }
                 .posterStyle(.landscape)
             }
+            .buttonStyle(.card)
             .onFirstAppear(perform: setImageSources)
             .onChange(of: useRandomImage) { _ in
                 setImageSources()
