@@ -11,11 +11,15 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: if no context menu defined, don't add context menu
+// TODO: option for focused content offset
 
 struct PosterButton<Item: Poster>: View {
 
     @FocusState
     private var isFocused: Bool
+
+    @State
+    private var isFocusedState = false
 
     private var item: Item
     private var type: PosterType
@@ -63,17 +67,34 @@ struct PosterButton<Item: Poster>: View {
                     .eraseToAnyView()
             })
             .posterShadow()
-            .ifLet(onFocusChanged) { view, onFocusChanged in
-                view
-                    .focused($isFocused)
-                    .onChange(of: isFocused) { newValue in
-                        onFocusChanged(newValue)
-                    }
+            .focused($isFocused)
+            .onChange(of: isFocused) { newValue in
+                onFocusChanged?(newValue)
             }
 
-            content()
-                .eraseToAnyView()
-                .zIndex(-1)
+//            content()
+//                .eraseToAnyView()
+
+            AlternateLayoutView(alignment: .top) {
+                content()
+                    .eraseToAnyView()
+            } content: {
+                content()
+                    .eraseToAnyView()
+                    .environment(\.isPosterButtonFocused, $isFocusedState)
+                    .offset(y: isFocused ? 20 : 0)
+                    .scaleEffect(x: isFocused ? 1.1 : 1, y: isFocused ? 1.1 : 1, anchor: .top)
+            }
+            .zIndex(-1)
+        }
+        .overlay {
+            Color.red
+                .opacity(0.2)
+                .frame(height: 600)
+        }
+        .animation(.linear(duration: 0.1), value: isFocused)
+        .onChange(of: isFocused) { newValue in
+            isFocusedState = newValue
         }
     }
 }
@@ -130,12 +151,17 @@ extension PosterButton {
 
     struct TitleContentView: View {
 
+        @Environment(\.isPosterButtonFocused)
+        private var isPosterButtonFocused
+
         let item: Item
 
         var body: some View {
             Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
-                .foregroundColor(.primary)
+                .foregroundColor(isPosterButtonFocused.wrappedValue ? .primary : .secondary)
+                .backport
+                .bold(isPosterButtonFocused.wrappedValue)
         }
     }
 
@@ -151,6 +177,9 @@ extension PosterButton {
     }
 
     struct TitleSubtitleContentView: View {
+
+        @Environment(\.isPosterButtonFocused)
+        private var isPosterButtonFocused
 
         let item: Item
 

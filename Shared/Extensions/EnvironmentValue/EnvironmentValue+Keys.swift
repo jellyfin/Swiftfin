@@ -45,4 +45,8 @@ extension EnvironmentValues {
     struct IsPresentingOverlayKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
+
+    struct IsPosterButtonFocused: EnvironmentKey {
+        static let defaultValue: Binding<Bool> = .constant(true)
+    }
 }

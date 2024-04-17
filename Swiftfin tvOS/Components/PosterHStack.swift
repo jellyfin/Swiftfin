@@ -63,21 +63,21 @@ struct PosterHStack<Item: Poster>: View {
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
-        .mask {
-            VStack(spacing: 0) {
-                Color.white
-
-                LinearGradient(
-                    stops: [
-                        .init(color: .white, location: 0),
-                        .init(color: .clear, location: 1),
-                    ],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 20)
-            }
-        }
+//        .mask {
+//            VStack(spacing: 0) {
+//                Color.white
+//
+//                LinearGradient(
+//                    stops: [
+//                        .init(color: .white, location: 0),
+//                        .init(color: .clear, location: 1),
+//                    ],
+//                    startPoint: .top,
+//                    endPoint: .bottom
+//                )
+//                .frame(height: 20)
+//            }
+//        }
     }
 }
 
