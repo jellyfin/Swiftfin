@@ -99,6 +99,21 @@ extension String {
         let characters = Self.alphanumeric.randomSample(count: Int.random(in: range))
         return String(characters)
     }
+
+    func trimmingSuffix(_ suffix: String) -> String {
+
+        guard suffix.count <= count else { return self }
+
+        var s = self
+        var suffix = suffix
+
+        while s.last == suffix.last {
+            s.removeLast()
+            suffix.removeLast()
+        }
+
+        return s
+    }
 }
 
 extension CharacterSet {
