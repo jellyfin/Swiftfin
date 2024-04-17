@@ -68,6 +68,11 @@ struct ProgramsView: View {
 
                 liveTVSectionScrollView
 
+                if programsViewModel.hasNoResults {
+                    // TODO: probably change to "No Programs"
+                    L10n.noResults.text
+                }
+
                 if programsViewModel.recommended.isNotEmpty {
                     programsSection(title: L10n.onNow, keyPath: \.recommended)
                 }
@@ -124,12 +129,7 @@ struct ProgramsView: View {
         WrappedView {
             switch programsViewModel.state {
             case .content:
-                if programsViewModel.hasNoResults {
-                    // TODO: probably change to "No Programs"
-                    L10n.noResults.text
-                } else {
-                    contentView
-                }
+                contentView
             case let .error(error):
                 errorView(with: error)
             case .initial, .refreshing:
