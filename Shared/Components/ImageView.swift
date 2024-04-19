@@ -25,19 +25,20 @@ private let imagePipeline = {
 //       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
+// TODO: probably don't need both `placeholder` modifiers
 struct ImageView: View {
 
     @State
     private var sources: [ImageSource]
 
     private var image: (Image) -> any View
-    private var placeholder: (() -> any View)?
+    private var placeholder: ((ImageSource) -> any View)?
     private var failure: () -> any View
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
-            placeholder()
+            placeholder(currentSource)
                 .eraseToAnyView()
         } else {
             DefaultPlaceholderView(blurHash: currentSource.blurHash)
@@ -124,6 +125,10 @@ extension ImageView {
     }
 
     func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.placeholder, with: { _ in content() })
+    }
+
+    func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
         copy(modifying: \.placeholder, with: content)
     }
 

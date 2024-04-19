@@ -12,11 +12,9 @@ import JellyfinAPI
 class LiveVideoPlayerManager: VideoPlayerManager {
 
     @Published
-    var program: LiveTVChannelProgram?
-    @Published
-    var dateFormatter = DateFormatter()
+    var program: ChannelProgram?
 
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: LiveTVChannelProgram? = nil) {
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: ChannelProgram? = nil) {
         self.program = program
         super.init()
 

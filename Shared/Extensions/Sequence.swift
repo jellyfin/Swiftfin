@@ -24,6 +24,27 @@ extension Sequence {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }
 
+    /// Returns the elements of the sequence, sorted by comparing values
+    /// at the given `KeyPath` of `Element`.
+    ///
+    /// `nil` values are considered the maximum.
+    func sorted<Key: Comparable>(using keyPath: KeyPath<Element, Key?>) -> [Element] {
+        sorted {
+            let x = $0[keyPath: keyPath]
+            let y = $1[keyPath: keyPath]
+
+            if let x, let y {
+                return x < y
+            } else if let _ = x {
+                return true
+            } else if let _ = y {
+                return false
+            }
+
+            return true
+        }
+    }
+
     func subtracting<Value: Equatable>(_ other: some Sequence<Value>, using keyPath: KeyPath<Element, Value>) -> [Element] {
         filter { !other.contains($0[keyPath: keyPath]) }
     }

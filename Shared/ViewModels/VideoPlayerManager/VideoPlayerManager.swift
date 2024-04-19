@@ -19,6 +19,7 @@ import VLCUI
 // TODO: should view models handle progress reports instead, with a protocol
 //       for other types of media handling
 
+// TODO: transition to `Stateful`
 class VideoPlayerManager: ViewModel {
 
     class CurrentProgressHandler: ObservableObject {

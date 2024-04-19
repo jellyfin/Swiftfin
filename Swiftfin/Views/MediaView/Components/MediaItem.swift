@@ -6,96 +6,11 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
 import Defaults
-import Factory
-import JellyfinAPI
-import Stinsen
 import SwiftUI
 
-// TODO: seems to redraw view when popped to sometimes?
-//       - similar to HomeView TODO bug?
-// TODO: list view
-// TODO: `afterLastDisappear` with `backgroundRefresh`
-struct MediaView: View {
-
-    @EnvironmentObject
-    private var router: MediaCoordinator.Router
-
-    @StateObject
-    private var viewModel = MediaViewModel()
-
-    private var padLayout: CollectionVGridLayout {
-        .minWidth(200)
-    }
-
-    private var phoneLayout: CollectionVGridLayout {
-        .columns(2)
-    }
-
-    private var contentView: some View {
-        CollectionVGrid(
-            $viewModel.mediaItems,
-            layout: UIDevice.isPhone ? phoneLayout : padLayout
-        ) { mediaType in
-            MediaItem(viewModel: viewModel, type: mediaType)
-                .onSelect {
-                    switch mediaType {
-                    case let .collectionFolder(item):
-                        let viewModel = ItemLibraryViewModel(
-                            parent: item,
-                            filters: .default
-                        )
-                        router.route(to: \.library, viewModel)
-                    case .downloads:
-                        router.route(to: \.downloads)
-                    case .favorites:
-                        let viewModel = ItemLibraryViewModel(
-                            title: L10n.favorites,
-                            filters: .favorites
-                        )
-                        router.route(to: \.library, viewModel)
-                    case .liveTV:
-                        router.route(to: \.liveTV)
-                    }
-                }
-        }
-        .refreshable {
-            viewModel.send(.refresh)
-        }
-    }
-
-    private func errorView(with error: some Error) -> some View {
-        ErrorView(error: error)
-            .onRetry {
-                viewModel.send(.refresh)
-            }
-    }
-
-    var body: some View {
-        WrappedView {
-            switch viewModel.state {
-            case .content:
-                contentView
-            case let .error(error):
-                errorView(with: error)
-            case .initial, .refreshing:
-                DelayedProgressView()
-            }
-        }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
-        .ignoresSafeArea()
-        .navigationTitle(L10n.allMedia)
-        .topBarTrailing {
-            if viewModel.isLoading {
-                ProgressView()
-            }
-        }
-        .onFirstAppear {
-            viewModel.send(.refresh)
-        }
-    }
-}
+// Note: the design reason to not have a local label always on top
+//       is to have the same failure/empty color for all views
 
 extension MediaView {
 
@@ -124,6 +39,12 @@ extension MediaView {
             self.mediaType = type
         }
 
+        private var useTitleLabel: Bool {
+            useRandomImage ||
+                mediaType == .downloads ||
+                mediaType == .favorites
+        }
+
         private func setImageSources() {
             Task { @MainActor in
                 if useRandomImage {
@@ -148,6 +69,19 @@ extension MediaView {
                 .frame(alignment: .center)
         }
 
+        // TODO: find a different way to do this local-label-wackiness if possible
+        private func titleLabelOverlay<Content: View>(with content: Content) -> some View {
+            ZStack {
+                content
+
+                Color.black
+                    .opacity(0.5)
+
+                titleLabel
+                    .foregroundStyle(.white)
+            }
+        }
+
         var body: some View {
             Button {
                 onSelect()
@@ -157,22 +91,14 @@ extension MediaView {
 
                     ImageView(imageSources)
                         .image { image in
-                            if useRandomImage ||
-                                mediaType == .downloads ||
-                                mediaType == .favorites
-                            {
-                                ZStack {
-                                    image
-
-                                    Color.black
-                                        .opacity(0.5)
-
-                                    titleLabel
-                                        .foregroundStyle(.white)
-                                }
+                            if useTitleLabel {
+                                titleLabelOverlay(with: image)
                             } else {
                                 image
                             }
+                        }
+                        .placeholder { imageSource in
+                            titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
                         }
                         .failure {
                             ImageView.DefaultFailureView()

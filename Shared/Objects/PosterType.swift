@@ -9,9 +9,14 @@
 import Defaults
 import SwiftUI
 
-// TODO: Rename to `PosterDisplayType` or `PosterDisplay`?
-// TODO: after no longer experimental, nest under `Poster`
+// TODO: Refactor to `ItemDisplayType`
+//       - this is to move away from video specific to generalizing all media types. However,
+//         media is still able to use grammar for their own contexts.
+//       - move landscape/portrait to wide/narrow
+//       - add `square`/something similar
+// TODO: after no longer experimental, nest under `Poster`?
 //       tracker: https://github.com/apple/swift-evolution/blob/main/proposals/0404-nested-protocols.md
+
 enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
 
     case landscape
