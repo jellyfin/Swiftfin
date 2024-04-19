@@ -1,5 +1,5 @@
 {
-  "originHash" : "014f7f9b582fe941e86e045d02b91ba05b36a8317ab6be0cd706443a529fc2da",
+  "originHash" : "20f168223d2d1133c4837df32ef688f816b79816393b1172be8e57d39c47d619",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "91513692e56cc564f1bcbd476289ae060eb7e877"
+        "revision" : "e4e0adc7722430870293e390e32d35c37a0d047b"
       }
     },
     {

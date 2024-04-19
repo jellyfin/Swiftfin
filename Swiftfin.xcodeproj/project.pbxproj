@@ -236,8 +236,6 @@
 		E1153D9A2BBA3E9800424D36 /* ErrorCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D992BBA3E9800424D36 /* ErrorCard.swift */; };
 		E1153D9C2BBA3E9D00424D36 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */; };
 		E1153DA42BBA614F00424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA32BBA614F00424D36 /* CollectionVGrid */; };
-		E1153DA72BBA641000424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA62BBA641000424D36 /* CollectionVGrid */; };
-		E1153DA92BBA642A00424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA82BBA642A00424D36 /* CollectionVGrid */; };
 		E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAB2BBA6AD200424D36 /* CollectionHStack */; };
 		E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAE2BBA734200424D36 /* CollectionHStack */; };
 		E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DB02BBA734C00424D36 /* CollectionHStack */; };
@@ -303,6 +301,9 @@
 		E12E30F329638B140022FAC9 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F229638B140022FAC9 /* ChevronButton.swift */; };
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
 		E12F038C28F8B0B100976CC3 /* EdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */; };
+		E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3C72BD200C10058A2DF /* CollectionVGrid */; };
+		E132D3CD2BD2179C0058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3CC2BD2179C0058A2DF /* CollectionVGrid */; };
+		E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3CE2BD217AA0058A2DF /* CollectionVGrid */; };
 		E13316FE2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
 		E13316FF2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* RatioCornerRadiusModifier.swift */; };
 		E133328829538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
@@ -358,6 +359,8 @@
 		E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */; };
 		E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6852A9FF62A001586C6 /* JellyfinAPI */; };
 		E14CB6882A9FF71F001586C6 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E14CB6872A9FF71F001586C6 /* JellyfinAPI */; };
+		E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
+		E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
 		E14EDEC52B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */; };
 		E14EDEC62B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */; };
 		E14EDEC82B8FB65F000F00A4 /* ItemFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */; };
@@ -1091,6 +1094,7 @@
 		E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemFilter+ItemTrait.swift"; sourceTree = "<group>"; };
 		E148128A28C15526003B8787 /* ItemSortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSortBy.swift; sourceTree = "<group>"; };
 		E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
+		E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLetter.swift; sourceTree = "<group>"; };
 		E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyItemFilter.swift; sourceTree = "<group>"; };
 		E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFilterType.swift; sourceTree = "<group>"; };
 		E14EDECB2B8FB709000F00A4 /* ItemYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemYear.swift; sourceTree = "<group>"; };
@@ -1404,9 +1408,9 @@
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
-				E1153DA92BBA642A00424D36 /* CollectionVGrid in Frameworks */,
 				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
+				E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
@@ -1452,13 +1456,14 @@
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E14CB6862A9FF62A001586C6 /* JellyfinAPI in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
+				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
-				E1153DA72BBA641000424D36 /* CollectionVGrid in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
 				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
+				E132D3CD2BD2179C0058A2DF /* CollectionVGrid in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
@@ -2420,6 +2425,7 @@
 				535870AC2669D8DD00D05A09 /* ItemFilterCollection.swift */,
 				E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */,
 				E11BDF762B8513B40045C54A /* ItemGenre.swift */,
+				E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */,
 				E148128A28C15526003B8787 /* ItemSortBy.swift */,
 				E11BDF962B865F550045C54A /* ItemTag.swift */,
 				E14EDECB2B8FB709000F00A4 /* ItemYear.swift */,
@@ -3198,9 +3204,9 @@
 				E14CB6872A9FF71F001586C6 /* JellyfinAPI */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
-				E1153DA82BBA642A00424D36 /* CollectionVGrid */,
 				E1153DB02BBA734C00424D36 /* CollectionHStack */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
+				E132D3CE2BD217AA0058A2DF /* CollectionVGrid */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3251,10 +3257,11 @@
 				E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */,
 				E18D6AA52BAA96F000A0D167 /* CollectionHStack */,
 				E1153DA32BBA614F00424D36 /* CollectionVGrid */,
-				E1153DA62BBA641000424D36 /* CollectionVGrid */,
 				E1153DAB2BBA6AD200424D36 /* CollectionHStack */,
 				E1153DAE2BBA734200424D36 /* CollectionHStack */,
 				E1153DCF2BBB634F00424D36 /* SVGKit */,
+				E132D3C72BD200C10058A2DF /* CollectionVGrid */,
+				E132D3CC2BD2179C0058A2DF /* CollectionVGrid */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3324,9 +3331,9 @@
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
-				E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
+				E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3522,6 +3529,7 @@
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
 				E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */,
 				E11CEB9128999D84003E74C7 /* EpisodeItemView.swift in Sources */,
+				E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1C9260C2887565C002A7A66 /* MovieItemContentView.swift in Sources */,
 				E1C9260B2887565C002A7A66 /* MovieItemView.swift in Sources */,
 				E1E6C45629B130F50064123F /* ChapterOverlay.swift in Sources */,
@@ -3865,6 +3873,7 @@
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E187F7672B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
+				E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
@@ -4626,14 +4635,6 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionVGrid";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/CollectionHStack";
@@ -4648,6 +4649,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
+			};
+		};
+		E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionVGrid";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
@@ -4823,16 +4832,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionVGrid;
 		};
-		E1153DA62BBA641000424D36 /* CollectionVGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
-			productName = CollectionVGrid;
-		};
-		E1153DA82BBA642A00424D36 /* CollectionVGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153DA52BBA641000424D36 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
-			productName = CollectionVGrid;
-		};
 		E1153DAB2BBA6AD200424D36 /* CollectionHStack */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionHStack;
@@ -4861,6 +4860,20 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E132D3C72BD200C10058A2DF /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionVGrid;
+		};
+		E132D3CC2BD2179C0058A2DF /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
+			productName = CollectionVGrid;
+		};
+		E132D3CE2BD217AA0058A2DF /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
+			productName = CollectionVGrid;
 		};
 		E1388A45293F0ABA009721B1 /* SwizzleSwift */ = {
 			isa = XCSwiftPackageProductDependency;

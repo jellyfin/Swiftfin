@@ -97,6 +97,15 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
             parameters.tags = filters.tags.map(\.value)
             parameters.years = filters.years.compactMap { Int($0.value) }
 
+            if filters.letter.first?.value == "#" {
+                parameters.nameLessThan = "A"
+            } else {
+                parameters.nameStartsWith = filters.letter
+                    .map(\.value)
+                    .filter { $0 != "#" }
+                    .first
+            }
+
             // Random sort won't take into account previous items, so
             // manual exclusion is necessary. This could possibly be
             // a performance issue for loading pages after already loading
