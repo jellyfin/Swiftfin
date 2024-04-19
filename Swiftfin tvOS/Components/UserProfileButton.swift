@@ -35,13 +35,17 @@ struct UserProfileButton: View {
             Button {
                 action()
             } label: {
-                ImageView(user.profileImageSource(client: userSession.client, maxWidth: 250, maxHeight: 250))
-                    .failure {
-                        Image(systemName: "person.fill")
-                            .resizable()
-                            .padding2()
-                    }
-                    .frame(width: 200, height: 200)
+                ZStack {
+                    Color.clear
+
+                    ImageView(user.profileImageSource(client: userSession.client, maxWidth: 250, maxHeight: 250))
+                        .failure {
+                            Image(systemName: "person.fill")
+                                .resizable()
+                                .edgePadding()
+                        }
+                }
+                .aspectRatio(1, contentMode: .fill)
             }
             .buttonStyle(.card)
             .focused($isFocused)

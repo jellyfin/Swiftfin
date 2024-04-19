@@ -1,5 +1,5 @@
 {
-  "originHash" : "20f168223d2d1133c4837df32ef688f816b79816393b1172be8e57d39c47d619",
+  "originHash" : "c477e4f1cd54bd525946c46dd4d4243ceca54f879672628a772af4ecb8aa0a79",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -35,15 +35,6 @@
       "state" : {
         "branch" : "main",
         "revision" : "e4e0adc7722430870293e390e32d35c37a0d047b"
-      }
-    },
-    {
-      "identity" : "collectionview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionView",
-      "state" : {
-        "branch" : "main",
-        "revision" : "70a44bd1a8864f88213be69613554a9d5a8fb779"
       }
     },
     {

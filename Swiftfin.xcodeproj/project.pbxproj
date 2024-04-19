@@ -725,7 +725,6 @@
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
 		E1DC9819296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
 		E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
-		E1DC981E296DD91900982F06 /* CollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC981D296DD91900982F06 /* CollectionView */; };
 		E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */; };
 		E1DC983E296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */; };
 		E1DC9841296DEBD800982F06 /* WatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9840296DEBD800982F06 /* WatchedIndicator.swift */; };
@@ -1380,7 +1379,6 @@
 				E1575E56293E7650001665B1 /* VLCUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
-				E1DC981E296DD91900982F06 /* CollectionView in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
 				62666E2A27E5020A00EC0ECD /* OpenGLES.framework in Frameworks */,
 				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
@@ -3199,7 +3197,6 @@
 				E1B5F7A829577BCE004B26CF /* PulseLogHandler */,
 				E1B5F7AA29577BCE004B26CF /* PulseUI */,
 				E1B5F7AC29577BDD004B26CF /* OrderedCollections */,
-				E1DC981D296DD91900982F06 /* CollectionView */,
 				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
 				E14CB6872A9FF71F001586C6 /* JellyfinAPI */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
@@ -3327,7 +3324,6 @@
 				E15210522946DF1B00375CC2 /* XCRemoteSwiftPackageReference "Pulse" */,
 				E19DDEC52948EF9900954E10 /* XCRemoteSwiftPackageReference "swift-collections" */,
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
-				E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */,
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
@@ -4747,14 +4743,6 @@
 				minimumVersion = 4.0.0;
 			};
 		};
-		E1DC981F296DDBE600982F06 /* XCRemoteSwiftPackageReference "CollectionView" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionView";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gunterhager/UDPBroadcastConnection";
@@ -5050,10 +5038,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
-		};
-		E1DC981D296DD91900982F06 /* CollectionView */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = CollectionView;
 		};
 		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;
