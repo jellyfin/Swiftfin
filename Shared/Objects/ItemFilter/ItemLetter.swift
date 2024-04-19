@@ -29,6 +29,8 @@ struct ItemLetter: CaseIterable, Codable, ExpressibleByStringLiteral, Hashable, 
         UILocalizedIndexedCollation
             .current()
             .sectionTitles
+            .subtracting(["#"])
+            .prepending("#")
             .map(Self.init)
     }
 }
