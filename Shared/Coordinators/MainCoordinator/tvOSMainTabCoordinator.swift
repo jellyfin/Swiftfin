@@ -73,8 +73,12 @@ final class MainTabCoordinator: TabCoordinatable {
         }
     }
 
-    func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
-        NavigationViewCoordinator(SearchCoordinator())
+    // TODO: does this cause issues?
+    func makeSearch() -> VideoPlayerWrapperCoordinator {
+        VideoPlayerWrapperCoordinator {
+            SearchCoordinator()
+                .view()
+        }
     }
 
     @ViewBuilder

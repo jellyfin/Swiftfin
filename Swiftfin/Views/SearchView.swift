@@ -13,6 +13,8 @@ import SwiftUI
 // TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
 // TODO: implement search view result type between `PosterHStack`
 //       and `ListHStack` (3 row list columns)? (iOS only)
+// TODO: have programs only pull recommended/current?
+//       - have progress overlay
 struct SearchView: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
@@ -20,6 +22,8 @@ struct SearchView: View {
     @Default(.Customization.searchPosterType)
     private var searchPosterType
 
+    @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
     @EnvironmentObject
     private var router: SearchCoordinator.Router
 
@@ -68,16 +72,36 @@ struct SearchView: View {
                 if viewModel.people.isNotEmpty {
                     itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
+
+                if viewModel.programs.isNotEmpty {
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
+                }
+
+                if viewModel.channels.isNotEmpty {
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
+                }
             }
             .edgePadding(.vertical)
         }
     }
 
     private func select(_ item: BaseItemDto) {
-        if item.type == .person {
+        switch item.type {
+        case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
-        } else {
+        case .program:
+            mainRouter.route(
+                to: \.liveVideoPlayer,
+                LiveVideoPlayerManager(program: item)
+            )
+        case .tvChannel:
+            guard let mediaSource = item.mediaSources?.first else { return }
+            mainRouter.route(
+                to: \.liveVideoPlayer,
+                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+            )
+        default:
             router.route(to: \.item, item)
         }
     }

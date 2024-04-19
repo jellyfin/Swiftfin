@@ -32,6 +32,8 @@ final class SearchViewModel: ViewModel, Stateful {
     }
 
     @Published
+    private(set) var channels: [BaseItemDto] = []
+    @Published
     private(set) var collections: [BaseItemDto] = []
     @Published
     private(set) var episodes: [BaseItemDto] = []
@@ -39,6 +41,8 @@ final class SearchViewModel: ViewModel, Stateful {
     private(set) var movies: [BaseItemDto] = []
     @Published
     private(set) var people: [BaseItemDto] = []
+    @Published
+    private(set) var programs: [BaseItemDto] = []
     @Published
     private(set) var series: [BaseItemDto] = []
     @Published
@@ -55,11 +59,15 @@ final class SearchViewModel: ViewModel, Stateful {
     let filterViewModel: FilterViewModel
 
     var hasNoResults: Bool {
-        collections.isEmpty &&
-            episodes.isEmpty &&
-            movies.isEmpty &&
-            people.isEmpty &&
-            series.isEmpty
+        [
+            collections,
+            channels,
+            episodes,
+            movies,
+            people,
+            programs,
+            series,
+        ].allSatisfy(\.isEmpty)
     }
 
     // MARK: init
@@ -144,7 +152,9 @@ final class SearchViewModel: ViewModel, Stateful {
                         .boxSet,
                         .episode,
                         .movie,
+                        .liveTvProgram,
                         .series,
+                        .tvChannel,
                     ]
 
                     for type in retrievingItemTypes {
@@ -173,9 +183,11 @@ final class SearchViewModel: ViewModel, Stateful {
 
                 await MainActor.run {
                     self.collections = items[.boxSet] ?? []
+                    self.channels = items[.tvChannel] ?? []
                     self.episodes = items[.episode] ?? []
                     self.movies = items[.movie] ?? []
                     self.people = items[.person] ?? []
+                    self.programs = items[.liveTvProgram] ?? []
                     self.series = items[.series] ?? []
 
                     self.state = .content
