@@ -172,7 +172,6 @@ final class ProgramsViewModel: ViewModel, Stateful {
         var parameters = Paths.GetLiveTvProgramsParameters()
         parameters.fields = .MinimumFields
             .appending(.channelInfo)
-            .appending(.mediaSources)
         parameters.hasAired = false
         parameters.limit = 10
         parameters.userID = userSession.user.id
