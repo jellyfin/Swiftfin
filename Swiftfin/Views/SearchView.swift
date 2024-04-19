@@ -13,6 +13,8 @@ import SwiftUI
 // TODO: have a `SearchLibraryViewModel` that allows paging on searched items?
 // TODO: implement search view result type between `PosterHStack`
 //       and `ListHStack` (3 row list columns)? (iOS only)
+// TODO: have programs only pull recommended/current?
+//       - have progress overlay
 struct SearchView: View {
 
     @Default(.Customization.Search.enabledDrawerFilters)
