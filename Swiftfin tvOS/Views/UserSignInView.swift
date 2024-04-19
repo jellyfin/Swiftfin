@@ -6,7 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionView
+import CollectionVGrid
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -110,21 +110,15 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .offset(y: -50)
             } else {
-                CollectionView(items: viewModel.publicUsers) { _, user, _ in
+                CollectionVGrid(
+                    viewModel.publicUsers,
+                    layout: .minWidth(250, insets: .init(20), itemSpacing: 20, lineSpacing: 20)
+                ) { user in
                     UserProfileButton(user: user)
                         .onSelect {
                             username = user.name ?? ""
                             focusedField = .password
                         }
-                }
-                .layout { _, layoutEnvironment in
-                    .grid(
-                        layoutEnvironment: layoutEnvironment,
-                        layoutMode: .adaptive(withMinItemSize: 250),
-                        itemSpacing: 20,
-                        lineSpacing: 20,
-                        sectionInsets: .init(top: 20, leading: 20, bottom: 20, trailing: 20)
-                    )
                 }
             }
         }
