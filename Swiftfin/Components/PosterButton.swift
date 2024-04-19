@@ -16,7 +16,7 @@ import SwiftUI
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
-    private var type: PosterType
+    private var type: ItemDisplayType
     private var content: () -> any View
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
@@ -27,7 +27,9 @@ struct PosterButton<Item: Poster>: View {
         switch type {
         case .portrait:
             ImageView(item.portraitPosterImageSource(maxWidth: 200))
-        case .landscape:
+        case .square:
+            ImageView(item.portraitPosterImageSource(maxWidth: 200))
+        case .wide:
             ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
         }
     }
@@ -66,7 +68,7 @@ extension PosterButton {
 
     init(
         item: Item,
-        type: PosterType,
+        type: ItemDisplayType,
         singleImage: Bool = false
     ) {
         self.init(

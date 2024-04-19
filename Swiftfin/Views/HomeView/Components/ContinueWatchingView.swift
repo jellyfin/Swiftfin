@@ -37,7 +37,7 @@ extension HomeView {
                 $viewModel.resumeItems,
                 columns: columnCount
             ) { item in
-                PosterButton(item: item, type: .landscape)
+                PosterButton(item: item, type: .wide)
                     .contextMenu {
                         Button {
                             viewModel.send(.setIsPlayed(true, item))

@@ -17,16 +17,24 @@ import SwiftUI
 // TODO: after no longer experimental, nest under `Poster`?
 //       tracker: https://github.com/apple/swift-evolution/blob/main/proposals/0404-nested-protocols.md
 
-enum PosterType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum ItemDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case landscape
+    /// Example: portrait posters
+    case wide
+
+//    /// Example: album art
+    case square
+
+    /// Example: thumb posters
     case portrait
 
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .landscape:
+        case .wide:
             "Landscape"
+        case .square:
+            "Square"
         case .portrait:
             "Portrait"
         }

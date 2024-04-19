@@ -138,7 +138,7 @@ extension VideoPlayer.Overlay.ChapterOverlay {
                             }
                             .aspectRatio(contentMode: .fit)
                     }
-                    .posterStyle(.landscape)
+                    .posterStyle(.wide)
                     .overlay {
                         if chapter.secondsRange.contains(currentProgressHandler.seconds) {
                             RoundedRectangle(cornerRadius: 1)

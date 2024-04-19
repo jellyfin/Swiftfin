@@ -109,7 +109,7 @@ extension MediaView {
                         }
                         .id(imageSources.hashValue)
                 }
-                .posterStyle(.landscape)
+                .posterStyle(.wide)
             }
             .onFirstAppear(perform: setImageSources)
             .onChange(of: useRandomImage) { _ in

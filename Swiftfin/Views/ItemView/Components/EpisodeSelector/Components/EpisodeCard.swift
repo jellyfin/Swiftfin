@@ -44,7 +44,7 @@ extension SeriesEpisodeSelector {
         var body: some View {
             PosterButton(
                 item: episode,
-                type: .landscape,
+                type: .wide,
                 singleImage: true
             )
             .content {

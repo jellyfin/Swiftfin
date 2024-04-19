@@ -16,12 +16,12 @@ extension PagingLibraryView {
         @Binding
         private var listColumnCount: Int
         @Binding
-        private var posterType: PosterType
+        private var posterType: ItemDisplayType
         @Binding
         private var viewType: LibraryViewType
 
         init(
-            posterType: Binding<PosterType>,
+            posterType: Binding<ItemDisplayType>,
             viewType: Binding<LibraryViewType>,
             listColumnCount: Binding<Int>
         ) {
@@ -35,9 +35,9 @@ extension PagingLibraryView {
 
                 Section("Poster") {
                     Button {
-                        posterType = .landscape
+                        posterType = .wide
                     } label: {
-                        if posterType == .landscape {
+                        if posterType == .wide {
                             Label("Landscape", systemImage: "checkmark")
                         } else {
                             Label("Landscape", systemImage: "rectangle")

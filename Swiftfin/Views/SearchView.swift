@@ -86,7 +86,7 @@ struct SearchView: View {
     private func itemsSection(
         title: String,
         keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
-        posterType: PosterType
+        posterType: ItemDisplayType
     ) -> some View {
         PosterHStack(
             title: title,

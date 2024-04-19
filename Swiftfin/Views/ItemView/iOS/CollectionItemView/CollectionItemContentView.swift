@@ -24,7 +24,7 @@ extension CollectionItemView {
 
                 VStack(alignment: .center) {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 600))
-                        .posterStyle(.landscape, contentMode: .fill)
+                        .posterStyle(.wide, contentMode: .fill)
                         .frame(maxHeight: 300)
                         .posterShadow()
                         .edgePadding(.horizontal)

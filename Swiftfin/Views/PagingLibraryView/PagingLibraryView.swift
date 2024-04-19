@@ -98,38 +98,42 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func padLayout(
-        posterType: PosterType,
+        posterType: ItemDisplayType,
         viewType: LibraryViewType,
         listColumnCount: Int
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.landscape, .grid):
+        case (.wide, .grid):
             .minWidth(200)
         case (.portrait, .grid):
             .minWidth(150)
         case (_, .list):
             .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+        default:
+            fatalError()
         }
     }
 
     private static func phoneLayout(
-        posterType: PosterType,
+        posterType: ItemDisplayType,
         viewType: LibraryViewType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.landscape, .grid):
+        case (.wide, .grid):
             .columns(2)
         case (.portrait, .grid):
             .columns(3)
         case (_, .list):
             .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+        default:
+            fatalError()
         }
     }
 
     // MARK: item view
 
     private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .landscape)
+        PosterButton(item: item, type: .wide)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
@@ -176,12 +180,14 @@ struct PagingLibraryView<Element: Poster>: View {
             layout: $layout
         ) { item in
             switch (posterType, viewType) {
-            case (.landscape, .grid):
+            case (.wide, .grid):
                 landscapeGridItemView(item: item)
             case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item)
+            default:
+                fatalError()
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {

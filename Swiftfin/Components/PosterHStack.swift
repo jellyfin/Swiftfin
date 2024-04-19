@@ -14,7 +14,7 @@ struct PosterHStack<Item: Poster>: View {
 
     private var header: () -> any View
     private var title: String?
-    private var type: PosterType
+    private var type: ItemDisplayType
     private var items: Binding<OrderedSet<Item>>
     private var singleImage: Bool
     private var content: (Item) -> any View
@@ -50,7 +50,7 @@ struct PosterHStack<Item: Poster>: View {
     private var phoneHStack: some View {
         CollectionHStack(
             items,
-            columns: type == .portrait ? 3 : 2
+            columns: type == .portrait || type == .square ? 3 : 2
         ) { item in
             PosterButton(
                 item: item,
@@ -96,7 +96,7 @@ extension PosterHStack {
 
     init(
         title: String? = nil,
-        type: PosterType,
+        type: ItemDisplayType,
         items: Binding<OrderedSet<Item>>,
         singleImage: Bool = false
     ) {
@@ -116,7 +116,7 @@ extension PosterHStack {
 
     init<S: Sequence<Item>>(
         title: String? = nil,
-        type: PosterType,
+        type: ItemDisplayType,
         items: S,
         singleImage: Bool = false
     ) {

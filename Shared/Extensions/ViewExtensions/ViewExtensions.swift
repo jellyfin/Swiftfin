@@ -91,15 +91,20 @@ extension View {
 
     /// Applies the aspect ratio and corner radius for the given `PosterType`
     @ViewBuilder
-    func posterStyle(_ type: PosterType, contentMode: ContentMode = .fill) -> some View {
+    func posterStyle(_ type: ItemDisplayType, contentMode: ContentMode = .fill) -> some View {
         switch type {
         case .portrait:
             aspectRatio(2 / 3, contentMode: contentMode)
             #if !os(tvOS)
                 .cornerRadius(ratio: 0.0375, of: \.width)
             #endif
-        case .landscape:
+        case .wide:
             aspectRatio(1.77, contentMode: contentMode)
+            #if !os(tvOS)
+                .cornerRadius(ratio: 1 / 30, of: \.width)
+            #endif
+        case .square:
+            aspectRatio(1, contentMode: contentMode)
             #if !os(tvOS)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
             #endif
