@@ -136,8 +136,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         if let filterViewModel {
             filterViewModel.$currentFilters
-                .dropFirst() // prevents a refresh on subscription
-                .debounce(for: 0.5, scheduler: RunLoop.main)
+                .dropFirst()
+                .debounce(for: 1, scheduler: RunLoop.main)
                 .removeDuplicates()
                 .sink { [weak self] _ in
                     guard let self else { return }
