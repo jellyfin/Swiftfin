@@ -34,15 +34,15 @@ extension Defaults.Keys {
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
 
         static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
-        static let nextUpPosterType = Key<ItemDisplayType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
-        static let recentlyAddedPosterType = Key<ItemDisplayType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
-        static let latestInLibraryPosterType = Key<ItemDisplayType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
+        static let nextUpPosterType = Key<ItemDisplayType>("nextUpPosterType", default: .narrow, suite: .generalSuite)
+        static let recentlyAddedPosterType = Key<ItemDisplayType>("recentlyAddedPosterType", default: .narrow, suite: .generalSuite)
+        static let latestInLibraryPosterType = Key<ItemDisplayType>("latestInLibraryPosterType", default: .narrow, suite: .generalSuite)
         static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
         static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
-        static let similarPosterType = Key<ItemDisplayType>("similarPosterType", default: .portrait, suite: .generalSuite)
+        static let similarPosterType = Key<ItemDisplayType>("similarPosterType", default: .narrow, suite: .generalSuite)
 
         // TODO: have search poster type by types of items if applicable
-        static let searchPosterType = Key<ItemDisplayType>("searchPosterType", default: .portrait, suite: .generalSuite)
+        static let searchPosterType = Key<ItemDisplayType>("searchPosterType", default: .narrow, suite: .generalSuite)
 
         enum CinematicItemViewType {
 
@@ -81,7 +81,7 @@ extension Defaults.Keys {
             )
             static let posterType = Key<ItemDisplayType>(
                 "libraryPosterType",
-                default: .portrait,
+                default: .narrow,
                 suite: .generalSuite
             )
             static let listColumnCount = Key<Int>(

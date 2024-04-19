@@ -45,9 +45,9 @@ extension PagingLibraryView {
                     }
 
                     Button {
-                        posterType = .portrait
+                        posterType = .narrow
                     } label: {
-                        if posterType == .portrait {
+                        if posterType == .narrow {
                             Label("Portrait", systemImage: "checkmark")
                         } else {
                             Label("Portrait", systemImage: "rectangle.portrait")

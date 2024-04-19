@@ -23,7 +23,7 @@ extension PagingLibraryView {
 
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
-            case .portrait:
+            case .narrow:
                 ImageView(element.portraitPosterImageSource(maxWidth: 60))
             case .square:
                 ImageView(element.portraitPosterImageSource(maxWidth: 60))

@@ -72,7 +72,7 @@ extension CollectionItemView {
                 if viewModel.collectionItems.isNotEmpty {
                     PosterHStack(
                         title: L10n.items,
-                        type: .portrait,
+                        type: .narrow,
                         items: viewModel.collectionItems
                     )
                     .trailing {

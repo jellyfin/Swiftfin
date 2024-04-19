@@ -66,7 +66,7 @@ struct SearchView: View {
                 }
 
                 if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .narrow)
                 }
             }
             .edgePadding(.vertical)

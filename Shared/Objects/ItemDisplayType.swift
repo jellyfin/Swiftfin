@@ -9,34 +9,26 @@
 import Defaults
 import SwiftUI
 
-// TODO: Refactor to `ItemDisplayType`
-//       - this is to move away from video specific to generalizing all media types. However,
-//         media is still able to use grammar for their own contexts.
-//       - move landscape/portrait to wide/narrow
-//       - add `square`/something similar
-// TODO: after no longer experimental, nest under `Poster`?
-//       tracker: https://github.com/apple/swift-evolution/blob/main/proposals/0404-nested-protocols.md
-
 enum ItemDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
+
+    /// Example: thumb posters
+    case narrow
+
+    /// Example: album art
+    case square
 
     /// Example: portrait posters
     case wide
 
-//    /// Example: album art
-    case square
-
-    /// Example: thumb posters
-    case portrait
-
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .wide:
-            "Landscape"
+        case .narrow:
+            "Portrait"
         case .square:
             "Square"
-        case .portrait:
-            "Portrait"
+        case .wide:
+            "Wide"
         }
     }
 }

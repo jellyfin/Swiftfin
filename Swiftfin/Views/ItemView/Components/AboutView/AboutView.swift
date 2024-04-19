@@ -37,7 +37,7 @@ extension ItemView {
                             viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
                                 .item.imageSource(.primary, maxWidth: 300)
                         )
-                        .posterStyle(.portrait)
+                        .posterStyle(.narrow)
                         .posterShadow()
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()

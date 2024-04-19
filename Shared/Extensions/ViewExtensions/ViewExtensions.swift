@@ -93,7 +93,7 @@ extension View {
     @ViewBuilder
     func posterStyle(_ type: ItemDisplayType, contentMode: ContentMode = .fill) -> some View {
         switch type {
-        case .portrait:
+        case .narrow:
             aspectRatio(2 / 3, contentMode: contentMode)
             #if !os(tvOS)
                 .cornerRadius(ratio: 0.0375, of: \.width)

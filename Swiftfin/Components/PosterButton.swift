@@ -25,7 +25,7 @@ struct PosterButton<Item: Poster>: View {
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
-        case .portrait:
+        case .narrow:
             ImageView(item.portraitPosterImageSource(maxWidth: 200))
         case .square:
             ImageView(item.portraitPosterImageSource(maxWidth: 200))
