@@ -44,8 +44,7 @@ extension SeriesEpisodeSelector {
         var body: some View {
             PosterButton(
                 item: episode,
-                type: .wide,
-                singleImage: true
+                type: .wide
             )
             .content {
                 let content: String = if episode.isUnaired {

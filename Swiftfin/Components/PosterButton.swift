@@ -21,7 +21,6 @@ struct PosterButton<Item: Poster>: View {
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
     private var onSelect: () -> Void
-    private var singleImage: Bool
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
@@ -30,7 +29,7 @@ struct PosterButton<Item: Poster>: View {
         case .square:
             ImageView(item.portraitPosterImageSource(maxWidth: 200))
         case .wide:
-            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+            ImageView(item.landscapePosterImageSources(maxWidth: 500))
         }
     }
 
@@ -68,17 +67,15 @@ extension PosterButton {
 
     init(
         item: Item,
-        type: ItemDisplayType,
-        singleImage: Bool = false
+        type: ItemDisplayType
     ) {
         self.init(
             item: item,
             type: type,
-            content: { TitleSubtitleContentView(item: item) },
+            content: { TitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
-            onSelect: {},
-            singleImage: singleImage
+            onSelect: {}
         )
     }
 
@@ -113,38 +110,21 @@ extension PosterButton {
             Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
                 .foregroundColor(.primary)
+                .backport
+                .lineLimit(1, reservesSpace: true)
         }
     }
 
-    struct SubtitleContentView: View {
-
-        let item: Item
-
-        var body: some View {
-            Text(item.subtitle ?? "")
-                .font(.caption.weight(.medium))
-                .foregroundColor(.secondary)
-        }
-    }
-
-    struct TitleSubtitleContentView: View {
-
-        let item: Item
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                if item.showTitle {
-                    TitleContentView(item: item)
-                        .backport
-                        .lineLimit(1, reservesSpace: true)
-                }
-
-                SubtitleContentView(item: item)
-                    .backport
-                    .lineLimit(1, reservesSpace: true)
-            }
-        }
-    }
+//    struct SubtitleContentView: View {
+//
+//        let item: Item
+//
+//        var body: some View {
+//            Text(item.subtitle ?? "")
+//                .font(.caption.weight(.medium))
+//                .foregroundColor(.secondary)
+//        }
+//    }
 
     // MARK: Default Overlay
 

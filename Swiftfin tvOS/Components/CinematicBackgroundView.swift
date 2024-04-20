@@ -48,6 +48,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
 
         init() {
             currentItemSubject
+                .removeDuplicates()
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
                 .sink { newItem in
                     self.currentItem = newItem
@@ -56,7 +57,6 @@ struct CinematicBackgroundView<Item: Poster>: View {
         }
 
         func select(item: Item) {
-            guard currentItem != item else { return }
             currentItemSubject.send(item)
         }
     }

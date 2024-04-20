@@ -15,25 +15,16 @@ import UIKit
 
 extension BaseItemDto: Poster {
 
-    var title: String {
-        switch type {
-        case .episode:
-            return seriesName ?? displayTitle
-        default:
-            return displayTitle
-        }
-    }
-
-    var subtitle: String? {
-        switch type {
-        case .episode:
-            return seasonEpisodeLabel
-        case .video:
-            return extraType?.displayTitle
-        default:
-            return nil
-        }
-    }
+//    var subtitle: String? {
+//        switch type {
+//        case .episode:
+//            return seasonEpisodeLabel
+//        case .video:
+//            return extraType?.displayTitle
+//        default:
+//            return nil
+//        }
+//    }
 
     var showTitle: Bool {
         switch type {
@@ -71,10 +62,10 @@ extension BaseItemDto: Poster {
         }
     }
 
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
+    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
         switch type {
         case .episode:
-            if single || !Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+            if !Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 return [imageSource(.primary, maxWidth: maxWidth)]
             } else {
                 return [

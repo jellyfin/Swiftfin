@@ -8,6 +8,8 @@
 
 import Foundation
 
+/// A type that is displayed with a title
 protocol Displayable {
+
     var displayTitle: String { get }
 }

@@ -28,7 +28,7 @@ extension PagingLibraryView {
             case .square:
                 ImageView(element.portraitPosterImageSource(maxWidth: 60))
             case .wide:
-                ImageView(element.landscapePosterImageSources(maxWidth: 110, single: false))
+                ImageView(element.landscapePosterImageSources(maxWidth: 110))
             }
         }
 

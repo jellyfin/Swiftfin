@@ -11,23 +11,23 @@ import Foundation
 // TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
 // TODO: instead of the below image functions, have functions that match `ImageType`
 //       - allows caller to choose images
+
+/// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, Identifiable {
 
-    @available(*, deprecated, message: "remove this")
-    var subtitle: String? { get }
+//    @available(*, deprecated, message: "remove this")
+//    var subtitle: String? { get }
     @available(*, deprecated, message: "remove this")
     var showTitle: Bool { get }
-    
+
     var typeSystemImage: String? { get }
 
     @available(*, deprecated, message: "use image type functions instead")
     func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
     @available(*, deprecated, message: "use image type functions instead")
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
+    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
     @available(*, deprecated, message: "use image type functions instead")
     func cinematicPosterImageSources() -> [ImageSource]
-    
-    
 }
 
 extension Poster {
@@ -40,7 +40,7 @@ extension Poster {
         .init()
     }
 
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
         []
     }
 

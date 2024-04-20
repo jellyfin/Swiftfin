@@ -16,7 +16,6 @@ struct PosterHStack<Item: Poster>: View {
     private var title: String?
     private var type: ItemDisplayType
     private var items: Binding<OrderedSet<Item>>
-    private var singleImage: Bool
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -31,8 +30,7 @@ struct PosterHStack<Item: Poster>: View {
         ) { item in
             PosterButton(
                 item: item,
-                type: type,
-                singleImage: singleImage
+                type: type
             )
             .content { content(item).eraseToAnyView() }
             .imageOverlay { imageOverlay(item).eraseToAnyView() }
@@ -54,8 +52,7 @@ struct PosterHStack<Item: Poster>: View {
         ) { item in
             PosterButton(
                 item: item,
-                type: type,
-                singleImage: singleImage
+                type: type
             )
             .content { content(item).eraseToAnyView() }
             .imageOverlay { imageOverlay(item).eraseToAnyView() }
@@ -97,16 +94,14 @@ extension PosterHStack {
     init(
         title: String? = nil,
         type: ItemDisplayType,
-        items: Binding<OrderedSet<Item>>,
-        singleImage: Bool = false
+        items: Binding<OrderedSet<Item>>
     ) {
         self.init(
             header: { DefaultHeader(title: title) },
             title: title,
             type: type,
             items: items,
-            singleImage: singleImage,
-            content: { PosterButton.TitleSubtitleContentView(item: $0) },
+            content: { PosterButton.TitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
             trailingContent: { EmptyView() },
@@ -117,14 +112,12 @@ extension PosterHStack {
     init<S: Sequence<Item>>(
         title: String? = nil,
         type: ItemDisplayType,
-        items: S,
-        singleImage: Bool = false
+        items: S
     ) {
         self.init(
             title: title,
             type: type,
-            items: .constant(OrderedSet(items)),
-            singleImage: singleImage
+            items: .constant(OrderedSet(items))
         )
     }
 
