@@ -74,11 +74,11 @@ struct SearchView: View {
                 }
 
                 if viewModel.programs.isNotEmpty {
-                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .wide)
                 }
 
                 if viewModel.channels.isNotEmpty {
-                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .square)
                 }
             }
             .edgePadding(.vertical)
