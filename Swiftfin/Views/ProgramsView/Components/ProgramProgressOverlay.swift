@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: item-type dependent views may be more appropriate near/on
+//       the `PosterButton` object instead of on these larger views
 extension ProgramsView {
 
     struct ProgramProgressOverlay: View {

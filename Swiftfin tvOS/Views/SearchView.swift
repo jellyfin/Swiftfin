@@ -16,6 +16,8 @@ struct SearchView: View {
     private var searchPosterType
 
     @EnvironmentObject
+    private var videoPlayerRouter: VideoPlayerWrapperCoordinator.Router
+    @EnvironmentObject
     private var router: SearchCoordinator.Router
 
     @StateObject
@@ -58,15 +60,35 @@ struct SearchView: View {
                 if viewModel.people.isNotEmpty {
                     itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
+
+                if viewModel.programs.isNotEmpty {
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
+                }
+
+                if viewModel.channels.isNotEmpty {
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
+                }
             }
         }
     }
 
     private func select(_ item: BaseItemDto) {
-        if item.type == .person {
+        switch item.type {
+        case .person:
             let viewModel = ItemLibraryViewModel(parent: item)
             router.route(to: \.library, viewModel)
-        } else {
+        case .program:
+            videoPlayerRouter.route(
+                to: \.liveVideoPlayer,
+                LiveVideoPlayerManager(program: item)
+            )
+        case .tvChannel:
+            guard let mediaSource = item.mediaSources?.first else { return }
+            videoPlayerRouter.route(
+                to: \.liveVideoPlayer,
+                LiveVideoPlayerManager(item: item, mediaSource: mediaSource)
+            )
+        default:
             router.route(to: \.item, item)
         }
     }
