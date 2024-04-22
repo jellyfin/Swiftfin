@@ -21,7 +21,7 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: "Special Features",
-                type: .wide,
+                type: .landscape,
                 items: items
             )
             .onSelect { item in

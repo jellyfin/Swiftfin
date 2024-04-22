@@ -62,7 +62,7 @@ struct SearchView: View {
                 }
 
                 if viewModel.programs.isNotEmpty {
-                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .wide)
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
                 }
 
                 if viewModel.channels.isNotEmpty {
@@ -97,7 +97,7 @@ struct SearchView: View {
     private func itemsSection(
         title: String,
         keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
-        posterType: ItemDisplayType
+        posterType: PosterDisplayType
     ) -> some View {
         PosterHStack(
             title: title,

@@ -53,7 +53,7 @@ extension VideoPlayer {
                             ForEach(viewModel.chapters, id: \.hashValue) { chapter in
                                 PosterButton(
                                     item: chapter,
-                                    type: .wide
+                                    type: .landscape
                                 )
                                 .imageOverlay {
                                     if chapter.secondsRange.contains(currentProgressHandler.seconds) {

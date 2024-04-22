@@ -70,8 +70,7 @@ extension BaseItemDto {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesID ?? "")
         return ImageSource(
             url: url,
-            blurHash: nil,
-            systemImage: systemImage
+            blurHash: nil
         )
     }
 
@@ -129,8 +128,7 @@ extension BaseItemDto {
 
         return ImageSource(
             url: url,
-            blurHash: blurHash,
-            systemImage: systemImage
+            blurHash: blurHash
         )
     }
 }

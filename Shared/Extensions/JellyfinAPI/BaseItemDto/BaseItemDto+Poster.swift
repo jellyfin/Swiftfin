@@ -59,7 +59,7 @@ extension BaseItemDto: Poster {
         case .channel, .tvChannel, .liveTvChannel, .movie, .series:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
-            [ImageSource(systemImage: systemImage)]
+            []
         }
     }
 

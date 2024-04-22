@@ -88,23 +88,21 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func makeLayout(
-        posterType: ItemDisplayType,
-        viewType: LibraryViewType
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.wide, .grid):
+        case (.landscape, .grid):
             .columns(5)
         case (.portrait, .grid):
             .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             .columns(1)
-        default:
-            fatalError()
         }
     }
 
     private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .wide)
+        PosterButton(item: item, type: .landscape)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
@@ -151,14 +149,12 @@ struct PagingLibraryView<Element: Poster>: View {
             layout: layout
         ) { item in
             switch (posterType, viewType) {
-            case (.wide, .grid):
+            case (.landscape, .grid):
                 landscapeGridItemView(item: item)
             case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item)
-            default:
-                fatalError()
             }
         }
     }

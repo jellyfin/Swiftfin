@@ -45,7 +45,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                PosterHStack(type: .wide, items: items)
+                PosterHStack(type: .landscape, items: items)
                     .content(itemContent)
                     .imageOverlay(itemImageOverlay)
                     .contextMenu(itemContextMenu)

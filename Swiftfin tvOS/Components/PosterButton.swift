@@ -18,7 +18,7 @@ struct PosterButton<Item: Poster>: View {
     private var isFocused: Bool
 
     private var item: Item
-    private var type: ItemDisplayType
+    private var type: PosterDisplayType
     private var horizontalAlignment: HorizontalAlignment
     private var content: () -> any View
     private var imageOverlay: () -> any View
@@ -33,9 +33,7 @@ struct PosterButton<Item: Poster>: View {
         switch type {
         case .portrait:
             ImageView(item.portraitImageSources(maxWidth: 500))
-        case .square:
-            ImageView(item.squareImageSources(maxWidth: 500))
-        case .wide:
+        case .landscape:
             ImageView(item.landscapeImageSources(maxWidth: 500))
         }
     }
@@ -50,7 +48,7 @@ struct PosterButton<Item: Poster>: View {
 
                     imageView(from: item)
                         .failure {
-                            SystemImageContentView(systemName: item.typeSystemImage)
+                            SystemImageContentView(systemName: item.systemImage)
                         }
 
                     imageOverlay()
@@ -81,7 +79,7 @@ struct PosterButton<Item: Poster>: View {
 
 extension PosterButton {
 
-    init(item: Item, type: ItemDisplayType) {
+    init(item: Item, type: PosterDisplayType) {
         self.init(
             item: item,
             type: type,

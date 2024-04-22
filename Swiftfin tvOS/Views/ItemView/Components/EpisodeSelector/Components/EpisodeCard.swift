@@ -23,7 +23,7 @@ extension SeriesEpisodeSelector {
         var body: some View {
             PosterButton(
                 item: episode,
-                type: .wide
+                type: .landscape
             )
             .content {
                 let content: String = if episode.isUnaired {

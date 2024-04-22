@@ -93,7 +93,8 @@ extension MediaView {
                             titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
                         }
                         .failure {
-                            ImageView.DefaultFailureView()
+                            Color.secondarySystemFill
+                                .opacity(0.75)
                                 .overlay {
                                     titleLabel
                                         .foregroundColor(.primary)
@@ -101,7 +102,7 @@ extension MediaView {
                         }
                         .id(imageSources.hashValue)
                 }
-                .posterStyle(.wide)
+                .posterStyle(.landscape)
             }
             .buttonStyle(.card)
             .onFirstAppear(perform: setImageSources)

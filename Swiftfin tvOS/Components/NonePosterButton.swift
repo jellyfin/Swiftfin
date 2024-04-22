@@ -10,7 +10,7 @@ import SwiftUI
 
 struct NonePosterButton: View {
 
-    let type: ItemDisplayType
+    let type: PosterDisplayType
 
     var body: some View {
         Button {

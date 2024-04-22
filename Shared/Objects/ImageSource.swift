@@ -16,15 +16,12 @@ struct ImageSource: Hashable {
 
     let url: URL?
     let blurHash: String?
-    let systemImage: String?
 
     init(
         url: URL? = nil,
-        blurHash: String? = nil,
-        systemImage: String? = nil
+        blurHash: String? = nil
     ) {
         self.url = url
         self.blurHash = blurHash
-        self.systemImage = systemImage
     }
 }

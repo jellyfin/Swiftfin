@@ -114,7 +114,7 @@ extension View {
                 RoundedRectangle(cornerRadius: size[keyPath: side] * ratio)
                     .stroke(
                         .white.opacity(0.10),
-                        lineWidth: 1.5
+                        lineWidth: 2
                     )
                     .clipped()
             }

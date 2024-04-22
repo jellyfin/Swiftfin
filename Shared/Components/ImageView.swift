@@ -41,8 +41,7 @@ struct ImageView: View {
                 .eraseToAnyView()
         } else {
             DefaultPlaceholderView(
-                blurHash: currentSource.blurHash,
-                systemImage: currentSource.systemImage
+                blurHash: currentSource.blurHash
             )
         }
     }
@@ -82,7 +81,7 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { SystemImageContentView(systemName: source.systemImage) }
+            failure: { EmptyView() }
         )
     }
 
@@ -91,7 +90,7 @@ extension ImageView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { SystemImageContentView(systemName: sources.last?.systemImage) }
+            failure: { EmptyView() }
         )
     }
 
@@ -100,7 +99,7 @@ extension ImageView {
             sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { SystemImageContentView(systemName: nil) }
+            failure: { EmptyView() }
         )
     }
 
@@ -113,7 +112,7 @@ extension ImageView {
             sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { SystemImageContentView(systemName: nil) }
+            failure: { EmptyView() }
         )
     }
 }
@@ -139,24 +138,21 @@ extension ImageView {
 
 extension ImageView {
 
+    struct DefaultFailureView: View {
+
+        var body: some View {
+            Color.secondarySystemFill
+                .opacity(0.75)
+        }
+    }
+
     struct DefaultPlaceholderView: View {
 
         let blurHash: String?
-        let systemImage: String?
-
-        init(
-            blurHash: String? = nil,
-            systemImage: String? = nil
-        ) {
-            self.blurHash = blurHash
-            self.systemImage = systemImage
-        }
 
         var body: some View {
             if let blurHash {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-            } else if let systemImage {
-                SystemImageContentView(systemName: systemImage)
             }
         }
     }

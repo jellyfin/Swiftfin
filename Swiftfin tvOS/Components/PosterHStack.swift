@@ -15,7 +15,7 @@ import SwiftUI
 struct PosterHStack<Item: Poster>: View {
 
     private var title: String?
-    private var type: ItemDisplayType
+    private var type: PosterDisplayType
     private var items: Binding<OrderedSet<Item>>
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
@@ -43,7 +43,7 @@ struct PosterHStack<Item: Poster>: View {
 
             CollectionHStack(
                 items,
-                columns: type == .wide ? 4 : 7
+                columns: type == .landscape ? 4 : 7
             ) { item in
                 PosterButton(item: item, type: type)
                     .content { content(item).eraseToAnyView() }
@@ -85,7 +85,7 @@ extension PosterHStack {
 
     init(
         title: String? = nil,
-        type: ItemDisplayType,
+        type: PosterDisplayType,
         items: Binding<OrderedSet<Item>>
     ) {
         self.init(
@@ -103,7 +103,7 @@ extension PosterHStack {
 
     init<S: Sequence<Item>>(
         title: String? = nil,
-        type: ItemDisplayType,
+        type: PosterDisplayType,
         items: S
     ) {
         self.init(

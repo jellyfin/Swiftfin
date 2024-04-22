@@ -42,6 +42,9 @@ struct PosterButton<Item: Poster>: View {
                     Color.clear
 
                     imageView(from: item)
+                        .failure {
+                            SystemImageContentView(systemName: item.systemImage)
+                        }
 
                     imageOverlay()
                         .eraseToAnyView()

@@ -41,18 +41,18 @@ struct ChannelLibraryView: View {
 
     init() {
         if UIDevice.isPhone {
-            layout = Self.padlayout(itemDisplayType: .list)
+            layout = Self.padlayout(channelDisplayType: .list)
         } else {
-            layout = Self.phonelayout(itemDisplayType: .list)
+            layout = Self.phonelayout(channelDisplayType: .list)
         }
     }
 
     // MARK: layout
 
     private static func padlayout(
-        itemDisplayType: LibraryDisplayType
+        channelDisplayType: LibraryDisplayType
     ) -> CollectionVGridLayout {
-        switch itemDisplayType {
+        switch channelDisplayType {
         case .grid:
             .minWidth(150)
         case .list:
@@ -61,9 +61,9 @@ struct ChannelLibraryView: View {
     }
 
     private static func phonelayout(
-        itemDisplayType: LibraryDisplayType
+        channelDisplayType: LibraryDisplayType
     ) -> CollectionVGridLayout {
-        switch itemDisplayType {
+        switch channelDisplayType {
         case .grid:
             .columns(3)
         case .list:
@@ -138,9 +138,9 @@ struct ChannelLibraryView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
-                layout = Self.phonelayout(itemDisplayType: newValue)
+                layout = Self.phonelayout(channelDisplayType: newValue)
             } else {
-                layout = Self.padlayout(itemDisplayType: newValue)
+                layout = Self.padlayout(channelDisplayType: newValue)
             }
         }
         .onFirstAppear {
