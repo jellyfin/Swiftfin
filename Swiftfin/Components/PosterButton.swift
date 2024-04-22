@@ -80,7 +80,7 @@ extension PosterButton {
         self.init(
             item: item,
             type: type,
-            content: { TitleContentView(item: item) },
+            content: { TitleSubtitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {}
@@ -104,6 +104,9 @@ extension PosterButton {
     }
 }
 
+// TODO: Shared default content with tvOS?
+//       - check if content is generally same
+
 extension PosterButton {
 
     // MARK: Default Content
@@ -116,8 +119,6 @@ extension PosterButton {
             Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
                 .foregroundColor(.primary)
-                .backport
-                .lineLimit(1, reservesSpace: true)
         }
     }
 
@@ -126,7 +127,7 @@ extension PosterButton {
         let item: Item
 
         var body: some View {
-            Text(item.subtitle ?? "")
+            Text(item.subtitle ?? " ")
                 .font(.caption.weight(.medium))
                 .foregroundColor(.secondary)
         }
@@ -171,10 +172,13 @@ extension PosterButton {
 
                     SeparatorHStack {
                         Text(item.seasonEpisodeLabel ?? .emptyDash)
-                            .lineLimit(1)
 
-                        Text(item.displayTitle)
-                            .lineLimit(1)
+                        if item.showTitle {
+                            Text(item.displayTitle)
+
+                        } else if let seriesName = item.seriesName {
+                            Text(seriesName)
+                        }
                     }
                     .separator {
                         Circle()
@@ -183,6 +187,7 @@ extension PosterButton {
                     }
                     .font(.caption)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
                 }
             }
         }

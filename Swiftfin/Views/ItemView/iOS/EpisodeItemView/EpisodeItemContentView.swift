@@ -25,10 +25,10 @@ extension EpisodeItemView {
                 VStack(alignment: .center) {
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
                         .frame(maxHeight: 300)
-                        .aspectRatio(1.77, contentMode: .fill)
-                        .cornerRadius(10)
-                        .padding(.horizontal)
+                        .posterBorder(ratio: 1.77, of: \.width)
+                        .posterStyle(.landscape)
                         .posterShadow()
+                        .padding(.horizontal)
 
                     ShelfView(viewModel: viewModel)
                 }

@@ -48,7 +48,14 @@ struct PosterButton<Item: Poster>: View {
 
                     imageView(from: item)
                         .failure {
-                            SystemImageContentView(systemName: item.systemImage)
+                            if item.showTitle {
+                                SystemImageContentView(systemName: item.systemImage)
+                            } else {
+                                SystemImageContentView(
+                                    title: item.displayTitle,
+                                    systemName: item.systemImage
+                                )
+                            }
                         }
 
                     imageOverlay()
@@ -120,7 +127,8 @@ extension PosterButton {
     }
 }
 
-// TODO: Shared default content?
+// TODO: Shared default content with iOS?
+//       - check if content is generally same
 
 extension PosterButton {
 
@@ -163,6 +171,58 @@ extension PosterButton {
                 SubtitleContentView(item: item)
                     .backport
                     .lineLimit(1, reservesSpace: true)
+            }
+        }
+    }
+
+    // TODO: clean up
+
+    // Content specific for BaseItemDto episode items
+    struct EpisodeContentSubtitleContent: View {
+
+        let item: Item
+
+        var body: some View {
+            if let item = item as? BaseItemDto {
+                // Unsure why this needs 0 spacing
+                // compared to other default content
+                VStack(alignment: .leading, spacing: 0) {
+                    if item.showTitle, let seriesName = item.seriesName {
+                        Text(seriesName)
+                            .font(.footnote.weight(.regular))
+                            .foregroundColor(.primary)
+                            .backport
+                            .lineLimit(1, reservesSpace: true)
+                    }
+
+                    Subtitle(item: item)
+                }
+            }
+        }
+
+        struct Subtitle: View {
+
+            let item: BaseItemDto
+
+            var body: some View {
+                SeparatorHStack {
+                    Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                    if item.showTitle {
+                        Text(item.displayTitle)
+
+                    } else if let seriesName = item.seriesName {
+                        Text(seriesName)
+                    }
+                }
+                .separator {
+                    Circle()
+                        .frame(width: 2, height: 2)
+                        .padding(.horizontal, 3)
+                }
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
             }
         }
     }
