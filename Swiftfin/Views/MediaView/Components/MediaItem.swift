@@ -11,6 +11,8 @@ import SwiftUI
 
 // Note: the design reason to not have a local label always on top
 //       is to have the same failure/empty color for all views
+// TODO: why don't shadows work with failure image views?
+//       - due to `Color`?
 
 extension MediaView {
 

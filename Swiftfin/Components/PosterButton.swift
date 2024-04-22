@@ -14,6 +14,8 @@ import SwiftUI
 // TODO: allow `content` to trigger `onSelect`?
 //       - not in button label to avoid context menu visual oddities
 // TODO: get width/height for images from layout size?
+// TODO: why don't shadows work with failure image views?
+//       - due to `Color`?
 
 struct PosterButton<Item: Poster>: View {
 
