@@ -17,14 +17,15 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     /// Show the title
     var showTitle: Bool { get }
 
-    /// A system that visually represents this type
-//    var typeSystemImage: String? { get }
-
     func portraitImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
 
     func landscapeImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
+
+    func cinematicImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
 }
@@ -47,6 +48,12 @@ extension Poster {
 
     func landscapeImageSources(
         maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
+        []
+    }
+
+    func cinematicImageSources(
+        maxWidth: CGFloat?
     ) -> [ImageSource] {
         []
     }

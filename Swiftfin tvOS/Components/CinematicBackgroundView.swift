@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-struct CinematicBackgroundView<Item: Poster & CinematicImageProvider>: View {
+struct CinematicBackgroundView<Item: Poster>: View {
 
     @ObservedObject
     var viewModel: ViewModel

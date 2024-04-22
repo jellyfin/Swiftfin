@@ -464,12 +464,6 @@
 		E15D63ED2BD622A700AA665D /* CompactChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63EC2BD622A700AA665D /* CompactChannelView.swift */; };
 		E15D63EF2BD6DFC200AA665D /* SystemImageable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */; };
 		E15D63F02BD6DFC200AA665D /* SystemImageable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */; };
-		E15D63F22BD708AD00AA665D /* CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F12BD708AD00AA665D /* CinematicImageProvider.swift */; };
-		E15D63F32BD708AD00AA665D /* CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F12BD708AD00AA665D /* CinematicImageProvider.swift */; };
-		E15D63F52BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F42BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift */; };
-		E15D63F62BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F42BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift */; };
-		E15D63F82BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F72BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift */; };
-		E15D63F92BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63F72BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift */; };
 		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
 		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
@@ -1135,9 +1129,6 @@
 		E15D4F092B1BD88900442DB8 /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
 		E15D63EC2BD622A700AA665D /* CompactChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactChannelView.swift; sourceTree = "<group>"; };
 		E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImageable.swift; sourceTree = "<group>"; };
-		E15D63F12BD708AD00AA665D /* CinematicImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicImageProvider.swift; sourceTree = "<group>"; };
-		E15D63F42BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+CinematicImageProvider.swift"; sourceTree = "<group>"; };
-		E15D63F72BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+CinematicImageProvider.swift"; sourceTree = "<group>"; };
 		E168BD08289A4162001A6922 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
@@ -1631,7 +1622,6 @@
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
 				E10231432BCF8A51009D71FC /* ChannelProgram.swift */,
-				E15D63F12BD708AD00AA665D /* CinematicImageProvider.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
@@ -2989,7 +2979,6 @@
 			isa = PBXGroup;
 			children = (
 				5364F454266CA0DC0026ECBA /* BaseItemPerson.swift */,
-				E15D63F72BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift */,
 				E118959C289312020042947B /* BaseItemPerson+Poster.swift */,
 			);
 			path = BaseItemPerson;
@@ -2999,7 +2988,6 @@
 			isa = PBXGroup;
 			children = (
 				E1AD104C26D96CE3003E4A08 /* BaseItemDto.swift */,
-				E15D63F42BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift */,
 				E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */,
 				E18845F426DD631E00B0C5B7 /* BaseItemDto+Poster.swift */,
 				E18A8E7C28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift */,
@@ -3504,13 +3492,11 @@
 				E15D4F0B2B1BD88900442DB8 /* Edge.swift in Sources */,
 				E193D53627193F8500900D82 /* LibraryCoordinator.swift in Sources */,
 				E1CCC3D228C858A50020ED54 /* UserProfileButton.swift in Sources */,
-				E15D63F62BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift in Sources */,
 				E18845F626DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
 				E1B490452967E26300D3EDCE /* PersistentLogHandler.swift in Sources */,
 				E193D53327193F7D00900D82 /* FilterCoordinator.swift in Sources */,
 				E18E021E2887492B0022598C /* RowDivider.swift in Sources */,
 				E1DC983E296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */,
-				E15D63F92BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift in Sources */,
 				E107BB9427880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
 				E1575E7E293E77B5001665B1 /* ItemFilterCollection.swift in Sources */,
 				E1D37F592B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */,
@@ -3697,7 +3683,6 @@
 				E1549678296CB22B00C4EF88 /* InlineEnumToggle.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */,
-				E15D63F32BD708AD00AA665D /* CinematicImageProvider.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
 				E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
@@ -3847,7 +3832,6 @@
 				E170D0E2294CC8000017224C /* VideoPlayer+Actions.swift in Sources */,
 				E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
-				E15D63F82BD70A4D00AA665D /* BaseItemPerson+CinematicImageProvider.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,
@@ -3907,7 +3891,6 @@
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E102314D2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
-				E15D63F22BD708AD00AA665D /* CinematicImageProvider.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
@@ -3998,7 +3981,6 @@
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
-				E15D63F52BD708E800AA665D /* BaseItemDto+CinematicImageProvider.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
 				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
@@ -4518,7 +4500,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -4534,7 +4516,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -4558,7 +4540,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = TY84JMYEFE;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -4574,7 +4556,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

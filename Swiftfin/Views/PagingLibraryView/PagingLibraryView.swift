@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: need to think about design for views that may not support current library display type
+// TODO: need to think about better design for views that may not support current library display type
 //       - ex: channels/albums when in portrait/landscape
 //       - just have the supported view embedded in a container view?
 

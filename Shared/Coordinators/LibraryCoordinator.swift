@@ -12,7 +12,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class LibraryCoordinator<Element: Poster & CinematicImageProvider>: NavigationCoordinatable {
+final class LibraryCoordinator<Element: Poster>: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \LibraryCoordinator.start)
 
