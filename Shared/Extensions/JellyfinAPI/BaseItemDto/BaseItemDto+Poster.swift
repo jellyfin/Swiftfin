@@ -88,7 +88,7 @@ extension BaseItemDto: Poster {
     func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            [_forceSeriesImageSource(.backdrop, maxWidth: maxWidth)]
+            [seriesImageSource(.backdrop, maxWidth: maxWidth)]
         default:
             [imageSource(.backdrop, maxWidth: maxWidth)]
         }

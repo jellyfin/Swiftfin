@@ -155,6 +155,9 @@ extension PosterButton {
     // Content specific for BaseItemDto episode items
     struct EpisodeContentSubtitleContent: View {
 
+        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+        private var useSeriesLandscapeBackdrop
+
         let item: Item
 
         var body: some View {
@@ -173,9 +176,8 @@ extension PosterButton {
                     SeparatorHStack {
                         Text(item.seasonEpisodeLabel ?? .emptyDash)
 
-                        if item.showTitle {
+                        if item.showTitle || useSeriesLandscapeBackdrop {
                             Text(item.displayTitle)
-
                         } else if let seriesName = item.seriesName {
                             Text(seriesName)
                         }

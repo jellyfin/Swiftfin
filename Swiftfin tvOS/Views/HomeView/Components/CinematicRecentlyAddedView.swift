@@ -21,7 +21,7 @@ extension HomeView {
 
         private func itemSelectorImageSource(for item: BaseItemDto) -> ImageSource {
             if item.type == .episode {
-                return item._forceSeriesImageSource(
+                return item.seriesImageSource(
                     .logo,
                     maxWidth: UIScreen.main.bounds.width * 0.4,
                     maxHeight: 200

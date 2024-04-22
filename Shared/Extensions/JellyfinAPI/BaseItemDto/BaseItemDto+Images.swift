@@ -50,34 +50,21 @@ extension BaseItemDto {
 
     // MARK: Series Images
 
+    /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
+    /// to episodes also retrieving series images in some areas. This may cause more 404s.
     func seriesImageURL(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> URL? {
         _imageURL(
             type,
             maxWidth: maxWidth,
             maxHeight: maxHeight,
-            itemID: seriesID ?? ""
+            itemID: seriesID ?? "",
+            force: true
         )
     }
 
+    /// - Note: Will force the creation of an image source even if it doesn't have a tag, due
+    /// to episodes also retrieving series images in some areas. This may cause more 404s.
     func seriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
-        let url = _imageURL(
-            type,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight,
-            itemID: seriesID ?? ""
-        )
-
-        return ImageSource(
-            url: url,
-            blurHash: nil
-        )
-    }
-
-    /// This will force the creation of an image source even if it doesn't have a tag, due
-    /// to episodes also retrieving series images in some areas.
-    ///
-    /// Underscored because it seems `unsafe` and will cause more 404s server side.
-    func _forceSeriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
         let url = _imageURL(
             type,
             maxWidth: maxWidth,
