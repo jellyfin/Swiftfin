@@ -39,35 +39,37 @@ extension BaseItemDto: Poster {
         switch type {
         case .boxSet:
             "film.stack"
+        case .channel, .tvChannel, .liveTvChannel, .program:
+            "tv"
         case .episode, .movie, .series:
             "film"
         case .folder:
             "folder.fill"
         case .person:
             "person.fill"
-        case .program:
-            "tv"
         default: nil
         }
     }
 
     func narrowImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
+        case .channel, .tvChannel, .liveTvChannel:
+            [imageSource(.primary, maxWidth: maxWidth)]
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth)]
         case .movie, .series:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
-            []
+            [ImageSource(systemImage: typeSystemImage)]
         }
     }
 
     func squareImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
-        case .channel:
+        case .channel, .tvChannel, .liveTvChannel:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
-            []
+            [ImageSource(systemImage: typeSystemImage)]
         }
     }
 

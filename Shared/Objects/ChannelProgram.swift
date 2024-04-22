@@ -51,7 +51,7 @@ extension ChannelProgram: Poster {
     }
 
     var typeSystemImage: String? {
-        "tv"
+        channel.typeSystemImage
     }
 
     func squareImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {

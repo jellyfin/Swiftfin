@@ -178,7 +178,7 @@
 		E10231392BCF8A3C009D71FC /* ProgramButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231302BCF8A3C009D71FC /* ProgramButtonContent.swift */; };
 		E102313B2BCF8A3C009D71FC /* ProgramProgressOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231312BCF8A3C009D71FC /* ProgramProgressOverlay.swift */; };
 		E102313D2BCF8A3C009D71FC /* ProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231332BCF8A3C009D71FC /* ProgramsView.swift */; };
-		E102313F2BCF8A3C009D71FC /* WideChannelGridItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231352BCF8A3C009D71FC /* WideChannelGridItem.swift */; };
+		E102313F2BCF8A3C009D71FC /* WideChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231352BCF8A3C009D71FC /* WideChannelView.swift */; };
 		E10231412BCF8A3C009D71FC /* ChannelLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231372BCF8A3C009D71FC /* ChannelLibraryView.swift */; };
 		E10231442BCF8A51009D71FC /* ChannelProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231432BCF8A51009D71FC /* ChannelProgram.swift */; };
 		E10231452BCF8A51009D71FC /* ChannelProgram.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231432BCF8A51009D71FC /* ChannelProgram.swift */; };
@@ -461,6 +461,7 @@
 		E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F062B1B12C300442DB8 /* Backport.swift */; };
 		E15D4F0A2B1BD88900442DB8 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F092B1BD88900442DB8 /* Edge.swift */; };
 		E15D4F0B2B1BD88900442DB8 /* Edge.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D4F092B1BD88900442DB8 /* Edge.swift */; };
+		E15D63ED2BD622A700AA665D /* NarrowChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15D63EC2BD622A700AA665D /* NarrowChannelView.swift */; };
 		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
 		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
@@ -978,7 +979,7 @@
 		E10231302BCF8A3C009D71FC /* ProgramButtonContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramButtonContent.swift; sourceTree = "<group>"; };
 		E10231312BCF8A3C009D71FC /* ProgramProgressOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramProgressOverlay.swift; sourceTree = "<group>"; };
 		E10231332BCF8A3C009D71FC /* ProgramsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramsView.swift; sourceTree = "<group>"; };
-		E10231352BCF8A3C009D71FC /* WideChannelGridItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WideChannelGridItem.swift; sourceTree = "<group>"; };
+		E10231352BCF8A3C009D71FC /* WideChannelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WideChannelView.swift; sourceTree = "<group>"; };
 		E10231372BCF8A3C009D71FC /* ChannelLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelLibraryView.swift; sourceTree = "<group>"; };
 		E10231432BCF8A51009D71FC /* ChannelProgram.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelProgram.swift; sourceTree = "<group>"; };
 		E10231462BCF8A6D009D71FC /* ChannelLibraryViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelLibraryViewModel.swift; sourceTree = "<group>"; };
@@ -1124,6 +1125,7 @@
 		E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoView.swift; sourceTree = "<group>"; };
 		E15D4F062B1B12C300442DB8 /* Backport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backport.swift; sourceTree = "<group>"; };
 		E15D4F092B1BD88900442DB8 /* Edge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Edge.swift; sourceTree = "<group>"; };
+		E15D63EC2BD622A700AA665D /* NarrowChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NarrowChannelView.swift; sourceTree = "<group>"; };
 		E168BD08289A4162001A6922 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
@@ -2086,7 +2088,8 @@
 		E10231362BCF8A3C009D71FC /* Component */ = {
 			isa = PBXGroup;
 			children = (
-				E10231352BCF8A3C009D71FC /* WideChannelGridItem.swift */,
+				E15D63EC2BD622A700AA665D /* NarrowChannelView.swift */,
+				E10231352BCF8A3C009D71FC /* WideChannelView.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -3854,6 +3857,7 @@
 				E18E01FA288747580022598C /* AboutAppView.swift in Sources */,
 				E170D103294CE8BF0017224C /* LoadingView.swift in Sources */,
 				6220D0AD26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
+				E15D63ED2BD622A700AA665D /* NarrowChannelView.swift in Sources */,
 				E18A8E8528D60D0000333B9A /* VideoPlayerCoordinator.swift in Sources */,
 				E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */,
 				E1A3E4CD2BB7D8C8005C59F8 /* Label-iOS.swift in Sources */,
@@ -4000,7 +4004,7 @@
 				E1579EA72B97DC1500A31CA1 /* Eventful.swift in Sources */,
 				E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */,
 				E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
-				E102313F2BCF8A3C009D71FC /* WideChannelGridItem.swift in Sources */,
+				E102313F2BCF8A3C009D71FC /* WideChannelView.swift in Sources */,
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E102313D2BCF8A3C009D71FC /* ProgramsView.swift in Sources */,

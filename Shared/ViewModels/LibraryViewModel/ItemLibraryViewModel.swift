@@ -53,7 +53,7 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var libraryID: String?
         var personIDs: [String]?
         var studioIDs: [String]?
-        var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
+        var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet, .tvChannel]
         var isRecursive: Bool? = true
 
         if let libraryType = parent?.libraryType, let id = parent?.id {

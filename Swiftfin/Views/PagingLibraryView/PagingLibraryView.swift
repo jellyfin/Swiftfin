@@ -297,7 +297,11 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                LibraryViewTypeToggle(posterType: $posterType, viewType: $viewType, listColumnCount: $listColumnCount)
+                LibraryViewTypeToggle(
+                    posterType: $posterType,
+                    viewType: $viewType,
+                    listColumnCount: $listColumnCount
+                )
 
                 Button(L10n.random, systemImage: "dice.fill") {
                     viewModel.send(.getRandomItem)

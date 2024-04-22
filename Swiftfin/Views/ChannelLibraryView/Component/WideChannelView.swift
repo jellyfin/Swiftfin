@@ -14,7 +14,7 @@ import SwiftUI
 
 extension ChannelLibraryView {
 
-    struct WideChannelGridItem: View {
+    struct WideChannelView: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -39,7 +39,7 @@ extension ChannelLibraryView {
                         .opacity(colorScheme == .dark ? 0.5 : 1)
                         .posterShadow()
 
-                    ImageView(channel.squareImageSources(maxWidth: 80))
+                    ImageView(channel.squareImageSources(maxWidth: 120))
                         .image {
                             $0.aspectRatio(contentMode: .fit)
                         }
@@ -55,6 +55,7 @@ extension ChannelLibraryView {
                 }
                 .aspectRatio(1.0, contentMode: .fill)
                 .cornerRadius(ratio: 0.0375, of: \.width)
+                .posterBorder(ratio: 0.0375)
 
                 Text(channel.channel.number ?? "")
                     .font(.body)
@@ -154,7 +155,7 @@ extension ChannelLibraryView {
     }
 }
 
-extension ChannelLibraryView.WideChannelGridItem {
+extension ChannelLibraryView.WideChannelView {
 
     init(channel: ChannelProgram) {
         self.init(

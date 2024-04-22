@@ -82,7 +82,7 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView(systemImage: source.systemImage) }
+            failure: { SystemImageContentView(systemName: source.systemImage) }
         )
     }
 
@@ -92,7 +92,7 @@ extension ImageView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView(systemImage: sources.last?.systemImage) }
+            failure: { SystemImageContentView(systemName: sources.last?.systemImage) }
         )
     }
 
@@ -101,7 +101,7 @@ extension ImageView {
             sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { SystemImageContentView(systemName: nil) }
         )
     }
 
@@ -114,7 +114,7 @@ extension ImageView {
             sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { SystemImageContentView(systemName: nil) }
         )
     }
 }
@@ -139,21 +139,6 @@ extension ImageView {
 // MARK: Defaults
 
 extension ImageView {
-
-    struct DefaultFailureView: View {
-
-        let systemImage: String?
-
-        init(systemImage: String? = nil) {
-            self.systemImage = systemImage
-        }
-
-        var body: some View {
-            if let systemImage {
-                SystemImageContentView(systemName: systemImage)
-            }
-        }
-    }
 
     struct DefaultPlaceholderView: View {
 

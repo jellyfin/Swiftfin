@@ -16,6 +16,8 @@ import SwiftUI
 //       - after `PosterType` has been refactored and with customizable toggle button
 // TODO: sorting by number/filtering
 //       - should be able to use normal filter view model, but how to add custom filters for data context?
+// TODO: saving item display type
+//       - wait until after user refactor
 
 struct ChannelLibraryView: View {
 
@@ -23,32 +25,82 @@ struct ChannelLibraryView: View {
     private var mainRouter: MainCoordinator.Router
 
     @State
+    private var itemDisplayType: ItemDisplayType = .wide
+    @State
     private var layout: CollectionVGridLayout
 
     @StateObject
     private var viewModel = ChannelLibraryViewModel()
 
+    // MARK: init
+
     init() {
         if UIDevice.isPhone {
-            layout = .columns(1)
+            layout = Self.padlayout(itemDisplayType: .wide)
         } else {
-            layout = .minWidth(250)
+            layout = Self.phonelayout(itemDisplayType: .wide)
         }
+    }
+
+    // MARK: layout
+
+    private static func padlayout(
+        itemDisplayType: ItemDisplayType
+    ) -> CollectionVGridLayout {
+        switch itemDisplayType {
+        case .narrow, .square:
+            .minWidth(150)
+        case .wide:
+            .minWidth(250)
+        }
+    }
+
+    private static func phonelayout(
+        itemDisplayType: ItemDisplayType
+    ) -> CollectionVGridLayout {
+        switch itemDisplayType {
+        case .narrow, .square:
+            .columns(3)
+        case .wide:
+            .columns(1)
+        }
+    }
+
+    // MARK: item view
+
+    private func narrowChannelView(channel: ChannelProgram) -> some View {
+        PosterButton(item: channel.channel, type: .square)
+            .onSelect {
+                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+                mainRouter.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                )
+            }
+    }
+
+    private func wideChannelView(channel: ChannelProgram) -> some View {
+        WideChannelView(channel: channel)
+            .onSelect {
+                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+                mainRouter.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                )
+            }
     }
 
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,
-            layout: layout
+            layout: $layout
         ) { channel in
-            WideChannelGridItem(channel: channel)
-                .onSelect {
-                    guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                    mainRouter.route(
-                        to: \.liveVideoPlayer,
-                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                    )
-                }
+            switch itemDisplayType {
+            case .narrow, .square:
+                narrowChannelView(channel: channel)
+            case .wide:
+                wideChannelView(channel: channel)
+            }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)
@@ -79,6 +131,13 @@ struct ChannelLibraryView: View {
         }
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: itemDisplayType) { newValue in
+            if UIDevice.isPhone {
+                layout = Self.phonelayout(itemDisplayType: newValue)
+            } else {
+                layout = Self.padlayout(itemDisplayType: newValue)
+            }
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)
@@ -94,6 +153,34 @@ struct ChannelLibraryView: View {
 
             if viewModel.backgroundStates.contains(.gettingNextPage) {
                 ProgressView()
+            }
+
+            Menu {
+                Button {
+                    itemDisplayType = .narrow
+                } label: {
+                    if itemDisplayType == .narrow {
+                        Label("Narrow", systemImage: "checkmark")
+                    } else {
+                        Label("Narrow", systemImage: "square.grid.2x2.fill")
+                    }
+                }
+
+                Button {
+                    itemDisplayType = .wide
+                } label: {
+                    if itemDisplayType == .wide {
+                        Label("Wide", systemImage: "checkmark")
+                    } else {
+                        Label("Wide", systemImage: "square.fill.text.grid.1x2")
+                    }
+                }
+            } label: {
+                if itemDisplayType == .narrow {
+                    Label("Narrow", systemImage: "square.grid.2x2.fill")
+                } else {
+                    Label("Wide", systemImage: "square.fill.text.grid.1x2")
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ import SwiftUI
 
 enum ItemDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    /// Example: thumb posters
+    /// Example: thumb posters, wide channels
     case narrow
 
     /// Example: album art
