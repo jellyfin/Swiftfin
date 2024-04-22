@@ -18,7 +18,7 @@ extension SeriesEpisodeSelector {
             VStack(alignment: .leading) {
                 Color.secondarySystemFill
                     .opacity(0.75)
-                    .posterStyle(.wide)
+                    .posterStyle(.landscape)
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: .emptyDash,

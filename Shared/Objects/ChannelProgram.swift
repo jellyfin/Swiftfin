@@ -46,15 +46,7 @@ extension ChannelProgram: Poster {
         channel.displayTitle
     }
 
-    var subtitle: String? {
-        nil
-    }
-
-    var typeSystemImage: String? {
-        channel.typeSystemImage
-    }
-
-    func squareImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
-        [channel.imageSource(.primary, maxWidth: maxWidth)]
+    var systemImage: String {
+        channel.systemImage
     }
 }

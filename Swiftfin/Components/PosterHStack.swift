@@ -14,7 +14,7 @@ struct PosterHStack<Item: Poster>: View {
 
     private var header: () -> any View
     private var title: String?
-    private var type: ItemDisplayType
+    private var type: PosterDisplayType
     private var items: Binding<OrderedSet<Item>>
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
@@ -26,7 +26,7 @@ struct PosterHStack<Item: Poster>: View {
     private var padHStack: some View {
         CollectionHStack(
             items,
-            minWidth: type == .narrow ? 140 : 220
+            minWidth: type == .portrait ? 140 : 220
         ) { item in
             PosterButton(
                 item: item,
@@ -48,7 +48,7 @@ struct PosterHStack<Item: Poster>: View {
     private var phoneHStack: some View {
         CollectionHStack(
             items,
-            columns: type == .narrow || type == .square ? 3 : 2
+            columns: type == .portrait ? 3 : 2
         ) { item in
             PosterButton(
                 item: item,
@@ -93,7 +93,7 @@ extension PosterHStack {
 
     init(
         title: String? = nil,
-        type: ItemDisplayType,
+        type: PosterDisplayType,
         items: Binding<OrderedSet<Item>>
     ) {
         self.init(
@@ -111,7 +111,7 @@ extension PosterHStack {
 
     init<S: Sequence<Item>>(
         title: String? = nil,
-        type: ItemDisplayType,
+        type: PosterDisplayType,
         items: S
     ) {
         self.init(

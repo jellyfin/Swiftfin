@@ -58,7 +58,7 @@ struct SearchView: View {
                 }
 
                 if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .narrow)
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
 
                 if viewModel.programs.isNotEmpty {
@@ -66,7 +66,7 @@ struct SearchView: View {
                 }
 
                 if viewModel.channels.isNotEmpty {
-                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .narrow)
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
                 }
             }
         }

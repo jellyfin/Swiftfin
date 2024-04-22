@@ -94,7 +94,7 @@ struct PagingLibraryView<Element: Poster>: View {
         switch (posterType, viewType) {
         case (.wide, .grid):
             .columns(5)
-        case (.narrow, .grid):
+        case (.portrait, .grid):
             .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             .columns(1)
@@ -123,7 +123,7 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func portraitGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .narrow)
+        PosterButton(item: item, type: .portrait)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
@@ -153,7 +153,7 @@ struct PagingLibraryView<Element: Poster>: View {
             switch (posterType, viewType) {
             case (.wide, .grid):
                 landscapeGridItemView(item: item)
-            case (.narrow, .grid):
+            case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item)

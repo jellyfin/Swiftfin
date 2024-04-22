@@ -28,7 +28,7 @@ extension CollectionItemView {
                 if viewModel.collectionItems.isNotEmpty {
                     PosterHStack(
                         title: L10n.items,
-                        type: .narrow,
+                        type: .portrait,
                         items: viewModel.collectionItems
                     )
                     .onSelect { item in

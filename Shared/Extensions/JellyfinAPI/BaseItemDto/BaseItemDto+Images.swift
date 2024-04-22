@@ -71,7 +71,7 @@ extension BaseItemDto {
         return ImageSource(
             url: url,
             blurHash: nil,
-            systemImage: typeSystemImage
+            systemImage: systemImage
         )
     }
 
@@ -130,7 +130,7 @@ extension BaseItemDto {
         return ImageSource(
             url: url,
             blurHash: blurHash,
-            systemImage: typeSystemImage
+            systemImage: systemImage
         )
     }
 }

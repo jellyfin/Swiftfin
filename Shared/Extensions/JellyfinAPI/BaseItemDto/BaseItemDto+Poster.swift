@@ -35,7 +35,7 @@ extension BaseItemDto: Poster {
         }
     }
 
-    var typeSystemImage: String? {
+    var systemImage: String {
         switch type {
         case .boxSet:
             "film.stack"
@@ -47,33 +47,23 @@ extension BaseItemDto: Poster {
             "folder.fill"
         case .person:
             "person.fill"
-        default: nil
+        default:
+            "circle"
         }
     }
 
-    func narrowImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
-        case .channel, .tvChannel, .liveTvChannel:
-            [imageSource(.primary, maxWidth: maxWidth)]
         case .episode:
             [seriesImageSource(.primary, maxWidth: maxWidth)]
-        case .movie, .series:
+        case .channel, .tvChannel, .liveTvChannel, .movie, .series:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
-            [ImageSource(systemImage: typeSystemImage)]
+            [ImageSource(systemImage: systemImage)]
         }
     }
 
-    func squareImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
-        switch type {
-        case .channel, .tvChannel, .liveTvChannel:
-            [imageSource(.primary, maxWidth: maxWidth)]
-        default:
-            [ImageSource(systemImage: typeSystemImage)]
-        }
-    }
-
-    func wideImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func landscapeImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
         case .episode:
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {

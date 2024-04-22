@@ -9,7 +9,7 @@
 import Foundation
 
 /// A type that is displayed as a poster
-protocol Poster: Displayable, Hashable, Identifiable {
+protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }
@@ -18,17 +18,13 @@ protocol Poster: Displayable, Hashable, Identifiable {
     var showTitle: Bool { get }
 
     /// A system that visually represents this type
-    var typeSystemImage: String? { get }
+//    var typeSystemImage: String? { get }
 
-    func narrowImageSources(
+    func portraitImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
 
-    func squareImageSources(
-        maxWidth: CGFloat?
-    ) -> [ImageSource]
-
-    func wideImageSources(
+    func landscapeImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
 }
@@ -43,19 +39,13 @@ extension Poster {
         true
     }
 
-    func narrowImageSources(
+    func portraitImageSources(
         maxWidth: CGFloat? = nil
     ) -> [ImageSource] {
         []
     }
 
-    func squareImageSources(
-        maxWidth: CGFloat? = nil
-    ) -> [ImageSource] {
-        []
-    }
-
-    func wideImageSources(
+    func landscapeImageSources(
         maxWidth: CGFloat? = nil
     ) -> [ImageSource] {
         []

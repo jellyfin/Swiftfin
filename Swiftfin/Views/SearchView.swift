@@ -70,15 +70,15 @@ struct SearchView: View {
                 }
 
                 if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .narrow)
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
 
                 if viewModel.programs.isNotEmpty {
-                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .wide)
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
                 }
 
                 if viewModel.channels.isNotEmpty {
-                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .square)
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
                 }
             }
             .edgePadding(.vertical)
@@ -110,7 +110,7 @@ struct SearchView: View {
     private func itemsSection(
         title: String,
         keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
-        posterType: ItemDisplayType
+        posterType: PosterDisplayType
     ) -> some View {
         PosterHStack(
             title: title,

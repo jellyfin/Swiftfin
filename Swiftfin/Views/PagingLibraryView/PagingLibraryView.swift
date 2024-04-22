@@ -11,6 +11,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: need to think about design for views that may not support current library display type
+//       - ex: channels/albums when in portrait/landscape
+//       - just have the supported view embedded in a container view?
+
 // Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
 //       This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
 //       other items that don't have a subtitle which requires the entire library to implement
@@ -98,47 +102,51 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func padLayout(
-        posterType: ItemDisplayType,
-        viewType: LibraryViewType,
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType,
         listColumnCount: Int
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.wide, .grid):
+        case (.landscape, .grid):
             .minWidth(200)
-        case (.narrow, .grid):
+        case (.portrait, .grid):
             .minWidth(150)
         case (_, .list):
             .columns(listColumnCount, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-        default:
-            fatalError()
         }
     }
 
     private static func phoneLayout(
-        posterType: ItemDisplayType,
-        viewType: LibraryViewType
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.wide, .grid):
+        case (.landscape, .grid):
             .columns(2)
-        case (.narrow, .grid):
+        case (.portrait, .grid):
             .columns(3)
         case (_, .list):
             .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
-        default:
-            fatalError()
         }
     }
 
     // MARK: item view
 
+    // Note: if parent is a folders then other items will have labels,
+    //       so an empty content view is necessary
+
     private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .wide)
+        PosterButton(item: item, type: .landscape)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
+                } else if viewModel.parent?.libraryType == .folder {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                        .hidden()
                 }
             }
             .onSelect {
@@ -147,12 +155,17 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func portraitGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .narrow)
+        PosterButton(item: item, type: .portrait)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
+                } else if viewModel.parent?.libraryType == .folder {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                        .hidden()
                 }
             }
             .onSelect {
@@ -180,14 +193,12 @@ struct PagingLibraryView<Element: Poster>: View {
             layout: $layout
         ) { item in
             switch (posterType, viewType) {
-            case (.wide, .grid):
+            case (.landscape, .grid):
                 landscapeGridItemView(item: item)
-            case (.narrow, .grid):
+            case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item)
-            default:
-                fatalError()
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {

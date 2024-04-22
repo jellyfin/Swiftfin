@@ -189,10 +189,8 @@ final class HomeViewModel: ViewModel, Stateful {
 
         async let excludedLibraryIDs = getExcludedLibraries()
 
-        #warning("remove music")
-
         return try await (userViews.value.items ?? [])
-            .intersection(["movies", "tvshows", "music"], using: \.collectionType)
+            .intersection(["movies", "tvshows"], using: \.collectionType)
             .subtracting(excludedLibraryIDs, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
     }

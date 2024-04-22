@@ -21,7 +21,7 @@ extension ItemView {
         var body: some View {
             PosterHStack(
                 title: L10n.castAndCrew,
-                type: .narrow,
+                type: .portrait,
                 items: people.filter(\.isDisplayed)
             )
             .trailing {

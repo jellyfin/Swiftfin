@@ -24,7 +24,7 @@ extension CollectionItemView {
 
                 VStack(alignment: .center) {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 600))
-                        .posterStyle(.wide, contentMode: .fill)
+                        .posterStyle(.landscape, contentMode: .fill)
                         .frame(maxHeight: 300)
                         .posterShadow()
                         .edgePadding(.horizontal)
@@ -72,7 +72,7 @@ extension CollectionItemView {
                 if viewModel.collectionItems.isNotEmpty {
                     PosterHStack(
                         title: L10n.items,
-                        type: .narrow,
+                        type: .portrait,
                         items: viewModel.collectionItems
                     )
                     .trailing {

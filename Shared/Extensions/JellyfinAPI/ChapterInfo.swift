@@ -45,7 +45,7 @@ extension ChapterInfo {
             chapterInfo.displayTitle
         }
 
-        let typeSystemImage: String? = "film"
+        let systemImage: String = "film"
         var subtitle: String?
         var showTitle: Bool = true
 
@@ -59,7 +59,7 @@ extension ChapterInfo {
             self.secondsRange = secondsRange
         }
 
-        func wideImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+        func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {
             [imageSource]
         }
     }

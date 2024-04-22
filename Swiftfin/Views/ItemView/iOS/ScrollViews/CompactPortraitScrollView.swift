@@ -143,9 +143,9 @@ extension ItemView.CompactPosterScrollView {
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
                         .failure {
-                            SystemImageContentView(systemName: viewModel.item.typeSystemImage)
+                            SystemImageContentView(systemName: viewModel.item.systemImage)
                         }
-                        .posterStyle(.narrow, contentMode: .fit)
+                        .posterStyle(.portrait, contentMode: .fit)
                         .frame(width: 130)
                         .accessibilityIgnoresInvertColors()
 

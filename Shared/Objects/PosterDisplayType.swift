@@ -9,26 +9,18 @@
 import Defaults
 import SwiftUI
 
-enum ItemDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum PosterDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    /// Example: thumb posters, wide channels
-    case narrow
-
-    /// Example: album art
-    case square
-
-    /// Example: portrait posters
-    case wide
+    case landscape
+    case portrait
 
     // TODO: localize
     var displayTitle: String {
         switch self {
-        case .narrow:
+        case .landscape:
+            "Landscape"
+        case .portrait:
             "Portrait"
-        case .square:
-            "Square"
-        case .wide:
-            "Wide"
         }
     }
 }

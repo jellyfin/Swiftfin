@@ -24,7 +24,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { newItem in
                 proxy.update {
-                    ImageView(newItem?.wideImageSources(maxWidth: nil) ?? [])
+                    ImageView(newItem?.landscapeImageSources(maxWidth: nil) ?? [])
                         .placeholder { _ in
                             Color.clear
                         }

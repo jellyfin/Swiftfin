@@ -19,16 +19,16 @@ extension PagingLibraryView {
 
         private let item: Element
         private var onSelect: () -> Void
-        private let posterType: ItemDisplayType
+        private let posterType: PosterDisplayType
 
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
-            case .narrow:
-                ImageView(element.narrowImageSources(maxWidth: 60))
-            case .square:
-                ImageView(element.squareImageSources(maxWidth: 60))
-            case .wide:
-                ImageView(element.wideImageSources(maxWidth: 110))
+            case .portrait:
+                ImageView(element.portraitImageSources(maxWidth: 60))
+            case .landscape:
+                ImageView(element.landscapeImageSources(maxWidth: 110))
+            default:
+                fatalError()
             }
         }
 
@@ -83,18 +83,18 @@ extension PagingLibraryView {
 
                             imageView(from: item)
                                 .failure {
-                                    SystemImageContentView(systemName: item.typeSystemImage)
+                                    SystemImageContentView(systemName: item.systemImage)
                                 }
                         }
                         .posterStyle(posterType)
-                        .frame(width: posterType == .wide ? 110 : 60)
+                        .frame(width: posterType == .landscape ? 110 : 60)
                         .posterShadow()
                         .padding(.vertical, 8)
 
                         HStack {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(item.displayTitle)
-                                    .font(posterType == .wide ? .subheadline : .callout)
+                                    .font(posterType == .landscape ? .subheadline : .callout)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.primary)
                                     .lineLimit(2)
@@ -124,7 +124,7 @@ extension PagingLibraryView {
 
 extension PagingLibraryView.LibraryRow {
 
-    init(item: Element, posterType: ItemDisplayType) {
+    init(item: Element, posterType: PosterDisplayType) {
         self.init(
             item: item,
             onSelect: {},

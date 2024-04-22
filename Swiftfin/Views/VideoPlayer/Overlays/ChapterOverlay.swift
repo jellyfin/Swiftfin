@@ -137,9 +137,9 @@ extension VideoPlayer.Overlay.ChapterOverlay {
                     ZStack {
                         Color.black
 
-                        ImageView(chapter.wideImageSources(maxWidth: 500))
+                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
                             .failure {
-                                SystemImageContentView(systemName: chapter.typeSystemImage)
+                                SystemImageContentView(systemName: chapter.systemImage)
                             }
                             .aspectRatio(contentMode: .fit)
                     }
@@ -161,7 +161,7 @@ extension VideoPlayer.Overlay.ChapterOverlay {
                         })
                     }
                     .aspectRatio(1.77, contentMode: .fill)
-                    .posterBorder(ratio: 1 / 30)
+                    .posterBorder(ratio: 1 / 30, of: \.width)
                     .cornerRadius(ratio: 1 / 30, of: \.width)
 
                     VStack(alignment: .leading, spacing: 5) {

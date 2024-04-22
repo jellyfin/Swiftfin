@@ -29,7 +29,7 @@ extension HomeView {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                    type: viewModel.elements.first?.type == .musicAlbum ? .square : latestInLibraryPosterType,
+                    type: latestInLibraryPosterType,
                     items: $viewModel.elements
                 )
                 .trailing {

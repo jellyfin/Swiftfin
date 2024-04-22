@@ -17,11 +17,11 @@ extension BaseItemPerson: Poster {
         firstRole
     }
 
-    var typeSystemImage: String? {
+    var systemImage: String {
         "person.fill"
     }
 
-    func narrowImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
 
         // TODO: figure out what to do about screen scaling with .main being deprecated
         //       - maxWidth assume already scaled?
@@ -45,7 +45,7 @@ extension BaseItemPerson: Poster {
         return [ImageSource(
             url: url,
             blurHash: blurHash,
-            systemImage: typeSystemImage
+            systemImage: systemImage
         )]
     }
 }

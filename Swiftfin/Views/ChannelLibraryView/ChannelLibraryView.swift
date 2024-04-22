@@ -12,12 +12,17 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: wide + narrow view toggling
-//       - after `PosterType` has been refactored and with customizable toggle button
 // TODO: sorting by number/filtering
-//       - should be able to use normal filter view model, but how to add custom filters for data context?
-// TODO: saving item display type
+//       - see if can use normal filter view model?
+//       - how to add custom filters for data context?
+// TODO: saving item display type/detailed column count
 //       - wait until after user refactor
+
+// Note: Repurposes `LibraryDisplayType` to save from creating a new type.
+//       If there are other places where detailed/compact contextually differ
+//       from the library types, then create a new type and use it here.
+//       - list: detailed
+//       - grid: compact
 
 struct ChannelLibraryView: View {
 
@@ -25,7 +30,7 @@ struct ChannelLibraryView: View {
     private var mainRouter: MainCoordinator.Router
 
     @State
-    private var itemDisplayType: ItemDisplayType = .wide
+    private var channelDisplayType: LibraryDisplayType = .list
     @State
     private var layout: CollectionVGridLayout
 
@@ -36,32 +41,32 @@ struct ChannelLibraryView: View {
 
     init() {
         if UIDevice.isPhone {
-            layout = Self.padlayout(itemDisplayType: .wide)
+            layout = Self.padlayout(itemDisplayType: .list)
         } else {
-            layout = Self.phonelayout(itemDisplayType: .wide)
+            layout = Self.phonelayout(itemDisplayType: .list)
         }
     }
 
     // MARK: layout
 
     private static func padlayout(
-        itemDisplayType: ItemDisplayType
+        itemDisplayType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch itemDisplayType {
-        case .narrow, .square:
+        case .grid:
             .minWidth(150)
-        case .wide:
+        case .list:
             .minWidth(250)
         }
     }
 
     private static func phonelayout(
-        itemDisplayType: ItemDisplayType
+        itemDisplayType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch itemDisplayType {
-        case .narrow, .square:
+        case .grid:
             .columns(3)
-        case .wide:
+        case .list:
             .columns(1)
         }
     }
@@ -69,7 +74,7 @@ struct ChannelLibraryView: View {
     // MARK: item view
 
     private func narrowChannelView(channel: ChannelProgram) -> some View {
-        PosterButton(item: channel.channel, type: .square)
+        CompactChannelView(channel: channel.channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
                 mainRouter.route(
@@ -80,7 +85,7 @@ struct ChannelLibraryView: View {
     }
 
     private func wideChannelView(channel: ChannelProgram) -> some View {
-        WideChannelView(channel: channel)
+        DetailedChannelView(channel: channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
                 mainRouter.route(
@@ -95,10 +100,10 @@ struct ChannelLibraryView: View {
             $viewModel.elements,
             layout: $layout
         ) { channel in
-            switch itemDisplayType {
-            case .narrow, .square:
+            switch channelDisplayType {
+            case .grid:
                 narrowChannelView(channel: channel)
-            case .wide:
+            case .list:
                 wideChannelView(channel: channel)
             }
         }
@@ -131,7 +136,7 @@ struct ChannelLibraryView: View {
         }
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: itemDisplayType) { newValue in
+        .onChange(of: channelDisplayType) { newValue in
             if UIDevice.isPhone {
                 layout = Self.phonelayout(itemDisplayType: newValue)
             } else {
@@ -156,31 +161,20 @@ struct ChannelLibraryView: View {
             }
 
             Menu {
-                Button {
-                    itemDisplayType = .narrow
-                } label: {
-                    if itemDisplayType == .narrow {
-                        Label("Narrow", systemImage: "checkmark")
-                    } else {
-                        Label("Narrow", systemImage: "square.grid.2x2.fill")
-                    }
-                }
+                // We repurposed `LibraryDisplayType` but want different labels
+                Picker("Channel Display", selection: $channelDisplayType) {
 
-                Button {
-                    itemDisplayType = .wide
-                } label: {
-                    if itemDisplayType == .wide {
-                        Label("Wide", systemImage: "checkmark")
-                    } else {
-                        Label("Wide", systemImage: "square.fill.text.grid.1x2")
-                    }
+                    Label("Compact", systemImage: LibraryDisplayType.grid.systemImage)
+                        .tag(LibraryDisplayType.grid)
+
+                    Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
+                        .tag(LibraryDisplayType.list)
                 }
             } label: {
-                if itemDisplayType == .narrow {
-                    Label("Narrow", systemImage: "square.grid.2x2.fill")
-                } else {
-                    Label("Wide", systemImage: "square.fill.text.grid.1x2")
-                }
+                Label(
+                    channelDisplayType.displayTitle,
+                    systemImage: channelDisplayType.systemImage
+                )
             }
         }
     }

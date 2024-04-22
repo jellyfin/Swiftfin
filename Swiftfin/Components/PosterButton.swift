@@ -12,12 +12,13 @@ import SwiftUI
 
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
 // TODO: allow `content` to trigger `onSelect`?
+//       - not in button label to avoid context menu visual oddities
 // TODO: get width/height for images from layout size?
 
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
-    private var type: ItemDisplayType
+    private var type: PosterDisplayType
     private var content: () -> any View
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
@@ -25,12 +26,10 @@ struct PosterButton<Item: Poster>: View {
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
-        case .narrow:
-            ImageView(item.narrowImageSources(maxWidth: 200))
-        case .square:
-            ImageView(item.squareImageSources(maxWidth: 200))
-        case .wide:
-            ImageView(item.wideImageSources(maxWidth: 500))
+        case .landscape:
+            ImageView(item.landscapeImageSources(maxWidth: 500))
+        case .portrait:
+            ImageView(item.portraitImageSources(maxWidth: 200))
         }
     }
 
@@ -65,7 +64,7 @@ extension PosterButton {
 
     init(
         item: Item,
-        type: ItemDisplayType
+        type: PosterDisplayType
     ) {
         self.init(
             item: item,

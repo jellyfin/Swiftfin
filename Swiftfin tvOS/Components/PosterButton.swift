@@ -31,12 +31,12 @@ struct PosterButton<Item: Poster>: View {
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
-        case .narrow:
-            ImageView(item.narrowImageSources(maxWidth: 500))
+        case .portrait:
+            ImageView(item.portraitImageSources(maxWidth: 500))
         case .square:
             ImageView(item.squareImageSources(maxWidth: 500))
         case .wide:
-            ImageView(item.wideImageSources(maxWidth: 500))
+            ImageView(item.landscapeImageSources(maxWidth: 500))
         }
     }
 

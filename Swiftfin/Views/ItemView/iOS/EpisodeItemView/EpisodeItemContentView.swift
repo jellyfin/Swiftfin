@@ -74,7 +74,7 @@ extension EpisodeItemView {
                 if let seriesItem = viewModel.seriesItem {
                     PosterHStack(
                         title: L10n.series,
-                        type: .narrow,
+                        type: .portrait,
                         items: [seriesItem]
                     )
                     .onSelect { item in

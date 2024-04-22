@@ -86,7 +86,6 @@ extension ImageView {
         )
     }
 
-    /// Will use the last source's system image
     init(_ sources: [ImageSource]) {
         self.init(
             sources: sources.compacted(using: \.url),

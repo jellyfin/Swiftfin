@@ -91,32 +91,27 @@ extension View {
 
     /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     @ViewBuilder
-    func posterStyle(_ type: ItemDisplayType, contentMode: ContentMode = .fill) -> some View {
+    func posterStyle(_ type: PosterDisplayType, contentMode: ContentMode = .fill) -> some View {
         switch type {
-        case .narrow:
-            aspectRatio(2 / 3, contentMode: contentMode)
-            #if !os(tvOS)
-                .posterBorder(ratio: 0.0375)
-                .cornerRadius(ratio: 0.0375, of: \.width)
-            #endif
-        case .square:
-            aspectRatio(1, contentMode: contentMode)
-            #if !os(tvOS)
-                .cornerRadius(ratio: 1 / 30, of: \.width)
-            #endif
-        case .wide:
+        case .landscape:
             aspectRatio(1.77, contentMode: contentMode)
             #if !os(tvOS)
-                .posterBorder(ratio: 1 / 30)
+                .posterBorder(ratio: 1 / 30, of: \.width)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
+            #endif
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+            #if !os(tvOS)
+                .posterBorder(ratio: 0.0375, of: \.width)
+                .cornerRadius(ratio: 0.0375, of: \.width)
             #endif
         }
     }
 
-    func posterBorder(ratio: CGFloat) -> some View {
+    func posterBorder(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>) -> some View {
         modifier(OnSizeChangedModifier { size in
             overlay {
-                RoundedRectangle(cornerRadius: size.width * ratio)
+                RoundedRectangle(cornerRadius: size[keyPath: side] * ratio)
                     .stroke(
                         .white.opacity(0.10),
                         lineWidth: 1.5
