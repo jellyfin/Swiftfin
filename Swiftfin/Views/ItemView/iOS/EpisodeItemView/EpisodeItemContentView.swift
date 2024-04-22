@@ -25,7 +25,6 @@ extension EpisodeItemView {
                 VStack(alignment: .center) {
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
                         .frame(maxHeight: 300)
-                        .posterBorder(ratio: 1.77, of: \.width)
                         .posterStyle(.landscape)
                         .posterShadow()
                         .padding(.horizontal)
