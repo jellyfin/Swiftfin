@@ -101,7 +101,7 @@ extension MediaView {
                         }
                         .id(imageSources.hashValue)
                 }
-                .posterStyle(.landscape)
+                .posterStyle(.wide)
             }
             .buttonStyle(.card)
             .onFirstAppear(perform: setImageSources)

@@ -99,7 +99,7 @@ extension ItemView.CompactLogoScrollView {
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
                 ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
-                    .placeholder {
+                    .placeholder { _ in
                         EmptyView()
                     }
                     .failure {

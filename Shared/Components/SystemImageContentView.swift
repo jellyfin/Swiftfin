@@ -39,7 +39,7 @@ struct SystemImageContentView: View {
                 .accessibilityHidden(true)
                 .frame(width: contentSize.width / widthRatio, height: contentSize.height / heightRatio)
         }
-        .size($contentSize)
+        .trackingSize($contentSize)
     }
 }
 

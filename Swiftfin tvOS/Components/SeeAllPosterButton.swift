@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SeeAllPosterButton: View {
 
-    private let type: PosterType
+    private let type: ItemDisplayType
     private var onSelect: () -> Void
 
     var body: some View {
@@ -37,7 +37,7 @@ struct SeeAllPosterButton: View {
 
 extension SeeAllPosterButton {
 
-    init(type: PosterType) {
+    init(type: ItemDisplayType) {
         self.init(
             type: type,
             onSelect: {}

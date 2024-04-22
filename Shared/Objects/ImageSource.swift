@@ -8,16 +8,23 @@
 
 import Foundation
 
+/// Represents an image source along with a blur hash and a system image
+/// to act as placeholders.
+///
+/// If `blurHash` is `nil`, the given system image is used instead.
 struct ImageSource: Hashable {
 
     let url: URL?
     let blurHash: String?
+    let systemImage: String?
 
     init(
         url: URL? = nil,
-        blurHash: String? = nil
+        blurHash: String? = nil,
+        systemImage: String? = nil
     ) {
         self.url = url
         self.blurHash = blurHash
+        self.systemImage = systemImage
     }
 }

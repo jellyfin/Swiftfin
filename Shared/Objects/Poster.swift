@@ -8,43 +8,56 @@
 
 import Foundation
 
-// TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
-// TODO: instead of the below image functions, have functions that match `ImageType`
-//       - allows caller to choose images
-
 /// A type that is displayed as a poster
 protocol Poster: Displayable, Hashable, Identifiable {
 
-//    @available(*, deprecated, message: "remove this")
-//    var subtitle: String? { get }
-    @available(*, deprecated, message: "remove this")
+    /// Optional subtitle when used as a poster
+    var subtitle: String? { get }
+
+    /// Show the title
     var showTitle: Bool { get }
 
+    /// A system that visually represents this type
     var typeSystemImage: String? { get }
 
-    @available(*, deprecated, message: "use image type functions instead")
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
-    @available(*, deprecated, message: "use image type functions instead")
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource]
-    @available(*, deprecated, message: "use image type functions instead")
-    func cinematicPosterImageSources() -> [ImageSource]
+    func narrowImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
+
+    func squareImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
+
+    func wideImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
 }
 
 extension Poster {
+
+    var subtitle: String? {
+        nil
+    }
 
     var showTitle: Bool {
         true
     }
 
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        .init()
-    }
-
-    func landscapePosterImageSources(maxWidth: CGFloat) -> [ImageSource] {
+    func narrowImageSources(
+        maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
         []
     }
 
-    func cinematicPosterImageSources() -> [ImageSource] {
+    func squareImageSources(
+        maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
+        []
+    }
+
+    func wideImageSources(
+        maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
         []
     }
 }

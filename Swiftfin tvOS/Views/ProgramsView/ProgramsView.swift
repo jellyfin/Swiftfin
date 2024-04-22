@@ -58,7 +58,7 @@ struct ProgramsView: View {
     ) -> some View {
         PosterHStack(
             title: title,
-            type: .landscape,
+            type: .wide,
             items: programsViewModel[keyPath: keyPath]
         )
         .content {

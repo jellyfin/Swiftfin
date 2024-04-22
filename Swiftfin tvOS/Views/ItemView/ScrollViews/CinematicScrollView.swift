@@ -67,7 +67,7 @@ extension ItemView {
                             maxWidth: UIScreen.main.bounds.width * 0.4,
                             maxHeight: 250
                         ))
-                        .placeholder {
+                        .placeholder { _ in
                             EmptyView()
                         }
                         .failure {

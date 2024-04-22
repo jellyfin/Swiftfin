@@ -58,15 +58,15 @@ struct SearchView: View {
                 }
 
                 if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .narrow)
                 }
 
                 if viewModel.programs.isNotEmpty {
-                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
+                    itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .wide)
                 }
 
                 if viewModel.channels.isNotEmpty {
-                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
+                    itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .narrow)
                 }
             }
         }
@@ -97,7 +97,7 @@ struct SearchView: View {
     private func itemsSection(
         title: String,
         keyPath: KeyPath<SearchViewModel, [BaseItemDto]>,
-        posterType: PosterType
+        posterType: ItemDisplayType
     ) -> some View {
         PosterHStack(
             title: title,

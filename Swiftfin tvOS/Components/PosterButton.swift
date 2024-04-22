@@ -18,13 +18,12 @@ struct PosterButton<Item: Poster>: View {
     private var isFocused: Bool
 
     private var item: Item
-    private var type: PosterType
+    private var type: ItemDisplayType
     private var horizontalAlignment: HorizontalAlignment
     private var content: () -> any View
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
     private var onSelect: () -> Void
-    private var singleImage: Bool
 
     // Setting the .focused() modifier causes significant performance issues.
     // Only set if desiring focus changes
@@ -32,10 +31,12 @@ struct PosterButton<Item: Poster>: View {
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
-        case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: 500))
-        case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+        case .narrow:
+            ImageView(item.narrowImageSources(maxWidth: 500))
+        case .square:
+            ImageView(item.squareImageSources(maxWidth: 500))
+        case .wide:
+            ImageView(item.wideImageSources(maxWidth: 500))
         }
     }
 
@@ -80,7 +81,7 @@ struct PosterButton<Item: Poster>: View {
 
 extension PosterButton {
 
-    init(item: Item, type: PosterType, singleImage: Bool = false) {
+    init(item: Item, type: ItemDisplayType) {
         self.init(
             item: item,
             type: type,
@@ -89,7 +90,6 @@ extension PosterButton {
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
             onSelect: {},
-            singleImage: singleImage,
             onFocusChanged: nil
         )
     }

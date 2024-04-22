@@ -25,7 +25,6 @@ private let imagePipeline = {
 //       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
-// TODO: probably don't need both `placeholder` modifiers
 struct ImageView: View {
 
     @State
@@ -41,7 +40,10 @@ struct ImageView: View {
             placeholder(currentSource)
                 .eraseToAnyView()
         } else {
-            DefaultPlaceholderView(blurHash: currentSource.blurHash)
+            DefaultPlaceholderView(
+                blurHash: currentSource.blurHash,
+                systemImage: currentSource.systemImage
+            )
         }
     }
 
@@ -80,16 +82,17 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { DefaultFailureView(systemImage: source.systemImage) }
         )
     }
 
+    /// Will use the last source's system image
     init(_ sources: [ImageSource]) {
         self.init(
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { DefaultFailureView(systemImage: sources.last?.systemImage) }
         )
     }
 
@@ -124,10 +127,6 @@ extension ImageView {
         copy(modifying: \.image, with: content)
     }
 
-    func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.placeholder, with: { _ in content() })
-    }
-
     func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
         copy(modifying: \.placeholder, with: content)
     }
@@ -143,22 +142,37 @@ extension ImageView {
 
     struct DefaultFailureView: View {
 
+        let systemImage: String?
+
+        init(systemImage: String? = nil) {
+            self.systemImage = systemImage
+        }
+
         var body: some View {
-            Color.secondarySystemFill
-                .opacity(0.75)
+            if let systemImage {
+                SystemImageContentView(systemName: systemImage)
+            }
         }
     }
 
     struct DefaultPlaceholderView: View {
 
         let blurHash: String?
+        let systemImage: String?
+
+        init(
+            blurHash: String? = nil,
+            systemImage: String? = nil
+        ) {
+            self.blurHash = blurHash
+            self.systemImage = systemImage
+        }
 
         var body: some View {
             if let blurHash {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-            } else {
-                Color.secondarySystemFill
-                    .opacity(0.75)
+            } else if let systemImage {
+                SystemImageContentView(systemName: systemImage)
             }
         }
     }

@@ -24,11 +24,11 @@ extension PagingLibraryView {
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
             case .narrow:
-                ImageView(element.portraitPosterImageSource(maxWidth: 60))
+                ImageView(element.narrowImageSources(maxWidth: 60))
             case .square:
-                ImageView(element.portraitPosterImageSource(maxWidth: 60))
+                ImageView(element.squareImageSources(maxWidth: 60))
             case .wide:
-                ImageView(element.landscapePosterImageSources(maxWidth: 110))
+                ImageView(element.wideImageSources(maxWidth: 110))
             }
         }
 
@@ -77,7 +77,7 @@ extension PagingLibraryView {
                 Button {
                     onSelect()
                 } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
+                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
                         ZStack {
                             Color.clear
 

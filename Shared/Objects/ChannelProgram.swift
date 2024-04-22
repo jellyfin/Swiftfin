@@ -54,7 +54,7 @@ extension ChannelProgram: Poster {
         "tv"
     }
 
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        channel.imageSource(.primary, maxWidth: maxWidth)
+    func squareImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+        [channel.imageSource(.primary, maxWidth: maxWidth)]
     }
 }

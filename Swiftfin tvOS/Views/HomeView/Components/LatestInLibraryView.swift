@@ -23,7 +23,7 @@ extension HomeView {
             if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
-                    type: .portrait,
+                    type: .narrow,
                     items: $viewModel.elements
                 )
                 .onSelect { item in

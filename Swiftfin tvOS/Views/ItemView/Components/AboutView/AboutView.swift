@@ -26,7 +26,7 @@ extension ItemView {
 
                 ScrollView(.horizontal) {
                     HStack(alignment: .top, spacing: 30) {
-                        PosterButton(item: viewModel.item, type: .portrait)
+                        PosterButton(item: viewModel.item, type: .narrow)
                             .content {
                                 EmptyView()
                             }

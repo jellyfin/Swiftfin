@@ -11,6 +11,9 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
+// TODO: figure out what to do about screen scaling with .main being deprecated
+//       - maxWidth assume already scaled?
+
 extension BaseItemDto {
 
     // MARK: Item Images
@@ -31,8 +34,11 @@ extension BaseItemDto {
         _imageURL(type, maxWidth: Int(maxWidth), maxHeight: Int(maxHeight), itemID: id ?? "")
     }
 
+    // TODO: will server actually only have a single blurhash per type?
+    //       - makes `firstBlurHash` redundant
     func blurHash(_ type: ImageType) -> String? {
         guard type != .logo else { return nil }
+
         if let tag = imageTags?[type.rawValue], let taggedBlurHash = imageBlurHashes?[type]?[tag] {
             return taggedBlurHash
         } else if let firstBlurHash = imageBlurHashes?[type]?.values.first {
@@ -62,7 +68,11 @@ extension BaseItemDto {
 
     func seriesImageSource(_ type: ImageType, maxWidth: Int? = nil, maxHeight: Int? = nil) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: seriesID ?? "")
-        return ImageSource(url: url, blurHash: nil)
+        return ImageSource(
+            url: url,
+            blurHash: nil,
+            systemImage: typeSystemImage
+        )
     }
 
     func seriesImageSource(_ type: ImageType, maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) -> ImageSource {
@@ -73,9 +83,9 @@ extension BaseItemDto {
         seriesImageSource(type, maxWidth: Int(maxWidth))
     }
 
-    // MARK: Fileprivate
+    // MARK: private
 
-    fileprivate func _imageURL(
+    private func _imageURL(
         _ type: ImageType,
         maxWidth: Int?,
         maxHeight: Int?,
@@ -105,17 +115,22 @@ extension BaseItemDto {
     private func getImageTag(for type: ImageType) -> String? {
         switch type {
         case .backdrop:
-            return backdropImageTags?.first
+            backdropImageTags?.first
         case .screenshot:
-            return screenshotImageTags?.first
+            screenshotImageTags?.first
         default:
-            return imageTags?[type.rawValue]
+            imageTags?[type.rawValue]
         }
     }
 
     private func _imageSource(_ type: ImageType, maxWidth: Int?, maxHeight: Int?) -> ImageSource {
         let url = _imageURL(type, maxWidth: maxWidth, maxHeight: maxHeight, itemID: id ?? "")
         let blurHash = blurHash(type)
-        return ImageSource(url: url, blurHash: blurHash)
+
+        return ImageSource(
+            url: url,
+            blurHash: blurHash,
+            systemImage: typeSystemImage
+        )
     }
 }

@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AfterLastDisappearModifier: ViewModifier {
+struct SinceLastDisappearModifier: ViewModifier {
 
     @State
     private var lastDisappear: Date? = nil

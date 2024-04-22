@@ -59,11 +59,7 @@ extension ChapterInfo {
             self.secondsRange = secondsRange
         }
 
-        func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-            .init()
-        }
-
-        func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+        func wideImageSources(maxWidth: CGFloat?) -> [ImageSource] {
             [imageSource]
         }
     }

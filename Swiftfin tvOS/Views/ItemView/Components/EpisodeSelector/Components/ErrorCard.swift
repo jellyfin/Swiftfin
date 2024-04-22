@@ -31,7 +31,7 @@ extension SeriesEpisodeSelector {
                 VStack(alignment: .leading) {
                     Color.secondarySystemFill
                         .opacity(0.75)
-                        .posterStyle(.landscape)
+                        .posterStyle(.wide)
                         .overlay {
                             Image(systemName: "arrow.clockwise.circle.fill")
                                 .font(.system(size: 40))

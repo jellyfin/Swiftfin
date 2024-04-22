@@ -88,21 +88,23 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func makeLayout(
-        posterType: PosterType,
+        posterType: ItemDisplayType,
         viewType: LibraryViewType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
-        case (.landscape, .grid):
+        case (.wide, .grid):
             .columns(5)
-        case (.portrait, .grid):
+        case (.narrow, .grid):
             .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
             .columns(1)
+        default:
+            fatalError()
         }
     }
 
     private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .landscape)
+        PosterButton(item: item, type: .wide)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
@@ -121,7 +123,7 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private func portraitGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .portrait)
+        PosterButton(item: item, type: .narrow)
             .content {
                 if item.showTitle {
                     PosterButton.TitleContentView(item: item)
@@ -149,12 +151,14 @@ struct PagingLibraryView<Element: Poster>: View {
             layout: layout
         ) { item in
             switch (posterType, viewType) {
-            case (.landscape, .grid):
+            case (.wide, .grid):
                 landscapeGridItemView(item: item)
-            case (.portrait, .grid):
+            case (.narrow, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
                 listItemView(item: item)
+            default:
+                fatalError()
             }
         }
     }

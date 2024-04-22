@@ -45,7 +45,7 @@ struct CinematicItemSelector<Item: Poster>: View {
                         .transition(.opacity)
                 }
 
-                PosterHStack(type: .landscape, items: items)
+                PosterHStack(type: .wide, items: items)
                     .content(itemContent)
                     .imageOverlay(itemImageOverlay)
                     .contextMenu(itemContextMenu)
@@ -56,7 +56,10 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .background(alignment: .top) {
             ZStack {
-                CinematicBackgroundView(viewModel: viewModel, initialItem: items.first)
+                CinematicBackgroundView(
+                    viewModel: viewModel,
+                    initialItem: items.first
+                )
 
                 LinearGradient(
                     stops: [

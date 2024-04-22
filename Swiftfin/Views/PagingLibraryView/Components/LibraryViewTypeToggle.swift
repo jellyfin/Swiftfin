@@ -50,7 +50,7 @@ extension PagingLibraryView {
                         if posterType == .narrow {
                             Label("Portrait", systemImage: "checkmark")
                         } else {
-                            Label("Portrait", systemImage: "rectangle.portrait")
+                            Label("Portrait", systemImage: "rectangle.narrow")
                         }
                     }
                 }

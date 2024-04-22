@@ -101,7 +101,8 @@ extension MediaView {
                             titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
                         }
                         .failure {
-                            ImageView.DefaultFailureView()
+                            Color.secondarySystemFill
+                                .opacity(0.75)
                                 .overlay {
                                     titleLabel
                                         .foregroundColor(.primary)
