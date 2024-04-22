@@ -35,6 +35,9 @@ struct ImageView: View {
     private var placeholder: ((ImageSource) -> any View)?
     private var failure: () -> any View
 
+    @State
+    private var isImageLoaded = false
+
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
         if let placeholder = placeholder {
@@ -66,6 +69,10 @@ struct ImageView: View {
                 }
             }
             .pipeline(imagePipeline)
+            .opacity(isImageLoaded ? 1 : 0)
+            .onAppear { self.isImageLoaded = true }
+            .animation(.easeIn(duration: 0.5), value: isImageLoaded)
+
         } else {
             failure()
                 .eraseToAnyView()
