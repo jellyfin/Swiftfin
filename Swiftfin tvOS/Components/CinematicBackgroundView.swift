@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-struct CinematicBackgroundView<Item: Poster>: View {
+struct CinematicBackgroundView<Item: Poster & CinematicImageProvider>: View {
 
     @ObservedObject
     var viewModel: ViewModel
@@ -24,7 +24,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { newItem in
                 proxy.update {
-                    ImageView(newItem?.landscapeImageSources(maxWidth: nil) ?? [])
+                    ImageView(newItem?.cinematicImageSources(maxWidth: nil) ?? [])
                         .placeholder { _ in
                             Color.clear
                         }

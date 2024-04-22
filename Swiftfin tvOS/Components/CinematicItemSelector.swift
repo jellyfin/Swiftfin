@@ -10,9 +10,10 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+// TODO: make new protocol for cinematic view image provider
 // TODO: better name
 
-struct CinematicItemSelector<Item: Poster>: View {
+struct CinematicItemSelector<Item: Poster & CinematicImageProvider>: View {
 
     @State
     private var focusedItem: Item?

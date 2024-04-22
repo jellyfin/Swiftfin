@@ -15,7 +15,7 @@ import SwiftUI
 // TODO: list columns
 // TODO: list row view (LibraryRow)
 
-struct PagingLibraryView<Element: Poster>: View {
+struct PagingLibraryView<Element: Poster & CinematicImageProvider>: View {
 
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
