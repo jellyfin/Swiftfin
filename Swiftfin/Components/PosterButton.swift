@@ -43,7 +43,14 @@ struct PosterButton<Item: Poster>: View {
 
                     imageView(from: item)
                         .failure {
-                            SystemImageContentView(systemName: item.systemImage)
+                            if item.showTitle {
+                                SystemImageContentView(systemName: item.systemImage)
+                            } else {
+                                SystemImageContentView(
+                                    title: item.displayTitle,
+                                    systemName: item.systemImage
+                                )
+                            }
                         }
 
                     imageOverlay()
@@ -51,6 +58,7 @@ struct PosterButton<Item: Poster>: View {
                 }
                 .posterStyle(type)
             }
+            .buttonStyle(.plain)
             .contextMenu(menuItems: {
                 contextMenu()
                     .eraseToAnyView()
@@ -96,8 +104,6 @@ extension PosterButton {
     }
 }
 
-// TODO: Shared default content?
-
 extension PosterButton {
 
     // MARK: Default Content
@@ -115,16 +121,72 @@ extension PosterButton {
         }
     }
 
-//    struct SubtitleContentView: View {
-//
-//        let item: Item
-//
-//        var body: some View {
-//            Text(item.subtitle ?? "")
-//                .font(.caption.weight(.medium))
-//                .foregroundColor(.secondary)
-//        }
-//    }
+    struct SubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            Text(item.subtitle ?? "")
+                .font(.caption.weight(.medium))
+                .foregroundColor(.secondary)
+        }
+    }
+
+    struct TitleSubtitleContentView: View {
+
+        let item: Item
+
+        var body: some View {
+            VStack(alignment: .leading) {
+                if item.showTitle {
+                    TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                }
+
+                SubtitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
+            }
+        }
+    }
+
+    // Content specific for BaseItemDto episode items
+    struct EpisodeContentSubtitleContent: View {
+
+        let item: Item
+
+        var body: some View {
+            if let item = item as? BaseItemDto {
+                // Unsure why this needs 0 spacing
+                // compared to other default content
+                VStack(alignment: .leading, spacing: 0) {
+                    if item.showTitle, let seriesName = item.seriesName {
+                        Text(seriesName)
+                            .font(.footnote.weight(.regular))
+                            .foregroundColor(.primary)
+                            .backport
+                            .lineLimit(1, reservesSpace: true)
+                    }
+
+                    SeparatorHStack {
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+                            .lineLimit(1)
+
+                        Text(item.displayTitle)
+                            .lineLimit(1)
+                    }
+                    .separator {
+                        Circle()
+                            .frame(width: 2, height: 2)
+                            .padding(.horizontal, 3)
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
 
     // MARK: Default Overlay
 

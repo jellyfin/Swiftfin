@@ -40,9 +40,7 @@ struct ImageView: View {
             placeholder(currentSource)
                 .eraseToAnyView()
         } else {
-            DefaultPlaceholderView(
-                blurHash: currentSource.blurHash
-            )
+            DefaultPlaceholderView(blurHash: currentSource.blurHash)
         }
     }
 
