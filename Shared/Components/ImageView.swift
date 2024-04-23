@@ -25,7 +25,12 @@ private let imagePipeline = {
 //       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
-// TODO: probably don't need both `placeholder` modifiers
+// TODO: `LazyImage` uses a transaction for view swapping, which will fade out old views
+//       and fade in new views, causing a black "flash" between the placeholder and final image.
+//       Since we use blur hashes, we actually just want the final image to fade in on top while
+//       the blur hash view is at full opacity.
+//       - refactor for option
+//       - take a look at `RotateContentView`
 struct ImageView: View {
 
     @State
@@ -124,10 +129,6 @@ extension ImageView {
         copy(modifying: \.image, with: content)
     }
 
-    func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.placeholder, with: { _ in content() })
-    }
-
     func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
         copy(modifying: \.placeholder, with: content)
     }
@@ -156,9 +157,6 @@ extension ImageView {
         var body: some View {
             if let blurHash {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-            } else {
-                Color.secondarySystemFill
-                    .opacity(0.75)
             }
         }
     }
