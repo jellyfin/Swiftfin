@@ -38,6 +38,13 @@ extension HomeView {
                 columns: columnCount
             ) { item in
                 PosterButton(item: item, type: .landscape)
+                    .content {
+                        if item.type == .episode {
+                            PosterButton.EpisodeContentSubtitleContent(item: item)
+                        } else {
+                            PosterButton.TitleSubtitleContentView(item: item)
+                        }
+                    }
                     .contextMenu {
                         Button {
                             viewModel.send(.setIsPlayed(true, item))

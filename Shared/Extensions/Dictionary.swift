@@ -8,8 +8,10 @@
 
 import Foundation
 
-/// A type that is displayed with a title
-protocol Displayable {
+extension Dictionary {
 
-    var displayTitle: String { get }
+    subscript(key: Key?) -> Value? {
+        guard let key else { return nil }
+        return self[key]
+    }
 }

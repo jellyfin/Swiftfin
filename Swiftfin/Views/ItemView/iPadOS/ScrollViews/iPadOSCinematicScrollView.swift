@@ -68,7 +68,7 @@ extension ItemView {
                 content()
                     .edgePadding(.vertical)
             }
-            .size($globalSize)
+            .trackingSize($globalSize)
         }
     }
 }
@@ -93,7 +93,7 @@ extension ItemView.iPadOSCinematicScrollView {
                         maxWidth: UIScreen.main.bounds.width * 0.4,
                         maxHeight: 130
                     ))
-                    .placeholder {
+                    .placeholder { _ in
                         EmptyView()
                     }
                     .failure {

@@ -88,8 +88,8 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func makeLayout(
-        posterType: PosterType,
-        viewType: LibraryViewType
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
         case (.landscape, .grid):

@@ -10,6 +10,7 @@ import Stinsen
 import SwiftUI
 
 struct UserSignInView: View {
+
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
 

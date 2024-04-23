@@ -14,9 +14,8 @@ struct PosterHStack<Item: Poster>: View {
 
     private var header: () -> any View
     private var title: String?
-    private var type: PosterType
+    private var type: PosterDisplayType
     private var items: Binding<OrderedSet<Item>>
-    private var singleImage: Bool
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
     private var contextMenu: (Item) -> any View
@@ -31,8 +30,7 @@ struct PosterHStack<Item: Poster>: View {
         ) { item in
             PosterButton(
                 item: item,
-                type: type,
-                singleImage: singleImage
+                type: type
             )
             .content { content(item).eraseToAnyView() }
             .imageOverlay { imageOverlay(item).eraseToAnyView() }
@@ -41,8 +39,8 @@ struct PosterHStack<Item: Poster>: View {
         }
         .clipsToBounds(false)
         .dataPrefix(20)
-        .insets(horizontal: EdgeInsets.defaultEdgePadding)
-        .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+        .insets(horizontal: EdgeInsets.edgePadding)
+        .itemSpacing(EdgeInsets.edgePadding / 2)
         .scrollBehavior(.continuousLeadingEdge)
     }
 
@@ -54,8 +52,7 @@ struct PosterHStack<Item: Poster>: View {
         ) { item in
             PosterButton(
                 item: item,
-                type: type,
-                singleImage: singleImage
+                type: type
             )
             .content { content(item).eraseToAnyView() }
             .imageOverlay { imageOverlay(item).eraseToAnyView() }
@@ -64,8 +61,8 @@ struct PosterHStack<Item: Poster>: View {
         }
         .clipsToBounds(false)
         .dataPrefix(20)
-        .insets(horizontal: EdgeInsets.defaultEdgePadding)
-        .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+        .insets(horizontal: EdgeInsets.edgePadding)
+        .itemSpacing(EdgeInsets.edgePadding / 2)
         .scrollBehavior(.continuousLeadingEdge)
     }
 
@@ -96,16 +93,14 @@ extension PosterHStack {
 
     init(
         title: String? = nil,
-        type: PosterType,
-        items: Binding<OrderedSet<Item>>,
-        singleImage: Bool = false
+        type: PosterDisplayType,
+        items: Binding<OrderedSet<Item>>
     ) {
         self.init(
             header: { DefaultHeader(title: title) },
             title: title,
             type: type,
             items: items,
-            singleImage: singleImage,
             content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
@@ -116,15 +111,13 @@ extension PosterHStack {
 
     init<S: Sequence<Item>>(
         title: String? = nil,
-        type: PosterType,
-        items: S,
-        singleImage: Bool = false
+        type: PosterDisplayType,
+        items: S
     ) {
         self.init(
             title: title,
             type: type,
-            items: .constant(OrderedSet(items)),
-            singleImage: singleImage
+            items: .constant(OrderedSet(items))
         )
     }
 

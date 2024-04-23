@@ -54,15 +54,15 @@ extension VideoPlayer.Overlay {
                 .tint(Color.white)
                 .foregroundColor(Color.white)
 
-                if let subtitle = viewModel.item.subtitle {
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-                            dimensions[.leading]
-                        }
-                        .offset(y: -10)
-                }
+//                if let subtitle = viewModel.item.subtitle {
+//                    Text(subtitle)
+//                        .font(.subheadline)
+//                        .foregroundColor(.white)
+//                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
+//                            dimensions[.leading]
+//                        }
+//                        .offset(y: -10)
+//                }
             }
         }
     }

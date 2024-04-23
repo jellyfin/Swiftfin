@@ -26,9 +26,9 @@ struct ServerListView: View {
             viewModel.servers,
             layout: .columns(
                 1,
-                insets: EdgeInsets.DefaultEdgeInsets,
-                itemSpacing: EdgeInsets.defaultEdgePadding,
-                lineSpacing: EdgeInsets.defaultEdgePadding
+                insets: EdgeInsets.edgeInsets,
+                itemSpacing: EdgeInsets.edgePadding,
+                lineSpacing: EdgeInsets.edgePadding
             )
         ) { server in
             ServerButton(server: server)

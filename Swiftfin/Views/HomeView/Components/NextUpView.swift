@@ -31,11 +31,12 @@ extension HomeView {
                     type: nextUpPosterType,
                     items: $homeViewModel.nextUpViewModel.elements
                 )
-                .trailing {
-                    SeeAllButton()
-                        .onSelect {
-                            router.route(to: \.library, homeViewModel.nextUpViewModel)
-                        }
+                .content { item in
+                    if item.type == .episode {
+                        PosterButton.EpisodeContentSubtitleContent(item: item)
+                    } else {
+                        PosterButton.TitleSubtitleContentView(item: item)
+                    }
                 }
                 .contextMenu { item in
                     Button {
@@ -46,6 +47,12 @@ extension HomeView {
                 }
                 .onSelect { item in
                     router.route(to: \.item, item)
+                }
+                .trailing {
+                    SeeAllButton()
+                        .onSelect {
+                            router.route(to: \.library, homeViewModel.nextUpViewModel)
+                        }
                 }
             }
         }

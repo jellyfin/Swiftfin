@@ -34,15 +34,15 @@ extension Defaults.Keys {
         static let itemViewType = Key<ItemViewType>("itemViewType", default: .compactLogo, suite: .generalSuite)
 
         static let showPosterLabels = Key<Bool>("showPosterLabels", default: true, suite: .generalSuite)
-        static let nextUpPosterType = Key<PosterType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
-        static let recentlyAddedPosterType = Key<PosterType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
-        static let latestInLibraryPosterType = Key<PosterType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
+        static let nextUpPosterType = Key<PosterDisplayType>("nextUpPosterType", default: .portrait, suite: .generalSuite)
+        static let recentlyAddedPosterType = Key<PosterDisplayType>("recentlyAddedPosterType", default: .portrait, suite: .generalSuite)
+        static let latestInLibraryPosterType = Key<PosterDisplayType>("latestInLibraryPosterType", default: .portrait, suite: .generalSuite)
         static let shouldShowMissingSeasons = Key<Bool>("shouldShowMissingSeasons", default: true, suite: .generalSuite)
         static let shouldShowMissingEpisodes = Key<Bool>("shouldShowMissingEpisodes", default: true, suite: .generalSuite)
-        static let similarPosterType = Key<PosterType>("similarPosterType", default: .portrait, suite: .generalSuite)
+        static let similarPosterType = Key<PosterDisplayType>("similarPosterType", default: .portrait, suite: .generalSuite)
 
         // TODO: have search poster type by types of items if applicable
-        static let searchPosterType = Key<PosterType>("searchPosterType", default: .portrait, suite: .generalSuite)
+        static let searchPosterType = Key<PosterDisplayType>("searchPosterType", default: .portrait, suite: .generalSuite)
 
         enum CinematicItemViewType {
 
@@ -74,12 +74,12 @@ extension Defaults.Keys {
                 default: ItemFilterType.allCases,
                 suite: .generalSuite
             )
-            static let viewType = Key<LibraryViewType>(
+            static let viewType = Key<LibraryDisplayType>(
                 "libraryViewType",
                 default: .grid,
                 suite: .generalSuite
             )
-            static let posterType = Key<PosterType>(
+            static let posterType = Key<PosterDisplayType>(
                 "libraryPosterType",
                 default: .portrait,
                 suite: .generalSuite

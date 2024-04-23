@@ -16,8 +16,8 @@ extension JellyfinClient {
 
         guard let path = request.url?.path else { return configuration.url }
         guard let fullPath = fullURL(with: path) else { return nil }
+        guard var components = URLComponents(string: fullPath.absoluteString) else { return nil }
 
-        var components = URLComponents(string: fullPath.absoluteString)!
         components.queryItems = request.query?.map { URLQueryItem(name: $0.0, value: $0.1) } ?? []
 
         return components.url ?? fullPath

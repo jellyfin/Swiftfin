@@ -16,10 +16,6 @@ import UIKit
 /// Magic number for page sizes
 private let DefaultPageSize = 50
 
-// TODO: frankly this is just generic because we also view `BaseItemPerson` elements
-//       and I don't want additional views for it. Is there a way we can transform a
-//       `BaseItemPerson` into a `BaseItemDto` and just use the concrete type?
-
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
@@ -301,6 +297,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         []
     }
 
+    /// Gets a random item from `elements`. Override if item should
+    /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
     }

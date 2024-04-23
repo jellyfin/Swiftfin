@@ -15,94 +15,82 @@ import UIKit
 
 extension BaseItemDto: Poster {
 
-    var title: String {
-        switch type {
-        case .episode:
-            return seriesName ?? displayTitle
-        default:
-            return displayTitle
-        }
-    }
-
     var subtitle: String? {
         switch type {
         case .episode:
-            return seasonEpisodeLabel
+            seasonEpisodeLabel
         case .video:
-            return extraType?.displayTitle
+            extraType?.displayTitle
         default:
-            return nil
+            nil
         }
     }
 
     var showTitle: Bool {
         switch type {
         case .episode, .series, .movie, .boxSet, .collectionFolder:
-            return Defaults[.Customization.showPosterLabels]
+            Defaults[.Customization.showPosterLabels]
         default:
-            return true
+            true
         }
     }
 
-    var typeSystemImage: String? {
+    var systemImage: String {
         switch type {
         case .boxSet:
             "film.stack"
+        case .channel, .tvChannel, .liveTvChannel, .program:
+            "tv"
         case .episode, .movie, .series:
             "film"
         case .folder:
             "folder.fill"
         case .person:
             "person.fill"
-        case .program:
-            "tv"
-        default: nil
-        }
-    }
-
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        switch type {
-        case .episode:
-            return seriesImageSource(.primary, maxWidth: maxWidth)
-        case .folder:
-            return ImageSource()
         default:
-            return imageSource(.primary, maxWidth: maxWidth)
+            "circle"
         }
     }
 
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool = false) -> [ImageSource] {
+    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            if single || !Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
-                return [imageSource(.primary, maxWidth: maxWidth)]
-            } else {
-                return [
+            [seriesImageSource(.primary, maxWidth: maxWidth)]
+        case .channel, .tvChannel, .liveTvChannel, .movie, .series:
+            [imageSource(.primary, maxWidth: maxWidth)]
+        default:
+            []
+        }
+    }
+
+    func landscapeImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+        switch type {
+        case .episode:
+            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+                [
                     seriesImageSource(.thumb, maxWidth: maxWidth),
                     seriesImageSource(.backdrop, maxWidth: maxWidth),
                     imageSource(.primary, maxWidth: maxWidth),
                 ]
+            } else {
+                [imageSource(.primary, maxWidth: maxWidth)]
             }
-        case .folder:
-            return [imageSource(.primary, maxWidth: maxWidth)]
-        case .program:
-            return [imageSource(.primary, maxWidth: maxWidth)]
-        case .video:
-            return [imageSource(.primary, maxWidth: maxWidth)]
+        case .folder, .program, .video:
+            [imageSource(.primary, maxWidth: maxWidth)]
         default:
-            return [
+            [
                 imageSource(.thumb, maxWidth: maxWidth),
                 imageSource(.backdrop, maxWidth: maxWidth),
             ]
         }
     }
 
-    func cinematicPosterImageSources() -> [ImageSource] {
+    func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch type {
         case .episode:
-            return [seriesImageSource(.backdrop, maxWidth: UIScreen.main.bounds.width)]
+            [seriesImageSource(.backdrop, maxWidth: maxWidth)]
         default:
-            return [imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width)]
+            [imageSource(.backdrop, maxWidth: maxWidth)]
         }
     }
 }

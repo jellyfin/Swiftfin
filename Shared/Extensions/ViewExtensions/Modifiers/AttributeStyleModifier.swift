@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: remove as a `ViewModifier` and instead a wrapper view
+
 struct AttributeViewModifier: ViewModifier {
 
     enum Style {
