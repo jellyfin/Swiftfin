@@ -85,7 +85,7 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -94,7 +94,7 @@ extension ImageView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -103,7 +103,7 @@ extension ImageView {
             sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -116,7 +116,7 @@ extension ImageView {
             sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 }
