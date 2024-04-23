@@ -19,14 +19,14 @@ extension PagingLibraryView {
 
         private let item: Element
         private var onSelect: () -> Void
-        private let posterType: PosterType
+        private let posterType: PosterDisplayType
 
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
-            case .portrait:
-                ImageView(element.portraitPosterImageSource(maxWidth: 60))
             case .landscape:
-                ImageView(element.landscapePosterImageSources(maxWidth: 110, single: false))
+                ImageView(element.landscapeImageSources(maxWidth: 110))
+            case .portrait:
+                ImageView(element.portraitImageSources(maxWidth: 60))
             }
         }
 
@@ -75,13 +75,13 @@ extension PagingLibraryView {
                 Button {
                     onSelect()
                 } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
+                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
                         ZStack {
                             Color.clear
 
                             imageView(from: item)
                                 .failure {
-                                    SystemImageContentView(systemName: item.typeSystemImage)
+                                    SystemImageContentView(systemName: item.systemImage)
                                 }
                         }
                         .posterStyle(posterType)
@@ -122,7 +122,7 @@ extension PagingLibraryView {
 
 extension PagingLibraryView.LibraryRow {
 
-    init(item: Element, posterType: PosterType) {
+    init(item: Element, posterType: PosterDisplayType) {
         self.init(
             item: item,
             onSelect: {},

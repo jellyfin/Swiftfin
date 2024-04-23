@@ -54,7 +54,7 @@ struct ProgramsView: View {
     @ViewBuilder
     private func programsSection(
         title: String,
-        keyPath: KeyPath<ProgramsViewModel, [ChannelProgram]>
+        keyPath: KeyPath<ProgramsViewModel, [BaseItemDto]>
     ) -> some View {
         PosterHStack(
             title: title,
@@ -62,18 +62,18 @@ struct ProgramsView: View {
             items: programsViewModel[keyPath: keyPath]
         )
         .content {
-            ProgramButtonContent(program: $0.programs[0])
+            ProgramButtonContent(program: $0)
         }
         .imageOverlay {
-            ProgramProgressOverlay(program: $0.programs[0])
+            ProgramProgressOverlay(program: $0)
         }
-        .onSelect { channelProgram in
-            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
-            router.route(
-                to: \.liveVideoPlayer,
-                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
-            )
-        }
+//        .onSelect { channelProgram in
+//            guard let mediaSource = channelProgram.channel.mediaSources?.first else { return }
+//            router.route(
+//                to: \.liveVideoPlayer,
+//                LiveVideoPlayerManager(item: channelProgram.channel, mediaSource: mediaSource)
+//            )
+//        }
     }
 
     var body: some View {

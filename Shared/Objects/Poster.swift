@@ -8,35 +8,53 @@
 
 import Foundation
 
-// TODO: remove `showTitle` and `subtitle` since the PosterButton can define custom supplementary views?
-// TODO: instead of the below image functions, have functions that match `ImageType`
-//       - allows caller to choose images
-protocol Poster: Displayable, Hashable, Identifiable {
+/// A type that is displayed as a poster
+protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
 
+    /// Optional subtitle when used as a poster
     var subtitle: String? { get }
-    var showTitle: Bool { get }
-    var typeSystemImage: String? { get }
 
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource]
-    func cinematicPosterImageSources() -> [ImageSource]
+    /// Show the title
+    var showTitle: Bool { get }
+
+    func portraitImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
+
+    func landscapeImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
+
+    func cinematicImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
 }
 
 extension Poster {
+
+    var subtitle: String? {
+        nil
+    }
 
     var showTitle: Bool {
         true
     }
 
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        .init()
-    }
-
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
+    func portraitImageSources(
+        maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
         []
     }
 
-    func cinematicPosterImageSources() -> [ImageSource] {
+    func landscapeImageSources(
+        maxWidth: CGFloat? = nil
+    ) -> [ImageSource] {
+        []
+    }
+
+    func cinematicImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource] {
         []
     }
 }

@@ -16,13 +16,13 @@ extension PagingLibraryView {
         @Binding
         private var listColumnCount: Int
         @Binding
-        private var posterType: PosterType
+        private var posterType: PosterDisplayType
         @Binding
-        private var viewType: LibraryViewType
+        private var viewType: LibraryDisplayType
 
         init(
-            posterType: Binding<PosterType>,
-            viewType: Binding<LibraryViewType>,
+            posterType: Binding<PosterDisplayType>,
+            viewType: Binding<LibraryDisplayType>,
             listColumnCount: Binding<Int>
         ) {
             self._listColumnCount = listColumnCount
@@ -62,7 +62,7 @@ extension PagingLibraryView {
                         if viewType == .grid {
                             Label("Grid", systemImage: "checkmark")
                         } else {
-                            Label("Grid", systemImage: "square.grid.2x2")
+                            Label("Grid", systemImage: "square.grid.2x2.fill")
                         }
                     }
 
@@ -83,7 +83,7 @@ extension PagingLibraryView {
             } label: {
                 switch viewType {
                 case .grid:
-                    Label("Layout", systemImage: "square.grid.2x2")
+                    Label("Layout", systemImage: "square.grid.2x2.fill")
                 case .list:
                     Label("Layout", systemImage: "square.fill.text.grid.1x2")
                 }

@@ -25,7 +25,6 @@ private let imagePipeline = {
 //       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
-// TODO: probably don't need both `placeholder` modifiers
 struct ImageView: View {
 
     @State
@@ -80,7 +79,7 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -89,7 +88,7 @@ extension ImageView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -98,7 +97,7 @@ extension ImageView {
             sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 
@@ -111,7 +110,7 @@ extension ImageView {
             sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { DefaultFailureView() }
+            failure: { EmptyView() }
         )
     }
 }
@@ -122,10 +121,6 @@ extension ImageView {
 
     func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
-    }
-
-    func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.placeholder, with: { _ in content() })
     }
 
     func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
@@ -156,9 +151,6 @@ extension ImageView {
         var body: some View {
             if let blurHash {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-            } else {
-                Color.secondarySystemFill
-                    .opacity(0.75)
             }
         }
     }

@@ -89,21 +89,36 @@ extension View {
         }
     }
 
-    /// Applies the aspect ratio and corner radius for the given `PosterType`
+    /// Applies the aspect ratio, corner radius, and border for the given `PosterType`
     @ViewBuilder
-    func posterStyle(_ type: PosterType, contentMode: ContentMode = .fill) -> some View {
+    func posterStyle(_ type: PosterDisplayType, contentMode: ContentMode = .fill) -> some View {
         switch type {
-        case .portrait:
-            aspectRatio(2 / 3, contentMode: contentMode)
-            #if !os(tvOS)
-                .cornerRadius(ratio: 0.0375, of: \.width)
-            #endif
         case .landscape:
             aspectRatio(1.77, contentMode: contentMode)
             #if !os(tvOS)
+                .posterBorder(ratio: 1 / 30, of: \.width)
                 .cornerRadius(ratio: 1 / 30, of: \.width)
             #endif
+        case .portrait:
+            aspectRatio(2 / 3, contentMode: contentMode)
+            #if !os(tvOS)
+                .posterBorder(ratio: 0.0375, of: \.width)
+                .cornerRadius(ratio: 0.0375, of: \.width)
+            #endif
         }
+    }
+
+    func posterBorder(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>) -> some View {
+        modifier(OnSizeChangedModifier { size in
+            overlay {
+                RoundedRectangle(cornerRadius: size[keyPath: side] * ratio)
+                    .stroke(
+                        .white.opacity(0.10),
+                        lineWidth: 2
+                    )
+                    .clipped()
+            }
+        })
     }
 
     // TODO: remove
@@ -139,7 +154,9 @@ extension View {
 
     /// Apply a corner radius as a ratio of a view's side
     func cornerRadius(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>, corners: UIRectCorner = .allCorners) -> some View {
-        modifier(RatioCornerRadiusModifier(corners: corners, ratio: ratio, side: side))
+        modifier(OnSizeChangedModifier { size in
+            cornerRadius(size[keyPath: side] * ratio, corners: corners)
+        })
     }
 
     func onFrameChanged(_ onChange: @escaping (CGRect) -> Void) -> some View {
@@ -152,8 +169,7 @@ extension View {
         .onPreferenceChange(FramePreferenceKey.self, perform: onChange)
     }
 
-    // TODO: probably rename since this doesn't set the frame but tracks it
-    func frame(_ binding: Binding<CGRect>) -> some View {
+    func trackingFrame(_ binding: Binding<CGRect>) -> some View {
         onFrameChanged { newFrame in
             binding.wrappedValue = newFrame
         }
@@ -174,8 +190,7 @@ extension View {
         .onPreferenceChange(LocationPreferenceKey.self, perform: onChange)
     }
 
-    // TODO: probably rename since this doesn't set the location but tracks it
-    func location(_ binding: Binding<CGPoint>) -> some View {
+    func trackingLocation(_ binding: Binding<CGPoint>) -> some View {
         onLocationChanged { newLocation in
             binding.wrappedValue = newLocation
         }
@@ -204,8 +219,7 @@ extension View {
         }
     }
 
-    // TODO: probably rename since this doesn't set the size but tracks it
-    func size(_ binding: Binding<CGSize>) -> some View {
+    func trackingSize(_ binding: Binding<CGSize>) -> some View {
         onSizeChanged { newSize in
             binding.wrappedValue = newSize
         }
@@ -272,11 +286,11 @@ extension View {
     }
 
     func onScenePhase(_ phase: ScenePhase, _ action: @escaping () -> Void) -> some View {
-        modifier(ScenePhaseChangeModifier(phase: phase, action: action))
+        modifier(OnScenePhaseChangedModifier(phase: phase, action: action))
     }
 
     func edgePadding(_ edges: Edge.Set = .all) -> some View {
-        padding(edges, EdgeInsets.defaultEdgePadding)
+        padding(edges, EdgeInsets.edgePadding)
     }
 
     var backport: Backport<Self> {
@@ -293,10 +307,10 @@ extension View {
         modifier(OnFirstAppearModifier(action: action))
     }
 
-    /// Perform an action as a view appears given the time interval
-    /// from when this view last disappeared.
-    func afterLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
-        modifier(AfterLastDisappearModifier(action: action))
+    /// Perform an action as the view appears given the time interval
+    /// since the view last disappeared.
+    func sinceLastDisappear(perform action: @escaping (TimeInterval) -> Void) -> some View {
+        modifier(SinceLastDisappearModifier(action: action))
     }
 
     func topBarTrailing(@ViewBuilder content: @escaping () -> some View) -> some View {

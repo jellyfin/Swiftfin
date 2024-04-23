@@ -36,7 +36,7 @@ extension DownloadTaskView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-                    ImageView(downloadTask.item.landscapePosterImageSources(maxWidth: 600, single: true))
+                    ImageView(downloadTask.item.landscapeImageSources(maxWidth: 600))
                         .frame(maxHeight: 300)
                         .aspectRatio(1.77, contentMode: .fill)
                         .cornerRadius(10)

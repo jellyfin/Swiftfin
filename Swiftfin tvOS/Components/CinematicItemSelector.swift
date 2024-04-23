@@ -10,6 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+// TODO: make new protocol for cinematic view image provider
 // TODO: better name
 
 struct CinematicItemSelector<Item: Poster>: View {
@@ -56,7 +57,10 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .background(alignment: .top) {
             ZStack {
-                CinematicBackgroundView(viewModel: viewModel, initialItem: items.first)
+                CinematicBackgroundView(
+                    viewModel: viewModel,
+                    initialItem: items.first
+                )
 
                 LinearGradient(
                     stops: [

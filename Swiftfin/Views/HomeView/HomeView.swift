@@ -83,7 +83,7 @@ struct HomeView: View {
                     .accessibilityLabel(L10n.settings)
             }
         }
-        .afterLastDisappear { interval in
+        .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
                 viewModel.send(.backgroundRefresh)
                 viewModel.notificationsReceived.remove(.itemMetadataDidChange)

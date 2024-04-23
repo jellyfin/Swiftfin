@@ -57,7 +57,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {
-        let viewModel = PagingLibraryViewModel(people, parent: BaseItemDto(name: L10n.castAndCrew))
+        let viewModel = PagingLibraryViewModel(title: L10n.castAndCrew, people)
         return LibraryCoordinator(viewModel: viewModel)
     }
 

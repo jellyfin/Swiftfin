@@ -30,16 +30,16 @@ extension ChannelLibraryView {
                 ZStack {
                     Color.clear
 
-                    ImageView(channel.portraitPosterImageSource(maxWidth: 110))
+                    ImageView(channel.portraitImageSources(maxWidth: 110))
                         .image {
                             $0.aspectRatio(contentMode: .fit)
                         }
                         .failure {
-                            SystemImageContentView(systemName: channel.typeSystemImage)
+                            SystemImageContentView(systemName: channel.systemImage)
                                 .background(color: .clear)
                                 .imageFrameRatio(width: 1.5, height: 1.5)
                         }
-                        .placeholder {
+                        .placeholder { _ in
                             EmptyView()
                         }
                 }
@@ -54,7 +54,7 @@ extension ChannelLibraryView {
 
         @ViewBuilder
         private func programLabel(for program: BaseItemDto) -> some View {
-            HStack(alignment: .top, spacing: EdgeInsets.defaultEdgePadding / 2) {
+            HStack(alignment: .top, spacing: EdgeInsets.edgePadding / 2) {
                 AlternateLayoutView(alignment: .leading) {
                     Text("00:00 AM")
                         .monospacedDigit()
@@ -104,7 +104,7 @@ extension ChannelLibraryView {
             Button {
                 onSelect()
             } label: {
-                HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding / 2) {
+                HStack(alignment: .center, spacing: EdgeInsets.edgePadding / 2) {
 
                     channelLogo
                         .frame(width: 110)
@@ -127,7 +127,7 @@ extension ChannelLibraryView {
                     .frame(maxWidth: .infinity)
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, EdgeInsets.defaultEdgePadding / 2)
+                .padding(.horizontal, EdgeInsets.edgePadding / 2)
             }
             .buttonStyle(.card)
             .frame(height: 200)

@@ -37,6 +37,9 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
     @Binding
     private var selection: Element?
 
+    @ViewBuilder
+    private var label: (Element) -> any View
+
     private let title: String
     private let hasNone: Bool
     private var noneStyle: NoneStyle
@@ -50,18 +53,22 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
             }
 
             ForEach(Element.allCases.asArray, id: \.hashValue) {
-                Text($0.displayTitle)
+                label($0)
+                    .eraseToAnyView()
                     .tag($0 as Element?)
             }
         }
     }
 }
 
+// MARK: Text
+
 extension CaseIterablePicker {
 
     init(title: String, selection: Binding<Element?>) {
         self.init(
             selection: selection,
+            label: { Text($0.displayTitle) },
             title: title,
             hasNone: true,
             noneStyle: .text
@@ -69,8 +76,6 @@ extension CaseIterablePicker {
     }
 
     init(title: String, selection: Binding<Element>) {
-        self.title = title
-
         let binding = Binding<Element?> {
             selection.wrappedValue
         } set: { newValue, _ in
@@ -78,13 +83,48 @@ extension CaseIterablePicker {
             selection.wrappedValue = newValue!
         }
 
-        self._selection = binding
-
-        self.hasNone = false
-        self.noneStyle = .text
+        self.init(
+            selection: binding,
+            label: { Text($0.displayTitle) },
+            title: title,
+            hasNone: false,
+            noneStyle: .text
+        )
     }
 
     func noneStyle(_ newStyle: NoneStyle) -> Self {
         copy(modifying: \.noneStyle, with: newStyle)
+    }
+}
+
+// MARK: Label
+
+extension CaseIterablePicker where Element: SystemImageable {
+
+    init(title: String, selection: Binding<Element?>) {
+        self.init(
+            selection: selection,
+            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
+            title: title,
+            hasNone: true,
+            noneStyle: .text
+        )
+    }
+
+    init(title: String, selection: Binding<Element>) {
+        let binding = Binding<Element?> {
+            selection.wrappedValue
+        } set: { newValue, _ in
+            precondition(newValue != nil, "Should not have nil new value with non-optional binding")
+            selection.wrappedValue = newValue!
+        }
+
+        self.init(
+            selection: binding,
+            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
+            title: title,
+            hasNone: false,
+            noneStyle: .text
+        )
     }
 }

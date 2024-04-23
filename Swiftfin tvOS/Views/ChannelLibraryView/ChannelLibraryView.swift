@@ -59,7 +59,7 @@ struct ChannelLibraryView: View {
                 viewModel.send(.refresh)
             }
         }
-        .afterLastDisappear { interval in
+        .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
                 viewModel.send(.refresh)

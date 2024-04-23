@@ -17,19 +17,19 @@ extension BaseItemPerson: Poster {
         firstRole
     }
 
-    var showTitle: Bool {
-        true
-    }
-
-    var typeSystemImage: String? {
+    var systemImage: String {
         "person.fill"
     }
 
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        let scaleWidth = UIScreen.main.scale(maxWidth)
+    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+
+        // TODO: figure out what to do about screen scaling with .main being deprecated
+        //       - maxWidth assume already scaled?
+        let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+
         let client = Container.userSession().client
         let imageRequestParameters = Paths.GetItemImageParameters(
-            maxWidth: scaleWidth,
+            maxWidth: scaleWidth ?? Int(maxWidth),
             tag: primaryImageTag
         )
 
@@ -40,17 +40,11 @@ extension BaseItemPerson: Poster {
         )
 
         let url = client.fullURL(with: imageRequest)
+        let blurHash: String? = imageBlurHashes?.primary?[primaryImageTag]
 
-        var blurHash: String?
-
-        if let tag = primaryImageTag, let taggedBlurHash = imageBlurHashes?.primary?[tag] {
-            blurHash = taggedBlurHash
-        }
-
-        return ImageSource(url: url, blurHash: blurHash)
-    }
-
-    func landscapePosterImageSources(maxWidth: CGFloat, single: Bool) -> [ImageSource] {
-        []
+        return [ImageSource(
+            url: url,
+            blurHash: blurHash
+        )]
     }
 }

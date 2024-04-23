@@ -26,6 +26,6 @@ extension UserDto {
 
         let profileImageURL = client.fullURL(with: request)
 
-        return ImageSource(url: profileImageURL, blurHash: nil)
+        return ImageSource(url: profileImageURL)
     }
 }

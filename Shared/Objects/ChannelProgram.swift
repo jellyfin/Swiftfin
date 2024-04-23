@@ -46,15 +46,7 @@ extension ChannelProgram: Poster {
         channel.displayTitle
     }
 
-    var subtitle: String? {
-        nil
-    }
-
-    var typeSystemImage: String? {
-        "tv"
-    }
-
-    func portraitPosterImageSource(maxWidth: CGFloat) -> ImageSource {
-        channel.imageSource(.primary, maxWidth: maxWidth)
+    var systemImage: String {
+        channel.systemImage
     }
 }

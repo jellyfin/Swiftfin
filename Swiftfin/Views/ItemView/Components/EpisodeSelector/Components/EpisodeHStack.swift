@@ -36,8 +36,8 @@ extension SeriesEpisodeSelector {
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
             }
             .scrollBehavior(.continuousLeadingEdge)
-            .insets(horizontal: EdgeInsets.defaultEdgePadding)
-            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
             .proxy(proxy)
             .onFirstAppear {
                 guard !didScrollToPlayButtonItem else { return }
@@ -77,8 +77,8 @@ extension SeriesEpisodeSelector {
                 SeriesEpisodeSelector.EmptyCard()
             }
             .allowScrolling(false)
-            .insets(horizontal: EdgeInsets.defaultEdgePadding)
-            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
         }
     }
 
@@ -101,8 +101,8 @@ extension SeriesEpisodeSelector {
                     }
             }
             .allowScrolling(false)
-            .insets(horizontal: EdgeInsets.defaultEdgePadding)
-            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
         }
     }
 
@@ -116,8 +116,8 @@ extension SeriesEpisodeSelector {
                 SeriesEpisodeSelector.LoadingCard()
             }
             .allowScrolling(false)
-            .insets(horizontal: EdgeInsets.defaultEdgePadding)
-            .itemSpacing(EdgeInsets.defaultEdgePadding / 2)
+            .insets(horizontal: EdgeInsets.edgePadding)
+            .itemSpacing(EdgeInsets.edgePadding / 2)
         }
     }
 }

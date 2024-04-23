@@ -14,9 +14,10 @@ import JellyfinAPI
 import Pulse
 
 final class UserSignInViewModel: ViewModel, Stateful {
+
     // MARK: Action
 
-    enum Action {
+    enum Action: Equatable {
         case signInWithUserPass(username: String, password: String)
         case signInWithQuickConnect(authSecret: String)
         case cancelSignIn
@@ -24,7 +25,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     // MARK: State
 
-    enum State: Equatable {
+    enum State: Hashable {
         case initial
         case signingIn
         case signedIn
@@ -38,6 +39,8 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     @Published
     var state: State = .initial
+    var lastAction: Action? = nil
+
     @Published
     private(set) var publicUsers: [UserDto] = []
     @Published

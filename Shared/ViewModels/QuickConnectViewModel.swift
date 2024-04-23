@@ -27,7 +27,7 @@ final class QuickConnectViewModel: ViewModel, Stateful {
     // MARK: State
 
     // The typical quick connect lifecycle is as follows:
-    enum State: Equatable {
+    enum State: Hashable {
         // 0. User has not interacted with quick connect
         case initial
         // 1. User clicks quick connect
@@ -53,6 +53,7 @@ final class QuickConnectViewModel: ViewModel, Stateful {
 
     @Published
     var state: State = .initial
+    var lastAction: Action? = nil
 
     let client: JellyfinClient
 

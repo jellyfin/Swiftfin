@@ -10,8 +10,6 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: better name
-
 struct CinematicBackgroundView<Item: Poster>: View {
 
     @ObservedObject
@@ -26,8 +24,8 @@ struct CinematicBackgroundView<Item: Poster>: View {
         RotateContentView(proxy: proxy)
             .onChange(of: viewModel.currentItem) { newItem in
                 proxy.update {
-                    ImageView(newItem?.cinematicPosterImageSources() ?? [])
-                        .placeholder {
+                    ImageView(newItem?.cinematicImageSources(maxWidth: nil) ?? [])
+                        .placeholder { _ in
                             Color.clear
                         }
                         .failure {
@@ -49,6 +47,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
         init() {
             currentItemSubject
                 .debounce(for: 0.5, scheduler: DispatchQueue.main)
+                .removeDuplicates()
                 .sink { newItem in
                     self.currentItem = newItem
                 }
@@ -56,7 +55,6 @@ struct CinematicBackgroundView<Item: Poster>: View {
         }
 
         func select(item: Item) {
-            guard currentItem != item else { return }
             currentItemSubject.send(item)
         }
     }

@@ -244,28 +244,6 @@ extension BaseItemDto {
         }
     }
 
-    // TODO: move as extension on `BaseItemKind`
-    // TODO: remove when `collectionType` becomes an enum
-    func includedItemTypesForCollectionType() -> [BaseItemKind]? {
-
-        guard let collectionType else { return nil }
-
-        var itemTypes: [BaseItemKind]?
-
-        switch collectionType {
-        case "movies":
-            itemTypes = [.movie]
-        case "tvshows":
-            itemTypes = [.series]
-        case "mixed":
-            itemTypes = [.movie, .series]
-        default:
-            itemTypes = nil
-        }
-
-        return itemTypes
-    }
-
     /// Returns `originalTitle` if it is not the same as `displayTitle`
     var alternateTitle: String? {
         originalTitle != displayTitle ? originalTitle : nil
