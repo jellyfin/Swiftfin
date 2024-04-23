@@ -13,21 +13,42 @@ import Foundation
 import JellyfinAPI
 import Pulse
 
-final class UserSignInViewModel: ViewModel {
+final class UserSignInViewModel: ViewModel, Stateful {
+    // MARK: Action
 
+    enum Action {
+        case signInWithUserPass(username: String, password: String)
+        case signInWithQuickConnect(authSecret: String)
+        case cancelSignIn
+    }
+
+    // MARK: State
+
+    enum State: Equatable {
+        case initial
+        case signingIn
+        case signedIn
+        case error(SignInError)
+    }
+
+    // TODO: Add more detailed errors
+    enum SignInError: Error {
+        case unknown
+    }
+
+    @Published
+    var state: State = .initial
     @Published
     private(set) var publicUsers: [UserDto] = []
     @Published
-    private(set) var quickConnectCode: String?
-    @Published
     private(set) var quickConnectEnabled = false
+
+    private var signInTask: Task<Void, Never>?
+
+    let quickConnectViewModel: QuickConnectViewModel
 
     let client: JellyfinClient
     let server: SwiftfinStore.State.Server
-
-    private var quickConnectTask: Task<Void, Never>?
-    private var quickConnectTimer: RepeatingTimer?
-    private var quickConnectSecret: String?
 
     init(server: ServerState) {
         self.client = JellyfinClient(
@@ -35,11 +56,43 @@ final class UserSignInViewModel: ViewModel {
             sessionDelegate: URLSessionProxyDelegate()
         )
         self.server = server
+        self.quickConnectViewModel = .init(client: client)
         super.init()
     }
 
-    func signIn(username: String, password: String) async throws {
+    func respond(to action: Action) -> State {
+        switch action {
+        case let .signInWithUserPass(username, password):
+            guard state != .signingIn else { return .signingIn }
+            Task {
+                do {
+                    try await signIn(username: username, password: password)
+                } catch {
+                    await MainActor.run {
+                        state = .error(.unknown)
+                    }
+                }
+            }
+            return .signingIn
+        case let .signInWithQuickConnect(authSecret):
+            guard state != .signingIn else { return .signingIn }
+            Task {
+                do {
+                    try await signIn(quickConnectSecret: authSecret)
+                } catch {
+                    await MainActor.run {
+                        state = .error(.unknown)
+                    }
+                }
+            }
+            return .signingIn
+        case .cancelSignIn:
+            self.signInTask?.cancel()
+            return .initial
+        }
+    }
 
+    private func signIn(username: String, password: String) async throws {
         let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
         let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -64,71 +117,7 @@ final class UserSignInViewModel: ViewModel {
         Notifications[.didSignIn].post()
     }
 
-    func getPublicUsers() async throws {
-        let publicUsersPath = Paths.getPublicUsers
-        let response = try await client.send(publicUsersPath)
-
-        await MainActor.run {
-            publicUsers = response.value
-        }
-    }
-
-    func checkQuickConnect() async throws {
-        let quickConnectEnabledPath = Paths.getEnabled
-        let response = try await client.send(quickConnectEnabledPath)
-        let decoder = JSONDecoder()
-        let isEnabled = try? decoder.decode(Bool.self, from: response.value)
-
-        await MainActor.run {
-            quickConnectEnabled = isEnabled ?? false
-        }
-    }
-
-    func startQuickConnect() -> AsyncStream<QuickConnectResult> {
-        Task {
-
-            let initiatePath = Paths.initiate
-            let response = try? await client.send(initiatePath)
-
-            guard let response else { return }
-
-            await MainActor.run {
-                quickConnectSecret = response.value.secret
-                quickConnectCode = response.value.code
-            }
-        }
-
-        return .init { continuation in
-
-            checkAuthStatus(continuation: continuation)
-        }
-    }
-
-    private func checkAuthStatus(continuation: AsyncStream<QuickConnectResult>.Continuation) {
-
-        let task = Task {
-            guard let quickConnectSecret else { return }
-            let connectPath = Paths.connect(secret: quickConnectSecret)
-            let response = try? await client.send(connectPath)
-
-            if let responseValue = response?.value, responseValue.isAuthenticated ?? false {
-                continuation.yield(responseValue)
-                return
-            }
-
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-
-            checkAuthStatus(continuation: continuation)
-        }
-
-        self.quickConnectTask = task
-    }
-
-    func stopQuickConnectAuthCheck() {
-        self.quickConnectTask?.cancel()
-    }
-
-    func signIn(quickConnectSecret: String) async throws {
+    private func signIn(quickConnectSecret: String) async throws {
         let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
         let response = try await client.send(quickConnectPath)
 
@@ -147,6 +136,15 @@ final class UserSignInViewModel: ViewModel {
         Defaults[.lastServerUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
+    }
+
+    func getPublicUsers() async throws {
+        let publicUsersPath = Paths.getPublicUsers
+        let response = try await client.send(publicUsersPath)
+
+        await MainActor.run {
+            publicUsers = response.value
+        }
     }
 
     @MainActor
@@ -191,5 +189,16 @@ final class UserSignInViewModel: ViewModel {
         }
 
         return user
+    }
+
+    func checkQuickConnect() async throws {
+        let quickConnectEnabledPath = Paths.getEnabled
+        let response = try await client.send(quickConnectEnabledPath)
+        let decoder = JSONDecoder()
+        let isEnabled = try? decoder.decode(Bool.self, from: response.value)
+
+        await MainActor.run {
+            quickConnectEnabled = isEnabled ?? false
+        }
     }
 }

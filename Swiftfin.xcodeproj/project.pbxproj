@@ -802,6 +802,9 @@
 		E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */; };
 		E43918662AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
 		E43918672AD5C8310045A18C /* ScenePhaseChangeModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */; };
+		EA2073A12BAE35A400D8C78F /* QuickConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2073A02BAE35A400D8C78F /* QuickConnectViewModel.swift */; };
+		EA2073A22BAE35A400D8C78F /* QuickConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2073A02BAE35A400D8C78F /* QuickConnectViewModel.swift */; };
+		EADD26FD2BAE4A6C002F05DE /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADD26FC2BAE4A6C002F05DE /* QuickConnectView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1369,6 +1372,8 @@
 		E1FE69A628C29B720021BC93 /* ProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBar.swift; sourceTree = "<group>"; };
 		E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
 		E43918652AD5C8310045A18C /* ScenePhaseChangeModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenePhaseChangeModifier.swift; sourceTree = "<group>"; };
+		EA2073A02BAE35A400D8C78F /* QuickConnectViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectViewModel.swift; sourceTree = "<group>"; };
+		EADD26FC2BAE4A6C002F05DE /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1527,6 +1532,7 @@
 				BD0BA2292AD6501300306A8D /* VideoPlayerManager */,
 				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
+				EA2073A02BAE35A400D8C78F /* QuickConnectViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2327,6 +2333,7 @@
 				E193D546271941C500900D82 /* UserListView.swift */,
 				E193D548271941CC00900D82 /* UserSignInView.swift */,
 				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
+				EADD26FC2BAE4A6C002F05DE /* QuickConnectView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -3521,6 +3528,7 @@
 				E102314B2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1DD55382B6EE533007501C0 /* Task.swift in Sources */,
 				E1575EA1293E7B1E001665B1 /* String.swift in Sources */,
+				EADD26FD2BAE4A6C002F05DE /* QuickConnectView.swift in Sources */,
 				E1E6C45429B1304E0064123F /* ChaptersActionButton.swift in Sources */,
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
 				E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */,
@@ -3610,6 +3618,7 @@
 				E12376B02A33D6AE001F5B44 /* AboutViewCard.swift in Sources */,
 				E12A9EF929499E0100731C3A /* JellyfinClient.swift in Sources */,
 				E148128328C1443D003B8787 /* NameGuidPair.swift in Sources */,
+				EA2073A22BAE35A400D8C78F /* QuickConnectViewModel.swift in Sources */,
 				E1579EA82B97DC1500A31CA1 /* Eventful.swift in Sources */,
 				E185920828CDAAA200326F80 /* SimilarItemsHStack.swift in Sources */,
 				E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */,
@@ -3838,6 +3847,7 @@
 				E1E1644128BB301900323B0A /* Array.swift in Sources */,
 				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
 				E129429828F4785200796AC6 /* CaseIterablePicker.swift in Sources */,
+				EA2073A12BAE35A400D8C78F /* QuickConnectViewModel.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,

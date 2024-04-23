@@ -10,7 +10,6 @@ import Stinsen
 import SwiftUI
 
 struct UserSignInView: View {
-
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
 
@@ -21,10 +20,6 @@ struct UserSignInView: View {
     private var isPresentingSignInError: Bool = false
     @State
     private var password: String = ""
-    @State
-    private var signInError: Error?
-    @State
-    private var signInTask: Task<Void, Never>?
     @State
     private var username: String = ""
 
@@ -39,28 +34,15 @@ struct UserSignInView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
 
-            if viewModel.isLoading {
+            if case .signingIn = viewModel.state {
                 Button(role: .destructive) {
-                    viewModel.isLoading = false
-                    signInTask?.cancel()
+                    viewModel.send(.cancelSignIn)
                 } label: {
                     L10n.cancel.text
                 }
             } else {
                 Button {
-                    let task = Task {
-                        viewModel.isLoading = true
-
-                        do {
-                            try await viewModel.signIn(username: username, password: password)
-                        } catch {
-                            signInError = error
-                            isPresentingSignInError = true
-                        }
-
-                        viewModel.isLoading = false
-                    }
-                    signInTask = task
+                    viewModel.send(.signInWithUserPass(username: username, password: password))
                 } label: {
                     L10n.signIn.text
                 }
@@ -104,9 +86,16 @@ struct UserSignInView: View {
         .headerProminence(.increased)
     }
 
+    var errorText: some View {
+        var text: String?
+        if case let .error(error) = viewModel.state {
+            text = error.localizedDescription
+        }
+        return Text(text ?? .emptyDash)
+    }
+
     var body: some View {
         List {
-
             signInSection
 
             if viewModel.quickConnectEnabled {
@@ -119,13 +108,22 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
+        .onChange(of: viewModel.state) { newState in
+            if case .error = newState {
+                // If we encountered the error as we switched from quick connect navigation to this view,
+                // it's possible that the alert doesn't show, so wait a little bit
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    isPresentingSignInError = true
+                }
+            }
+        }
         .alert(
             L10n.error,
             isPresented: $isPresentingSignInError
         ) {
             Button(L10n.dismiss, role: .cancel)
         } message: {
-            Text(signInError?.localizedDescription ?? .emptyDash)
+            errorText
         }
         .navigationTitle(L10n.signIn)
         .onAppear {
@@ -135,8 +133,7 @@ struct UserSignInView: View {
             }
         }
         .onDisappear {
-            viewModel.isLoading = false
-            viewModel.stopQuickConnectAuthCheck()
+            viewModel.send(.cancelSignIn)
         }
     }
 }
