@@ -11,6 +11,8 @@ import SwiftUI
 
 // Note: the design reason to not have a local label always on top
 //       is to have the same failure/empty color for all views
+// TODO: why don't shadows work with failure image views?
+//       - due to `Color`?
 
 extension MediaView {
 
@@ -101,7 +103,8 @@ extension MediaView {
                             titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
                         }
                         .failure {
-                            ImageView.DefaultFailureView()
+                            Color.secondarySystemFill
+                                .opacity(0.75)
                                 .overlay {
                                     titleLabel
                                         .foregroundColor(.primary)
@@ -110,6 +113,7 @@ extension MediaView {
                         .id(imageSources.hashValue)
                 }
                 .posterStyle(.landscape)
+                .posterShadow()
             }
             .onFirstAppear(perform: setImageSources)
             .onChange(of: useRandomImage) { _ in

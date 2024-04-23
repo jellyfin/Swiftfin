@@ -12,10 +12,17 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-// TODO: wide + narrow view toggling
-//       - after `PosterType` has been refactored and with customizable toggle button
 // TODO: sorting by number/filtering
-//       - should be able to use normal filter view model, but how to add custom filters for data context?
+//       - see if can use normal filter view model?
+//       - how to add custom filters for data context?
+// TODO: saving item display type/detailed column count
+//       - wait until after user refactor
+
+// Note: Repurposes `LibraryDisplayType` to save from creating a new type.
+//       If there are other places where detailed/compact contextually differ
+//       from the library types, then create a new type and use it here.
+//       - list: detailed
+//       - grid: compact
 
 struct ChannelLibraryView: View {
 
@@ -23,32 +30,82 @@ struct ChannelLibraryView: View {
     private var mainRouter: MainCoordinator.Router
 
     @State
+    private var channelDisplayType: LibraryDisplayType = .list
+    @State
     private var layout: CollectionVGridLayout
 
     @StateObject
     private var viewModel = ChannelLibraryViewModel()
 
+    // MARK: init
+
     init() {
         if UIDevice.isPhone {
-            layout = .columns(1)
+            layout = Self.padlayout(channelDisplayType: .list)
         } else {
-            layout = .minWidth(250)
+            layout = Self.phonelayout(channelDisplayType: .list)
         }
+    }
+
+    // MARK: layout
+
+    private static func padlayout(
+        channelDisplayType: LibraryDisplayType
+    ) -> CollectionVGridLayout {
+        switch channelDisplayType {
+        case .grid:
+            .minWidth(150)
+        case .list:
+            .minWidth(250)
+        }
+    }
+
+    private static func phonelayout(
+        channelDisplayType: LibraryDisplayType
+    ) -> CollectionVGridLayout {
+        switch channelDisplayType {
+        case .grid:
+            .columns(3)
+        case .list:
+            .columns(1)
+        }
+    }
+
+    // MARK: item view
+
+    private func narrowChannelView(channel: ChannelProgram) -> some View {
+        CompactChannelView(channel: channel.channel)
+            .onSelect {
+                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+                mainRouter.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                )
+            }
+    }
+
+    private func wideChannelView(channel: ChannelProgram) -> some View {
+        DetailedChannelView(channel: channel)
+            .onSelect {
+                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+                mainRouter.route(
+                    to: \.liveVideoPlayer,
+                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+                )
+            }
     }
 
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,
-            layout: layout
+            layout: $layout
         ) { channel in
-            WideChannelGridItem(channel: channel)
-                .onSelect {
-                    guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                    mainRouter.route(
-                        to: \.liveVideoPlayer,
-                        LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                    )
-                }
+            switch channelDisplayType {
+            case .grid:
+                narrowChannelView(channel: channel)
+            case .list:
+                wideChannelView(channel: channel)
+            }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
             viewModel.send(.getNextPage)
@@ -79,12 +136,19 @@ struct ChannelLibraryView: View {
         }
         .navigationTitle(L10n.channels)
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: channelDisplayType) { newValue in
+            if UIDevice.isPhone {
+                layout = Self.phonelayout(channelDisplayType: newValue)
+            } else {
+                layout = Self.padlayout(channelDisplayType: newValue)
+            }
+        }
         .onFirstAppear {
             if viewModel.state == .initial {
                 viewModel.send(.refresh)
             }
         }
-        .afterLastDisappear { interval in
+        .sinceLastDisappear { interval in
             // refresh after 3 hours
             if interval >= 10800 {
                 viewModel.send(.refresh)
@@ -94,6 +158,23 @@ struct ChannelLibraryView: View {
 
             if viewModel.backgroundStates.contains(.gettingNextPage) {
                 ProgressView()
+            }
+
+            Menu {
+                // We repurposed `LibraryDisplayType` but want different labels
+                Picker("Channel Display", selection: $channelDisplayType) {
+
+                    Label("Compact", systemImage: LibraryDisplayType.grid.systemImage)
+                        .tag(LibraryDisplayType.grid)
+
+                    Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
+                        .tag(LibraryDisplayType.list)
+                }
+            } label: {
+                Label(
+                    channelDisplayType.displayTitle,
+                    systemImage: channelDisplayType.systemImage
+                )
             }
         }
     }

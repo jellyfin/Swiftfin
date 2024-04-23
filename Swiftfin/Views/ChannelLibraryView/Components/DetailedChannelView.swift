@@ -14,7 +14,7 @@ import SwiftUI
 
 extension ChannelLibraryView {
 
-    struct WideChannelGridItem: View {
+    struct DetailedChannelView: View {
 
         @Default(.accentColor)
         private var accentColor
@@ -39,21 +39,22 @@ extension ChannelLibraryView {
                         .opacity(colorScheme == .dark ? 0.5 : 1)
                         .posterShadow()
 
-                    ImageView(channel.portraitPosterImageSource(maxWidth: 80))
+                    ImageView(channel.channel.imageSource(.primary, maxWidth: 120))
                         .image {
                             $0.aspectRatio(contentMode: .fit)
                         }
                         .failure {
-                            SystemImageContentView(systemName: channel.typeSystemImage)
+                            SystemImageContentView(systemName: channel.systemImage)
                                 .background(color: .clear)
                                 .imageFrameRatio(width: 2, height: 2)
                         }
-                        .placeholder {
+                        .placeholder { _ in
                             EmptyView()
                         }
-                        .padding(2)
+                        .padding(5)
                 }
                 .aspectRatio(1.0, contentMode: .fill)
+                .posterBorder(ratio: 0.0375, of: \.width)
                 .cornerRadius(ratio: 0.0375, of: \.width)
 
                 Text(channel.channel.number ?? "")
@@ -116,7 +117,7 @@ extension ChannelLibraryView {
                 Button {
                     onSelect()
                 } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.defaultEdgePadding) {
+                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
                         channelLogo
                             .frame(width: 80)
@@ -138,7 +139,7 @@ extension ChannelLibraryView {
                             Spacer()
                         }
                         .frame(maxWidth: .infinity)
-                        .size($contentSize)
+                        .trackingSize($contentSize)
                     }
                 }
                 .buttonStyle(.plain)
@@ -154,7 +155,7 @@ extension ChannelLibraryView {
     }
 }
 
-extension ChannelLibraryView.WideChannelGridItem {
+extension ChannelLibraryView.DetailedChannelView {
 
     init(channel: ChannelProgram) {
         self.init(

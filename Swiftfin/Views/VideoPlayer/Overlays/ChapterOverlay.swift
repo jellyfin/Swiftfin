@@ -38,6 +38,9 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
+        @State
+        private var size: CGSize = .zero
+
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
 
@@ -75,7 +78,7 @@ extension VideoPlayer.Overlay {
                 ) { chapter in
                     ChapterButton(chapter: chapter)
                 }
-                .insets(horizontal: EdgeInsets.defaultEdgePadding, vertical: EdgeInsets.defaultEdgePadding)
+                .insets(horizontal: EdgeInsets.edgePadding, vertical: EdgeInsets.edgePadding)
                 .proxy(collectionHStackProxy)
                 .onChange(of: currentOverlayType) { newValue in
                     guard newValue == .chapters else { return }
@@ -84,6 +87,8 @@ extension VideoPlayer.Overlay {
                         collectionHStackProxy.scrollTo(element: currentChapter, animated: false)
                     }
                 }
+                .trackingSize($size)
+                .id(size.width)
             }
             .background {
                 LinearGradient(
@@ -132,20 +137,32 @@ extension VideoPlayer.Overlay.ChapterOverlay {
                     ZStack {
                         Color.black
 
-                        ImageView(chapter.landscapePosterImageSources(maxWidth: 500, single: false))
+                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
                             .failure {
-                                SystemImageContentView(systemName: chapter.typeSystemImage)
+                                SystemImageContentView(systemName: chapter.systemImage)
                             }
                             .aspectRatio(contentMode: .fit)
                     }
-                    .posterStyle(.landscape)
                     .overlay {
-                        if chapter.secondsRange.contains(currentProgressHandler.seconds) {
-                            RoundedRectangle(cornerRadius: 1)
-                                .stroke(accentColor, lineWidth: 5)
-                                .transition(.opacity.animation(.linear(duration: 0.1)))
-                        }
+                        modifier(OnSizeChangedModifier { size in
+                            if chapter.secondsRange.contains(currentProgressHandler.seconds) {
+                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
+                                    .stroke(accentColor, lineWidth: 8)
+                                    .transition(.opacity.animation(.linear(duration: 0.1)))
+                                    .clipped()
+                            } else {
+                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
+                                    .stroke(
+                                        .white.opacity(0.10),
+                                        lineWidth: 1.5
+                                    )
+                                    .clipped()
+                            }
+                        })
                     }
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .cornerRadius(ratio: 1 / 30, of: \.width)
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(chapter.chapterInfo.displayTitle)

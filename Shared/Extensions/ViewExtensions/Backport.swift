@@ -22,7 +22,7 @@ extension Backport where Content: View {
                 .lineLimit(limit, reservesSpace: reservesSpace)
         } else {
             ZStack(alignment: .top) {
-                Text(String(repeating: "\n", count: limit - 1))
+                Text(String(repeating: " \n", count: limit))
 
                 content
                     .lineLimit(limit)

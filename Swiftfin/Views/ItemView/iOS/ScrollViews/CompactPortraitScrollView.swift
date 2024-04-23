@@ -37,7 +37,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxWidth: UIScreen.main.bounds.width))
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
                 .onAppear {
@@ -143,7 +143,7 @@ extension ItemView.CompactPosterScrollView {
 
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 130))
                         .failure {
-                            SystemImageContentView(systemName: viewModel.item.typeSystemImage)
+                            SystemImageContentView(systemName: viewModel.item.systemImage)
                         }
                         .posterStyle(.portrait, contentMode: .fit)
                         .frame(width: 130)

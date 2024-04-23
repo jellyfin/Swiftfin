@@ -29,7 +29,7 @@ extension ItemView {
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(.backdrop, maxHeight: UIScreen.main.bounds.height * 0.35))
-                .aspectRatio(contentMode: .fill)
+                .aspectRatio(1.77, contentMode: .fill)
                 .frame(height: UIScreen.main.bounds.height * 0.35)
                 .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
                 .onAppear {
@@ -99,7 +99,7 @@ extension ItemView.CompactLogoScrollView {
         var body: some View {
             VStack(alignment: .center, spacing: 10) {
                 ImageView(viewModel.item.imageURL(.logo, maxHeight: 70))
-                    .placeholder {
+                    .placeholder { _ in
                         EmptyView()
                     }
                     .failure {

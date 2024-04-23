@@ -15,7 +15,7 @@ import SwiftUI
 struct PosterHStack<Item: Poster>: View {
 
     private var title: String?
-    private var type: PosterType
+    private var type: PosterDisplayType
     private var items: Binding<OrderedSet<Item>>
     private var content: (Item) -> any View
     private var imageOverlay: (Item) -> any View
@@ -58,8 +58,8 @@ struct PosterHStack<Item: Poster>: View {
             }
             .clipsToBounds(false)
             .dataPrefix(20)
-            .insets(horizontal: EdgeInsets.defaultEdgePadding, vertical: 20)
-            .itemSpacing(EdgeInsets.defaultEdgePadding - 20)
+            .insets(horizontal: EdgeInsets.edgePadding, vertical: 20)
+            .itemSpacing(EdgeInsets.edgePadding - 20)
             .scrollBehavior(.continuousLeadingEdge)
         }
         .focusSection()
@@ -85,7 +85,7 @@ extension PosterHStack {
 
     init(
         title: String? = nil,
-        type: PosterType,
+        type: PosterDisplayType,
         items: Binding<OrderedSet<Item>>
     ) {
         self.init(
@@ -103,7 +103,7 @@ extension PosterHStack {
 
     init<S: Sequence<Item>>(
         title: String? = nil,
-        type: PosterType,
+        type: PosterDisplayType,
         items: S
     ) {
         self.init(

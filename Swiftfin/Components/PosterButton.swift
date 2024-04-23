@@ -12,23 +12,26 @@ import SwiftUI
 
 // TODO: expose `ImageView.image` modifier for image aspect fill/fit
 // TODO: allow `content` to trigger `onSelect`?
+//       - not in button label to avoid context menu visual oddities
+// TODO: get width/height for images from layout size?
+// TODO: why don't shadows work with failure image views?
+//       - due to `Color`?
 
 struct PosterButton<Item: Poster>: View {
 
     private var item: Item
-    private var type: PosterType
+    private var type: PosterDisplayType
     private var content: () -> any View
     private var imageOverlay: () -> any View
     private var contextMenu: () -> any View
     private var onSelect: () -> Void
-    private var singleImage: Bool
 
     private func imageView(from item: Item) -> ImageView {
         switch type {
-        case .portrait:
-            ImageView(item.portraitPosterImageSource(maxWidth: 200))
         case .landscape:
-            ImageView(item.landscapePosterImageSources(maxWidth: 500, single: singleImage))
+            ImageView(item.landscapeImageSources(maxWidth: 500))
+        case .portrait:
+            ImageView(item.portraitImageSources(maxWidth: 200))
         }
     }
 
@@ -42,7 +45,14 @@ struct PosterButton<Item: Poster>: View {
 
                     imageView(from: item)
                         .failure {
-                            SystemImageContentView(systemName: item.typeSystemImage)
+                            if item.showTitle {
+                                SystemImageContentView(systemName: item.systemImage)
+                            } else {
+                                SystemImageContentView(
+                                    title: item.displayTitle,
+                                    systemName: item.systemImage
+                                )
+                            }
                         }
 
                     imageOverlay()
@@ -50,6 +60,7 @@ struct PosterButton<Item: Poster>: View {
                 }
                 .posterStyle(type)
             }
+            .buttonStyle(.plain)
             .contextMenu(menuItems: {
                 contextMenu()
                     .eraseToAnyView()
@@ -66,8 +77,7 @@ extension PosterButton {
 
     init(
         item: Item,
-        type: PosterType,
-        singleImage: Bool = false
+        type: PosterDisplayType
     ) {
         self.init(
             item: item,
@@ -75,8 +85,7 @@ extension PosterButton {
             content: { TitleSubtitleContentView(item: item) },
             imageOverlay: { DefaultOverlay(item: item) },
             contextMenu: { EmptyView() },
-            onSelect: {},
-            singleImage: singleImage
+            onSelect: {}
         )
     }
 
@@ -97,7 +106,8 @@ extension PosterButton {
     }
 }
 
-// TODO: Shared default content?
+// TODO: Shared default content with tvOS?
+//       - check if content is generally same
 
 extension PosterButton {
 
@@ -119,7 +129,7 @@ extension PosterButton {
         let item: Item
 
         var body: some View {
-            Text(item.subtitle ?? "")
+            Text(item.subtitle ?? " ")
                 .font(.caption.weight(.medium))
                 .foregroundColor(.secondary)
         }
@@ -140,6 +150,49 @@ extension PosterButton {
                 SubtitleContentView(item: item)
                     .backport
                     .lineLimit(1, reservesSpace: true)
+            }
+        }
+    }
+
+    // Content specific for BaseItemDto episode items
+    struct EpisodeContentSubtitleContent: View {
+
+        @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
+        private var useSeriesLandscapeBackdrop
+
+        let item: Item
+
+        var body: some View {
+            if let item = item as? BaseItemDto {
+                // Unsure why this needs 0 spacing
+                // compared to other default content
+                VStack(alignment: .leading, spacing: 0) {
+                    if item.showTitle, let seriesName = item.seriesName {
+                        Text(seriesName)
+                            .font(.footnote.weight(.regular))
+                            .foregroundColor(.primary)
+                            .backport
+                            .lineLimit(1, reservesSpace: true)
+                    }
+
+                    SeparatorHStack {
+                        Text(item.seasonEpisodeLabel ?? .emptyDash)
+
+                        if item.showTitle || useSeriesLandscapeBackdrop {
+                            Text(item.displayTitle)
+                        } else if let seriesName = item.seriesName {
+                            Text(seriesName)
+                        }
+                    }
+                    .separator {
+                        Circle()
+                            .frame(width: 2, height: 2)
+                            .padding(.horizontal, 3)
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                }
             }
         }
     }

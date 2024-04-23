@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ScenePhaseChangeModifier: ViewModifier {
+struct OnScenePhaseChangedModifier: ViewModifier {
 
     @Environment(\.scenePhase)
     private var scenePhase

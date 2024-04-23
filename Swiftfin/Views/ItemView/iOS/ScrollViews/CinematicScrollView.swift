@@ -44,7 +44,7 @@ extension ItemView {
                 usePrimaryImage ? .primary : .backdrop,
                 maxWidth: UIScreen.main.bounds.width
             ))
-            .aspectRatio(contentMode: .fill)
+            .aspectRatio(usePrimaryImage ? (2 / 3) : 1.77, contentMode: .fill)
             .frame(height: UIScreen.main.bounds.height * 0.6)
             .bottomEdgeGradient(bottomColor: blurHashBottomEdgeColor)
             .onAppear {
@@ -109,7 +109,7 @@ extension ItemView.CinematicScrollView {
                 VStack(alignment: .center, spacing: 10) {
                     if !cinematicItemViewTypeUsePrimaryImage {
                         ImageView(viewModel.item.imageURL(.logo, maxHeight: 100))
-                            .placeholder {
+                            .placeholder { _ in
                                 EmptyView()
                             }
                             .failure {

@@ -39,7 +39,7 @@ extension HomeView {
             CinematicItemSelector(items: viewModel.elements.elements)
                 .topContent { item in
                     ImageView(itemSelectorImageSource(for: item))
-                        .placeholder {
+                        .placeholder { _ in
                             EmptyView()
                         }
                         .failure {

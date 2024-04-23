@@ -8,8 +8,7 @@
 
 import Foundation
 
-/// A type that is displayed with a title
-protocol Displayable {
+protocol SystemImageable {
 
-    var displayTitle: String { get }
+    var systemImage: String { get }
 }

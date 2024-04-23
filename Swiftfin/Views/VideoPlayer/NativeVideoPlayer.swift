@@ -143,12 +143,14 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     }
 
     private func createMetadata() -> [AVMetadataItem] {
-        let allMetadata: [AVMetadataIdentifier: Any?] = [
-            .commonIdentifierTitle: videoPlayerManager.currentViewModel.item.displayTitle,
-            .iTunesMetadataTrackSubTitle: videoPlayerManager.currentViewModel.item.subtitle,
-        ]
+        []
 
-        return allMetadata.compactMap { createMetadataItem(for: $0, value: $1) }
+//        let allMetadata: [AVMetadataIdentifier: Any?] = [
+//            .commonIdentifierTitle: videoPlayerManager.currentViewModel.item.displayTitle,
+//            .iTunesMetadataTrackSubTitle: videoPlayerManager.currentViewModel.item.subtitle,
+//        ]
+//
+//        return allMetadata.compactMap { createMetadataItem(for: $0, value: $1) }
     }
 
     private func createMetadataItem(

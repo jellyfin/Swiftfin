@@ -34,7 +34,7 @@ struct BackgroundParallaxHeaderModifier<Header: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .size($contentSize)
+            .trackingSize($contentSize)
             .background(alignment: .top) {
                 header()
                     .offset(y: scrollViewOffset > 0 ? -scrollViewOffset * multiplier : 0)

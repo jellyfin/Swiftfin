@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import UIKit
 
-enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum LibraryDisplayType: String, CaseIterable, Displayable, Defaults.Serializable, SystemImageable {
 
     case grid
     case list
@@ -22,6 +22,15 @@ enum LibraryViewType: String, CaseIterable, Displayable, Defaults.Serializable {
             "Grid"
         case .list:
             "List"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .grid:
+            "square.grid.2x2.fill"
+        case .list:
+            "square.fill.text.grid.1x2"
         }
     }
 }

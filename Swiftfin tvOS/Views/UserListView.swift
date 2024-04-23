@@ -32,9 +32,9 @@ struct UserListView: View {
             viewModel.users,
             layout: .minWidth(
                 250,
-                insets: EdgeInsets.DefaultEdgeInsets,
-                itemSpacing: EdgeInsets.defaultEdgePadding,
-                lineSpacing: EdgeInsets.defaultEdgePadding
+                insets: EdgeInsets.edgeInsets,
+                itemSpacing: EdgeInsets.edgePadding,
+                lineSpacing: EdgeInsets.edgePadding
             )
         ) { user in
             UserProfileButton(user: user)

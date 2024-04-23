@@ -11,6 +11,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: need to think about better design for views that may not support current library display type
+//       - ex: channels/albums when in portrait/landscape
+//       - just have the supported view embedded in a container view?
+
 // Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
 //       This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
 //       other items that don't have a subtitle which requires the entire library to implement
@@ -98,8 +102,8 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: layout
 
     private static func padLayout(
-        posterType: PosterType,
-        viewType: LibraryViewType,
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType,
         listColumnCount: Int
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
@@ -113,8 +117,8 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     private static func phoneLayout(
-        posterType: PosterType,
-        viewType: LibraryViewType
+        posterType: PosterDisplayType,
+        viewType: LibraryDisplayType
     ) -> CollectionVGridLayout {
         switch (posterType, viewType) {
         case (.landscape, .grid):
@@ -128,6 +132,9 @@ struct PagingLibraryView<Element: Poster>: View {
 
     // MARK: item view
 
+    // Note: if parent is a folders then other items will have labels,
+    //       so an empty content view is necessary
+
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
             .content {
@@ -135,6 +142,11 @@ struct PagingLibraryView<Element: Poster>: View {
                     PosterButton.TitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
+                } else if viewModel.parent?.libraryType == .folder {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                        .hidden()
                 }
             }
             .onSelect {
@@ -149,6 +161,11 @@ struct PagingLibraryView<Element: Poster>: View {
                     PosterButton.TitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
+                } else if viewModel.parent?.libraryType == .folder {
+                    PosterButton.TitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                        .hidden()
                 }
             }
             .onSelect {
@@ -291,7 +308,11 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                LibraryViewTypeToggle(posterType: $posterType, viewType: $viewType, listColumnCount: $listColumnCount)
+                LibraryViewTypeToggle(
+                    posterType: $posterType,
+                    viewType: $viewType,
+                    listColumnCount: $listColumnCount
+                )
 
                 Button(L10n.random, systemImage: "dice.fill") {
                     viewModel.send(.getRandomItem)
