@@ -57,16 +57,16 @@ struct SearchView: View {
                     itemsSection(title: L10n.episodes, keyPath: \.episodes, posterType: searchPosterType)
                 }
 
-                if viewModel.people.isNotEmpty {
-                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
-                }
-
                 if viewModel.programs.isNotEmpty {
                     itemsSection(title: L10n.programs, keyPath: \.programs, posterType: .landscape)
                 }
 
                 if viewModel.channels.isNotEmpty {
                     itemsSection(title: L10n.channels, keyPath: \.channels, posterType: .portrait)
+                }
+
+                if viewModel.people.isNotEmpty {
+                    itemsSection(title: L10n.people, keyPath: \.people, posterType: .portrait)
                 }
             }
         }
