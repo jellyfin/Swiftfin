@@ -25,12 +25,7 @@ private let imagePipeline = {
 //       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
-// TODO: `LazyImage` uses a transaction for view swapping, which will fade out old views
-//       and fade in new views, causing a black "flash" between the placeholder and final image.
-//       Since we use blur hashes, we actually just want the final image to fade in on top while
-//       the blur hash view is at full opacity.
-//       - refactor for option
-//       - take a look at `RotateContentView`
+// TODO: probably don't need both `placeholder` modifiers
 struct ImageView: View {
 
     @State
@@ -39,9 +34,6 @@ struct ImageView: View {
     private var image: (Image) -> any View
     private var placeholder: ((ImageSource) -> any View)?
     private var failure: () -> any View
-
-    @State
-    private var isImageLoaded = false
 
     @ViewBuilder
     private func _placeholder(_ currentSource: ImageSource) -> some View {
@@ -55,7 +47,7 @@ struct ImageView: View {
 
     var body: some View {
         if let currentSource = sources.first {
-            LazyImage(url: currentSource.url) { state in
+            LazyImage(url: currentSource.url, transaction: .init(animation: .linear)) { state in
                 if state.isLoading {
                     _placeholder(currentSource)
                 } else if let _image = state.image {
@@ -74,10 +66,6 @@ struct ImageView: View {
                 }
             }
             .pipeline(imagePipeline)
-            .opacity(isImageLoaded ? 1 : 0)
-            .onAppear { self.isImageLoaded = true }
-            .animation(.easeIn(duration: 0.5), value: isImageLoaded)
-
         } else {
             failure()
                 .eraseToAnyView()
@@ -92,7 +80,7 @@ extension ImageView {
             sources: [source].compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { EmptyView() }
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -101,7 +89,7 @@ extension ImageView {
             sources: sources.compacted(using: \.url),
             image: { $0 },
             placeholder: nil,
-            failure: { EmptyView() }
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -110,7 +98,7 @@ extension ImageView {
             sources: [ImageSource(url: source)],
             image: { $0 },
             placeholder: nil,
-            failure: { EmptyView() }
+            failure: { DefaultFailureView() }
         )
     }
 
@@ -123,7 +111,7 @@ extension ImageView {
             sources: imageSources,
             image: { $0 },
             placeholder: nil,
-            failure: { EmptyView() }
+            failure: { DefaultFailureView() }
         )
     }
 }
@@ -134,6 +122,10 @@ extension ImageView {
 
     func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
+    }
+
+    func placeholder(@ViewBuilder _ content: @escaping () -> any View) -> Self {
+        copy(modifying: \.placeholder, with: { _ in content() })
     }
 
     func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {
@@ -164,6 +156,9 @@ extension ImageView {
         var body: some View {
             if let blurHash {
                 BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+            } else {
+                Color.secondarySystemFill
+                    .opacity(0.75)
             }
         }
     }
