@@ -66,7 +66,7 @@ class UserListViewModel: ViewModel, Stateful {
     private func getServers() throws -> [ServerState] {
         try SwiftfinStore
             .dataStack
-            .fetchAll(From<SwiftfinStore.Models.StoredServer>())
+            .fetchAll(From<ServerModel>())
             .map(\.state)
     }
 

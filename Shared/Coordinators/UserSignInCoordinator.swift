@@ -16,6 +16,7 @@ final class UserSignInCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
+
     #if os(iOS)
     @Route(.modal)
     var quickConnect = makeQuickConnect

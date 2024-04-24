@@ -15,8 +15,8 @@ struct ConnectToServerView: View {
     @EnvironmentObject
     private var router: ConnectToServerCoodinator.Router
 
-    @ObservedObject
-    var viewModel: ConnectToServerViewModel
+    @StateObject
+    private var viewModel = ConnectToServerViewModel()
 
     @State
     private var connectionError: Error?
@@ -48,7 +48,7 @@ struct ConnectToServerView: View {
                     isPresentingDuplicateServerAlert = true
                 } else {
                     try viewModel.save(server: serverConnection.server)
-                    router.route(to: \.userSignIn, serverConnection.server)
+//                    router.route(to: \.userSignIn, serverConnection.server)
                 }
             } catch {
                 connectionError = error

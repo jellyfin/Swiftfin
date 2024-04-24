@@ -167,9 +167,9 @@ final class UserSignInViewModel: ViewModel, Stateful {
         }
 
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
-            From<SwiftfinStore.Models.StoredServer>(),
+            From<ServerModel>(),
             [
-                Where<SwiftfinStore.Models.StoredServer>(
+                Where<ServerModel>(
                     "id == %@",
                     server.id
                 ),

@@ -42,16 +42,6 @@ struct ServerDetailView: View {
                         viewModel.setCurrentServerURL(to: currentServerURL)
                     }
                 }
-
-                TextPairView(
-                    leading: L10n.version,
-                    trailing: viewModel.server.version
-                )
-
-                TextPairView(
-                    leading: L10n.operatingSystem,
-                    trailing: viewModel.server.os
-                )
             }
         }
         .navigationBarTitleDisplayMode(.inline)

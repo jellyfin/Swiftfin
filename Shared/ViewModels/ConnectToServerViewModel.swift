@@ -60,9 +60,7 @@ final class ConnectToServerViewModel: ViewModel {
         let response = try await client.send(Paths.getPublicSystemInfo)
 
         guard let name = response.value.serverName,
-              let id = response.value.id,
-              let os = response.value.operatingSystem,
-              let version = response.value.version
+              let id = response.value.id
         else {
             throw JellyfinAPIError("Missing server data from network call")
         }
@@ -76,8 +74,6 @@ final class ConnectToServerViewModel: ViewModel {
             currentURL: connectionURL,
             name: name,
             id: id,
-            os: os,
-            version: version,
             usersIDs: []
         )
 
@@ -107,8 +103,8 @@ final class ConnectToServerViewModel: ViewModel {
 
     func isDuplicate(server: ServerState) -> Bool {
         if let _ = try? SwiftfinStore.dataStack.fetchOne(
-            From<SwiftfinStore.Models.StoredServer>(),
-            [Where<SwiftfinStore.Models.StoredServer>(
+            From<ServerModel>(),
+            [Where<ServerModel>(
                 "id == %@",
                 server.id
             )]
@@ -120,14 +116,12 @@ final class ConnectToServerViewModel: ViewModel {
 
     func save(server: ServerState) throws {
         try SwiftfinStore.dataStack.perform { transaction in
-            let newServer = transaction.create(Into<SwiftfinStore.Models.StoredServer>())
+            let newServer = transaction.create(Into<ServerModel>())
 
             newServer.urls = server.urls
             newServer.currentURL = server.currentURL
             newServer.name = server.name
             newServer.id = server.id
-            newServer.os = server.os
-            newServer.version = server.version
             newServer.users = []
         }
     }
@@ -145,8 +139,6 @@ final class ConnectToServerViewModel: ViewModel {
                     currentURL: server.url,
                     name: server.name,
                     id: server.id,
-                    os: "",
-                    version: "",
                     usersIDs: []
                 ))
             }
@@ -162,8 +154,8 @@ final class ConnectToServerViewModel: ViewModel {
     func add(url: URL, server: ServerState) {
         try! SwiftfinStore.dataStack.perform { transaction in
             let existingServer = try! SwiftfinStore.dataStack.fetchOne(
-                From<SwiftfinStore.Models.StoredServer>(),
-                [Where<SwiftfinStore.Models.StoredServer>(
+                From<ServerModel>(),
+                [Where<ServerModel>(
                     "id == %@",
                     server.id
                 )]

@@ -8,8 +8,12 @@
 
 import CollectionVGrid
 import Defaults
+import JellyfinAPI
 import OrderedCollections
 import SwiftUI
+
+// TODO: option for splashscreen image
+// TODO: navigation bar blur fixed with splashscreen
 
 struct UserListView: View {
 
@@ -39,6 +43,17 @@ struct UserListView: View {
         let initialDisplayType = Defaults[.userListDisplayType]
 
         self.layout = Self.phoneLayout(displayType: initialDisplayType)
+    }
+
+    private var splashScreenImageSource: ImageSource? {
+        guard let selectedServer else { return nil }
+
+        let parameters = Paths.GetSplashscreenParameters(maxHeight: 1000)
+        let request = Paths.getSplashscreen(parameters: parameters)
+
+        guard let url = selectedServer.client.fullURL(with: request) else { return nil }
+
+        return ImageSource(url: url)
     }
 
     private static func phoneLayout(
@@ -148,7 +163,7 @@ struct UserListView: View {
     }
 
     @ViewBuilder
-    private var gridView: some View {
+    private var contentView: some View {
         CollectionVGrid(
             $gridItems,
             layout: $layout
@@ -158,6 +173,21 @@ struct UserListView: View {
                 gridView(for: item)
             case .list:
                 listView(for: item)
+            }
+        }
+        .background {
+            if let splashScreenImageSource {
+                ImageView(splashScreenImageSource)
+                    .placeholder { _ in
+                        Color.clear
+                    }
+                    .aspectRatio(contentMode: .fill)
+                    .ignoresSafeArea()
+                    .overlay {
+                        Color.black
+                            .opacity(0.9)
+                            .ignoresSafeArea()
+                    }
             }
         }
     }
@@ -170,7 +200,7 @@ struct UserListView: View {
             case .initial:
                 Color.black
             case .content:
-                gridView
+                contentView
             }
         }
         .navigationTitle("Users")
@@ -188,8 +218,12 @@ struct UserListView: View {
         }
         .topBarTrailing {
             advancedMenu
+
+            Button("", systemImage: "heart.fill") {
+                router.route(to: \.connectToServer)
+            }
         }
-        .onFirstAppear {
+        .onAppear {
             viewModel.send(.getServers)
         }
         .onChange(of: viewModel.servers) { newValue in
@@ -198,6 +232,8 @@ struct UserListView: View {
                 .appending(.addUser)
 
             gridItems = OrderedSet(items)
+
+            selectedServer = server
         }
     }
 }

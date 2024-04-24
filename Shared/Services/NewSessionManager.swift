@@ -76,8 +76,8 @@ extension Container {
 
         if let lastUserID = Defaults[.lastServerUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(
-               From<SwiftfinStore.Models.StoredUser>(),
-               [Where<SwiftfinStore.Models.StoredUser>("id == %@", lastUserID)]
+               From<UserModel>(),
+               [Where<UserModel>("id == %@", lastUserID)]
            )
         {
             guard let server = user.server,

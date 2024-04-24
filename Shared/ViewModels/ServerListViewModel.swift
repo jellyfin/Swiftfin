@@ -26,7 +26,7 @@ final class ServerListViewModel: ViewModel {
     }
 
     func fetchServers() {
-        let servers = try! SwiftfinStore.dataStack.fetchAll(From<SwiftfinStore.Models.StoredServer>())
+        let servers = try! SwiftfinStore.dataStack.fetchAll(From<ServerModel>())
         self.servers = servers.map(\.state)
     }
 
@@ -41,8 +41,8 @@ final class ServerListViewModel: ViewModel {
     func remove(server: SwiftfinStore.State.Server) {
 
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
-            From<SwiftfinStore.Models.StoredServer>(),
-            [Where<SwiftfinStore.Models.StoredServer>("id == %@", server.id)]
+            From<ServerModel>(),
+            [Where<ServerModel>("id == %@", server.id)]
         )
         else { fatalError("No stored server for state server?") }
 
