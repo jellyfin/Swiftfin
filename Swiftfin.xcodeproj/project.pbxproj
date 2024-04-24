@@ -212,6 +212,9 @@
 		E10B1E8B2BD76FA900A92EAF /* QuickConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1E892BD76FA900A92EAF /* QuickConnectViewModel.swift */; };
 		E10B1E8E2BD7708900A92EAF /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */; };
 		E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
+		E10B1EB22BD976A200A92EAF /* AddUserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */; };
+		E10B1EB42BD9803100A92EAF /* UserListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB32BD9803100A92EAF /* UserListRow.swift */; };
+		E10B1EB62BD98C6600A92EAF /* AddUserListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */; };
 		E10E842A29A587110064EA49 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842929A587110064EA49 /* LoadingView.swift */; };
 		E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842B29A589860064EA49 /* NonePosterButton.swift */; };
 		E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSize.swift */; };
@@ -1006,6 +1009,9 @@
 		E1092F4B29106F9F00163F57 /* GestureAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureAction.swift; sourceTree = "<group>"; };
 		E10B1E892BD76FA900A92EAF /* QuickConnectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickConnectViewModel.swift; sourceTree = "<group>"; };
 		E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
+		E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserGridButton.swift; sourceTree = "<group>"; };
+		E10B1EB32BD9803100A92EAF /* UserListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListRow.swift; sourceTree = "<group>"; };
+		E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserListRow.swift; sourceTree = "<group>"; };
 		E10E842929A587110064EA49 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		E10E842B29A589860064EA49 /* NonePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonePosterButton.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSize.swift; sourceTree = "<group>"; };
@@ -2195,6 +2201,25 @@
 			path = ItemViewModel;
 			sourceTree = "<group>";
 		};
+		E10B1EAF2BD9769500A92EAF /* UserListView */ = {
+			isa = PBXGroup;
+			children = (
+				E10B1EB02BD9769C00A92EAF /* Components */,
+				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
+			);
+			path = UserListView;
+			sourceTree = "<group>";
+		};
+		E10B1EB02BD9769C00A92EAF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */,
+				E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */,
+				E10B1EB32BD9803100A92EAF /* UserListRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E10E842829A587090064EA49 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -2413,7 +2438,7 @@
 				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
 				E13DD3E427177D15009D4DAF /* ServerListView.swift */,
 				E1E5D54A2783E26100692DFE /* SettingsView */,
-				E13DD3FB2717EAE8009D4DAF /* UserListView.swift */,
+				E10B1EAF2BD9769500A92EAF /* UserListView */,
 				E1171A1A28A2215800FA1AF5 /* UserSignInView */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
 			);
@@ -3931,6 +3956,7 @@
 				E15756322935642A00976E1F /* Double.swift in Sources */,
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
+				E10B1EB42BD9803100A92EAF /* UserListRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */,
@@ -4108,6 +4134,7 @@
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
+				E10B1EB62BD98C6600A92EAF /* AddUserListRow.swift in Sources */,
 				E1D37F582B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */,
 				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E19F6C5D28F5189300C5197E /* MediaStreamInfoView.swift in Sources */,
@@ -4171,6 +4198,7 @@
 				E13F05EC28BC9000003499D2 /* LibraryDisplayType.swift in Sources */,
 				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,
+				E10B1EB22BD976A200A92EAF /* AddUserGridButton.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,

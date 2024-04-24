@@ -26,6 +26,8 @@ extension Defaults.Keys {
     static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
     static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
 
+    static let userListDisplayType = Defaults.Key<LibraryDisplayType>("userListDisplayType", default: .grid, suite: .universalSuite)
+
     // TODO: Replace with a cache
     static let libraryFilterStore = Key<[String: ItemFilterCollection]>("libraryFilterStore", default: [:], suite: .generalSuite)
 

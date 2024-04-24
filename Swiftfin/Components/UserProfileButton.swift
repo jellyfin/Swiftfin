@@ -17,17 +17,14 @@ struct UserProfileButton: View {
     private let user: UserDto
     private var onSelect: () -> Void
 
-    // TODO: Why both?
     init(user: UserDto, client: JellyfinClient) {
         self.client = client
         self.user = user
         self.onSelect = {}
     }
 
-    init(user: UserState, client: JellyfinClient) {
-        self.client = client
-        self.user = .init(id: user.id, name: user.username)
-        self.onSelect = {}
+    private var personView: some View {
+        SystemImageContentView(systemName: "person.fill")
     }
 
     var body: some View {
@@ -35,22 +32,24 @@ struct UserProfileButton: View {
             Button {
                 onSelect()
             } label: {
-                ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
-                    .failure {
-                        ZStack {
-                            Color.secondarySystemFill
-                                .opacity(0.5)
+                ZStack {
+                    Color.clear
 
-                            Image(systemName: "person.fill")
-                                .resizable()
-                                .frame(width: 60, height: 60)
+                    ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                        .placeholder { _ in
+                            personView
                         }
-                    }
-                    .clipShape(Circle())
+                        .failure {
+                            personView
+                        }
+                }
+                .aspectRatio(1, contentMode: .fill)
+                .cornerRadius(ratio: 1 / 30, of: \.width)
             }
-            .frame(width: 120, height: 120)
 
             Text(user.name ?? .emptyDash)
+                .fontWeight(.semibold)
+                .lineLimit(1)
         }
     }
 }

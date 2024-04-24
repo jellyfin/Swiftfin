@@ -6,79 +6,78 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import CoreStore
 import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
-import Pulse
-import SwiftUI
+import OrderedCollections
 
-class UserListViewModel: ViewModel {
+class UserListViewModel: ViewModel, Stateful {
 
-    @Published
-    private(set) var users: [UserState] = []
-    @Published
-    private(set) var server: ServerState
+    // MARK: Action
 
-    var client: JellyfinClient {
-        JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
-            sessionDelegate: URLSessionProxyDelegate()
-        )
+    enum Action: Equatable {
+        case getServers
+        case signIn(UserState)
     }
 
-    init(server: ServerState) {
-        self.server = server
-        super.init()
+    // MARK: State
 
-        Notifications[.didChangeCurrentServerURL]
-            .publisher
-            .sink { [weak self] notification in
-                guard let serverState = notification.object as? SwiftfinStore.State.Server else {
-                    return
-                }
-                self?.server = serverState
+    enum State: Hashable {
+        case error(JellyfinAPIError)
+        case initial
+        case content
+    }
+
+    @Published
+    var servers: OrderedDictionary<ServerState, [UserState]> = [:]
+
+    @Published
+    var lastAction: Action? = nil
+    @Published
+    var state: State = .initial
+
+    @MainActor
+    func respond(to action: Action) -> State {
+        switch action {
+        case .getServers:
+            do {
+                servers = try getServers()
+                    .zipped(map: getUsers)
+                    .reduce(into: OrderedDictionary<ServerState, [UserState]>()) { partialResult, pair in
+                        partialResult[pair.0] = pair.1
+                    }
+
+                return .content
+            } catch {
+                return .error(.init(error.localizedDescription))
             }
-            .store(in: &cancellables)
+        case let .signIn(user):
+            Defaults[.lastServerUserID] = user.id
+            Container.userSession.reset()
+            Notifications[.didSignIn].post()
+
+            return state
+        }
     }
 
-    func fetchUsers() {
+    private func getServers() throws -> [ServerState] {
+        try SwiftfinStore
+            .dataStack
+            .fetchAll(From<SwiftfinStore.Models.StoredServer>())
+            .map(\.state)
+    }
 
+    private func getUsers(for server: ServerState) throws -> [UserState] {
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
             From<ServerModel>(),
             Where<ServerModel>("id == %@", server.id)
         )
         else { fatalError("No stored server associated with given state server?") }
 
-        users = storedServer.users
+        return storedServer.users
             .map(\.state)
-            .sorted(using: \.username)
-    }
-
-    func signIn(user: UserState) {
-        Defaults[.lastServerUserID] = user.id
-        Container.userSession.reset()
-        Notifications[.didSignIn].post()
-    }
-
-    func remove(user: UserState) {
-        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(
-            From<SwiftfinStore.Models.StoredUser>(),
-            [Where<SwiftfinStore.Models.StoredUser>("id == %@", user.id)]
-        ) else {
-            logger.error("Unable to find user to delete")
-            return
-        }
-
-        let transaction = SwiftfinStore.dataStack.beginUnsafe()
-        transaction.delete(storedUser)
-
-        do {
-            try transaction.commitAndWait()
-            fetchUsers()
-        } catch {
-            logger.error("Unable to delete user")
-        }
     }
 }

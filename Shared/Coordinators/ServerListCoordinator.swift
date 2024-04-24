@@ -29,7 +29,7 @@ final class ServerListCoordinator: NavigationCoordinatable {
     }
 
     func makeUserList(server: ServerState) -> UserListCoordinator {
-        UserListCoordinator(server: server)
+        UserListCoordinator()
     }
 
     func makeBasicAppSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
