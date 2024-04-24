@@ -73,7 +73,7 @@ struct ChannelLibraryView: View {
 
     // MARK: item view
 
-    private func narrowChannelView(channel: ChannelProgram) -> some View {
+    private func compactChannelView(channel: ChannelProgram) -> some View {
         CompactChannelView(channel: channel.channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
@@ -84,7 +84,7 @@ struct ChannelLibraryView: View {
             }
     }
 
-    private func wideChannelView(channel: ChannelProgram) -> some View {
+    private func detailedChannelView(channel: ChannelProgram) -> some View {
         DetailedChannelView(channel: channel)
             .onSelect {
                 guard let mediaSource = channel.channel.mediaSources?.first else { return }
@@ -102,9 +102,9 @@ struct ChannelLibraryView: View {
         ) { channel in
             switch channelDisplayType {
             case .grid:
-                narrowChannelView(channel: channel)
+                compactChannelView(channel: channel)
             case .list:
-                wideChannelView(channel: channel)
+                detailedChannelView(channel: channel)
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
