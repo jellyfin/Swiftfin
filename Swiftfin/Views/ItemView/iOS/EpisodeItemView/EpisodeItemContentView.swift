@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
 import JellyfinAPI
 import SwiftUI
 
@@ -24,6 +25,17 @@ extension EpisodeItemView {
 
                 VStack(alignment: .center) {
                     ImageView(viewModel.item.imageSource(.primary, maxWidth: 600))
+                        .placeholder { source in
+                            if let blurHash = source.blurHash {
+                                BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+                            } else {
+                                Color.secondarySystemFill
+                                    .opacity(0.75)
+                            }
+                        }
+                        .failure {
+                            SystemImageContentView(systemName: viewModel.item.systemImage)
+                        }
                         .frame(maxHeight: 300)
                         .posterStyle(.landscape)
                         .posterShadow()
