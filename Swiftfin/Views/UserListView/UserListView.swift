@@ -13,7 +13,7 @@ import OrderedCollections
 import SwiftUI
 
 // TODO: option for splashscreen image
-// TODO: navigation bar blur fixed with splashscreen
+// TODO: navigation bar blur always on with splashscreen
 
 struct UserListView: View {
 
@@ -27,6 +27,11 @@ struct UserListView: View {
 
     @EnvironmentObject
     private var router: UserListCoordinator.Router
+
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var gridItemSize: CGSize = .zero
 
     @State
     private var gridItems: OrderedSet<UserGridItem> = []
@@ -113,24 +118,15 @@ struct UserListView: View {
     private func gridView(for item: UserGridItem) -> some View {
         switch item {
         case let .user(user):
-            UserProfileButton(
-                user: .init(id: user.id, name: user.username),
-                client: .init(
-                    configuration: .init(
-                        url: URL(string: "apple.com")!,
-                        client: "",
-                        deviceName: "",
-                        deviceID: "",
-                        version: ""
-                    )
-                )
-            )
-            .onSelect {
-                viewModel.send(.signIn(user))
+            UserGridItemView(
+                user: user,
+                client: selectedServer!.client
+            ) {
+                print("here")
             }
         case .addUser:
             AddUserButton {
-                print("here")
+                router.route(to: \.userSignIn, selectedServer!)
             }
         }
     }
@@ -163,7 +159,7 @@ struct UserListView: View {
     }
 
     @ViewBuilder
-    private var contentView: some View {
+    private var listContentView: some View {
         CollectionVGrid(
             $gridItems,
             layout: $layout
@@ -173,6 +169,38 @@ struct UserListView: View {
                 gridView(for: item)
             case .list:
                 listView(for: item)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var gridContentView: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]) {
+            ForEach(gridItems, id: \.self) { item in
+                if item == gridItems.last, gridItems.count % 2 == 1 {
+                    gridView(for: item)
+                        .trackingSize($gridItemSize)
+                        .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - 10)
+                } else {
+                    gridView(for: item)
+                }
+            }
+        }
+        .scroll(ifLargerThan: contentSize.height)
+        .edgePadding(.horizontal)
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        ZStack {
+            Color.clear
+                .trackingSize($contentSize)
+
+            switch userListDisplayType {
+            case .grid:
+                gridContentView
+            case .list:
+                listContentView
             }
         }
         .background {
@@ -203,6 +231,7 @@ struct UserListView: View {
                 contentView
             }
         }
+        .animation(.linear(duration: 0.1), value: userListDisplayType)
         .navigationTitle("Users")
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: userListDisplayType) { newValue in
@@ -213,7 +242,7 @@ struct UserListView: View {
                 Image(uiImage: .jellyfinBlobBlue)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 34)
+                    .frame(width: 30)
             }
         }
         .topBarTrailing {
@@ -235,5 +264,30 @@ struct UserListView: View {
 
             selectedServer = server
         }
+    }
+}
+
+struct ScrollIfLargerThanModifier: ViewModifier {
+
+    @State
+    private var contentSize: CGSize = .zero
+
+    let height: CGFloat
+
+    func body(content: Content) -> some View {
+        ScrollView {
+            content
+                .trackingSize($contentSize)
+        }
+        .backport
+        .scrollDisabled(contentSize.height < height)
+        .frame(maxHeight: contentSize.height >= height ? .infinity : contentSize.height)
+    }
+}
+
+extension View {
+
+    func scroll(ifLargerThan height: CGFloat) -> some View {
+        modifier(ScrollIfLargerThanModifier(height: height))
     }
 }

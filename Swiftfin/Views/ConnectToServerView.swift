@@ -78,9 +78,6 @@ struct ConnectToServerView: View {
                 }
             } else {
                 Button {
-                    if !url.contains("://") {
-                        url = "http://" + url
-                    }
                     connectToServer()
                 } label: {
                     L10n.connect.text

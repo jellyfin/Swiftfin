@@ -30,6 +30,17 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
+    func scrollDisabled(_ disabled: Bool) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content.scrollDisabled(disabled)
+        } else {
+            content.introspect(.scrollView, on: .iOS(.v15)) { scrollView in
+                scrollView.isScrollEnabled = !disabled
+            }
+        }
+    }
+
     #if os(iOS)
 
     // TODO: - remove comment when migrated away from Stinsen

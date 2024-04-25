@@ -196,8 +196,6 @@ extension View {
         }
     }
 
-    // TODO: have width/height tracked binding
-
     func onSizeChanged(perform action: @escaping (CGSize) -> Void) -> some View {
         onSizeChanged { size, _ in
             action(size)

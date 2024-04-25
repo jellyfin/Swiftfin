@@ -34,7 +34,8 @@ extension SwiftfinStore.V1 {
                 accessToken: accessToken,
                 id: id,
                 serverID: server.id,
-                username: username
+                username: username,
+                image: nil
             )
         }
     }

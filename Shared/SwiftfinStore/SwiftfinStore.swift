@@ -11,9 +11,10 @@ import Defaults
 import Foundation
 import JellyfinAPI
 import Pulse
+import UIKit
 
-typealias ServerModel = SwiftfinStore.V1.StoredServer
-typealias UserModel = SwiftfinStore.V1.StoredUser
+typealias ServerModel = SwiftfinStore.V2.StoredServer
+typealias UserModel = SwiftfinStore.V2.StoredUser
 
 typealias ServerState = SwiftfinStore.State.Server
 typealias UserState = SwiftfinStore.State.User
@@ -80,17 +81,20 @@ extension SwiftfinStore {
             let id: String
             let serverID: String
             let username: String
+            let image: UIImage?
 
             init(
                 accessToken: String,
                 id: String,
                 serverID: String,
-                username: String
+                username: String,
+                image: UIImage?
             ) {
                 self.accessToken = accessToken
                 self.id = id
                 self.serverID = serverID
                 self.username = username
+                self.image = image
             }
 
             static var sample: Self {
@@ -98,7 +102,8 @@ extension SwiftfinStore {
                     accessToken: "open-sesame",
                     id: "123abc",
                     serverID: "123abc",
-                    username: "JohnnyAppleseed"
+                    username: "JohnnyAppleseed",
+                    image: nil
                 )
             }
         }
@@ -109,22 +114,23 @@ extension SwiftfinStore {
     static let dataStack: DataStack = {
 
         let _dataStack = DataStack(
-            V1.schema,
-//            V2.schema,
-            migrationChain: ["V1"]
+            //            V1.schema,
+            V2.schema
+//            migrationChain: ["V1", "V2"]
         )
 
 //        DispatchQueue.main.async {
 //            _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite", localStorageOptions: .recreateStoreOnModelMismatch)) {
-//            result in
+//                result in
 //                print(result)
 //            }
 //        }
 
         try! _dataStack.addStorageAndWait(SQLiteStore(
             fileName: "Swiftfin.sqlite",
-            localStorageOptions: .allowSynchronousLightweightMigration
+            localStorageOptions: .recreateStoreOnModelMismatch
         ))
+
         return _dataStack
     }()
 }

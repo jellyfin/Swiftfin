@@ -10,8 +10,11 @@ import CoreStore
 import Defaults
 import Factory
 import Foundation
+import Get
 import JellyfinAPI
+import Nuke
 import Pulse
+import UIKit
 
 final class UserSignInViewModel: ViewModel, Stateful {
 
@@ -177,6 +180,8 @@ final class UserSignInViewModel: ViewModel, Stateful {
         )
         else { fatalError("No stored server associated with given state server?") }
 
+        let profileImage = try! await getProfileImage(for: response.user!)
+
         let user = try SwiftfinStore.dataStack.perform { transaction in
             let newUser = transaction.create(Into<UserModel>())
 
@@ -184,6 +189,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
             newUser.appleTVID = ""
             newUser.id = id
             newUser.username = username
+            newUser.image = profileImage
 
             let editServer = transaction.edit(storedServer)!
             editServer.users.insert(newUser)
@@ -192,6 +198,25 @@ final class UserSignInViewModel: ViewModel, Stateful {
         }
 
         return user
+    }
+
+    private func getProfileImage(for user: UserDto) async throws -> UIImage? {
+
+        let profileImageURL = user.profileImageSource(
+            client: client,
+            maxWidth: 500,
+            maxHeight: 500
+        ).url!
+
+        return try? await ImagePipeline.shared.image(for: profileImageURL)
+
+//        func loadImage() async throws {
+//            let imageTask = ImagePipeline.shared.imageTask(with: url)
+//            for await progress in imageTask.progress {
+//                // Update progress
+//            }
+//            imageView.image = try await imageTask.image
+//        }
     }
 
     func checkQuickConnect() async throws {

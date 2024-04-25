@@ -29,3 +29,21 @@ extension UserDto {
         return ImageSource(url: profileImageURL)
     }
 }
+
+extension UserState {
+
+    func profileImageSource(client: JellyfinClient, maxWidth: CGFloat, maxHeight: CGFloat) -> ImageSource {
+        let scaleWidth = UIScreen.main.scale(maxWidth)
+        let scaleHeight = UIScreen.main.scale(maxHeight)
+
+        let request = Paths.getUserImage(
+            userID: id,
+            imageType: "Primary",
+            parameters: .init(maxWidth: scaleWidth, maxHeight: scaleHeight)
+        )
+
+        let profileImageURL = client.fullURL(with: request)
+
+        return ImageSource(url: profileImageURL)
+    }
+}
