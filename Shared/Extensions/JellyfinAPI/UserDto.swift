@@ -12,6 +12,8 @@ import Get
 import JellyfinAPI
 import UIKit
 
+#warning("TODO: cleanup")
+
 extension UserDto {
 
     func profileImageSource(client: JellyfinClient, maxWidth: CGFloat, maxHeight: CGFloat) -> ImageSource {

@@ -6,64 +6,45 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import SwiftUI
 
 extension UserListView {
 
     struct AddUserListRow: View {
 
-        @State
-        private var contentSize: CGSize = .zero
+        @Environment(\.isEnabled)
+        private var isEnabled
 
-        private var onSelect: () -> Void
+        var onSelect: () -> Void
 
         var body: some View {
-            ZStack(alignment: .bottomTrailing) {
-                Button {
-                    onSelect()
-                } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+            Button {
+                onSelect()
+            } label: {
+                HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
-                        SystemImageContentView(systemName: "plus")
-                            .aspectRatio(1, contentMode: .fill)
-                            .clipShape(.circle)
-                            .frame(width: 80)
-                            .padding(.vertical, 8)
+                    SystemImageContentView(systemName: "plus")
+                        .aspectRatio(1, contentMode: .fill)
+                        .clipShape(.circle)
+                        .frame(width: 80)
+                        .padding(.vertical, 8)
 
-                        HStack {
+                    HStack {
 
-                            Text("Add User")
-                                .font(.body)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
+                        Text("Add User")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(isEnabled ? .primary : .secondary)
+                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
 
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .trackingSize($contentSize)
+                        Spacer()
                     }
+                    .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.plain)
-
-                Color.secondarySystemFill
-                    .frame(width: contentSize.width, height: 1)
             }
+            .buttonStyle(.plain)
+            .disabled(!isEnabled)
         }
-    }
-}
-
-extension UserListView.AddUserListRow {
-
-    init() {
-        self.init(
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

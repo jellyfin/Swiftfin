@@ -13,12 +13,17 @@ extension UserListView {
 
     struct UserListRow: View {
 
+        @Environment(\.isEditing)
+        private var isEditing: Bool
+        @Environment(\.isSelected)
+        private var isSelected: Bool
+
         @State
         private var contentSize: CGSize = .zero
 
-        private let client: JellyfinClient
-        private let user: UserDto
-        private var onSelect: () -> Void
+        let user: UserState
+        let server: ServerState
+        var onSelect: () -> Void
 
         private var personView: some View {
             SystemImageContentView(systemName: "person.fill")
@@ -29,13 +34,18 @@ extension UserListView {
             ZStack {
                 Color.clear
 
-                ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
                     .placeholder { _ in
                         personView
                     }
                     .failure {
                         personView
                     }
+
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                }
             }
             .aspectRatio(1, contentMode: .fill)
             .cornerRadius(ratio: 1 / 30, of: \.width)
@@ -46,25 +56,43 @@ extension UserListView {
                 Button {
                     onSelect()
                 } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+                    ZStack {
+                        Color.clear
 
-                        userImage
-                            .frame(width: 80)
-                            .padding(.vertical, 8)
+                        HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
-                        HStack {
+                            userImage
+                                .frame(width: 80)
+                                .padding(.vertical, 8)
 
-                            Text(user.name ?? .emptyDash)
-                                .font(.body)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.primary)
-                                .lineLimit(2)
-                                .multilineTextAlignment(.leading)
+                            HStack {
 
-                            Spacer()
+                                Text(user.username)
+                                    .font(.body)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                    .lineLimit(2)
+                                    .multilineTextAlignment(.leading)
+
+                                Spacer()
+
+                                if isSelected {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 20, height: 20)
+                                        .paletteOverlayRendering()
+                                } else if isEditing {
+                                    Image(systemName: "circle")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 20, height: 20)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .trackingSize($contentSize)
                         }
-                        .frame(maxWidth: .infinity)
-                        .trackingSize($contentSize)
                     }
                 }
                 .buttonStyle(.plain)
@@ -76,17 +104,17 @@ extension UserListView {
     }
 }
 
-extension UserListView.UserListRow {
-
-    init(user: UserDto, client: JellyfinClient) {
-        self.init(
-            client: client,
-            user: user,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
-    }
-}
+// extension UserListView.UserListRow {
+//
+//    init(user: UserState, server: ServerState) {
+//        self.init(
+//            server: server,
+//            user: user,
+//            onSelect: {}
+//        )
+//    }
+//
+//    func onSelect(_ action: @escaping () -> Void) -> Self {
+//        copy(modifying: \.onSelect, with: action)
+//    }
+// }

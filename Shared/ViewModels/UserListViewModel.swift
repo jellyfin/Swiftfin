@@ -19,6 +19,7 @@ class UserListViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
+        case deleteUsers([UserState])
         case getServers
         case signIn(UserState)
     }
@@ -42,6 +43,16 @@ class UserListViewModel: ViewModel, Stateful {
     @MainActor
     func respond(to action: Action) -> State {
         switch action {
+        case let .deleteUsers(users):
+            do {
+                for user in users {
+                    try delete(user: user)
+                }
+
+                return state
+            } catch {
+                return .error(.init(error.localizedDescription))
+            }
         case .getServers:
             do {
                 servers = try getServers()
@@ -79,5 +90,20 @@ class UserListViewModel: ViewModel, Stateful {
 
         return storedServer.users
             .map(\.state)
+    }
+
+    private func delete(user: UserState) throws {
+        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(
+            From<UserModel>(),
+            [Where<UserModel>("id == %@", user.id)]
+        ) else {
+            logger.error("Unable to find user to delete")
+            return
+        }
+
+        let transaction = SwiftfinStore.dataStack.beginUnsafe()
+        transaction.delete(storedUser)
+
+        try transaction.commitAndWait()
     }
 }

@@ -25,6 +25,11 @@ extension EnvironmentValues {
         set { self[CurrentOverlayTypeKey.self] = newValue }
     }
 
+    var isEditing: Bool {
+        get { self[IsEditingKey.self] }
+        set { self[IsEditingKey.self] = newValue }
+    }
+
     var isPresentingOverlay: Binding<Bool> {
         get { self[IsPresentingOverlayKey.self] }
         set { self[IsPresentingOverlayKey.self] = newValue }
@@ -33,6 +38,11 @@ extension EnvironmentValues {
     var isScrubbing: Binding<Bool> {
         get { self[IsScrubbingKey.self] }
         set { self[IsScrubbingKey.self] = newValue }
+    }
+
+    var isSelected: Bool {
+        get { self[IsSelectedKey.self] }
+        set { self[IsSelectedKey.self] = newValue }
     }
 
     var playbackSpeed: Binding<Double> {

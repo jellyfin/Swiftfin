@@ -12,6 +12,9 @@ extension UserListView {
 
     struct AddUserButton: View {
 
+        @Environment(\.isEnabled)
+        private var isEnabled
+
         let action: () -> Void
 
         var body: some View {
@@ -20,12 +23,15 @@ extension UserListView {
                     action()
                 } label: {
                     SystemImageContentView(systemName: "plus")
+                        .background(color: Color.secondary)
                         .aspectRatio(1, contentMode: .fill)
                         .clipShape(.circle)
                 }
+                .disabled(!isEnabled)
 
                 Text("Add User")
                     .fontWeight(.semibold)
+                    .foregroundStyle(isEnabled ? .primary : .secondary)
             }
         }
     }

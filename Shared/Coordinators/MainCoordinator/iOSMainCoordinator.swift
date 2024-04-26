@@ -25,10 +25,9 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @Root
     var mainTab = makeMainTab
-//    @Root
-//    var serverList = makeServerList
     @Root
     var userList = makeUserList
+
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
     @Route(.fullScreen)
@@ -44,8 +43,7 @@ final class MainCoordinator: NavigationCoordinatable {
             stack = NavigationStack(initial: \MainCoordinator.userList)
         }
 
-        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB memory
 
         WidgetCenter.shared.reloadAllTimelines()
         UIScrollView.appearance().keyboardDismissMode = .onDrag

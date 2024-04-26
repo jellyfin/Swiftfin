@@ -55,7 +55,6 @@ struct SystemImageContentView: View {
     var body: some View {
         ZStack {
             backgroundColor
-                .opacity(0.5)
 
             imageView
                 .frame(width: contentSize.width)

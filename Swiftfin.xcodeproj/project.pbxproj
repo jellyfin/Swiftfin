@@ -682,6 +682,8 @@
 		E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2F829524FDA00CC0294 /* PlayPreviousItemActionButton.swift */; };
 		E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */; };
 		E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */; };
+		E1BE1CE72BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */; };
+		E1BE1CEA2BDB5AFE008176A9 /* UserGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */; };
 		E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E1C812C5277A90B200918266 /* URLComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponents.swift */; };
 		E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */; };
@@ -1301,6 +1303,8 @@
 		E1BDF2F829524FDA00CC0294 /* PlayPreviousItemActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayPreviousItemActionButton.swift; sourceTree = "<group>"; };
 		E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleActionButton.swift; sourceTree = "<group>"; };
 		E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedActionButton.swift; sourceTree = "<group>"; };
+		E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlwaysNavigationBarBlurModifier.swift; sourceTree = "<group>"; };
+		E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridItemView.swift; sourceTree = "<group>"; };
 		E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackSpeed.swift; sourceTree = "<group>"; };
 		E1C812C4277A90B200918266 /* URLComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLComponents.swift; sourceTree = "<group>"; };
 		E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPoint.swift; sourceTree = "<group>"; };
@@ -2240,6 +2244,7 @@
 			children = (
 				E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */,
 				E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */,
+				E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */,
 				E10B1EB32BD9803100A92EAF /* UserListRow.swift */,
 			);
 			path = Components;
@@ -2962,6 +2967,7 @@
 			isa = PBXGroup;
 			children = (
 				E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */,
+				E1BE1CE82BDABDC4008176A9 /* AlwaysNavigationBarBlurModifier */,
 				E113133028BDB6D600930F75 /* NavigationBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavigationBarOffset */,
 			);
@@ -3000,6 +3006,14 @@
 				E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */,
 			);
 			path = ActionButtons;
+			sourceTree = "<group>";
+		};
+		E1BE1CE82BDABDC4008176A9 /* AlwaysNavigationBarBlurModifier */ = {
+			isa = PBXGroup;
+			children = (
+				E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */,
+			);
+			path = AlwaysNavigationBarBlurModifier;
 			sourceTree = "<group>";
 		};
 		E1C925FA2887565C002A7A66 /* MovieItemView */ = {
@@ -3931,6 +3945,7 @@
 				E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
+				E1BE1CE72BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,
 				E12CC1B128D1008F00678D5D /* NextUpView.swift in Sources */,
@@ -4058,6 +4073,7 @@
 				6334175B287DDFB9000603CE /* QuickConnectSettingsView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
+				E1BE1CEA2BDB5AFE008176A9 /* UserGridItemView.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E10B1EBB2BD9AD2000A92EAF /* SwiftfinStore+Error.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
