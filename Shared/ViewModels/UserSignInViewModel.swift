@@ -53,16 +53,11 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     let quickConnectViewModel: QuickConnectViewModel
 
-    let client: JellyfinClient
-    let server: SwiftfinStore.State.Server
+    let server: ServerState
 
     init(server: ServerState) {
-        self.client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
-            sessionDelegate: URLSessionProxyDelegate()
-        )
         self.server = server
-        self.quickConnectViewModel = .init(client: client)
+        self.quickConnectViewModel = .init(client: server.client)
         super.init()
     }
 
@@ -104,7 +99,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
         let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
-        let response = try await client.signIn(username: username, password: password)
+        let response = try await server.client.signIn(username: username, password: password)
 
         let user: UserState
 
@@ -125,7 +120,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     private func signIn(quickConnectSecret: String) async throws {
         let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
-        let response = try await client.send(quickConnectPath)
+        let response = try await server.client.send(quickConnectPath)
 
         let user: UserState
 
@@ -146,7 +141,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     func getPublicUsers() async throws {
         let publicUsersPath = Paths.getPublicUsers
-        let response = try await client.send(publicUsersPath)
+        let response = try await server.client.send(publicUsersPath)
 
         await MainActor.run {
             publicUsers = response.value
@@ -203,7 +198,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
     private func getProfileImage(for user: UserDto) async throws -> UIImage? {
 
         let profileImageURL = user.profileImageSource(
-            client: client,
+            client: server.client,
             maxWidth: 500,
             maxHeight: 500
         ).url!
@@ -221,7 +216,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
 
     func checkQuickConnect() async throws {
         let quickConnectEnabledPath = Paths.getEnabled
-        let response = try await client.send(quickConnectEnabledPath)
+        let response = try await server.client.send(quickConnectEnabledPath)
         let decoder = JSONDecoder()
         let isEnabled = try? decoder.decode(Bool.self, from: response.value)
 

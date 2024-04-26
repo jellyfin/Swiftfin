@@ -56,7 +56,12 @@ extension UserListView {
                                     personView
                                 }
                         }
-
+                    }
+                    .aspectRatio(1, contentMode: .fill)
+                    .posterShadow()
+                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .clipShape(.circle)
+                    .overlay {
                         if isEditing {
                             ZStack(alignment: .bottomTrailing) {
                                 Color.black
@@ -73,10 +78,6 @@ extension UserListView {
                             }
                         }
                     }
-                    .aspectRatio(1, contentMode: .fill)
-                    .posterShadow()
-                    .posterBorder(ratio: 1 / 30, of: \.width)
-                    .cornerRadius(ratio: 1 / 30, of: \.width)
                 }
 
                 Text(user.username)

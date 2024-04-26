@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import SwiftUI
 
@@ -79,9 +80,18 @@ struct HomeView: View {
             Button {
                 router.route(to: \.settings)
             } label: {
-                Image(systemName: "gearshape.fill")
-                    .accessibilityLabel(L10n.settings)
+                if let userImage = viewModel.userSession.user.image {
+                    Image(uiImage: userImage)
+                        .resizable()
+                        .clipShape(.circle)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 30, height: 30)
+                } else {
+                    Image(systemName: "gearshape.fill")
+                        .resizable()
+                }
             }
+            .accessibilityLabel(L10n.settings)
         }
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

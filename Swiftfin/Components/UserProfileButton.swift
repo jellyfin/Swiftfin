@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+#warning("TODO: remove/refactor for public users")
+
 // TODO: remove client passing and mirror how other images are made
 
 struct UserProfileButton: View {

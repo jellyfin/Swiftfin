@@ -10,7 +10,7 @@ import Defaults
 import Stinsen
 import SwiftUI
 
-struct BasicAppSettingsView: View {
+struct AppSettingsView: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -20,22 +20,15 @@ struct BasicAppSettingsView: View {
     @EnvironmentObject
     private var router: BasicAppSettingsCoordinator.Router
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
-
-    @State
-    private var resetUserSettingsSelected: Bool = false
-    @State
-    private var resetAppSettingsSelected: Bool = false
-    @State
-    private var removeAllServersSelected: Bool = false
+    @StateObject
+    private var viewModel = SettingsViewModel()
 
     var body: some View {
         Form {
 
             ChevronButton(title: L10n.about)
                 .onSelect {
-                    router.route(to: \.about)
+                    router.route(to: \.about, viewModel)
                 }
 
             Section {
@@ -43,7 +36,7 @@ struct BasicAppSettingsView: View {
 
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
-                        router.route(to: \.appIconSelector)
+                        router.route(to: \.appIconSelector, viewModel)
                     }
             } header: {
                 L10n.accessibility.text
@@ -60,33 +53,9 @@ struct BasicAppSettingsView: View {
                     router.route(to: \.log)
                 }
 
-            Section {
-                Button {
-                    resetUserSettingsSelected = true
-                } label: {
-                    L10n.resetUserSettings.text
-                }
-
-                Button {
-                    removeAllServersSelected = true
-                } label: {
-                    Text(L10n.removeAllServers)
-                }
-            }
+            ChevronButton(title: "Super User")
         }
-        .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
-            Button(L10n.reset, role: .destructive) {
-                viewModel.resetUserSettings()
-            }
-        } message: {
-            Text(L10n.resetAllSettings)
-        }
-        .alert(L10n.removeAllServers, isPresented: $removeAllServersSelected) {
-            Button(L10n.reset, role: .destructive) {
-                viewModel.removeAllServers()
-            }
-        }
-        .navigationTitle(L10n.settings)
+        .navigationTitle(L10n.advanced)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()

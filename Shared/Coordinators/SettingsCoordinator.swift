@@ -21,13 +21,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var about = makeAbout
     @Route(.push)
-    var appIconSelector = makeAppIconSelector
-    @Route(.push)
     var log = makeLog
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
     var quickConnect = makeQuickConnectSettings
+    @Route(.push)
+    var userProfile = makeUserProfileSettings
 
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
@@ -63,21 +63,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     #endif
 
-    private let viewModel: SettingsViewModel
-
-    init() {
-        viewModel = .init()
-    }
-
     #if os(iOS)
     @ViewBuilder
-    func makeAbout() -> some View {
+    func makeAbout(viewModel: SettingsViewModel) -> some View {
         AboutAppView(viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    func makeAppIconSelector() -> some View {
-        AppIconSelectorView(viewModel: viewModel)
     }
 
     @ViewBuilder
@@ -88,6 +77,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeQuickConnectSettings() -> some View {
         QuickConnectSettingsView(viewModel: .init())
+    }
+
+    @ViewBuilder
+    func makeUserProfileSettings(viewModel: SettingsViewModel) -> some View {
+        UserProfileSettingsView(viewModel: viewModel)
     }
 
     @ViewBuilder
@@ -172,6 +166,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        SettingsView(viewModel: viewModel)
+        SettingsView()
     }
 }

@@ -114,6 +114,8 @@ struct UserListView: View {
         }
     }
 
+    // MARK: advancedMenu
+
     @ViewBuilder
     private var advancedMenu: some View {
         Menu(L10n.advanced, systemImage: "gearshape.fill") {
@@ -145,9 +147,28 @@ struct UserListView: View {
             .pickerStyle(.menu)
 
             Section {
-                Button(L10n.advanced, systemImage: "gearshape.fill") {}
+                Button(L10n.advanced, systemImage: "gearshape.fill") {
+                    router.route(to: \.advancedSettings)
+                }
             }
         }
+    }
+
+    // MARK: grid
+
+    @ViewBuilder
+    private var gridContentView: some View {
+        LazyVGrid(columns: [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]) {
+            ForEach(gridItems, id: \.hashValue) { item in
+                gridItemView(for: item)
+                    .if(gridItems.count % 2 == 1 && item == gridItems.last) { view in
+                        view.trackingSize($gridItemSize)
+                            .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - 10)
+                    }
+            }
+        }
+        .edgePadding()
+        .scroll(ifLargerThan: contentSize.height)
     }
 
     @ViewBuilder
@@ -181,6 +202,20 @@ struct UserListView: View {
         }
     }
 
+    // MARK: list
+
+    @ViewBuilder
+    private var listContentView: some View {
+        ScrollView {
+            LazyVStack {
+                ForEach(gridItems, id: \.hashValue) { item in
+                    listItemView(for: item)
+                }
+            }
+            .edgePadding()
+        }
+    }
+
     @ViewBuilder
     private func listItemView(for item: UserGridItem) -> some View {
         switch item {
@@ -208,33 +243,6 @@ struct UserListView: View {
             }
             .environment(\.isEnabled, !isEditingUsers)
         }
-    }
-
-    @ViewBuilder
-    private var listContentView: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(gridItems, id: \.hashValue) { item in
-                    listItemView(for: item)
-                }
-            }
-            .edgePadding()
-        }
-    }
-
-    @ViewBuilder
-    private var gridContentView: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]) {
-            ForEach(gridItems, id: \.hashValue) { item in
-                gridItemView(for: item)
-                    .if(gridItems.count % 2 == 1 && item == gridItems.last) { view in
-                        view.trackingSize($gridItemSize)
-                            .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - 10)
-                    }
-            }
-        }
-        .edgePadding()
-        .scroll(ifLargerThan: contentSize.height)
     }
 
     // MARK: contentView

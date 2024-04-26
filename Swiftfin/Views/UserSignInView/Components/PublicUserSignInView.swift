@@ -10,6 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension UserSignInView {
+
     struct PublicUserSignInView: View {
         @ObservedObject
         var viewModel: UserSignInViewModel
@@ -30,13 +31,13 @@ extension UserSignInView {
                 }
             } label: {
                 HStack {
-                    ImageView(publicUser.profileImageSource(client: viewModel.client, maxWidth: 50, maxHeight: 50))
+                    ImageView(publicUser.profileImageSource(client: viewModel.server.client, maxWidth: 50, maxHeight: 50))
                         .failure {
                             Image(systemName: "person.circle")
                                 .resizable()
                         }
                         .frame(width: 50, height: 50)
-                        .clipShape(Circle())
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
 
                     Text(publicUser.name ?? .emptyDash)
                     Spacer()

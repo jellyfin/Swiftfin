@@ -21,35 +21,30 @@ struct SettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @Injected(Container.userSession)
-    private var userSession
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
+    @StateObject
+    private var viewModel = SettingsViewModel()
 
     var body: some View {
         Form {
 
             Section {
-                HStack {
-                    L10n.user.text
-                    Spacer()
-                    Text(userSession.user.username)
-                        .foregroundColor(accentColor)
+
+                UserProfileRow {
+                    router.route(to: \.userProfile, viewModel)
                 }
 
-                ChevronButton(title: L10n.server, subtitle: userSession.server.name)
+                ChevronButton(title: L10n.server, subtitle: viewModel.userSession.server.name)
                     .onSelect {
-                        router.route(to: \.serverDetail, userSession.server)
+                        router.route(to: \.serverDetail, viewModel.userSession.server)
                     }
 
-                ChevronButton(title: L10n.quickConnect)
-                    .onSelect {
-                        router.route(to: \.quickConnect)
-                    }
+//                ChevronButton(title: L10n.quickConnect)
+//                    .onSelect {
+//                        router.route(to: \.quickConnect)
+//                    }
 
                 Button {
                     router.dismissCoordinator {
@@ -83,11 +78,6 @@ struct SettingsView: View {
             Section {
                 CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
-                ChevronButton(title: L10n.appIcon)
-                    .onSelect {
-                        router.route(to: \.appIconSelector)
-                    }
-
                 ChevronButton(title: L10n.customize)
                     .onSelect {
                         router.route(to: \.customizeViewsSettings)
@@ -109,7 +99,7 @@ struct SettingsView: View {
 
             ChevronButton(title: L10n.about)
                 .onSelect {
-                    router.route(to: \.about)
+                    router.route(to: \.about, viewModel)
                 }
 
             ChevronButton(title: L10n.logs)

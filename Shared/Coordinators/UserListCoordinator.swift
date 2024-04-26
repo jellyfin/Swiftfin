@@ -21,6 +21,8 @@ final class UserListCoordinator: NavigationCoordinatable {
     var connectToServer = makeConnectToServer
     @Route(.push)
     var userSignIn = makeUserSignIn
+    @Route(.modal)
+    var advancedSettings = makeAdvancedSettings
 
     func makeConnectToServer() -> some View {
         ConnectToServerView()
@@ -28,6 +30,10 @@ final class UserListCoordinator: NavigationCoordinatable {
 
     func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
         UserSignInCoordinator(viewModel: .init(server: server))
+    }
+
+    func makeAdvancedSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
+        NavigationViewCoordinator(BasicAppSettingsCoordinator())
     }
 
     @ViewBuilder

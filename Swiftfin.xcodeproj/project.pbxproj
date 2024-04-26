@@ -684,6 +684,8 @@
 		E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */; };
 		E1BE1CE72BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */; };
 		E1BE1CEA2BDB5AFE008176A9 /* UserGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */; };
+		E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CED2BDB68CD008176A9 /* UserProfileRow.swift */; };
+		E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */; };
 		E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
 		E1C812C5277A90B200918266 /* URLComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812C4277A90B200918266 /* URLComponents.swift */; };
 		E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */; };
@@ -731,7 +733,7 @@
 		E1D37F562B9CEF4600343D2B /* DeviceProfile+NativeProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F542B9CEF4600343D2B /* DeviceProfile+NativeProfile.swift */; };
 		E1D37F582B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F572B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift */; };
 		E1D37F592B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F572B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift */; };
-		E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */; };
+		E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* AppSettingsView.swift */; };
 		E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
 		E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
 		E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
@@ -1305,6 +1307,8 @@
 		E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedActionButton.swift; sourceTree = "<group>"; };
 		E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlwaysNavigationBarBlurModifier.swift; sourceTree = "<group>"; };
 		E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridItemView.swift; sourceTree = "<group>"; };
+		E1BE1CED2BDB68CD008176A9 /* UserProfileRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRow.swift; sourceTree = "<group>"; };
+		E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSettingsView.swift; sourceTree = "<group>"; };
 		E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackSpeed.swift; sourceTree = "<group>"; };
 		E1C812C4277A90B200918266 /* URLComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLComponents.swift; sourceTree = "<group>"; };
 		E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGPoint.swift; sourceTree = "<group>"; };
@@ -1343,7 +1347,7 @@
 		E1D37F512B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceProfile+SharedCodecProfiles.swift"; sourceTree = "<group>"; };
 		E1D37F542B9CEF4600343D2B /* DeviceProfile+NativeProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceProfile+NativeProfile.swift"; sourceTree = "<group>"; };
 		E1D37F572B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceProfile+SwiftfinProfile.swift"; sourceTree = "<group>"; };
-		E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
+		E1D4BF7B2719D05000A11E64 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
 		E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsCoordinator.swift; sourceTree = "<group>"; };
 		E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
@@ -2480,7 +2484,7 @@
 			children = (
 				E18E01F3288747580022598C /* AboutAppView.swift */,
 				E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */,
-				E1D4BF7B2719D05000A11E64 /* BasicAppSettingsView.swift */,
+				E1D4BF7B2719D05000A11E64 /* AppSettingsView.swift */,
 				E10231382BCF8A3C009D71FC /* ChannelLibraryView */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
 				E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */,
@@ -3016,6 +3020,23 @@
 			path = AlwaysNavigationBarBlurModifier;
 			sourceTree = "<group>";
 		};
+		E1BE1CEB2BDB68BC008176A9 /* SettingsView */ = {
+			isa = PBXGroup;
+			children = (
+				E1BE1CEC2BDB68C4008176A9 /* Components */,
+				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+			);
+			path = SettingsView;
+			sourceTree = "<group>";
+		};
+		E1BE1CEC2BDB68C4008176A9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E1BE1CED2BDB68CD008176A9 /* UserProfileRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E1C925FA2887565C002A7A66 /* MovieItemView */ = {
 			isa = PBXGroup;
 			children = (
@@ -3176,7 +3197,8 @@
 				E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */,
 				E15756332936851D00976E1F /* NativeVideoPlayerSettingsView.swift */,
 				6334175A287DDFB9000603CE /* QuickConnectSettingsView.swift */,
-				539B2DA4263BA5B8007FF1A4 /* SettingsView.swift */,
+				E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */,
+				E1BE1CEB2BDB68BC008176A9 /* SettingsView */,
 				E1BDF2E7295148F400CC0294 /* VideoPlayerSettingsView */,
 			);
 			path = SettingsView;
@@ -4005,6 +4027,7 @@
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E102314D2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
+				E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E13DD3E527177D15009D4DAF /* ServerListView.swift in Sources */,
 				E113132B28BDB4B500930F75 /* NavigationBarDrawerView.swift in Sources */,
@@ -4204,9 +4227,10 @@
 				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				E15756342936851D00976E1F /* NativeVideoPlayerSettingsView.swift in Sources */,
-				E1D4BF7C2719D05000A11E64 /* BasicAppSettingsView.swift in Sources */,
+				E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */,
 				E1BDF2F329524C3B00CC0294 /* ChaptersActionButton.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
+				E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */,
 				E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */,
 				E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */,
 				E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */,

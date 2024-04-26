@@ -48,7 +48,7 @@ extension UserListView {
                 }
             }
             .aspectRatio(1, contentMode: .fill)
-            .cornerRadius(ratio: 1 / 30, of: \.width)
+            .clipShape(.circle)
         }
 
         var body: some View {

@@ -31,20 +31,16 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
     var log = makeLog
     #endif
 
-    private let viewModel: SettingsViewModel
-
-    init() {
-        viewModel = .init()
-    }
+    init() {}
 
     #if os(iOS)
     @ViewBuilder
-    func makeAbout() -> some View {
+    func makeAbout(viewModel: SettingsViewModel) -> some View {
         AboutAppView(viewModel: viewModel)
     }
 
     @ViewBuilder
-    func makeAppIconSelector() -> some View {
+    func makeAppIconSelector(viewModel: SettingsViewModel) -> some View {
         AppIconSelectorView(viewModel: viewModel)
     }
     #endif
@@ -56,6 +52,6 @@ final class BasicAppSettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        BasicAppSettingsView(viewModel: viewModel)
+        AppSettingsView()
     }
 }
