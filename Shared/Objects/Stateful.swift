@@ -43,6 +43,11 @@ protocol Stateful: AnyObject {
 
 extension Stateful {
 
+    var lastAction: Action? {
+        get { nil }
+        set {}
+    }
+
     @MainActor
     func send(_ action: Action) {
         state = respond(to: action)

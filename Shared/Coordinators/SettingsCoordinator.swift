@@ -25,7 +25,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
-    var quickConnect = makeQuickConnectSettings
+    var quickConnect = makeQuickConnectAuthorize
+    @Route(.push)
+    var resetUserPassword = makeResetUserPassword
     @Route(.push)
     var userProfile = makeUserProfileSettings
 
@@ -75,8 +77,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeQuickConnectSettings() -> some View {
-        QuickConnectSettingsView(viewModel: .init())
+    func makeQuickConnectAuthorize() -> some View {
+        QuickConnectAuthorizeView()
+    }
+
+    @ViewBuilder
+    func makeResetUserPassword() -> some View {
+        ResetUserPasswordView()
     }
 
     @ViewBuilder

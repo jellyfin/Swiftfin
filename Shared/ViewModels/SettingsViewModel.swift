@@ -95,6 +95,4 @@ final class SettingsViewModel: ViewModel {
             transaction.delete(allServers)
         }
     }
-    
-//    func authorizeQuickConnect(with code: String) 
 }

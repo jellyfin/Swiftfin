@@ -69,12 +69,15 @@ struct UserProfileSettingsView: View {
             }
 
             Section {
-                ChevronButton(title: "QuickConnect")
+                ChevronButton(title: L10n.quickConnect)
                     .onSelect {
                         router.route(to: \.quickConnect)
                     }
 
                 ChevronButton(title: "Password")
+                    .onSelect {
+                        router.route(to: \.resetUserPassword)
+                    }
             }
         }
     }
