@@ -14,7 +14,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
-    enum Event: Equatable {
+    enum Event {
         case authorized
         case error(JellyfinAPIError)
     }

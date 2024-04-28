@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct QuickConnectView: View {
+
     @EnvironmentObject
     private var router: QuickConnectCoordinator.Router
 
@@ -57,12 +58,14 @@ struct QuickConnectView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            L10n.quickConnectStep1.text
+//            L10n.quickConnectStep1.text
+//
+//            L10n.quickConnectStep2.text
+//
+//            L10n.quickConnectStep3.text
+//                .padding(.bottom)
 
-            L10n.quickConnectStep2.text
-
-            L10n.quickConnectStep3.text
-                .padding(.bottom)
+            Text("Enter the following code by another")
 
             quickConnectBody
 

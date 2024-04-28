@@ -174,6 +174,7 @@ struct ConnectToServerView: View {
             }
         }
         .navigationTitle(L10n.connect)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             viewModel.discoverServers()
         }

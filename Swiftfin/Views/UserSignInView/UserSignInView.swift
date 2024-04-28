@@ -109,6 +109,20 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
+        .interactiveDismissDisabled(true)
+        .background {
+            ImageView(viewModel.server.splashScreenImageSource())
+                .placeholder { _ in
+                    Color.clear
+                }
+                .aspectRatio(contentMode: .fill)
+                .ignoresSafeArea()
+                .overlay {
+                    Color.black
+                        .opacity(0.9)
+                        .ignoresSafeArea()
+                }
+        }
         .onChange(of: viewModel.state) { newState in
             if case .error = newState {
                 // If we encountered the error as we switched from quick connect navigation to this view,

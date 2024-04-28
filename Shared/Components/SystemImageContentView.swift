@@ -47,7 +47,7 @@ struct SystemImageContentView: View {
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
                 .font(.footnote.weight(.regular))
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .trackingSize($labelSize)
         }
     }

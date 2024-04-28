@@ -24,6 +24,8 @@ extension UserListView {
                 HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
                     SystemImageContentView(systemName: "plus")
+                        .background(color: Color(uiColor: .systemGray2))
+                        .foregroundStyle(Color.primary, Color.black)
                         .aspectRatio(1, contentMode: .fill)
                         .clipShape(.circle)
                         .frame(width: 80)

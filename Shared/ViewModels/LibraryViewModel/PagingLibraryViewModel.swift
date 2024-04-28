@@ -27,7 +27,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
-    enum Event: Equatable {
+    enum Event {
         case gotRandomItem(Element)
     }
 

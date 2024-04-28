@@ -23,7 +23,7 @@ extension UserListView {
                     action()
                 } label: {
                     SystemImageContentView(systemName: "plus")
-                        .background(color: Color.secondary)
+                        .background(color: Color.tertiarySystemBackgorund)
                         .aspectRatio(1, contentMode: .fill)
                         .clipShape(.circle)
                 }

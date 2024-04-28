@@ -36,8 +36,6 @@ class UserListViewModel: ViewModel, Stateful {
     var servers: OrderedDictionary<ServerState, [UserState]> = [:]
 
     @Published
-    var lastAction: Action? = nil
-    @Published
     var state: State = .initial
 
     @MainActor

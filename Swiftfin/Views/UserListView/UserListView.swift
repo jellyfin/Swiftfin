@@ -24,6 +24,12 @@ extension Defaults.Keys {
         default: .none,
         suite: .universalSuite
     )
+
+    static let userListViewUseSplashScreen = Defaults.Key<Bool>(
+        "userListViewUseSplashScreen",
+        default: false,
+        suite: .universalSuite
+    )
 }
 
 extension ServerState {
@@ -75,6 +81,8 @@ struct UserListView: View {
     private var storedServerSelectionOption
     @Default(.userListDisplayType)
     private var userListDisplayType
+    @Default(.userListViewUseSplashScreen)
+    private var userListViewUseSplashScreen
 
     @EnvironmentObject
     private var router: UserListCoordinator.Router
@@ -96,6 +104,16 @@ struct UserListView: View {
 
     @StateObject
     private var viewModel = UserListViewModel()
+
+    private var selectedServer: ServerState? {
+        if case let ServerSelectionOption.server(id: id) = storedServerSelectionOption,
+           let server = viewModel.servers.keys.first(where: { server in server.id == id })
+        {
+            return server
+        }
+
+        return nil
+    }
 
     private var splashScreenImageSource: ImageSource? {
         switch storedServerSelectionOption {
@@ -124,12 +142,6 @@ struct UserListView: View {
                 if gridItems.count > 1 {
                     Button("Edit Users", systemImage: "person.crop.circle") {
                         isEditingUsers.toggle()
-                    }
-                }
-
-                if storedServerSelectionOption != .all || storedServerSelectionOption != .all {
-                    Button("Edit Server", systemImage: "server.rack") {
-                        print("edit server")
                     }
                 }
             }
@@ -195,7 +207,9 @@ struct UserListView: View {
                 case .all: ()
                 case .none: ()
                 case let .server(id: id):
-                    router.route(to: \.userSignIn, viewModel.servers.keys.first(where: { $0.id == id })!)
+                    if let selectedServer {
+                        router.route(to: \.userSignIn, selectedServer)
+                    }
                 }
             }
             .environment(\.isEnabled, !isEditingUsers)
@@ -269,19 +283,28 @@ struct UserListView: View {
                         Button("Add Server", systemImage: "plus") {
                             router.route(to: \.connectToServer)
                         }
+
+                        if let selectedServer {
+                            Button("Edit Server", systemImage: "server.rack") {
+                                router.route(to: \.editServer, selectedServer)
+                            }
+                        }
                     }
 
                     Picker("Servers", selection: $storedServerSelectionOption) {
+
+                        if viewModel.servers.keys.count > 1 {
+                            Label("All", systemImage: "person.2.fill")
+                                .tag(ServerSelectionOption.all)
+                        }
+
                         ForEach(viewModel.servers.keys) { server in
-                            Button {} label: {
+                            Button {
                                 Text(server.name)
                                 Text(server.currentURL.absoluteString)
                             }
                             .tag(ServerSelectionOption.server(id: server.id))
                         }
-
-                        Text("All")
-                            .tag(ServerSelectionOption.all)
                     }
                 }
                 .edgePadding()
@@ -315,7 +338,7 @@ struct UserListView: View {
             }
         }
         .background {
-            if let splashScreenImageSource {
+            if let splashScreenImageSource, userListViewUseSplashScreen {
                 ImageView(splashScreenImageSource)
                     .placeholder { _ in
                         Color.clear
@@ -389,13 +412,14 @@ struct UserListView: View {
                 print("none - onChange(storedServerSelectionOption")
             case let .server(id: id):
                 print("server: \(id)")
-                guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
+
+                guard let selectedServer else {
                     assertionFailure("server with ID not found?")
                     return
                 }
 
-                let items = viewModel.servers[server]!
-                    .map { UserGridItem.user($0, server: server) }
+                let items = viewModel.servers[selectedServer]!
+                    .map { UserGridItem.user($0, server: selectedServer) }
                     .appending(.addUser)
 
                 gridItems = OrderedSet(items)
@@ -476,8 +500,7 @@ struct ServerSelectionMenu<Content: View>: View {
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.secondarySystemFill)
-                    .opacity(0.75)
+                    .foregroundStyle(Color.tertiarySystemBackgorund)
 
                 Group {
                     switch selection {

@@ -45,7 +45,7 @@ struct QuickConnectAuthorizeView: View {
                         .disabled(code.count != 6 || viewModel.state == .authorizing)
                 }
             } footer: {
-                Text("Enter the 6 digit code found on your other device.")
+                Text("Enter the 6 digit code from your other device.")
             }
         }
         .navigationTitle(L10n.quickConnect.text)

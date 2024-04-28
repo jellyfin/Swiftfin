@@ -10,6 +10,8 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+#warning("TODO: cleanup")
+
 final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -153,6 +155,8 @@ struct ResetUserPasswordView: View {
             L10n.error,
             isPresented: $isPresentingError
         ) {
+            Text(errorMessage)
+
             Button(L10n.dismiss, role: .cancel)
         }
         .alert(
