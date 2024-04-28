@@ -41,33 +41,41 @@ extension SeriesEpisodeSelector {
             }
         }
 
+        private var episodeContent: String {
+            if episode.isUnaired {
+                episode.airDateLabel ?? L10n.noOverviewAvailable
+            } else {
+                episode.overview ?? L10n.noOverviewAvailable
+            }
+        }
+
         var body: some View {
-            PosterButton(
-                item: episode,
-                type: .landscape
-            )
-            .content {
-                let content: String = if episode.isUnaired {
-                    episode.airDateLabel ?? L10n.noOverviewAvailable
-                } else {
-                    episode.overview ?? L10n.noOverviewAvailable
+            VStack(alignment: .leading) {
+                Button {
+                    guard let mediaSource = episode.mediaSources?.first else { return }
+                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
+                } label: {
+                    ZStack {
+                        Color.clear
+
+                        ImageView(episode.imageSource(.primary, maxWidth: 500))
+                            .failure {
+                                SystemImageContentView(systemName: episode.systemImage)
+                            }
+
+                        overlayView
+                    }
+                    .posterStyle(.landscape)
                 }
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: episode.episodeLocator ?? .emptyDash,
                     header: episode.displayTitle,
-                    content: content
+                    content: episodeContent
                 )
                 .onSelect {
                     router.route(to: \.item, episode)
                 }
-            }
-            .imageOverlay {
-                overlayView
-            }
-            .onSelect {
-                guard let mediaSource = episode.mediaSources?.first else { return }
-                mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
             }
         }
     }
