@@ -20,45 +20,59 @@ extension SeriesEpisodeSelector {
 
         let episode: BaseItemDto
 
-        var body: some View {
-            PosterButton(
-                item: episode,
-                type: .landscape
-            )
-            .content {
-                let content: String = if episode.isUnaired {
-                    episode.airDateLabel ?? L10n.noOverviewAvailable
+        @ViewBuilder
+        private var imageOverlay: some View {
+            ZStack {
+                if episode.userData?.isPlayed ?? false {
+                    WatchedIndicator(size: 45)
                 } else {
-                    episode.overview ?? L10n.noOverviewAvailable
+                    if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
+                        LandscapePosterProgressBar(
+                            title: episode.progressLabel ?? L10n.continue,
+                            progress: (episode.userData?.playedPercentage ?? 0) / 100
+                        )
+                    }
                 }
+            }
+        }
+
+        private var episodeContent: String {
+            if episode.isUnaired {
+                episode.airDateLabel ?? L10n.noOverviewAvailable
+            } else {
+                episode.overview ?? L10n.noOverviewAvailable
+            }
+        }
+
+        var body: some View {
+            VStack(alignment: .leading) {
+                Button {
+                    guard let mediaSource = episode.mediaSources?.first else { return }
+                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
+                } label: {
+                    ZStack {
+                        Color.clear
+
+                        ImageView(episode.imageSource(.primary, maxWidth: 500))
+                            .failure {
+                                SystemImageContentView(systemName: episode.systemImage)
+                            }
+
+                        imageOverlay
+                    }
+                    .posterStyle(.landscape)
+                }
+                .buttonStyle(.card)
+                .posterShadow()
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: episode.episodeLocator ?? .emptyDash,
                     header: episode.displayTitle,
-                    content: content
+                    content: episodeContent
                 )
                 .onSelect {
                     router.route(to: \.item, episode)
                 }
-            }
-            .imageOverlay {
-                ZStack {
-                    if episode.userData?.isPlayed ?? false {
-                        WatchedIndicator(size: 45)
-                    } else {
-                        if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
-                            LandscapePosterProgressBar(
-                                title: episode.progressLabel ?? L10n.continue,
-                                progress: (episode.userData?.playedPercentage ?? 0) / 100
-                            )
-                            .padding()
-                        }
-                    }
-                }
-            }
-            .onSelect {
-                guard let mediaSource = episode.mediaSources?.first else { return }
-                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
             }
         }
     }
