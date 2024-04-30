@@ -27,6 +27,7 @@ extension UserListView {
 
         private var personView: some View {
             SystemImageContentView(systemName: "person.fill")
+                .imageFrameRatio(width: 2, height: 2)
         }
 
         @ViewBuilder

@@ -13,11 +13,16 @@ struct QuickConnectView: View {
     @EnvironmentObject
     private var router: QuickConnectCoordinator.Router
 
-    @ObservedObject
-    var viewModel: QuickConnectViewModel
+    @StateObject
+    private var viewModel: QuickConnectViewModel
 
     // Once the auth secret is fetched, run this and dismiss this view
     var signIn: @MainActor (_: String) -> Void
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: QuickConnectViewModel(client: server.client))
+        self.signIn = { _ in }
+    }
 
     func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
         Text(quickConnectCode)

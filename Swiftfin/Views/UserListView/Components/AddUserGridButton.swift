@@ -6,28 +6,67 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import OrderedCollections
 import SwiftUI
 
 extension UserListView {
 
     struct AddUserButton: View {
 
+        @Binding
+        private var serverSelection: ServerSelectionOption
+
         @Environment(\.isEnabled)
         private var isEnabled
 
-        let action: () -> Void
+        private let action: (ServerState) -> Void
+        private let servers: OrderedSet<ServerState>
+
+        init(
+            serverSelection: Binding<ServerSelectionOption>,
+            servers: OrderedSet<ServerState>,
+            action: @escaping (ServerState) -> Void
+        ) {
+            self._serverSelection = serverSelection
+            self.action = action
+            self.servers = servers
+        }
+
+        private var content: some View {
+            SystemImageContentView(systemName: "plus")
+                .background(color: Color.tertiarySystemBackgorund)
+                .aspectRatio(1, contentMode: .fill)
+                .clipShape(.circle)
+        }
 
         var body: some View {
             VStack(alignment: .center) {
-                Button {
-                    action()
-                } label: {
-                    SystemImageContentView(systemName: "plus")
-                        .background(color: Color.tertiarySystemBackgorund)
-                        .aspectRatio(1, contentMode: .fill)
-                        .clipShape(.circle)
+                if serverSelection == .all {
+                    Menu {
+                        ForEach(servers) { server in
+                            Button {
+                                action(server)
+                            } label: {
+                                Text(server.name)
+                                Text(server.currentURL.absoluteString)
+                            }
+                        }
+                    } label: {
+                        content
+                    }
+                    .disabled(!isEnabled)
+                } else {
+                    Button {
+                        if case let ServerSelectionOption.server(id: id) = serverSelection,
+                           let server = servers.first(where: { $0.id == id })
+                        {
+                            action(server)
+                        }
+                    } label: {
+                        content
+                    }
+                    .disabled(!isEnabled)
                 }
-                .disabled(!isEnabled)
 
                 Text("Add User")
                     .fontWeight(.semibold)

@@ -12,10 +12,10 @@ import SwiftUI
 struct UserSignInView: View {
 
     @EnvironmentObject
-    private var router: UserSignInCoordinator.Router
+    private var router: UserListCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserSignInViewModel
+    @FocusState
+    private var isUsernameFocused: Bool
 
     @State
     private var isPresentingSignInError: Bool = false
@@ -24,12 +24,20 @@ struct UserSignInView: View {
     @State
     private var username: String = ""
 
+    @StateObject
+    private var viewModel: UserSignInViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
+    }
+
     @ViewBuilder
     private var signInSection: some View {
         Section {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
+                .focused($isUsernameFocused)
 
             UnmaskSecureField(L10n.password, text: $password)
                 .autocorrectionDisabled()
@@ -101,7 +109,7 @@ struct UserSignInView: View {
 
             if viewModel.quickConnectEnabled {
                 Button {
-                    router.route(to: \.quickConnect)
+                    router.route(to: \.quickConnect, viewModel.server)
                 } label: {
                     L10n.quickConnect.text
                 }
@@ -109,7 +117,6 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
-        .interactiveDismissDisabled(true)
         .background {
             ImageView(viewModel.server.splashScreenImageSource())
                 .placeholder { _ in
@@ -141,6 +148,7 @@ struct UserSignInView: View {
             errorText
         }
         .navigationTitle(L10n.signIn)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             Task {
                 try? await viewModel.checkQuickConnect()
@@ -149,6 +157,9 @@ struct UserSignInView: View {
         }
         .onDisappear {
             viewModel.send(.cancelSignIn)
+        }
+        .onFirstAppear {
+            isUsernameFocused = true
         }
     }
 }

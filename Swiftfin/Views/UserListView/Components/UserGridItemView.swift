@@ -34,6 +34,7 @@ extension UserListView {
 
         private var personView: some View {
             SystemImageContentView(systemName: "person.fill")
+                .imageFrameRatio(width: 2, height: 2)
         }
 
         var body: some View {
@@ -59,7 +60,7 @@ extension UserListView {
                     }
                     .aspectRatio(1, contentMode: .fill)
                     .posterShadow()
-                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .posterBorder(ratio: 1 / 2, of: \.width)
                     .clipShape(.circle)
                     .overlay {
                         if isEditing {

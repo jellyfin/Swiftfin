@@ -27,11 +27,11 @@ extension SettingsView {
                 ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
                     .placeholder { _ in
                         SystemImageContentView(systemName: "person.fill")
-                            .imageFrameRatio(width: 2)
+                            .imageFrameRatio(width: 2, height: 2)
                     }
                     .failure {
                         SystemImageContentView(systemName: "person.fill")
-                            .imageFrameRatio(width: 2)
+                            .imageFrameRatio(width: 2, height: 2)
                     }
             }
         }

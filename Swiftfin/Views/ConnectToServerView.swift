@@ -6,107 +6,66 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Stinsen
+import Combine
 import SwiftUI
 
 struct ConnectToServerView: View {
 
     @EnvironmentObject
-    private var router: ConnectToServerCoodinator.Router
+    private var router: UserListCoordinator.Router
+
+    @FocusState
+    private var isURLFocused: Bool
+
+    @State
+    private var duplicateServer: ServerState? = nil
+    @State
+    private var error: Error? = nil
+    @State
+    private var isPresentingDuplicateServer: Bool = false
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var url: String = ""
 
     @StateObject
     private var viewModel = ConnectToServerViewModel()
 
-    @State
-    private var connectionError: Error?
-    @State
-    private var connectionTask: Task<Void, Never>?
-    @State
-    private var duplicateServer: (server: ServerState, url: URL)?
-    @State
-    private var isConnecting: Bool = false
-    @State
-    private var isPresentingConnectionError: Bool = false
-    @State
-    private var isPresentingDuplicateServerAlert: Bool = false
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var url = ""
+    private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
-    private func connectToServer() {
-        let task = Task {
-            isConnecting = true
-            connectionError = nil
+    var body: some View {
+        List {
+            Section(L10n.connectToServer) {
 
-            do {
-                let serverConnection = try await viewModel.connectToServer(url: url)
+                TextField(L10n.serverURL, text: $url)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
+                    .keyboardType(.URL)
+                    .focused($isURLFocused)
 
-                if viewModel.isDuplicate(server: serverConnection.server) {
-                    duplicateServer = serverConnection
-                    isPresentingDuplicateServerAlert = true
+                if viewModel.state == .connecting {
+                    Button(L10n.cancel, role: .destructive) {
+                        viewModel.send(.cancel)
+                    }
                 } else {
-                    try viewModel.save(server: serverConnection.server)
-//                    router.route(to: \.userSignIn, serverConnection.server)
+                    Button(L10n.connect) {
+                        viewModel.send(.connect(url))
+                    }
+                    .disabled(url.isEmpty)
                 }
-            } catch {
-                connectionError = error
-                isPresentingConnectionError = true
             }
 
-            isConnecting = false
-        }
-
-        connectionTask = task
-    }
-
-    @ViewBuilder
-    private var connectSection: some View {
-        Section {
-            TextField(L10n.serverURL, text: $url)
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
-                .keyboardType(.URL)
-
-            if isConnecting {
-                Button(role: .destructive) {
-                    connectionTask?.cancel()
-                    isConnecting = false
-                } label: {
-                    L10n.cancel.text
-                }
-            } else {
-                Button {
-                    connectToServer()
-                } label: {
-                    L10n.connect.text
-                }
-                .disabled(URL(string: url) == nil || isConnecting)
-            }
-        } header: {
-            L10n.connectToJellyfinServer.text
-        }
-    }
-
-    @ViewBuilder
-    private var publicServerSection: some View {
-        Section {
-            if viewModel.isSearching {
-                L10n.searchingDots.text
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-            } else {
+            Section {
                 if viewModel.discoveredServers.isEmpty {
                     L10n.noLocalServersFound.text
                         .font(.callout)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity)
                 } else {
-                    ForEach(viewModel.discoveredServers, id: \.id) { server in
+                    ForEach(viewModel.discoveredServers) { server in
                         Button {
                             url = server.currentURL.absoluteString
-                            connectToServer()
+                            viewModel.send(.connect(server.currentURL.absoluteString))
                         } label: {
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(server.name)
@@ -117,69 +76,74 @@ struct ConnectToServerView: View {
                                     .foregroundColor(.secondary)
                             }
                         }
-                        .disabled(isConnecting)
+                        .disabled(viewModel.state == .connecting)
+                    }
+                }
+            } header: {
+                HStack {
+                    L10n.localServers.text
+
+                    Spacer()
+
+                    if viewModel.backgroundStates.contains(.searching) {
+                        ProgressView()
                     }
                 }
             }
-        } header: {
-            HStack {
-                L10n.localServers.text
-                Spacer()
-
-                Button {
-                    viewModel.discoverServers()
-                } label: {
-                    Image(systemName: "arrow.clockwise.circle.fill")
-                }
-                .disabled(viewModel.isSearching || isConnecting)
-            }
         }
-        .headerProminence(.increased)
-    }
-
-    var body: some View {
-        List {
-
-            connectSection
-
-            publicServerSection
-        }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingConnectionError
-        ) {
-            Button(L10n.dismiss, role: .cancel)
-        } message: {
-            Text(connectionError?.localizedDescription ?? .emptyDash)
-        }
-        .alert(
-            L10n.existingServer,
-            isPresented: $isPresentingDuplicateServerAlert
-        ) {
-            Button {
-                guard let duplicateServer else { return }
-                viewModel.add(
-                    url: duplicateServer.url,
-                    server: duplicateServer.server
-                )
-                router.dismissCoordinator()
-            } label: {
-                L10n.addURL.text
-            }
-
-            Button(L10n.dismiss, role: .cancel)
-        } message: {
-            if let duplicateServer {
-                L10n.serverAlreadyExistsPrompt(duplicateServer.server.name).text
-            }
-        }
+        .interactiveDismissDisabled(viewModel.state == .connecting)
         .navigationTitle(L10n.connect)
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear {
-            viewModel.discoverServers()
+        .navigationBarCloseButton(disabled: viewModel.state == .connecting) {
+            router.popLast()
         }
-        .onDisappear {
-            isConnecting = false
+        .onFirstAppear {
+            isURLFocused = true
+            viewModel.send(.searchForServers)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .connected:
+                router.popLast()
+            case let .duplicateServer(server):
+                duplicateServer = server
+                isPresentingDuplicateServer = true
+            case let .error(error):
+                self.error = error
+                isPresentingError = true
+            }
+        }
+        .onReceive(timer) { _ in
+            guard viewModel.state != .connecting else { return }
+
+            viewModel.send(.searchForServers)
+        }
+        .topBarTrailing {
+            if viewModel.state == .connecting {
+                ProgressView()
+            }
+        }
+        .alert(
+            L10n.server.text,
+            isPresented: $isPresentingDuplicateServer,
+            presenting: duplicateServer
+        ) { server in
+            Button(L10n.dismiss, role: .destructive)
+
+            Button(L10n.addURL) {
+                viewModel.send(.addNewURL(server))
+            }
+        } message: { server in
+            Text("\(server.name) is already connected.")
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
         }
     }
 }

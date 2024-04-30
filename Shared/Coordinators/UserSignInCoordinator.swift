@@ -36,6 +36,7 @@ final class UserSignInCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        UserSignInView(viewModel: viewModel)
+//        UserSignInView(viewModel: viewModel)
+        Text("Removed")
     }
 }

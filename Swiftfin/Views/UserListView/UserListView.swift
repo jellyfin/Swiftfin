@@ -21,7 +21,7 @@ extension Defaults.Keys {
 
     static let userListViewServerSelectionOption = Defaults.Key<UserListView.ServerSelectionOption>(
         "userListViewServerSelectionOption",
-        default: .none,
+        default: .all,
         suite: .universalSuite
     )
 
@@ -42,19 +42,15 @@ extension ServerState {
 
 struct UserListView: View {
 
-    // Note: `none` necessary since Defaults doesn't support `nil`
     enum ServerSelectionOption: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
 
         case all
         case server(id: String)
-        case none
 
         var rawValue: String {
             switch self {
             case .all:
                 "swiftfin-all"
-            case .none:
-                "swiftfin-none"
             case let .server(id):
                 id
             }
@@ -64,8 +60,6 @@ struct UserListView: View {
             switch rawValue {
             case "swiftfin-all":
                 self = .all
-            case "swiftfin-none":
-                self = .none
             default:
                 self = .server(id: rawValue)
             }
@@ -78,7 +72,7 @@ struct UserListView: View {
     }
 
     @Default(.userListViewServerSelectionOption)
-    private var storedServerSelectionOption
+    private var serverSelection
     @Default(.userListDisplayType)
     private var userListDisplayType
     @Default(.userListViewUseSplashScreen)
@@ -106,7 +100,7 @@ struct UserListView: View {
     private var viewModel = UserListViewModel()
 
     private var selectedServer: ServerState? {
-        if case let ServerSelectionOption.server(id: id) = storedServerSelectionOption,
+        if case let ServerSelectionOption.server(id: id) = serverSelection,
            let server = viewModel.servers.keys.first(where: { server in server.id == id })
         {
             return server
@@ -116,18 +110,14 @@ struct UserListView: View {
     }
 
     private var splashScreenImageSource: ImageSource? {
-        switch storedServerSelectionOption {
+        switch serverSelection {
         case .all:
             return viewModel.servers
                 .keys
                 .randomElement()?
                 .splashScreenImageSource()
-        case .none:
-            return nil
-        case let .server(id: id):
-            return viewModel.servers
-                .keys
-                .first(where: { $0.id == id })?
+        case .server:
+            return selectedServer?
                 .splashScreenImageSource()
         }
     }
@@ -200,17 +190,11 @@ struct UserListView: View {
             .environment(\.isSelected, selectedUsers.contains(user))
             .environment(\.isEditing, isEditingUsers)
         case .addUser:
-            AddUserButton {
-                // TODO: figure out what to do here with `all`
-                //       - open menu to select server
-                switch storedServerSelectionOption {
-                case .all: ()
-                case .none: ()
-                case let .server(id: id):
-                    if let selectedServer {
-                        router.route(to: \.userSignIn, selectedServer)
-                    }
-                }
+            AddUserButton(
+                serverSelection: $serverSelection,
+                servers: viewModel.servers.keys
+            ) { server in
+                router.route(to: \.userSignIn, server)
             }
             .environment(\.isEnabled, !isEditingUsers)
         }
@@ -248,9 +232,8 @@ struct UserListView: View {
             .environment(\.isEditing, isEditingUsers)
         case .addUser:
             AddUserListRow {
-                switch storedServerSelectionOption {
+                switch serverSelection {
                 case .all: ()
-                case .none: ()
                 case let .server(id: id):
                     router.route(to: \.userSignIn, viewModel.servers.keys.first(where: { $0.id == id })!)
                 }
@@ -277,37 +260,9 @@ struct UserListView: View {
             }
             .frame(maxHeight: .infinity)
 
-            if storedServerSelectionOption != .none, !isEditingUsers {
-                ServerSelectionMenu(selection: $storedServerSelectionOption) {
-                    Section {
-                        Button("Add Server", systemImage: "plus") {
-                            router.route(to: \.connectToServer)
-                        }
-
-                        if let selectedServer {
-                            Button("Edit Server", systemImage: "server.rack") {
-                                router.route(to: \.editServer, selectedServer)
-                            }
-                        }
-                    }
-
-                    Picker("Servers", selection: $storedServerSelectionOption) {
-
-                        if viewModel.servers.keys.count > 1 {
-                            Label("All", systemImage: "person.2.fill")
-                                .tag(ServerSelectionOption.all)
-                        }
-
-                        ForEach(viewModel.servers.keys) { server in
-                            Button {
-                                Text(server.name)
-                                Text(server.currentURL.absoluteString)
-                            }
-                            .tag(ServerSelectionOption.server(id: server.id))
-                        }
-                    }
-                }
-                .edgePadding()
+            if !isEditingUsers {
+                ServerSelectionMenu(selection: $serverSelection, viewModel: viewModel)
+                    .edgePadding()
             }
 
             if isEditingUsers {
@@ -338,7 +293,7 @@ struct UserListView: View {
             }
         }
         .background {
-            if let splashScreenImageSource, userListViewUseSplashScreen {
+            if let splashScreenImageSource {
                 ImageView(splashScreenImageSource)
                     .placeholder { _ in
                         Color.clear
@@ -381,7 +336,7 @@ struct UserListView: View {
         }
         .topBarTrailing {
             if isEditingUsers {
-                Button("Cancel") {
+                Button(L10n.cancel) {
                     isEditingUsers = false
                 }
             } else {
@@ -396,7 +351,7 @@ struct UserListView: View {
 
             selectedUsers.removeAll()
         }
-        .onChange(of: storedServerSelectionOption) { newValue in
+        .onChange(of: serverSelection) { newValue in
             switch newValue {
             case .all:
                 print("all")
@@ -408,8 +363,6 @@ struct UserListView: View {
                     .appending(.addUser)
 
                 gridItems = OrderedSet(items)
-            case .none:
-                print("none - onChange(storedServerSelectionOption")
             case let .server(id: id):
                 print("server: \(id)")
 
@@ -426,7 +379,7 @@ struct UserListView: View {
             }
         }
         .onChange(of: viewModel.servers) { _ in
-            switch storedServerSelectionOption {
+            switch serverSelection {
             case .all:
                 let items = viewModel.servers
                     .map { server, users in
@@ -436,8 +389,6 @@ struct UserListView: View {
                     .appending(.addUser)
 
                 gridItems = OrderedSet(items)
-            case .none:
-                storedServerSelectionOption = .all
             case let .server(id: id):
                 print("server: \(id)")
                 guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
@@ -479,45 +430,6 @@ extension View {
 
     func scroll(ifLargerThan height: CGFloat) -> some View {
         modifier(ScrollIfLargerThanModifier(height: height))
-    }
-}
-
-struct ServerSelectionMenu<Content: View>: View {
-
-    @Binding
-    private var selection: UserListView.ServerSelectionOption
-
-    private let content: () -> Content
-
-    init(selection: Binding<UserListView.ServerSelectionOption>, @ViewBuilder _ content: @escaping () -> Content) {
-        self._selection = selection
-        self.content = content
-    }
-
-    var body: some View {
-        Menu {
-            content()
-        } label: {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.tertiarySystemBackgorund)
-
-                Group {
-                    switch selection {
-                    case .all:
-                        Text("all")
-                    case let .server(id):
-                        Text(id)
-                    case .none:
-                        Text("None")
-                    }
-                }
-                .font(.body.weight(.semibold))
-                .foregroundStyle(Color.secondary)
-            }
-            .frame(height: 50)
-        }
-        .buttonStyle(.plain)
     }
 }
 

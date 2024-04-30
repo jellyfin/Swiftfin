@@ -6,45 +6,146 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import CoreStore
-import CryptoKit
-import Defaults
-import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import OrderedCollections
 import Pulse
-import UIKit
 
-final class ConnectToServerViewModel: ViewModel {
+// Note: Discovered servers works by always listening on a port for
+//       server responses and will send broadcasts as requested.
+//       This won't "clear" servers that no longer send a response,
+//       but case is negligible and just requires re-opening.
+
+final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
+
+    // MARK: Event
+
+    enum Event {
+        case connected(ServerState)
+        case duplicateServer(ServerState)
+        case error(JellyfinAPIError)
+    }
+
+    // MARK: Action
+
+    enum Action: Equatable {
+        case searchForServers
+        case connect(String)
+        case cancel
+        case addNewURL(ServerState)
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
+        case searching
+    }
+
+    // MARK: State
+
+    enum State: Hashable {
+        case connecting
+        case initial
+    }
 
     @Published
-    private(set) var discoveredServers: [ServerState] = []
-
+    var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    private(set) var isSearching = false
+    var discoveredServers: OrderedSet<ServerState> = []
+    @Published
+    var state: State = .initial
 
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    private var connectTask: AnyCancellable? = nil
     private let discovery = ServerDiscovery()
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    var connectToServerTask: Task<ServerState, Error>?
+    deinit {
+        discovery.close()
+    }
 
-    func connectToServer(url: String) async throws -> (server: ServerState, url: URL) {
+    override init() {
+        super.init()
 
-        #if os(iOS)
-        // shhhh
-        // TODO: remove
-        if let data = url.data(using: .utf8) {
-            var sha = SHA256()
-            sha.update(data: data)
-            let digest = sha.finalize()
-            let urlHash = digest.compactMap { String(format: "%02x", $0) }.joined()
-            if urlHash == "7499aced43869b27f505701e4edc737f0cc346add1240d4ba86fbfa251e0fc35" {
-                Defaults[.Experimental.downloads] = true
+        Task { [weak self] in
+            guard let self else { return }
 
-                await UIDevice.feedback(.success)
+            for await response in discovery.discoveredServers.values {
+                await MainActor.run {
+                    let _ = self.discoveredServers.append(response.asServerState)
+                }
             }
         }
-        #endif
+        .store(in: &cancellables)
+    }
+
+    func respond(to action: Action) -> State {
+        switch action {
+        case .searchForServers:
+            Task {
+                await MainActor.run {
+                    let _ = backgroundStates.append(.searching)
+                }
+
+                await searchForServers()
+
+                await MainActor.run {
+                    let _ = backgroundStates.remove(.searching)
+                }
+            }
+            .store(in: &cancellables)
+
+            return state
+        case let .connect(url):
+            connectTask?.cancel()
+
+            connectTask = Task {
+                do {
+                    let server = try await connectToServer(url: url)
+
+                    if isDuplicate(server: server) {
+                        await MainActor.run {
+                            self.eventSubject.send(.duplicateServer(server))
+                        }
+                    } else {
+                        try save(server: server)
+
+                        await MainActor.run {
+                            self.eventSubject.send(.connected(server))
+                        }
+                    }
+
+                    await MainActor.run {
+                        self.state = .initial
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                        self.state = .initial
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .connecting
+        case .cancel:
+            connectTask?.cancel()
+
+            return .initial
+        case let .addNewURL(serverState):
+            return state
+        }
+    }
+
+    private func connectToServer(url: String) async throws -> ServerState {
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -77,7 +178,7 @@ final class ConnectToServerViewModel: ViewModel {
             usersIDs: []
         )
 
-        return (newServerState, url)
+        return newServerState
     }
 
     // TODO: this probably isn't the best way to properly handle this, fix if necessary
@@ -101,7 +202,7 @@ final class ConnectToServerViewModel: ViewModel {
         return url
     }
 
-    func isDuplicate(server: ServerState) -> Bool {
+    private func isDuplicate(server: ServerState) -> Bool {
         if let _ = try? SwiftfinStore.dataStack.fetchOne(
             From<ServerModel>(),
             [Where<ServerModel>(
@@ -114,7 +215,7 @@ final class ConnectToServerViewModel: ViewModel {
         return false
     }
 
-    func save(server: ServerState) throws {
+    private func save(server: ServerState) throws {
         try SwiftfinStore.dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
 
@@ -126,33 +227,8 @@ final class ConnectToServerViewModel: ViewModel {
         }
     }
 
-    func discoverServers() {
-        isSearching = true
-        discoveredServers.removeAll()
-
-        var _discoveredServers: Set<SwiftfinStore.State.Server> = []
-
-        discovery.locateServer { server in
-            if let server = server {
-                _discoveredServers.insert(.init(
-                    urls: [],
-                    currentURL: server.url,
-                    name: server.name,
-                    id: server.id,
-                    usersIDs: []
-                ))
-            }
-        }
-
-        // Timeout after 3 seconds
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            self.isSearching = false
-            self.discoveredServers = _discoveredServers.sorted(by: { $0.name < $1.name })
-        }
-    }
-
-    func add(url: URL, server: ServerState) {
-        try! SwiftfinStore.dataStack.perform { transaction in
+    private func add(url: URL, to server: ServerState) throws {
+        try SwiftfinStore.dataStack.perform { transaction in
             let existingServer = try! SwiftfinStore.dataStack.fetchOne(
                 From<ServerModel>(),
                 [Where<ServerModel>(
@@ -164,5 +240,14 @@ final class ConnectToServerViewModel: ViewModel {
             let editServer = transaction.edit(existingServer)!
             editServer.urls.insert(url)
         }
+    }
+
+    private func searchForServers() async {
+        discovery.broadcast()
+
+        // give illusion of "discovering" even
+        // though we're always listening
+
+        try? await Task.sleep(nanoseconds: 2_000_000_000)
     }
 }

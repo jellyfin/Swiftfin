@@ -54,7 +54,7 @@ extension View {
         onNotification(UIApplication.willTerminateNotification, perform: action)
     }
 
-    func navigationBarCloseButton(_ action: @escaping () -> Void) -> some View {
+    func navigationBarCloseButton(disabled: Bool = false, _ action: @escaping () -> Void) -> some View {
         toolbar {
             ToolbarItemGroup(placement: .topBarLeading) {
                 Button {
@@ -63,6 +63,7 @@ extension View {
                     Image(systemName: "xmark.circle.fill")
                         .paletteOverlayRendering()
                 }
+                .disabled(disabled)
             }
         }
     }
