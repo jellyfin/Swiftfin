@@ -15,7 +15,6 @@ import Pulse
 
 /// Handles getting and exposing quick connect code and related states and polling for authentication secret and
 /// exposing it to a consumer.
-/// __Does not handle using the authentication secret itself to sign in.__
 final class QuickConnectViewModel: ViewModel, Stateful {
     // MARK: Action
 

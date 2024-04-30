@@ -80,16 +80,16 @@ struct HomeView: View {
             Button {
                 router.route(to: \.settings)
             } label: {
-                if let userImage = viewModel.userSession.user.image {
-                    Image(uiImage: userImage)
-                        .resizable()
-                        .clipShape(.circle)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 30, height: 30)
-                } else {
-                    Image(systemName: "gearshape.fill")
-                        .resizable()
-                }
+//                if let userImage = viewModel.userSession.user.image {
+//                    Image(uiImage: userImage)
+//                        .resizable()
+//                        .clipShape(.circle)
+//                        .aspectRatio(1, contentMode: .fit)
+//                        .frame(width: 30, height: 30)
+//                } else {
+                Image(systemName: "gearshape.fill")
+                    .resizable()
+//                }
             }
             .accessibilityLabel(L10n.settings)
         }

@@ -20,20 +20,18 @@ extension SettingsView {
 
         @ViewBuilder
         private var imageView: some View {
-            if let image = userSession.user.image {
-                Image(uiImage: image)
-                    .resizable()
-            } else {
-                ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
-                    .placeholder { _ in
-                        SystemImageContentView(systemName: "person.fill")
-                            .imageFrameRatio(width: 2, height: 2)
-                    }
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill")
-                            .imageFrameRatio(width: 2, height: 2)
-                    }
-            }
+//            if let image = userSession.user.image {
+//                Image(uiImage: image)
+//                    .resizable()
+//            } else {
+            ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
+                .placeholder { _ in
+                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                }
+                .failure {
+                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                }
+//            }
         }
 
         var body: some View {

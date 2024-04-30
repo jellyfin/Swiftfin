@@ -19,26 +19,24 @@ struct UserProfileSettingsView: View {
 
     @ViewBuilder
     private var imageView: some View {
-        if let image = viewModel.userSession.user.image {
-            Image(uiImage: image)
-                .resizable()
-        } else {
-            ImageView(
-                viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 120,
-                    maxHeight: 120
-                )
+//        if let image = viewModel.userSession.user.image {
+//            Image(uiImage: image)
+//                .resizable()
+//        } else {
+        ImageView(
+            viewModel.userSession.user.profileImageSource(
+                client: viewModel.userSession.client,
+                maxWidth: 120,
+                maxHeight: 120
             )
-            .placeholder { _ in
-                SystemImageContentView(systemName: "person.fill")
-                    .imageFrameRatio(width: 2, height: 2)
-            }
-            .failure {
-                SystemImageContentView(systemName: "person.fill")
-                    .imageFrameRatio(width: 2, height: 2)
-            }
+        )
+        .placeholder { _ in
+            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
+        .failure {
+            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+        }
+//        }
     }
 
     var body: some View {

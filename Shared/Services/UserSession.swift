@@ -43,38 +43,16 @@ final class SwiftfinSession {
     }
 }
 
-final class BasicServerSession {
-
-    let client: JellyfinClient
-    let server: ServerState
-
-    init(server: ServerState) {
-        self.server = server
-
-        let client = JellyfinClient(
-            configuration: .swiftfinConfiguration(url: server.currentURL),
-            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger())
-        )
-
-        self.client = client
-    }
-}
-
 extension Container.Scope {
 
-    static var basicServerSessionScope = Shared()
     static var userSessionScope = Cached()
 }
 
 extension Container {
 
-    static let basicServerSessionScope = ParameterFactory<ServerState, BasicServerSession>(scope: .basicServerSessionScope) {
-        .init(server: $0)
-    }
-
     static let userSession = Factory<SwiftfinSession>(scope: .userSessionScope) {
 
-        if let lastUserID = Defaults[.lastServerUserID],
+        if let lastUserID = Defaults[.lastSignedInUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(
                From<UserModel>(),
                [Where<UserModel>("id == %@", lastUserID)]

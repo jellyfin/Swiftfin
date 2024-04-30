@@ -90,6 +90,7 @@ struct ConnectToServerView: View {
                     }
                 }
             }
+            .headerProminence(.increased)
         }
         .interactiveDismissDisabled(viewModel.state == .connecting)
         .navigationTitle(L10n.connect)

@@ -33,8 +33,7 @@ extension UserListView {
         }
 
         private var personView: some View {
-            SystemImageContentView(systemName: "person.fill")
-                .imageFrameRatio(width: 2, height: 2)
+            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
 
         private var labelStyle: some ShapeStyle {
@@ -51,18 +50,18 @@ extension UserListView {
                     ZStack {
                         Color.clear
 
-                        if let image = user.image {
-                            Image(uiImage: image)
-                                .resizable()
-                        } else {
-                            ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
-                                .placeholder { _ in
-                                    personView
-                                }
-                                .failure {
-                                    personView
-                                }
-                        }
+//                        if let image = user.image {
+//                            Image(uiImage: image)
+//                                .resizable()
+//                        } else {
+                        ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                            .placeholder { _ in
+                                personView
+                            }
+                            .failure {
+                                personView
+                            }
+//                        }
                     }
                     .aspectRatio(1, contentMode: .fill)
                     .posterShadow()

@@ -84,7 +84,7 @@ struct MediaView: View {
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
         .topBarTrailing {
-            if viewModel.isLoading {
+            if viewModel.state == .refreshing {
                 ProgressView()
             }
         }

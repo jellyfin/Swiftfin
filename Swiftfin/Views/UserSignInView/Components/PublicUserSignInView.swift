@@ -12,6 +12,7 @@ import SwiftUI
 extension UserSignInView {
 
     struct PublicUserSignInView: View {
+
         @ObservedObject
         var viewModel: UserSignInViewModel
 
@@ -25,7 +26,7 @@ extension UserSignInView {
                 SecureField(L10n.password, text: $password)
                 Button {
                     guard let username = publicUser.name else { return }
-                    viewModel.send(.signInWithUserPass(username: username, password: password))
+//                    viewModel.send(.signInWithUserPass(username: username, password: password))
                 } label: {
                     L10n.signIn.text
                 }

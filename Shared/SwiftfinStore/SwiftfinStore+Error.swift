@@ -8,28 +8,28 @@
 
 import Foundation
 
-extension SwiftfinStore {
-
-    enum Error: LocalizedError {
-        case existingServer(State.Server)
-        case existingUser(State.User)
-
-        var title: String {
-            switch self {
-            case .existingServer:
-                return L10n.existingServer
-            case .existingUser:
-                return L10n.existingUser
-            }
-        }
-
-        var errorDescription: String? {
-            switch self {
-            case let .existingServer(server):
-                return L10n.serverAlreadyConnected(server.name)
-            case let .existingUser(user):
-                return L10n.userAlreadySignedIn(user.username)
-            }
-        }
-    }
-}
+// extension SwiftfinStore {
+//
+//    enum Error: LocalizedError {
+//        case existingServer(State.Server)
+//        case existingUser(State.User)
+//
+//        var title: String {
+//            switch self {
+//            case .existingServer:
+//                return L10n.existingServer
+//            case .existingUser:
+//                return L10n.existingUser
+//            }
+//        }
+//
+//        var errorDescription: String? {
+//            switch self {
+//            case let .existingServer(server):
+//                return L10n.serverAlreadyConnected(server.name)
+//            case let .existingUser(user):
+//                return L10n.userAlreadySignedIn(user.username)
+//            }
+//        }
+//    }
+// }

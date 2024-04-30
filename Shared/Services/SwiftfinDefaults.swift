@@ -24,7 +24,7 @@ extension Defaults.Keys {
     static let accentColor: Key<Color> = .init("accentColor", default: .jellyfinPurple, suite: .universalSuite)
     static let appAppearance = Key<AppAppearance>("appAppearance", default: .system, suite: .universalSuite)
     static let hapticFeedback: Key<Bool> = .init("hapticFeedback", default: true, suite: .universalSuite)
-    static let lastServerUserID = Defaults.Key<String?>("lastServerUserID", suite: .universalSuite)
+    static let lastSignedInUserID = Defaults.Key<String?>("lastSignedInUserID", suite: .universalSuite)
 
     static let userListDisplayType = Defaults.Key<LibraryDisplayType>("userListDisplayType", default: .grid, suite: .universalSuite)
 

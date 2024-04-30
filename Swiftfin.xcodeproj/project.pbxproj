@@ -379,6 +379,10 @@
 		E145EB432BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */; };
 		E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
 		E145EB462BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
+		E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */; };
+		E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB4A2BE16849003BF6F3 /* KeychainSwift */; };
+		E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */; };
+		E145EB4F2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */; };
 		E148128328C1443D003B8787 /* NameGuidPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */; };
 		E148128528C15472003B8787 /* SortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder.swift */; };
 		E148128628C15475003B8787 /* SortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder.swift */; };
@@ -408,8 +412,8 @@
 		E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549655296CA2EF00C4EF88 /* DownloadTask.swift */; };
 		E1549660296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */; };
 		E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */; };
-		E1549662296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */; };
-		E1549663296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */; };
+		E1549662296CA2EF00C4EF88 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* UserSession.swift */; };
+		E1549663296CA2EF00C4EF88 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* UserSession.swift */; };
 		E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */; };
 		E1549665296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */; };
 		E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */; };
@@ -1144,6 +1148,9 @@
 		E145EB242BE055AD003BF6F3 /* ServerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
 		E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelectionMenu.swift; sourceTree = "<group>"; };
 		E145EB442BE0AD4E003BF6F3 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollIfLargerThanModifier.swift; sourceTree = "<group>"; };
+		E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftinStore+UserState.swift"; sourceTree = "<group>"; };
+		E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+ServerState.swift"; sourceTree = "<group>"; };
 		E148128428C15472003B8787 /* SortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOrder.swift; sourceTree = "<group>"; };
 		E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemFilter+ItemTrait.swift"; sourceTree = "<group>"; };
 		E148128A28C15526003B8787 /* ItemSortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSortBy.swift; sourceTree = "<group>"; };
@@ -1158,7 +1165,7 @@
 		E1546779289AF48200087E35 /* CollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemContentView.swift; sourceTree = "<group>"; };
 		E1549655296CA2EF00C4EF88 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinDefaults.swift; sourceTree = "<group>"; };
-		E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewSessionManager.swift; sourceTree = "<group>"; };
+		E1549657296CA2EF00C4EF88 /* UserSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
 		E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
 		E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinNotifications.swift; sourceTree = "<group>"; };
 		E154965B296CA2EF00C4EF88 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
@@ -1504,6 +1511,7 @@
 				E192608328D2D0DB002314B4 /* Factory in Frameworks */,
 				E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */,
 				E1523F822B132C350062821A /* CollectionHStack in Frameworks */,
+				E145EB4B2BE16849003BF6F3 /* KeychainSwift in Frameworks */,
 				E10706142942F57D00646DAF /* PulseUI in Frameworks */,
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
@@ -2273,6 +2281,8 @@
 			isa = PBXGroup;
 			children = (
 				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
+				E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */,
+				E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */,
 				E10B1EBA2BD9AD2000A92EAF /* SwiftfinStore+Error.swift */,
 				E10B1EC32BD9AD7E00A92EAF /* SwiftfinStore+ImageCoder.swift */,
 				E10B1EB92BD9ACFB00A92EAF /* V2Schema */,
@@ -2590,7 +2600,7 @@
 				E154965B296CA2EF00C4EF88 /* DownloadManager.swift */,
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
-				E1549657296CA2EF00C4EF88 /* NewSessionManager.swift */,
+				E1549657296CA2EF00C4EF88 /* UserSession.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
 				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
 			);
@@ -2996,6 +3006,7 @@
 			isa = PBXGroup;
 			children = (
 				E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */,
+				E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */,
 				E1BE1CE82BDABDC4008176A9 /* AlwaysNavigationBarBlurModifier */,
 				E113133028BDB6D600930F75 /* NavigationBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavigationBarOffset */,
@@ -3418,6 +3429,7 @@
 				E1153DCF2BBB634F00424D36 /* SVGKit */,
 				E132D3C72BD200C10058A2DF /* CollectionVGrid */,
 				E132D3CC2BD2179C0058A2DF /* CollectionVGrid */,
+				E145EB4A2BE16849003BF6F3 /* KeychainSwift */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3489,6 +3501,7 @@
 				E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
 				E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
+				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3662,7 +3675,7 @@
 				E18A8E7E28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
 				E1E6C43B29AECBD30064123F /* BottomBarView.swift in Sources */,
 				E152107D2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
-				E1549663296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */,
+				E1549663296CA2EF00C4EF88 /* UserSession.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E145EB232BDCCA43003BF6F3 /* BulletedList.swift in Sources */,
 				E104DC972B9E7E29008F506D /* AssertionFailureView.swift in Sources */,
@@ -4141,6 +4154,7 @@
 				E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */,
 				E102313B2BCF8A3C009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1937A61288F32DB00CB80AA /* Poster.swift in Sources */,
+				E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift in Sources */,
 				E1CAF65F2BA345830087D991 /* MediaViewModel.swift in Sources */,
 				E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */,
@@ -4148,6 +4162,7 @@
 				6267B3D626710B8900A7371D /* Collection.swift in Sources */,
 				E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
+				E145EB4F2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
@@ -4233,7 +4248,7 @@
 				E18E01EE288747230022598C /* AboutView.swift in Sources */,
 				62E632E0267D30CA0063E547 /* ItemLibraryViewModel.swift in Sources */,
 				E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */,
-				E1549662296CA2EF00C4EF88 /* NewSessionManager.swift in Sources */,
+				E1549662296CA2EF00C4EF88 /* UserSession.swift in Sources */,
 				E15756362936856700976E1F /* VideoPlayerType.swift in Sources */,
 				E1DA654C28E69B0500592A73 /* SpecialFeatureType.swift in Sources */,
 				E11CEB8B28998552003E74C7 /* View-iOS.swift in Sources */,
@@ -4346,6 +4361,7 @@
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,
+				E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */,
 				53EE24E6265060780068F029 /* SearchView.swift in Sources */,
 				E1D37F522B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift in Sources */,
 				E192608028D28AAD002314B4 /* UserProfileButton.swift in Sources */,
@@ -4869,6 +4885,14 @@
 				minimumVersion = 7.0.0;
 			};
 		};
+		E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 24.0.0;
+			};
+		};
 		E14CB6842A9FF62A001586C6 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/jellyfin/jellyfin-sdk-swift.git";
@@ -5105,6 +5129,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
 			productName = Defaults;
+		};
+		E145EB4A2BE16849003BF6F3 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 		E14CB6852A9FF62A001586C6 /* JellyfinAPI */ = {
 			isa = XCSwiftPackageProductDependency;

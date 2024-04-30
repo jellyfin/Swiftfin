@@ -26,8 +26,7 @@ extension UserListView {
         var onSelect: () -> Void
 
         private var personView: some View {
-            SystemImageContentView(systemName: "person.fill")
-                .imageFrameRatio(width: 2, height: 2)
+            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
 
         @ViewBuilder

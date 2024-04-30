@@ -419,30 +419,3 @@ struct UserListView: View {
         }
     }
 }
-
-#warning("TODO: cleanup")
-
-struct ScrollIfLargerThanModifier: ViewModifier {
-
-    @State
-    private var contentSize: CGSize = .zero
-
-    let height: CGFloat
-
-    func body(content: Content) -> some View {
-        ScrollView {
-            content
-                .trackingSize($contentSize)
-        }
-        .backport
-        .scrollDisabled(contentSize.height < height)
-        .frame(maxHeight: contentSize.height >= height ? .infinity : contentSize.height)
-    }
-}
-
-extension View {
-
-    func scroll(ifLargerThan height: CGFloat) -> some View {
-        modifier(ScrollIfLargerThanModifier(height: height))
-    }
-}

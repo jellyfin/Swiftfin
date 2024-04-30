@@ -34,7 +34,7 @@ struct QuickConnectAuthorizeView: View {
             Section {
                 TextField(L10n.quickConnectCode, text: $code)
                     .keyboardType(.numberPad)
-                    .disabled(viewModel.isLoading)
+                    .disabled(viewModel.state == .authorizing)
                     .focused($isCodeFocused)
 
                 Button {

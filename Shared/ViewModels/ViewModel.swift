@@ -18,14 +18,6 @@ class ViewModel: ObservableObject {
     @Injected(Container.userSession)
     var userSession
 
-    // TODO: remove on transition to Stateful
-    @Published
-    var error: ErrorMessage? = nil
-
-    // TODO: remove on transition to Stateful
-    @Published
-    var isLoading = false
-
     var cancellables = Set<AnyCancellable>()
 
     private var userSessionResolverCancellable: AnyCancellable?

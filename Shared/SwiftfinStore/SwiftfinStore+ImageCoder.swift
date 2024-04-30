@@ -10,6 +10,12 @@ import CoreStore
 import Foundation
 import UIKit
 
+enum UserSignInPolicy: Codable {
+
+    case requireEveryTime
+    case save(accessToken: String)
+}
+
 extension SwiftfinStore {
 
     struct ImageCoder: FieldCoderType {
@@ -21,6 +27,18 @@ extension SwiftfinStore {
         static func decodeFromStoredData(_ data: Data?) -> UIImage? {
             guard let data else { return nil }
             return UIImage(data: data)
+        }
+    }
+
+    struct UserSignInPolicyCoder: FieldCoderType {
+
+        static func encodeToStoredData(_ fieldValue: UserSignInPolicy?) -> Data? {
+            try? JSONEncoder().encode(fieldValue)
+        }
+
+        static func decodeFromStoredData(_ data: Data?) -> UserSignInPolicy? {
+            guard let data else { return nil }
+            return try? JSONDecoder().decode(UserSignInPolicy.self, from: data)
         }
     }
 }

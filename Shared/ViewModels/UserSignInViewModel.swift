@@ -6,24 +6,31 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import CoreStore
 import Defaults
 import Factory
 import Foundation
 import Get
 import JellyfinAPI
-import Nuke
 import Pulse
-import UIKit
 
-final class UserSignInViewModel: ViewModel, Stateful {
+final class UserSignInViewModel: ViewModel, Eventful, Stateful {
+
+    // MARK: Event
+
+    enum Event {
+        case duplicateUser(UserState)
+        case error(JellyfinAPIError)
+    }
 
     // MARK: Action
 
     enum Action: Equatable {
-        case signInWithUserPass(username: String, password: String)
+        case getPublicUsers
+        case signIn(username: String, password: String)
         case signInWithQuickConnect(authSecret: String)
-        case cancelSignIn
+        case cancel
     }
 
     // MARK: State
@@ -31,29 +38,25 @@ final class UserSignInViewModel: ViewModel, Stateful {
     enum State: Hashable {
         case initial
         case signingIn
-        case signedIn
-        case error(SignInError)
     }
 
-    // TODO: Add more detailed errors
-    enum SignInError: Error {
-        case unknown
-    }
-
+    @Published
+    var publicUsers: [UserDto] = []
+    @Published
+    var quickConnectEnabled = false
     @Published
     var state: State = .initial
-    var lastAction: Action? = nil
 
-    @Published
-    private(set) var publicUsers: [UserDto] = []
-    @Published
-    private(set) var quickConnectEnabled = false
-
-    private var signInTask: Task<Void, Never>?
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
 
     let quickConnectViewModel: QuickConnectViewModel
-
     let server: ServerState
+
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     init(server: ServerState) {
         self.server = server
@@ -62,41 +65,46 @@ final class UserSignInViewModel: ViewModel, Stateful {
     }
 
     func respond(to action: Action) -> State {
-        switch action {
-        case let .signInWithUserPass(username, password):
-            guard state != .signingIn else { return .signingIn }
-            Task {
-                do {
-                    try await signIn(username: username, password: password)
-                } catch {
-                    await MainActor.run {
-                        state = .error(.unknown)
-                    }
-                }
-            }
-            return .signingIn
-        case let .signInWithQuickConnect(authSecret):
-            guard state != .signingIn else { return .signingIn }
-            Task {
-                do {
-                    try await signIn(quickConnectSecret: authSecret)
-                } catch {
-                    await MainActor.run {
-                        state = .error(.unknown)
-                    }
-                }
-            }
-            return .signingIn
-        case .cancelSignIn:
-            self.signInTask?.cancel()
-            return .initial
-        }
+        .initial
+
+//        switch action {
+//        case let .signIn(username, password):
+//            guard state != .signingIn else { return .signingIn }
+//            Task {
+//                do {
+//                    try await signIn(username: username, password: password)
+//                } catch {
+//                    await MainActor.run {
+//                        state = .error(.init(error.localizedDescription))
+//                    }
+//                }
+//            }
+//
+//            return .signingIn
+//        case let .signInWithQuickConnect(authSecret):
+//            guard state != .signingIn else { return .signingIn }
+//            Task {
+//                do {
+//                    try await signIn(quickConnectSecret: authSecret)
+//                } catch {
+//                    await MainActor.run {
+//                        state = .error(.init(error.localizedDescription))
+//                    }
+//                }
+//            }
+//            return .signingIn
+//        case .cancel:
+//            return .initial
+//        }
     }
 
     private func signIn(username: String, password: String) async throws {
-        let username = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        let username = username
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
-        let password = password.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let password = password
+            .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
 
         let response = try await server.client.signIn(username: username, password: password)
@@ -106,14 +114,15 @@ final class UserSignInViewModel: ViewModel, Stateful {
         do {
             user = try await createLocalUser(response: response)
         } catch {
-            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
-                user = existingUser
-            } else {
-                throw error
-            }
+            throw error
+//            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+//                user = existingUser
+//            } else {
+//                throw error
+//            }
         }
 
-        Defaults[.lastServerUserID] = user.id
+        Defaults[.lastSignedInUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
     }
@@ -127,25 +136,24 @@ final class UserSignInViewModel: ViewModel, Stateful {
         do {
             user = try await createLocalUser(response: response.value)
         } catch {
-            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
-                user = existingUser
-            } else {
-                throw error
-            }
+            throw error
+//            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
+//                user = existingUser
+//            } else {
+//                throw error
+//            }
         }
 
-        Defaults[.lastServerUserID] = user.id
+        Defaults[.lastSignedInUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
     }
 
-    func getPublicUsers() async throws {
+    private func getPublicUsers() async throws -> [UserDto] {
         let publicUsersPath = Paths.getPublicUsers
         let response = try await server.client.send(publicUsersPath)
 
-        await MainActor.run {
-            publicUsers = response.value
-        }
+        return response.value
     }
 
     @MainActor
@@ -161,7 +169,7 @@ final class UserSignInViewModel: ViewModel, Stateful {
                 id
             )]
         ) {
-            throw SwiftfinStore.Error.existingUser(existingUser.state)
+//            throw SwiftfinStore.Error.existingUser(existingUser.state)
         }
 
         guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
@@ -175,16 +183,14 @@ final class UserSignInViewModel: ViewModel, Stateful {
         )
         else { fatalError("No stored server associated with given state server?") }
 
-        let profileImage = try! await getProfileImage(for: response.user!)
-
         let user = try SwiftfinStore.dataStack.perform { transaction in
             let newUser = transaction.create(Into<UserModel>())
 
-            newUser.accessToken = accessToken
+//            newUser.accessToken = accessToken
             newUser.appleTVID = ""
             newUser.id = id
             newUser.username = username
-            newUser.image = profileImage
+//            newUser.image = profileImage
 
             let editServer = transaction.edit(storedServer)!
             editServer.users.insert(newUser)
@@ -193,25 +199,6 @@ final class UserSignInViewModel: ViewModel, Stateful {
         }
 
         return user
-    }
-
-    private func getProfileImage(for user: UserDto) async throws -> UIImage? {
-
-        let profileImageURL = user.profileImageSource(
-            client: server.client,
-            maxWidth: 500,
-            maxHeight: 500
-        ).url!
-
-        return try? await ImagePipeline.shared.image(for: profileImageURL)
-
-//        func loadImage() async throws {
-//            let imageTask = ImagePipeline.shared.imageTask(with: url)
-//            for await progress in imageTask.progress {
-//                // Update progress
-//            }
-//            imageView.image = try await imageTask.image
-//        }
     }
 
     func checkQuickConnect() async throws {

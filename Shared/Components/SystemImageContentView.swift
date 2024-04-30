@@ -18,17 +18,15 @@ struct SystemImageContentView: View {
     private var labelSize: CGSize = .zero
 
     private var backgroundColor: Color
-    private var heightRatio: CGFloat
+    private var ratio: CGFloat
     private let systemName: String
     private let title: String?
-    private var widthRatio: CGFloat
 
-    init(title: String? = nil, systemName: String?) {
+    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.5) {
         self.backgroundColor = Color.secondarySystemFill
-        self.heightRatio = 3
+        self.ratio = 1 / 3
         self.systemName = systemName ?? "circle"
         self.title = title
-        self.widthRatio = 3.5
     }
 
     private var imageView: some View {
@@ -37,7 +35,7 @@ struct SystemImageContentView: View {
             .aspectRatio(contentMode: .fit)
             .foregroundColor(.secondary)
             .accessibilityHidden(true)
-            .frame(width: contentSize.width / widthRatio, height: contentSize.height / heightRatio)
+            .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
     }
 
     @ViewBuilder
@@ -72,10 +70,5 @@ extension SystemImageContentView {
 
     func background(color: Color = Color.secondarySystemFill) -> Self {
         copy(modifying: \.backgroundColor, with: color)
-    }
-
-    func imageFrameRatio(width: CGFloat = 3.5, height: CGFloat = 3) -> Self {
-        copy(modifying: \.heightRatio, with: height)
-            .copy(modifying: \.widthRatio, with: width)
     }
 }

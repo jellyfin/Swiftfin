@@ -64,7 +64,7 @@ class UserListViewModel: ViewModel, Stateful {
                 return .error(.init(error.localizedDescription))
             }
         case let .signIn(user):
-            Defaults[.lastServerUserID] = user.id
+            Defaults[.lastSignedInUserID] = user.id
             Container.userSession.reset()
             Notifications[.didSignIn].post()
 
