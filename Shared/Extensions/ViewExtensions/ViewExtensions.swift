@@ -319,10 +319,19 @@ extension View {
         }
     }
 
-    func onNotification(_ name: NSNotification.Name, perform action: @escaping () -> Void) -> some View {
+    func onNotification(_ name: NSNotification.Name, perform action: @escaping (Notification) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
                 notification: name,
+                onReceive: action
+            )
+        )
+    }
+
+    func onNotification(_ swiftfinNotification: Notifications.Key, perform action: @escaping (Notification) -> Void) -> some View {
+        modifier(
+            OnReceiveNotificationModifier(
+                notification: swiftfinNotification.underlyingNotification.name,
                 onReceive: action
             )
         )

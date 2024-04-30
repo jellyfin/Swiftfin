@@ -103,7 +103,8 @@ struct ConnectToServerView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .connected:
+            case let .connected(server):
+                Notifications[.didConnectToServer].post(object: server)
                 router.popLast()
             case let .duplicateServer(server):
                 duplicateServer = server

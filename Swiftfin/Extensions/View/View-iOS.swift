@@ -43,15 +43,15 @@ extension View {
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.didEnterBackgroundNotification, perform: action)
+        onNotification(UIApplication.didEnterBackgroundNotification, perform: { _ in action() })
     }
 
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.willResignActiveNotification, perform: action)
+        onNotification(UIApplication.willResignActiveNotification, perform: { _ in action() })
     }
 
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.willTerminateNotification, perform: action)
+        onNotification(UIApplication.willTerminateNotification, perform: { _ in action() })
     }
 
     func navigationBarCloseButton(disabled: Bool = false, _ action: @escaping () -> Void) -> some View {

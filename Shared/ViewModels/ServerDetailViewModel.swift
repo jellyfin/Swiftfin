@@ -10,6 +10,8 @@ import CoreStore
 import Foundation
 import JellyfinAPI
 
+#warning("TODO: move server deletion to UserListVM")
+
 class ServerDetailViewModel: ViewModel {
 
     @Published
@@ -17,6 +19,23 @@ class ServerDetailViewModel: ViewModel {
 
     init(server: ServerState) {
         self.server = server
+    }
+
+    func delete() {
+        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+            From<ServerModel>(),
+            [Where<ServerModel>("id == %@", server.id)]
+        ) else {
+            logger.error("Unable to find server to delete")
+            return
+        }
+
+        try! SwiftfinStore.dataStack.perform { transaction in
+            transaction.delete(storedServer.users)
+            transaction.delete(storedServer)
+        }
+
+        Notifications[.didDeleteServer].post(object: server)
     }
 
     func setCurrentServerURL(to url: URL) {

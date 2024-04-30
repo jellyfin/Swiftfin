@@ -80,7 +80,6 @@ extension UserListView {
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 40, height: 40, alignment: .bottomTrailing)
                                         .paletteOverlayRendering()
-                                        .padding()
                                 }
                             }
                         }

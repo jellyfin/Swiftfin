@@ -157,17 +157,19 @@ struct UserListView: View {
                 }
             }
 
-            Picker(selection: $userListDisplayType) {
-                ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
-                    Label($0.displayTitle, systemImage: $0.systemImage)
-                        .tag($0)
+            if !viewModel.servers.isEmpty {
+                Picker(selection: $userListDisplayType) {
+                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
+                        Label($0.displayTitle, systemImage: $0.systemImage)
+                            .tag($0)
+                    }
+                } label: {
+                    Text("Layout")
+                    Text(userListDisplayType.displayTitle)
+                    Image(systemName: userListDisplayType.systemImage)
                 }
-            } label: {
-                Text("Layout")
-                Text(userListDisplayType.displayTitle)
-                Image(systemName: userListDisplayType.systemImage)
+                .pickerStyle(.menu)
             }
-            .pickerStyle(.menu)
 
             Section {
                 Button(L10n.advanced, systemImage: "gearshape.fill") {
@@ -338,7 +340,17 @@ struct UserListView: View {
     // MARK: emptyView
 
     private var emptyView: some View {
-        VStack {}
+        VStack {
+            L10n.connectToJellyfinServerStart.text
+                .frame(minWidth: 50, maxWidth: 240)
+                .multilineTextAlignment(.center)
+
+            PrimaryButton(title: L10n.connect)
+                .onSelect {
+                    router.route(to: \.connectToServer)
+                }
+                .frame(maxWidth: 300)
+        }
     }
 
     // MARK: body
@@ -389,6 +401,21 @@ struct UserListView: View {
         }
         .onChange(of: viewModel.servers) { _ in
             gridItems = makeGridItems(for: serverSelection)
+        }
+        .onNotification(.didConnectToServer) { notification in
+            if let server = notification.object as? ServerState {
+                viewModel.send(.getServers)
+                serverSelection = .server(id: server.id)
+            }
+        }
+        .onNotification(.didDeleteServer) { notification in
+            if let server = notification.object as? ServerState {
+                if case let ServerSelection.server(id: id) = serverSelection, server.id == id {
+                    serverSelection = .all
+                }
+
+                viewModel.send(.getServers)
+            }
         }
     }
 }

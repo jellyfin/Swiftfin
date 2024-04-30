@@ -38,6 +38,7 @@ final class ServerListCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        ServerListView(viewModel: ServerListViewModel())
+//        ServerListView(viewModel: ServerListViewModel())
+        AssertionFailureView("Removed")
     }
 }
