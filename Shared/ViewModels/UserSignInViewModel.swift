@@ -53,14 +53,12 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
-    let quickConnectViewModel: QuickConnectViewModel
     let server: ServerState
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     init(server: ServerState) {
         self.server = server
-        self.quickConnectViewModel = .init(client: server.client)
         super.init()
     }
 
@@ -154,6 +152,19 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         let response = try await server.client.send(publicUsersPath)
 
         return response.value
+    }
+
+    private func isDuplicate(user: UserState) -> Bool {
+        if let _ = try? SwiftfinStore.dataStack.fetchOne(
+            From<UserModel>(),
+            [Where<UserModel>(
+                "id == %@",
+                user.id
+            )]
+        ) {
+            return true
+        }
+        return false
     }
 
     @MainActor

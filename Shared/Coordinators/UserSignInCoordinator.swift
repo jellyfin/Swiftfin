@@ -22,21 +22,22 @@ final class UserSignInCoordinator: NavigationCoordinatable {
     var quickConnect = makeQuickConnect
     #endif
 
-    let viewModel: UserSignInViewModel
+    private let server: ServerState
 
-    init(viewModel: UserSignInViewModel) {
-        self.viewModel = viewModel
+    init(server: ServerState) {
+        self.server = server
     }
 
     #if os(iOS)
-    func makeQuickConnect() -> NavigationViewCoordinator<QuickConnectCoordinator> {
-        NavigationViewCoordinator(QuickConnectCoordinator(viewModel: viewModel))
+    func makeQuickConnect() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            QuickConnectView(server: self.server)
+        }
     }
     #endif
 
     @ViewBuilder
     func makeStart() -> some View {
-//        UserSignInView(viewModel: viewModel)
-        Text("Removed")
+        UserSignInView(server: server)
     }
 }

@@ -6,92 +6,60 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct QuickConnectView: View {
 
     @EnvironmentObject
-    private var router: QuickConnectCoordinator.Router
+    private var router: UserListCoordinator.Router
 
     @StateObject
-    private var viewModel: QuickConnectViewModel
-
-    // Once the auth secret is fetched, run this and dismiss this view
-    var signIn: @MainActor (_: String) -> Void
+    private var viewModel: QuickConnect
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: QuickConnectViewModel(client: server.client))
-        self.signIn = { _ in }
+        self._viewModel = StateObject(wrappedValue: QuickConnect(client: server.client))
     }
 
-    func quickConnectWaitingAuthentication(quickConnectCode: String) -> some View {
-        Text(quickConnectCode)
+    private func pollingView(code: String) -> some View {
+        Text(code)
             .tracking(10)
             .font(.largeTitle)
             .monospacedDigit()
-            .frame(maxWidth: .infinity)
     }
 
-    var quickConnectFailed: some View {
-        Label {
-            Text("Failed to retrieve quick connect code")
-        } icon: {
-            Image(systemName: "exclamationmark.circle.fill")
-                .foregroundColor(.red)
-        }
-    }
-
-    var quickConnectLoading: some View {
-        HStack {
-            Spacer()
-            ProgressView()
-            Spacer()
-        }
-    }
-
+    #warning("TODO: retry")
     @ViewBuilder
-    var quickConnectBody: some View {
-        switch viewModel.state {
-        case let .awaitingAuthentication(code):
-            quickConnectWaitingAuthentication(quickConnectCode: code)
-        case .initial, .fetchingSecret, .authenticated:
-            quickConnectLoading
-        case .error:
-            quickConnectFailed
-        }
+    private func errorView(error: QuickConnect.QuickConnectError) -> some View {
+        Text(error.localizedDescription)
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-//            L10n.quickConnectStep1.text
-//
-//            L10n.quickConnectStep2.text
-//
-//            L10n.quickConnectStep3.text
-//                .padding(.bottom)
-
-            Text("Enter the following code by another")
-
-            quickConnectBody
-
-            Spacer()
-        }
-        .padding(.horizontal)
-        .navigationTitle(L10n.quickConnect)
-        .onChange(of: viewModel.state) { newState in
-            if case let .authenticated(secret: secret) = newState {
-                signIn(secret)
-                router.dismissCoordinator()
+        WrappedView {
+            switch viewModel.state {
+            case .idle:
+                Color.clear
+            case .retrievingCode:
+                ProgressView()
+            case let .polling(code):
+                pollingView(code: code)
+            case .authenticated:
+                Text("Authenticated")
+            case let .error(error):
+                errorView(error: error)
             }
         }
-        .onAppear {
-            viewModel.send(.startQuickConnect)
+        .edgePadding()
+        .navigationTitle(L10n.quickConnect)
+        .navigationBarTitleDisplayMode(.inline)
+        .onFirstAppear {
+            viewModel.start()
         }
         .onDisappear {
-            viewModel.send(.cancelQuickConnect)
+            viewModel.stop()
         }
         .navigationBarCloseButton {
-            router.dismissCoordinator()
+            router.popLast()
         }
     }
 }

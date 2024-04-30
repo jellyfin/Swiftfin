@@ -12,7 +12,7 @@ import SwiftUI
 struct UserSignInView: View {
 
     @EnvironmentObject
-    private var router: UserListCoordinator.Router
+    private var router: UserSignInCoordinator.Router
 
     @FocusState
     private var isUsernameFocused: Bool
@@ -101,7 +101,7 @@ struct UserSignInView: View {
 
             if viewModel.quickConnectEnabled {
                 Button {
-                    router.route(to: \.quickConnect, viewModel.server)
+                    router.route(to: \.quickConnect)
                 } label: {
                     L10n.quickConnect.text
                 }
@@ -109,25 +109,12 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
-//        .onChange(of: viewModel.state) { newState in
-//            if case .error = newState {
-//                // If we encountered the error as we switched from quick connect navigation to this view,
-//                // it's possible that the alert doesn't show, so wait a little bit
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                    isPresentingSignInError = true
-//                }
-//            }
-//        }
-//        .alert(
-//            L10n.error,
-//            isPresented: $isPresentingSignInError
-//        ) {
-//            Button(L10n.dismiss, role: .cancel)
-//        } message: {
-//            errorText
-//        }
+        .animation(.linear, value: viewModel.quickConnectEnabled)
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            try? await viewModel.checkQuickConnect()
+        }
 //        .onAppear {
 //            Task {
 //                try? await viewModel.checkQuickConnect()
