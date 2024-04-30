@@ -11,7 +11,7 @@ import SwiftUI
 
 extension UserListView {
 
-    struct UserListRow: View {
+    struct UserRow: View {
 
         @Environment(\.isEditing)
         private var isEditing: Bool
@@ -104,18 +104,3 @@ extension UserListView {
         }
     }
 }
-
-// extension UserListView.UserListRow {
-//
-//    init(user: UserState, server: ServerState) {
-//        self.init(
-//            server: server,
-//            user: user,
-//            onSelect: {}
-//        )
-//    }
-//
-//    func onSelect(_ action: @escaping () -> Void) -> Self {
-//        copy(modifying: \.onSelect, with: action)
-//    }
-// }

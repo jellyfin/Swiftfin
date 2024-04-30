@@ -212,9 +212,9 @@
 		E10B1E8B2BD76FA900A92EAF /* QuickConnectViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1E892BD76FA900A92EAF /* QuickConnectViewModel.swift */; };
 		E10B1E8E2BD7708900A92EAF /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */; };
 		E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */; };
-		E10B1EB22BD976A200A92EAF /* AddUserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */; };
-		E10B1EB42BD9803100A92EAF /* UserListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB32BD9803100A92EAF /* UserListRow.swift */; };
-		E10B1EB62BD98C6600A92EAF /* AddUserListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */; };
+		E10B1EB22BD976A200A92EAF /* AddUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB12BD976A200A92EAF /* AddUserButton.swift */; };
+		E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB32BD9803100A92EAF /* UserRow.swift */; };
+		E10B1EB62BD98C6600A92EAF /* AddUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EB52BD98C6600A92EAF /* AddUserRow.swift */; };
 		E10B1EBB2BD9AD2000A92EAF /* SwiftfinStore+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EBA2BD9AD2000A92EAF /* SwiftfinStore+Error.swift */; };
 		E10B1EBC2BD9AD2000A92EAF /* SwiftfinStore+Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EBA2BD9AD2000A92EAF /* SwiftfinStore+Error.swift */; };
 		E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1EBD2BD9AD5C00A92EAF /* V1ServerModel.swift */; };
@@ -378,6 +378,8 @@
 		E145EB262BE055AD003BF6F3 /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB242BE055AD003BF6F3 /* ServerResponse.swift */; };
 		E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */; };
 		E145EB432BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */; };
+		E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
+		E145EB462BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
 		E148128328C1443D003B8787 /* NameGuidPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */; };
 		E148128528C15472003B8787 /* SortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder.swift */; };
 		E148128628C15475003B8787 /* SortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder.swift */; };
@@ -690,7 +692,7 @@
 		E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */; };
 		E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */; };
 		E1BE1CE72BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */; };
-		E1BE1CEA2BDB5AFE008176A9 /* UserGridItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */; };
+		E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CE92BDB5AFE008176A9 /* UserGridButton.swift */; };
 		E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CED2BDB68CD008176A9 /* UserProfileRow.swift */; };
 		E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */; };
 		E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */; };
@@ -1036,9 +1038,9 @@
 		E1092F4B29106F9F00163F57 /* GestureAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureAction.swift; sourceTree = "<group>"; };
 		E10B1E892BD76FA900A92EAF /* QuickConnectViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickConnectViewModel.swift; sourceTree = "<group>"; };
 		E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
-		E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserGridButton.swift; sourceTree = "<group>"; };
-		E10B1EB32BD9803100A92EAF /* UserListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListRow.swift; sourceTree = "<group>"; };
-		E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserListRow.swift; sourceTree = "<group>"; };
+		E10B1EB12BD976A200A92EAF /* AddUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
+		E10B1EB32BD9803100A92EAF /* UserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRow.swift; sourceTree = "<group>"; };
+		E10B1EB52BD98C6600A92EAF /* AddUserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserRow.swift; sourceTree = "<group>"; };
 		E10B1EBA2BD9AD2000A92EAF /* SwiftfinStore+Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+Error.swift"; sourceTree = "<group>"; };
 		E10B1EBD2BD9AD5C00A92EAF /* V1ServerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V1ServerModel.swift; sourceTree = "<group>"; };
 		E10B1EC02BD9AD6100A92EAF /* V1UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V1UserModel.swift; sourceTree = "<group>"; };
@@ -1143,6 +1145,7 @@
 		E145EB212BDCCA43003BF6F3 /* BulletedList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BulletedList.swift; sourceTree = "<group>"; };
 		E145EB242BE055AD003BF6F3 /* ServerResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerResponse.swift; sourceTree = "<group>"; };
 		E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelectionMenu.swift; sourceTree = "<group>"; };
+		E145EB442BE0AD4E003BF6F3 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		E148128428C15472003B8787 /* SortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOrder.swift; sourceTree = "<group>"; };
 		E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemFilter+ItemTrait.swift"; sourceTree = "<group>"; };
 		E148128A28C15526003B8787 /* ItemSortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSortBy.swift; sourceTree = "<group>"; };
@@ -1317,7 +1320,7 @@
 		E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleActionButton.swift; sourceTree = "<group>"; };
 		E1BDF31629525F0400CC0294 /* AdvancedActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedActionButton.swift; sourceTree = "<group>"; };
 		E1BE1CE62BDABDC1008176A9 /* AlwaysNavigationBarBlurModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlwaysNavigationBarBlurModifier.swift; sourceTree = "<group>"; };
-		E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridItemView.swift; sourceTree = "<group>"; };
+		E1BE1CE92BDB5AFE008176A9 /* UserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridButton.swift; sourceTree = "<group>"; };
 		E1BE1CED2BDB68CD008176A9 /* UserProfileRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRow.swift; sourceTree = "<group>"; };
 		E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSettingsView.swift; sourceTree = "<group>"; };
 		E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackSpeed.swift; sourceTree = "<group>"; };
@@ -1997,6 +2000,7 @@
 				E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */,
 				E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */,
 				E1B5861129E32EEF00E45D6E /* Sequence.swift */,
+				E145EB442BE0AD4E003BF6F3 /* Set.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1DD55362B6EE533007501C0 /* Task.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
@@ -2258,11 +2262,11 @@
 		E10B1EB02BD9769C00A92EAF /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E10B1EB12BD976A200A92EAF /* AddUserGridButton.swift */,
-				E10B1EB52BD98C6600A92EAF /* AddUserListRow.swift */,
-				E1BE1CE92BDB5AFE008176A9 /* UserGridItemView.swift */,
-				E10B1EB32BD9803100A92EAF /* UserListRow.swift */,
+				E10B1EB12BD976A200A92EAF /* AddUserButton.swift */,
+				E10B1EB52BD98C6600A92EAF /* AddUserRow.swift */,
 				E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */,
+				E1BE1CE92BDB5AFE008176A9 /* UserGridButton.swift */,
+				E10B1EB32BD9803100A92EAF /* UserRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3846,6 +3850,7 @@
 				C46DD8D92A8DC2990046A504 /* LiveNativeVideoPlayer.swift in Sources */,
 				E1575E9F293E7B1E001665B1 /* Int.swift in Sources */,
 				E1D9F475296E86D400129AF3 /* NativeVideoPlayer.swift in Sources */,
+				E145EB462BE0AD4E003BF6F3 /* Set.swift in Sources */,
 				E1575E7D293E77B5001665B1 /* PosterDisplayType.swift in Sources */,
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E18A17F2298C68BB00C22F62 /* MainOverlay.swift in Sources */,
@@ -4039,6 +4044,7 @@
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,
 				E1BDF2F129524AB700CC0294 /* AutoPlayActionButton.swift in Sources */,
+				E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */,
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
 				C46DD8E02A8DC7790046A504 /* LiveOverlay.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
@@ -4084,7 +4090,7 @@
 				E15756322935642A00976E1F /* Double.swift in Sources */,
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
-				E10B1EB42BD9803100A92EAF /* UserListRow.swift in Sources */,
+				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */,
@@ -4124,7 +4130,7 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
-				E1BE1CEA2BDB5AFE008176A9 /* UserGridItemView.swift in Sources */,
+				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E10B1EBB2BD9AD2000A92EAF /* SwiftfinStore+Error.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4272,7 +4278,7 @@
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
-				E10B1EB62BD98C6600A92EAF /* AddUserListRow.swift in Sources */,
+				E10B1EB62BD98C6600A92EAF /* AddUserRow.swift in Sources */,
 				E1D37F582B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */,
 				E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */,
 				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
@@ -4340,7 +4346,7 @@
 				E13F05EC28BC9000003499D2 /* LibraryDisplayType.swift in Sources */,
 				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,
-				E10B1EB22BD976A200A92EAF /* AddUserGridButton.swift in Sources */,
+				E10B1EB22BD976A200A92EAF /* AddUserButton.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* UserListCoordinator.swift in Sources */,
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
 				E1FCD09626C47118007C8DCF /* ErrorMessage.swift in Sources */,

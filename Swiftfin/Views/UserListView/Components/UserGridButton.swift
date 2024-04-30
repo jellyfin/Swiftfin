@@ -11,16 +11,16 @@ import SwiftUI
 
 extension UserListView {
 
-    struct UserGridItemView: View {
+    struct UserGridButton: View {
 
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
         private var isSelected
 
-        let user: UserState
-        let client: JellyfinClient
-        let action: () -> Void
+        private let user: UserState
+        private let client: JellyfinClient
+        private let action: () -> Void
 
         init(
             user: UserState,
@@ -35,6 +35,12 @@ extension UserListView {
         private var personView: some View {
             SystemImageContentView(systemName: "person.fill")
                 .imageFrameRatio(width: 2, height: 2)
+        }
+
+        private var labelStyle: some ShapeStyle {
+            guard isEditing else { return .primary }
+
+            return isSelected ? .primary : .secondary
         }
 
         var body: some View {
@@ -83,6 +89,7 @@ extension UserListView {
 
                 Text(user.username)
                     .fontWeight(.semibold)
+                    .foregroundStyle(labelStyle)
                     .lineLimit(1)
             }
         }

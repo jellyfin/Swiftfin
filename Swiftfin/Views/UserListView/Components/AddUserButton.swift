@@ -14,7 +14,7 @@ extension UserListView {
     struct AddUserButton: View {
 
         @Binding
-        private var serverSelection: ServerSelectionOption
+        private var serverSelection: ServerSelection
 
         @Environment(\.isEnabled)
         private var isEnabled
@@ -22,8 +22,18 @@ extension UserListView {
         private let action: (ServerState) -> Void
         private let servers: OrderedSet<ServerState>
 
+        private var selectedServer: ServerState? {
+            if case let ServerSelection.server(id: id) = serverSelection,
+               let server = servers.first(where: { server in server.id == id })
+            {
+                return server
+            }
+
+            return nil
+        }
+
         init(
-            serverSelection: Binding<ServerSelectionOption>,
+            serverSelection: Binding<ServerSelection>,
             servers: OrderedSet<ServerState>,
             action: @escaping (ServerState) -> Void
         ) {
@@ -57,10 +67,8 @@ extension UserListView {
                     .disabled(!isEnabled)
                 } else {
                     Button {
-                        if case let ServerSelectionOption.server(id: id) = serverSelection,
-                           let server = servers.first(where: { $0.id == id })
-                        {
-                            action(server)
+                        if let selectedServer {
+                            action(selectedServer)
                         }
                     } label: {
                         content

@@ -19,7 +19,7 @@ import SwiftUI
 
 extension Defaults.Keys {
 
-    static let userListViewServerSelectionOption = Defaults.Key<UserListView.ServerSelectionOption>(
+    static let userListViewServerSelectionOption = Defaults.Key<UserListView.ServerSelection>(
         "userListViewServerSelectionOption",
         default: .all,
         suite: .universalSuite
@@ -42,7 +42,7 @@ extension ServerState {
 
 struct UserListView: View {
 
-    enum ServerSelectionOption: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
+    enum ServerSelection: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
 
         case all
         case server(id: String)
@@ -87,20 +87,16 @@ struct UserListView: View {
     private var gridItemSize: CGSize = .zero
     @State
     private var gridItems: OrderedSet<UserGridItem> = []
-
     @State
     private var isEditingUsers: Bool = false
     @State
     private var selectedUsers: Set<UserState> = []
 
-    @State
-    private var isSelectingServer: Bool = false
-
     @StateObject
     private var viewModel = UserListViewModel()
 
     private var selectedServer: ServerState? {
-        if case let ServerSelectionOption.server(id: id) = serverSelection,
+        if case let ServerSelection.server(id: id) = serverSelection,
            let server = viewModel.servers.keys.first(where: { server in server.id == id })
         {
             return server
@@ -119,6 +115,31 @@ struct UserListView: View {
         case .server:
             return selectedServer?
                 .splashScreenImageSource()
+        }
+    }
+
+    private func makeGridItems(for serverSelection: ServerSelection) -> OrderedSet<UserGridItem> {
+        switch serverSelection {
+        case .all:
+            let items = viewModel.servers
+                .map { server, users in
+                    users.map { UserGridItem.user($0, server: server) }
+                }
+                .flatMap { $0 }
+                .appending(.addUser)
+
+            return OrderedSet(items)
+        case let .server(id: id):
+            guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
+                assertionFailure("server with ID not found?")
+                return [.addUser]
+            }
+
+            let items = viewModel.servers[server]!
+                .map { UserGridItem.user($0, server: server) }
+                .appending(.addUser)
+
+            return OrderedSet(items)
         }
     }
 
@@ -165,7 +186,7 @@ struct UserListView: View {
                 gridItemView(for: item)
                     .if(gridItems.count % 2 == 1 && item == gridItems.last) { view in
                         view.trackingSize($gridItemSize)
-                            .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - 10)
+                            .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - EdgeInsets.edgePadding)
                     }
             }
         }
@@ -177,7 +198,7 @@ struct UserListView: View {
     private func gridItemView(for item: UserGridItem) -> some View {
         switch item {
         case let .user(user, server):
-            UserGridItemView(
+            UserGridButton(
                 user: user,
                 client: server.client
             ) {
@@ -218,7 +239,7 @@ struct UserListView: View {
     private func listItemView(for item: UserGridItem) -> some View {
         switch item {
         case let .user(user, server):
-            UserListRow(
+            UserRow(
                 user: user,
                 server: server
             ) {
@@ -231,21 +252,46 @@ struct UserListView: View {
             .environment(\.isSelected, selectedUsers.contains(user))
             .environment(\.isEditing, isEditingUsers)
         case .addUser:
-            AddUserListRow {
-                switch serverSelection {
-                case .all: ()
-                case let .server(id: id):
-                    router.route(to: \.userSignIn, viewModel.servers.keys.first(where: { $0.id == id })!)
-                }
+            AddUserRow(
+                serverSelection: $serverSelection,
+                servers: viewModel.servers.keys
+            ) { server in
+                router.route(to: \.userSignIn, server)
             }
             .environment(\.isEnabled, !isEditingUsers)
         }
     }
 
-    // MARK: contentView
+    private var deleteUsersButton: some View {
+        Button {
+            viewModel.send(.deleteUsers(Array(selectedUsers)))
+            viewModel.send(.getServers)
+
+            isEditingUsers = false
+        } label: {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(Color.red)
+
+                Label("Delete", systemImage: "trash.fill")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
+
+                if selectedUsers.isEmpty {
+                    Color.black
+                        .opacity(0.5)
+                }
+            }
+            .frame(height: 50)
+        }
+        .disabled(!isEditingUsers)
+        .buttonStyle(.plain)
+    }
+
+    // MARK: userView
 
     @ViewBuilder
-    private var contentView: some View {
+    private var userView: some View {
         VStack {
             ZStack {
                 Color.clear
@@ -266,30 +312,8 @@ struct UserListView: View {
             }
 
             if isEditingUsers {
-                Button {
-                    viewModel.send(.deleteUsers(Array(selectedUsers)))
-                    viewModel.send(.getServers)
-
-                    isEditingUsers = false
-                } label: {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundStyle(Color.red)
-
-                        Label("Delete", systemImage: "trash.fill")
-                            .font(.body.weight(.semibold))
-                            .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
-
-                        if selectedUsers.isEmpty {
-                            Color.black
-                                .opacity(0.5)
-                        }
-                    }
-                    .frame(height: 50)
-                }
-                .disabled(!isEditingUsers)
-                .buttonStyle(.plain)
-                .edgePadding()
+                deleteUsersButton
+                    .edgePadding()
             }
         }
         .background {
@@ -311,6 +335,12 @@ struct UserListView: View {
         .alwaysNavigationBarBlur()
     }
 
+    // MARK: emptyView
+
+    private var emptyView: some View {
+        VStack {}
+    }
+
     // MARK: body
 
     var body: some View {
@@ -321,7 +351,11 @@ struct UserListView: View {
             case .initial:
                 Color.black
             case .content:
-                contentView
+                if viewModel.servers.isEmpty {
+                    emptyView
+                } else {
+                    userView
+                }
             }
         }
         .navigationTitle("Users")
@@ -348,60 +382,13 @@ struct UserListView: View {
         }
         .onChange(of: isEditingUsers) { newValue in
             guard !newValue else { return }
-
             selectedUsers.removeAll()
         }
         .onChange(of: serverSelection) { newValue in
-            switch newValue {
-            case .all:
-                print("all")
-                let items = viewModel.servers
-                    .map { server, users in
-                        users.map { UserGridItem.user($0, server: server) }
-                    }
-                    .flatMap { $0 }
-                    .appending(.addUser)
-
-                gridItems = OrderedSet(items)
-            case let .server(id: id):
-                print("server: \(id)")
-
-                guard let selectedServer else {
-                    assertionFailure("server with ID not found?")
-                    return
-                }
-
-                let items = viewModel.servers[selectedServer]!
-                    .map { UserGridItem.user($0, server: selectedServer) }
-                    .appending(.addUser)
-
-                gridItems = OrderedSet(items)
-            }
+            gridItems = makeGridItems(for: newValue)
         }
         .onChange(of: viewModel.servers) { _ in
-            switch serverSelection {
-            case .all:
-                let items = viewModel.servers
-                    .map { server, users in
-                        users.map { UserGridItem.user($0, server: server) }
-                    }
-                    .flatMap { $0 }
-                    .appending(.addUser)
-
-                gridItems = OrderedSet(items)
-            case let .server(id: id):
-                print("server: \(id)")
-                guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
-                    assertionFailure("server with ID not found?")
-                    return
-                }
-
-                let items = viewModel.servers[server]!
-                    .map { UserGridItem.user($0, server: server) }
-                    .appending(.addUser)
-
-                gridItems = OrderedSet(items)
-            }
+            gridItems = makeGridItems(for: serverSelection)
         }
     }
 }
@@ -430,16 +417,5 @@ extension View {
 
     func scroll(ifLargerThan height: CGFloat) -> some View {
         modifier(ScrollIfLargerThanModifier(height: height))
-    }
-}
-
-extension Set {
-
-    mutating func toggle(value: Element) {
-        if contains(value) {
-            remove(value)
-        } else {
-            insert(value)
-        }
     }
 }

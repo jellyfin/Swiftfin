@@ -16,13 +16,13 @@ extension UserListView {
         private var router: UserListCoordinator.Router
 
         @Binding
-        private var serverSelection: ServerSelectionOption
+        private var serverSelection: ServerSelection
 
         @ObservedObject
         private var viewModel: UserListViewModel
 
         private var selectedServer: ServerState? {
-            if case let ServerSelectionOption.server(id: id) = serverSelection,
+            if case let ServerSelection.server(id: id) = serverSelection,
                let server = viewModel.servers.keys.first(where: { server in server.id == id })
             {
                 return server
@@ -32,7 +32,7 @@ extension UserListView {
         }
 
         init(
-            selection: Binding<ServerSelectionOption>,
+            selection: Binding<ServerSelection>,
             viewModel: UserListViewModel
         ) {
             self._serverSelection = selection
@@ -57,7 +57,7 @@ extension UserListView {
 
                     if viewModel.servers.keys.count > 1 {
                         Label("All Servers", systemImage: "person.2.fill")
-                            .tag(ServerSelectionOption.all)
+                            .tag(ServerSelection.all)
                     }
 
                     ForEach(viewModel.servers.keys) { server in
@@ -65,7 +65,7 @@ extension UserListView {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
-                        .tag(ServerSelectionOption.server(id: server.id))
+                        .tag(ServerSelection.server(id: server.id))
                     }
                 }
             } label: {
