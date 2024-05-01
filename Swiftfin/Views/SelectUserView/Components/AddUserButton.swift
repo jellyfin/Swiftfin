@@ -9,7 +9,7 @@
 import OrderedCollections
 import SwiftUI
 
-extension UserListView {
+extension SelectUserView {
 
     struct AddUserButton: View {
 

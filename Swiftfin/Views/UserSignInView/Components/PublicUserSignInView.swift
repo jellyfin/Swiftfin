@@ -11,39 +11,57 @@ import SwiftUI
 
 extension UserSignInView {
 
-    struct PublicUserSignInView: View {
+    struct PublicUserButton: View {
 
-        @ObservedObject
-        var viewModel: UserSignInViewModel
+        private let user: UserDto
+        private let client: JellyfinClient
+        private let action: () -> Void
 
-        @State
-        private var password: String = ""
-
-        let publicUser: UserDto
+        init(
+            user: UserDto,
+            client: JellyfinClient,
+            action: @escaping () -> Void
+        ) {
+            self.user = user
+            self.client = client
+            self.action = action
+        }
 
         var body: some View {
-            DisclosureGroup {
-                SecureField(L10n.password, text: $password)
-                Button {
-                    guard let username = publicUser.name else { return }
-//                    viewModel.send(.signInWithUserPass(username: username, password: password))
-                } label: {
-                    L10n.signIn.text
-                }
+            Button {
+                action()
             } label: {
                 HStack {
-                    ImageView(publicUser.profileImageSource(client: viewModel.server.client, maxWidth: 50, maxHeight: 50))
-                        .failure {
-                            Image(systemName: "person.circle")
-                                .resizable()
-                        }
-                        .frame(width: 50, height: 50)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    ZStack {
+                        Color.clear
 
-                    Text(publicUser.name ?? .emptyDash)
+                        ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                            .placeholder { _ in
+                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                            }
+                            .failure {
+                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                            }
+                    }
+                    .aspectRatio(1, contentMode: .fill)
+                    .posterShadow()
+                    .posterBorder(ratio: 1 / 2, of: \.width)
+                    .clipShape(.circle)
+                    .frame(width: 50, height: 50)
+
+                    Text(user.name ?? .emptyDash)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+
                     Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.body.weight(.regular))
+                        .foregroundColor(.secondary)
                 }
             }
+            .buttonStyle(.plain)
         }
     }
 }

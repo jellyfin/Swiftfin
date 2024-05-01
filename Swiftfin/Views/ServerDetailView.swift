@@ -9,15 +9,17 @@
 import Factory
 import SwiftUI
 
-#warning("TODO: break into 2 views for userlist and basic user")
+// Note: uses environment `isEditing` for deletion button. This was done
+//       to just prevent having 2 views that looked/interacted the same
+//       except for a single button.
 
-struct ServerDetailView: View {
+struct EditServerView: View {
 
     @EnvironmentObject
     private var router: UserListCoordinator.Router
 
-    @Environment(\.isEnabled)
-    private var isEnabled
+    @Environment(\.isEditing)
+    private var isEditing
 
     @State
     private var currentServerURL: URL
@@ -25,10 +27,10 @@ struct ServerDetailView: View {
     private var isPresentingConfirmDeletion: Bool = false
 
     @StateObject
-    private var viewModel: ServerDetailViewModel
+    private var viewModel: EditServerViewModel
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: ServerDetailViewModel(server: server))
+        self._viewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
         self._currentServerURL = State(initialValue: server.currentURL)
     }
 
@@ -47,23 +49,25 @@ struct ServerDetailView: View {
                             .tag(url)
                             .foregroundColor(.secondary)
                     }
-                    .onChange(of: currentServerURL) { newValue in
-                        viewModel.setCurrentServerURL(to: newValue)
-                    }
                 }
             }
 
-            if isEnabled {
-                Button("Delete", systemImage: "trash.fill", role: .destructive) {
+            if isEditing {
+                Button("Delete", role: .destructive) {
                     isPresentingConfirmDeletion = true
                 }
                 .buttonStyle(.plain)
+                .font(.body.weight(.semibold))
                 .foregroundStyle(.red)
+                .frame(maxWidth: .infinity)
                 .listRowBackground(Color.red.opacity(0.1))
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(L10n.server)
+        .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: currentServerURL) { newValue in
+            viewModel.setCurrentURL(to: newValue)
+        }
         .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
             Button("Delete", role: .destructive) {
                 viewModel.delete()

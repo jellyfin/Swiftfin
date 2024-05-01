@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension UserListView {
+extension SelectUserView {
 
     struct ServerSelectionMenu: View {
 
@@ -19,7 +19,7 @@ extension UserListView {
         private var serverSelection: ServerSelection
 
         @ObservedObject
-        private var viewModel: UserListViewModel
+        private var viewModel: SelectUserViewModel
 
         private var selectedServer: ServerState? {
             if case let ServerSelection.server(id: id) = serverSelection,
@@ -33,7 +33,7 @@ extension UserListView {
 
         init(
             selection: Binding<ServerSelection>,
-            viewModel: UserListViewModel
+            viewModel: SelectUserViewModel
         ) {
             self._serverSelection = selection
             self.viewModel = viewModel

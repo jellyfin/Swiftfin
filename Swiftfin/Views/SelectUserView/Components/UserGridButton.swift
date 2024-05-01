@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserListView {
+extension SelectUserView {
 
     struct UserGridButton: View {
 
@@ -36,7 +36,7 @@ extension UserListView {
             SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
 
-        private var labelStyle: some ShapeStyle {
+        private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
 
             return isSelected ? .primary : .secondary
@@ -87,7 +87,7 @@ extension UserListView {
 
                 Text(user.username)
                     .fontWeight(.semibold)
-                    .foregroundStyle(labelStyle)
+                    .foregroundStyle(labelForegroundStyle)
                     .lineLimit(1)
             }
         }

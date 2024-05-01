@@ -15,7 +15,7 @@ struct UserSignInView: View {
     private var router: UserSignInCoordinator.Router
 
     @FocusState
-    private var isUsernameFocused: Bool
+    private var focusedTextField: Int?
 
     @State
     private var isPresentingError: Bool = false
@@ -39,22 +39,30 @@ struct UserSignInView: View {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
-                .focused($isUsernameFocused)
+                .focused($focusedTextField, equals: 0)
 
             UnmaskSecureField(L10n.password, text: $password)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
+                .focused($focusedTextField, equals: 1)
+        }
 
-            if case .signingIn = viewModel.state {
-                Button(L10n.cancel, role: .destructive) {
-                    viewModel.send(.cancel)
-                }
-            } else {
-                Button(L10n.signIn) {
-                    viewModel.send(.signIn(username: username, password: password))
-                }
-                .disabled(username.isEmpty)
+        if case .signingIn = viewModel.state {
+            Button(L10n.cancel, role: .destructive) {
+                viewModel.send(.cancel)
             }
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.red.opacity(0.1))
+        } else {
+            Button(L10n.signIn) {
+                viewModel.send(.signIn(username: username, password: password))
+            }
+            .buttonStyle(.plain)
+            .disabled(username.isEmpty)
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.accentColor.opacity(username.isEmpty ? 0.5 : 1))
         }
     }
 
@@ -68,11 +76,16 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserSignInView(viewModel: viewModel, publicUser: user)
+                    PublicUserButton(
+                        user: user,
+                        client: viewModel.server.client
+                    ) {
+                        username = user.name ?? ""
+                        focusedTextField = 1
+                    }
                 }
             }
         }
-        .headerProminence(.increased)
     }
 
     var body: some View {
@@ -80,25 +93,34 @@ struct UserSignInView: View {
             signInSection
 
             if viewModel.isQuickConnectEnabled {
-                Button {
-                    router.route(to: \.quickConnect, viewModel.quickConnect)
-                } label: {
-                    L10n.quickConnect.text
+                Section {
+                    Button(L10n.quickConnect) {
+                        router.route(to: \.quickConnect, viewModel.quickConnect)
+                    }
+                    .buttonStyle(.plain)
+                    .font(.body.weight(.semibold))
+                    .listRowBackground(Color.accentColor)
+                    .frame(maxWidth: .infinity)
                 }
             }
 
             publicUsersSection
         }
-        .interactiveDismissDisabled(viewModel.state == .signingIn)
         .animation(.linear, value: viewModel.isQuickConnectEnabled)
+        .interactiveDismissDisabled(viewModel.state == .signingIn)
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismissCoordinator()
         }
         .onFirstAppear {
-            isUsernameFocused = true
+            focusedTextField = 0
             viewModel.send(.getPublicData)
+        }
+        .topBarTrailing {
+            if viewModel.state == .signingIn {
+                ProgressView()
+            }
         }
     }
 }

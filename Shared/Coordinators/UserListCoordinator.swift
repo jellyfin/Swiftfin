@@ -38,8 +38,8 @@ final class UserListCoordinator: NavigationCoordinatable {
 
     func makeEditServer(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ServerDetailView(server: server)
-                .environment(\.isEnabled, true)
+            EditServerView(server: server)
+                .environment(\.isEditing, true)
         }
     }
 
@@ -49,7 +49,7 @@ final class UserListCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        UserListView()
+        SelectUserView()
             .preferredColorScheme(.dark)
     }
 }

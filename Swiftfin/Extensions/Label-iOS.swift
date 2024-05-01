@@ -22,6 +22,13 @@ extension LabelStyle where Self == TrailingIconLabelStyle {
     }
 }
 
+extension LabelStyle where Self == WideTitleLabelStyle {
+
+    static var wideTitle: WideTitleLabelStyle {
+        WideTitleLabelStyle()
+    }
+}
+
 struct EpisodeSelectorLabelStyle: LabelStyle {
 
     func makeBody(configuration: Configuration) -> some View {
@@ -50,6 +57,20 @@ struct TrailingIconLabelStyle: LabelStyle {
             configuration.title
 
             configuration.icon
+        }
+    }
+}
+
+struct WideTitleLabelStyle: LabelStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.icon
+
+            Spacer()
+        }
+        .overlay {
+            configuration.title
         }
     }
 }

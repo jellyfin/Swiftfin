@@ -14,7 +14,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class UserListViewModel: ViewModel, Stateful {
+class SelectUserViewModel: ViewModel, Stateful {
 
     // MARK: Action
 

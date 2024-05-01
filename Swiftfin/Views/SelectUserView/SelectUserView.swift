@@ -19,7 +19,7 @@ import SwiftUI
 
 extension Defaults.Keys {
 
-    static let userListViewServerSelectionOption = Defaults.Key<UserListView.ServerSelection>(
+    static let userListViewServerSelectionOption = Defaults.Key<SelectUserView.ServerSelection>(
         "userListViewServerSelectionOption",
         default: .all,
         suite: .universalSuite
@@ -40,7 +40,7 @@ extension ServerState {
     }
 }
 
-struct UserListView: View {
+struct SelectUserView: View {
 
     enum ServerSelection: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
 
@@ -93,7 +93,7 @@ struct UserListView: View {
     private var selectedUsers: Set<UserState> = []
 
     @StateObject
-    private var viewModel = UserListViewModel()
+    private var viewModel = SelectUserViewModel()
 
     private var selectedServer: ServerState? {
         if case let ServerSelection.server(id: id) = serverSelection,
@@ -309,8 +309,11 @@ struct UserListView: View {
             .frame(maxHeight: .infinity)
 
             if !isEditingUsers {
-                ServerSelectionMenu(selection: $serverSelection, viewModel: viewModel)
-                    .edgePadding()
+                ServerSelectionMenu(
+                    selection: $serverSelection,
+                    viewModel: viewModel
+                )
+                .edgePadding()
             }
 
             if isEditingUsers {

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserListView {
+extension SelectUserView {
 
     struct UserRow: View {
 
