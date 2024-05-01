@@ -19,10 +19,6 @@ struct UserProfileSettingsView: View {
 
     @ViewBuilder
     private var imageView: some View {
-//        if let image = viewModel.userSession.user.image {
-//            Image(uiImage: image)
-//                .resizable()
-//        } else {
         ImageView(
             viewModel.userSession.user.profileImageSource(
                 client: viewModel.userSession.client,
@@ -36,7 +32,6 @@ struct UserProfileSettingsView: View {
         .failure {
             SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
-//        }
     }
 
     var body: some View {
@@ -44,7 +39,7 @@ struct UserProfileSettingsView: View {
             Section {
                 VStack(alignment: .center) {
                     Button {
-                        print("here")
+                        // TODO: photo picker
                     } label: {
                         ZStack(alignment: .bottomTrailing) {
                             imageView
@@ -52,9 +47,10 @@ struct UserProfileSettingsView: View {
                                 .clipShape(.circle)
                                 .shadow(radius: 5)
 
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
+                            // TODO: photo picker
+//                            Image(systemName: "pencil.circle.fill")
+//                                .resizable()
+//                                .frame(width: 30, height: 30)
                         }
                     }
 

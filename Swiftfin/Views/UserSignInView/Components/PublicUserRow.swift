@@ -11,7 +11,7 @@ import SwiftUI
 
 extension UserSignInView {
 
-    struct PublicUserButton: View {
+    struct PublicUserRow: View {
 
         private let user: UserDto
         private let client: JellyfinClient

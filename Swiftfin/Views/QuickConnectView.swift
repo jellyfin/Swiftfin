@@ -21,33 +21,34 @@ struct QuickConnectView: View {
         self.viewModel = quickConnect
     }
 
-    #warning("TODO: complete view")
     private func pollingView(code: String) -> some View {
-        Text(code)
-            .tracking(10)
-            .font(.largeTitle)
-            .monospacedDigit()
-    }
+        VStack(spacing: 50) {
 
-    #warning("TODO: retry")
-    @ViewBuilder
-    private func errorView(error: QuickConnect.QuickConnectError) -> some View {
-        Text(error.localizedDescription)
+            #warning("TODO: finalize, probably move back to steps")
+            Text("Enter the following code on another Jellyfin login:")
+
+            Text(code)
+                .tracking(10)
+                .font(.largeTitle)
+                .monospacedDigit()
+
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .edgePadding()
     }
 
     var body: some View {
         WrappedView {
             switch viewModel.state {
-            case .idle:
+            case .idle, .authenticated:
                 Color.clear
             case .retrievingCode:
                 ProgressView()
             case let .polling(code):
                 pollingView(code: code)
-            case .authenticated:
-                Text("Authenticated")
             case let .error(error):
-                errorView(error: error)
+                ErrorView(error: error)
             }
         }
         .edgePadding()

@@ -33,25 +33,32 @@ struct ConnectToServerView: View {
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
+    @ViewBuilder
     private var connectSection: some View {
         Section(L10n.connectToServer) {
-
             TextField(L10n.serverURL, text: $url)
                 .disableAutocorrection(true)
                 .autocapitalization(.none)
                 .keyboardType(.URL)
                 .focused($isURLFocused)
+        }
 
-            if viewModel.state == .connecting {
-                Button(L10n.cancel, role: .destructive) {
-                    viewModel.send(.cancel)
-                }
-            } else {
-                Button(L10n.connect) {
-                    viewModel.send(.connect(url))
-                }
-                .disabled(url.isEmpty)
+        if viewModel.state == .connecting {
+            Button(L10n.cancel, role: .destructive) {
+                viewModel.send(.cancel)
             }
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.red.opacity(0.1))
+        } else {
+            Button(L10n.connect) {
+                viewModel.send(.connect(url))
+            }
+            .buttonStyle(.plain)
+            .disabled(url.isEmpty)
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.accentColor.opacity(url.isEmpty ? 0.5 : 1))
         }
     }
 
@@ -68,16 +75,26 @@ struct ConnectToServerView: View {
                         url = server.currentURL.absoluteString
                         viewModel.send(.connect(server.currentURL.absoluteString))
                     } label: {
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(server.name)
-                                .font(.title3)
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(server.name)
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
 
-                            Text(server.currentURL.absoluteString)
-                                .font(.subheadline)
+                                Text(server.currentURL.absoluteString)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
                                 .foregroundColor(.secondary)
                         }
                     }
                     .disabled(viewModel.state == .connecting)
+                    .buttonStyle(.plain)
                 }
             }
         }

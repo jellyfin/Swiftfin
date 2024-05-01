@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: use _UIHostingView for button animation workaround?
+
 struct UnmaskSecureField: UIViewRepresentable {
 
     @Binding
@@ -20,7 +22,7 @@ struct UnmaskSecureField: UIViewRepresentable {
         self._text = text
     }
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> UITextField {
 
         let textField = UITextField()
         textField.isSecureTextEntry = true
@@ -50,7 +52,11 @@ struct UnmaskSecureField: UIViewRepresentable {
         return textField
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func updateUIView(_ textField: UITextField, context: Context) {
+        if text != textField.text {
+            textField.text = text
+        }
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator()

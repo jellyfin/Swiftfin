@@ -76,11 +76,12 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserButton(
+                    PublicUserRow(
                         user: user,
                         client: viewModel.server.client
                     ) {
                         username = user.name ?? ""
+                        password = ""
                         focusedTextField = 1
                     }
                 }

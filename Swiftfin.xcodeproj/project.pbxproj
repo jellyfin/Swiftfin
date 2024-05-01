@@ -559,7 +559,7 @@
 		E18ACA8F2A15A2CF00BB4F35 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		E18ACA922A15A32F00BB4F35 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		E18ACA952A15A3E100BB4F35 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0AE28A222240092E7F1 /* PublicUserSignInView.swift */; };
+		E18CE0AF28A222240092E7F1 /* PublicUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0AE28A222240092E7F1 /* PublicUserRow.swift */; };
 		E18CE0B228A229E70092E7F1 /* UserDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B128A229E70092E7F1 /* UserDto.swift */; };
 		E18CE0B428A22EDA0092E7F1 /* RepeatingTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */; };
 		E18CE0B928A2322D0092E7F1 /* QuickConnectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B828A2322D0092E7F1 /* QuickConnectCoordinator.swift */; };
@@ -1229,7 +1229,7 @@
 		E18A8E8228D60BC400333B9A /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		E18A8E8428D60D0000333B9A /* VideoPlayerCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerCoordinator.swift; sourceTree = "<group>"; };
 		E18ACA8A2A14301800BB4F35 /* ScalingButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalingButtonStyle.swift; sourceTree = "<group>"; };
-		E18CE0AE28A222240092E7F1 /* PublicUserSignInView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicUserSignInView.swift; sourceTree = "<group>"; };
+		E18CE0AE28A222240092E7F1 /* PublicUserRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicUserRow.swift; sourceTree = "<group>"; };
 		E18CE0B128A229E70092E7F1 /* UserDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDto.swift; sourceTree = "<group>"; };
 		E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatingTimer.swift; sourceTree = "<group>"; };
 		E18CE0B828A2322D0092E7F1 /* QuickConnectCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectCoordinator.swift; sourceTree = "<group>"; };
@@ -2758,7 +2758,7 @@
 		E18CE0B028A222310092E7F1 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E18CE0AE28A222240092E7F1 /* PublicUserSignInView.swift */,
+				E18CE0AE28A222240092E7F1 /* PublicUserRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -4014,7 +4014,7 @@
 				E18E01E8288747230022598C /* SeriesItemContentView.swift in Sources */,
 				E16AA60828A364A6009A983C /* PosterButton.swift in Sources */,
 				E1E1644128BB301900323B0A /* Array.swift in Sources */,
-				E18CE0AF28A222240092E7F1 /* PublicUserSignInView.swift in Sources */,
+				E18CE0AF28A222240092E7F1 /* PublicUserRow.swift in Sources */,
 				E129429828F4785200796AC6 /* CaseIterablePicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
 				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
