@@ -22,7 +22,7 @@ class ServerDetailViewModel: ViewModel {
     }
 
     func delete() {
-        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+        guard let storedServer = try? dataStack.fetchOne(
             From<ServerModel>(),
             [Where<ServerModel>("id == %@", server.id)]
         ) else {
@@ -30,7 +30,7 @@ class ServerDetailViewModel: ViewModel {
             return
         }
 
-        try! SwiftfinStore.dataStack.perform { transaction in
+        try! dataStack.perform { transaction in
             transaction.delete(storedServer.users)
             transaction.delete(storedServer)
         }
@@ -40,7 +40,7 @@ class ServerDetailViewModel: ViewModel {
 
     func setCurrentServerURL(to url: URL) {
 
-        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+        guard let storedServer = try? dataStack.fetchOne(
             From<ServerModel>(),
             [Where<ServerModel>("id == %@", server.id)]
         ) else {
@@ -53,7 +53,7 @@ class ServerDetailViewModel: ViewModel {
             return
         }
 
-        let transaction = SwiftfinStore.dataStack.beginUnsafe()
+        let transaction = dataStack.beginUnsafe()
 
         guard let editServer = transaction.edit(storedServer) else {
             logger.error("Unable to create edit server instance")

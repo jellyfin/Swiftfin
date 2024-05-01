@@ -1,5 +1,5 @@
 {
-  "originHash" : "d67f68ba769bd520ac411a1537cbbf60060d509bfae2aaa8274baccf6dcd2cde",
+  "originHash" : "8ea1d1eecfd3ee530e9acbb9048c410e284fe6524ba8a64506a46647748df8f8",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -97,7 +97,7 @@
       "location" : "https://github.com/LePips/jellyfin-sdk-swift",
       "state" : {
         "branch" : "quick-connect",
-        "revision" : "81dd00270d290fe8bc462e7cc1bc16aed8307d88"
+        "revision" : "110ce46c758e010d66aaba73d624780b62cf7d71"
       }
     },
     {

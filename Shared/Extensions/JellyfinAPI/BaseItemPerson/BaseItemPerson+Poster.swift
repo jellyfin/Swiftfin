@@ -27,7 +27,7 @@ extension BaseItemPerson: Poster {
         //       - maxWidth assume already scaled?
         let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
 
-        let client = Container.userSession().client
+        let client = Container.userSession()!.client
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
             tag: primaryImageTag

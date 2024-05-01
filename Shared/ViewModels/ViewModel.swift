@@ -12,11 +12,15 @@ import Foundation
 
 class ViewModel: ObservableObject {
 
+    @Injected(Container.dataStack)
+    var dataStack
+
     @Injected(LogManager.service)
     var logger
 
+    /// The current *signed in* user session
     @Injected(Container.userSession)
-    var userSession
+    var userSession: SwiftfinSession!
 
     var cancellables = Set<AnyCancellable>()
 

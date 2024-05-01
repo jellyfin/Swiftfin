@@ -89,9 +89,9 @@ final class SettingsViewModel: ViewModel {
     }
 
     func removeAllServers() {
-        guard let allServers = try? SwiftfinStore.dataStack.fetchAll(From<ServerModel>()) else { return }
+        guard let allServers = try? dataStack.fetchAll(From<ServerModel>()) else { return }
 
-        try? SwiftfinStore.dataStack.perform { transaction in
+        try? dataStack.perform { transaction in
             transaction.delete(allServers)
         }
     }

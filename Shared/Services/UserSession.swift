@@ -22,16 +22,13 @@ final class SwiftfinSession {
     let client: JellyfinClient
     let server: ServerState
     let user: UserState
-    let authenticated: Bool
 
     init(
         server: ServerState,
-        user: UserState,
-        authenticated: Bool
+        user: UserState
     ) {
         self.server = server
         self.user = user
-        self.authenticated = authenticated
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
@@ -50,12 +47,11 @@ extension Container.Scope {
 
 extension Container {
 
-    static let userSession = Factory<SwiftfinSession>(scope: .userSessionScope) {
+    static let userSession = Factory<SwiftfinSession?>(scope: .userSessionScope) {
 
         if let lastUserID = Defaults[.lastSignedInUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(
-               From<UserModel>(),
-               [Where<UserModel>("id == %@", lastUserID)]
+               From<UserModel>().where(\.$id == lastUserID)
            )
         {
             guard let server = user.server,
@@ -66,17 +62,11 @@ extension Container {
 
             return .init(
                 server: server.state,
-                user: user.state,
-                authenticated: true
-            )
-
-        } else {
-            return .init(
-                server: .sample,
-                user: .sample,
-                authenticated: false
+                user: user.state
             )
         }
+
+        return nil
     }
 }
 

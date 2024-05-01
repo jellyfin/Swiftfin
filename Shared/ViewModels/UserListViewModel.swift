@@ -80,7 +80,7 @@ class UserListViewModel: ViewModel, Stateful {
     }
 
     private func getUsers(for server: ServerState) throws -> [UserState] {
-        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
+        guard let storedServer = try? dataStack.fetchOne(
             From<ServerModel>(),
             Where<ServerModel>("id == %@", server.id)
         )
@@ -91,7 +91,7 @@ class UserListViewModel: ViewModel, Stateful {
     }
 
     private func delete(user: UserState) throws {
-        guard let storedUser = try? SwiftfinStore.dataStack.fetchOne(
+        guard let storedUser = try? dataStack.fetchOne(
             From<UserModel>(),
             [Where<UserModel>("id == %@", user.id)]
         ) else {
@@ -99,7 +99,7 @@ class UserListViewModel: ViewModel, Stateful {
             return
         }
 
-        let transaction = SwiftfinStore.dataStack.beginUnsafe()
+        let transaction = dataStack.beginUnsafe()
         transaction.delete(storedUser)
 
         try transaction.commitAndWait()

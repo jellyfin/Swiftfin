@@ -35,7 +35,7 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var signInSection: some View {
-        Section {
+        Section(L10n.signInToServer(viewModel.server.name)) {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
@@ -50,21 +50,17 @@ struct UserSignInView: View {
                     viewModel.send(.cancel)
                 }
             } else {
-                Button {
-//                    viewModel.send(.signInWithUserPass(username: username, password: password))
-                } label: {
-                    L10n.signIn.text
+                Button(L10n.signIn) {
+                    viewModel.send(.signIn(username: username, password: password))
                 }
                 .disabled(username.isEmpty)
             }
-        } header: {
-            L10n.signInToServer(viewModel.server.name).text
         }
     }
 
     @ViewBuilder
     private var publicUsersSection: some View {
-        Section {
+        Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
                 L10n.noPublicUsers.text
                     .font(.callout)
@@ -73,23 +69,7 @@ struct UserSignInView: View {
             } else {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
                     PublicUserSignInView(viewModel: viewModel, publicUser: user)
-//                        .disabled(viewModel.isLoading)
                 }
-            }
-        } header: {
-            HStack {
-                L10n.publicUsers.text
-
-                Spacer()
-
-                Button {
-                    Task {
-//                        try? await viewModel.getPublicUsers()
-                    }
-                } label: {
-                    Image(systemName: "arrow.clockwise.circle.fill")
-                }
-//                .disabled(viewModel.isLoading)
             }
         }
         .headerProminence(.increased)
@@ -99,9 +79,9 @@ struct UserSignInView: View {
         List {
             signInSection
 
-            if viewModel.quickConnectEnabled {
+            if viewModel.isQuickConnectEnabled {
                 Button {
-                    router.route(to: \.quickConnect)
+                    router.route(to: \.quickConnect, viewModel.quickConnect)
                 } label: {
                     L10n.quickConnect.text
                 }
@@ -109,23 +89,16 @@ struct UserSignInView: View {
 
             publicUsersSection
         }
-        .animation(.linear, value: viewModel.quickConnectEnabled)
+        .interactiveDismissDisabled(viewModel.state == .signingIn)
+        .animation(.linear, value: viewModel.isQuickConnectEnabled)
         .navigationTitle(L10n.signIn)
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            try? await viewModel.checkQuickConnect()
+        .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
+            router.dismissCoordinator()
         }
-//        .onAppear {
-//            Task {
-//                try? await viewModel.checkQuickConnect()
-//                try? await viewModel.getPublicUsers()
-//            }
-//        }
-//        .onDisappear {
-//            viewModel.send(.cancelSignIn)
-//        }
         .onFirstAppear {
             isUsernameFocused = true
+            viewModel.send(.getPublicData)
         }
     }
 }

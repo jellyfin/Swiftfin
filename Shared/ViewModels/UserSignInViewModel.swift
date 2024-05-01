@@ -27,9 +27,9 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case getPublicUsers
+        case getPublicData
+        case signInQuickConnect(secret: String)
         case signIn(username: String, password: String)
-        case signInWithQuickConnect(authSecret: String)
         case cancel
     }
 
@@ -41,9 +41,9 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    var publicUsers: [UserDto] = []
+    var isQuickConnectEnabled = false
     @Published
-    var quickConnectEnabled = false
+    var publicUsers: [UserDto] = []
     @Published
     var state: State = .initial
 
@@ -53,47 +53,83 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
+    let quickConnect: QuickConnect
     let server: ServerState
 
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
+    private var signInTask: AnyCancellable?
 
     init(server: ServerState) {
         self.server = server
+        self.quickConnect = QuickConnect(client: server.client)
+
         super.init()
+
+        quickConnect.$state
+            .sink { [weak self] state in
+                if case let QuickConnect.State.authenticated(secret: secret) = state {
+                    guard let self else { return }
+
+                    Task {
+                        await self.send(.signInQuickConnect(secret: secret))
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     func respond(to action: Action) -> State {
-        .initial
+        switch action {
+        case .getPublicData:
+            Task { [weak self] in
+                let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()
+                let publicUsers = try await self?.retrievePublicUsers()
 
-//        switch action {
-//        case let .signIn(username, password):
-//            guard state != .signingIn else { return .signingIn }
-//            Task {
-//                do {
-//                    try await signIn(username: username, password: password)
-//                } catch {
-//                    await MainActor.run {
-//                        state = .error(.init(error.localizedDescription))
-//                    }
-//                }
-//            }
-//
-//            return .signingIn
-//        case let .signInWithQuickConnect(authSecret):
-//            guard state != .signingIn else { return .signingIn }
-//            Task {
-//                do {
-//                    try await signIn(quickConnectSecret: authSecret)
-//                } catch {
-//                    await MainActor.run {
-//                        state = .error(.init(error.localizedDescription))
-//                    }
-//                }
-//            }
-//            return .signingIn
-//        case .cancel:
-//            return .initial
-//        }
+                guard let self else { return }
+
+                await MainActor.run {
+                    self.isQuickConnectEnabled = isQuickConnectEnabled ?? false
+                    self.publicUsers = publicUsers ?? []
+                }
+            }
+            .store(in: &cancellables)
+
+            return state
+        case let .signIn(username, password):
+            signInTask?.cancel()
+
+            signInTask = Task {
+                do {
+                    try await signIn(username: username, password: password)
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .signingIn
+        case let .signInQuickConnect(secret):
+            signInTask?.cancel()
+
+            signInTask = Task {
+                do {
+                    try await signIn(secret: secret)
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .signingIn
+        case .cancel:
+            signInTask?.cancel()
+
+            return .initial
+        }
     }
 
     private func signIn(username: String, password: String) async throws {
@@ -106,95 +142,44 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             .trimmingCharacters(in: .objectReplacement)
 
         let response = try await server.client.signIn(username: username, password: password)
-
-        let user: UserState
-
-        do {
-            user = try await createLocalUser(response: response)
-        } catch {
-            throw error
-//            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
-//                user = existingUser
-//            } else {
-//                throw error
-//            }
-        }
+        let user = try await saveUser(with: response)
 
         Defaults[.lastSignedInUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
     }
 
-    private func signIn(quickConnectSecret: String) async throws {
-        let quickConnectPath = Paths.authenticateWithQuickConnect(.init(secret: quickConnectSecret))
-        let response = try await server.client.send(quickConnectPath)
+    private func signIn(secret: String) async throws {
 
-        let user: UserState
-
-        do {
-            user = try await createLocalUser(response: response.value)
-        } catch {
-            throw error
-//            if case let SwiftfinStore.Error.existingUser(existingUser) = error {
-//                user = existingUser
-//            } else {
-//                throw error
-//            }
-        }
+        let response = try await server.client.signIn(quickConnectSecret: secret)
+        let user = try await saveUser(with: response)
 
         Defaults[.lastSignedInUserID] = user.id
         Container.userSession.reset()
         Notifications[.didSignIn].post()
     }
 
-    private func getPublicUsers() async throws -> [UserDto] {
-        let publicUsersPath = Paths.getPublicUsers
-        let response = try await server.client.send(publicUsersPath)
-
-        return response.value
-    }
-
-    private func isDuplicate(user: UserState) -> Bool {
-        if let _ = try? SwiftfinStore.dataStack.fetchOne(
-            From<UserModel>(),
-            [Where<UserModel>(
-                "id == %@",
-                user.id
-            )]
-        ) {
-            return true
-        }
-        return false
+    private func isDuplicate(userID: String) -> Bool {
+        let existingUser = try? SwiftfinStore
+            .dataStack
+            .fetchOne(From<UserModel>().where(\.$id == userID))
+        return existingUser != nil
     }
 
     @MainActor
-    private func createLocalUser(response: AuthenticationResult) async throws -> UserState {
+    private func saveUser(with response: AuthenticationResult) async throws -> UserState {
+
         guard let accessToken = response.accessToken,
               let username = response.user?.name,
               let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
 
-        if let existingUser = try? SwiftfinStore.dataStack.fetchOne(
-            From<UserModel>(),
-            [Where<UserModel>(
-                "id == %@",
-                id
-            )]
-        ) {
-//            throw SwiftfinStore.Error.existingUser(existingUser.state)
+        guard !isDuplicate(userID: id) else { throw JellyfinAPIError("User already exists") }
+
+        guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
+            fatalError("No stored server for state server?")
         }
 
-        guard let storedServer = try? SwiftfinStore.dataStack.fetchOne(
-            From<ServerModel>(),
-            [
-                Where<ServerModel>(
-                    "id == %@",
-                    server.id
-                ),
-            ]
-        )
-        else { fatalError("No stored server associated with given state server?") }
-
-        let user = try SwiftfinStore.dataStack.perform { transaction in
+        let user = try dataStack.perform { transaction in
             let newUser = transaction.create(Into<UserModel>())
 
 //            newUser.accessToken = accessToken
@@ -203,7 +188,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             newUser.username = username
 //            newUser.image = profileImage
 
-            let editServer = transaction.edit(storedServer)!
+            let editServer = transaction.edit(serverModel)!
             editServer.users.insert(newUser)
 
             return newUser.state
@@ -212,14 +197,18 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         return user
     }
 
-    func checkQuickConnect() async throws {
-        let quickConnectEnabledPath = Paths.getEnabled
-        let response = try await server.client.send(quickConnectEnabledPath)
-        let decoder = JSONDecoder()
-        let isEnabled = try? decoder.decode(Bool.self, from: response.value)
+    private func retrievePublicUsers() async throws -> [UserDto] {
+        let publicUsersPath = Paths.getPublicUsers
+        let response = try await server.client.send(publicUsersPath)
 
-        await MainActor.run {
-            quickConnectEnabled = isEnabled ?? false
-        }
+        return response.value
+    }
+
+    private func retrieveQuickConnectEnabled() async throws -> Bool {
+        let request = Paths.getEnabled
+        let response = try await server.client.send(request)
+
+        let isEnabled = try? JSONDecoder().decode(Bool.self, from: response.value)
+        return isEnabled ?? false
     }
 }

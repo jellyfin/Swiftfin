@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -29,9 +30,9 @@ final class UserSignInCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    func makeQuickConnect() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeQuickConnect(quickConnect: QuickConnect) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            QuickConnectView(server: self.server)
+            QuickConnectView(quickConnect: quickConnect)
         }
     }
     #endif

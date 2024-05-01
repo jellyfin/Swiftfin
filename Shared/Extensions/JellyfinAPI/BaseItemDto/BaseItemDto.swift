@@ -205,7 +205,7 @@ extension BaseItemDto {
                 )
 
                 let imageURL = Container
-                    .userSession()
+                    .userSession()!
                     .client
                     .fullURL(with: request)
 

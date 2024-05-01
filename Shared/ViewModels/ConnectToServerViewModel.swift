@@ -203,7 +203,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func isDuplicate(server: ServerState) -> Bool {
-        if let _ = try? SwiftfinStore.dataStack.fetchOne(
+        if let _ = try? dataStack.fetchOne(
             From<ServerModel>(),
             [Where<ServerModel>(
                 "id == %@",
@@ -216,7 +216,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func save(server: ServerState) throws {
-        try SwiftfinStore.dataStack.perform { transaction in
+        try dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
 
             newServer.urls = server.urls
@@ -228,8 +228,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func add(url: URL, to server: ServerState) throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let existingServer = try! SwiftfinStore.dataStack.fetchOne(
+        try dataStack.perform { transaction in
+            let existingServer = try! dataStack.fetchOne(
                 From<ServerModel>(),
                 [Where<ServerModel>(
                     "id == %@",

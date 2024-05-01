@@ -7,11 +7,9 @@
 //
 
 import CoreStore
-import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
-import Pulse
-import UIKit
 
 typealias ServerModel = SwiftfinStore.V2.StoredServer
 typealias UserModel = SwiftfinStore.V2.StoredUser
@@ -31,6 +29,13 @@ enum SwiftfinStore {
 
     /// Namespace for state objects
     enum State {}
+}
+
+extension Container {
+
+    static let dataStack = Factory<DataStack>(scope: .singleton) {
+        SwiftfinStore.dataStack
+    }
 }
 
 // MARK: dataStack

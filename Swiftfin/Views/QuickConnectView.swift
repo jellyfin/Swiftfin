@@ -12,13 +12,13 @@ import SwiftUI
 struct QuickConnectView: View {
 
     @EnvironmentObject
-    private var router: UserListCoordinator.Router
+    private var router: UserSignInCoordinator.Router
 
-    @StateObject
+    @ObservedObject
     private var viewModel: QuickConnect
 
-    init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: QuickConnect(client: server.client))
+    init(quickConnect: QuickConnect) {
+        self.viewModel = quickConnect
     }
 
     private func pollingView(code: String) -> some View {

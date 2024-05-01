@@ -97,7 +97,7 @@ extension BaseItemDto {
             return nil
         }
 
-        let client = Container.userSession().client
+        let client = Container.userSession()!.client
         let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,
