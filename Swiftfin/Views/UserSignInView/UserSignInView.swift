@@ -18,11 +18,11 @@ struct UserSignInView: View {
     private var focusedTextField: Int?
 
     @State
+    private var error: Error? = nil
+    @State
     private var isPresentingError: Bool = false
     @State
     private var password: String = ""
-    @State
-    private var requireEveryTimeSignIn: Bool = false
     @State
     private var username: String = ""
 
@@ -114,6 +114,16 @@ struct UserSignInView: View {
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismissCoordinator()
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .duplicateUser(user): ()
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
+                isPresentingError = true
+            }
+        }
         .onFirstAppear {
             focusedTextField = 0
             viewModel.send(.getPublicData)
@@ -122,6 +132,15 @@ struct UserSignInView: View {
             if viewModel.state == .signingIn {
                 ProgressView()
             }
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
         }
     }
 }

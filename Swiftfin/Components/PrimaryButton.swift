@@ -29,8 +29,8 @@ struct PrimaryButton: View {
                     .cornerRadius(10)
 
                 Text(title)
+                    .fontWeight(.bold)
                     .foregroundColor(accentColor.overlayColor)
-                    .bold()
             }
         }
     }

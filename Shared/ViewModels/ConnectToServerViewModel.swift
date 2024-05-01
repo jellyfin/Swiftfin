@@ -216,18 +216,20 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     // server has same id, but (possible) new URL
     private func addNewURL(server: ServerState) {
-        dataStack.perform { transaction in
-            let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
-            let editServer = transaction.edit(existingServer)!
+        do {
+            let newState = try dataStack.perform { transaction in
+                let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
+                let editServer = transaction.edit(existingServer)!
 
-            editServer.urls.insert(server.currentURL)
-            editServer.currentURL = server.currentURL
+                editServer.urls.insert(server.currentURL)
+                editServer.currentURL = server.currentURL
 
-            return editServer.state
-        } success: { server in
-            Notifications[.didChangeCurrentServerURL].post(object: server)
-        } failure: { error in
-            self.logger.error("\(error.localizedDescription)")
+                return editServer.state
+            }
+
+            Notifications[.didChangeCurrentServerURL].post(object: newState)
+        } catch {
+            logger.critical("\(error.localizedDescription)")
         }
     }
 }

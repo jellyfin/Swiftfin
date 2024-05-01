@@ -20,11 +20,11 @@ struct QuickConnectAuthorizeView: View {
     @State
     private var code: String = ""
     @State
-    private var errorMessage: String = ""
-    @State
-    private var isAuthorized: Bool = false
+    private var error: Error? = nil
     @State
     private var isPresentingError: Bool = false
+    @State
+    private var isPresentingSuccess: Bool = false
 
     @StateObject
     private var viewModel = QuickConnectAuthorizeViewModel()
@@ -49,40 +49,45 @@ struct QuickConnectAuthorizeView: View {
             }
         }
         .navigationTitle(L10n.quickConnect.text)
+        .onFirstAppear {
+            isCodeFocused = true
+        }
         .onReceive(viewModel.events) { event in
             switch event {
             case .authorized:
-                isAuthorized = true
-            case let .error(error):
-                self.errorMessage = error.localizedDescription
-                self.isPresentingError = true
+                UIDevice.feedback(.success)
+
+                isPresentingSuccess = true
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
+                isPresentingError = true
+            }
+        }
+        .topBarTrailing {
+            if viewModel.state == .authorizing {
+                ProgressView()
             }
         }
         .alert(
-            L10n.error,
-            isPresented: $isPresentingError
-        ) {
-            Button(L10n.dismiss, role: .cancel)
-        } message: {
-            Text(errorMessage)
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
         }
         .alert(
             L10n.quickConnect,
-            isPresented: $isAuthorized
+            isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
                 router.pop()
             }
         } message: {
             L10n.quickConnectSuccessMessage.text
-        }
-        .onFirstAppear {
-            isCodeFocused = true
-        }
-        .topBarTrailing {
-            if viewModel.state == .authorizing {
-                ProgressView()
-            }
         }
     }
 }

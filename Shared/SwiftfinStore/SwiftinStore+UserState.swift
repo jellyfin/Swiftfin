@@ -29,15 +29,6 @@ extension SwiftfinStore.State {
             self.serverID = serverID
             self.username = username
         }
-
-        @available(*, deprecated, message: "Don't use sample states")
-        static var sample: Self {
-            .init(
-                id: "123abc",
-                serverID: "123abc",
-                username: "JohnnyAppleseed"
-            )
-        }
     }
 }
 

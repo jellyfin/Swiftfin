@@ -36,15 +36,14 @@ struct SettingsView: View {
                     router.route(to: \.userProfile, viewModel)
                 }
 
-                ChevronButton(title: L10n.server, subtitle: viewModel.userSession.server.name)
-                    .onSelect {
-                        router.route(to: \.serverDetail, viewModel.userSession.server)
-                    }
-
-//                ChevronButton(title: L10n.quickConnect)
-//                    .onSelect {
-//                        router.route(to: \.quickConnect)
-//                    }
+                // TODO: admin users go to dashboard instead
+                ChevronButton(
+                    title: L10n.server,
+                    subtitle: viewModel.userSession.server.name
+                )
+                .onSelect {
+                    router.route(to: \.serverDetail, viewModel.userSession.server)
+                }
 
                 Button {
                     router.dismissCoordinator {

@@ -82,6 +82,8 @@ struct SelectUserView: View {
     private var router: SelectUserCoordinator.Router
 
     @State
+    private var contentSafeAreaInsets: EdgeInsets = .zero
+    @State
     private var contentSize: CGSize = .zero
     @State
     private var gridItemSize: CGSize = .zero
@@ -277,7 +279,7 @@ struct SelectUserView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle(Color.red)
 
-                Label("Delete", systemImage: "trash.fill")
+                Text("Delete")
                     .font(.body.weight(.semibold))
                     .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
 
@@ -287,8 +289,9 @@ struct SelectUserView: View {
                 }
             }
             .frame(height: 50)
+            .frame(maxWidth: 400)
         }
-        .disabled(!isEditingUsers)
+        .disabled(selectedUsers.isEmpty)
         .buttonStyle(.plain)
     }
 
@@ -299,7 +302,10 @@ struct SelectUserView: View {
         VStack {
             ZStack {
                 Color.clear
-                    .trackingSize($contentSize)
+                    .onSizeChanged { size, safeAreaInsets in
+                        contentSize = size
+                        contentSafeAreaInsets = safeAreaInsets
+                    }
 
                 switch userListDisplayType {
                 case .grid:
@@ -339,13 +345,12 @@ struct SelectUserView: View {
                     .id(splashScreenImageSource)
             }
         }
-        .alwaysNavigationBarBlur()
     }
 
     // MARK: emptyView
 
     private var emptyView: some View {
-        VStack {
+        VStack(spacing: 10) {
             L10n.connectToJellyfinServerStart.text
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
@@ -362,17 +367,10 @@ struct SelectUserView: View {
 
     var body: some View {
         WrappedView {
-            switch viewModel.state {
-            case let .error(error):
-                Text(error.localizedDescription)
-            case .initial:
-                Color.black
-            case .content:
-                if viewModel.servers.isEmpty {
-                    emptyView
-                } else {
-                    userView
-                }
+            if viewModel.servers.isEmpty {
+                emptyView
+            } else {
+                userView
             }
         }
         .navigationTitle("Users")
@@ -387,9 +385,19 @@ struct SelectUserView: View {
         }
         .topBarTrailing {
             if isEditingUsers {
-                Button(L10n.cancel) {
+                Button {
                     isEditingUsers = false
+                } label: {
+                    L10n.cancel.text
+                        .font(.headline)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 10)
+                        .background {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color.tertiarySystemFill)
+                        }
                 }
+                .buttonStyle(.plain)
             } else {
                 advancedMenu
             }

@@ -10,9 +10,6 @@ import SwiftUI
 
 struct AboutAppView: View {
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
-
     @ObservedObject
     var viewModel: SettingsViewModel
 

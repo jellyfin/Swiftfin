@@ -26,21 +26,19 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var mainTab = makeMainTab
     @Root
-    var userList = makeUserList
+    var selectUser = makeSelectUser
 
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
     @Route(.fullScreen)
     var liveVideoPlayer = makeLiveVideoPlayer
 
-    private var cancellables = Set<AnyCancellable>()
-
     init() {
 
         if Container.userSession() != nil {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
-            stack = NavigationStack(initial: \MainCoordinator.userList)
+            stack = NavigationStack(initial: \MainCoordinator.selectUser)
         }
 
         ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB memory
@@ -64,7 +62,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didSignOut() {
         logger.info("Signed out")
-        root(\.userList)
+        root(\.selectUser)
     }
 
     @objc
@@ -94,11 +92,7 @@ final class MainCoordinator: NavigationCoordinatable {
         MainTabCoordinator()
     }
 
-//    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
-//        NavigationViewCoordinator(ServerListCoordinator())
-//    }
-
-    func makeUserList() -> NavigationViewCoordinator<SelectUserCoordinator> {
+    func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
         NavigationViewCoordinator(SelectUserCoordinator())
     }
 

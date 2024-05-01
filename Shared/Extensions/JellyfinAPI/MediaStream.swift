@@ -250,22 +250,22 @@ extension [MediaStream] {
     }
 
     var has4KVideo: Bool {
-        oneSatisfies { $0.is4kVideo }
+        contains { $0.is4kVideo }
     }
 
     var has51AudioChannelLayout: Bool {
-        oneSatisfies { $0.is51AudioChannelLayout }
+        contains { $0.is51AudioChannelLayout }
     }
 
     var has71AudioChannelLayout: Bool {
-        oneSatisfies { $0.is71AudioChannelLayout }
+        contains { $0.is71AudioChannelLayout }
     }
 
     var hasHDVideo: Bool {
-        oneSatisfies { $0.isHDVideo }
+        contains { $0.isHDVideo }
     }
 
     var hasSubtitles: Bool {
-        oneSatisfies { $0.type == .subtitle }
+        contains { $0.type == .subtitle }
     }
 }

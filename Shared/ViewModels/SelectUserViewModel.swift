@@ -14,7 +14,13 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class SelectUserViewModel: ViewModel, Stateful {
+class SelectUserViewModel: ViewModel, Eventful, Stateful {
+
+    // MARK: Event
+
+    enum Event {
+        case error(JellyfinAPIError)
+    }
 
     // MARK: Action
 
@@ -27,16 +33,21 @@ class SelectUserViewModel: ViewModel, Stateful {
     // MARK: State
 
     enum State: Hashable {
-        case error(JellyfinAPIError)
-        case initial
         case content
     }
 
     @Published
     var servers: OrderedDictionary<ServerState, [UserState]> = [:]
-
     @Published
-    var state: State = .initial
+    var state: State = .content
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     @MainActor
     func respond(to action: Action) -> State {
@@ -46,10 +57,8 @@ class SelectUserViewModel: ViewModel, Stateful {
                 for user in users {
                     try delete(user: user)
                 }
-
-                return state
             } catch {
-                return .error(.init(error.localizedDescription))
+                eventSubject.send(.error(.init(error.localizedDescription)))
             }
         case .getServers:
             do {
@@ -61,15 +70,15 @@ class SelectUserViewModel: ViewModel, Stateful {
 
                 return .content
             } catch {
-                return .error(.init(error.localizedDescription))
+                eventSubject.send(.error(.init(error.localizedDescription)))
             }
         case let .signIn(user):
             Defaults[.lastSignedInUserID] = user.id
             Container.userSession.reset()
             Notifications[.didSignIn].post()
-
-            return state
         }
+
+        return .content
     }
 
     private func getServers() throws -> [ServerState] {
@@ -80,28 +89,21 @@ class SelectUserViewModel: ViewModel, Stateful {
     }
 
     private func getUsers(for server: ServerState) throws -> [UserState] {
-        guard let storedServer = try? dataStack.fetchOne(
-            From<ServerModel>(),
-            Where<ServerModel>("id == %@", server.id)
-        )
-        else { fatalError("No stored server associated with given state server?") }
+        guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
+            throw JellyfinAPIError("Unable to find server for users")
+        }
 
         return storedServer.users
             .map(\.state)
     }
 
     private func delete(user: UserState) throws {
-        guard let storedUser = try? dataStack.fetchOne(
-            From<UserModel>(),
-            [Where<UserModel>("id == %@", user.id)]
-        ) else {
-            logger.error("Unable to find user to delete")
-            return
+        try dataStack.perform { transaction in
+            guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == user.id)) else {
+                throw JellyfinAPIError("Unable to find server to delete")
+            }
+
+            transaction.delete(storedUser)
         }
-
-        let transaction = dataStack.beginUnsafe()
-        transaction.delete(storedUser)
-
-        try transaction.commitAndWait()
     }
 }

@@ -87,6 +87,7 @@ extension SelectUserView {
                     .foregroundStyle(Color.secondary)
                 }
                 .frame(height: 50)
+                .frame(maxWidth: 400)
             }
             .buttonStyle(.plain)
         }

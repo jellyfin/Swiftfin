@@ -18,18 +18,6 @@ enum UserSignInPolicy: Codable {
 
 extension SwiftfinStore {
 
-    struct ImageCoder: FieldCoderType {
-
-        static func encodeToStoredData(_ fieldValue: UIImage?) -> Data? {
-            fieldValue?.pngData()
-        }
-
-        static func decodeFromStoredData(_ data: Data?) -> UIImage? {
-            guard let data else { return nil }
-            return UIImage(data: data)
-        }
-    }
-
     struct UserSignInPolicyCoder: FieldCoderType {
 
         static func encodeToStoredData(_ fieldValue: UserSignInPolicy?) -> Data? {

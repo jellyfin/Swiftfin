@@ -34,19 +34,6 @@ extension SwiftfinStore.State {
             self.userIDs = usersIDs
         }
 
-        @available(*, deprecated, message: "Don't use sample states")
-        static var sample: Server {
-            .init(
-                urls: [
-                    .init(string: "http://localhost:8096")!,
-                ],
-                currentURL: .init(string: "http://localhost:8096")!,
-                name: "Johnny's Tree",
-                id: "123abc",
-                usersIDs: ["1", "2"]
-            )
-        }
-
         /// - Note: Since this is created from a server, it does not
         ///         have a user access token.
         var client: JellyfinClient {

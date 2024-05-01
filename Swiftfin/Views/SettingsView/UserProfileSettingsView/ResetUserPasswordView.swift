@@ -30,11 +30,11 @@ struct ResetUserPasswordView: View {
     private var confirmNewPassword: String = ""
 
     @State
-    private var errorMessage: String = ""
-    @State
-    private var success: Bool = false
+    private var error: Error? = nil
     @State
     private var isPresentingError: Bool = false
+    @State
+    private var isPresentingSuccess: Bool = false
 
     @StateObject
     private var viewModel = ResetUserPasswordViewModel()
@@ -72,39 +72,42 @@ struct ResetUserPasswordView: View {
             }
         }
         .navigationTitle(L10n.password)
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .error(error):
-                UIDevice.feedback(.error)
-                self.errorMessage = error.localizedDescription
-                self.isPresentingError = true
-            case .success:
-                UIDevice.feedback(.success)
-                self.success = true
-            }
-        }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingError
-        ) {
-            Text(errorMessage)
-
-            Button(L10n.dismiss, role: .cancel)
-        }
-        .alert(
-            "Success",
-            isPresented: $success
-        ) {
-            Button(L10n.dismiss, role: .cancel) {
-                router.pop()
-            }
-        }
         .onFirstAppear {
             isCurrentFocused = true
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
+                isPresentingError = true
+            case .success:
+                UIDevice.feedback(.success)
+
+                isPresentingSuccess = true
+            }
         }
         .topBarTrailing {
             if viewModel.state == .resetting {
                 ProgressView()
+            }
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert(
+            "Success",
+            isPresented: $isPresentingSuccess
+        ) {
+            Button(L10n.dismiss, role: .cancel) {
+                router.pop()
             }
         }
     }

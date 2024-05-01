@@ -9,6 +9,8 @@
 import Foundation
 import JellyfinAPI
 
+// This is only kept as reference until more strongly-typed errors are implemented.
+
 // enum NetworkError: Error {
 //
 //    /// For the case that the ErrorResponse object has a code of -1

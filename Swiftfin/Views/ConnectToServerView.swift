@@ -62,6 +62,33 @@ struct ConnectToServerView: View {
         }
     }
 
+    private func localServerButton(for server: ServerState) -> some View {
+        Button {
+            url = server.currentURL.absoluteString
+            viewModel.send(.connect(server.currentURL.absoluteString))
+        } label: {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(server.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
+
+                    Text(server.currentURL.absoluteString)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
+            }
+        }
+        .disabled(viewModel.state == .connecting)
+        .buttonStyle(.plain)
+    }
+
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
@@ -71,30 +98,7 @@ struct ConnectToServerView: View {
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.localServers) { server in
-                    Button {
-                        url = server.currentURL.absoluteString
-                        viewModel.send(.connect(server.currentURL.absoluteString))
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(server.name)
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-
-                                Text(server.currentURL.absoluteString)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.body.weight(.regular))
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                    .disabled(viewModel.state == .connecting)
-                    .buttonStyle(.plain)
+                    localServerButton(for: server)
                 }
             }
         }
@@ -119,13 +123,19 @@ struct ConnectToServerView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .connected(server):
+                UIDevice.feedback(.success)
+
                 Notifications[.didConnectToServer].post(object: server)
                 router.popLast()
             case let .duplicateServer(server):
+                UIDevice.feedback(.warning)
+
                 duplicateServer = server
                 isPresentingDuplicateServer = true
-            case let .error(error):
-                self.error = error
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
                 isPresentingError = true
             }
         }
@@ -140,6 +150,15 @@ struct ConnectToServerView: View {
             }
         }
         .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert(
             L10n.server.text,
             isPresented: $isPresentingDuplicateServer,
             presenting: duplicateServer
@@ -152,15 +171,6 @@ struct ConnectToServerView: View {
             }
         } message: { server in
             Text("\(server.name) is already connected.")
-        }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .destructive)
-        } message: { error in
-            Text(error.localizedDescription)
         }
     }
 }

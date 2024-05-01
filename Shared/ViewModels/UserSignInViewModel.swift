@@ -28,8 +28,8 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case getPublicData
-        case signInQuickConnect(secret: String)
         case signIn(username: String, password: String)
+        case signInQuickConnect(secret: String)
         case cancel
     }
 
@@ -159,11 +159,11 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         Notifications[.didSignIn].post()
     }
 
-    private func isDuplicate(userID: String) -> Bool {
-        let existingUser = try? SwiftfinStore
+    private func user(for id: String) -> UserState? {
+        try? SwiftfinStore
             .dataStack
-            .fetchOne(From<UserModel>().where(\.$id == userID))
-        return existingUser != nil
+            .fetchOne(From<UserModel>().where(\.$id == id))?
+            .state
     }
 
     @MainActor
@@ -173,10 +173,14 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
               let username = response.user?.name,
               let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
 
-        guard !isDuplicate(userID: id) else { throw JellyfinAPIError("User already exists") }
+        // User already signed in, just sign in
+        if let existingUser = user(for: id) {
+            return existingUser
+        }
 
         guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
-            fatalError("No stored server for state server?")
+            logger.critical("Unable to find server to save user")
+            throw JellyfinAPIError("An internal error has occurred")
         }
 
         let user = try dataStack.perform { transaction in

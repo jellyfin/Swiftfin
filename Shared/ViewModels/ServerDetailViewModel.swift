@@ -21,7 +21,8 @@ class EditServerViewModel: ViewModel {
 
     func delete() {
         guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
-            fatalError("Unable to find error to delete")
+            logger.critical("Unable to find server to delete")
+            return
         }
 
         do {
@@ -32,22 +33,24 @@ class EditServerViewModel: ViewModel {
 
             Notifications[.didDeleteServer].post(object: server)
         } catch {
-            logger.error("Unable to delete server: \(server.name)")
+            logger.critical("Unable to delete server: \(server.name)")
         }
     }
 
     func setCurrentURL(to url: URL) {
-        dataStack.perform { transaction -> ServerModel in
-            guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == self.server.id)) else {
-                throw JellyfinAPIError("Unable to find server for URL change: \(self.server.name)")
-            }
-            storedServer.currentURL = url
+        do {
+            let newState = try dataStack.perform { transaction in
+                guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == self.server.id)) else {
+                    throw JellyfinAPIError("Unable to find server for URL change: \(self.server.name)")
+                }
+                storedServer.currentURL = url
 
-            return storedServer
-        } success: { storedServer in
-            Notifications[.didChangeCurrentServerURL].post(object: storedServer.state)
-        } failure: { error in
-            self.logger.error("\(error.localizedDescription)")
+                return storedServer.state
+            }
+
+            Notifications[.didChangeCurrentServerURL].post(object: newState)
+        } catch {
+            logger.critical("\(error.localizedDescription)")
         }
     }
 }

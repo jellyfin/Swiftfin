@@ -50,6 +50,7 @@ extension SelectUserView {
                     .foregroundStyle(.secondary)
             }
             .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
         }
 
         var body: some View {
