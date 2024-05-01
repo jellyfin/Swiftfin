@@ -10,9 +10,9 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class UserListCoordinator: NavigationCoordinatable {
+final class SelectUserCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \UserListCoordinator.start)
+    let stack = NavigationStack(initial: \SelectUserCoordinator.start)
 
     @Root
     var start = makeStart
@@ -40,6 +40,9 @@ final class UserListCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator {
             EditServerView(server: server)
                 .environment(\.isEditing, true)
+                .navigationBarCloseButton {
+                    self.popLast()
+                }
         }
     }
 

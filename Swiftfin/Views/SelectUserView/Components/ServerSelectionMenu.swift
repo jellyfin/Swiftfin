@@ -13,7 +13,7 @@ extension SelectUserView {
     struct ServerSelectionMenu: View {
 
         @EnvironmentObject
-        private var router: UserListCoordinator.Router
+        private var router: SelectUserCoordinator.Router
 
         @Binding
         private var serverSelection: ServerSelection

@@ -14,9 +14,9 @@ extension SelectUserView {
     struct UserRow: View {
 
         @Environment(\.isEditing)
-        private var isEditing: Bool
+        private var isEditing
         @Environment(\.isSelected)
-        private var isSelected: Bool
+        private var isSelected
 
         @State
         private var contentSize: CGSize = .zero

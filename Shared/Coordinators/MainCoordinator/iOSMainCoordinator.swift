@@ -98,8 +98,8 @@ final class MainCoordinator: NavigationCoordinatable {
 //        NavigationViewCoordinator(ServerListCoordinator())
 //    }
 
-    func makeUserList() -> NavigationViewCoordinator<UserListCoordinator> {
-        NavigationViewCoordinator(UserListCoordinator())
+    func makeUserList() -> NavigationViewCoordinator<SelectUserCoordinator> {
+        NavigationViewCoordinator(SelectUserCoordinator())
     }
 
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {

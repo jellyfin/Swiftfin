@@ -50,10 +50,6 @@ extension SelectUserView {
                     ZStack {
                         Color.clear
 
-//                        if let image = user.image {
-//                            Image(uiImage: image)
-//                                .resizable()
-//                        } else {
                         ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
                             .placeholder { _ in
                                 personView
@@ -61,7 +57,6 @@ extension SelectUserView {
                             .failure {
                                 personView
                             }
-//                        }
                     }
                     .aspectRatio(1, contentMode: .fill)
                     .posterShadow()

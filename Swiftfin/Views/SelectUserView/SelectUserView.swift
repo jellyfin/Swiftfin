@@ -79,7 +79,7 @@ struct SelectUserView: View {
     private var userListViewUseSplashScreen
 
     @EnvironmentObject
-    private var router: UserListCoordinator.Router
+    private var router: SelectUserCoordinator.Router
 
     @State
     private var contentSize: CGSize = .zero
@@ -406,6 +406,12 @@ struct SelectUserView: View {
             gridItems = makeGridItems(for: serverSelection)
         }
         .onNotification(.didConnectToServer) { notification in
+            if let server = notification.object as? ServerState {
+                viewModel.send(.getServers)
+                serverSelection = .server(id: server.id)
+            }
+        }
+        .onNotification(.didChangeCurrentServerURL) { notification in
             if let server = notification.object as? ServerState {
                 viewModel.send(.getServers)
                 serverSelection = .server(id: server.id)

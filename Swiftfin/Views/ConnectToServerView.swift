@@ -12,7 +12,7 @@ import SwiftUI
 struct ConnectToServerView: View {
 
     @EnvironmentObject
-    private var router: UserListCoordinator.Router
+    private var router: SelectUserCoordinator.Router
 
     @FocusState
     private var isURLFocused: Bool
@@ -33,64 +33,61 @@ struct ConnectToServerView: View {
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
+    private var connectSection: some View {
+        Section(L10n.connectToServer) {
+
+            TextField(L10n.serverURL, text: $url)
+                .disableAutocorrection(true)
+                .autocapitalization(.none)
+                .keyboardType(.URL)
+                .focused($isURLFocused)
+
+            if viewModel.state == .connecting {
+                Button(L10n.cancel, role: .destructive) {
+                    viewModel.send(.cancel)
+                }
+            } else {
+                Button(L10n.connect) {
+                    viewModel.send(.connect(url))
+                }
+                .disabled(url.isEmpty)
+            }
+        }
+    }
+
+    private var localServersSection: some View {
+        Section(L10n.localServers) {
+            if viewModel.localServers.isEmpty {
+                L10n.noLocalServersFound.text
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            } else {
+                ForEach(viewModel.localServers) { server in
+                    Button {
+                        url = server.currentURL.absoluteString
+                        viewModel.send(.connect(server.currentURL.absoluteString))
+                    } label: {
+                        VStack(alignment: .leading, spacing: 5) {
+                            Text(server.name)
+                                .font(.title3)
+
+                            Text(server.currentURL.absoluteString)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .disabled(viewModel.state == .connecting)
+                }
+            }
+        }
+    }
+
     var body: some View {
         List {
-            Section(L10n.connectToServer) {
+            connectSection
 
-                TextField(L10n.serverURL, text: $url)
-                    .disableAutocorrection(true)
-                    .autocapitalization(.none)
-                    .keyboardType(.URL)
-                    .focused($isURLFocused)
-
-                if viewModel.state == .connecting {
-                    Button(L10n.cancel, role: .destructive) {
-                        viewModel.send(.cancel)
-                    }
-                } else {
-                    Button(L10n.connect) {
-                        viewModel.send(.connect(url))
-                    }
-                    .disabled(url.isEmpty)
-                }
-            }
-
-            Section {
-                if viewModel.discoveredServers.isEmpty {
-                    L10n.noLocalServersFound.text
-                        .font(.callout)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity)
-                } else {
-                    ForEach(viewModel.discoveredServers) { server in
-                        Button {
-                            url = server.currentURL.absoluteString
-                            viewModel.send(.connect(server.currentURL.absoluteString))
-                        } label: {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(server.name)
-                                    .font(.title3)
-
-                                Text(server.currentURL.absoluteString)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                        .disabled(viewModel.state == .connecting)
-                    }
-                }
-            } header: {
-                HStack {
-                    L10n.localServers.text
-
-                    Spacer()
-
-                    if viewModel.backgroundStates.contains(.searching) {
-                        ProgressView()
-                    }
-                }
-            }
-            .headerProminence(.increased)
+            localServersSection
         }
         .interactiveDismissDisabled(viewModel.state == .connecting)
         .navigationTitle(L10n.connect)
@@ -134,6 +131,7 @@ struct ConnectToServerView: View {
 
             Button(L10n.addURL) {
                 viewModel.send(.addNewURL(server))
+                router.popLast()
             }
         } message: { server in
             Text("\(server.name) is already connected.")

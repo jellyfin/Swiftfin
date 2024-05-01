@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import UIKit
 
 extension SwiftfinStore.State {
@@ -37,5 +38,28 @@ extension SwiftfinStore.State {
                 username: "JohnnyAppleseed"
             )
         }
+    }
+}
+
+extension UserState {
+
+    func profileImageSource(
+        client: JellyfinClient,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil
+    ) -> ImageSource {
+        let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
+        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
+
+        let parameters = Paths.GetUserImageParameters(maxWidth: scaleWidth, maxHeight: scaleHeight)
+        let request = Paths.getUserImage(
+            userID: id,
+            imageType: "Primary",
+            parameters: parameters
+        )
+
+        let profileImageURL = client.fullURL(with: request)
+
+        return ImageSource(url: profileImageURL)
     }
 }

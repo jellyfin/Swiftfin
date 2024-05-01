@@ -21,6 +21,7 @@ struct QuickConnectView: View {
         self.viewModel = quickConnect
     }
 
+    #warning("TODO: complete view")
     private func pollingView(code: String) -> some View {
         Text(code)
             .tracking(10)

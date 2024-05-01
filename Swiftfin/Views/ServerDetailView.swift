@@ -13,10 +13,12 @@ import SwiftUI
 //       to just prevent having 2 views that looked/interacted the same
 //       except for a single button.
 
+// TODO: change URL picker from menu to list with network-url mapping
+
 struct EditServerView: View {
 
     @EnvironmentObject
-    private var router: UserListCoordinator.Router
+    private var router: SelectUserCoordinator.Router
 
     @Environment(\.isEditing)
     private var isEditing

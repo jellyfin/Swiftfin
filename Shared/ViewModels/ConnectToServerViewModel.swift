@@ -54,7 +54,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    var discoveredServers: OrderedSet<ServerState> = []
+    var localServers: OrderedSet<ServerState> = []
     @Published
     var state: State = .initial
 
@@ -80,7 +80,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
             for await response in discovery.discoveredServers.values {
                 await MainActor.run {
-                    let _ = self.discoveredServers.append(response.asServerState)
+                    let _ = self.localServers.append(response.asServerState)
                 }
             }
         }
@@ -90,18 +90,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     func respond(to action: Action) -> State {
         switch action {
         case .searchForServers:
-            Task {
-                await MainActor.run {
-                    let _ = backgroundStates.append(.searching)
-                }
-
-                await searchForServers()
-
-                await MainActor.run {
-                    let _ = backgroundStates.remove(.searching)
-                }
-            }
-            .store(in: &cancellables)
+            discovery.broadcast()
 
             return state
         case let .connect(url):
@@ -113,6 +102,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
                     if isDuplicate(server: server) {
                         await MainActor.run {
+                            // server has same id, but (possible) new URL
                             self.eventSubject.send(.duplicateServer(server))
                         }
                     } else {
@@ -140,7 +130,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             connectTask?.cancel()
 
             return .initial
-        case let .addNewURL(serverState):
+        case let .addNewURL(server):
+            addNewURL(server: server)
+
             return state
         }
     }
@@ -166,9 +158,10 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             throw JellyfinAPIError("Missing server data from network call")
         }
 
-        // in case of redirects, we must process the new URL
-
-        let connectionURL = processConnectionURL(initial: url, response: response.response.url)
+        let connectionURL = processConnectionURL(
+            initial: url,
+            response: response.response.url
+        )
 
         let newServerState = ServerState(
             urls: [connectionURL],
@@ -181,7 +174,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         return newServerState
     }
 
-    // TODO: this probably isn't the best way to properly handle this, fix if necessary
+    // In the event of redirects, get the new host URL from response
     private func processConnectionURL(initial url: URL, response: URL?) -> URL {
 
         guard let response else { return url }
@@ -203,16 +196,10 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func isDuplicate(server: ServerState) -> Bool {
-        if let _ = try? dataStack.fetchOne(
-            From<ServerModel>(),
-            [Where<ServerModel>(
-                "id == %@",
-                server.id
-            )]
-        ) {
-            return true
-        }
-        return false
+        let existingServer = try? SwiftfinStore
+            .dataStack
+            .fetchOne(From<ServerModel>().where(\.$id == server.id))
+        return existingServer != nil
     }
 
     private func save(server: ServerState) throws {
@@ -227,27 +214,20 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func add(url: URL, to server: ServerState) throws {
-        try dataStack.perform { transaction in
-            let existingServer = try! dataStack.fetchOne(
-                From<ServerModel>(),
-                [Where<ServerModel>(
-                    "id == %@",
-                    server.id
-                )]
-            )
-
+    // server has same id, but (possible) new URL
+    private func addNewURL(server: ServerState) {
+        dataStack.perform { transaction in
+            let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
             let editServer = transaction.edit(existingServer)!
-            editServer.urls.insert(url)
+
+            editServer.urls.insert(server.currentURL)
+            editServer.currentURL = server.currentURL
+
+            return editServer.state
+        } success: { server in
+            Notifications[.didChangeCurrentServerURL].post(object: server)
+        } failure: { error in
+            self.logger.error("\(error.localizedDescription)")
         }
-    }
-
-    private func searchForServers() async {
-        discovery.broadcast()
-
-        // give illusion of "discovering" even
-        // though we're always listening
-
-        try? await Task.sleep(nanoseconds: 2_000_000_000)
     }
 }
