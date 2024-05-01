@@ -179,8 +179,20 @@ struct SelectUserView: View {
 
     // MARK: grid
 
+    #warning("TODO: centering")
     @ViewBuilder
-    private var gridContentView: some View {
+    private var padGridContentView: some View {
+        LazyVGrid(columns: [.init(.adaptive(minimum: 150, maximum: 250), spacing: EdgeInsets.edgePadding)]) {
+            ForEach(gridItems, id: \.hashValue) { item in
+                gridItemView(for: item)
+            }
+        }
+        .edgePadding()
+        .scroll(ifLargerThan: contentSize.height - 100) // do a little less
+    }
+
+    @ViewBuilder
+    private var phoneGridContentView: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]) {
             ForEach(gridItems, id: \.hashValue) { item in
                 gridItemView(for: item)
@@ -191,7 +203,7 @@ struct SelectUserView: View {
             }
         }
         .edgePadding()
-        .scroll(ifLargerThan: contentSize.height)
+        .scroll(ifLargerThan: contentSize.height - 100) // do a little less
     }
 
     @ViewBuilder
@@ -298,7 +310,7 @@ struct SelectUserView: View {
 
     @ViewBuilder
     private var userView: some View {
-        VStack {
+        VStack(spacing: 0) {
             ZStack {
                 Color.clear
                     .onSizeChanged { size, safeAreaInsets in
@@ -308,24 +320,43 @@ struct SelectUserView: View {
 
                 switch userListDisplayType {
                 case .grid:
-                    gridContentView
+                    if UIDevice.isPhone {
+                        phoneGridContentView
+                    } else {
+                        padGridContentView
+                    }
                 case .list:
                     listContentView
                 }
             }
             .frame(maxHeight: .infinity)
+            .mask {
+                VStack(spacing: 0) {
+                    Color.white
+
+                    LinearGradient(
+                        stops: [
+                            .init(color: .white, location: 0),
+                            .init(color: .clear, location: 1),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 30)
+                }
+            }
 
             if !isEditingUsers {
                 ServerSelectionMenu(
                     selection: $serverSelection,
                     viewModel: viewModel
                 )
-                .edgePadding()
+                .edgePadding([.bottom, .horizontal])
             }
 
             if isEditingUsers {
                 deleteUsersButton
-                    .edgePadding()
+                    .edgePadding([.bottom, .horizontal])
             }
         }
         .background {
