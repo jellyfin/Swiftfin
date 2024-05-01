@@ -11,8 +11,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-typealias ServerModel = SwiftfinStore.V2.StoredServer
-typealias UserModel = SwiftfinStore.V2.StoredUser
+typealias ServerModel = SwiftfinStore.V1.StoredServer
+typealias UserModel = SwiftfinStore.V1.StoredUser
 
 typealias ServerState = SwiftfinStore.State.Server
 typealias UserState = SwiftfinStore.State.User
@@ -45,17 +45,8 @@ extension SwiftfinStore {
     static let dataStack: DataStack = {
 
         let _dataStack = DataStack(
-            //            V1.schema,
-            V2.schema
-//            migrationChain: ["V1", "V2"]
+            V1.schema
         )
-
-//        DispatchQueue.main.async {
-//            _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite", localStorageOptions: .recreateStoreOnModelMismatch)) {
-//                result in
-//                print(result)
-//            }
-//        }
 
         try! _dataStack.addStorageAndWait(SQLiteStore(
             fileName: "Swiftfin.sqlite",

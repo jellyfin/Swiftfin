@@ -116,6 +116,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                     await MainActor.run {
                         self.state = .initial
                     }
+                } catch is CancellationError {
+                    // cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))

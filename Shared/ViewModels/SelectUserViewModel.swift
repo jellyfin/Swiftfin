@@ -57,6 +57,8 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
                 for user in users {
                     try delete(user: user)
                 }
+
+                send(.getServers)
             } catch {
                 eventSubject.send(.error(.init(error.localizedDescription)))
             }

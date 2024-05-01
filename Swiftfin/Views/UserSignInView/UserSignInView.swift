@@ -116,7 +116,6 @@ struct UserSignInView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case let .duplicateUser(user): ()
             case let .error(eventError):
                 UIDevice.feedback(.error)
 

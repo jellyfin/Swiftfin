@@ -25,9 +25,11 @@ extension SwiftfinStore.V1 {
         @Field.Stored("id")
         var id: String = ""
 
+        @available(*, deprecated, message: "Get remote server data from network call")
         @Field.Stored("os")
         var os: String = ""
 
+        @available(*, deprecated, message: "Get remote server data from network call")
         @Field.Stored("version")
         var version: String = ""
 

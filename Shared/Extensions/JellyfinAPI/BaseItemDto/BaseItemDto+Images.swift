@@ -98,7 +98,8 @@ extension BaseItemDto {
         }
 
         // TODO: client passing for widget/shared group views?
-        let client = Container.userSession()!.client
+        guard let client = Container.userSession()?.client else { return nil }
+
         let parameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth,
             maxHeight: scaleHeight,

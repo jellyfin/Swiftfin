@@ -15,7 +15,7 @@ import SwiftUI
 #warning("TODO: cleanup")
 
 // TODO: option for splashscreen image
-// TODO: navigation bar blur always on with splashscreen
+// TODO: user ordering
 
 extension Defaults.Keys {
 
@@ -125,9 +125,12 @@ struct SelectUserView: View {
         case .all:
             let items = viewModel.servers
                 .map { server, users in
-                    users.map { UserGridItem.user($0, server: server) }
+                    users.map { (server: server, user: $0) }
                 }
                 .flatMap { $0 }
+                .sorted(using: \.user.username)
+                .reversed()
+                .map { UserGridItem.user($0.user, server: $0.server) }
                 .appending(.addUser)
 
             return OrderedSet(items)
@@ -138,6 +141,7 @@ struct SelectUserView: View {
             }
 
             let items = viewModel.servers[server]!
+                .sorted(using: \.username)
                 .map { UserGridItem.user($0, server: server) }
                 .appending(.addUser)
 
@@ -212,6 +216,8 @@ struct SelectUserView: View {
                 } else {
                     viewModel.send(.signIn(user))
                 }
+            } onDelete: {
+                viewModel.send(.deleteUsers([user]))
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
@@ -254,6 +260,8 @@ struct SelectUserView: View {
                 } else {
                     viewModel.send(.signIn(user))
                 }
+            } onDelete: {
+                viewModel.send(.deleteUsers([user]))
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
@@ -271,7 +279,6 @@ struct SelectUserView: View {
     private var deleteUsersButton: some View {
         Button {
             viewModel.send(.deleteUsers(Array(selectedUsers)))
-            viewModel.send(.getServers)
 
             isEditingUsers = false
         } label: {
@@ -394,7 +401,7 @@ struct SelectUserView: View {
                         .padding(.horizontal, 10)
                         .background {
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.tertiarySystemFill)
+                                .fill(Color.tertiarySystemBackground)
                         }
                 }
                 .buttonStyle(.plain)

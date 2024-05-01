@@ -48,7 +48,7 @@ extension SelectUserView {
                 ZStack {
                     Color.tertiarySystemBackground
 
-                    RelativeSystemImageView(systemName: "plus", ratio: 0.5)
+                    RelativeSystemImageView(systemName: "plus")
                         .foregroundStyle(.secondary)
                 }
                 .aspectRatio(1, contentMode: .fill)

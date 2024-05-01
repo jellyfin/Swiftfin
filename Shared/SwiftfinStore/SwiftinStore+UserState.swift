@@ -20,11 +20,12 @@ extension SwiftfinStore.State {
         let username: String
 
         init(
+            accessToken: String,
             id: String,
             serverID: String,
             username: String
         ) {
-            self.accessToken = "REPLACE ME"
+            self.accessToken = accessToken
             self.id = id
             self.serverID = serverID
             self.username = username

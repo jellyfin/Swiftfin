@@ -53,7 +53,8 @@ struct AppSettingsView: View {
                     router.route(to: \.log)
                 }
 
-            ChevronButton(title: "Super User")
+            // TODO: come up with exact rules and implement
+//            ChevronButton(title: "Super User")
         }
         .navigationTitle(L10n.advanced)
         .navigationBarTitleDisplayMode(.inline)

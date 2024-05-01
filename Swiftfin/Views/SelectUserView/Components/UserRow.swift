@@ -25,23 +25,37 @@ extension SelectUserView {
         private let server: ServerState
         private let showServer: Bool
         private let action: () -> Void
+        private let onDelete: () -> Void
 
         init(
             user: UserState,
             server: ServerState,
             showServer: Bool,
-            action: @escaping () -> Void
+            action: @escaping () -> Void,
+            onDelete: @escaping () -> Void
         ) {
             self.user = user
             self.server = server
             self.showServer = showServer
             self.action = action
+            self.onDelete = onDelete
         }
 
         private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
 
             return isSelected ? .primary : .secondary
+        }
+
+        private var personView: some View {
+            ZStack {
+                Color.tertiarySystemBackground
+
+                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
         }
 
         @ViewBuilder
@@ -51,10 +65,10 @@ extension SelectUserView {
 
                 ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
                     .placeholder { _ in
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                        personView
                     }
                     .failure {
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                        personView
                     }
 
                 if isEditing {
@@ -119,6 +133,11 @@ extension SelectUserView {
                     }
                 }
                 .buttonStyle(.plain)
+                .contextMenu {
+                    Button("Delete", role: .destructive) {
+                        onDelete()
+                    }
+                }
 
                 Color.secondarySystemFill
                     .frame(width: contentSize.width, height: 1)

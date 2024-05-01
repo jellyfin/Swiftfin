@@ -9,6 +9,8 @@
 import CoreStore
 import Foundation
 
+// TODO: complete and make migration
+
 extension SwiftfinStore.V2 {
 
     static let schema = CoreStoreSchema(

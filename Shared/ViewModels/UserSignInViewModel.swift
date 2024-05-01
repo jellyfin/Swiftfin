@@ -15,12 +15,16 @@ import Get
 import JellyfinAPI
 import Pulse
 
+// TODO: instead of just signing in duplicate user, send event for alert
+//       to override existing user access token?
+//       - won't require deleting and re-signing in user
+//       - account for local device auth required
+
 final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
     enum Event {
-        case duplicateUser(UserState)
         case error(JellyfinAPIError)
     }
 
@@ -101,9 +105,12 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             signInTask = Task {
                 do {
                     try await signIn(username: username, password: password)
+                } catch is CancellationError {
+                    // cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
+                        self.state = .initial
                     }
                 }
             }
@@ -116,9 +123,12 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             signInTask = Task {
                 do {
                     try await signIn(secret: secret)
+                } catch is CancellationError {
+                    // cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
+                        self.state = .initial
                     }
                 }
             }
@@ -186,7 +196,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         let user = try dataStack.perform { transaction in
             let newUser = transaction.create(Into<UserModel>())
 
-//            newUser.accessToken = accessToken
+            newUser.accessToken = accessToken
             newUser.appleTVID = ""
             newUser.id = id
             newUser.username = username

@@ -22,17 +22,20 @@ extension SelectUserView {
         private let server: ServerState
         private let showServer: Bool
         private let action: () -> Void
+        private let onDelete: () -> Void
 
         init(
             user: UserState,
             server: ServerState,
             showServer: Bool,
-            action: @escaping () -> Void
+            action: @escaping () -> Void,
+            onDelete: @escaping () -> Void
         ) {
             self.user = user
             self.server = server
             self.showServer = showServer
             self.action = action
+            self.onDelete = onDelete
         }
 
         private var labelForegroundStyle: some ShapeStyle {
@@ -41,20 +44,31 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
+        private var personView: some View {
+            ZStack {
+                Color.tertiarySystemBackground
+
+                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
+        }
+
         var body: some View {
-            VStack(alignment: .center) {
-                Button {
-                    action()
-                } label: {
+            Button {
+                action()
+            } label: {
+                VStack(alignment: .center) {
                     ZStack {
                         Color.clear
 
                         ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
                             .placeholder { _ in
-                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                                personView
                             }
                             .failure {
-                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                                personView
                             }
                     }
                     .aspectRatio(1, contentMode: .fill)
@@ -77,19 +91,25 @@ extension SelectUserView {
                             }
                         }
                     }
-                }
 
-                VStack(spacing: 5) {
-                    Text(user.username)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(labelForegroundStyle)
-                        .lineLimit(1)
+                    VStack {
+                        Text(user.username)
+                            .fontWeight(.semibold)
+                            .foregroundStyle(labelForegroundStyle)
+                            .lineLimit(1)
 
-                    if showServer {
-                        Text(server.name)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        if showServer {
+                            Text(server.name)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
                     }
+                }
+            }
+            .buttonStyle(.plain)
+            .contextMenu {
+                Button("Delete", role: .destructive) {
+                    onDelete()
                 }
             }
         }

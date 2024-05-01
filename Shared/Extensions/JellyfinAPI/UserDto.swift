@@ -17,6 +17,7 @@ extension UserDto {
         maxHeight: CGFloat? = nil
     ) -> ImageSource {
         UserState(
+            accessToken: "",
             id: id ?? "",
             serverID: "",
             username: ""

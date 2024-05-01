@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: bottom view can probably just be cleaned up and change
+//       usages to use local background views
+
 struct RelativeSystemImageView: View {
 
     @State
@@ -32,13 +35,10 @@ struct RelativeSystemImageView: View {
             Image(systemName: systemName)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .accessibilityHidden(true)
                 .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
         }
     }
 }
-
-// TODO: is the background color setting really the best way?
 
 struct SystemImageContentView: View {
 
@@ -52,7 +52,7 @@ struct SystemImageContentView: View {
     private let systemName: String
     private let title: String?
 
-    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.33) {
+    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.3) {
         self.backgroundColor = Color.secondarySystemFill
         self.ratio = ratio
         self.systemName = systemName ?? "circle"
@@ -97,7 +97,7 @@ struct SystemImageContentView: View {
 
 extension SystemImageContentView {
 
-    func background(color: Color = Color.secondarySystemFill) -> Self {
+    func background(color: Color) -> Self {
         copy(modifying: \.backgroundColor, with: color)
     }
 }

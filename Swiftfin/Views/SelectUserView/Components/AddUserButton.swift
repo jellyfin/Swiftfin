@@ -43,44 +43,15 @@ extension SelectUserView {
         }
 
         private var content: some View {
-            ZStack {
-                Color.tertiarySystemBackground
-
-                RelativeSystemImageView(systemName: "plus", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
-
-        var body: some View {
             VStack(alignment: .center) {
-                if serverSelection == .all {
-                    Menu {
-                        ForEach(servers) { server in
-                            Button {
-                                action(server)
-                            } label: {
-                                Text(server.name)
-                                Text(server.currentURL.absoluteString)
-                            }
-                        }
-                    } label: {
-                        content
-                    }
-                    .disabled(!isEnabled)
-                    .foregroundStyle(.primary, .secondary)
-                } else {
-                    Button {
-                        if let selectedServer {
-                            action(selectedServer)
-                        }
-                    } label: {
-                        content
-                    }
-                    .disabled(!isEnabled)
-                    .foregroundStyle(.primary, .secondary)
+                ZStack {
+                    Color.tertiarySystemBackground
+
+                    RelativeSystemImageView(systemName: "plus")
+                        .foregroundStyle(.secondary)
                 }
+                .clipShape(.circle)
+                .aspectRatio(1, contentMode: .fill)
 
                 Text("Add User")
                     .fontWeight(.semibold)
@@ -91,6 +62,35 @@ extension SelectUserView {
                         .font(.caption)
                         .hidden()
                 }
+            }
+        }
+
+        var body: some View {
+            if serverSelection == .all {
+                Menu {
+                    ForEach(servers) { server in
+                        Button {
+                            action(server)
+                        } label: {
+                            Text(server.name)
+                            Text(server.currentURL.absoluteString)
+                        }
+                    }
+                } label: {
+                    content
+                }
+                .disabled(!isEnabled)
+                .foregroundStyle(.primary, .secondary)
+            } else {
+                Button {
+                    if let selectedServer {
+                        action(selectedServer)
+                    }
+                } label: {
+                    content
+                }
+                .buttonStyle(.plain)
+                .disabled(!isEnabled)
             }
         }
     }
