@@ -19,21 +19,20 @@ extension SelectUserView {
         private var isSelected
 
         private let user: UserState
-        private let client: JellyfinClient
+        private let server: ServerState
+        private let showServer: Bool
         private let action: () -> Void
 
         init(
             user: UserState,
-            client: JellyfinClient,
+            server: ServerState,
+            showServer: Bool,
             action: @escaping () -> Void
         ) {
             self.user = user
-            self.client = client
+            self.server = server
+            self.showServer = showServer
             self.action = action
-        }
-
-        private var personView: some View {
-            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
         }
 
         private var labelForegroundStyle: some ShapeStyle {
@@ -50,12 +49,12 @@ extension SelectUserView {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                        ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
                             .placeholder { _ in
-                                personView
+                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                             }
                             .failure {
-                                personView
+                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                             }
                     }
                     .aspectRatio(1, contentMode: .fill)
@@ -80,10 +79,18 @@ extension SelectUserView {
                     }
                 }
 
-                Text(user.username)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(labelForegroundStyle)
-                    .lineLimit(1)
+                VStack(spacing: 5) {
+                    Text(user.username)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
+
+                    if showServer {
+                        Text(server.name)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
     }

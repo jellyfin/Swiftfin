@@ -43,10 +43,13 @@ extension SelectUserView {
         }
 
         private var content: some View {
-            SystemImageContentView(systemName: "plus")
-                .background(color: Color.tertiarySystemBackgorund)
-                .aspectRatio(1, contentMode: .fill)
-                .clipShape(.circle)
+            ZStack {
+                Color.tertiarySystemBackground
+
+                RelativeSystemImageView(systemName: "plus", ratio: 0.5)
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
         }
 
         var body: some View {
@@ -65,6 +68,7 @@ extension SelectUserView {
                         content
                     }
                     .disabled(!isEnabled)
+                    .foregroundStyle(.primary, .secondary)
                 } else {
                     Button {
                         if let selectedServer {
@@ -74,11 +78,18 @@ extension SelectUserView {
                         content
                     }
                     .disabled(!isEnabled)
+                    .foregroundStyle(.primary, .secondary)
                 }
 
                 Text("Add User")
                     .fontWeight(.semibold)
                     .foregroundStyle(isEnabled ? .primary : .secondary)
+
+                if serverSelection == .all {
+                    Text("Hidden")
+                        .font(.caption)
+                        .hidden()
+                }
             }
         }
     }

@@ -71,7 +71,7 @@ extension SelectUserView {
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.tertiarySystemBackgorund)
+                        .foregroundStyle(Color.tertiarySystemBackground)
 
                     Group {
                         switch serverSelection {

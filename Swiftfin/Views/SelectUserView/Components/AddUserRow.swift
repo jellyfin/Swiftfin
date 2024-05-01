@@ -45,13 +45,16 @@ extension SelectUserView {
         private var content: some View {
             HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
-                SystemImageContentView(systemName: "plus")
-                    .background(color: Color(uiColor: .systemGray2))
-                    .foregroundStyle(Color.primary, Color.black)
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipShape(.circle)
-                    .frame(width: 80)
-                    .padding(.vertical, 8)
+                ZStack {
+                    Color.tertiarySystemBackground
+
+                    RelativeSystemImageView(systemName: "plus", ratio: 0.5)
+                        .foregroundStyle(.secondary)
+                }
+                .aspectRatio(1, contentMode: .fill)
+                .clipShape(.circle)
+                .frame(width: 80)
+                .padding(.vertical, 8)
 
                 HStack {
 

@@ -202,7 +202,8 @@ struct SelectUserView: View {
         case let .user(user, server):
             UserGridButton(
                 user: user,
-                client: server.client
+                server: server,
+                showServer: serverSelection == .all
             ) {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
@@ -210,8 +211,8 @@ struct SelectUserView: View {
                     viewModel.send(.signIn(user))
                 }
             }
-            .environment(\.isSelected, selectedUsers.contains(user))
             .environment(\.isEditing, isEditingUsers)
+            .environment(\.isSelected, selectedUsers.contains(user))
         case .addUser:
             AddUserButton(
                 serverSelection: $serverSelection,
@@ -243,7 +244,8 @@ struct SelectUserView: View {
         case let .user(user, server):
             UserRow(
                 user: user,
-                server: server
+                server: server,
+                showServer: serverSelection == .all
             ) {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
@@ -251,8 +253,8 @@ struct SelectUserView: View {
                     viewModel.send(.signIn(user))
                 }
             }
-            .environment(\.isSelected, selectedUsers.contains(user))
             .environment(\.isEditing, isEditingUsers)
+            .environment(\.isSelected, selectedUsers.contains(user))
         case .addUser:
             AddUserRow(
                 serverSelection: $serverSelection,

@@ -8,6 +8,36 @@
 
 import SwiftUI
 
+struct RelativeSystemImageView: View {
+
+    @State
+    private var contentSize: CGSize = .zero
+
+    private let systemName: String
+    private let ratio: CGFloat
+
+    init(
+        systemName: String,
+        ratio: CGFloat = 0.5
+    ) {
+        self.systemName = systemName
+        self.ratio = ratio
+    }
+
+    var body: some View {
+        AlternateLayoutView {
+            Color.clear
+                .trackingSize($contentSize)
+        } content: {
+            Image(systemName: systemName)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .accessibilityHidden(true)
+                .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
+        }
+    }
+}
+
 // TODO: is the background color setting really the best way?
 
 struct SystemImageContentView: View {
@@ -22,20 +52,19 @@ struct SystemImageContentView: View {
     private let systemName: String
     private let title: String?
 
-    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.5) {
+    init(title: String? = nil, systemName: String?, ratio: CGFloat = 0.33) {
         self.backgroundColor = Color.secondarySystemFill
-        self.ratio = 1 / 3
+        self.ratio = ratio
         self.systemName = systemName ?? "circle"
         self.title = title
     }
 
     private var imageView: some View {
-        Image(systemName: systemName)
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .foregroundColor(.secondary)
-            .accessibilityHidden(true)
-            .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
+        RelativeSystemImageView(
+            systemName: systemName,
+            ratio: ratio
+        )
+        .foregroundColor(.secondary)
     }
 
     @ViewBuilder

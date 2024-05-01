@@ -21,12 +21,27 @@ extension SelectUserView {
         @State
         private var contentSize: CGSize = .zero
 
-        let user: UserState
-        let server: ServerState
-        var onSelect: () -> Void
+        private let user: UserState
+        private let server: ServerState
+        private let showServer: Bool
+        private let action: () -> Void
 
-        private var personView: some View {
-            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+        init(
+            user: UserState,
+            server: ServerState,
+            showServer: Bool,
+            action: @escaping () -> Void
+        ) {
+            self.user = user
+            self.server = server
+            self.showServer = showServer
+            self.action = action
+        }
+
+        private var labelForegroundStyle: some ShapeStyle {
+            guard isEditing else { return .primary }
+
+            return isSelected ? .primary : .secondary
         }
 
         @ViewBuilder
@@ -36,10 +51,10 @@ extension SelectUserView {
 
                 ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
                     .placeholder { _ in
-                        personView
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                     }
                     .failure {
-                        personView
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                     }
 
                 if isEditing {
@@ -54,7 +69,7 @@ extension SelectUserView {
         var body: some View {
             ZStack(alignment: .bottomTrailing) {
                 Button {
-                    onSelect()
+                    action()
                 } label: {
                     ZStack {
                         Color.clear
@@ -67,12 +82,20 @@ extension SelectUserView {
 
                             HStack {
 
-                                Text(user.username)
-                                    .font(.body)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Text(user.username)
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                        .foregroundStyle(labelForegroundStyle)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+
+                                    if showServer {
+                                        Text(server.name)
+                                            .font(.caption)
+                                            .foregroundColor(Color(UIColor.lightGray))
+                                    }
+                                }
 
                                 Spacer()
 
