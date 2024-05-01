@@ -15,6 +15,8 @@ import SwiftUI
 
 // TODO: change URL picker from menu to list with network-url mapping
 
+#warning("TODO: delete button tap areas fixed")
+
 struct EditServerView: View {
 
     @EnvironmentObject

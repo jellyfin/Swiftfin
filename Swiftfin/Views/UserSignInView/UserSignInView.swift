@@ -9,6 +9,8 @@
 import Stinsen
 import SwiftUI
 
+#warning("TODO: sign in/quick connect/cancel button tap areas fixed")
+
 struct UserSignInView: View {
 
     @EnvironmentObject

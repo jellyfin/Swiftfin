@@ -9,6 +9,8 @@
 import Combine
 import SwiftUI
 
+#warning("TODO: connect/cancel button tap areas fixed")
+
 struct ConnectToServerView: View {
 
     @EnvironmentObject
