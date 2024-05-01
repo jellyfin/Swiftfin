@@ -38,7 +38,7 @@ struct ConnectToServerView: View {
         Section(L10n.connectToServer) {
             TextField(L10n.serverURL, text: $url)
                 .disableAutocorrection(true)
-                .autocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .keyboardType(.URL)
                 .focused($isURLFocused)
         }
@@ -52,6 +52,7 @@ struct ConnectToServerView: View {
             .listRowBackground(Color.red.opacity(0.1))
         } else {
             Button(L10n.connect) {
+                isURLFocused = false
                 viewModel.send(.connect(url))
             }
             .buttonStyle(.plain)
@@ -137,6 +138,7 @@ struct ConnectToServerView: View {
 
                 error = eventError
                 isPresentingError = true
+                isURLFocused = true
             }
         }
         .onReceive(timer) { _ in

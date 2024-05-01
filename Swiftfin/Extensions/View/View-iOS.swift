@@ -62,6 +62,7 @@ extension View {
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .paletteOverlayRendering()
+                        .opacity(disabled ? 0.75 : 1)
                 }
                 .disabled(disabled)
             }

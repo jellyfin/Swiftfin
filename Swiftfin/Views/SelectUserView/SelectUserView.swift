@@ -32,14 +32,6 @@ extension Defaults.Keys {
     )
 }
 
-extension ServerState {
-
-    func splashScreenImageSource() -> ImageSource {
-        let request = Paths.getSplashscreen()
-        return ImageSource(url: client.fullURL(with: request))
-    }
-}
-
 struct SelectUserView: View {
 
     enum ServerSelection: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {

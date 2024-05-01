@@ -38,13 +38,22 @@ struct UserSignInView: View {
         Section(L10n.signInToServer(viewModel.server.name)) {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .focused($focusedTextField, equals: 0)
+                .onSubmit {
+                    focusedTextField = 1
+                }
 
-            UnmaskSecureField(L10n.password, text: $password)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedTextField, equals: 1)
+            UnmaskSecureField(L10n.password, text: $password) {
+                focusedTextField = nil
+
+                if username.isNotEmpty {
+                    viewModel.send(.signIn(username: username, password: password))
+                }
+            }
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($focusedTextField, equals: 1)
         }
 
         if case .signingIn = viewModel.state {
@@ -56,6 +65,7 @@ struct UserSignInView: View {
             .listRowBackground(Color.red.opacity(0.1))
         } else {
             Button(L10n.signIn) {
+                focusedTextField = nil
                 viewModel.send(.signIn(username: username, password: password))
             }
             .buttonStyle(.plain)
@@ -99,6 +109,7 @@ struct UserSignInView: View {
                         router.route(to: \.quickConnect, viewModel.quickConnect)
                     }
                     .buttonStyle(.plain)
+                    .disabled(viewModel.state == .signingIn)
                     .font(.body.weight(.semibold))
                     .listRowBackground(Color.accentColor)
                     .frame(maxWidth: .infinity)

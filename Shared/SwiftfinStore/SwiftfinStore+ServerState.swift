@@ -44,3 +44,11 @@ extension SwiftfinStore.State {
         }
     }
 }
+
+extension ServerState {
+
+    func splashScreenImageSource() -> ImageSource {
+        let request = Paths.getSplashscreen()
+        return ImageSource(url: client.fullURL(with: request))
+    }
+}

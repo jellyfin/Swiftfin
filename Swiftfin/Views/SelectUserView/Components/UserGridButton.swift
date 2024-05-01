@@ -64,6 +64,10 @@ extension SelectUserView {
                         Color.clear
 
                         ImageView(user.profileImageSource(client: server.client, maxWidth: 120, maxHeight: 120))
+                            .image { image in
+                                image
+                                    .posterBorder(ratio: 1 / 2, of: \.width)
+                            }
                             .placeholder { _ in
                                 personView
                             }
@@ -73,7 +77,6 @@ extension SelectUserView {
                     }
                     .aspectRatio(1, contentMode: .fill)
                     .posterShadow()
-                    .posterBorder(ratio: 1 / 2, of: \.width)
                     .clipShape(.circle)
                     .overlay {
                         if isEditing {
