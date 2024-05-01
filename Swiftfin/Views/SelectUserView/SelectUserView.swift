@@ -372,7 +372,6 @@ struct SelectUserView: View {
                             .opacity(0.9)
                             .ignoresSafeArea()
                     }
-                    .id(splashScreenImageSource)
             }
         }
     }

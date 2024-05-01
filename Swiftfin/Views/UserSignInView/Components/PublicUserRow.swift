@@ -27,6 +27,17 @@ extension UserSignInView {
             self.action = action
         }
 
+        private var personView: some View {
+            ZStack {
+                Color.tertiarySystemBackground
+
+                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
+        }
+
         var body: some View {
             Button {
                 action()
@@ -36,16 +47,19 @@ extension UserSignInView {
                         Color.clear
 
                         ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                            .image { image in
+                                image
+                                    .posterBorder(ratio: 1 / 2, of: \.width)
+                            }
                             .placeholder { _ in
-                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                                personView
                             }
                             .failure {
-                                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                                personView
                             }
                     }
                     .aspectRatio(1, contentMode: .fill)
                     .posterShadow()
-                    .posterBorder(ratio: 1 / 2, of: \.width)
                     .clipShape(.circle)
                     .frame(width: 50, height: 50)
 

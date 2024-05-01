@@ -31,21 +31,17 @@ struct AppSettingsView: View {
                     router.route(to: \.about, viewModel)
                 }
 
-            Section {
-                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
+            Section(L10n.accessibility) {
 
                 ChevronButton(title: L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector, viewModel)
                     }
-            } header: {
-                L10n.accessibility.text
-            }
 
-            Section {
-                ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
-            } footer: {
-                L10n.accentColorDescription.text
+                CaseIterablePicker(
+                    title: L10n.appearance,
+                    selection: $appAppearance
+                )
             }
 
             ChevronButton(title: L10n.logs)

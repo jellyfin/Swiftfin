@@ -96,11 +96,6 @@ struct SettingsView: View {
                 Text(L10n.accentColorDescription)
             }
 
-            ChevronButton(title: L10n.about)
-                .onSelect {
-                    router.route(to: \.about, viewModel)
-                }
-
             ChevronButton(title: L10n.logs)
                 .onSelect {
                     router.route(to: \.log)

@@ -19,8 +19,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     #if os(iOS)
     @Route(.push)
-    var about = makeAbout
-    @Route(.push)
     var log = makeLog
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
@@ -66,11 +64,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(iOS)
-    @ViewBuilder
-    func makeAbout(viewModel: SettingsViewModel) -> some View {
-        AboutAppView(viewModel: viewModel)
-    }
-
     @ViewBuilder
     func makeNativePlayerSettings() -> some View {
         NativeVideoPlayerSettingsView()

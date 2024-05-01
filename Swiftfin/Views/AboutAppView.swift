@@ -16,13 +16,12 @@ struct AboutAppView: View {
     var body: some View {
         List {
             Section {
-                VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 10) {
 
-                    Image(uiImage: viewModel.currentAppIcon.iconPreview)
+                    Image(.jellyfinBlobBlue)
                         .resizable()
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(150 / 6.4)
-                        .shadow(radius: 5)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(height: 150)
 
                     // App name, not to be localized
                     Text("Swiftfin")

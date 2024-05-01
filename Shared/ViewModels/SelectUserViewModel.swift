@@ -88,6 +88,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             .dataStack
             .fetchAll(From<ServerModel>())
             .map(\.state)
+            .sorted(using: \.name)
     }
 
     private func getUsers(for server: ServerState) throws -> [UserState] {
