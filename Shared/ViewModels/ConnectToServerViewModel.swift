@@ -14,11 +14,6 @@ import JellyfinAPI
 import OrderedCollections
 import Pulse
 
-// Note: Discovered servers works by always listening on a port for
-//       server responses and will send broadcasts as requested.
-//       This won't "clear" servers that no longer send a response,
-//       but case is negligible and just requires re-opening.
-
 final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -53,6 +48,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
+
+    // no longer-found servers are not cleared, but not an issue
     @Published
     var localServers: OrderedSet<ServerState> = []
     @Published
@@ -149,7 +146,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
-            sessionDelegate: URLSessionProxyDelegate()
+            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger())
         )
 
         let response = try await client.send(Paths.getPublicSystemInfo)

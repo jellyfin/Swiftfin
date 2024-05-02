@@ -15,9 +15,7 @@ import JellyfinAPI
 import Pulse
 import UIKit
 
-// TODO: cleanup
-
-final class SwiftfinSession {
+final class UserSession {
 
     let client: JellyfinClient
     let server: ServerState
@@ -40,14 +38,14 @@ final class SwiftfinSession {
     }
 }
 
-extension Container.Scope {
+fileprivate extension Container.Scope {
 
-    static var userSessionScope = Cached()
+    static let userSessionScope = Cached()
 }
 
 extension Container {
 
-    static let userSession = Factory<SwiftfinSession?>(scope: .userSessionScope) {
+    static let userSession = Factory<UserSession?>(scope: .userSessionScope) {
 
         if let lastUserID = Defaults[.lastSignedInUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(
@@ -67,28 +65,5 @@ extension Container {
         }
 
         return nil
-    }
-}
-
-extension JellyfinClient.Configuration {
-
-    static func swiftfinConfiguration(url: URL) -> Self {
-
-        let client = "Swiftfin \(UIDevice.platform)"
-        let deviceName = UIDevice.current.name
-            .folding(options: .diacriticInsensitive, locale: .current)
-            .unicodeScalars
-            .filter { CharacterSet.urlQueryAllowed.contains($0) }
-            .description
-        let deviceID = "\(UIDevice.platform)_\(UIDevice.vendorUUIDString)"
-        let version = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0.0.1"
-
-        return .init(
-            url: url,
-            client: client,
-            deviceName: deviceName,
-            deviceID: deviceID,
-            version: version
-        )
     }
 }

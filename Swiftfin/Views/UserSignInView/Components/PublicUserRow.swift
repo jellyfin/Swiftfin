@@ -46,10 +46,10 @@ extension UserSignInView {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(client: client, maxWidth: 120, maxHeight: 120))
+                        ImageView(user.profileImageSource(client: client, maxWidth: 120))
                             .image { image in
                                 image
-                                    .posterBorder(ratio: 1 / 2, of: \.width)
+                                    .posterBorder(ratio: 0.5, of: \.width)
                             }
                             .placeholder { _ in
                                 personView
@@ -75,7 +75,7 @@ extension UserSignInView {
                         .foregroundColor(.secondary)
                 }
             }
-            .buttonStyle(.plain)
+            .foregroundStyle(.primary)
         }
     }
 }

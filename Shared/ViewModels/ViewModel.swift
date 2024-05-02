@@ -20,7 +20,7 @@ class ViewModel: ObservableObject {
 
     /// The current *signed in* user session
     @Injected(Container.userSession)
-    var userSession: SwiftfinSession!
+    var userSession: UserSession!
 
     var cancellables = Set<AnyCancellable>()
 

@@ -44,18 +44,16 @@ struct SettingsView: View {
                 .onSelect {
                     router.route(to: \.serverDetail, viewModel.userSession.server)
                 }
-
-                Button {
-                    router.dismissCoordinator {
-                        viewModel.signOut()
-                    }
-                } label: {
-                    L10n.switchUser.text
-                        .font(.callout)
-                }
             }
 
-            Section {
+            ListRowButton(L10n.switchUser) {
+                router.dismissCoordinator {
+                    viewModel.signOut()
+                }
+            }
+            .foregroundStyle(.primary, Color.accentColor)
+
+            Section(L10n.videoPlayer) {
                 CaseIterablePicker(
                     title: L10n.videoPlayerType,
                     selection: $videoPlayerType
@@ -70,11 +68,9 @@ struct SettingsView: View {
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)
                     }
-            } header: {
-                L10n.videoPlayer.text
             }
 
-            Section {
+            Section(L10n.accessibility) {
                 CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
 
                 ChevronButton(title: L10n.customize)
@@ -86,8 +82,6 @@ struct SettingsView: View {
                     .onSelect {
                         router.route(to: \.experimentalSettings)
                     }
-            } header: {
-                L10n.accessibility.text
             }
 
             Section {

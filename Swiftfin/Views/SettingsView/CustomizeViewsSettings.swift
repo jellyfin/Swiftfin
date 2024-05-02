@@ -16,9 +16,6 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
 
-    @Default(.hapticFeedback)
-    private var hapticFeedback
-
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
@@ -72,8 +69,6 @@ struct CustomizeViewsSettings: View {
                         L10n.usePrimaryImageDescription.text
                     }
                 }
-
-                Toggle(L10n.hapticFeedback, isOn: $hapticFeedback)
             }
 
             Section {

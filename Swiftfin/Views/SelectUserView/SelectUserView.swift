@@ -22,13 +22,13 @@ extension Defaults.Keys {
     static let userListViewServerSelectionOption = Defaults.Key<SelectUserView.ServerSelection>(
         "userListViewServerSelectionOption",
         default: .all,
-        suite: .universalSuite
+        suite: .appSuite
     )
 
     static let userListViewUseSplashScreen = Defaults.Key<Bool>(
         "userListViewUseSplashScreen",
         default: false,
-        suite: .universalSuite
+        suite: .appSuite
     )
 }
 
@@ -182,7 +182,7 @@ struct SelectUserView: View {
     #warning("TODO: centering")
     @ViewBuilder
     private var padGridContentView: some View {
-        LazyVGrid(columns: [.init(.adaptive(minimum: 150, maximum: 250), spacing: EdgeInsets.edgePadding)]) {
+        LazyVGrid(columns: [.init(.adaptive(minimum: 150, maximum: 300), spacing: EdgeInsets.edgePadding)]) {
             ForEach(gridItems, id: \.hashValue) { item in
                 gridItemView(for: item)
             }

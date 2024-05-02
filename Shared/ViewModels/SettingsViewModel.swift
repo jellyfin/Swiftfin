@@ -83,16 +83,4 @@ final class SettingsViewModel: ViewModel {
         Container.userSession.reset()
         Notifications[.didSignOut].post()
     }
-
-    func resetUserSettings() {
-        UserDefaults.generalSuite.removeAll()
-    }
-
-    func removeAllServers() {
-        guard let allServers = try? dataStack.fetchAll(From<ServerModel>()) else { return }
-
-        try? dataStack.perform { transaction in
-            transaction.delete(allServers)
-        }
-    }
 }

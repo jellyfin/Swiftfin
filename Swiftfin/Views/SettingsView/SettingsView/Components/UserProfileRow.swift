@@ -14,7 +14,7 @@ extension SettingsView {
     struct UserProfileRow: View {
 
         @Injected(Container.userSession)
-        private var userSession: SwiftfinSession!
+        private var userSession: UserSession!
 
         let action: () -> Void
 
