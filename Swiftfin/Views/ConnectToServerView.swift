@@ -9,8 +9,6 @@
 import Combine
 import SwiftUI
 
-#warning("TODO: connect/cancel button tap areas fixed")
-
 struct ConnectToServerView: View {
 
     @EnvironmentObject
@@ -46,22 +44,20 @@ struct ConnectToServerView: View {
         }
 
         if viewModel.state == .connecting {
-            Button(L10n.cancel, role: .destructive) {
+            ListRowButton(L10n.cancel) {
                 viewModel.send(.cancel)
             }
-            .font(.body.weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.red.opacity(0.1))
+            .foregroundStyle(.red, .red.opacity(0.2))
         } else {
-            Button(L10n.connect) {
+            ListRowButton(L10n.connect) {
                 isURLFocused = false
                 viewModel.send(.connect(url))
             }
-            .buttonStyle(.plain)
             .disabled(url.isEmpty)
-            .font(.body.weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.accentColor.opacity(url.isEmpty ? 0.5 : 1))
+            .foregroundStyle(
+                .primary.opacity(url.isEmpty ? 0.5 : 1),
+                Color.accentColor
+            )
         }
     }
 

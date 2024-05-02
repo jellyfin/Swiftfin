@@ -9,8 +9,6 @@
 import Stinsen
 import SwiftUI
 
-#warning("TODO: sign in/quick connect/cancel button tap areas fixed")
-
 struct UserSignInView: View {
 
     @EnvironmentObject
@@ -59,22 +57,20 @@ struct UserSignInView: View {
         }
 
         if case .signingIn = viewModel.state {
-            Button(L10n.cancel, role: .destructive) {
+            ListRowButton(L10n.cancel) {
                 viewModel.send(.cancel)
             }
-            .font(.body.weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.red.opacity(0.1))
+            .foregroundStyle(.red, .red.opacity(0.2))
         } else {
-            Button(L10n.signIn) {
+            ListRowButton(L10n.signIn) {
                 focusedTextField = nil
                 viewModel.send(.signIn(username: username, password: password))
             }
-            .buttonStyle(.plain)
             .disabled(username.isEmpty)
-            .font(.body.weight(.semibold))
-            .frame(maxWidth: .infinity)
-            .listRowBackground(Color.accentColor.opacity(username.isEmpty ? 0.5 : 1))
+            .foregroundStyle(
+                .primary.opacity(username.isEmpty ? 0.5 : 1),
+                Color.accentColor
+            )
         }
     }
 
@@ -107,14 +103,14 @@ struct UserSignInView: View {
 
             if viewModel.isQuickConnectEnabled {
                 Section {
-                    Button(L10n.quickConnect) {
+                    ListRowButton(L10n.quickConnect) {
                         router.route(to: \.quickConnect, viewModel.quickConnect)
                     }
-                    .buttonStyle(.plain)
                     .disabled(viewModel.state == .signingIn)
-                    .font(.body.weight(.semibold))
-                    .listRowBackground(Color.accentColor)
-                    .frame(maxWidth: .infinity)
+                    .foregroundStyle(
+                        .primary,
+                        Color.accentColor
+                    )
                 }
             }
 

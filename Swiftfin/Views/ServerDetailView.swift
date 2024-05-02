@@ -15,8 +15,6 @@ import SwiftUI
 
 // TODO: change URL picker from menu to list with network-url mapping
 
-#warning("TODO: delete button tap areas fixed")
-
 struct EditServerView: View {
 
     @EnvironmentObject
@@ -57,14 +55,10 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                Button("Delete", role: .destructive) {
+                ListRowButton("Delete") {
                     isPresentingConfirmDeletion = true
                 }
-                .buttonStyle(.plain)
-                .font(.body.weight(.semibold))
-                .foregroundStyle(.red)
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.red.opacity(0.1))
+                .foregroundStyle(.red, .red.opacity(0.2))
             }
         }
         .navigationTitle(L10n.server)
