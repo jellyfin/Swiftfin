@@ -67,12 +67,11 @@ struct SwiftfinApp: App {
                 AppURLHandler.shared.processDeepLink(url: url)
             }
             .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
-                print("in background")
                 Defaults[.backgroundTimeStamp] = Date.now
             }
             .onNotification(UIApplication.willEnterForegroundNotification) { _ in
                 guard Defaults[.signOutOnBackground] else { return }
-
+                
                 if Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp]) > Defaults[.backgroundSignOutInterval] {
                     Defaults[.lastSignedInUserID] = nil
                     Container.userSession.reset()
