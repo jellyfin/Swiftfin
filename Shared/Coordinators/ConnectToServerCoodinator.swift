@@ -10,21 +10,23 @@ import Foundation
 import Stinsen
 import SwiftUI
 
-final class ConnectToServerCoodinator: NavigationCoordinatable {
+#warning("TODO: cleanup")
 
-    let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
-
-    @Root
-    var start = makeStart
-    @Route(.push)
-    var userSignIn = makeUserSignIn
-
-    func makeUserSignIn(server: SwiftfinStore.State.Server) -> UserSignInCoordinator {
-        UserSignInCoordinator(server: server)
-    }
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        ConnectToServerView()
-    }
-}
+// final class ConnectToServerCoodinator: NavigationCoordinatable {
+//
+//    let stack = NavigationStack(initial: \ConnectToServerCoodinator.start)
+//
+//    @Root
+//    var start = makeStart
+//    @Route(.push)
+//    var userSignIn = makeUserSignIn
+//
+//    func makeUserSignIn(server: ServerState) -> UserSignInCoordinator {
+//        UserSignInCoordinator(server: server)
+//    }
+//
+//    @ViewBuilder
+//    func makeStart() -> some View {
+//        ConnectToServerView()
+//    }
+// }

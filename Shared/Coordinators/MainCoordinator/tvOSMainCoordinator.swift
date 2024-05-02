@@ -22,14 +22,14 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var mainTab = makeMainTab
     @Root
-    var serverList = makeServerList
+    var selectUser = makeSelectUser
 
     init() {
 
-        if Container.userSession().authenticated {
+        if Container.userSession() != nil {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
-            stack = NavigationStack(initial: \MainCoordinator.serverList)
+            stack = NavigationStack(initial: \MainCoordinator.selectUser)
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
@@ -51,14 +51,14 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didSignOut() {
         logger.info("Received `didSignOut` from NSNotificationCenter.")
-        root(\.serverList)
+        root(\.selectUser)
     }
 
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }
 
-    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
-        NavigationViewCoordinator(ServerListCoordinator())
+    func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
+        NavigationViewCoordinator(SelectUserCoordinator())
     }
 }

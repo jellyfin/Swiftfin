@@ -35,9 +35,8 @@ extension ChannelLibraryView {
                             $0.aspectRatio(contentMode: .fit)
                         }
                         .failure {
-                            SystemImageContentView(systemName: channel.systemImage)
+                            SystemImageContentView(systemName: channel.systemImage, ratio: 0.66)
                                 .background(color: .clear)
-                                .imageFrameRatio(width: 1.5, height: 1.5)
                         }
                         .placeholder { _ in
                             EmptyView()

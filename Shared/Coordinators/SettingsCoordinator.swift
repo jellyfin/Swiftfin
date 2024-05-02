@@ -139,19 +139,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                IndicatorSettingsView()
-            }
-        )
+        NavigationViewCoordinator {
+            IndicatorSettingsView()
+        }
     }
 
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                ServerDetailView(server: server)
-            }
-        )
+        NavigationViewCoordinator {
+            EditServerView(server: server)
+        }
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {

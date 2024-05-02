@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-struct ServerDetailView: View {
+struct EditServerView: View {
 
     @StateObject
-    private var viewModel: ServerDetailViewModel
+    private var viewModel: EditServerViewModel
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: ServerDetailViewModel(server: server))
+        self._viewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
     }
 
     var body: some View {
@@ -26,27 +26,17 @@ struct ServerDetailView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section(header: L10n.serverDetails.text) {
+                Section(L10n.serverDetails) {
 
                     TextPairView(
                         leading: L10n.name,
-                        trailing: viewModel.server.name
+                        trailing: ""
                     )
 
-                    TextPairView(
-                        leading: L10n.url,
-                        trailing: viewModel.server.currentURL.absoluteString
-                    )
-
-                    TextPairView(
-                        leading: L10n.version,
-                        trailing: viewModel.server.version
-                    )
-
-                    TextPairView(
-                        leading: L10n.operatingSystem,
-                        trailing: viewModel.server.os
-                    )
+//                    TextPairView(
+//                        leading: L10n.url,
+//                        trailing: viewModel.server.currentURL.absoluteString
+//                    )
                 }
             }
             .withDescriptionTopPadding()

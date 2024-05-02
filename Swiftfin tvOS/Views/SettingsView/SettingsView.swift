@@ -19,8 +19,8 @@ struct SettingsView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
+    @StateObject
+    private var viewModel = SettingsViewModel()
 
     var body: some View {
         SplitFormWindowView()

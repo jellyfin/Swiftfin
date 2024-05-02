@@ -366,7 +366,6 @@
 		E145EB252BE055AD003BF6F3 /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB242BE055AD003BF6F3 /* ServerResponse.swift */; };
 		E145EB262BE055AD003BF6F3 /* ServerResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB242BE055AD003BF6F3 /* ServerResponse.swift */; };
 		E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */; };
-		E145EB432BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB412BE0A6EE003BF6F3 /* ServerSelectionMenu.swift */; };
 		E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
 		E145EB462BE0AD4E003BF6F3 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB442BE0AD4E003BF6F3 /* Set.swift */; };
 		E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */; };
@@ -652,6 +651,9 @@
 		E1AD104E26D96CE3003E4A08 /* BaseItemDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD104C26D96CE3003E4A08 /* BaseItemDto.swift */; };
 		E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */; };
 		E1AEFA372BE317E200CFAFD8 /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */; };
+		E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */; };
+		E1AEFA392BE36C4C00CFAFD8 /* SwiftfinStore+ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */; };
+		E1AEFA3B2BE36D5E00CFAFD8 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1AEFA3A2BE36D5E00CFAFD8 /* JellyfinAPI */; };
 		E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33EAF28EA890D0073B0FD /* Equatable.swift */; };
 		E1B33ECF28EB6EA90073B0FD /* OverlayMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */; };
 		E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */; };
@@ -1460,6 +1462,7 @@
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
+				E1AEFA3B2BE36D5E00CFAFD8 /* JellyfinAPI in Frameworks */,
 				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
@@ -3337,6 +3340,7 @@
 				E1153DB02BBA734C00424D36 /* CollectionHStack */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
 				E132D3CE2BD217AA0058A2DF /* CollectionVGrid */,
+				E1AEFA3A2BE36D5E00CFAFD8 /* JellyfinAPI */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3613,6 +3617,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1AEFA392BE36C4C00CFAFD8 /* SwiftfinStore+ServerState.swift in Sources */,
 				E15D4F0B2B1BD88900442DB8 /* Edge.swift in Sources */,
 				E193D53627193F8500900D82 /* LibraryCoordinator.swift in Sources */,
 				E1CCC3D228C858A50020ED54 /* UserProfileButton.swift in Sources */,
@@ -3849,12 +3854,12 @@
 				E11BDF982B865F550045C54A /* ItemTag.swift in Sources */,
 				E1DC9848296DEFF500982F06 /* FavoriteIndicator.swift in Sources */,
 				E193D53C27193F9500900D82 /* SelectUserCoordinator.swift in Sources */,
-				E145EB432BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */,
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E154967C296CBB1A00C4EF88 /* FontPickerView.swift in Sources */,
 				E15D63F02BD6DFC200AA665D /* SystemImageable.swift in Sources */,
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E1575E86293E7A00001665B1 /* AppIcons.swift in Sources */,
+				E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */,
 				E11895B42893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */,
 				E1D37F532B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift in Sources */,
@@ -5186,6 +5191,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */;
 			productName = PreferencesView;
+		};
+		E1AEFA3A2BE36D5E00CFAFD8 /* JellyfinAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E145EB522BE18682003BF6F3 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */;
+			productName = JellyfinAPI;
 		};
 		E1B5F7A629577BCE004B26CF /* Pulse */ = {
 			isa = XCSwiftPackageProductDependency;
