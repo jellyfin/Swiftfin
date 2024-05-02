@@ -15,7 +15,6 @@
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
 		5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5321753A2671BCFC005491E6 /* SettingsViewModel.swift */; };
-		53352571265EA0A0006CCA86 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 53352570265EA0A0006CCA86 /* Introspect */; };
 		5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5338F74D263B61370014BF09 /* ConnectToServerView.swift */; };
 		534D4FF026A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
 		534D4FF126A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEE26A7D7CC000A7A48 /* Localizable.strings */; };
@@ -197,6 +196,8 @@
 		E10231602BCF8B7E009D71FC /* VideoPlayerWrapperCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */; };
 		E103DF902BCF2F1C000229B2 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103DF8F2BCF2F1C000229B2 /* MediaItem.swift */; };
 		E103DF952BCF31CD000229B2 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103DF942BCF31CD000229B2 /* MediaItem.swift */; };
+		E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10432F52BE4426F006FF9DD /* FormatStyle.swift */; };
+		E10432F72BE4426F006FF9DD /* FormatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10432F52BE4426F006FF9DD /* FormatStyle.swift */; };
 		E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1047E2227E5880000CB0D4A /* SystemImageContentView.swift */; };
 		E104C870296E087200C1C3F9 /* IndicatorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */; };
 		E104C873296E0D0A00C1C3F9 /* IndicatorSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E104C872296E0D0A00C1C3F9 /* IndicatorSettingsView.swift */; };
@@ -516,6 +517,8 @@
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
+		E178B0742BE434390023651B /* MultiComponentPicker in Frameworks */ = {isa = PBXBuildFile; productRef = E178B0732BE434390023651B /* MultiComponentPicker */; };
+		E178B0762BE435D70023651B /* HourMinutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178B0752BE435D70023651B /* HourMinutePicker.swift */; };
 		E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
 		E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
 		E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */; };
@@ -1022,6 +1025,7 @@
 		E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerWrapperCoordinator.swift; sourceTree = "<group>"; };
 		E103DF8F2BCF2F1C000229B2 /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 		E103DF942BCF31CD000229B2 /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
+		E10432F52BE4426F006FF9DD /* FormatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatStyle.swift; sourceTree = "<group>"; };
 		E1047E2227E5880000CB0D4A /* SystemImageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImageContentView.swift; sourceTree = "<group>"; };
 		E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorSettingsView.swift; sourceTree = "<group>"; };
 		E104C872296E0D0A00C1C3F9 /* IndicatorSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndicatorSettingsView.swift; sourceTree = "<group>"; };
@@ -1195,6 +1199,7 @@
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
+		E178B0752BE435D70023651B /* HourMinutePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourMinutePicker.swift; sourceTree = "<group>"; };
 		E17AC9692954D00E003D2BC2 /* URLResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLResponse.swift; sourceTree = "<group>"; };
 		E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListView.swift; sourceTree = "<group>"; };
 		E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewModel.swift; sourceTree = "<group>"; };
@@ -1506,11 +1511,11 @@
 				E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */,
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
+				E178B0742BE434390023651B /* MultiComponentPicker in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
-				53352571265EA0A0006CCA86 /* Introspect in Frameworks */,
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
 				E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
@@ -1946,6 +1951,7 @@
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
 				E1DE2B492B97ECB900F6715F /* ErrorView.swift */,
 				E1921B7528E63306003A5238 /* GestureView.swift */,
+				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
 				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
 				E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */,
 				E1FE69AF28C2DA4A0021BC93 /* NavigationBarFilterDrawer */,
@@ -1981,6 +1987,7 @@
 				E1B33EAF28EA890D0073B0FD /* Equatable.swift */,
 				E133328729538D8D00EE76AB /* Files.swift */,
 				E11CEB8C28999B4A003E74C7 /* Font.swift */,
+				E10432F52BE4426F006FF9DD /* FormatStyle.swift */,
 				E1E6C44A29AED2B70064123F /* HorizontalAlignment.swift */,
 				E139CC1E28EC83E400688DE2 /* Int.swift */,
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
@@ -3363,7 +3370,6 @@
 			);
 			name = "Swiftfin iOS";
 			packageProductDependencies = (
-				53352570265EA0A0006CCA86 /* Introspect */,
 				62C29E9B26D0FE4200C1D2E7 /* Stinsen */,
 				E13DD3C52716499E009D4DAF /* CoreStore */,
 				E13DD3D227168E65009D4DAF /* Defaults */,
@@ -3397,6 +3403,7 @@
 				E132D3CC2BD2179C0058A2DF /* CollectionVGrid */,
 				E145EB4A2BE16849003BF6F3 /* KeychainSwift */,
 				E145EB532BE18682003BF6F3 /* JellyfinAPI */,
+				E178B0732BE434390023651B /* MultiComponentPicker */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3469,6 +3476,7 @@
 				E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				E145EB522BE18682003BF6F3 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
+				E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3739,6 +3747,7 @@
 				E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
 				E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
 				E1575E87293E7A00001665B1 /* InvertedDarkAppIcon.swift in Sources */,
+				E10432F72BE4426F006FF9DD /* FormatStyle.swift in Sources */,
 				62E632F4267D54030063E547 /* ItemViewModel.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
@@ -4065,6 +4074,7 @@
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
+				E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */,
 				E14EDEC52B8FB64E000F00A4 /* AnyItemFilter.swift in Sources */,
 				E11245B728D97ED200D8A977 /* TopBarView.swift in Sources */,
@@ -4120,6 +4130,7 @@
 				E1CAF65F2BA345830087D991 /* MediaViewModel.swift in Sources */,
 				E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */,
+				E178B0762BE435D70023651B /* HourMinutePicker.swift in Sources */,
 				E12F038C28F8B0B100976CC3 /* EdgeInsets.swift in Sources */,
 				6267B3D626710B8900A7371D /* Collection.swift in Sources */,
 				E152107C2947ACA000375CC2 /* InvertedLightAppIcon.swift in Sources */,
@@ -4766,7 +4777,7 @@
 			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.3;
+				minimumVersion = 1.0.0;
 			};
 		};
 		62666E3727E502CE00EC0ECD /* XCRemoteSwiftPackageReference "SwizzleSwift" */ = {
@@ -4873,6 +4884,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/MultiComponentPicker";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/VLCUI";
@@ -4932,11 +4951,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		53352570265EA0A0006CCA86 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
-		};
 		535870902669D7A800D05A09 /* Introspect */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
@@ -5142,6 +5156,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
+		};
+		E178B0732BE434390023651B /* MultiComponentPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */;
+			productName = MultiComponentPicker;
 		};
 		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;

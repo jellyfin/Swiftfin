@@ -1,5 +1,5 @@
 {
-  "originHash" : "8ea1d1eecfd3ee530e9acbb9048c410e284fe6524ba8a64506a46647748df8f8",
+  "originHash" : "b4bf08723df39a590f119c693237988ccc4652706ec8255e472fa81483630011",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -110,6 +110,15 @@
       }
     },
     {
+      "identity" : "multicomponentpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LePips/MultiComponentPicker",
+      "state" : {
+        "branch" : "main",
+        "revision" : "d24152f3815c80684551490d02f2c29735cc23d9"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
@@ -195,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "121c146fe591b1320238d054ae35c81ffa45f45a",
-        "version" : "0.12.0"
+        "revision" : "0cd2a5a5895306bc21d54a2254302d24a9a571e4",
+        "version" : "1.1.3"
       }
     },
     {

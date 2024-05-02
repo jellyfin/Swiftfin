@@ -52,14 +52,14 @@ private extension Defaults.Keys {
 extension Defaults.Keys {
 
     static let accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
-    static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
+    static let appearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
+    static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
+    static let backgroundTimeStamp: Key<Date> = AppKey("backgroundTimeStamp", default: Date.now)
     static let lastSignedInUserID: Key<String?> = AppKey("lastSignedInUserID")
+    static let signOutOnBackground: Key<Bool> = AppKey("signOutOnBackground", default: true)
+    static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: true)
 
-    static let userListDisplayType = Defaults.Key<LibraryDisplayType>(
-        "userListDisplayType",
-        default: .grid,
-        suite: .appSuite
-    )
+    static let userListDisplayType: Key<LibraryDisplayType> = AppKey("userListDisplayType", default: .grid)
 }
 
 // MARK: User

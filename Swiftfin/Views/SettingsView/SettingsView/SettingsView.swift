@@ -16,7 +16,9 @@ struct SettingsView: View {
 
     @Default(.accentColor)
     private var accentColor
-    @Default(.appAppearance)
+
+    #warning("TODO: user app appearance")
+    @Default(.appearance)
     private var appAppearance
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType

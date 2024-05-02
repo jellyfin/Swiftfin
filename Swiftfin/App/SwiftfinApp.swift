@@ -8,6 +8,7 @@
 
 import CoreStore
 import Defaults
+import Factory
 import Logging
 import PreferencesView
 import Pulse
@@ -30,7 +31,7 @@ struct SwiftfinApp: App {
         }
 
         Task {
-            for await newValue in Defaults.updates(.appAppearance) {
+            for await newValue in Defaults.updates(.appearance) {
                 UIApplication.shared.setAppearance(newValue.style)
             }
         }
@@ -64,6 +65,19 @@ struct SwiftfinApp: App {
             .ignoresSafeArea()
             .onOpenURL { url in
                 AppURLHandler.shared.processDeepLink(url: url)
+            }
+            .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
+                print("in background")
+                Defaults[.backgroundTimeStamp] = Date.now
+            }
+            .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+                guard Defaults[.signOutOnBackground] else { return }
+
+                if Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp]) > Defaults[.backgroundSignOutInterval] {
+                    Defaults[.lastSignedInUserID] = nil
+                    Container.userSession.reset()
+                    Notifications[.didSignOut].post()
+                }
             }
         }
     }
