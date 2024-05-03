@@ -16,13 +16,13 @@ extension SelectUserView {
         private var router: SelectUserCoordinator.Router
 
         @Binding
-        private var serverSelection: ServerSelection
+        private var serverSelection: SelectUserServerSelection
 
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
         private var selectedServer: ServerState? {
-            if case let ServerSelection.server(id: id) = serverSelection,
+            if case let SelectUserServerSelection.server(id: id) = serverSelection,
                let server = viewModel.servers.keys.first(where: { server in server.id == id })
             {
                 return server
@@ -32,7 +32,7 @@ extension SelectUserView {
         }
 
         init(
-            selection: Binding<ServerSelection>,
+            selection: Binding<SelectUserServerSelection>,
             viewModel: SelectUserViewModel
         ) {
             self._serverSelection = selection
@@ -57,7 +57,7 @@ extension SelectUserView {
 
                     if viewModel.servers.keys.count > 1 {
                         Label("All Servers", systemImage: "person.2.fill")
-                            .tag(ServerSelection.all)
+                            .tag(SelectUserServerSelection.all)
                     }
 
                     ForEach(viewModel.servers.keys) { server in
@@ -65,7 +65,7 @@ extension SelectUserView {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
-                        .tag(ServerSelection.server(id: server.id))
+                        .tag(SelectUserServerSelection.server(id: server.id))
                     }
                 }
             } label: {

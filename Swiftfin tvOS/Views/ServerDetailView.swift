@@ -30,7 +30,7 @@ struct EditServerView: View {
 
                     TextPairView(
                         leading: L10n.name,
-                        trailing: ""
+                        trailing: viewModel.server.name
                     )
 
 //                    TextPairView(

@@ -25,7 +25,6 @@
 		535870632669D21600D05A09 /* SwiftfinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* SwiftfinApp.swift */; };
 		535870672669D21700D05A09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870662669D21700D05A09 /* Assets.xcassets */; };
 		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
-		535870912669D7A800D05A09 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = 535870902669D7A800D05A09 /* Introspect */; };
 		535870AD2669D8DD00D05A09 /* ItemFilterCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* ItemFilterCollection.swift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
 		5364F455266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* BaseItemPerson.swift */; };
@@ -123,7 +122,6 @@
 		62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */ = {isa = PBXBuildFile; productRef = 62C29E9B26D0FE4200C1D2E7 /* Stinsen */; };
 		62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29E9E26D1016600C1D2E7 /* iOSMainCoordinator.swift */; };
 		62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA026D102A500C1D2E7 /* iOSMainTabCoordinator.swift */; };
-		62C29EA326D1030F00C1D2E7 /* ConnectToServerCoodinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */; };
 		62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */; };
 		62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA726D103D500C1D2E7 /* MediaCoordinator.swift */; };
 		62C83B08288C6A630004ED0C /* FontPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C83B07288C6A630004ED0C /* FontPickerView.swift */; };
@@ -490,6 +488,8 @@
 		E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA832BA167350080E926 /* CollectionHStack */; };
 		E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = E15EFA852BA1685F0080E926 /* SwiftUIIntrospect */; };
 		E164A7F42BE4736300A54B18 /* SignOutIntervalSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F32BE4736300A54B18 /* SignOutIntervalSection.swift */; };
+		E164A7F62BE4814700A54B18 /* SelectUserServerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */; };
+		E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
 		E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */; };
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
@@ -602,7 +602,6 @@
 		E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */; };
 		E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A3D288F0D3D00CB80AA /* UIScreen.swift */; };
 		E1937A61288F32DB00CB80AA /* Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1937A60288F32DB00CB80AA /* Poster.swift */; };
-		E193D53227193F7B00900D82 /* ConnectToServerCoodinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */; };
 		E193D53327193F7D00900D82 /* FilterCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0B926D6092100B8E046 /* FilterCoordinator.swift */; };
 		E193D53427193F7F00900D82 /* HomeCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */; };
 		E193D53527193F8100900D82 /* ItemCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6220D0BF26D61C5000B8E046 /* ItemCoordinator.swift */; };
@@ -613,7 +612,7 @@
 		E193D53C27193F9500900D82 /* SelectUserCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD4012717EE79009D4DAF /* SelectUserCoordinator.swift */; };
 		E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */; };
 		E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */; };
-		E193D547271941C500900D82 /* UserListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D546271941C500900D82 /* UserListView.swift */; };
+		E193D547271941C500900D82 /* SelectUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D546271941C500900D82 /* SelectUserView.swift */; };
 		E193D549271941CC00900D82 /* UserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D548271941CC00900D82 /* UserSignInView.swift */; };
 		E193D54B271941D300900D82 /* ServerListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54A271941D300900D82 /* ServerListView.swift */; };
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
@@ -970,7 +969,6 @@
 		628B95232670CABD0091AF3B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		62C29E9E26D1016600C1D2E7 /* iOSMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSMainCoordinator.swift; sourceTree = "<group>"; };
 		62C29EA026D102A500C1D2E7 /* iOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSMainTabCoordinator.swift; sourceTree = "<group>"; };
-		62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToServerCoodinator.swift; sourceTree = "<group>"; };
 		62C29EA526D1036A00C1D2E7 /* HomeCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeCoordinator.swift; sourceTree = "<group>"; };
 		62C29EA726D103D500C1D2E7 /* MediaCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCoordinator.swift; sourceTree = "<group>"; };
 		62C83B07288C6A630004ED0C /* FontPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontPickerView.swift; sourceTree = "<group>"; };
@@ -1176,6 +1174,7 @@
 		E15D63EC2BD622A700AA665D /* CompactChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactChannelView.swift; sourceTree = "<group>"; };
 		E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImageable.swift; sourceTree = "<group>"; };
 		E164A7F32BE4736300A54B18 /* SignOutIntervalSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutIntervalSection.swift; sourceTree = "<group>"; };
+		E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserServerSelection.swift; sourceTree = "<group>"; };
 		E168BD08289A4162001A6922 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
@@ -1263,7 +1262,7 @@
 		E1937A3D288F0D3D00CB80AA /* UIScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScreen.swift; sourceTree = "<group>"; };
 		E1937A60288F32DB00CB80AA /* Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Poster.swift; sourceTree = "<group>"; };
 		E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainCoordinator.swift; sourceTree = "<group>"; };
-		E193D546271941C500900D82 /* UserListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListView.swift; sourceTree = "<group>"; };
+		E193D546271941C500900D82 /* SelectUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserView.swift; sourceTree = "<group>"; };
 		E193D548271941CC00900D82 /* UserSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInView.swift; sourceTree = "<group>"; };
 		E193D54A271941D300900D82 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
@@ -1447,7 +1446,6 @@
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
 				E1392FED2BA218A80034110D /* SwiftUIIntrospect in Frameworks */,
-				535870912669D7A800D05A09 /* Introspect in Frameworks */,
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
 				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
@@ -1692,6 +1690,7 @@
 				E18CE0B328A22EDA0092E7F1 /* RepeatingTimer.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
 				E18ACA8A2A14301800BB4F35 /* ScalingButtonStyle.swift */,
+				E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */,
 				E129429228F2845000796AC6 /* SliderType.swift */,
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
 				E11042742B8013DF00821020 /* Stateful.swift */,
@@ -2027,7 +2026,6 @@
 			children = (
 				E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */,
 				E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */,
-				62C29EA226D1030F00C1D2E7 /* ConnectToServerCoodinator.swift */,
 				E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */,
 				E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
@@ -2441,10 +2439,10 @@
 				E10231572BCF8AF8009D71FC /* ProgramsView */,
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
+				E193D546271941C500900D82 /* SelectUserView.swift */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E193D54A271941D300900D82 /* ServerListView.swift */,
 				E1E5D54D2783E66600692DFE /* SettingsView */,
-				E193D546271941C500900D82 /* UserListView.swift */,
 				E193D548271941CC00900D82 /* UserSignInView.swift */,
 				5310694F2684E7EE00CFFDBA /* VideoPlayer */,
 			);
@@ -3343,7 +3341,6 @@
 			);
 			name = "Swiftfin tvOS";
 			packageProductDependencies = (
-				535870902669D7A800D05A09 /* Introspect */,
 				6220D0C826D63F3700B8E046 /* Stinsen */,
 				E13DD3CC27164CA7009D4DAF /* CoreStore */,
 				E12186DD2718F1C50010884C /* Defaults */,
@@ -3826,6 +3823,7 @@
 				E1575EA2293E7B1E001665B1 /* Color.swift in Sources */,
 				E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */,
 				E1575E72293E77B5001665B1 /* Utilities.swift in Sources */,
+				E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */,
 				E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E102315B2BCF8AF8009D71FC /* ProgramProgressOverlay.swift in Sources */,
@@ -3929,7 +3927,7 @@
 				E1D37F4F2B9CEDC400343D2B /* DeviceProfile.swift in Sources */,
 				E1575E94293E7B1E001665B1 /* VerticalAlignment.swift in Sources */,
 				E1575EA3293E7B1E001665B1 /* UIDevice.swift in Sources */,
-				E193D547271941C500900D82 /* UserListView.swift in Sources */,
+				E193D547271941C500900D82 /* SelectUserView.swift in Sources */,
 				E1DE2B4D2B9838B200F6715F /* PaletteOverlayRenderingModifier.swift in Sources */,
 				E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
 				E10231592BCF8AF8009D71FC /* ChannelLibraryView.swift in Sources */,
@@ -3938,7 +3936,6 @@
 				E1A1528E28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift in Sources */,
 				E18E021D2887492B0022598C /* AttributeStyleModifier.swift in Sources */,
 				E1CAF6632BA363840087D991 /* UIHostingController.swift in Sources */,
-				E193D53227193F7B00900D82 /* ConnectToServerCoodinator.swift in Sources */,
 				E10231492BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
@@ -4063,6 +4060,7 @@
 				E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E113132B28BDB4B500930F75 /* NavigationBarDrawerView.swift in Sources */,
+				E164A7F62BE4814700A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
 				E1559A76294D960C00C1FFBC /* MainOverlay.swift in Sources */,
 				E14EDECC2B8FB709000F00A4 /* ItemYear.swift in Sources */,
@@ -4073,7 +4071,6 @@
 				E14EDEC82B8FB65F000F00A4 /* ItemFilterType.swift in Sources */,
 				E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */,
 				62133890265F83A900A81A2A /* MediaView.swift in Sources */,
-				62C29EA326D1030F00C1D2E7 /* ConnectToServerCoodinator.swift in Sources */,
 				E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */,
 				E18E01E1288747230022598C /* EpisodeItemContentView.swift in Sources */,
 				E129429B28F4A5E300796AC6 /* PlaybackSettingsView.swift in Sources */,
@@ -4971,11 +4968,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		535870902669D7A800D05A09 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
-		};
 		6220D0C826D63F3700B8E046 /* Stinsen */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;

@@ -12,63 +12,23 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-#warning("TODO: cleanup")
+#warning("TODO: option for splashscreen image")
 
-// TODO: option for splashscreen image
 // TODO: user ordering
 
-extension Defaults.Keys {
-
-    static let userListViewServerSelectionOption = Defaults.Key<SelectUserView.ServerSelection>(
-        "userListViewServerSelectionOption",
-        default: .all,
-        suite: .appSuite
-    )
-
-    static let userListViewUseSplashScreen = Defaults.Key<Bool>(
-        "userListViewUseSplashScreen",
-        default: false,
-        suite: .appSuite
-    )
-}
-
 struct SelectUserView: View {
-
-    enum ServerSelection: RawRepresentable, Codable, Defaults.Serializable, Equatable, Hashable {
-
-        case all
-        case server(id: String)
-
-        var rawValue: String {
-            switch self {
-            case .all:
-                "swiftfin-all"
-            case let .server(id):
-                id
-            }
-        }
-
-        init?(rawValue: String) {
-            switch rawValue {
-            case "swiftfin-all":
-                self = .all
-            default:
-                self = .server(id: rawValue)
-            }
-        }
-    }
 
     private enum UserGridItem: Hashable {
         case user(UserState, server: ServerState)
         case addUser
     }
 
-    @Default(.userListViewServerSelectionOption)
+    @Default(.selectUserServerSelection)
     private var serverSelection
-    @Default(.userListDisplayType)
+    @Default(.selectUserDisplayType)
     private var userListDisplayType
-    @Default(.userListViewUseSplashScreen)
-    private var userListViewUseSplashScreen
+//    @Default(.userListViewUseSplashScreen)
+//    private var userListViewUseSplashScreen
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
@@ -90,7 +50,7 @@ struct SelectUserView: View {
     private var viewModel = SelectUserViewModel()
 
     private var selectedServer: ServerState? {
-        if case let ServerSelection.server(id: id) = serverSelection,
+        if case let SelectUserServerSelection.server(id: id) = serverSelection,
            let server = viewModel.servers.keys.first(where: { server in server.id == id })
         {
             return server
@@ -112,7 +72,7 @@ struct SelectUserView: View {
         }
     }
 
-    private func makeGridItems(for serverSelection: ServerSelection) -> OrderedSet<UserGridItem> {
+    private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
         switch serverSelection {
         case .all:
             let items = viewModel.servers
@@ -458,7 +418,7 @@ struct SelectUserView: View {
         }
         .onNotification(.didDeleteServer) { notification in
             if let server = notification.object as? ServerState {
-                if case let ServerSelection.server(id: id) = serverSelection, server.id == id {
+                if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
                     serverSelection = .all
                 }
 

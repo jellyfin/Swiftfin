@@ -14,7 +14,7 @@ extension SelectUserView {
     struct AddUserRow: View {
 
         @Binding
-        private var serverSelection: ServerSelection
+        private var serverSelection: SelectUserServerSelection
 
         @Environment(\.isEnabled)
         private var isEnabled
@@ -23,7 +23,7 @@ extension SelectUserView {
         private let servers: OrderedSet<ServerState>
 
         private var selectedServer: ServerState? {
-            if case let ServerSelection.server(id: id) = serverSelection,
+            if case let SelectUserServerSelection.server(id: id) = serverSelection,
                let server = servers.first(where: { server in server.id == id })
             {
                 return server
@@ -33,7 +33,7 @@ extension SelectUserView {
         }
 
         init(
-            serverSelection: Binding<ServerSelection>,
+            serverSelection: Binding<SelectUserServerSelection>,
             servers: OrderedSet<ServerState>,
             action: @escaping (ServerState) -> Void
         ) {

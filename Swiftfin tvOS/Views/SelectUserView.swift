@@ -15,9 +15,47 @@ import SwiftUI
 
 struct SelectUserView: View {
 
-    var body: some View {
-        Text("TODO")
+    @ViewBuilder
+    private var gridContentView: some View {
+        let columns = Array(repeating: GridItem(.flexible(), spacing: EdgeInsets.edgePadding * 3), count: 4)
+
+        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding * 3) {
+            ForEach(0 ..< 15) { _ in
+                Button {} label: {
+                    Color.blue
+                        .aspectRatio(1, contentMode: .fill)
+                        .clipShape(.circle)
+                }
+                .buttonStyle(.card)
+            }
+        }
     }
+
+    var body: some View {
+        VStack {
+            Image(.jellyfinBlobBlue)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 100)
+
+            ScrollView {
+                gridContentView
+                    .edgePadding()
+            }
+            
+            HStack {
+                Rectangle()
+                    .fill(Color.red)
+                    .frame(height: 150)
+            }
+        }
+        .ignoresSafeArea()
+        .padding(.top, 10)
+    }
+}
+
+#Preview {
+    SelectUserView()
 }
 
 // struct UserListView: View {
