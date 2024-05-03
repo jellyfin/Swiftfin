@@ -19,18 +19,15 @@ struct HourMinutePicker: View {
     @State
     private var componentMinuteSelection: Int
 
-    private let hourSelection: Binding<Int>
-    private let minuteSelection: Binding<Int>
+    private let duration: Binding<TimeInterval>
 
     init(
-        hourSelection: Binding<Int>,
-        minuteSelection: Binding<Int>
+        duration: Binding<TimeInterval>
     ) {
-        self.hourSelection = hourSelection
-        self.minuteSelection = minuteSelection
+        self.duration = duration
 
-        self._componentHourSelection = State(initialValue: hourSelection.wrappedValue)
-        self._componentMinuteSelection = State(initialValue: minuteSelection.wrappedValue)
+        _componentHourSelection = State(initialValue: Int(duration.wrappedValue) / 3600)
+        _componentMinuteSelection = State(initialValue: (Int(duration.wrappedValue) % 3600) / 60)
     }
 
     var body: some View {
@@ -62,10 +59,12 @@ struct HourMinutePicker: View {
             }
         }
         .onChange(of: componentHourSelection) { newValue in
-            hourSelection.wrappedValue = newValue
+            let newDuration = Double(newValue * 3600 + componentMinuteSelection * 60)
+            duration.wrappedValue = newDuration
         }
         .onChange(of: componentMinuteSelection) { newValue in
-            minuteSelection.wrappedValue = newValue
+            let newDuration = Double(componentHourSelection * 3600 + newValue * 60)
+            duration.wrappedValue = newDuration
         }
     }
 }

@@ -80,16 +80,27 @@ struct HomeView: View {
             Button {
                 router.route(to: \.settings)
             } label: {
-//                if let userImage = viewModel.userSession.user.image {
-//                    Image(uiImage: userImage)
-//                        .resizable()
-//                        .clipShape(.circle)
-//                        .aspectRatio(1, contentMode: .fit)
-//                        .frame(width: 30, height: 30)
-//                } else {
-                Image(systemName: "gearshape.fill")
-                    .resizable()
-//                }
+                ZStack {
+                    Color.clear
+
+                    ImageView(viewModel.userSession.user.profileImageSource(client: viewModel.userSession.client, maxWidth: 120))
+                        .image { image in
+                            image
+                                .resizable()
+                                .clipShape(.circle)
+                                .aspectRatio(1, contentMode: .fit)
+                                .posterBorder(ratio: 1 / 2, of: \.width)
+                        }
+                        .placeholder { _ in
+                            Image(systemName: "gearshape.fill")
+                                .resizable()
+                        }
+                        .failure {
+                            Image(systemName: "gearshape.fill")
+                                .resizable()
+                        }
+                }
+                .frame(width: 30, height: 30)
             }
             .accessibilityLabel(L10n.settings)
         }

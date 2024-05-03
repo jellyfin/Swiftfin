@@ -63,19 +63,27 @@ struct SwiftfinApp: App {
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
             .ignoresSafeArea()
-            .onOpenURL { url in
-                AppURLHandler.shared.processDeepLink(url: url)
-            }
             .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
                 Defaults[.backgroundTimeStamp] = Date.now
             }
             .onNotification(UIApplication.willEnterForegroundNotification) { _ in
-                guard Defaults[.signOutOnBackground] else { return }
-                
-                if Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp]) > Defaults[.backgroundSignOutInterval] {
+                // TODO: needs to check if any background playback is happening
+                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+
+                if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
                     Defaults[.lastSignedInUserID] = nil
                     Container.userSession.reset()
                     Notifications[.didSignOut].post()
+                }
+            }
+            .onNotification(UIApplication.willTerminateNotification) { _ in
+
+                if Defaults[.signOutOnClose] {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        Defaults[.lastSignedInUserID] = nil
+                        Container.userSession.reset()
+                        Notifications[.didSignOut].post()
+                    }
                 }
             }
         }
