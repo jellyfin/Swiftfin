@@ -42,7 +42,7 @@ struct SelectUserView: View {
                 gridContentView
                     .edgePadding()
             }
-            
+
             HStack {
                 Rectangle()
                     .fill(Color.red)

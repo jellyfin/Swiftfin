@@ -1,5 +1,5 @@
 {
-  "originHash" : "b4bf08723df39a590f119c693237988ccc4652706ec8255e472fa81483630011",
+  "originHash" : "8ea1d1eecfd3ee530e9acbb9048c410e284fe6524ba8a64506a46647748df8f8",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -107,15 +107,6 @@
       "state" : {
         "revision" : "5e1b02b6a9dac2a759a1d5dbc175c86bd192a608",
         "version" : "24.0.0"
-      }
-    },
-    {
-      "identity" : "multicomponentpicker",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/MultiComponentPicker",
-      "state" : {
-        "branch" : "main",
-        "revision" : "d24152f3815c80684551490d02f2c29735cc23d9"
       }
     },
     {

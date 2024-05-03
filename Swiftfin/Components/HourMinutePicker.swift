@@ -6,65 +6,46 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import MultiComponentPicker
 import SwiftUI
 
-// TODO: localize
-//       - can DateFormatter do it automagically?
+struct HourMinutePicker: UIViewRepresentable {
 
-struct HourMinutePicker: View {
+    let interval: Binding<TimeInterval>
 
-    @State
-    private var componentHourSelection: Int
-    @State
-    private var componentMinuteSelection: Int
+    func makeUIView(context: Context) -> some UIView {
+        let picker = UIDatePicker(frame: .zero)
+        picker.translatesAutoresizingMaskIntoConstraints = false
+        picker.datePickerMode = .countDownTimer
 
-    private let duration: Binding<TimeInterval>
+        context.coordinator.add(picker: picker)
+        context.coordinator.interval = interval
 
-    init(
-        duration: Binding<TimeInterval>
-    ) {
-        self.duration = duration
-
-        _componentHourSelection = State(initialValue: Int(duration.wrappedValue) / 3600)
-        _componentMinuteSelection = State(initialValue: (Int(duration.wrappedValue) % 3600) / 60)
+        return picker
     }
 
-    var body: some View {
-        MultiComponentPicker {
-            ComponentPickerItem(
-                selection: $componentHourSelection,
-                values: Array(0 ... 23)
-            ) { value in
-                Group {
-                    if value == 1 {
-                        Text("hour")
-                            .fontWeight(.bold)
-                    } else {
-                        Text("hours")
-                            .fontWeight(.bold)
-                            .transition(.opacity)
-                    }
-                }
-                .padding(.leading, 8)
-            }
+    func updateUIView(_ uiView: UIViewType, context: Context) {}
 
-            ComponentPickerItem(
-                selection: $componentMinuteSelection,
-                values: Array(0 ... 59)
-            ) { _ in
-                Text("min")
-                    .fontWeight(.bold)
-                    .padding(.leading, 8)
-            }
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    class Coordinator {
+
+        var interval: Binding<TimeInterval>!
+
+        func add(picker: UIDatePicker) {
+            picker.addTarget(
+                self,
+                action: #selector(
+                    dateChanged
+                ),
+                for: .valueChanged
+            )
         }
-        .onChange(of: componentHourSelection) { newValue in
-            let newDuration = Double(newValue * 3600 + componentMinuteSelection * 60)
-            duration.wrappedValue = newDuration
-        }
-        .onChange(of: componentMinuteSelection) { newValue in
-            let newDuration = Double(componentHourSelection * 3600 + newValue * 60)
-            duration.wrappedValue = newDuration
+
+        @objc
+        func dateChanged(_ picker: UIDatePicker) {
+            interval.wrappedValue = picker.countDownDuration
         }
     }
 }

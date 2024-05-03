@@ -518,7 +518,6 @@
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
-		E178B0742BE434390023651B /* MultiComponentPicker in Frameworks */ = {isa = PBXBuildFile; productRef = E178B0732BE434390023651B /* MultiComponentPicker */; };
 		E178B0762BE435D70023651B /* HourMinutePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178B0752BE435D70023651B /* HourMinutePicker.swift */; };
 		E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
 		E17AC96B2954D00E003D2BC2 /* URLResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9692954D00E003D2BC2 /* URLResponse.swift */; };
@@ -1511,7 +1510,6 @@
 				E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */,
 				E18D6AA62BAA96F000A0D167 /* CollectionHStack in Frameworks */,
 				62666E0127E5016900EC0ECD /* CoreFoundation.framework in Frameworks */,
-				E178B0742BE434390023651B /* MultiComponentPicker in Frameworks */,
 				62666E2427E501F300EC0ECD /* Foundation.framework in Frameworks */,
 				E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */,
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
@@ -3419,7 +3417,6 @@
 				E132D3CC2BD2179C0058A2DF /* CollectionVGrid */,
 				E145EB4A2BE16849003BF6F3 /* KeychainSwift */,
 				E145EB532BE18682003BF6F3 /* JellyfinAPI */,
-				E178B0732BE434390023651B /* MultiComponentPicker */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -3492,7 +3489,6 @@
 				E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				E145EB522BE18682003BF6F3 /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
-				E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4901,14 +4897,6 @@
 				minimumVersion = 4.0.0;
 			};
 		};
-		E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/MultiComponentPicker";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/VLCUI";
@@ -5168,11 +5156,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
-		};
-		E178B0732BE434390023651B /* MultiComponentPicker */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E178B0722BE434390023651B /* XCRemoteSwiftPackageReference "MultiComponentPicker" */;
-			productName = MultiComponentPicker;
 		};
 		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -57,22 +57,13 @@ extension AppSettingsView {
                     }
 
                     if isEditingBackgroundSignOutInterval {
-                        HourMinutePicker(duration: $backgroundSignOutInterval)
+                        HourMinutePicker(interval: $backgroundSignOutInterval)
                     }
                 }
             } footer: {
-                if backgroundSignOutInterval == 0, signOutOnBackground {
-                    HStack(alignment: .top) {
-                        Image(systemName: "exclamationmark.circle.fill")
-                            .foregroundStyle(.orange)
-
-                        Text("The last user will be signed out every time the app enters the background")
-                    }
-                } else {
-                    Text(
-                        "Signs out the last user when Swiftfin has been in the background without media playback for some time"
-                    )
-                }
+                Text(
+                    "Signs out the last user when Swiftfin has been in the background without media playback after some time"
+                )
             }
             .animation(.linear(duration: 0.15), value: isEditingBackgroundSignOutInterval)
         }
