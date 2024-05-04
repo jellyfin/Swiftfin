@@ -42,34 +42,108 @@ extension SwiftfinStore.V1 {
 /// - `User`: a user
 /// - `Value`: the stored value for a user
 @propertyWrapper
-struct StoredValue<Value: Codable> {
+struct StoredValue<Value: Codable>: DynamicProperty {
+
+    @ObservedObject
+    private var observable: Observable
 
     let defaultValue: () -> Value
     let id: String
-    let name: String
+    let name: String?
+
+    var projectedValue: Binding<Value> { $observable.value }
 
     var wrappedValue: Value {
         get {
-            guard id != "defaultStoreID" else { return defaultValue() }
+            guard let name, id != "defaultStoreID" else { return defaultValue() }
             guard let value: Value = try? AnyStoredData.fetchAnyData(id: id, name: name) else { return defaultValue() }
 
             return value
         }
-        set {
-            guard id != "defaultStoreID" else { return }
+        nonmutating set {
+            guard let name, id != "defaultStoreID" else { return }
             try? AnyStoredData.storeAnyData(value: newValue, id: id, name: name)
+
+            print("Stored: \(newValue)\n - id: \(id)\n - name: \(name)")
         }
     }
 
+    /// Note: if `name` is `nil`, values will not be stored.
     init(
-        name: String,
+        name: String?,
         id: String = Container.userSession()?.user.id ?? "defaultStoreID",
         defaultValue: @autoclosure @escaping () -> Value
     ) {
         self.defaultValue = defaultValue
         self.id = id
         self.name = name
+
+        self.observable = .init(
+            id: id,
+            name: name,
+            value: defaultValue()
+        )
     }
+
+    func update() {}
+}
+
+extension StoredValue {
+
+    final class Observable: ObservableObject {
+
+        let id: String
+        let name: String?
+        var value: Value
+
+        init(id: String, name: String?, value: Value) {
+            self.id = id
+            self.name = name
+            self.value = value
+        }
+    }
+}
+
+@propertyWrapper
+struct CurrentUserStoredValue<Value: Codable> {
+
+    let key: CurrentUserStoredValues.Key<Value>
+
+    init(_ key: CurrentUserStoredValues.Key<Value>) {
+        self.key = key
+    }
+
+    var wrappedValue: Value {
+        get { fatalError() }
+        set {}
+    }
+}
+
+enum CurrentUserStoredValues {
+
+    enum Keys {}
+
+    final class Key<Value: Codable> {
+
+        let defaultValue: () -> Value
+        let name: String
+        let id: String
+
+        init(
+            name: String,
+            id: String = Container.userSession()?.user.id ?? "defaultStoreID",
+            defaultValue: @autoclosure @escaping () -> Value
+        ) {
+            self.defaultValue = defaultValue
+            self.id = id
+            self.name = name
+        }
+    }
+}
+
+extension CurrentUserStoredValues.Keys {
+
+    static let userPolicy = CurrentUserStoredValues.Key(name: "userPolicy", defaultValue: "None")
 }
 
 extension AnyStoredData {

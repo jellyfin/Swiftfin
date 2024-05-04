@@ -26,7 +26,7 @@ import SwiftUI
 struct PagingLibraryView<Element: Poster>: View {
 
     @StoredValue
-    private var testValue: LibraryDisplayType
+    private var testValue: String
 
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
@@ -52,7 +52,7 @@ struct PagingLibraryView<Element: Poster>: View {
 
     init(viewModel: PagingLibraryViewModel<Element>) {
 
-        self._testValue = StoredValue(name: "testValue", defaultValue: Defaults[.Customization.Library.viewType])
+        self._testValue = StoredValue(name: viewModel.parent?.id, defaultValue: "default-value")
 
         self._viewModel = StateObject(wrappedValue: viewModel)
 
@@ -326,6 +326,12 @@ struct PagingLibraryView<Element: Poster>: View {
                 .disabled(viewModel.elements.isEmpty)
             } label: {
                 Image(systemName: "ellipsis.circle")
+            }
+        }
+        .onFirstAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                self.testValue = "this should work"
+                print(testValue)
             }
         }
     }

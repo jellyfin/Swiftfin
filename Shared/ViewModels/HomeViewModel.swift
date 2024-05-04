@@ -130,8 +130,6 @@ final class HomeViewModel: ViewModel, Stateful {
 
             refreshTask = Task { [weak self] in
                 do {
-                    try await Task.sleep(nanoseconds: 10_000_000_000)
-
                     try await self?.refresh()
 
                     guard !Task.isCancelled else { return }
