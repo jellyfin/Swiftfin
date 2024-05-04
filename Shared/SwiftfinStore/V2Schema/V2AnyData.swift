@@ -7,6 +7,7 @@
 //
 
 import CoreStore
+import Defaults
 import Factory
 import Foundation
 import SwiftUI
@@ -17,22 +18,20 @@ typealias AnyStoredData = SwiftfinStore.V1.AnyData
 
 extension SwiftfinStore.V1 {
 
-    /// Used to store arbitrary data with a `name` and `id`,
-    /// typically an attached user `id`.
+    /// Used to store arbitrary data with a `name` and `ownerID`.
     ///
-    /// Used instead of `UserDefaults` for large objects or
-    /// potentially large collections of data.
+    /// Essentially just a bag-of-bytes model like UserDefaults, but for
+    /// storing larger objects or potentially large collections of data.
     final class AnyData: CoreStoreObject {
 
         @Field.Stored("data")
         var data: Data? = nil
 
-        #warning("TODO: rename ownerID / something similar")
-        @Field.Stored("id")
-        var id: String = ""
-
         @Field.Stored("name")
         var name: String = ""
+
+        @Field.Stored("ownerID")
+        var ownerID: String = ""
     }
 }
 
@@ -44,45 +43,49 @@ extension SwiftfinStore.V1 {
 @propertyWrapper
 struct StoredValue<Value: Codable>: DynamicProperty {
 
-    @ObservedObject
-    private var observable: Observable
+//    @ObservedObject
+//    private var observable: Observable
 
     let defaultValue: () -> Value
-    let id: String
-    let name: String?
+    let name: String
+    let ownerID: String
 
-    var projectedValue: Binding<Value> { $observable.value }
+//    var projectedValue: Binding<Value> { $observable.value }
 
     var wrappedValue: Value {
         get {
-            guard let name, id != "defaultStoreID" else { return defaultValue() }
-            guard let value: Value = try? AnyStoredData.fetchAnyData(id: id, name: name) else { return defaultValue() }
+            guard name.isNotEmpty, ownerID.isNotEmpty else { return defaultValue() }
+            guard let value: Value = try? AnyStoredData.fetch(name: name, ownerID: ownerID) else { return defaultValue() }
 
             return value
         }
         nonmutating set {
-            guard let name, id != "defaultStoreID" else { return }
-            try? AnyStoredData.storeAnyData(value: newValue, id: id, name: name)
-
-            print("Stored: \(newValue)\n - id: \(id)\n - name: \(name)")
+            guard name.isNotEmpty, ownerID.isNotEmpty else { return }
+            try? AnyStoredData.store(value: newValue, name: name, ownerID: ownerID)
         }
     }
 
     /// Note: if `name` is `nil`, values will not be stored.
     init(
-        name: String?,
-        id: String = Container.userSession()?.user.id ?? "defaultStoreID",
-        defaultValue: @autoclosure @escaping () -> Value
+        name: String,
+        ownerID: String,
+        default defaultValue: @autoclosure @escaping () -> Value
     ) {
         self.defaultValue = defaultValue
-        self.id = id
         self.name = name
+        self.ownerID = ownerID
 
-        self.observable = .init(
-            id: id,
-            name: name,
-            value: defaultValue()
-        )
+//        self.observable = .init(
+//            id: id,
+//            name: name,
+//            value: defaultValue()
+//        )
+    }
+
+    init(_ key: StoredValues.Key<Value>) {
+        self.defaultValue = key.defaultValue
+        self.name = key.name
+        self.ownerID = key.ownerID
     }
 
     func update() {}
@@ -96,7 +99,11 @@ extension StoredValue {
         let name: String?
         var value: Value
 
-        init(id: String, name: String?, value: Value) {
+        init(
+            id: String,
+            name: String?,
+            value: Value
+        ) {
             self.id = id
             self.name = name
             self.value = value
@@ -104,74 +111,85 @@ extension StoredValue {
     }
 }
 
-@propertyWrapper
-struct CurrentUserStoredValue<Value: Codable> {
+enum StoredValues {
 
-    let key: CurrentUserStoredValues.Key<Value>
+    typealias Keys = _AnyKey
 
-    init(_ key: CurrentUserStoredValues.Key<Value>) {
-        self.key = key
+    class _AnyKey {
+        typealias Key = StoredValues.Key
+
+        #warning("TODO: actual swift format ignore comment")
+        let swiftFormatIgnore = 1
     }
 
-    var wrappedValue: Value {
-        get { fatalError() }
-        set {}
-    }
-}
-
-enum CurrentUserStoredValues {
-
-    enum Keys {}
-
-    final class Key<Value: Codable> {
+    final class Key<Value: Codable>: _AnyKey {
 
         let defaultValue: () -> Value
         let name: String
-        let id: String
+        let ownerID: String
 
         init(
             name: String,
-            id: String = Container.userSession()?.user.id ?? "defaultStoreID",
-            defaultValue: @autoclosure @escaping () -> Value
+            ownerID: String,
+            default defaultValue: @autoclosure @escaping () -> Value
         ) {
             self.defaultValue = defaultValue
-            self.id = id
+            self.ownerID = ownerID
             self.name = name
+        }
+
+        init(always: @autoclosure @escaping () -> Value) {
+            defaultValue = always
+            name = ""
+            ownerID = ""
         }
     }
 }
 
-extension CurrentUserStoredValues.Keys {
+extension StoredValues.Keys {
 
-    static let userPolicy = CurrentUserStoredValues.Key(name: "userPolicy", defaultValue: "None")
+    static func UserKey<Value: Codable>(name: String?, default defaultValue: Value) -> Key<Value> {
+        guard let name else { return Key(always: defaultValue) }
+        guard let currentUser = Container.userSession()?.user else {
+            return Key(always: defaultValue)
+        }
+
+        return Key(name: name, ownerID: currentUser.id, default: defaultValue)
+    }
+
+//    static let userPolicy = StoredValues.Key(name: "userPolicy", defaultValue: "None")
+
+    static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
+        UserKey(name: parentID, default: Defaults[.Customization.Library.viewType])
+    }
 }
 
 extension AnyStoredData {
 
-    static func fetchAnyData<Value: Codable>(id: String, name: String) throws -> Value? {
+    static func fetch<Value: Codable>(name: String, ownerID: String) throws -> Value? {
         let values = try SwiftfinStore.dataStack
             .fetchAll(
                 From<AnyStoredData>()
-                    .where(\.$id == id && \.$name == name)
+                    .where(\.$ownerID == ownerID && \.$name == name)
             )
             .compactMap(\.data)
             .compactMap {
                 try JSONDecoder().decode(Value.self, from: $0)
             }
 
-        assert(values.count < 2, "More than one stored object for same name and id?")
+        assert(values.count < 2, "More than one stored object for same name and id!")
 
         return values.first
     }
 
-    static func storeAnyData<Value: Codable>(value: Value, id: String, name: String) throws {
+    static func store<Value: Codable>(value: Value, name: String, ownerID: String) throws {
         try SwiftfinStore.dataStack.perform { transaction in
             let existing = try transaction.fetchAll(
                 From<AnyStoredData>()
-                    .where(\.$id == id && \.$name == name)
+                    .where(\.$ownerID == ownerID && \.$name == name)
             )
 
-            assert(existing.count < 2, "More than one stored object for same name and id?")
+            assert(existing.count < 2, "More than one stored object for same name and id!")
 
             let encodedData = try JSONEncoder().encode(value)
 
@@ -182,7 +200,7 @@ extension AnyStoredData {
                 let newData = transaction.create(Into<AnyStoredData>())
 
                 newData.data = encodedData
-                newData.id = id
+                newData.ownerID = ownerID
                 newData.name = name
             }
         }

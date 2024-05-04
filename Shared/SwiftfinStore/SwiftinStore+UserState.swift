@@ -36,46 +36,6 @@ extension SwiftfinStore.State {
 
 extension UserState {
 
-    func fetchAnyData<Value: Codable>(name: String) throws -> Value? {
-        let values = try SwiftfinStore.dataStack
-            .fetchAll(
-                From<AnyStoredData>()
-                    .where(\.$id == id && \.$name == name)
-            )
-            .compactMap(\.data)
-            .compactMap {
-                try JSONDecoder().decode(Value.self, from: $0)
-            }
-
-        assert(values.count < 2, "More than one stored object for same name and id?")
-
-        return values.first
-    }
-
-    func storeAnyData<Value: Codable>(value: Value, name: String) throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let existing = try transaction.fetchAll(
-                From<AnyStoredData>()
-                    .where(\.$id == id && \.$name == name)
-            )
-
-            assert(existing.count < 2, "More than one stored object for same name and id?")
-
-            let encodedData = try JSONEncoder().encode(value)
-
-            if let existingObject = existing.first {
-                let edit = transaction.edit(existingObject)
-                existingObject.data = encodedData
-            } else {
-                let newData = transaction.create(Into<AnyStoredData>())
-
-                newData.data = encodedData
-                newData.id = id
-                newData.name = name
-            }
-        }
-    }
-
     func profileImageSource(
         client: JellyfinClient,
         maxWidth: CGFloat? = nil,
