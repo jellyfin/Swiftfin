@@ -19,6 +19,7 @@ class EditServerViewModel: ViewModel {
         self.server = server
     }
 
+    #warning("TODO: delete user any data")
     func delete() {
         guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
             logger.critical("Unable to find server to delete")

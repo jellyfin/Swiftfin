@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import SwiftUI
 
@@ -36,18 +37,18 @@ struct QuickConnectAuthorizeView: View {
                     .keyboardType(.numberPad)
                     .disabled(viewModel.state == .authorizing)
                     .focused($isCodeFocused)
-
-                Button {
-                    viewModel.send(.authorize(code))
-                } label: {
-                    L10n.authorize.text
-                        .font(.callout)
-                        .disabled(code.count != 6 || viewModel.state == .authorizing)
-                }
             } footer: {
                 Text("Enter the 6 digit code from your other device.")
             }
+
+            ListRowButton(L10n.authorize) {
+                viewModel.send(.authorize(code))
+            }
+            .disabled(code.count != 6 || viewModel.state == .authorizing)
+            .foregroundStyle(.primary, Color.accentColor)
         }
+        .interactiveDismissDisabled(viewModel.state == .authorizing)
+        .navigationBarBackButtonHidden(viewModel.state == .authorizing)
         .navigationTitle(L10n.quickConnect.text)
         .onFirstAppear {
             isCodeFocused = true

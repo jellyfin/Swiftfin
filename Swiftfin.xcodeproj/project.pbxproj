@@ -490,6 +490,7 @@
 		E164A7F42BE4736300A54B18 /* SignOutIntervalSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F32BE4736300A54B18 /* SignOutIntervalSection.swift */; };
 		E164A7F62BE4814700A54B18 /* SelectUserServerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */; };
 		E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */; };
+		E164A8152BE58C2F00A54B18 /* V2AnyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A8142BE58C2F00A54B18 /* V2AnyData.swift */; };
 		E168BD10289A4162001A6922 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD08289A4162001A6922 /* HomeView.swift */; };
 		E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */; };
 		E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */; };
@@ -1174,6 +1175,7 @@
 		E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemImageable.swift; sourceTree = "<group>"; };
 		E164A7F32BE4736300A54B18 /* SignOutIntervalSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignOutIntervalSection.swift; sourceTree = "<group>"; };
 		E164A7F52BE4814700A54B18 /* SelectUserServerSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserServerSelection.swift; sourceTree = "<group>"; };
+		E164A8142BE58C2F00A54B18 /* V2AnyData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2AnyData.swift; sourceTree = "<group>"; };
 		E168BD08289A4162001A6922 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		E168BD0D289A4162001A6922 /* ContinueWatchingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContinueWatchingView.swift; sourceTree = "<group>"; };
 		E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LatestInLibraryView.swift; sourceTree = "<group>"; };
@@ -2287,6 +2289,7 @@
 			isa = PBXGroup;
 			children = (
 				E10B1ECC2BD9AFD800A92EAF /* SwiftfinStore+V2.swift */,
+				E164A8142BE58C2F00A54B18 /* V2AnyData.swift */,
 				E10B1EC62BD9AF6100A92EAF /* V2ServerModel.swift */,
 				E10B1ECF2BD9AFF200A92EAF /* V2UserModel.swift */,
 			);
@@ -2437,7 +2440,7 @@
 				E10231572BCF8AF8009D71FC /* ProgramsView */,
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
-				E193D546271941C500900D82 /* SelectUserView.swift */,
+				E164A8122BE4995200A54B18 /* SelectUserView */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E193D54A271941D300900D82 /* ServerListView.swift */,
 				E1E5D54D2783E66600692DFE /* SettingsView */,
@@ -2611,6 +2614,22 @@
 			isa = PBXGroup;
 			children = (
 				E164A7F32BE4736300A54B18 /* SignOutIntervalSection.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		E164A8122BE4995200A54B18 /* SelectUserView */ = {
+			isa = PBXGroup;
+			children = (
+				E164A8132BE4995800A54B18 /* Components */,
+				E193D546271941C500900D82 /* SelectUserView.swift */,
+			);
+			path = SelectUserView;
+			sourceTree = "<group>";
+		};
+		E164A8132BE4995800A54B18 /* Components */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -4344,6 +4363,7 @@
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
 				E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */,
 				53EE24E6265060780068F029 /* SearchView.swift in Sources */,
+				E164A8152BE58C2F00A54B18 /* V2AnyData.swift in Sources */,
 				E1D37F522B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift in Sources */,
 				E1DC9841296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
 			);

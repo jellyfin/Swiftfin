@@ -51,6 +51,9 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
         switch action {
         case let .authorize(code):
             authorizeTask = Task {
+
+                try? await Task.sleep(nanoseconds: 10_000_000_000)
+
                 do {
                     try await authorize(code: code)
 

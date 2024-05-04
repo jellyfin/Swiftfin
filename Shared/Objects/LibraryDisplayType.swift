@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import UIKit
 
-enum LibraryDisplayType: String, CaseIterable, Displayable, Defaults.Serializable, SystemImageable {
+enum LibraryDisplayType: String, CaseIterable, Codable, Displayable, Defaults.Serializable, SystemImageable {
 
     case grid
     case list

@@ -100,6 +100,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             .map(\.state)
     }
 
+    #warning("TODO: delete corresponding any data")
     private func delete(user: UserState) throws {
         try dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == user.id)) else {

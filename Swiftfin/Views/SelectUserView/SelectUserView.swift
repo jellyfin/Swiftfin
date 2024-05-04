@@ -38,11 +38,15 @@ struct SelectUserView: View {
     @State
     private var contentSize: CGSize = .zero
     @State
-    private var gridItemSize: CGSize = .zero
-    @State
     private var gridItems: OrderedSet<UserGridItem> = []
     @State
+    private var gridItemSize: CGSize = .zero
+    @State
     private var isEditingUsers: Bool = false
+    @State
+    private var isPresentingConfirmDeleteUsers = false
+    @State
+    private var padGridItemColumnCount: Int = 1
     @State
     private var selectedUsers: Set<UserState> = []
 
@@ -139,31 +143,52 @@ struct SelectUserView: View {
 
     // MARK: grid
 
-    #warning("TODO: centering")
+    private func padGridItemOffset(index: Int) -> CGFloat {
+        let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
+
+        guard lastRowIndices.contains(index) else { return 0 }
+
+        let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
+        return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
+    }
+
     @ViewBuilder
     private var padGridContentView: some View {
-        LazyVGrid(columns: [.init(.adaptive(minimum: 150, maximum: 300), spacing: EdgeInsets.edgePadding)]) {
-            ForEach(gridItems, id: \.hashValue) { item in
+        let columns = [GridItem(.adaptive(minimum: 150, maximum: 300), spacing: EdgeInsets.edgePadding)]
+
+        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding) {
+            ForEach(Array(gridItems.enumerated().map(\.offset)), id: \.hashValue) { index in
+                let item = gridItems[index]
+
                 gridItemView(for: item)
+                    .trackingSize($gridItemSize)
+                    .offset(x: padGridItemOffset(index: index))
             }
         }
         .edgePadding()
-        .scroll(ifLargerThan: contentSize.height - 100) // do a little less
+        .scroll(ifLargerThan: contentSize.height - 100)
+        .onChange(of: gridItemSize) { newValue in
+            let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
+
+            padGridItemColumnCount = columns
+        }
     }
 
     @ViewBuilder
     private var phoneGridContentView: some View {
-        LazyVGrid(columns: [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]) {
+        let columns = [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]
+
+        LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding) {
             ForEach(gridItems, id: \.hashValue) { item in
                 gridItemView(for: item)
                     .if(gridItems.count % 2 == 1 && item == gridItems.last) { view in
                         view.trackingSize($gridItemSize)
-                            .offset(x: (contentSize.width / 2) - (gridItemSize.width / 2) - EdgeInsets.edgePadding)
+                            .offset(x: (gridItemSize.width + EdgeInsets.edgePadding) / 2)
                     }
             }
         }
         .edgePadding()
-        .scroll(ifLargerThan: contentSize.height - 100) // do a little less
+        .scroll(ifLargerThan: contentSize.height - 100)
     }
 
     @ViewBuilder
@@ -181,7 +206,8 @@ struct SelectUserView: View {
                     viewModel.send(.signIn(user))
                 }
             } onDelete: {
-                viewModel.send(.deleteUsers([user]))
+                selectedUsers.insert(user)
+                isPresentingConfirmDeleteUsers = true
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
@@ -225,7 +251,8 @@ struct SelectUserView: View {
                     viewModel.send(.signIn(user))
                 }
             } onDelete: {
-                viewModel.send(.deleteUsers([user]))
+                selectedUsers.insert(user)
+                isPresentingConfirmDeleteUsers = true
             }
             .environment(\.isEditing, isEditingUsers)
             .environment(\.isSelected, selectedUsers.contains(user))
@@ -242,9 +269,7 @@ struct SelectUserView: View {
 
     private var deleteUsersButton: some View {
         Button {
-            viewModel.send(.deleteUsers(Array(selectedUsers)))
-
-            isEditingUsers = false
+            isPresentingConfirmDeleteUsers = true
         } label: {
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
@@ -398,6 +423,11 @@ struct SelectUserView: View {
             guard !newValue else { return }
             selectedUsers.removeAll()
         }
+        .onChange(of: isPresentingConfirmDeleteUsers) { newValue in
+            guard !newValue else { return }
+            isEditingUsers = false
+            selectedUsers.removeAll()
+        }
         .onChange(of: serverSelection) { newValue in
             gridItems = makeGridItems(for: newValue)
         }
@@ -424,6 +454,17 @@ struct SelectUserView: View {
 
                 viewModel.send(.getServers)
             }
+        }
+        .alert(
+            Text("Delete User"),
+            isPresented: $isPresentingConfirmDeleteUsers,
+            presenting: selectedUsers
+        ) { selectedUsers in
+            Button("Delete", role: .destructive) {
+                viewModel.send(.deleteUsers(Array(selectedUsers)))
+            }
+        } message: { selectedUsers in
+            Text("Are you sure you want to delete \(selectedUsers.count) users?")
         }
     }
 }

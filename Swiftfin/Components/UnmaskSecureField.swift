@@ -18,7 +18,11 @@ struct UnmaskSecureField: UIViewRepresentable {
     private let onReturn: () -> Void
     private let title: String
 
-    init(_ title: String, text: Binding<String>, onReturn: @escaping () -> Void = {}) {
+    init(
+        _ title: String,
+        text: Binding<String>,
+        onReturn: @escaping () -> Void = {}
+    ) {
         self._text = text
         self.title = title
         self.onReturn = onReturn
@@ -31,12 +35,23 @@ struct UnmaskSecureField: UIViewRepresentable {
         textField.keyboardType = .asciiCapable
         textField.placeholder = title
         textField.text = text
-        textField.addTarget(context.coordinator, action: #selector(Coordinator.textDidChange), for: .editingChanged)
+        textField.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.textDidChange),
+            for: .editingChanged
+        )
 
         let button = UIButton(type: .custom)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(context.coordinator, action: #selector(Coordinator.buttonPressed), for: .touchUpInside)
-        button.setImage(UIImage(systemName: "eye.fill"), for: .normal)
+        button.addTarget(
+            context.coordinator,
+            action: #selector(Coordinator.buttonPressed),
+            for: .touchUpInside
+        )
+        button.setImage(
+            UIImage(systemName: "eye.fill"),
+            for: .normal
+        )
 
         NSLayoutConstraint.activate([
             button.heightAnchor.constraint(equalToConstant: 50),

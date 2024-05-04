@@ -25,6 +25,9 @@ import SwiftUI
 
 struct PagingLibraryView<Element: Poster>: View {
 
+    @StoredValue
+    private var testValue: LibraryDisplayType
+
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
     @Default(.Customization.Library.listColumnCount)
@@ -48,6 +51,9 @@ struct PagingLibraryView<Element: Poster>: View {
     // MARK: init
 
     init(viewModel: PagingLibraryViewModel<Element>) {
+
+        self._testValue = StoredValue(name: "testValue", defaultValue: Defaults[.Customization.Library.viewType])
+
         self._viewModel = StateObject(wrappedValue: viewModel)
 
         let initialPosterType = Defaults[.Customization.Library.posterType]

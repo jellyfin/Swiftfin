@@ -16,8 +16,8 @@ extension MediaStream {
     static var none: MediaStream = .init(displayTitle: L10n.none, index: -1)
 
     var asPlaybackChild: VLCVideoPlayer.PlaybackChild? {
-        guard let deliveryURL else { return nil }
-        let client = Container.userSession()!.client
+        guard let deliveryURL, let client = Container.userSession()?.client else { return nil }
+
         let deliveryPath = deliveryURL.removingFirst(if: client.configuration.url.absoluteString.last == "/")
 
         guard let fullURL = client.fullURL(with: deliveryPath) else { return nil }

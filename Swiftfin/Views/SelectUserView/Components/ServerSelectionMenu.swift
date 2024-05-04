@@ -60,7 +60,7 @@ extension SelectUserView {
                             .tag(SelectUserServerSelection.all)
                     }
 
-                    ForEach(viewModel.servers.keys) { server in
+                    ForEach(viewModel.servers.keys.reversed()) { server in
                         Button {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)

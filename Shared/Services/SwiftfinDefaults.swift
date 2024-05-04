@@ -51,8 +51,7 @@ private extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    #warning("TODO: rename appAccentColor, have user accent color")
-    static let accentColor: Key<Color> = AppKey("appAccentColor", default: .jellyfinPurple)
+    static let appAccentColor: Key<Color> = AppKey("appAccentColor", default: .jellyfinPurple)
     static let appearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
     static let backgroundTimeStamp: Key<Date> = AppKey("backgroundTimeStamp", default: Date.now)
@@ -66,6 +65,8 @@ extension Defaults.Keys {
 // MARK: User
 
 extension Defaults.Keys {
+
+    static let accentColor: Key<Color> = UserKey("userAccentColor", default: .jellyfinPurple)
 
     // TODO: Replace with a cache
 //    static let libraryFilterStore: Key<[String: ItemFilterCollection]> = UserKey("libraryFilterStore", default: [:])

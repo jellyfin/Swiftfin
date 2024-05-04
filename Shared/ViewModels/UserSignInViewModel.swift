@@ -15,6 +15,8 @@ import Get
 import JellyfinAPI
 import Pulse
 
+#warning("TODO: NSURLErrorDomain Code=-999 cancelled error on sign in")
+
 // TODO: instead of just signing in duplicate user, send event for alert
 //       to override existing user access token?
 //       - won't require deleting and re-signing in user
@@ -200,7 +202,6 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             newUser.appleTVID = ""
             newUser.id = id
             newUser.username = username
-//            newUser.image = profileImage
 
             let editServer = transaction.edit(serverModel)!
             editServer.users.insert(newUser)

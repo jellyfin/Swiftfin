@@ -117,7 +117,7 @@ extension SelectUserView {
 
                                 Spacer()
 
-                                if isSelected {
+                                if isEditing, isSelected {
                                     Image(systemName: "checkmark.circle.fill")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)

@@ -337,13 +337,37 @@ extension View {
         )
     }
 
+    // MARK: debug
+
+    // Useful modifiers during development for layout
+
     #if DEBUG
-    // Useful modifier during development
-    func debugBackground(_ color: Color = Color.red, opacity: CGFloat = 0.5) -> some View {
+    func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
         background {
-            color
-                .opacity(opacity)
+            Rectangle()
+                .fill(fill)
         }
+    }
+
+    func debugVLine<S: ShapeStyle>(_ fill: S) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .frame(width: 4)
+        }
+    }
+
+    func debugHLine<S: ShapeStyle>(_ fill: S) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .frame(height: 4)
+        }
+    }
+
+    func debugCross<S: ShapeStyle>(_ fill: S = .red) -> some View {
+        debugVLine(fill)
+            .debugHLine(fill)
     }
     #endif
 }

@@ -10,17 +10,13 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// Note: can't do focus manipulation with `onSubmit` because `UmmaskSecureField`
-//       is a manually wrapped `UITextField`. Could implement an `onSubmit`
-//       equivalent modifier but isn't a big deal.
-
 struct ResetUserPasswordView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @FocusState
-    private var isCurrentFocused: Bool
+    private var focusedPassword: Int?
 
     @State
     private var currentPassword: String = ""
@@ -42,24 +38,33 @@ struct ResetUserPasswordView: View {
     var body: some View {
         List {
 
-            UnmaskSecureField("Current Password", text: $currentPassword)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($isCurrentFocused)
+            UnmaskSecureField("Current Password", text: $currentPassword) {
+                focusedPassword = 1
+            }
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.none)
+            .focused($focusedPassword, equals: 0)
 
             Section {
-                UnmaskSecureField("New Password", text: $newPassword)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.none)
+                UnmaskSecureField("New Password", text: $newPassword) {
+                    focusedPassword = 2
+                }
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
+                .focused($focusedPassword, equals: 1)
 
-                UnmaskSecureField("Confirm New Password", text: $confirmNewPassword)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.none)
+                UnmaskSecureField("Confirm New Password", text: $confirmNewPassword) {
+                    viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+                }
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
+                .focused($focusedPassword, equals: 2)
 
-                Button("Reset") {
+                ListRowButton("Reset") {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
                 .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
+                .foregroundStyle(.primary, Color.accentColor)
             } footer: {
                 if newPassword != confirmNewPassword {
                     HStack {
@@ -71,9 +76,11 @@ struct ResetUserPasswordView: View {
                 }
             }
         }
+        .interactiveDismissDisabled(viewModel.state == .resetting)
+        .navigationBarBackButtonHidden(viewModel.state == .resetting)
         .navigationTitle(L10n.password)
         .onFirstAppear {
-            isCurrentFocused = true
+            focusedPassword = 0
         }
         .onReceive(viewModel.events) { event in
             switch event {
