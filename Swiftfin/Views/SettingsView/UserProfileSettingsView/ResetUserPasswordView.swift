@@ -59,12 +59,6 @@ struct ResetUserPasswordView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 2)
-
-                ListRowButton("Reset") {
-                    viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
-                }
-                .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
-                .foregroundStyle(.primary, Color.accentColor)
             } footer: {
                 if newPassword != confirmNewPassword {
                     HStack {
@@ -75,6 +69,12 @@ struct ResetUserPasswordView: View {
                     }
                 }
             }
+
+            ListRowButton("Reset") {
+                viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+            }
+            .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
+            .foregroundStyle(.primary, Color.accentColor)
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)
         .navigationBarBackButtonHidden(viewModel.state == .resetting)

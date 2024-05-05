@@ -40,6 +40,7 @@ struct RelativeSystemImageView: View {
     }
 }
 
+// TODO: cleanup and become the failure view for poster buttons
 struct SystemImageContentView: View {
 
     @State
@@ -60,11 +61,11 @@ struct SystemImageContentView: View {
     }
 
     private var imageView: some View {
-        RelativeSystemImageView(
-            systemName: systemName,
-            ratio: ratio
-        )
-        .foregroundColor(.secondary)
+        Image(systemName: systemName)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .foregroundColor(.secondary)
+            .frame(width: contentSize.width * ratio, height: contentSize.height * ratio)
     }
 
     @ViewBuilder

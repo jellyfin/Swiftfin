@@ -12,8 +12,8 @@ import SwiftUI
 extension HomeView {
 
     // Want the default navigation bar `Image(systemName:)` styling
-    // but using them within `ImageView` placeholder/failure strips it.
-    // Need to do manual checking of image
+    // but using within `ImageView.placeholder/failure` strips it.
+    // Need to do manual checking of image loading.
     struct SettingsBarButton: View {
 
         @State
