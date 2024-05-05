@@ -9,6 +9,7 @@
 import CoreStore
 import Foundation
 import JellyfinAPI
+import Pulse
 import UIKit
 
 extension SwiftfinStore.State {
@@ -35,6 +36,21 @@ extension SwiftfinStore.State {
 }
 
 extension UserState {
+
+    /// Must pass in the server to create a JellyfinClient
+    /// with an access token.
+    func getUserData(server: ServerState) async throws -> UserDto {
+        let client = JellyfinClient(
+            configuration: .swiftfinConfiguration(url: server.currentURL),
+            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger()),
+            accessToken: accessToken
+        )
+
+        let request = Paths.getCurrentUser
+        let response = try await client.send(request)
+
+        return response.value
+    }
 
     func profileImageSource(
         client: JellyfinClient,

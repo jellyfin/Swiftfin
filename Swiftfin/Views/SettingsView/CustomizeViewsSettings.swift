@@ -40,8 +40,13 @@ struct CustomizeViewsSettings: View {
     private var searchPosterType
     @Default(.Customization.Library.viewType)
     private var libraryViewType
+    @Default(.Customization.Library.posterType)
+    private var libraryPosterType
     @Default(.Customization.Library.listColumnCount)
     private var listColumnCount
+
+    @Default(.Customization.Library.rememberLayout)
+    private var rememberLibraryLayout
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
@@ -103,7 +108,7 @@ struct CustomizeViewsSettings: View {
                 L10n.missingItems.text
             }
 
-            Section {
+            Section(L10n.posters) {
 
                 ChevronButton(title: L10n.indicators)
                     .onSelect {
@@ -121,9 +126,12 @@ struct CustomizeViewsSettings: View {
                 CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
 
                 CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
+            }
 
-                // TODO: figure out how we can do the same Menu as the library menu picker?
+            Section {
                 CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
+
+                CaseIterablePicker(title: L10n.posters, selection: $libraryPosterType)
 
                 if libraryViewType == .list, UIDevice.isPad {
                     BasicStepper(
@@ -134,8 +142,11 @@ struct CustomizeViewsSettings: View {
                     )
                 }
 
+                Toggle("Remember Layout", isOn: $rememberLibraryLayout)
             } header: {
-                L10n.posters.text
+                Text("Library Layout")
+            } footer: {
+                Text("Remember layout for individual libraries")
             }
 
             Section {

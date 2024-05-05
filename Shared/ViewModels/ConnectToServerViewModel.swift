@@ -103,7 +103,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                             self.eventSubject.send(.duplicateServer(server))
                         }
                     } else {
-                        try save(server: server)
+                        try await save(server: server)
 
                         await MainActor.run {
                             self.eventSubject.send(.connected(server))
@@ -154,7 +154,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         guard let name = response.value.serverName,
               let id = response.value.id
         else {
-            throw JellyfinAPIError("Missing server data from network call")
+            logger.critical("Missing server data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
         }
 
         let connectionURL = processConnectionURL(
@@ -201,7 +202,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         return existingServer != nil
     }
 
-    private func save(server: ServerState) throws {
+    private func save(server: ServerState) async throws {
         try dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
 
@@ -211,6 +212,11 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             newServer.id = server.id
             newServer.users = []
         }
+
+        let serverInfo = try await server.getSystemInfo()
+
+        StoredValues[.Server.info] = serverInfo.info
+        StoredValues[.Server.publicInfo] = serverInfo.public
     }
 
     // server has same id, but (possible) new URL

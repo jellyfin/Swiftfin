@@ -47,6 +47,16 @@ extension SwiftfinStore.State {
 
 extension ServerState {
 
+    func getSystemInfo() async throws -> (public: PublicSystemInfo, info: SystemInfo) {
+        let publicInfoRequest = Paths.getPublicSystemInfo
+        let systemInfoRequest = Paths.getSystemInfo
+
+        async let publicInfoResponse = client.send(publicInfoRequest)
+        async let systemInfoResponse = client.send(systemInfoRequest)
+
+        return try await (public: publicInfoResponse.value, info: systemInfoResponse.value)
+    }
+
     func splashScreenImageSource() -> ImageSource {
         let request = Paths.getSplashscreen()
         return ImageSource(url: client.fullURL(with: request))

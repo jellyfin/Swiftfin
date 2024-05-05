@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import CoreStore
 import Defaults
 import Factory
@@ -14,182 +15,75 @@ import SwiftUI
 
 typealias AnyStoredData = SwiftfinStore.V1.AnyData
 
-#warning("TODO: finalize")
-
 extension SwiftfinStore.V1 {
 
     /// Used to store arbitrary data with a `name` and `ownerID`.
     ///
     /// Essentially just a bag-of-bytes model like UserDefaults, but for
-    /// storing larger objects or potentially large collections of data.
+    /// storing larger objects or arbitrary collection elements.
+    ///
+    /// Relationships generally take the form below, where `ownerID` is like
+    /// an object, `domain`s are property names, and `key`s are values within
+    /// the `domain`. An instance where `domain == key` is like a single-value
+    /// property while a `domain` with many `keys` is like a dictionary.
+    ///
+    /// ownerID
+    /// - domain
+    ///   - key(s)
+    /// - domain
+    ///   - key(s)
     final class AnyData: CoreStoreObject {
 
         @Field.Stored("data")
         var data: Data? = nil
 
-        @Field.Stored("name")
-        var name: String = ""
+        @Field.Stored("domain")
+        var domain: String = ""
+
+        @Field.Stored("key")
+        var key: String = ""
 
         @Field.Stored("ownerID")
         var ownerID: String = ""
     }
 }
 
-/// A wrapper for a:
-///
-/// - `Stored`: stored in Core Data
-/// - `User`: a user
-/// - `Value`: the stored value for a user
-@propertyWrapper
-struct StoredValue<Value: Codable>: DynamicProperty {
-
-//    @ObservedObject
-//    private var observable: Observable
-
-    let defaultValue: () -> Value
-    let name: String
-    let ownerID: String
-
-//    var projectedValue: Binding<Value> { $observable.value }
-
-    var wrappedValue: Value {
-        get {
-            guard name.isNotEmpty, ownerID.isNotEmpty else { return defaultValue() }
-            guard let value: Value = try? AnyStoredData.fetch(name: name, ownerID: ownerID) else { return defaultValue() }
-
-            return value
-        }
-        nonmutating set {
-            guard name.isNotEmpty, ownerID.isNotEmpty else { return }
-            try? AnyStoredData.store(value: newValue, name: name, ownerID: ownerID)
-        }
-    }
-
-    /// Note: if `name` is `nil`, values will not be stored.
-    init(
-        name: String,
-        ownerID: String,
-        default defaultValue: @autoclosure @escaping () -> Value
-    ) {
-        self.defaultValue = defaultValue
-        self.name = name
-        self.ownerID = ownerID
-
-//        self.observable = .init(
-//            id: id,
-//            name: name,
-//            value: defaultValue()
-//        )
-    }
-
-    init(_ key: StoredValues.Key<Value>) {
-        self.defaultValue = key.defaultValue
-        self.name = key.name
-        self.ownerID = key.ownerID
-    }
-
-    func update() {}
-}
-
-extension StoredValue {
-
-    final class Observable: ObservableObject {
-
-        let id: String
-        let name: String?
-        var value: Value
-
-        init(
-            id: String,
-            name: String?,
-            value: Value
-        ) {
-            self.id = id
-            self.name = name
-            self.value = value
-        }
-    }
-}
-
-enum StoredValues {
-
-    typealias Keys = _AnyKey
-
-    class _AnyKey {
-        typealias Key = StoredValues.Key
-
-        #warning("TODO: actual swift format ignore comment")
-        let swiftFormatIgnore = 1
-    }
-
-    final class Key<Value: Codable>: _AnyKey {
-
-        let defaultValue: () -> Value
-        let name: String
-        let ownerID: String
-
-        init(
-            name: String,
-            ownerID: String,
-            default defaultValue: @autoclosure @escaping () -> Value
-        ) {
-            self.defaultValue = defaultValue
-            self.ownerID = ownerID
-            self.name = name
-        }
-
-        init(always: @autoclosure @escaping () -> Value) {
-            defaultValue = always
-            name = ""
-            ownerID = ""
-        }
-    }
-}
-
-extension StoredValues.Keys {
-
-    static func UserKey<Value: Codable>(name: String?, default defaultValue: Value) -> Key<Value> {
-        guard let name else { return Key(always: defaultValue) }
-        guard let currentUser = Container.userSession()?.user else {
-            return Key(always: defaultValue)
-        }
-
-        return Key(name: name, ownerID: currentUser.id, default: defaultValue)
-    }
-
-//    static let userPolicy = StoredValues.Key(name: "userPolicy", defaultValue: "None")
-
-    static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
-        UserKey(name: parentID, default: Defaults[.Customization.Library.viewType])
-    }
-}
-
 extension AnyStoredData {
 
-    static func fetch<Value: Codable>(name: String, ownerID: String) throws -> Value? {
+    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    static func fetch<Value: Codable>(_ key: String, ownerID: String, domain: String? = nil) throws -> Value? {
+
+        let domain = domain ?? "none"
+
+        let clause = From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+
         let values = try SwiftfinStore.dataStack
             .fetchAll(
-                From<AnyStoredData>()
-                    .where(\.$ownerID == ownerID && \.$name == name)
+                clause
             )
             .compactMap(\.data)
             .compactMap {
                 try JSONDecoder().decode(Value.self, from: $0)
             }
 
-        assert(values.count < 2, "More than one stored object for same name and id!")
+        assert(values.count < 2, "More than one stored object for same name, id, and domain!")
 
         return values.first
     }
 
-    static func store<Value: Codable>(value: Value, name: String, ownerID: String) throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let existing = try transaction.fetchAll(
-                From<AnyStoredData>()
-                    .where(\.$ownerID == ownerID && \.$name == name)
-            )
+    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    static func store<Value: Codable>(value: Value, key: String, ownerID: String, domain: String? = nil) throws {
 
-            assert(existing.count < 2, "More than one stored object for same name and id!")
+        let domain = domain ?? "none"
+
+        let clause = From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            let existing = try transaction.fetchAll(clause)
+
+            assert(existing.count < 2, "More than one stored object for same name, id, and domain!")
 
             let encodedData = try JSONEncoder().encode(value)
 
@@ -200,9 +94,59 @@ extension AnyStoredData {
                 let newData = transaction.create(Into<AnyStoredData>())
 
                 newData.data = encodedData
+                newData.domain = domain
                 newData.ownerID = ownerID
-                newData.name = name
+                newData.key = key
             }
+        }
+    }
+
+    // TODO: pass transaction along?
+
+    /// Delete all data with the given `ownerID`
+    ///
+    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    static func deleteAll(ownerID: String) throws {
+
+        let clause = From<AnyStoredData>()
+            .where(\.$ownerID == ownerID)
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            let values = try transaction.fetchAll(clause)
+
+            transaction.delete(values)
+        }
+    }
+
+    /// Delete all data with the given `ownerID` and `domain`
+    ///
+    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    static func deleteAll(ownerID: String, domain: String? = nil) throws {
+
+        let domain = domain ?? "none"
+
+        let clause = From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$domain == domain)
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            let values = try transaction.fetchAll(clause)
+
+            transaction.delete(values)
+        }
+    }
+
+    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    static func delete(key: String, ownerID: String, domain: String? = nil) throws {
+
+        let domain = domain ?? "none"
+
+        let clause = From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+
+        try SwiftfinStore.dataStack.perform { transaction in
+            let values = try transaction.fetchAll(clause)
+
+            transaction.delete(values)
         }
     }
 }

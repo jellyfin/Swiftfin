@@ -75,6 +75,18 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
                 eventSubject.send(.error(.init(error.localizedDescription)))
             }
         case let .signIn(user):
+
+            Task {
+                guard let userServer = servers.keys.first(where: { $0.id == user.serverID }) else {
+                    assertionFailure("?")
+                    return
+                }
+
+                let userData = try await user.getUserData(server: userServer)
+
+                StoredValues[.User.data(id: user.id)] = userData
+            }
+
             Defaults[.lastSignedInUserID] = user.id
             Container.userSession.reset()
             Notifications[.didSignIn].post()
@@ -100,13 +112,20 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             .map(\.state)
     }
 
-    #warning("TODO: delete corresponding any data")
+    #warning("TODO: delete corresponding any data/user defaults suite")
     private func delete(user: UserState) throws {
         try dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == user.id)) else {
                 throw JellyfinAPIError("Unable to find server to delete")
             }
 
+            let userData = try transaction.fetchAll(
+                From<AnyStoredData>()
+                    .where(\.$ownerID == user.id)
+            )
+
+            transaction.delete(userData)
+            UserDefaults.userSuite(id: storedUser.id).removeAll()
             transaction.delete(storedUser)
         }
     }

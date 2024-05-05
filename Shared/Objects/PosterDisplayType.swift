@@ -9,7 +9,7 @@
 import Defaults
 import SwiftUI
 
-enum PosterDisplayType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case landscape
     case portrait
@@ -21,6 +21,15 @@ enum PosterDisplayType: String, CaseIterable, Displayable, Defaults.Serializable
             "Landscape"
         case .portrait:
             "Portrait"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .landscape:
+            "rectangle.fill"
+        case .portrait:
+            "rectangle.portrait.fill"
         }
     }
 }

@@ -25,23 +25,21 @@ import SwiftUI
 
 struct PagingLibraryView<Element: Poster>: View {
 
-    @StoredValue
-    private var testValue: LibraryDisplayType
-
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
-    @Default(.Customization.Library.listColumnCount)
-    private var listColumnCount
-    @Default(.Customization.Library.posterType)
-    private var posterType
-    @Default(.Customization.Library.viewType)
-    private var viewType
 
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
     @State
     private var layout: CollectionVGridLayout
+
+    @StoredValue
+    private var displayType: LibraryDisplayType
+    @StoredValue
+    private var listColumnCount: Int
+    @StoredValue
+    private var posterType: PosterDisplayType
 
     @StateObject
     private var collectionVGridProxy: CollectionVGridProxy<Element> = .init()
@@ -52,24 +50,22 @@ struct PagingLibraryView<Element: Poster>: View {
 
     init(viewModel: PagingLibraryViewModel<Element>) {
 
-        self._testValue = StoredValue(.libraryDisplayType(parentID: viewModel.parent?.id))
+        self._displayType = StoredValue(.User.libraryDisplayType(parentID: viewModel.parent?.id))
+        self._listColumnCount = StoredValue(.User.libraryListColumnCount(parentID: viewModel.parent?.id))
+        self._posterType = StoredValue(.User.libraryPosterType(parentID: viewModel.parent?.id))
 
         self._viewModel = StateObject(wrappedValue: viewModel)
 
-        let initialPosterType = Defaults[.Customization.Library.posterType]
-        let initialViewType = Defaults[.Customization.Library.viewType]
-        let initialListColumnCount = Defaults[.Customization.Library.listColumnCount]
-
         if UIDevice.isPhone {
             layout = Self.phoneLayout(
-                posterType: initialPosterType,
-                viewType: initialViewType
+                posterType: _posterType.wrappedValue,
+                viewType: _displayType.wrappedValue
             )
         } else {
             layout = Self.padLayout(
-                posterType: initialPosterType,
-                viewType: initialViewType,
-                listColumnCount: initialListColumnCount
+                posterType: _posterType.wrappedValue,
+                viewType: _displayType.wrappedValue,
+                listColumnCount: _listColumnCount.wrappedValue
             )
         }
     }
@@ -198,7 +194,7 @@ struct PagingLibraryView<Element: Poster>: View {
             $viewModel.elements,
             layout: $layout
         ) { item in
-            switch (posterType, viewType) {
+            switch (posterType, displayType) {
             case (.landscape, .grid):
                 landscapeGridItemView(item: item)
             case (.portrait, .grid):
@@ -244,27 +240,27 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .onChange(of: posterType) { newValue in
             if UIDevice.isPhone {
-                if viewType == .list {
+                if displayType == .list {
                     collectionVGridProxy.layout()
                 } else {
                     layout = Self.phoneLayout(
                         posterType: newValue,
-                        viewType: viewType
+                        viewType: displayType
                     )
                 }
             } else {
-                if viewType == .list {
+                if displayType == .list {
                     collectionVGridProxy.layout()
                 } else {
                     layout = Self.padLayout(
                         posterType: newValue,
-                        viewType: viewType,
+                        viewType: displayType,
                         listColumnCount: listColumnCount
                     )
                 }
             }
         }
-        .onChange(of: viewType) { newValue in
+        .onChange(of: displayType) { newValue in
             if UIDevice.isPhone {
                 layout = Self.phoneLayout(
                     posterType: posterType,
@@ -282,7 +278,7 @@ struct PagingLibraryView<Element: Poster>: View {
             if UIDevice.isPad {
                 layout = Self.padLayout(
                     posterType: posterType,
-                    viewType: viewType,
+                    viewType: displayType,
                     listColumnCount: newValue
                 )
             }
@@ -314,11 +310,14 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                LibraryViewTypeToggle(
-                    posterType: $posterType,
-                    viewType: $viewType,
-                    listColumnCount: $listColumnCount
-                )
+                #warning("TODO: switch between defaults and stored value")
+                if Defaults[.Customization.Library.rememberLayout] {
+                    LibraryViewTypeToggle(
+                        posterType: $posterType,
+                        viewType: $displayType,
+                        listColumnCount: $listColumnCount
+                    )
+                }
 
                 Button(L10n.random, systemImage: "dice.fill") {
                     viewModel.send(.getRandomItem)
@@ -326,12 +325,6 @@ struct PagingLibraryView<Element: Poster>: View {
                 .disabled(viewModel.elements.isEmpty)
             } label: {
                 Image(systemName: "ellipsis.circle")
-            }
-        }
-        .onFirstAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                self.testValue = "this should work"
-                print(testValue)
             }
         }
     }

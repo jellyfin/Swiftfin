@@ -19,7 +19,7 @@ import Pulse
 
 // TODO: instead of just signing in duplicate user, send event for alert
 //       to override existing user access token?
-//       - won't require deleting and re-signing in user
+//       - won't require deleting and re-signing in user for password changes
 //       - account for local device auth required
 
 final class UserSignInViewModel: ViewModel, Eventful, Stateful {
@@ -183,7 +183,11 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
         guard let accessToken = response.accessToken,
               let username = response.user?.name,
-              let id = response.user?.id else { throw JellyfinAPIError("Missing user data from network call") }
+              let id = response.user?.id
+        else {
+            logger.critical("Missing user data from network call")
+            throw JellyfinAPIError("An internal error has occurred")
+        }
 
         // User already signed in, just sign in
         if let existingUser = user(for: id) {
@@ -207,6 +211,10 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             editServer.users.insert(newUser)
 
             return newUser.state
+        }
+
+        if let user = response.user {
+            StoredValues[.User.data(id: id)] = user
         }
 
         return user

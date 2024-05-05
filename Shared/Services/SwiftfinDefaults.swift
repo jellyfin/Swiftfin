@@ -14,6 +14,9 @@ import UIKit
 
 // TODO: Organize
 
+/// Note: Only use Defaults for basic single-value settings to avoid potential storage
+///       issues. For larger data types and arbitrary lists, use `StoredValue` instead.
+
 // MARK: suites
 
 extension UserDefaults {
@@ -27,8 +30,11 @@ extension UserDefaults {
     // MARK: current user
 
     static var currentUserSuite: UserDefaults {
-        let userID: String = Container.userSession()?.user.id ?? "default"
-        return UserDefaults(suiteName: "user\(userID)")!
+        userSuite(id: Container.userSession()?.user.id ?? "default")
+    }
+
+    static func userSuite(id: String) -> UserDefaults {
+        UserDefaults(suiteName: "user\(id)")!
     }
 }
 
@@ -116,6 +122,8 @@ extension Defaults.Keys {
             static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
             static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
             static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
+
+            static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
         }
 
         enum Search {

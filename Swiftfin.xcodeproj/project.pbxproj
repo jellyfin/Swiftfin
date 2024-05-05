@@ -372,12 +372,18 @@
 		E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */; };
 		E145EB4F2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */; };
 		E145EB542BE18682003BF6F3 /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E145EB532BE18682003BF6F3 /* JellyfinAPI */; };
+		E146A9D82BE6E9830034DA1E /* StoredValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E146A9D72BE6E9830034DA1E /* StoredValue.swift */; };
+		E146A9D92BE6E9830034DA1E /* StoredValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E146A9D72BE6E9830034DA1E /* StoredValue.swift */; };
+		E146A9DB2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E146A9DA2BE6E9BF0034DA1E /* StoredValues+User.swift */; };
+		E146A9DC2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */ = {isa = PBXBuildFile; fileRef = E146A9DA2BE6E9BF0034DA1E /* StoredValues+User.swift */; };
 		E148128328C1443D003B8787 /* NameGuidPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */; };
 		E148128528C15472003B8787 /* SortOrder+ItemSortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder+ItemSortOrder.swift */; };
 		E148128628C15475003B8787 /* SortOrder+ItemSortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128428C15472003B8787 /* SortOrder+ItemSortOrder.swift */; };
 		E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */; };
 		E148128928C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */; };
 		E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E148128A28C15526003B8787 /* ItemSortBy.swift */; };
+		E149CCAD2BE6ECC8008B9331 /* Storable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149CCAC2BE6ECC8008B9331 /* Storable.swift */; };
+		E149CCAE2BE6ECC8008B9331 /* Storable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E149CCAC2BE6ECC8008B9331 /* Storable.swift */; };
 		E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */; };
 		E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
 		E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */; };
@@ -526,6 +532,8 @@
 		E17AC96F2954EE4B003D2BC2 /* DownloadListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */; };
 		E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */; };
 		E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */; };
+		E17DC74A2BE740D900B42379 /* StoredValues+Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17DC7492BE740D900B42379 /* StoredValues+Server.swift */; };
+		E17DC74B2BE740D900B42379 /* StoredValues+Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17DC7492BE740D900B42379 /* StoredValues+Server.swift */; };
 		E17FB55228C119D400311DFE /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */; };
 		E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */; };
@@ -1137,9 +1145,12 @@
 		E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollIfLargerThanModifier.swift; sourceTree = "<group>"; };
 		E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftinStore+UserState.swift"; sourceTree = "<group>"; };
 		E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+ServerState.swift"; sourceTree = "<group>"; };
+		E146A9D72BE6E9830034DA1E /* StoredValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredValue.swift; sourceTree = "<group>"; };
+		E146A9DA2BE6E9BF0034DA1E /* StoredValues+User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredValues+User.swift"; sourceTree = "<group>"; };
 		E148128428C15472003B8787 /* SortOrder+ItemSortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SortOrder+ItemSortOrder.swift"; sourceTree = "<group>"; };
 		E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ItemFilter+ItemTrait.swift"; sourceTree = "<group>"; };
 		E148128A28C15526003B8787 /* ItemSortBy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSortBy.swift; sourceTree = "<group>"; };
+		E149CCAC2BE6ECC8008B9331 /* Storable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storable.swift; sourceTree = "<group>"; };
 		E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerViewModel.swift; sourceTree = "<group>"; };
 		E14E9DF02BCF7A99004E3371 /* ItemLetter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemLetter.swift; sourceTree = "<group>"; };
 		E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyItemFilter.swift; sourceTree = "<group>"; };
@@ -1207,6 +1218,7 @@
 		E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListViewModel.swift; sourceTree = "<group>"; };
 		E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListCoordinator.swift; sourceTree = "<group>"; };
 		E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskButton.swift; sourceTree = "<group>"; };
+		E17DC7492BE740D900B42379 /* StoredValues+Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredValues+Server.swift"; sourceTree = "<group>"; };
 		E17FB55128C119D400311DFE /* Displayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Displayable.swift; sourceTree = "<group>"; };
 		E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
@@ -1675,6 +1687,7 @@
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
 				E10231432BCF8A51009D71FC /* ChannelProgram.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
+				E149CCAC2BE6ECC8008B9331 /* Storable.swift */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
 				E1D37F4A2B9CEA5C00343D2B /* ImageSource.swift */,
@@ -2266,11 +2279,12 @@
 		E10B1EB72BD9ACC800A92EAF /* SwiftfinStore */ = {
 			isa = PBXGroup;
 			children = (
+				E146A9DD2BE6E9DC0034DA1E /* StoredValue */,
 				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
-				E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */,
 				E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */,
-				E10B1EB92BD9ACFB00A92EAF /* V2Schema */,
+				E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */,
 				E10B1EB82BD9ACE900A92EAF /* V1Schema */,
+				E10B1EB92BD9ACFB00A92EAF /* V2Schema */,
 			);
 			path = SwiftfinStore;
 			sourceTree = "<group>";
@@ -2533,6 +2547,16 @@
 			path = AppIcons;
 			sourceTree = "<group>";
 		};
+		E146A9DD2BE6E9DC0034DA1E /* StoredValue */ = {
+			isa = PBXGroup;
+			children = (
+				E146A9D72BE6E9830034DA1E /* StoredValue.swift */,
+				E17DC7492BE740D900B42379 /* StoredValues+Server.swift */,
+				E146A9DA2BE6E9BF0034DA1E /* StoredValues+User.swift */,
+			);
+			path = StoredValue;
+			sourceTree = "<group>";
+		};
 		E14EDECA2B8FB66F000F00A4 /* ItemFilter */ = {
 			isa = PBXGroup;
 			children = (
@@ -2585,9 +2609,9 @@
 				E154965B296CA2EF00C4EF88 /* DownloadManager.swift */,
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
-				E1549657296CA2EF00C4EF88 /* UserSession.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
 				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
+				E1549657296CA2EF00C4EF88 /* UserSession.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3692,6 +3716,7 @@
 				E1575E71293E77B5001665B1 /* RepeatingTimer.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
 				E10231452BCF8A51009D71FC /* ChannelProgram.swift in Sources */,
+				E146A9D92BE6E9830034DA1E /* StoredValue.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
 				C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1575E63293E77B5001665B1 /* CaseIterablePicker.swift in Sources */,
@@ -3802,6 +3827,7 @@
 				E1DC9842296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
 				E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */,
 				E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
+				E17DC74B2BE740D900B42379 /* StoredValues+Server.swift in Sources */,
 				E10E842A29A587110064EA49 /* LoadingView.swift in Sources */,
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				E13316FF2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */,
@@ -3825,6 +3851,7 @@
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
 				E1D37F492B9C648E00343D2B /* MaxHeightText.swift in Sources */,
+				E146A9DC2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */,
 				E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */,
 				E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */,
 				E193D53D27193F9700900D82 /* UserSignInCoordinator.swift in Sources */,
@@ -3863,6 +3890,7 @@
 				E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
+				E149CCAE2BE6ECC8008B9331 /* Storable.swift in Sources */,
 				C46DD8D92A8DC2990046A504 /* LiveNativeVideoPlayer.swift in Sources */,
 				E1575E9F293E7B1E001665B1 /* Int.swift in Sources */,
 				E1D9F475296E86D400129AF3 /* NativeVideoPlayer.swift in Sources */,
@@ -3983,6 +4011,7 @@
 				5364F455266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E18845F526DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
 				E1B33ECF28EB6EA90073B0FD /* OverlayMenu.swift in Sources */,
+				E146A9D82BE6E9830034DA1E /* StoredValue.swift in Sources */,
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */,
 				4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
@@ -4000,6 +4029,7 @@
 				E17FB55928C125E900311DFE /* StudiosHStack.swift in Sources */,
 				E1C812C5277A90B200918266 /* URLComponents.swift in Sources */,
 				E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */,
+				E17DC74A2BE740D900B42379 /* StoredValues+Server.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */,
@@ -4135,6 +4165,7 @@
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
 				E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */,
+				E146A9DB2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */,
 				E1DC9847296DEFF500982F06 /* FavoriteIndicator.swift in Sources */,
 				E1E306CD28EF6E8000537998 /* TimerProxy.swift in Sources */,
 				BD0BA22E2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */,
@@ -4284,6 +4315,7 @@
 				E113133828BEADBA00930F75 /* LibraryParent.swift in Sources */,
 				E104DC962B9E7E29008F506D /* AssertionFailureView.swift in Sources */,
 				E102312C2BCF8A08009D71FC /* iOSLiveTVCoordinator.swift in Sources */,
+				E149CCAD2BE6ECC8008B9331 /* Storable.swift in Sources */,
 				E18ACA8F2A15A2CF00BB4F35 /* (null) in Sources */,
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
