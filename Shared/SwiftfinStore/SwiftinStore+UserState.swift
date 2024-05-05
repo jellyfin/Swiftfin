@@ -37,6 +37,34 @@ extension SwiftfinStore.State {
 
 extension UserState {
 
+    /// Deletes the model that this state represents and
+    /// all settings from `Defaults` and `StoredValues`
+    func delete() throws {
+        try SwiftfinStore.dataStack.perform { transaction in
+            guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
+                throw JellyfinAPIError("Unable to find user to delete")
+            }
+
+            transaction.delete(storedUser)
+        }
+
+        try deleteSettings()
+    }
+
+    /// Deletes user settings from `Defaults` and `StoredValues`
+    func deleteSettings() throws {
+        try SwiftfinStore.dataStack.perform { transaction in
+            let userData = try transaction.fetchAll(
+                From<AnyStoredData>()
+                    .where(\.$ownerID == id)
+            )
+
+            transaction.delete(userData)
+        }
+
+        UserDefaults.userSuite(id: id).removeAll()
+    }
+
     /// Must pass in the server to create a JellyfinClient
     /// with an access token.
     func getUserData(server: ServerState) async throws -> UserDto {

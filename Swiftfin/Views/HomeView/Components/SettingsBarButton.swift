@@ -1,0 +1,62 @@
+//
+// Swiftfin is subject to the terms of the Mozilla Public
+// License, v2.0. If a copy of the MPL was not distributed with this
+// file, you can obtain one at https://mozilla.org/MPL/2.0/.
+//
+// Copyright (c) 2024 Jellyfin & Jellyfin Contributors
+//
+
+import Factory
+import SwiftUI
+
+extension HomeView {
+
+    // Want the default navigation bar `Image(systemName:)` styling
+    // but using them within `ImageView` placeholder/failure strips it.
+    // Need to do manual checking of image
+    struct SettingsBarButton: View {
+
+        @State
+        private var isUserImage = false
+
+        let viewModel: HomeViewModel
+        let action: () -> Void
+
+        var body: some View {
+            ZStack {
+                Color.clear
+            }
+
+            Button {
+                action()
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .visible(!isUserImage)
+                    .overlay {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(viewModel.userSession.user.profileImageSource(
+                                client: viewModel.userSession.client,
+                                maxWidth: 120
+                            ))
+                            .image { image in
+                                image
+                                    .clipShape(.circle)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .posterBorder(ratio: 1 / 2, of: \.width)
+                                    .onAppear {
+                                        isUserImage = true
+                                    }
+                            }
+                            .placeholder { _ in
+                                Color.clear
+                            }
+                        }
+                        .frame(width: 30)
+                    }
+            }
+            .accessibilityLabel(L10n.settings)
+        }
+    }
+}

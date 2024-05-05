@@ -77,32 +77,9 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            Button {
+            SettingsBarButton(viewModel: viewModel) {
                 router.route(to: \.settings)
-            } label: {
-                ZStack {
-                    Color.clear
-
-                    ImageView(viewModel.userSession.user.profileImageSource(client: viewModel.userSession.client, maxWidth: 120))
-                        .image { image in
-                            image
-                                .resizable()
-                                .clipShape(.circle)
-                                .aspectRatio(1, contentMode: .fit)
-                                .posterBorder(ratio: 1 / 2, of: \.width)
-                        }
-                        .placeholder { _ in
-                            Image(systemName: "gearshape.fill")
-                                .resizable()
-                        }
-                        .failure {
-                            Image(systemName: "gearshape.fill")
-                                .resizable()
-                        }
-                }
-                .frame(width: 30, height: 30)
             }
-            .accessibilityLabel(L10n.settings)
         }
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

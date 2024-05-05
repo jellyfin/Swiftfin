@@ -27,10 +27,10 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case searchForServers
-        case connect(String)
-        case cancel
         case addNewURL(ServerState)
+        case cancel
+        case connect(String)
+        case searchForServers
     }
 
     // MARK: BackgroundState
@@ -86,10 +86,14 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case .searchForServers:
-            discovery.broadcast()
+        case let .addNewURL(server):
+            addNewURL(server: server)
 
             return state
+        case .cancel:
+            connectTask?.cancel()
+
+            return .initial
         case let .connect(url):
             connectTask?.cancel()
 
@@ -125,12 +129,8 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             .asAnyCancellable()
 
             return .connecting
-        case .cancel:
-            connectTask?.cancel()
-
-            return .initial
-        case let .addNewURL(server):
-            addNewURL(server: server)
+        case .searchForServers:
+            discovery.broadcast()
 
             return state
         }
@@ -213,10 +213,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             newServer.users = []
         }
 
-        let serverInfo = try await server.getSystemInfo()
+        let publicInfo = try await server.getPublicSystemInfo()
 
-        StoredValues[.Server.info] = serverInfo.info
-        StoredValues[.Server.publicInfo] = serverInfo.public
+        StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }
 
     // server has same id, but (possible) new URL

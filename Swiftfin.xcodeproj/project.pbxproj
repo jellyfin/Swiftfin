@@ -534,6 +534,7 @@
 		E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */; };
 		E17DC74A2BE740D900B42379 /* StoredValues+Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17DC7492BE740D900B42379 /* StoredValues+Server.swift */; };
 		E17DC74B2BE740D900B42379 /* StoredValues+Server.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17DC7492BE740D900B42379 /* StoredValues+Server.swift */; };
+		E17DC74D2BE7601E00B42379 /* SettingsBarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17DC74C2BE7601E00B42379 /* SettingsBarButton.swift */; };
 		E17FB55228C119D400311DFE /* Displayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55128C119D400311DFE /* Displayable.swift */; };
 		E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */; };
 		E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */; };
@@ -1219,6 +1220,7 @@
 		E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListCoordinator.swift; sourceTree = "<group>"; };
 		E17AC9722955007A003D2BC2 /* DownloadTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTaskButton.swift; sourceTree = "<group>"; };
 		E17DC7492BE740D900B42379 /* StoredValues+Server.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredValues+Server.swift"; sourceTree = "<group>"; };
+		E17DC74C2BE7601E00B42379 /* SettingsBarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsBarButton.swift; sourceTree = "<group>"; };
 		E17FB55128C119D400311DFE /* Displayable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Displayable.swift; sourceTree = "<group>"; };
 		E17FB55428C1250B00311DFE /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E17FB55628C1256400311DFE /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
@@ -2674,6 +2676,7 @@
 				E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */,
 				E12CC1B028D1008F00678D5D /* NextUpView.swift */,
 				E12CC1BD28D11F4500678D5D /* RecentlyAddedView.swift */,
+				E17DC74C2BE7601E00B42379 /* SettingsBarButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -4313,6 +4316,7 @@
 				E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */,
 				62E632E3267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
 				E113133828BEADBA00930F75 /* LibraryParent.swift in Sources */,
+				E17DC74D2BE7601E00B42379 /* SettingsBarButton.swift in Sources */,
 				E104DC962B9E7E29008F506D /* AssertionFailureView.swift in Sources */,
 				E102312C2BCF8A08009D71FC /* iOSLiveTVCoordinator.swift in Sources */,
 				E149CCAD2BE6ECC8008B9331 /* Storable.swift in Sources */,

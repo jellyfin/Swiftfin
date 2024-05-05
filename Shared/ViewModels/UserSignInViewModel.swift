@@ -51,6 +51,8 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     @Published
     var publicUsers: [UserDto] = []
     @Published
+    var serverDisclaimer: String? = nil
+    @Published
     var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {
@@ -90,12 +92,14 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             Task { [weak self] in
                 let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()
                 let publicUsers = try await self?.retrievePublicUsers()
+                let serverMessage = try await self?.retrieveServerDisclaimer()
 
                 guard let self else { return }
 
                 await MainActor.run {
                     self.isQuickConnectEnabled = isQuickConnectEnabled ?? false
                     self.publicUsers = publicUsers ?? []
+                    self.serverDisclaimer = serverMessage
                 }
             }
             .store(in: &cancellables)
@@ -221,10 +225,19 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func retrievePublicUsers() async throws -> [UserDto] {
-        let publicUsersPath = Paths.getPublicUsers
-        let response = try await server.client.send(publicUsersPath)
+        let request = Paths.getPublicUsers
+        let response = try await server.client.send(request)
 
         return response.value
+    }
+
+    private func retrieveServerDisclaimer() async throws -> String? {
+        let request = Paths.getBrandingOptions
+        let response = try await server.client.send(request)
+
+        guard let disclaimer = response.value.loginDisclaimer, disclaimer.isNotEmpty else { return nil }
+
+        return disclaimer
     }
 
     private func retrieveQuickConnectEnabled() async throws -> Bool {

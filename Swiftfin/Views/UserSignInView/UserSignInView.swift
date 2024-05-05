@@ -72,6 +72,13 @@ struct UserSignInView: View {
                 Color.accentColor
             )
         }
+
+        if let disclaimer = viewModel.serverDisclaimer {
+            Section("Disclaimer") {
+                Text(disclaimer)
+                    .font(.callout)
+            }
+        }
     }
 
     @ViewBuilder

@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CoreStore
 import Foundation
 import JellyfinAPI
 import Pulse
@@ -47,14 +48,40 @@ extension SwiftfinStore.State {
 
 extension ServerState {
 
-    func getSystemInfo() async throws -> (public: PublicSystemInfo, info: SystemInfo) {
-        let publicInfoRequest = Paths.getPublicSystemInfo
-        let systemInfoRequest = Paths.getSystemInfo
+    /// Deletes the model that this state represents and
+    /// all settings from `Defaults` and `StoredValues`.
+    func delete() throws {
+        try SwiftfinStore.dataStack.perform { transaction in
+            guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == id)) else {
+                throw JellyfinAPIError("Unable to find server to delete")
+            }
 
-        async let publicInfoResponse = client.send(publicInfoRequest)
-        async let systemInfoResponse = client.send(systemInfoRequest)
+            transaction.delete(storedServer)
+        }
 
-        return try await (public: publicInfoResponse.value, info: systemInfoResponse.value)
+        try deleteSettings()
+    }
+
+    /// Deletes user settings from `Defaults` and `StoredValues`
+    func deleteSettings() throws {
+        try SwiftfinStore.dataStack.perform { transaction in
+            let userData = try transaction.fetchAll(
+                From<AnyStoredData>()
+                    .where(\.$ownerID == id)
+            )
+
+            transaction.delete(userData)
+        }
+
+        UserDefaults.userSuite(id: id).removeAll()
+    }
+
+    func getPublicSystemInfo() async throws -> PublicSystemInfo {
+
+        let request = Paths.getPublicSystemInfo
+        let response = try await client.send(request)
+
+        return response.value
     }
 
     func splashScreenImageSource() -> ImageSource {

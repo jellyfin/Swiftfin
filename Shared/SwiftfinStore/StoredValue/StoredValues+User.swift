@@ -11,11 +11,9 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-// MARK: key/domain
+// MARK: keys
 
 extension StoredValues.Keys {
-
-    // MARK: keys
 
     /// Construct a key where `ownerID` is the id of the user in the
     /// current user session, or always returns the default if there
@@ -100,7 +98,7 @@ extension StoredValues.Keys {
                 UserKey(always: Defaults[.Customization.Library.posterType])
             }
         }
-        
+
         static func librarySortBy(parentID: String?) -> Key<[ItemSortBy]> {
             if Defaults[.Customization.Library.rememberSort] {
                 CurrentUserKey(
@@ -112,7 +110,7 @@ extension StoredValues.Keys {
                 UserKey(always: ItemFilterCollection.default.sortBy)
             }
         }
-        
+
         static func librarySortOrder(parentID: String?) -> Key<[ItemSortOrder]> {
             if Defaults[.Customization.Library.rememberSort] {
                 CurrentUserKey(

@@ -26,10 +26,20 @@ class EditServerViewModel: ViewModel {
             return
         }
 
+        let userStates = storedServer.users.map(\.state)
+
+        // Note: don't use Server/UserState.delete() to have
+        //       all deletions in a single transaction
         do {
             try dataStack.perform { transaction in
                 transaction.delete(storedServer.users)
                 transaction.delete(storedServer)
+            }
+
+            try server.deleteSettings()
+
+            for user in userStates {
+                try user.deleteSettings()
             }
 
             Notifications[.didDeleteServer].post(object: server)
