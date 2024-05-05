@@ -74,9 +74,6 @@ extension Defaults.Keys {
 
     static let accentColor: Key<Color> = UserKey("userAccentColor", default: .jellyfinPurple)
 
-    // TODO: Replace with a cache
-//    static let libraryFilterStore: Key<[String: ItemFilterCollection]> = UserKey("libraryFilterStore", default: [:])
-
     enum Customization {
 
         static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .compactLogo)
@@ -117,13 +114,14 @@ extension Defaults.Keys {
                 "Library.enabledDrawerFilters",
                 default: ItemFilterType.allCases
             )
-            static let viewType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
+            static let displayType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
             static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
             static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)
             static let randomImage: Key<Bool> = UserKey("libraryRandomImage", default: true)
             static let showFavorites: Key<Bool> = UserKey("libraryShowFavorites", default: true)
 
             static let rememberLayout: Key<Bool> = UserKey("libraryRememberLayout", default: false)
+            static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
         }
 
         enum Search {

@@ -38,8 +38,8 @@ struct CustomizeViewsSettings: View {
     private var similarPosterType
     @Default(.Customization.searchPosterType)
     private var searchPosterType
-    @Default(.Customization.Library.viewType)
-    private var libraryViewType
+    @Default(.Customization.Library.displayType)
+    private var libraryDisplayType
     @Default(.Customization.Library.posterType)
     private var libraryPosterType
     @Default(.Customization.Library.listColumnCount)
@@ -129,11 +129,11 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
-                CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
+                CaseIterablePicker(title: L10n.library, selection: $libraryDisplayType)
 
                 CaseIterablePicker(title: L10n.posters, selection: $libraryPosterType)
 
-                if libraryViewType == .list, UIDevice.isPad {
+                if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
                         title: "Columns",
                         value: $listColumnCount,

@@ -15,21 +15,14 @@ import JellyfinAPI
 
 extension StoredValues.Keys {
 
-    // Domains for user data
-    enum UserDomain: String {
-
-        case library
-        case main
-    }
-
     // MARK: keys
-    
+
     /// Construct a key where `ownerID` is the id of the user in the
     /// current user session, or always returns the default if there
     /// isn't a current session user.
     static func CurrentUserKey<Value: Codable>(
         _ name: String?,
-        domain: UserDomain,
+        domain: String,
         default defaultValue: Value
     ) -> Key<Value> {
         guard let name, let currentUser = Container.userSession()?.user else {
@@ -39,15 +32,15 @@ extension StoredValues.Keys {
         return Key(
             name,
             ownerID: currentUser.id,
-            domain: domain.rawValue,
+            domain: domain,
             default: defaultValue
         )
     }
-    
+
     static func UserKey<Value: Codable>(
         _ name: String?,
         ownerID: String,
-        domain: UserDomain,
+        domain: String,
         default defaultValue: Value
     ) -> Key<Value> {
         guard let name else {
@@ -57,7 +50,7 @@ extension StoredValues.Keys {
         return Key(
             name,
             ownerID: ownerID,
-            domain: domain.rawValue,
+            domain: domain,
             default: defaultValue
         )
     }
@@ -76,11 +69,11 @@ extension StoredValues.Keys {
             if Defaults[.Customization.Library.rememberLayout] {
                 CurrentUserKey(
                     parentID,
-                    domain: .library,
-                    default: Defaults[.Customization.Library.viewType]
+                    domain: "libraryDisplayType",
+                    default: Defaults[.Customization.Library.displayType]
                 )
             } else {
-                UserKey(always: Defaults[.Customization.Library.viewType])
+                UserKey(always: Defaults[.Customization.Library.displayType])
             }
         }
 
@@ -88,7 +81,7 @@ extension StoredValues.Keys {
             if Defaults[.Customization.Library.rememberLayout] {
                 CurrentUserKey(
                     parentID,
-                    domain: .library,
+                    domain: "libraryListColumnCount",
                     default: Defaults[.Customization.Library.listColumnCount]
                 )
             } else {
@@ -100,21 +93,45 @@ extension StoredValues.Keys {
             if Defaults[.Customization.Library.rememberLayout] {
                 CurrentUserKey(
                     parentID,
-                    domain: .library,
+                    domain: "libraryPosterType",
                     default: Defaults[.Customization.Library.posterType]
                 )
             } else {
                 UserKey(always: Defaults[.Customization.Library.posterType])
             }
         }
+        
+        static func librarySortBy(parentID: String?) -> Key<[ItemSortBy]> {
+            if Defaults[.Customization.Library.rememberSort] {
+                CurrentUserKey(
+                    parentID,
+                    domain: "librarySortBy",
+                    default: ItemFilterCollection.default.sortBy
+                )
+            } else {
+                UserKey(always: ItemFilterCollection.default.sortBy)
+            }
+        }
+        
+        static func librarySortOrder(parentID: String?) -> Key<[ItemSortOrder]> {
+            if Defaults[.Customization.Library.rememberSort] {
+                CurrentUserKey(
+                    parentID,
+                    domain: "librarySortOrder",
+                    default: ItemFilterCollection.default.sortOrder
+                )
+            } else {
+                UserKey(always: ItemFilterCollection.default.sortOrder)
+            }
+        }
 
-        // Doesn't use `CurrentUserKey` because user data may be
+        // Doesn't use `CurrentUserKey` because data may be
         // retrieved and stored without a user session
         static func data(id: String) -> Key<UserDto> {
             UserKey(
                 "userData",
                 ownerID: id,
-                domain: .main,
+                domain: "userData",
                 default: .init()
             )
         }
