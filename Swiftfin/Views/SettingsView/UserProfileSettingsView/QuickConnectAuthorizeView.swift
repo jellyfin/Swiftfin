@@ -12,6 +12,9 @@ import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
 
+    @Default(.accentColor)
+    private var accentColor
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -45,7 +48,7 @@ struct QuickConnectAuthorizeView: View {
                 viewModel.send(.authorize(code))
             }
             .disabled(code.count != 6 || viewModel.state == .authorizing)
-            .foregroundStyle(.primary, Color.accentColor)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)
         .navigationBarBackButtonHidden(viewModel.state == .authorizing)

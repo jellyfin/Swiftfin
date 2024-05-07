@@ -7,9 +7,13 @@
 //
 
 import Combine
+import Defaults
 import SwiftUI
 
 struct ConnectToServerView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
@@ -56,7 +60,7 @@ struct ConnectToServerView: View {
             .disabled(url.isEmpty)
             .foregroundStyle(
                 .primary.opacity(url.isEmpty ? 0.5 : 1),
-                Color.accentColor
+                accentColor
             )
         }
     }

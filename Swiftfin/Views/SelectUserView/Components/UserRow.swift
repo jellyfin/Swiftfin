@@ -6,12 +6,16 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension SelectUserView {
 
     struct UserRow: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Environment(\.colorScheme)
         private var colorScheme
@@ -132,7 +136,7 @@ extension SelectUserView {
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 20, height: 20)
                                         .symbolRenderingMode(.palette)
-                                        .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+                                        .foregroundStyle(accentColor.overlayColor, accentColor)
                                 } else if isEditing {
                                     Image(systemName: "circle")
                                         .resizable()

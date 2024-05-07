@@ -87,7 +87,7 @@ extension AppIconSelectorView {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
             }

@@ -50,7 +50,7 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
                             .symbolRenderingMode(.palette)
-                            .foregroundStyle(Color.accentColor, Color.accentColor.overlayColor)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
             }

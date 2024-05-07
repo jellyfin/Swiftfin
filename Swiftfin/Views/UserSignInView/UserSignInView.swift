@@ -6,10 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Stinsen
 import SwiftUI
 
 struct UserSignInView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
@@ -68,8 +72,8 @@ struct UserSignInView: View {
             }
             .disabled(username.isEmpty)
             .foregroundStyle(
-                .primary.opacity(username.isEmpty ? 0.5 : 1),
-                Color.accentColor
+                accentColor.overlayColor.opacity(username.isEmpty ? 0.5 : 1),
+                accentColor
             )
         }
 
@@ -115,8 +119,8 @@ struct UserSignInView: View {
                     }
                     .disabled(viewModel.state == .signingIn)
                     .foregroundStyle(
-                        .primary,
-                        Color.accentColor
+                        accentColor.overlayColor,
+                        accentColor
                     )
                 }
             }

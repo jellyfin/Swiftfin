@@ -7,10 +7,14 @@
 //
 
 import Combine
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ResetUserPasswordView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -74,7 +78,7 @@ struct ResetUserPasswordView: View {
                 viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
             }
             .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
-            .foregroundStyle(.primary, Color.accentColor)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)
         .navigationBarBackButtonHidden(viewModel.state == .resetting)

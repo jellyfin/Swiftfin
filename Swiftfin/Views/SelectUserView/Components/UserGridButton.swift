@@ -6,12 +6,16 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension SelectUserView {
 
     struct UserGridButton: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @Environment(\.colorScheme)
         private var colorScheme
@@ -98,7 +102,7 @@ extension SelectUserView {
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 40, height: 40, alignment: .bottomTrailing)
                                         .symbolRenderingMode(.palette)
-                                        .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+                                        .foregroundStyle(accentColor.overlayColor, accentColor)
                                 }
                             }
                         }
