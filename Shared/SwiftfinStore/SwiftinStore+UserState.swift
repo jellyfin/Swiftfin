@@ -45,13 +45,21 @@ extension UserState {
                 throw JellyfinAPIError("Unable to find user to delete")
             }
 
+            let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
+            let storedData = try transaction.fetchAll(storedDataClause)
+
             transaction.delete(storedUser)
+            transaction.delete(storedData)
         }
 
-        try deleteSettings()
+        UserDefaults.userSuite(id: id).removeAll()
     }
 
-    /// Deletes user settings from `Defaults` and `StoredValues`
+    /// Deletes user settings from `UserDefaults` and `StoredValues`
+    ///
+    /// Note: if performing deletion with another transaction, use
+    ///       `AnyStoredData.fetchClause` instead within that transaction
+    ///       and delete `UserDefaults` manually
     func deleteSettings() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             let userData = try transaction.fetchAll(
@@ -65,8 +73,8 @@ extension UserState {
         UserDefaults.userSuite(id: id).removeAll()
     }
 
-    /// Must pass in the server to create a JellyfinClient
-    /// with an access token.
+    /// Must pass the server to create a JellyfinClient
+    /// with an access token
     func getUserData(server: ServerState) async throws -> UserDto {
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),

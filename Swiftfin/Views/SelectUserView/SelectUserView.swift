@@ -23,12 +23,17 @@ struct SelectUserView: View {
         case addUser
     }
 
+    @Default(.selectUserUseSplashscreen)
+    private var selectUserUseSplashscreen
+    @Default(.selectUserAllServersSplashscreen)
+    private var selectUserAllServersSplashscreen
     @Default(.selectUserServerSelection)
     private var serverSelection
     @Default(.selectUserDisplayType)
     private var userListDisplayType
-//    @Default(.userListViewUseSplashScreen)
-//    private var userListViewUseSplashScreen
+
+    @Environment(\.colorScheme)
+    private var colorScheme
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
@@ -49,6 +54,8 @@ struct SelectUserView: View {
     private var padGridItemColumnCount: Int = 1
     @State
     private var selectedUsers: Set<UserState> = []
+    @State
+    private var splashScreenImageSource: ImageSource? = nil
 
     @StateObject
     private var viewModel = SelectUserViewModel()
@@ -61,19 +68,6 @@ struct SelectUserView: View {
         }
 
         return nil
-    }
-
-    private var splashScreenImageSource: ImageSource? {
-        switch serverSelection {
-        case .all:
-            return viewModel.servers
-                .keys
-                .randomElement()?
-                .splashScreenImageSource()
-        case .server:
-            return selectedServer?
-                .splashScreenImageSource()
-        }
     }
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
@@ -102,6 +96,29 @@ struct SelectUserView: View {
                 .appending(.addUser)
 
             return OrderedSet(items)
+        }
+    }
+
+    // For all server selection, .all is random
+    private func makeSplashScreenImageSource(
+        serverSelection: SelectUserServerSelection,
+        allServersSelection: SelectUserServerSelection
+    ) -> ImageSource? {
+        switch (serverSelection, allServersSelection) {
+        case (.all, .all):
+            return viewModel
+                .servers
+                .keys
+                .randomElement()?
+                .splashScreenImageSource()
+
+        // need to evaluate server with id selection first
+        case let (.server(id), _), let (.all, .server(id)):
+            return viewModel
+                .servers
+                .keys
+                .first { $0.id == id }?
+                .splashScreenImageSource()
         }
     }
 
@@ -272,8 +289,7 @@ struct SelectUserView: View {
             isPresentingConfirmDeleteUsers = true
         } label: {
             ZStack {
-                RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle(Color.red)
+                Color.red
 
                 Text("Delete")
                     .font(.body.weight(.semibold))
@@ -284,6 +300,7 @@ struct SelectUserView: View {
                         .opacity(0.5)
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .frame(height: 50)
             .frame(maxWidth: 400)
         }
@@ -345,18 +362,20 @@ struct SelectUserView: View {
             }
         }
         .background {
-            if let splashScreenImageSource {
-                ImageView(splashScreenImageSource)
-                    .placeholder { _ in
-                        Color.clear
-                    }
-                    .aspectRatio(contentMode: .fill)
-                    .ignoresSafeArea()
-                    .overlay {
-                        Color.black
-                            .opacity(0.9)
-                            .ignoresSafeArea()
-                    }
+            if selectUserUseSplashscreen, let splashScreenImageSource {
+                ZStack {
+                    Color.clear
+
+                    ImageView(splashScreenImageSource)
+                        .aspectRatio(contentMode: .fill)
+                        .id(splashScreenImageSource)
+                        .transition(.opacity)
+                        .animation(.linear, value: splashScreenImageSource)
+
+                    Color.black
+                        .opacity(0.9)
+                }
+                .ignoresSafeArea()
             }
         }
     }
@@ -407,9 +426,13 @@ struct SelectUserView: View {
                         .padding(.vertical, 5)
                         .padding(.horizontal, 10)
                         .background {
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.tertiarySystemBackground)
+                            if colorScheme == .light {
+                                Color.secondarySystemFill
+                            } else {
+                                Color.tertiarySystemBackground
+                            }
                         }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
             } else {
@@ -418,6 +441,11 @@ struct SelectUserView: View {
         }
         .onAppear {
             viewModel.send(.getServers)
+
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: serverSelection,
+                allServersSelection: selectUserAllServersSplashscreen
+            )
         }
         .onChange(of: isEditingUsers) { newValue in
             guard !newValue else { return }
@@ -428,8 +456,19 @@ struct SelectUserView: View {
             isEditingUsers = false
             selectedUsers.removeAll()
         }
+        .onChange(of: selectUserAllServersSplashscreen) { newValue in
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: serverSelection,
+                allServersSelection: newValue
+            )
+        }
         .onChange(of: serverSelection) { newValue in
             gridItems = makeGridItems(for: newValue)
+
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: newValue,
+                allServersSelection: selectUserAllServersSplashscreen
+            )
         }
         .onChange(of: viewModel.servers) { _ in
             gridItems = makeGridItems(for: serverSelection)
@@ -447,12 +486,19 @@ struct SelectUserView: View {
             }
         }
         .onNotification(.didDeleteServer) { notification in
+            viewModel.send(.getServers)
+
             if let server = notification.object as? ServerState {
                 if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                    serverSelection = .all
+                    if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                        serverSelection = .server(id: first.id)
+                    } else {
+                        serverSelection = .all
+                    }
                 }
 
-                viewModel.send(.getServers)
+                // change splash screen selection if necessary
+                selectUserAllServersSplashscreen = serverSelection
             }
         }
         .alert(

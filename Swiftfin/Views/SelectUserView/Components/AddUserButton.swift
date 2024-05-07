@@ -16,6 +16,8 @@ extension SelectUserView {
         @Binding
         private var serverSelection: SelectUserServerSelection
 
+        @Environment(\.colorScheme)
+        private var colorScheme
         @Environment(\.isEnabled)
         private var isEnabled
 
@@ -45,7 +47,14 @@ extension SelectUserView {
         private var content: some View {
             VStack(alignment: .center) {
                 ZStack {
-                    Color.tertiarySystemBackground
+                    Group {
+                        if colorScheme == .light {
+                            Color.secondarySystemFill
+                        } else {
+                            Color.tertiarySystemBackground
+                        }
+                    }
+                    .posterShadow()
 
                     RelativeSystemImageView(systemName: "plus")
                         .foregroundStyle(.secondary)
@@ -54,12 +63,13 @@ extension SelectUserView {
                 .aspectRatio(1, contentMode: .fill)
 
                 Text("Add User")
+                    .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(isEnabled ? .primary : .secondary)
 
                 if serverSelection == .all {
                     Text("Hidden")
-                        .font(.caption)
+                        .font(.footnote)
                         .hidden()
                 }
             }

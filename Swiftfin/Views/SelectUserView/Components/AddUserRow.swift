@@ -16,6 +16,8 @@ extension SelectUserView {
         @Binding
         private var serverSelection: SelectUserServerSelection
 
+        @Environment(\.colorScheme)
+        private var colorScheme
         @Environment(\.isEnabled)
         private var isEnabled
 
@@ -46,7 +48,14 @@ extension SelectUserView {
             HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
                 ZStack {
-                    Color.tertiarySystemBackground
+                    Group {
+                        if colorScheme == .light {
+                            Color.secondarySystemFill
+                        } else {
+                            Color.tertiarySystemBackground
+                        }
+                    }
+                    .posterShadow()
 
                     RelativeSystemImageView(systemName: "plus")
                         .foregroundStyle(.secondary)
@@ -59,7 +68,7 @@ extension SelectUserView {
                 HStack {
 
                     Text("Add User")
-                        .font(.body)
+                        .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundStyle(isEnabled ? .primary : .secondary)
                         .lineLimit(2)

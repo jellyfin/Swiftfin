@@ -14,12 +14,13 @@ import SwiftUI
 
 struct SettingsView: View {
 
-    @Default(.accentColor)
+//    @Default(.accentColor)
+    @Default(.userAccentColor)
     private var accentColor
 
     #warning("TODO: user app appearance")
-    @Default(.appearance)
-    private var appAppearance
+    @Default(.userAppearance)
+    private var appearance
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
@@ -53,7 +54,7 @@ struct SettingsView: View {
                     viewModel.signOut()
                 }
             }
-            .foregroundStyle(.primary, Color.accentColor)
+            .foregroundStyle(accentColor.overlayColor, accentColor)
 
             Section(L10n.videoPlayer) {
                 CaseIterablePicker(
@@ -73,7 +74,7 @@ struct SettingsView: View {
             }
 
             Section(L10n.accessibility) {
-                CaseIterablePicker(title: L10n.appearance, selection: $appAppearance)
+                CaseIterablePicker(title: L10n.appearance, selection: $appearance)
 
                 ChevronButton(title: L10n.customize)
                     .onSelect {

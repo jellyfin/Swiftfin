@@ -14,8 +14,15 @@ struct AppSettingsView: View {
 
     @Default(.accentColor)
     private var accentColor
-    @Default(.appearance)
+
+    @Default(.appAppearance)
     private var appearance
+
+    @Default(.selectUserUseSplashscreen)
+    private var selectUserUseSplashscreen
+    @Default(.selectUserAllServersSplashscreen)
+    private var selectUserAllServersSplashscreen
+
     @Default(.signOutOnClose)
     private var signOutOnClose
 
@@ -39,11 +46,37 @@ struct AppSettingsView: View {
                     .onSelect {
                         router.route(to: \.appIconSelector, viewModel)
                     }
+            }
 
-                CaseIterablePicker(
-                    title: L10n.appearance,
-                    selection: $appearance
-                )
+            Section {
+
+                Toggle("Use splashscreen", isOn: $selectUserUseSplashscreen)
+
+                if selectUserUseSplashscreen {
+                    Picker("Servers", selection: $selectUserAllServersSplashscreen) {
+
+                        Section {
+                            Label("Random", systemImage: "dice.fill")
+                                .tag(SelectUserServerSelection.all)
+                        }
+
+                        ForEach(viewModel.servers) { server in
+                            Text(server.name)
+                                .tag(SelectUserServerSelection.server(id: server.id))
+                        }
+                    }
+                } else {
+                    CaseIterablePicker(
+                        title: L10n.appearance,
+                        selection: $appearance
+                    )
+                }
+            } header: {
+                Text("Splashscreen")
+            } footer: {
+                if selectUserUseSplashscreen {
+                    Text("When All Servers is selected, use the splashscreen from a single server or a random server")
+                }
             }
 
             SignOutIntervalSection()
@@ -53,6 +86,7 @@ struct AppSettingsView: View {
                     router.route(to: \.log)
                 }
         }
+        .animation(.linear, value: selectUserUseSplashscreen)
         .navigationTitle(L10n.advanced)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {

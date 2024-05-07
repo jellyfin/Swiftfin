@@ -13,6 +13,8 @@ extension SelectUserView {
 
     struct UserRow: View {
 
+        @Environment(\.colorScheme)
+        private var colorScheme
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
@@ -49,7 +51,14 @@ extension SelectUserView {
 
         private var personView: some View {
             ZStack {
-                Color.tertiarySystemBackground
+                Group {
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
+                    }
+                }
+                .posterShadow()
 
                 RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
                     .foregroundStyle(.secondary)
@@ -102,7 +111,7 @@ extension SelectUserView {
 
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text(user.username)
-                                        .font(.body)
+                                        .font(.title3)
                                         .fontWeight(.semibold)
                                         .foregroundStyle(labelForegroundStyle)
                                         .lineLimit(2)
@@ -110,7 +119,7 @@ extension SelectUserView {
 
                                     if showServer {
                                         Text(server.name)
-                                            .font(.caption)
+                                            .font(.footnote)
                                             .foregroundColor(Color(UIColor.lightGray))
                                     }
                                 }
@@ -122,7 +131,8 @@ extension SelectUserView {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 20, height: 20)
-                                        .paletteOverlayRendering()
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
                                 } else if isEditing {
                                     Image(systemName: "circle")
                                         .resizable()

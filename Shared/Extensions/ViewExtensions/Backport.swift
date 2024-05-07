@@ -15,6 +15,16 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
+    /// Note: has no effect on iOS/tvOS 15
+    @ViewBuilder
+    func fontWeight(_ weight: Font.Weight?) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content.fontWeight(weight)
+        } else {
+            content
+        }
+    }
+
     @ViewBuilder
     func lineLimit(_ limit: Int, reservesSpace: Bool = false) -> some View {
         if #available(iOS 16, tvOS 16, *) {

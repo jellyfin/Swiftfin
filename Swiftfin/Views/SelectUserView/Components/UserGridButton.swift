@@ -13,6 +13,8 @@ extension SelectUserView {
 
     struct UserGridButton: View {
 
+        @Environment(\.colorScheme)
+        private var colorScheme
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
@@ -46,7 +48,14 @@ extension SelectUserView {
 
         private var personView: some View {
             ZStack {
-                Color.tertiarySystemBackground
+                Group {
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
+                    }
+                }
+                .posterShadow()
 
                 RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
                     .foregroundStyle(.secondary)
@@ -76,7 +85,6 @@ extension SelectUserView {
                             }
                     }
                     .aspectRatio(1, contentMode: .fill)
-                    .posterShadow()
                     .clipShape(.circle)
                     .overlay {
                         if isEditing {
@@ -89,7 +97,8 @@ extension SelectUserView {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                                        .paletteOverlayRendering()
+                                        .symbolRenderingMode(.palette)
+                                        .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
                                 }
                             }
                         }
@@ -97,13 +106,14 @@ extension SelectUserView {
 
                     VStack {
                         Text(user.username)
+                            .font(.title3)
                             .fontWeight(.semibold)
                             .foregroundStyle(labelForegroundStyle)
                             .lineLimit(1)
 
                         if showServer {
                             Text(server.name)
-                                .font(.caption)
+                                .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
                     }

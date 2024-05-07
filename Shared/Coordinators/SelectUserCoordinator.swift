@@ -55,6 +55,5 @@ final class SelectUserCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         SelectUserView()
-            .preferredColorScheme(.dark)
     }
 }

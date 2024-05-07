@@ -32,6 +32,9 @@ extension SwiftfinStore.V1 {
     ///   - key(s)
     /// - domain
     ///   - key(s)
+    ///
+    /// This can be useful to not require migrations on model objects for new
+    /// "properties".
     final class AnyData: CoreStoreObject {
 
         @Field.Stored("data")
@@ -101,18 +104,39 @@ extension AnyStoredData {
         }
     }
 
-    // TODO: pass transaction along?
+    /// Creates a fetch clause to be used within local transactions
+    static func fetchClause(ownerID: String) -> FetchChainBuilder<AnyStoredData> {
+        From<AnyStoredData>()
+            .where(\.$ownerID == ownerID)
+    }
+
+    /// Creates a fetch clause to be used within local transactions
+    ///
+    /// Note: if `domain == nil`, will default to "none"
+    static func fetchClause(ownerID: String, domain: String? = nil) throws -> FetchChainBuilder<AnyStoredData> {
+        let domain = domain ?? "none"
+
+        return From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$domain == domain)
+    }
+
+    /// Creates a fetch clause to be used within local transactions
+    ///
+    /// Note: if `domain == nil`, will default to "none"
+    static func fetchClause(key: String, ownerID: String, domain: String? = nil) throws -> FetchChainBuilder<AnyStoredData> {
+        let domain = domain ?? "none"
+
+        return From<AnyStoredData>()
+            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+    }
 
     /// Delete all data with the given `ownerID`
     ///
-    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    /// Note: if performing deletion with another transaction, use `fetchClause`
+    ///       instead to delete within the other transaction
     static func deleteAll(ownerID: String) throws {
-
-        let clause = From<AnyStoredData>()
-            .where(\.$ownerID == ownerID)
-
         try SwiftfinStore.dataStack.perform { transaction in
-            let values = try transaction.fetchAll(clause)
+            let values = try transaction.fetchAll(fetchClause(ownerID: ownerID))
 
             transaction.delete(values)
         }
@@ -120,31 +144,26 @@ extension AnyStoredData {
 
     /// Delete all data with the given `ownerID` and `domain`
     ///
-    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    /// Note: if performing deletion with another transaction, use `fetchClause`
+    ///       instead to delete within the other transaction
+    /// Note: if `domain == nil`, will default to "none"
     static func deleteAll(ownerID: String, domain: String? = nil) throws {
-
-        let domain = domain ?? "none"
-
-        let clause = From<AnyStoredData>()
-            .where(\.$ownerID == ownerID && \.$domain == domain)
-
         try SwiftfinStore.dataStack.perform { transaction in
-            let values = try transaction.fetchAll(clause)
+            let values = try transaction.fetchAll(fetchClause(ownerID: ownerID, domain: domain))
 
             transaction.delete(values)
         }
     }
 
-    /// Note: if `domain == nil`, will default to "none" to avoid local typing issues.
+    /// Delete all data given `key`, `ownerID`, and `domain`.
+    ///
+    ///
+    /// Note: if performing deletion with another transaction, use `fetchClause`
+    ///       instead to delete within the other transaction
+    /// Note: if `domain == nil`, will default to "none"
     static func delete(key: String, ownerID: String, domain: String? = nil) throws {
-
-        let domain = domain ?? "none"
-
-        let clause = From<AnyStoredData>()
-            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
-
         try SwiftfinStore.dataStack.perform { transaction in
-            let values = try transaction.fetchAll(clause)
+            let values = try transaction.fetchAll(fetchClause(key: key, ownerID: ownerID, domain: domain))
 
             transaction.delete(values)
         }

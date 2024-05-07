@@ -49,7 +49,8 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 20, height: 20)
-                            .paletteOverlayRendering()
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.accentColor, Color.accentColor.overlayColor)
                     }
                 }
             }

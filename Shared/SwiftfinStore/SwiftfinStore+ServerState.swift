@@ -56,24 +56,12 @@ extension ServerState {
                 throw JellyfinAPIError("Unable to find server to delete")
             }
 
+            let storedDataClause = AnyStoredData.fetchClause(ownerID: id)
+            let storedData = try transaction.fetchAll(storedDataClause)
+
+            transaction.delete(storedData)
             transaction.delete(storedServer)
         }
-
-        try deleteSettings()
-    }
-
-    /// Deletes user settings from `Defaults` and `StoredValues`
-    func deleteSettings() throws {
-        try SwiftfinStore.dataStack.perform { transaction in
-            let userData = try transaction.fetchAll(
-                From<AnyStoredData>()
-                    .where(\.$ownerID == id)
-            )
-
-            transaction.delete(userData)
-        }
-
-        UserDefaults.userSuite(id: id).removeAll()
     }
 
     func getPublicSystemInfo() async throws -> PublicSystemInfo {

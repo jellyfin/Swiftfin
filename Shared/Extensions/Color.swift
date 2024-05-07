@@ -10,7 +10,8 @@ import SwiftUI
 
 extension Color {
 
-    static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
+//    static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
+    static let jellyfinPurple = Color.blue
 
     var uiColor: UIColor {
         UIColor(self)

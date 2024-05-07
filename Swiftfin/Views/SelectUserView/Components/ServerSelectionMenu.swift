@@ -12,6 +12,9 @@ extension SelectUserView {
 
     struct ServerSelectionMenu: View {
 
+        @Environment(\.colorScheme)
+        private var colorScheme
+
         @EnvironmentObject
         private var router: SelectUserCoordinator.Router
 
@@ -70,8 +73,12 @@ extension SelectUserView {
                 }
             } label: {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .foregroundStyle(Color.tertiarySystemBackground)
+
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
+                    }
 
                     Group {
                         switch serverSelection {
@@ -84,10 +91,11 @@ extension SelectUserView {
                         }
                     }
                     .font(.body.weight(.semibold))
-                    .foregroundStyle(Color.secondary)
+                    .foregroundStyle(Color.primary)
                 }
                 .frame(height: 50)
                 .frame(maxWidth: 400)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .buttonStyle(.plain)
         }

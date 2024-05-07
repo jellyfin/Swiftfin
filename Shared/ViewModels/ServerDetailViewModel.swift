@@ -19,8 +19,9 @@ class EditServerViewModel: ViewModel {
         self.server = server
     }
 
-    #warning("TODO: delete user any data")
+    // TODO: this could probably be cleaner
     func delete() {
+
         guard let storedServer = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
             logger.critical("Unable to find server to delete")
             return
@@ -32,14 +33,21 @@ class EditServerViewModel: ViewModel {
         //       all deletions in a single transaction
         do {
             try dataStack.perform { transaction in
+
+                /// Delete stored data for all users
+                for user in storedServer.users {
+                    let storedDataClause = AnyStoredData.fetchClause(ownerID: user.id)
+                    let storedData = try transaction.fetchAll(storedDataClause)
+
+                    transaction.delete(storedData)
+                }
+
                 transaction.delete(storedServer.users)
                 transaction.delete(storedServer)
             }
 
-            try server.deleteSettings()
-
             for user in userStates {
-                try user.deleteSettings()
+                UserDefaults.userSuite(id: user.id).removeAll()
             }
 
             Notifications[.didDeleteServer].post(object: server)

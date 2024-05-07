@@ -43,6 +43,8 @@ fileprivate extension Container.Scope {
     static let userSessionScope = Cached()
 }
 
+// TODO: change from `Container`
+
 extension Container {
 
     static let userSession = Factory<UserSession?>(scope: .userSessionScope) {

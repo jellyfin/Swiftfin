@@ -244,15 +244,6 @@ extension View {
         }
     }
 
-    /// Applies the `.palette` symbol rendering mode and a foreground style
-    /// where the primary style is the passed `Color`'s `overlayColor` and the
-    /// secondary style is the passed `Color`.
-    ///
-    /// If `color == nil`, then `accentColor` from the environment is used.
-    func paletteOverlayRendering(color: Color? = nil) -> some View {
-        modifier(PaletteOverlayRenderingModifier(color: color))
-    }
-
     @ViewBuilder
     func navigationBarHidden() -> some View {
         if #available(iOS 16, tvOS 16, *) {

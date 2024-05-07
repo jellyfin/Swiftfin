@@ -15,16 +15,24 @@ import SwiftUI
 //       - ex: channels/albums when in portrait/landscape
 //       - just have the supported view embedded in a container view?
 
-// Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
-//       This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
-//       other items that don't have a subtitle which requires the entire library to implement
-//       subtitle content but that doesn't look appealing. Until a solution arrives grid posters
-//       will not have subtitle content.
-//       There should be a solution since there are contexts where subtitles are desirable and/or
-//       we can have subtitle content for other items.
+/*
+   Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
+       This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
+       other items that don't have a subtitle which requires the entire library to implement
+       subtitle content but that doesn't look appealing. Until a solution arrives grid posters
+       will not have subtitle content.
+       There should be a solution since there are contexts where subtitles are desirable and/or
+       we can have subtitle content for other items.
+ */
 
 struct PagingLibraryView<Element: Poster>: View {
 
+    @Default(.Customization.Library.displayType)
+    private var defaultDisplayType
+    @Default(.Customization.Library.listColumnCount)
+    private var defaultListColumnCount
+    @Default(.Customization.Library.posterType)
+    private var defaultPosterType
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
 
@@ -310,12 +318,18 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                #warning("TODO: switch between defaults and stored value")
+                // TODO: create a way to "switch" binding sources?
                 if Defaults[.Customization.Library.rememberLayout] {
                     LibraryViewTypeToggle(
                         posterType: $posterType,
                         viewType: $displayType,
                         listColumnCount: $listColumnCount
+                    )
+                } else {
+                    LibraryViewTypeToggle(
+                        posterType: $defaultPosterType,
+                        viewType: $defaultDisplayType,
+                        listColumnCount: $defaultListColumnCount
                     )
                 }
 

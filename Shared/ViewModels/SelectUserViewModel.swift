@@ -112,7 +112,6 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             .map(\.state)
     }
 
-    #warning("TODO: delete corresponding any data/user defaults suite")
     private func delete(user: UserState) throws {
         try user.delete()
     }

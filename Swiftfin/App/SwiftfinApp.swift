@@ -21,20 +21,10 @@ struct SwiftfinApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate
 
+    @StateObject
+    private var valueObservation = ValueObservation()
+
     init() {
-
-        // Defaults
-        Task {
-            for await newValue in Defaults.updates(.accentColor) {
-                UIApplication.shared.setAccentColor(newValue.uiColor)
-            }
-        }
-
-        Task {
-            for await newValue in Defaults.updates(.appearance) {
-                UIApplication.shared.setAppearance(newValue.style)
-            }
-        }
 
         // Logging
         LoggingSystem.bootstrap { label in
@@ -77,13 +67,8 @@ struct SwiftfinApp: App {
                 }
             }
             .onNotification(UIApplication.willTerminateNotification) { _ in
-
                 if Defaults[.signOutOnClose] {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        Defaults[.lastSignedInUserID] = nil
-                        Container.userSession.reset()
-                        Notifications[.didSignOut].post()
-                    }
+                    Defaults[.lastSignedInUserID] = nil
                 }
             }
         }

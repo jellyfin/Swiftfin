@@ -12,29 +12,32 @@ import Foundation
 import SwiftUI
 import UIKit
 
-// TODO: Organize
+// TODO: organize
+// TODO: all user settings could be moved to `StoredValues`?
 
-/// Note: Only use Defaults for basic single-value settings to avoid potential storage
-///       issues. For larger data types and arbitrary lists, use `StoredValue` instead.
+// Note: Only use Defaults for basic single-value settings.
+//       For larger data types and collections, use `StoredValue` instead.
 
-// MARK: suites
+// MARK: Suites
 
 extension UserDefaults {
 
-    // MARK: app
+    // MARK: App
 
-    // Note: settings that should apply to the app,
-
+    /// Settings that should apply to the app
     static let appSuite = UserDefaults(suiteName: "swiftfinApp")!
 
-    // MARK: current user
+    // MARK: Usser
 
+    // TODO: the Factory resolver cannot be used because it would cause freezes, but
+    //       the Defaults value should always be in sync with the latest user and what
+    //       views properly expect. However, this feels like a hack and should be changed?
     static var currentUserSuite: UserDefaults {
-        userSuite(id: Container.userSession()?.user.id ?? "default")
+        userSuite(id: Defaults[.lastSignedInUserID] ?? "default")
     }
 
     static func userSuite(id: String) -> UserDefaults {
-        UserDefaults(suiteName: "user\(id)")!
+        UserDefaults(suiteName: id)!
     }
 }
 
@@ -57,13 +60,35 @@ private extension Defaults.Keys {
 
 extension Defaults.Keys {
 
+    /// The _real_ accent color key to be used.
+    ///
+    /// This is set externally whenever the app or user accent colors change,
+    /// depending on the current app state.
+    static var accentColor: Key<Color> = AppKey("accentColor", default: .jellyfinPurple)
+
+    /// The _real_ appearance key to be used.
+    ///
+    /// This is set externally whenever the app or user appearances change,
+    /// depending on the current app state.
+    static let appearance: Key<AppAppearance> = AppKey("appearance", default: .system)
+
+    /// The accent color default for non-user contexts.
+    /// Only use for `set`, use `accentColor` for `get`.
     static let appAccentColor: Key<Color> = AppKey("appAccentColor", default: .jellyfinPurple)
-    static let appearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
+
+    /// The appearance default for non-user contexts.
+    /// /// Only use for `set`, use `appearance` for `get`.
+    static let appAppearance: Key<AppAppearance> = AppKey("appAppearance", default: .system)
+
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
     static let backgroundTimeStamp: Key<Date> = AppKey("backgroundTimeStamp", default: Date.now)
     static let lastSignedInUserID: Key<String?> = AppKey("lastSignedInUserID")
+
     static let selectUserDisplayType: Key<LibraryDisplayType> = AppKey("selectUserDisplayType", default: .grid)
     static let selectUserServerSelection: Key<SelectUserServerSelection> = AppKey("selectUserServerSelection", default: .all)
+    static let selectUserAllServersSplashscreen: Key<SelectUserServerSelection> = AppKey("selectUserAllServersSplashscreen", default: .all)
+    static let selectUserUseSplashscreen: Key<Bool> = AppKey("selectUserUseSplashscreen", default: true)
+
     static let signOutOnBackground: Key<Bool> = AppKey("signOutOnBackground", default: true)
     static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: true)
 }
@@ -72,7 +97,13 @@ extension Defaults.Keys {
 
 extension Defaults.Keys {
 
-    static let accentColor: Key<Color> = UserKey("userAccentColor", default: .jellyfinPurple)
+    /// The accent color default for user contexts.
+    /// Only use for `set`, use `accentColor` for `get`.
+    static var userAccentColor: Key<Color> { UserKey("userAccentColor", default: .jellyfinPurple) }
+
+    /// The appearance default for user contexts.
+    /// /// Only use for `set`, use `appearance` for `get`.
+    static var userAppearance: Key<AppAppearance> { UserKey("userAppearance", default: .system) }
 
     enum Customization {
 

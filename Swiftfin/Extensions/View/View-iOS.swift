@@ -54,19 +54,33 @@ extension View {
         onNotification(UIApplication.willTerminateNotification, perform: { _ in action() })
     }
 
-    func navigationBarCloseButton(disabled: Bool = false, _ action: @escaping () -> Void) -> some View {
-        toolbar {
-            ToolbarItemGroup(placement: .topBarLeading) {
-                Button {
-                    action()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .paletteOverlayRendering()
-                        .opacity(disabled ? 0.75 : 1)
-                }
-                .disabled(disabled)
-            }
-        }
+    @ViewBuilder
+    func navigationBarCloseButton(
+        disabled: Bool = false,
+        _ action: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            NavigationBarCloseButtonModifier(
+                disabled: disabled,
+                action: action
+            )
+        )
+
+//        toolbar {
+//            ToolbarItemGroup(placement: .topBarLeading) {
+//                Button {
+//                    action()
+//                } label: {
+//                    Image(systemName: "xmark.circle.fill")
+//                        .backport
+//                        .fontWeight(.bold)
+//                        .symbolRenderingMode(.palette)
+//                        .foregroundStyle(Color.accentColor.overlayColor, Color.accentColor)
+//                        .opacity(disabled ? 0.75 : 1)
+//                }
+//                .disabled(disabled)
+//            }
+//        }
     }
 
     func scroll(ifLargerThan height: CGFloat) -> some View {

@@ -19,7 +19,8 @@ struct WatchedIndicator: View {
             Image(systemName: "checkmark.circle.fill")
                 .resizable()
                 .frame(width: size, height: size)
-                .paletteOverlayRendering(color: .white)
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, .black)
                 .padding(3)
         }
     }
