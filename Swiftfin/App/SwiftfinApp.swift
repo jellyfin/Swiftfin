@@ -66,11 +66,6 @@ struct SwiftfinApp: App {
                     Notifications[.didSignOut].post()
                 }
             }
-            .onNotification(UIApplication.willTerminateNotification) { _ in
-                if Defaults[.signOutOnClose] {
-                    Defaults[.lastSignedInUserID] = nil
-                }
-            }
         }
     }
 }

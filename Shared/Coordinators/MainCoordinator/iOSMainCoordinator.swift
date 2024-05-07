@@ -35,13 +35,13 @@ final class MainCoordinator: NavigationCoordinatable {
 
     init() {
 
-        if Container.userSession() != nil {
+        if Container.userSession() != nil, !Defaults[.signOutOnClose] {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.selectUser)
         }
 
-        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB memory
+        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB
 
         WidgetCenter.shared.reloadAllTimelines()
         UIScrollView.appearance().keyboardDismissMode = .onDrag
