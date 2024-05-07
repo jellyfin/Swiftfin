@@ -46,6 +46,13 @@ struct AppSettingsView: View {
                     .onSelect {
                         router.route(to: \.appIconSelector, viewModel)
                     }
+
+                if !selectUserUseSplashscreen {
+                    CaseIterablePicker(
+                        title: L10n.appearance,
+                        selection: $appearance
+                    )
+                }
             }
 
             Section {
@@ -65,11 +72,6 @@ struct AppSettingsView: View {
                                 .tag(SelectUserServerSelection.server(id: server.id))
                         }
                     }
-                } else {
-                    CaseIterablePicker(
-                        title: L10n.appearance,
-                        selection: $appearance
-                    )
                 }
             } header: {
                 Text("Splashscreen")

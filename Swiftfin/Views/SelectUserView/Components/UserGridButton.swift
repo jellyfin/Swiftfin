@@ -95,6 +95,7 @@ extension SelectUserView {
                             ZStack(alignment: .bottomTrailing) {
                                 Color.black
                                     .opacity(isSelected ? 0 : 0.5)
+                                    .clipShape(.circle)
 
                                 if isSelected {
                                     Image(systemName: "checkmark.circle.fill")

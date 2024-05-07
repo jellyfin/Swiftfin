@@ -14,6 +14,9 @@ import SwiftUI
 // TODO: need to think about better design for views that may not support current library display type
 //       - ex: channels/albums when in portrait/landscape
 //       - just have the supported view embedded in a container view?
+// TODO: could bottom (defaults + stored) `onChange` copies be cleaned up?
+//       - more could be cleaned up if there was a "switcher" property wrapper that takes two
+//         sources and a switch and holds the current expected value
 
 /*
    Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
@@ -27,14 +30,17 @@ import SwiftUI
 
 struct PagingLibraryView<Element: Poster>: View {
 
-    @Default(.Customization.Library.displayType)
-    private var defaultDisplayType
-    @Default(.Customization.Library.listColumnCount)
-    private var defaultListColumnCount
-    @Default(.Customization.Library.posterType)
-    private var defaultPosterType
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
+    @Default(.Customization.Library.rememberLayout)
+    private var rememberLayout
+
+    @Default
+    private var defaultDisplayType: LibraryDisplayType
+    @Default
+    private var defaultListColumnCount: Int
+    @Default
+    private var defaultPosterType: PosterDisplayType
 
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
@@ -58,22 +64,34 @@ struct PagingLibraryView<Element: Poster>: View {
 
     init(viewModel: PagingLibraryViewModel<Element>) {
 
+        // have to set these properties manually to get proper initial layout
+
+        self._defaultDisplayType = Default(.Customization.Library.displayType)
+        self._defaultListColumnCount = Default(.Customization.Library.listColumnCount)
+        self._defaultPosterType = Default(.Customization.Library.posterType)
+
         self._displayType = StoredValue(.User.libraryDisplayType(parentID: viewModel.parent?.id))
         self._listColumnCount = StoredValue(.User.libraryListColumnCount(parentID: viewModel.parent?.id))
         self._posterType = StoredValue(.User.libraryPosterType(parentID: viewModel.parent?.id))
 
         self._viewModel = StateObject(wrappedValue: viewModel)
 
+        let initialDisplayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
+            .wrappedValue
+        let initialListColumnCount = Defaults[.Customization.Library.rememberLayout] ? _listColumnCount
+            .wrappedValue : _defaultListColumnCount.wrappedValue
+        let initialPosterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+
         if UIDevice.isPhone {
             layout = Self.phoneLayout(
-                posterType: _posterType.wrappedValue,
-                viewType: _displayType.wrappedValue
+                posterType: initialPosterType,
+                viewType: initialDisplayType
             )
         } else {
             layout = Self.padLayout(
-                posterType: _posterType.wrappedValue,
-                viewType: _displayType.wrappedValue,
-                listColumnCount: _listColumnCount.wrappedValue
+                posterType: initialPosterType,
+                viewType: initialDisplayType,
+                listColumnCount: initialListColumnCount
             )
         }
     }
@@ -110,6 +128,8 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     // MARK: layout
+
+    // TODO: rename old "viewType" paramter to "displayType" and sort
 
     private static func padLayout(
         posterType: PosterDisplayType,
@@ -183,7 +203,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    private func listItemView(item: Element) -> some View {
+    private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(item: item, posterType: posterType)
             .onSelect {
                 onSelect(item)
@@ -202,13 +222,18 @@ struct PagingLibraryView<Element: Poster>: View {
             $viewModel.elements,
             layout: $layout
         ) { item in
+
+            let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType
+                .wrappedValue
+            let posterType = Defaults[.Customization.Library.rememberLayout] ? _posterType.wrappedValue : _defaultPosterType.wrappedValue
+
             switch (posterType, displayType) {
             case (.landscape, .grid):
                 landscapeGridItemView(item: item)
             case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
-                listItemView(item: item)
+                listItemView(item: item, posterType: posterType)
             }
         }
         .onReachedBottomEdge(offset: .offset(300)) {
@@ -246,24 +271,53 @@ struct PagingLibraryView<Element: Poster>: View {
                 router.route(to: \.filter, $0)
             }
         }
-        .onChange(of: posterType) { newValue in
+        .onChange(of: defaultDisplayType) { newValue in
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
             if UIDevice.isPhone {
-                if displayType == .list {
+                layout = Self.phoneLayout(
+                    posterType: defaultPosterType,
+                    viewType: newValue
+                )
+            } else {
+                layout = Self.padLayout(
+                    posterType: defaultPosterType,
+                    viewType: newValue,
+                    listColumnCount: defaultListColumnCount
+                )
+            }
+        }
+        .onChange(of: defaultListColumnCount) { newValue in
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            if UIDevice.isPad {
+                layout = Self.padLayout(
+                    posterType: defaultPosterType,
+                    viewType: defaultDisplayType,
+                    listColumnCount: newValue
+                )
+            }
+        }
+        .onChange(of: defaultPosterType) { newValue in
+            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+            if UIDevice.isPhone {
+                if defaultDisplayType == .list {
                     collectionVGridProxy.layout()
                 } else {
                     layout = Self.phoneLayout(
                         posterType: newValue,
-                        viewType: displayType
+                        viewType: defaultDisplayType
                     )
                 }
             } else {
-                if displayType == .list {
+                if defaultDisplayType == .list {
                     collectionVGridProxy.layout()
                 } else {
                     layout = Self.padLayout(
                         posterType: newValue,
-                        viewType: displayType,
-                        listColumnCount: listColumnCount
+                        viewType: defaultDisplayType,
+                        listColumnCount: defaultListColumnCount
                     )
                 }
             }
@@ -288,6 +342,46 @@ struct PagingLibraryView<Element: Poster>: View {
                     posterType: posterType,
                     viewType: displayType,
                     listColumnCount: newValue
+                )
+            }
+        }
+        .onChange(of: posterType) { newValue in
+            if UIDevice.isPhone {
+                if displayType == .list {
+                    collectionVGridProxy.layout()
+                } else {
+                    layout = Self.phoneLayout(
+                        posterType: newValue,
+                        viewType: displayType
+                    )
+                }
+            } else {
+                if displayType == .list {
+                    collectionVGridProxy.layout()
+                } else {
+                    layout = Self.padLayout(
+                        posterType: newValue,
+                        viewType: displayType,
+                        listColumnCount: listColumnCount
+                    )
+                }
+            }
+        }
+        .onChange(of: rememberLayout) { newValue in
+            let newDisplayType = newValue ? displayType : defaultDisplayType
+            let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
+            let newPosterType = newValue ? posterType : defaultPosterType
+
+            if UIDevice.isPhone {
+                layout = Self.phoneLayout(
+                    posterType: newPosterType,
+                    viewType: newDisplayType
+                )
+            } else {
+                layout = Self.padLayout(
+                    posterType: newPosterType,
+                    viewType: newDisplayType,
+                    listColumnCount: newListColumnCount
                 )
             }
         }
@@ -318,7 +412,7 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                // TODO: create a way to "switch" binding sources?
+                #warning("TODO: create a way to \"switch\" binding sources?")
                 if Defaults[.Customization.Library.rememberLayout] {
                     LibraryViewTypeToggle(
                         posterType: $posterType,

@@ -20,7 +20,7 @@ struct WatchedIndicator: View {
                 .resizable()
                 .frame(width: size, height: size)
                 .symbolRenderingMode(.palette)
-                .foregroundStyle(.white, .black)
+                .foregroundStyle(.white, Color.jellyfinPurple)
                 .padding(3)
         }
     }

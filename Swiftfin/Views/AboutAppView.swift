@@ -54,6 +54,8 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(systemName: "plus.circle.fill")
                             .resizable()
+                            .backport
+                            .fontWeight(.bold)
                             .frame(width: 20, height: 20)
                             .foregroundColor(.primary)
                     }

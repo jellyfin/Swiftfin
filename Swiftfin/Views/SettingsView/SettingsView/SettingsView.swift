@@ -14,11 +14,9 @@ import SwiftUI
 
 struct SettingsView: View {
 
-//    @Default(.accentColor)
     @Default(.userAccentColor)
     private var accentColor
 
-    #warning("TODO: user app appearance")
     @Default(.userAppearance)
     private var appearance
     @Default(.VideoPlayer.videoPlayerType)

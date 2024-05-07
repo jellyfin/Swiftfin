@@ -13,6 +13,9 @@ extension UserSignInView {
 
     struct PublicUserRow: View {
 
+        @Environment(\.colorScheme)
+        private var colorScheme
+
         private let user: UserDto
         private let client: JellyfinClient
         private let action: () -> Void
@@ -29,7 +32,14 @@ extension UserSignInView {
 
         private var personView: some View {
             ZStack {
-                Color.tertiarySystemBackground
+                Group {
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
+                    }
+                }
+                .posterShadow()
 
                 RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
                     .foregroundStyle(.secondary)

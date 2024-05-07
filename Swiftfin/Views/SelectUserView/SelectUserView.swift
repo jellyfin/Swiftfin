@@ -12,8 +12,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-#warning("TODO: option for splashscreen image")
-
+// TODO: fix splash screen shifting when modals presented
 // TODO: user ordering
 
 struct SelectUserView: View {
@@ -510,7 +509,11 @@ struct SelectUserView: View {
                 viewModel.send(.deleteUsers(Array(selectedUsers)))
             }
         } message: { selectedUsers in
-            Text("Are you sure you want to delete \(selectedUsers.count) users?")
+            if selectedUsers.count == 1, let first = selectedUsers.first {
+                Text("Are you sure you want to delete \(first.username)?")
+            } else {
+                Text("Are you sure you want to delete \(selectedUsers.count) users?")
+            }
         }
     }
 }
