@@ -83,6 +83,19 @@ struct UserSignInView: View {
             .opacity(username.isEmpty ? 0.5 : 1)
         }
 
+        if viewModel.isQuickConnectEnabled {
+            Section {
+                ListRowButton(L10n.quickConnect) {
+                    router.route(to: \.quickConnect, viewModel.quickConnect)
+                }
+                .disabled(viewModel.state == .signingIn)
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+            }
+        }
+
         if let disclaimer = viewModel.serverDisclaimer {
             Section("Disclaimer") {
                 Text(disclaimer)
@@ -117,19 +130,6 @@ struct UserSignInView: View {
     var body: some View {
         List {
             signInSection
-
-            if viewModel.isQuickConnectEnabled {
-                Section {
-                    ListRowButton(L10n.quickConnect) {
-                        router.route(to: \.quickConnect, viewModel.quickConnect)
-                    }
-                    .disabled(viewModel.state == .signingIn)
-                    .foregroundStyle(
-                        accentColor.overlayColor,
-                        accentColor
-                    )
-                }
-            }
 
             publicUsersSection
         }
