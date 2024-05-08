@@ -311,8 +311,11 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     private func setNewAccessToken(user: UserState) {
         do {
             let newState = try dataStack.perform { transaction in
-                let existingUser = try self.dataStack.fetchOne(From<UserModel>().where(\.$id == server.id))
-                let editUser = transaction.edit(existingUser)!
+                let existingUser = try self.dataStack.fetchOne(From<UserModel>().where(\.$id == user.id))
+                guard let editUser = transaction.edit(existingUser) else {
+                    logger.critical("Could not find user to set new access token")
+                    throw JellyfinAPIError("An internal error has occurred")
+                }
 
                 editUser.accessToken = user.accessToken
 

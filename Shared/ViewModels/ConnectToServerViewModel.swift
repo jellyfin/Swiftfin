@@ -223,7 +223,10 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         do {
             let newState = try dataStack.perform { transaction in
                 let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
-                let editServer = transaction.edit(existingServer)!
+                guard let editServer = transaction.edit(existingServer) else {
+                    logger.critical("Could not find server to add new url")
+                    throw JellyfinAPIError("An internal error has occurred")
+                }
 
                 editServer.urls.insert(server.currentURL)
                 editServer.currentURL = server.currentURL

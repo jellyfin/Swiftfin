@@ -73,6 +73,7 @@ struct HomeView: View {
         .navigationTitle(L10n.home)
         .topBarTrailing {
 
+            #warning("TODO: fix spacing issue")
             if viewModel.backgroundStates.contains(.refresh) {
                 ProgressView()
             }

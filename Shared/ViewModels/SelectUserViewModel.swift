@@ -76,6 +76,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             }
         case let .signIn(user):
 
+            // TODO: needs to be moved elsewhere and implicitly cancelleable
             Task {
                 guard let userServer = servers.keys.first(where: { $0.id == user.serverID }) else {
                     assertionFailure("?")
@@ -87,6 +88,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
                 StoredValues[.User.data(id: user.id)] = userData
             }
 
+            // TODO: views should actually handle this
             Defaults[.lastSignedInUserID] = user.id
             Container.userSession.reset()
             Notifications[.didSignIn].post()

@@ -11,6 +11,8 @@ import CoreStore
 import Foundation
 import SwiftUI
 
+// TODO: observation
+
 /// A property wrapper for a stored `AnyData` object.
 @propertyWrapper
 struct StoredValue<Value: Codable>: DynamicProperty {
