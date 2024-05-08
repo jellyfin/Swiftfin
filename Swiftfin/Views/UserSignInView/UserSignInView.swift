@@ -143,6 +143,8 @@ struct UserSignInView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .duplicateUser(duplicateUser):
+                UIDevice.impact(.medium)
+
                 self.duplicateUser = duplicateUser
                 isPresentingDuplicateUser = true
             case let .error(eventError):
@@ -151,6 +153,8 @@ struct UserSignInView: View {
                 error = eventError
                 isPresentingError = true
             case let .signedIn(user):
+                UIDevice.feedback(.success)
+
                 Defaults[.lastSignedInUserID] = user.id
                 Container.userSession.reset()
                 Notifications[.didSignIn].post()

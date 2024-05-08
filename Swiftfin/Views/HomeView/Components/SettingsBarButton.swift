@@ -23,10 +23,6 @@ extension HomeView {
         let action: () -> Void
 
         var body: some View {
-            ZStack {
-                Color.clear
-            }
-
             Button {
                 action()
             } label: {
@@ -53,7 +49,6 @@ extension HomeView {
                                 Color.clear
                             }
                         }
-                        .frame(width: 30)
                     }
             }
             .accessibilityLabel(L10n.settings)
