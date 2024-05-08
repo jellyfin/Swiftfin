@@ -268,6 +268,7 @@
 		E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */; };
 		E11895B42893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */; };
 		E1194F4E2BEABA9100888DB6 /* NavigationBarCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1194F4D2BEABA9100888DB6 /* NavigationBarCloseButton.swift */; };
+		E1194F502BEB1E3000888DB6 /* StoredValues+Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1194F4F2BEB1E3000888DB6 /* StoredValues+Temp.swift */; };
 		E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */; };
 		E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF762B8513B40045C54A /* ItemGenre.swift */; };
@@ -1079,6 +1080,7 @@
 		E11895AE2893840F0042947B /* NavigationBarOffsetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarOffsetView.swift; sourceTree = "<group>"; };
 		E11895B22893844A0042947B /* BackgroundParallaxHeaderModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundParallaxHeaderModifier.swift; sourceTree = "<group>"; };
 		E1194F4D2BEABA9100888DB6 /* NavigationBarCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarCloseButton.swift; sourceTree = "<group>"; };
+		E1194F4F2BEB1E3000888DB6 /* StoredValues+Temp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StoredValues+Temp.swift"; sourceTree = "<group>"; };
 		E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JellyfinAPIError.swift; sourceTree = "<group>"; };
 		E11BDF762B8513B40045C54A /* ItemGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemGenre.swift; sourceTree = "<group>"; };
 		E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCaseIterable.swift; sourceTree = "<group>"; };
@@ -2556,6 +2558,7 @@
 			children = (
 				E146A9D72BE6E9830034DA1E /* StoredValue.swift */,
 				E17DC7492BE740D900B42379 /* StoredValues+Server.swift */,
+				E1194F4F2BEB1E3000888DB6 /* StoredValues+Temp.swift */,
 				E146A9DA2BE6E9BF0034DA1E /* StoredValues+User.swift */,
 			);
 			path = StoredValue;
@@ -4373,6 +4376,7 @@
 				E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
+				E1194F502BEB1E3000888DB6 /* StoredValues+Temp.swift in Sources */,
 				E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
 				E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */,
 				E1E6C44029AECC6D0064123F /* ActionButtons.swift in Sources */,

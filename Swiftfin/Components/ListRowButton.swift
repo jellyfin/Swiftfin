@@ -22,6 +22,7 @@ struct ListRowButton: View {
         Button(title) {
             action()
         }
+        .font(.body.weight(.bold))
         .buttonStyle(ListRowButtonStyle())
         .listRowInsets(.init(.zero))
     }
@@ -38,7 +39,6 @@ private struct ListRowButtonStyle: ButtonStyle {
                 .foregroundStyle(.primary)
         }
         .opacity(configuration.isPressed ? 0.75 : 1)
-        .font(.body.weight(.semibold))
         .frame(maxWidth: .infinity)
         .listRowInsets(.zero)
     }

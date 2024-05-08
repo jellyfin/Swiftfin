@@ -57,7 +57,9 @@ struct SwiftfinApp: App {
                 Defaults[.backgroundTimeStamp] = Date.now
             }
             .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+
                 // TODO: needs to check if any background playback is happening
+                //       - atow, background video playback isn't officially supported
                 let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
 
                 if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {

@@ -9,10 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: fix with shorter text
-//       - possibly caused by word wrapping making the view
-//         no longer as wide, will then center align?
-
 struct ItemOverviewView: View {
 
     @EnvironmentObject
@@ -37,7 +33,7 @@ struct ItemOverviewView: View {
                         .multilineTextAlignment(.leading)
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .edgePadding()
         }
         .navigationTitle(item.displayTitle)

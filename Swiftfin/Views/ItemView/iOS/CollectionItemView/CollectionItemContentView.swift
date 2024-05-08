@@ -92,6 +92,7 @@ extension CollectionItemView {
                             .onSelect {
                                 let viewModel = ItemLibraryViewModel(
                                     title: viewModel.item.displayTitle,
+                                    id: viewModel.item.id,
                                     viewModel.collectionItems
                                 )
                                 router.route(to: \.library, viewModel)

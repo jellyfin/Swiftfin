@@ -9,6 +9,10 @@
 import Defaults
 import SwiftUI
 
+// TODO: rename `LibraryDisplayTypeToggle`/Section
+//       - change to 2 Menu's in a section with subtitle
+//         like on `SelectUserView`?
+
 extension PagingLibraryView {
 
     struct LibraryViewTypeToggle: View {

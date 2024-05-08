@@ -120,7 +120,11 @@ struct SearchView: View {
         .trailing {
             SeeAllButton()
                 .onSelect {
-                    let viewModel = PagingLibraryViewModel(title: title, viewModel[keyPath: keyPath])
+                    let viewModel = PagingLibraryViewModel(
+                        title: title,
+                        id: "search-\(keyPath.hashValue)",
+                        viewModel[keyPath: keyPath]
+                    )
                     router.route(to: \.library, viewModel)
                 }
         }

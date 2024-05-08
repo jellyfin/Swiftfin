@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Stinsen
 import SwiftUI
 
@@ -22,7 +23,11 @@ struct UserSignInView: View {
     private var focusedTextField: Int?
 
     @State
+    private var duplicateUser: UserState? = nil
+    @State
     private var error: Error? = nil
+    @State
+    private var isPresentingDuplicateUser: Bool = false
     @State
     private var isPresentingError: Bool = false
     @State
@@ -72,9 +77,10 @@ struct UserSignInView: View {
             }
             .disabled(username.isEmpty)
             .foregroundStyle(
-                accentColor.overlayColor.opacity(username.isEmpty ? 0.5 : 1),
+                accentColor.overlayColor,
                 accentColor
             )
+            .opacity(username.isEmpty ? 0.5 : 1)
         }
 
         if let disclaimer = viewModel.serverDisclaimer {
@@ -136,11 +142,18 @@ struct UserSignInView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
+            case let .duplicateUser(duplicateUser):
+                self.duplicateUser = duplicateUser
+                isPresentingDuplicateUser = true
             case let .error(eventError):
                 UIDevice.feedback(.error)
 
                 error = eventError
                 isPresentingError = true
+            case let .signedIn(user):
+                Defaults[.lastSignedInUserID] = user.id
+                Container.userSession.reset()
+                Notifications[.didSignIn].post()
             }
         }
         .onFirstAppear {
@@ -151,6 +164,25 @@ struct UserSignInView: View {
             if viewModel.state == .signingIn {
                 ProgressView()
             }
+        }
+        .alert(
+            Text("Duplicate User"),
+            isPresented: $isPresentingDuplicateUser,
+            presenting: duplicateUser
+        ) { duplicateUser in
+            Button(L10n.signIn) {
+                viewModel.send(.signInDuplicate(duplicateUser, replace: false))
+            }
+
+            Button("Replace") {
+                viewModel.send(.signInDuplicate(duplicateUser, replace: true))
+            }
+
+            Button(L10n.dismiss, role: .destructive)
+                .backport
+                .fontWeight(.bold)
+        } message: { duplicateUser in
+            Text("\(duplicateUser.username) is already saved")
         }
         .alert(
             L10n.error.text,

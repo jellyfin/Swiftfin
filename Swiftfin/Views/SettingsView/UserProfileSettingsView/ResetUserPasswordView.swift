@@ -48,6 +48,7 @@ struct ResetUserPasswordView: View {
             .autocorrectionDisabled()
             .textInputAutocapitalization(.none)
             .focused($focusedPassword, equals: 0)
+            .disabled(viewModel.state == .resetting)
 
             Section {
                 UnmaskSecureField("New Password", text: $newPassword) {
@@ -56,6 +57,7 @@ struct ResetUserPasswordView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 1)
+                .disabled(viewModel.state == .resetting)
 
                 UnmaskSecureField("Confirm New Password", text: $confirmNewPassword) {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
@@ -63,6 +65,7 @@ struct ResetUserPasswordView: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 2)
+                .disabled(viewModel.state == .resetting)
             } footer: {
                 if newPassword != confirmNewPassword {
                     HStack {
@@ -74,11 +77,21 @@ struct ResetUserPasswordView: View {
                 }
             }
 
-            ListRowButton("Reset") {
-                viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+            if viewModel.state == .resetting {
+                ListRowButton(L10n.cancel) {
+                    viewModel.send(.cancel)
+                    focusedPassword = 0
+                }
+                .foregroundStyle(.red, .red.opacity(0.2))
+            } else {
+                ListRowButton("Reset") {
+                    focusedPassword = nil
+                    viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+                }
+                .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
+                .foregroundStyle(accentColor.overlayColor, accentColor)
+                .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
             }
-            .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)
         .navigationBarBackButtonHidden(viewModel.state == .resetting)
@@ -109,7 +122,9 @@ struct ResetUserPasswordView: View {
             isPresented: $isPresentingError,
             presenting: error
         ) { _ in
-            Button(L10n.dismiss, role: .destructive)
+            Button(L10n.dismiss, role: .cancel) {
+                focusedPassword = 1
+            }
         } message: { error in
             Text(error.localizedDescription)
         }
@@ -120,6 +135,8 @@ struct ResetUserPasswordView: View {
             Button(L10n.dismiss, role: .cancel) {
                 router.pop()
             }
+        } message: {
+            Text("User password has been changed.")
         }
     }
 }

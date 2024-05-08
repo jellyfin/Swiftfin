@@ -44,17 +44,32 @@ struct QuickConnectAuthorizeView: View {
                 Text("Enter the 6 digit code from your other device.")
             }
 
-            ListRowButton(L10n.authorize) {
-                viewModel.send(.authorize(code))
+            if viewModel.state == .authorizing {
+                ListRowButton(L10n.cancel) {
+                    viewModel.send(.cancel)
+                    isCodeFocused = true
+                }
+                .foregroundStyle(.red, .red.opacity(0.2))
+            } else {
+                ListRowButton(L10n.authorize) {
+                    viewModel.send(.authorize(code))
+                }
+                .disabled(code.count != 6 || viewModel.state == .authorizing)
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+                .opacity(code.count != 6 ? 0.5 : 1)
             }
-            .disabled(code.count != 6 || viewModel.state == .authorizing)
-            .foregroundStyle(accentColor.overlayColor, accentColor)
         }
         .interactiveDismissDisabled(viewModel.state == .authorizing)
         .navigationBarBackButtonHidden(viewModel.state == .authorizing)
         .navigationTitle(L10n.quickConnect.text)
         .onFirstAppear {
             isCodeFocused = true
+        }
+        .onChange(of: code) { newValue in
+            code = String(newValue.prefix(6))
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -79,7 +94,9 @@ struct QuickConnectAuthorizeView: View {
             isPresented: $isPresentingError,
             presenting: error
         ) { _ in
-            Button(L10n.dismiss, role: .destructive)
+            Button(L10n.dismiss, role: .destructive) {
+                isCodeFocused = true
+            }
         } message: { error in
             Text(error.localizedDescription)
         }

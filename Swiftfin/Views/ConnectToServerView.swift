@@ -59,9 +59,10 @@ struct ConnectToServerView: View {
             }
             .disabled(url.isEmpty)
             .foregroundStyle(
-                .primary.opacity(url.isEmpty ? 0.5 : 1),
+                accentColor.overlayColor,
                 accentColor
             )
+            .opacity(url.isEmpty ? 0.5 : 1)
         }
     }
 

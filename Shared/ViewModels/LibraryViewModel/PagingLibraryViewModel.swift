@@ -103,9 +103,16 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     convenience init(
         title: String,
+        id: String?,
         _ data: some Collection<Element>
     ) {
-        self.init(data, parent: TitledLibraryParent(displayTitle: title))
+        self.init(
+            data,
+            parent: TitledLibraryParent(
+                displayTitle: title,
+                id: id
+            )
+        )
     }
 
     // paging
@@ -148,11 +155,15 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     convenience init(
         title: String,
+        id: String?,
         filters: ItemFilterCollection = .default,
         pageSize: Int = DefaultPageSize
     ) {
         self.init(
-            parent: TitledLibraryParent(displayTitle: title),
+            parent: TitledLibraryParent(
+                displayTitle: title,
+                id: id
+            ),
             filters: filters,
             pageSize: pageSize
         )

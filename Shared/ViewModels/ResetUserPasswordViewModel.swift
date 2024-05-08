@@ -22,6 +22,7 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
+        case cancel
         case reset(current: String, new: String)
     }
 
@@ -46,15 +47,23 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
+        case .cancel:
+            resetTask?.cancel()
+
+            return .initial
         case let .reset(current, new):
             resetTask = Task {
                 do {
+//                    try await Task.sleep(nanoseconds: 5_000_000_000)
+
                     try await reset(current: current, new: new)
 
                     await MainActor.run {
                         self.eventSubject.send(.success)
                         self.state = .initial
                     }
+                } catch is CancellationError {
+                    // cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))

@@ -219,6 +219,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
+                    UIDevice.feedback(.success)
                     viewModel.send(.signIn(user))
                 }
             } onDelete: {
@@ -232,6 +233,7 @@ struct SelectUserView: View {
                 serverSelection: $serverSelection,
                 servers: viewModel.servers.keys
             ) { server in
+                UIDevice.impact(.light)
                 router.route(to: \.userSignIn, server)
             }
             .environment(\.isEnabled, !isEditingUsers)
@@ -264,6 +266,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
+                    UIDevice.feedback(.success)
                     viewModel.send(.signIn(user))
                 }
             } onDelete: {
@@ -277,6 +280,7 @@ struct SelectUserView: View {
                 serverSelection: $serverSelection,
                 servers: viewModel.servers.keys
             ) { server in
+                UIDevice.impact(.light)
                 router.route(to: \.userSignIn, server)
             }
             .environment(\.isEnabled, !isEditingUsers)

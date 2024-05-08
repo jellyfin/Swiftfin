@@ -17,6 +17,7 @@ import SwiftUI
 // TODO: could bottom (defaults + stored) `onChange` copies be cleaned up?
 //       - more could be cleaned up if there was a "switcher" property wrapper that takes two
 //         sources and a switch and holds the current expected value
+// TODO: when there are no filters sometimes navigation bar will be clear until popped back to
 
 /*
    Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
@@ -412,7 +413,6 @@ struct PagingLibraryView<Element: Poster>: View {
 
             Menu {
 
-                #warning("TODO: create a way to \"switch\" binding sources?")
                 if Defaults[.Customization.Library.rememberLayout] {
                     LibraryViewTypeToggle(
                         posterType: $posterType,

@@ -48,6 +48,8 @@ struct SettingsView: View {
             }
 
             ListRowButton(L10n.switchUser) {
+                UIDevice.impact(.medium)
+
                 router.dismissCoordinator {
                     viewModel.signOut()
                 }
