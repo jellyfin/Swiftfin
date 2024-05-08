@@ -115,6 +115,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         )
     }
 
+    // TODO: why does one have nil-able filters and one doesn't?
+
     // paging
     init(
         parent: (any LibraryParent)? = nil,

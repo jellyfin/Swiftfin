@@ -52,6 +52,8 @@ extension StoredValue {
         let key: StoredValues.Key<Value>
 
         let objectWillChange = ObservableObjectPublisher()
+        private var objectPublisher: ObjectPublisher<AnyStoredData>?
+        private var shouldListenToPublish: Bool = true
 
         var value: Value {
             get {
@@ -67,6 +69,7 @@ extension StoredValue {
             }
             set {
                 guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return }
+                shouldListenToPublish = false
 
                 objectWillChange.send()
 
@@ -76,11 +79,58 @@ extension StoredValue {
                     ownerID: key.ownerID,
                     domain: key.domain ?? ""
                 )
+
+                shouldListenToPublish = true
             }
         }
 
         init(key: StoredValues.Key<Value>) {
             self.key = key
+            self.objectPublisher = makeObjectPublisher()
+        }
+
+        private func makeObjectPublisher() -> ObjectPublisher<AnyStoredData>? {
+
+            guard key.name.isNotEmpty, key.ownerID.isNotEmpty else { return nil }
+
+            let domain = key.domain ?? "none"
+
+            let clause = From<AnyStoredData>()
+                .where(\.$ownerID == key.ownerID && \.$key == key.name && \.$domain == domain)
+
+            if let values = try? SwiftfinStore.dataStack.fetchAll(clause), let first = values.first {
+                let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
+
+                publisher.addObserver(self) { [weak self] objectPublisher in
+                    guard self?.shouldListenToPublish ?? false else { return }
+                    guard let data = objectPublisher.object?.data else { return }
+                    guard let newValue = try? JSONDecoder().decode(Value.self, from: data) else { fatalError() }
+
+                    DispatchQueue.main.async {
+                        self?.value = newValue
+                    }
+                }
+
+                return publisher
+            } else {
+                // Stored value doesn't exist but we want to observe it.
+                // Create default and get new publisher
+
+                do {
+                    try AnyStoredData.store(
+                        value: key.defaultValue(),
+                        key: key.name,
+                        ownerID: key.ownerID,
+                        domain: key.domain
+                    )
+                } catch {
+                    LogManager.service().error("Unable to store and create publisher for: \(key)")
+
+                    return nil
+                }
+
+                return makeObjectPublisher()
+            }
         }
     }
 }
