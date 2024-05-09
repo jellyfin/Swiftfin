@@ -59,7 +59,7 @@ extension UserState {
     ///
     /// Note: if performing deletion with another transaction, use
     ///       `AnyStoredData.fetchClause` instead within that transaction
-    ///       and delete `UserDefaults` manually
+    ///       and delete `Defaults` manually
     func deleteSettings() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             let userData = try transaction.fetchAll(

@@ -63,64 +63,40 @@ extension StoredValues.Keys {
 extension StoredValues.Keys {
 
     enum User {
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
-            if Defaults[.Customization.Library.rememberLayout] {
-                CurrentUserKey(
-                    parentID,
-                    domain: "libraryDisplayType",
-                    default: Defaults[.Customization.Library.displayType]
-                )
-            } else {
-                UserKey(always: Defaults[.Customization.Library.displayType])
-            }
+            CurrentUserKey(
+                parentID,
+                domain: "libraryDisplayType",
+                default: Defaults[.Customization.Library.displayType]
+            )
         }
 
         static func libraryListColumnCount(parentID: String?) -> Key<Int> {
-            if Defaults[.Customization.Library.rememberLayout] {
-                CurrentUserKey(
-                    parentID,
-                    domain: "libraryListColumnCount",
-                    default: Defaults[.Customization.Library.listColumnCount]
-                )
-            } else {
-                UserKey(always: Defaults[.Customization.Library.listColumnCount])
-            }
+            CurrentUserKey(
+                parentID,
+                domain: "libraryListColumnCount",
+                default: Defaults[.Customization.Library.listColumnCount]
+            )
         }
 
         static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
-            if Defaults[.Customization.Library.rememberLayout] {
-                CurrentUserKey(
-                    parentID,
-                    domain: "libraryPosterType",
-                    default: Defaults[.Customization.Library.posterType]
-                )
-            } else {
-                UserKey(always: Defaults[.Customization.Library.posterType])
-            }
+            CurrentUserKey(
+                parentID,
+                domain: "libraryPosterType",
+                default: Defaults[.Customization.Library.posterType]
+            )
         }
 
-        static func librarySortBy(parentID: String?) -> Key<[ItemSortBy]> {
-            if Defaults[.Customization.Library.rememberSort] {
-                CurrentUserKey(
-                    parentID,
-                    domain: "librarySortBy",
-                    default: ItemFilterCollection.default.sortBy
-                )
-            } else {
-                UserKey(always: ItemFilterCollection.default.sortBy)
-            }
-        }
-
-        static func librarySortOrder(parentID: String?) -> Key<[ItemSortOrder]> {
-            if Defaults[.Customization.Library.rememberSort] {
-                CurrentUserKey(
-                    parentID,
-                    domain: "librarySortOrder",
-                    default: ItemFilterCollection.default.sortOrder
-                )
-            } else {
-                UserKey(always: ItemFilterCollection.default.sortOrder)
-            }
+        // TODO: for now, only used for `sortBy` and `sortOrder`. Need to come up with
+        //       rules for how stored filters work with libraries that should init
+        //       with non-default filters (atow ex: favorites)
+        static func libraryFilters(parentID: String?) -> Key<ItemFilterCollection> {
+            CurrentUserKey(
+                parentID,
+                domain: "libraryFilters",
+                default: ItemFilterCollection.default
+            )
         }
 
         // Doesn't use `CurrentUserKey` because data may be

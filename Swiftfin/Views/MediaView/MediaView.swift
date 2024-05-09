@@ -50,6 +50,7 @@ struct MediaView: View {
                     case .downloads:
                         router.route(to: \.downloads)
                     case .favorites:
+                        // TODO: favorites should have its own view instead of a library
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
                             id: "favorites",

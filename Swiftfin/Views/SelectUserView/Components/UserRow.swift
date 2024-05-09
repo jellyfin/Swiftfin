@@ -150,12 +150,12 @@ extension SelectUserView {
                         }
                     }
                 }
-                .buttonStyle(.plain)
                 .contextMenu {
                     Button("Delete", role: .destructive) {
                         onDelete()
                     }
                 }
+                .foregroundStyle(.primary, .secondary)
 
                 Color.secondarySystemFill
                     .frame(width: contentSize.width, height: 1)

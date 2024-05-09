@@ -49,7 +49,7 @@ extension SwiftfinStore.State {
 extension ServerState {
 
     /// Deletes the model that this state represents and
-    /// all settings from `Defaults` and `StoredValues`.
+    /// all settings from `StoredValues`.
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedServer = try transaction.fetchOne(From<ServerModel>().where(\.$id == id)) else {

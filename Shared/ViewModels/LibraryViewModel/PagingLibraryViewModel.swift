@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import Get
 import JellyfinAPI
@@ -23,6 +24,14 @@ private let DefaultPageSize = 50
 //       on refresh. Should make bidirectional/offset index start?
 //       - use startIndex/index ranges instead of pages
 //       - source of data doesn't guarantee that all items in 0 ..< startIndex exist
+
+/*
+ Note: if `rememberSort == true`, then will override given filters with stored sorts
+       for parent ID. This was just easy. See `PagingLibraryView` notes for lack of
+       `rememberSort` observation and `StoredValues.User.libraryFilters` for TODO
+       on remembering other filters.
+ */
+
 class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
@@ -115,8 +124,6 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         )
     }
 
-    // TODO: why does one have nil-able filters and one doesn't?
-
     // paging
     init(
         parent: (any LibraryParent)? = nil,
@@ -129,6 +136,19 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         self.parent = parent
 
         if let filters {
+            var filters = filters
+
+            if let id = parent?.id, Defaults[.Customization.Library.rememberSort] {
+                // TODO: see `StoredValues.User.libraryFilters` for TODO
+                //       on remembering other filters
+
+                let storedFilters = StoredValues[.User.libraryFilters(parentID: id)]
+
+                filters = filters
+                    .mutating(\.sortBy, with: storedFilters.sortBy)
+                    .mutating(\.sortOrder, with: storedFilters.sortOrder)
+            }
+
             self.filterViewModel = .init(
                 parent: parent,
                 currentFilters: filters
@@ -158,7 +178,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     convenience init(
         title: String,
         id: String?,
-        filters: ItemFilterCollection = .default,
+        filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
         self.init(

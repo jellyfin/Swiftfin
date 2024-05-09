@@ -17,16 +17,23 @@ import SwiftUI
 // TODO: could bottom (defaults + stored) `onChange` copies be cleaned up?
 //       - more could be cleaned up if there was a "switcher" property wrapper that takes two
 //         sources and a switch and holds the current expected value
+//       - or if Defaults values were moved to StoredValues and each key would return/respond to
+//         what values they should have
 // TODO: when there are no filters sometimes navigation bar will be clear until popped back to
 
 /*
-   Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
+ Note: Currently, it is a conscious decision to not have grid posters have subtitle content.
        This is due to episodes, which have their `S_E_` subtitles, and these can be alongside
        other items that don't have a subtitle which requires the entire library to implement
        subtitle content but that doesn't look appealing. Until a solution arrives grid posters
        will not have subtitle content.
        There should be a solution since there are contexts where subtitles are desirable and/or
        we can have subtitle content for other items.
+
+ Note: For `rememberLayout` and `rememberSort`, there are quirks for observing changes while a
+       library is open and the setting has been changed. For simplicity, do not enforce observing
+       changes and doing proper updates since there is complexitry with what "actual" settings
+       should be applied.
  */
 
 struct PagingLibraryView<Element: Poster>: View {
@@ -211,6 +218,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
@@ -244,6 +252,8 @@ struct PagingLibraryView<Element: Poster>: View {
     }
 
     // MARK: body
+
+    // TODO: becoming too large for typechecker during development, should break up somehow
 
     var body: some View {
         WrappedView {
@@ -384,6 +394,17 @@ struct PagingLibraryView<Element: Poster>: View {
                     viewType: newDisplayType,
                     listColumnCount: newListColumnCount
                 )
+            }
+        }
+        .onChange(of: viewModel.filterViewModel?.currentFilters) { newValue in
+            guard let newValue, let id = viewModel.parent?.id else { return }
+
+            if Defaults[.Customization.Library.rememberSort] {
+                let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                    .mutating(\.sortBy, with: newValue.sortBy)
+                    .mutating(\.sortOrder, with: newValue.sortOrder)
+
+                StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
             }
         }
         .onReceive(viewModel.events) { event in

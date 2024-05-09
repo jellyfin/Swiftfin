@@ -94,7 +94,8 @@ extension SelectUserView {
                 } label: {
                     content
                 }
-                .buttonStyle(.plain)
+                .disabled(!isEnabled)
+                .foregroundStyle(.primary, .secondary)
             } else {
                 Button {
                     if let selectedServer {
@@ -103,8 +104,8 @@ extension SelectUserView {
                 } label: {
                     content
                 }
-                .buttonStyle(.plain)
                 .disabled(!isEnabled)
+                .foregroundStyle(.primary, .secondary)
             }
         }
     }

@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: will be entirely re-organized
+
 struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
@@ -47,6 +49,8 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Library.rememberLayout)
     private var rememberLibraryLayout
+    @Default(.Customization.Library.rememberSort)
+    private var rememberLibrarySort
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
@@ -128,7 +132,7 @@ struct CustomizeViewsSettings: View {
                 CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
             }
 
-            Section {
+            Section("Libraries") {
                 CaseIterablePicker(title: L10n.library, selection: $libraryDisplayType)
 
                 CaseIterablePicker(title: L10n.posters, selection: $libraryPosterType)
@@ -141,12 +145,18 @@ struct CustomizeViewsSettings: View {
                         step: 1
                     )
                 }
+            }
 
-                Toggle("Remember Layout", isOn: $rememberLibraryLayout)
-            } header: {
-                Text("Library Layout")
+            Section {
+                Toggle("Remember layout", isOn: $rememberLibraryLayout)
             } footer: {
                 Text("Remember layout for individual libraries")
+            }
+
+            Section {
+                Toggle("Remember sorting", isOn: $rememberLibrarySort)
+            } footer: {
+                Text("Remember sorting for individual libraries")
             }
 
             Section {
