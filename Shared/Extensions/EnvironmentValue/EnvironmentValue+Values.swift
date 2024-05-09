@@ -48,4 +48,9 @@ extension EnvironmentValues {
         get { self[SubtitleOffsetKey.self] }
         set { self[SubtitleOffsetKey.self] = newValue }
     }
+
+    var isPosterButtonFocused: Binding<Bool> {
+        get { self[IsPosterButtonFocused.self] }
+        set { self[IsPosterButtonFocused.self] = newValue }
+    }
 }

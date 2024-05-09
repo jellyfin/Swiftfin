@@ -30,6 +30,16 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
+    func bold(_ isActive: Bool) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content
+                .bold(isActive)
+        } else {
+            content
+        }
+    }
+
     #if os(iOS)
 
     // TODO: - remove comment when migrated away from Stinsen
