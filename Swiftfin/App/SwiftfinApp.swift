@@ -62,7 +62,7 @@ struct SwiftfinApp: App {
                 //       - atow, background video playback isn't officially supported
                 let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
 
-                if Defaults[.signOutOnBackground] || backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
                     Defaults[.lastSignedInUserID] = nil
                     Container.userSession.reset()
                     Notifications[.didSignOut].post()

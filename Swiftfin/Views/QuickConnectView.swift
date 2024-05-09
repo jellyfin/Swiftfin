@@ -22,15 +22,24 @@ struct QuickConnectView: View {
     }
 
     private func pollingView(code: String) -> some View {
-        VStack(spacing: 50) {
+        VStack(alignment: .leading, spacing: 20) {
 
-            #warning("TODO: finalize, probably move back to steps")
-            Text("Enter the following code on another Jellyfin login:")
+            // TODO: change strings so that numbers are removed
+            //       and use `BulletedList`
+            //       - also probably rephrase/change steps
+
+            L10n.quickConnectStep1.text
+
+            L10n.quickConnectStep2.text
+
+            L10n.quickConnectStep3.text
+                .padding(.bottom)
 
             Text(code)
                 .tracking(10)
                 .font(.largeTitle)
                 .monospacedDigit()
+                .frame(maxWidth: .infinity)
 
             Spacer()
         }

@@ -9,6 +9,7 @@
 import SwiftUI
 
 // TODO: use _UIHostingView for button animation workaround?
+//       - have a nice animation for toggle
 
 struct UnmaskSecureField: UIViewRepresentable {
 

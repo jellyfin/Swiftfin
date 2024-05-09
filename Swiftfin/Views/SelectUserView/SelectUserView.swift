@@ -12,7 +12,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: fix splash screen shifting when modals presented
 // TODO: user ordering
 
 struct SelectUserView: View {
@@ -409,6 +408,7 @@ struct SelectUserView: View {
                 userView
             }
         }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .navigationTitle("Users")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
