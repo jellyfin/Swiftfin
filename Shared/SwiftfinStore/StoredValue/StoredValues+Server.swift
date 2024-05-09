@@ -11,6 +11,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 
+// TODO: also have matching properties on `ServerState` that get/set values
+
 // MARK: keys
 
 extension StoredValues.Keys {
