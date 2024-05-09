@@ -21,6 +21,8 @@ final class UserSignInCoordinator: NavigationCoordinatable {
     #if os(iOS)
     @Route(.modal)
     var quickConnect = makeQuickConnect
+    @Route(.modal)
+    var security = makeSecurity
     #endif
 
     private let server: ServerState
@@ -33,6 +35,12 @@ final class UserSignInCoordinator: NavigationCoordinatable {
     func makeQuickConnect(quickConnect: QuickConnect) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             QuickConnectView(quickConnect: quickConnect)
+        }
+    }
+
+    func makeSecurity(signInPolicy: Binding<UserSignInPolicy>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            UserSignInView.SecurityView(signInPolicy: signInPolicy)
         }
     }
     #endif

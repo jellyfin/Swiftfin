@@ -826,6 +826,9 @@
 		E1E9017F28DAB15F001B1594 /* BarActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9017E28DAB15F001B1594 /* BarActionButtons.swift */; };
 		E1E9EFEA28C6B96500CC1F8B /* ServerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */; };
 		E1E9EFEB28C7EA2C00CC1F8B /* UserDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B128A229E70092E7F1 /* UserDto.swift */; };
+		E1EA09672BED6815004CDE76 /* UserSignInSecurityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */; };
+		E1EA09692BED78BB004CDE76 /* UserSignInPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */; };
+		E1EA096A2BED78F5004CDE76 /* UserSignInPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */; };
 		E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */; };
 		E1EA9F6B28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */; };
 		E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */; };
@@ -1432,6 +1435,8 @@
 		E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
 		E1E9017E28DAB15F001B1594 /* BarActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarActionButtons.swift; sourceTree = "<group>"; };
 		E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerButton.swift; sourceTree = "<group>"; };
+		E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInSecurityView.swift; sourceTree = "<group>"; };
+		E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInPolicy.swift; sourceTree = "<group>"; };
 		E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerManager.swift; sourceTree = "<group>"; };
 		E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruncatedText.swift; sourceTree = "<group>"; };
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
@@ -1692,7 +1697,6 @@
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
 				E10231432BCF8A51009D71FC /* ChannelProgram.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
-				E149CCAC2BE6ECC8008B9331 /* Storable.swift */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
 				E1D37F4A2B9CEA5C00343D2B /* ImageSource.swift */,
@@ -1712,6 +1716,7 @@
 				E129429228F2845000796AC6 /* SliderType.swift */,
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
 				E11042742B8013DF00821020 /* Stateful.swift */,
+				E149CCAC2BE6ECC8008B9331 /* Storable.swift */,
 				E1EF4C402911B783008CC695 /* StreamType.swift */,
 				E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */,
 				E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */,
@@ -1719,6 +1724,7 @@
 				E1E306CC28EF6E8000537998 /* TimerProxy.swift */,
 				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
 				E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */,
+				E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */,
 				E1D8429229340B8300D1041A /* Utilities.swift */,
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
@@ -2817,6 +2823,7 @@
 			isa = PBXGroup;
 			children = (
 				E18CE0AE28A222240092E7F1 /* PublicUserRow.swift */,
+				E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3934,6 +3941,7 @@
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E154967C296CBB1A00C4EF88 /* FontPickerView.swift in Sources */,
 				E15D63F02BD6DFC200AA665D /* SystemImageable.swift in Sources */,
+				E1EA096A2BED78F5004CDE76 /* UserSignInPolicy.swift in Sources */,
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E1575E86293E7A00001665B1 /* AppIcons.swift in Sources */,
 				E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */,
@@ -4128,6 +4136,7 @@
 				E129429B28F4A5E300796AC6 /* PlaybackSettingsView.swift in Sources */,
 				E1E9017B28DAAE4D001B1594 /* RoundedCorner.swift in Sources */,
 				E18E01F2288747230022598C /* ActionButtonHStack.swift in Sources */,
+				E1EA09692BED78BB004CDE76 /* UserSignInPolicy.swift in Sources */,
 				E18E0204288749200022598C /* RowDivider.swift in Sources */,
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */,
@@ -4255,6 +4264,7 @@
 				E1EF4C412911B783008CC695 /* StreamType.swift in Sources */,
 				6220D0CC26D640C400B8E046 /* AppURLHandler.swift in Sources */,
 				E1A3E4CF2BB7E02B005C59F8 /* DelayedProgressView.swift in Sources */,
+				E1EA09672BED6815004CDE76 /* UserSignInSecurityView.swift in Sources */,
 				E1BCDB4F2BE1F491009F6744 /* ResetUserPasswordViewModel.swift in Sources */,
 				E1921B7628E63306003A5238 /* GestureView.swift in Sources */,
 				E18A8E8028D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,

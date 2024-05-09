@@ -33,6 +33,8 @@ struct UserSignInView: View {
     @State
     private var password: String = ""
     @State
+    private var signInPolicy: UserSignInPolicy = .save
+    @State
     private var username: String = ""
 
     @StateObject
@@ -44,7 +46,7 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var signInSection: some View {
-        Section(L10n.signInToServer(viewModel.server.name)) {
+        Section {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
@@ -63,6 +65,40 @@ struct UserSignInView: View {
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             .focused($focusedTextField, equals: 1)
+        } header: {
+            Text(L10n.signInToServer(viewModel.server.name))
+        } footer: {
+            switch signInPolicy {
+            case .doNotSave:
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will not be saved.")
+                }
+            case .requireDeviceAuthentication:
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require device authentication.")
+                }
+            case .requirePin:
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require a pin.")
+                }
+            case .save:
+                EmptyView()
+            }
         }
 
         if case .signingIn = viewModel.state {
@@ -167,6 +203,10 @@ struct UserSignInView: View {
         .topBarTrailing {
             if viewModel.state == .signingIn {
                 ProgressView()
+            }
+
+            Button("Security", systemImage: "gearshape.fill") {
+                router.route(to: \.security, $signInPolicy)
             }
         }
         .alert(
