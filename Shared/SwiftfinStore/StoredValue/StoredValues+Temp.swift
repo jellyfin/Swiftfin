@@ -49,6 +49,13 @@ extension StoredValues.Keys {
             default: .save
         )
 
+        static let userLocalPin: Key<String> = TempKey(
+            "userLocalPin",
+            ownerID: "temporary",
+            domain: "userLocalPin",
+            default: ""
+        )
+
         static let userData: Key<UserDto> = TempKey(
             "tempUserData",
             ownerID: "temporary",

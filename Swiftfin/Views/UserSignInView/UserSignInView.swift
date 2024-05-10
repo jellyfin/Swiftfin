@@ -34,7 +34,11 @@ struct UserSignInView: View {
     @State
     private var isPresentingError: Bool = false
     @State
+    private var isPresentingLocalPin: Bool = false
+    @State
     private var password: String = ""
+    @State
+    private var pin: String = ""
     @State
     private var signInPolicy: UserSignInPolicy = .save
     @State
@@ -47,27 +51,49 @@ struct UserSignInView: View {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
-    // TODO: local pin stuff
+    // TODO: don't have multiple ways to handle device authentication vs required pin
 
-    private func openQuickConnect() {
+    private func openQuickConnect(needsPin: Bool = true) {
         Task {
-            if signInPolicy == .requireDeviceAuthentication {
+            switch signInPolicy {
+            case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(
                     reason: "Require device authentication to sign in to the Quick Connect user on this device"
                 )
+            case .requirePin:
+                if needsPin {
+                    isPresentingLocalPin = true
+                    return
+                }
+            case .save: ()
             }
 
             router.route(to: \.quickConnect, viewModel.quickConnect)
         }
     }
 
-    private func signInUserPassword() {
+    private func signInUserPassword(needsPin: Bool = true) {
         Task {
-            if signInPolicy == .requireDeviceAuthentication {
+            switch signInPolicy {
+            case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
+            case .requirePin:
+                if needsPin {
+                    isPresentingLocalPin = true
+                    return
+                }
+            case .save: ()
             }
 
             viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+        }
+    }
+
+    private func performPinAuthentication() async throws {
+        isPresentingLocalPin = true
+
+        guard pin.count > 4, pin.count < 30 else {
+            throw JellyfinAPIError("Pin auth failed")
         }
     }
 
@@ -230,6 +256,13 @@ struct UserSignInView: View {
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismissCoordinator()
         }
+        .onChange(of: isPresentingLocalPin) { newValue in
+            guard newValue else { return }
+            pin = ""
+        }
+        .onChange(of: pin) { newValue in
+            StoredValues[.Temp.userLocalPin] = newValue
+        }
         .onChange(of: signInPolicy) { newValue in
             // necessary for Quick Connect sign in
             StoredValues[.Temp.userSignInPolicy] = newValue
@@ -294,6 +327,20 @@ struct UserSignInView: View {
             Button(L10n.dismiss, role: .destructive)
         } message: { error in
             Text(error.localizedDescription)
+        }
+        .alert("Set Pin", isPresented: $isPresentingLocalPin) {
+
+            TextField("Pin", text: $pin)
+                .keyboardType(.numberPad)
+
+            Button("Sign In") {
+                signInUserPassword(needsPin: false)
+            }
+//            .disabled(pin.count < 4 || pin.count > 30)
+
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Create a pin to sign in to \(username) on this device")
         }
     }
 }

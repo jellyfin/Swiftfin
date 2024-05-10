@@ -55,7 +55,11 @@ struct SelectUserView: View {
     @State
     private var isPresentingError: Bool = false
     @State
+    private var isPresentingLocalPin: Bool = false
+    @State
     private var padGridItemColumnCount: Int = 1
+    @State
+    private var pin: String = ""
     @State
     private var selectedUsers: Set<UserState> = []
     @State
@@ -126,14 +130,23 @@ struct SelectUserView: View {
         }
     }
 
-    private func select(user: UserState) {
+    private func select(user: UserState, needsPin: Bool = true) {
         Task { @MainActor in
-            if user.signInPolicy == .requireDeviceAuthentication {
+            selectedUsers.insert(user)
+
+            switch user.signInPolicy {
+            case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+            case .requirePin:
+                if needsPin {
+                    isPresentingLocalPin = true
+                    return
+                }
+            case .save: ()
             }
 
             UIDevice.feedback(.success)
-            viewModel.send(.signIn(user))
+            viewModel.send(.signIn(user, pin: pin))
         }
     }
 
@@ -509,6 +522,11 @@ struct SelectUserView: View {
             isEditingUsers = false
             selectedUsers.removeAll()
         }
+        .onChange(of: isPresentingLocalPin) { newValue in
+            guard !newValue else { return }
+            pin = ""
+            selectedUsers.removeAll()
+        }
         .onChange(of: selectUserAllServersSplashscreen) { newValue in
             splashScreenImageSource = makeSplashScreenImageSource(
                 serverSelection: serverSelection,
@@ -525,6 +543,13 @@ struct SelectUserView: View {
         }
         .onChange(of: viewModel.servers) { _ in
             gridItems = makeGridItems(for: serverSelection)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                self.error = eventError
+                self.isPresentingError = true
+            }
         }
         .onNotification(.didConnectToServer) { notification in
             if let server = notification.object as? ServerState {
@@ -568,6 +593,36 @@ struct SelectUserView: View {
             } else {
                 Text("Are you sure you want to delete \(selectedUsers.count) users?")
             }
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert("Sign in", isPresented: $isPresentingLocalPin) {
+
+            TextField("Pin", text: $pin)
+                .keyboardType(.numberPad)
+
+            Button("Sign In") {
+                guard let user = selectedUsers.first else {
+                    assertionFailure("User not selected")
+                    return
+                }
+
+                select(user: user, needsPin: false)
+            }
+//            .disabled(pin.count < 4 || pin.count > 30)
+
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            let username = selectedUsers.first?.username ?? .emptyDash
+
+            Text("Enter pin for \(username)")
         }
     }
 }

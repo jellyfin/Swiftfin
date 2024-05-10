@@ -13,6 +13,7 @@ import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import KeychainSwift
 import OrderedCollections
 import SwiftUI
 
@@ -301,6 +302,13 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
         user.data = StoredValues[.Temp.userData]
         user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
+
+        let keychain = KeychainSwift()
+        keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
+
+        // TODO: remove when implemented cleanup elsewhere
+        StoredValues[.Temp.userSignInPolicy] = .save
+        StoredValues[.Temp.userLocalPin] = ""
     }
 
     private func retrievePublicUsers() async throws -> [UserDto] {

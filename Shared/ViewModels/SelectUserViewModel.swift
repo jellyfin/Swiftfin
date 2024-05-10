@@ -12,6 +12,7 @@ import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
+import KeychainSwift
 import OrderedCollections
 
 class SelectUserViewModel: ViewModel, Eventful, Stateful {
@@ -27,7 +28,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
     enum Action: Equatable {
         case deleteUsers([UserState])
         case getServers
-        case signIn(UserState)
+        case signIn(UserState, pin: String)
     }
 
     // MARK: State
@@ -74,9 +75,20 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             } catch {
                 eventSubject.send(.error(.init(error.localizedDescription)))
             }
-        case let .signIn(user):
+        case let .signIn(user, pin):
 
-            // TODO: needs to be moved elsewhere and implicitly cancelleable
+            let keychain = KeychainSwift()
+
+            if user.signInPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
+                if pin != storedPin {
+                    self.eventSubject.send(.error(.init("Incorrect pin for \(user.username)")))
+
+                    return .content
+                }
+            }
+
+            // TODO: needs to be moved elsewhere and implicitly cancelleable, or other mechanism
+            //       fetches user data
             Task {
                 guard let userServer = servers.keys.first(where: { $0.id == user.serverID }) else {
                     assertionFailure("?")
