@@ -15,6 +15,8 @@ import OrderedCollections
 import SwiftUI
 
 // TODO: authentication view during face ID
+//       - could use provided UI, but is iOS 16+
+//       - could just ignore for iOS 15
 // TODO: user ordering
 
 struct SelectUserView: View {
@@ -550,12 +552,12 @@ struct SelectUserView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
+                
                 self.error = eventError
                 self.isPresentingError = true
             case let .signedIn(user):
                 UIDevice.feedback(.success)
-
+                
                 Defaults[.lastSignedInUserID] = user.id
                 Container.userSession.reset()
                 Notifications[.didSignIn].post()
