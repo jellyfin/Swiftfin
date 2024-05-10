@@ -18,12 +18,12 @@ extension UserSignInView {
         private var router: UserSignInCoordinator.Router
 
         @Binding
-        private var signInPolicy: UserSignInPolicy
+        private var signInPolicy: UserAccessPolicy
 
         @State
-        private var updateSignInPolicy: UserSignInPolicy
+        private var updateSignInPolicy: UserAccessPolicy
 
-        init(signInPolicy: Binding<UserSignInPolicy>) {
+        init(signInPolicy: Binding<UserAccessPolicy>) {
             self._signInPolicy = signInPolicy
             self._updateSignInPolicy = State(initialValue: signInPolicy.wrappedValue)
         }
@@ -38,7 +38,7 @@ extension UserSignInView {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text(
-                            "Additional security options for users signed in to this device. This does not change any Jellyfin server user settings."
+                            "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings."
                         )
 
                         BulletedList {
@@ -55,12 +55,13 @@ extension UserSignInView {
                                 Text("Pin")
                                     .fontWeight(.semibold)
 
+                                #warning("TODO: add unrecoverable message")
                                 Text("Require a local pin when signing in to the user.")
                             }
                             .padding(.bottom, 15)
 
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("Save")
+                                Text("None")
                                     .fontWeight(.semibold)
 
                                 Text("Save the user to this device without any local authentication.")

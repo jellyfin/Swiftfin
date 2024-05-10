@@ -8,6 +8,7 @@
 
 import CollectionVGrid
 import Defaults
+import Factory
 import JellyfinAPI
 import LocalAuthentication
 import OrderedCollections
@@ -145,7 +146,6 @@ struct SelectUserView: View {
             case .save: ()
             }
 
-            UIDevice.feedback(.success)
             viewModel.send(.signIn(user, pin: pin))
         }
     }
@@ -523,9 +523,11 @@ struct SelectUserView: View {
             selectedUsers.removeAll()
         }
         .onChange(of: isPresentingLocalPin) { newValue in
-            guard !newValue else { return }
-            pin = ""
-            selectedUsers.removeAll()
+            if newValue {
+                pin = ""
+            } else {
+                selectedUsers.removeAll()
+            }
         }
         .onChange(of: selectUserAllServersSplashscreen) { newValue in
             splashScreenImageSource = makeSplashScreenImageSource(
@@ -547,8 +549,16 @@ struct SelectUserView: View {
         .onReceive(viewModel.events) { event in
             switch event {
             case let .error(eventError):
+                UIDevice.feedback(.error)
+
                 self.error = eventError
                 self.isPresentingError = true
+            case let .signedIn(user):
+                UIDevice.feedback(.success)
+
+                Defaults[.lastSignedInUserID] = user.id
+                Container.userSession.reset()
+                Notifications[.didSignIn].post()
             }
         }
         .onNotification(.didConnectToServer) { notification in
@@ -608,6 +618,8 @@ struct SelectUserView: View {
             TextField("Pin", text: $pin)
                 .keyboardType(.numberPad)
 
+            // bug in SwiftUI: having .disabled will dismiss
+            // alert but not call the closure (for length)
             Button("Sign In") {
                 guard let user = selectedUsers.first else {
                     assertionFailure("User not selected")
@@ -616,7 +628,6 @@ struct SelectUserView: View {
 
                 select(user: user, needsPin: false)
             }
-//            .disabled(pin.count < 4 || pin.count > 30)
 
             Button("Cancel", role: .cancel) {}
         } message: {

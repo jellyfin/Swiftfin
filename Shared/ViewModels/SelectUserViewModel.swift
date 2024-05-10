@@ -8,7 +8,6 @@
 
 import Combine
 import CoreStore
-import Defaults
 import Factory
 import Foundation
 import JellyfinAPI
@@ -21,6 +20,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
 
     enum Event {
         case error(JellyfinAPIError)
+        case signedIn(UserState)
     }
 
     // MARK: Action
@@ -77,11 +77,12 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             }
         case let .signIn(user, pin):
 
+            // TODO: make a service?
             let keychain = KeychainSwift()
 
             if user.signInPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
                 if pin != storedPin {
-                    self.eventSubject.send(.error(.init("Incorrect pin for \(user.username)")))
+                    eventSubject.send(.error(.init("Incorrect pin for \(user.username)")))
 
                     return .content
                 }
@@ -100,10 +101,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
                 StoredValues[.User.data(id: user.id)] = userData
             }
 
-            // TODO: views should actually handle this
-            Defaults[.lastSignedInUserID] = user.id
-            Container.userSession.reset()
-            Notifications[.didSignIn].post()
+            eventSubject.send(.signedIn(user))
         }
 
         return .content

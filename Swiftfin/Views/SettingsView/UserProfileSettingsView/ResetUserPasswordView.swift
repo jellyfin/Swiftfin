@@ -42,15 +42,17 @@ struct ResetUserPasswordView: View {
     var body: some View {
         List {
 
-            UnmaskSecureField("Current Password", text: $currentPassword) {
-                focusedPassword = 1
+            Section("Current Password") {
+                UnmaskSecureField("Current Password", text: $currentPassword) {
+                    focusedPassword = 1
+                }
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.none)
+                .focused($focusedPassword, equals: 0)
+                .disabled(viewModel.state == .resetting)
             }
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.none)
-            .focused($focusedPassword, equals: 0)
-            .disabled(viewModel.state == .resetting)
 
-            Section {
+            Section("New Password") {
                 UnmaskSecureField("New Password", text: $newPassword) {
                     focusedPassword = 2
                 }
@@ -58,7 +60,9 @@ struct ResetUserPasswordView: View {
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 1)
                 .disabled(viewModel.state == .resetting)
+            }
 
+            Section {
                 UnmaskSecureField("Confirm New Password", text: $confirmNewPassword) {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
@@ -66,6 +70,8 @@ struct ResetUserPasswordView: View {
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 2)
                 .disabled(viewModel.state == .resetting)
+            } header: {
+                Text("Confirm New Password")
             } footer: {
                 if newPassword != confirmNewPassword {
                     HStack {

@@ -13,6 +13,10 @@ import Stinsen
 import SwiftUI
 
 // TODO: ignore biometric authentication `canceled by user` NSError
+// TODO: fix duplicate user
+//       - could be good to replace access token
+//       - need to think about change in policy
+//       - remember to check against current pin/device auth
 
 struct UserSignInView: View {
 
@@ -36,11 +40,13 @@ struct UserSignInView: View {
     @State
     private var isPresentingLocalPin: Bool = false
     @State
+    private var onPinCompletion: (() -> Void)? = nil
+    @State
     private var password: String = ""
     @State
     private var pin: String = ""
     @State
-    private var signInPolicy: UserSignInPolicy = .save
+    private var signInPolicy: UserAccessPolicy = .save
     @State
     private var username: String = ""
 
@@ -62,6 +68,9 @@ struct UserSignInView: View {
                 )
             case .requirePin:
                 if needsPin {
+                    onPinCompletion = {
+                        router.route(to: \.quickConnect, viewModel.quickConnect)
+                    }
                     isPresentingLocalPin = true
                     return
                 }
@@ -79,6 +88,9 @@ struct UserSignInView: View {
                 try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
             case .requirePin:
                 if needsPin {
+                    onPinCompletion = {
+                        viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+                    }
                     isPresentingLocalPin = true
                     return
                 }
@@ -86,6 +98,24 @@ struct UserSignInView: View {
             }
 
             viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+        }
+    }
+
+    private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
+        Task {
+            switch user.signInPolicy {
+            case .requireDeviceAuthentication:
+                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+            case .requirePin:
+                onPinCompletion = {
+                    viewModel.send(.signInDuplicate(user, replace: replace))
+                }
+                isPresentingLocalPin = true
+                return
+            case .save: ()
+            }
+
+            viewModel.send(.signInDuplicate(user, replace: replace))
         }
     }
 
@@ -103,7 +133,7 @@ struct UserSignInView: View {
         let context = LAContext()
         var policyError: NSError?
 
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &policyError) else {
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
 
             await MainActor.run {
@@ -119,7 +149,7 @@ struct UserSignInView: View {
         }
 
         do {
-            try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "I think it's funny")
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "I think it's funny")
         } catch {
             print(type(of: error))
             print(error)
@@ -257,8 +287,11 @@ struct UserSignInView: View {
             router.dismissCoordinator()
         }
         .onChange(of: isPresentingLocalPin) { newValue in
-            guard newValue else { return }
-            pin = ""
+            if newValue {
+                pin = ""
+            } else {
+                onPinCompletion = nil
+            }
         }
         .onChange(of: pin) { newValue in
             StoredValues[.Temp.userLocalPin] = newValue
@@ -304,18 +337,17 @@ struct UserSignInView: View {
             Text("Duplicate User"),
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
-        ) { duplicateUser in
-            Button(L10n.signIn) {
-                viewModel.send(.signInDuplicate(duplicateUser, replace: false))
-            }
+        ) { _ in
 
-            Button("Replace") {
-                viewModel.send(.signInDuplicate(duplicateUser, replace: true))
-            }
+//            Button(L10n.signIn) {
+//                signInUplicate(user: user, replace: false)
+//            }
 
-            Button(L10n.dismiss, role: .destructive)
-                .backport
-                .fontWeight(.bold)
+//            Button("Replace") {
+//                signInUplicate(user: user, replace: true)
+//            }
+
+            Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
             Text("\(duplicateUser.username) is already saved")
         }
@@ -324,22 +356,27 @@ struct UserSignInView: View {
             isPresented: $isPresentingError,
             presenting: error
         ) { _ in
-            Button(L10n.dismiss, role: .destructive)
+            Button(L10n.dismiss, role: .cancel)
         } message: { error in
             Text(error.localizedDescription)
         }
-        .alert("Set Pin", isPresented: $isPresentingLocalPin) {
+        .alert(
+            "Set Pin",
+            isPresented: $isPresentingLocalPin,
+            presenting: onPinCompletion
+        ) { completion in
 
             TextField("Pin", text: $pin)
                 .keyboardType(.numberPad)
 
+            // bug in SwiftUI: having .disabled will dismiss
+            // alert but not call the closure (for length)
             Button("Sign In") {
-                signInUserPassword(needsPin: false)
+                completion()
             }
-//            .disabled(pin.count < 4 || pin.count > 30)
 
-            Button("Cancel", role: .cancel) {}
-        } message: {
+            Button(L10n.cancel, role: .cancel) {}
+        } message: { _ in
             Text("Create a pin to sign in to \(username) on this device")
         }
     }

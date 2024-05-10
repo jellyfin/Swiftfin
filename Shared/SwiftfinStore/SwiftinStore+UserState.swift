@@ -48,12 +48,13 @@ extension UserState {
         }
     }
 
-    var signInPolicy: UserSignInPolicy {
+    // TODO: rename to accessPolicy and fix all uses
+    var signInPolicy: UserAccessPolicy {
         get {
-            StoredValues[.User.signInPolicy(id: id)]
+            StoredValues[.User.accessPolicy(id: id)]
         }
         nonmutating set {
-            StoredValues[.User.signInPolicy(id: id)] = newValue
+            StoredValues[.User.accessPolicy(id: id)] = newValue
         }
     }
 }

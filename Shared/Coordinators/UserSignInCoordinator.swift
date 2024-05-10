@@ -38,7 +38,7 @@ final class UserSignInCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeSecurity(signInPolicy: Binding<UserSignInPolicy>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeSecurity(signInPolicy: Binding<UserAccessPolicy>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             UserSignInView.SecurityView(signInPolicy: signInPolicy)
         }

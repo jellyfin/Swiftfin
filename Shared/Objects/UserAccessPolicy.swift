@@ -11,7 +11,7 @@ import Foundation
 // TODO: require remote sign in every time
 //       - actually found to be a bit difficult?
 
-enum UserSignInPolicy: String, CaseIterable, Codable, Displayable {
+enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
 
     case requireDeviceAuthentication
     case requirePin

@@ -8,7 +8,6 @@
 
 import Combine
 import CoreStore
-import Defaults
 import Factory
 import Foundation
 import Get
@@ -17,15 +16,15 @@ import KeychainSwift
 import OrderedCollections
 import SwiftUI
 
-#warning("TODO: NSURLErrorDomain Code=-999 cancelled error on sign in")
-
 // TODO: instead of just signing in duplicate user, send event for alert
 //       to override existing user access token?
 //       - won't require deleting and re-signing in user for password changes
 //       - account for local device auth required
+// TODO: ignore NSURLErrorDomain Code=-999 cancelled error on sign in
+//       - need to make NSError wrappres anyways
 
-// Note: stores in CoreData the UserDto data so that it doesn't need to be passed
-//       around along with the user UserState
+// Note: UserDto in StoredValues so that it doesn't need to be passed
+//       around along with the user UserState. Was just easy
 
 final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
@@ -41,9 +40,9 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case getPublicData
-        case signIn(username: String, password: String, policy: UserSignInPolicy)
+        case signIn(username: String, password: String, policy: UserAccessPolicy)
         case signInDuplicate(UserState, replace: Bool)
-        case signInQuickConnect(secret: String, policy: UserSignInPolicy)
+        case signInQuickConnect(secret: String, policy: UserAccessPolicy)
         case cancel
     }
 
@@ -216,7 +215,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func signIn(username: String, password: String, policy: UserSignInPolicy) async throws -> UserState {
+    private func signIn(username: String, password: String, policy: UserAccessPolicy) async throws -> UserState {
         let username = username
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -247,7 +246,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         )
     }
 
-    private func signIn(secret: String, policy: UserSignInPolicy) async throws -> UserState {
+    private func signIn(secret: String, policy: UserAccessPolicy) async throws -> UserState {
 
         let response = try await server.client.signIn(quickConnectSecret: secret)
 
@@ -303,10 +302,11 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         user.data = StoredValues[.Temp.userData]
         user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
 
+        // TODO: make a service?
         let keychain = KeychainSwift()
         keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
 
-        // TODO: remove when implemented cleanup elsewhere
+        // TODO: remove when implemented periodic cleanup elsewhere
         StoredValues[.Temp.userSignInPolicy] = .save
         StoredValues[.Temp.userLocalPin] = ""
     }

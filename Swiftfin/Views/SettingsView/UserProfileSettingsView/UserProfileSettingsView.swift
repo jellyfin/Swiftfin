@@ -47,7 +47,7 @@ struct UserProfileSettingsView: View {
                                 .clipShape(.circle)
                                 .shadow(radius: 5)
 
-                            // TODO: photo picker
+                            // TODO: uncomment when photo picker implemented
 //                            Image(systemName: "pencil.circle.fill")
 //                                .resizable()
 //                                .frame(width: 30, height: 30)
@@ -71,6 +71,13 @@ struct UserProfileSettingsView: View {
                 ChevronButton(title: "Password")
                     .onSelect {
                         router.route(to: \.resetUserPassword)
+                    }
+            }
+
+            Section {
+                ChevronButton(title: "Local Security")
+                    .onSelect {
+                        router.route(to: \.localSecurity)
                     }
             }
         }

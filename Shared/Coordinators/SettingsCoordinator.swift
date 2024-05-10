@@ -27,6 +27,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var resetUserPassword = makeResetUserPassword
     @Route(.push)
+    var localSecurity = makeLocalSecurity
+    @Route(.push)
     var userProfile = makeUserProfileSettings
 
     @Route(.push)
@@ -77,6 +79,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeResetUserPassword() -> some View {
         ResetUserPasswordView()
+    }
+
+    @ViewBuilder
+    func makeLocalSecurity() -> some View {
+        UserLocalSecurityView()
     }
 
     @ViewBuilder

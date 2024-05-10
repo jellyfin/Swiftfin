@@ -827,8 +827,9 @@
 		E1E9EFEA28C6B96500CC1F8B /* ServerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */; };
 		E1E9EFEB28C7EA2C00CC1F8B /* UserDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18CE0B128A229E70092E7F1 /* UserDto.swift */; };
 		E1EA09672BED6815004CDE76 /* UserSignInSecurityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */; };
-		E1EA09692BED78BB004CDE76 /* UserSignInPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */; };
-		E1EA096A2BED78F5004CDE76 /* UserSignInPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */; };
+		E1EA09692BED78BB004CDE76 /* UserAccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */; };
+		E1EA096A2BED78F5004CDE76 /* UserAccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */; };
+		E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */; };
 		E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */; };
 		E1EA9F6B28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */; };
 		E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */; };
@@ -1436,7 +1437,8 @@
 		E1E9017E28DAB15F001B1594 /* BarActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarActionButtons.swift; sourceTree = "<group>"; };
 		E1E9EFE928C6B96400CC1F8B /* ServerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerButton.swift; sourceTree = "<group>"; };
 		E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInSecurityView.swift; sourceTree = "<group>"; };
-		E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInPolicy.swift; sourceTree = "<group>"; };
+		E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccessPolicy.swift; sourceTree = "<group>"; };
+		E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalSecurityView.swift; sourceTree = "<group>"; };
 		E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerManager.swift; sourceTree = "<group>"; };
 		E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruncatedText.swift; sourceTree = "<group>"; };
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
@@ -1724,7 +1726,7 @@
 				E1E306CC28EF6E8000537998 /* TimerProxy.swift */,
 				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
 				E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */,
-				E1EA09682BED78BB004CDE76 /* UserSignInPolicy.swift */,
+				E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */,
 				E1D8429229340B8300D1041A /* Utilities.swift */,
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
@@ -2601,8 +2603,9 @@
 			isa = PBXGroup;
 			children = (
 				6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */,
-				E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */,
 				E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */,
+				E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */,
+				E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */,
 			);
 			path = UserProfileSettingsView;
 			sourceTree = "<group>";
@@ -3941,7 +3944,7 @@
 				E1CEFBF727914E6400F60429 /* CustomizeViewsSettings.swift in Sources */,
 				E154967C296CBB1A00C4EF88 /* FontPickerView.swift in Sources */,
 				E15D63F02BD6DFC200AA665D /* SystemImageable.swift in Sources */,
-				E1EA096A2BED78F5004CDE76 /* UserSignInPolicy.swift in Sources */,
+				E1EA096A2BED78F5004CDE76 /* UserAccessPolicy.swift in Sources */,
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E1575E86293E7A00001665B1 /* AppIcons.swift in Sources */,
 				E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */,
@@ -4122,6 +4125,7 @@
 				E113132B28BDB4B500930F75 /* NavigationBarDrawerView.swift in Sources */,
 				E164A7F62BE4814700A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
+				E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */,
 				E1559A76294D960C00C1FFBC /* MainOverlay.swift in Sources */,
 				E14EDECC2B8FB709000F00A4 /* ItemYear.swift in Sources */,
 				E1DE2B4A2B97ECB900F6715F /* ErrorView.swift in Sources */,
@@ -4136,7 +4140,7 @@
 				E129429B28F4A5E300796AC6 /* PlaybackSettingsView.swift in Sources */,
 				E1E9017B28DAAE4D001B1594 /* RoundedCorner.swift in Sources */,
 				E18E01F2288747230022598C /* ActionButtonHStack.swift in Sources */,
-				E1EA09692BED78BB004CDE76 /* UserSignInPolicy.swift in Sources */,
+				E1EA09692BED78BB004CDE76 /* UserAccessPolicy.swift in Sources */,
 				E18E0204288749200022598C /* RowDivider.swift in Sources */,
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */,

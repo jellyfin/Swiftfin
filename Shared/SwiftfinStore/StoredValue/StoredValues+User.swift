@@ -112,11 +112,11 @@ extension StoredValues.Keys {
             )
         }
 
-        static func signInPolicy(id: String) -> Key<UserSignInPolicy> {
+        static func accessPolicy(id: String) -> Key<UserAccessPolicy> {
             UserKey(
-                "signInPolicy",
+                "accessPolicy",
                 ownerID: id,
-                domain: "signInPolicy",
+                domain: "accessPolicy",
                 default: .save
             )
         }
