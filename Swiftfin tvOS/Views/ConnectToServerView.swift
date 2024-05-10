@@ -56,7 +56,7 @@ struct ConnectToServerView: View {
 //                    duplicateServer = serverConnection
 //                    isPresentingDuplicateServerAlert = true
 //                } else {
-//                    try viewModel.save(server: serverConnection.server)
+//                    try viewModel.none(server: serverConnection.server)
 //                    router.route(to: \.userSignIn, serverConnection.server)
 //                }
 //            } catch {

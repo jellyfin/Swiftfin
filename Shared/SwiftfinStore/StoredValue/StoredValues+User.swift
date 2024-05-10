@@ -117,7 +117,7 @@ extension StoredValues.Keys {
                 "accessPolicy",
                 ownerID: id,
                 domain: "accessPolicy",
-                default: .save
+                default: .none
             )
         }
     }

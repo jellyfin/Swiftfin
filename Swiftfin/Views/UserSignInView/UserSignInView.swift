@@ -46,7 +46,7 @@ struct UserSignInView: View {
     @State
     private var pin: String = ""
     @State
-    private var signInPolicy: UserAccessPolicy = .save
+    private var signInPolicy: UserAccessPolicy = .none
     @State
     private var username: String = ""
 
@@ -62,6 +62,7 @@ struct UserSignInView: View {
     private func openQuickConnect(needsPin: Bool = true) {
         Task {
             switch signInPolicy {
+            case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(
                     reason: "Require device authentication to sign in to the Quick Connect user on this device"
@@ -74,7 +75,6 @@ struct UserSignInView: View {
                     isPresentingLocalPin = true
                     return
                 }
-            case .save: ()
             }
 
             router.route(to: \.quickConnect, viewModel.quickConnect)
@@ -84,6 +84,7 @@ struct UserSignInView: View {
     private func signInUserPassword(needsPin: Bool = true) {
         Task {
             switch signInPolicy {
+            case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
             case .requirePin:
@@ -94,7 +95,6 @@ struct UserSignInView: View {
                     isPresentingLocalPin = true
                     return
                 }
-            case .save: ()
             }
 
             viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
@@ -104,6 +104,7 @@ struct UserSignInView: View {
     private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
         Task {
             switch user.signInPolicy {
+            case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
             case .requirePin:
@@ -112,7 +113,6 @@ struct UserSignInView: View {
                 }
                 isPresentingLocalPin = true
                 return
-            case .save: ()
             }
 
             viewModel.send(.signInDuplicate(user, replace: replace))
@@ -151,8 +151,6 @@ struct UserSignInView: View {
         do {
             try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "I think it's funny")
         } catch {
-            print(type(of: error))
-            print(error)
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
@@ -205,7 +203,7 @@ struct UserSignInView: View {
 
                     Text("This user will require a pin.")
                 }
-            case .save:
+            case .none:
                 EmptyView()
             }
         }
@@ -339,6 +337,7 @@ struct UserSignInView: View {
             presenting: duplicateUser
         ) { _ in
 
+            // TODO: uncomment when duplicate user fixed
 //            Button(L10n.signIn) {
 //                signInUplicate(user: user, replace: false)
 //            }
@@ -377,7 +376,7 @@ struct UserSignInView: View {
 
             Button(L10n.cancel, role: .cancel) {}
         } message: { _ in
-            Text("Create a pin to sign in to \(username) on this device")
+            Text("Set pin for new user.")
         }
     }
 }

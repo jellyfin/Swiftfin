@@ -42,7 +42,7 @@ struct ResetUserPasswordView: View {
     var body: some View {
         List {
 
-            Section("Current Password") {
+            Section {
                 UnmaskSecureField("Current Password", text: $currentPassword) {
                     focusedPassword = 1
                 }
@@ -50,6 +50,8 @@ struct ResetUserPasswordView: View {
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 0)
                 .disabled(viewModel.state == .resetting)
+            } header: {
+                Text("Changes the user password into the Jellyfin server. This does not change Swiftfin local security settings.")
             }
 
             Section("New Password") {

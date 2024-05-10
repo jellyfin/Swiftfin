@@ -76,6 +76,8 @@ extension BulletedList {
                 .trackingSize($bulletSize)
         }
 
+        // TODO: this can cause clipping issues with text since
+        //       with .offset, find fix
         var body: some View {
             ZStack {
                 child

@@ -8,58 +8,13 @@
 
 import Combine
 import Defaults
+import KeychainSwift
 import LocalAuthentication
 import SwiftUI
 
-#warning("TODO: finish")
-
-class UserLocalSecurityViewModel: ViewModel, Eventful {
-
-    enum Event: Hashable {
-        case promptForOldDeviceAuth
-        case promptForOldPin
-
-        case promptForNewDeviceAuth
-        case promptForNewPin
-    }
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // Will throw and send event if needing to prompt for old auth.
-    // TODO: do better.
-    func checkForOldPolicy() throws {
-
-        let oldPolicy = userSession.user.signInPolicy
-
-        switch oldPolicy {
-        case .requireDeviceAuthentication:
-            eventSubject.send(.promptForOldDeviceAuth)
-
-            throw JellyfinAPIError("Prompt for old device auth")
-        case .requirePin:
-            eventSubject.send(.promptForOldPin)
-
-            throw JellyfinAPIError("Prompt for old pin")
-        case .save: ()
-        }
-    }
-
-    func set(newPolicy: UserAccessPolicy) {
-        switch newPolicy {
-        case .requireDeviceAuthentication:
-            eventSubject.send(.promptForNewDeviceAuth)
-        case .requirePin:
-            eventSubject.send(.promptForNewPin)
-        case .save: ()
-        }
-    }
-}
+// TODO: present toast when authentication successfully changed
+// TODO: pop is just a workaround to get change published from usersession.
+//       find fix and don't pop when successfully changed
 
 struct UserLocalSecurityView: View {
 
@@ -70,15 +25,21 @@ struct UserLocalSecurityView: View {
     private var router: SettingsCoordinator.Router
 
     @State
+    private var error: Error? = nil
+    @State
+    private var isPresentingError: Bool = false
+    @State
     private var isPresentingOldPinPrompt: Bool = false
     @State
     private var isPresentingNewPinPrompt: Bool = false
+    @State
+    private var listSize: CGSize = .zero
     @State
     private var onPinCompletion: (() -> Void)? = nil
     @State
     private var pin: String = ""
     @State
-    private var signInPolicy: UserAccessPolicy = .save
+    private var signInPolicy: UserAccessPolicy = .none
 
     @StateObject
     private var viewModel = UserLocalSecurityViewModel()
@@ -90,46 +51,92 @@ struct UserLocalSecurityView: View {
             return
         }
 
-        viewModel.set(newPolicy: signInPolicy)
+        checkNewPolicy()
+    }
+
+    private func checkNewPolicy() {
+        do {
+            try viewModel.checkFor(newPolicy: signInPolicy)
+        } catch {
+            return
+        }
+
+        viewModel.set(newPolicy: signInPolicy, newPin: pin)
+    }
+
+    // error logging/presentation is handled within here, just
+    // use try+thrown error in local Task for early return
+    private func performDeviceAuthentication(reason: String) async throws {
+        let context = LAContext()
+        var policyError: NSError?
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
+            viewModel.logger.critical("\(policyError!.localizedDescription)")
+
+            await MainActor.run {
+                self
+                    .error =
+                    JellyfinAPIError(
+                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                    )
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+
+        do {
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "I think it's funny")
+        } catch {
+            viewModel.logger.critical("\(error.localizedDescription)")
+
+            await MainActor.run {
+                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
     }
 
     var body: some View {
         List {
 
             Section {
-                CaseIterablePicker(title: "Access", selection: $signInPolicy)
+                CaseIterablePicker(title: "Security", selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(
                         "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings."
                     )
 
+                    // frame necessary with bug within BulletedList
                     BulletedList {
 
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Device Authentication")
+                            Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                 .fontWeight(.semibold)
 
-                            Text("Require local device authentication when signing in to the user.")
+                            Text("Require device authentication when signing in to the user.")
                         }
                         .padding(.bottom, 15)
 
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("Pin")
+                            Text(UserAccessPolicy.requirePin.displayTitle)
                                 .fontWeight(.semibold)
 
-                            #warning("TODO: add unrecoverable message")
-                            Text("Require a local pin when signing in to the user.")
+                            Text("Require a local pin when signing in to the user. This pin is unrecoverable.")
                         }
                         .padding(.bottom, 15)
 
                         VStack(alignment: .leading, spacing: 5) {
-                            Text("None")
+                            Text(UserAccessPolicy.none.displayTitle)
                                 .fontWeight(.semibold)
 
                             Text("Save the user to this device without any local authentication.")
                         }
                     }
+                    .frame(width: max(10, listSize.width - 50))
                 }
             }
         }
@@ -141,17 +148,42 @@ struct UserLocalSecurityView: View {
         }
         .onReceive(viewModel.events) { event in
             switch event {
-            case .promptForOldDeviceAuth: ()
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
+                isPresentingError = true
+            case .promptForOldDeviceAuth:
+                Task { @MainActor in
+                    try await performDeviceAuthentication(
+                        reason: "User \(viewModel.userSession.user.username) requires device authentication"
+                    )
+
+                    checkNewPolicy()
+                }
             case .promptForOldPin:
                 onPinCompletion = {
-                    try? viewModel.set(newPolicy: signInPolicy)
+                    Task {
+                        try viewModel.check(oldPin: pin)
+
+                        checkNewPolicy()
+                    }
                 }
 
                 pin = ""
                 isPresentingOldPinPrompt = true
-            case .promptForNewDeviceAuth: ()
+            case .promptForNewDeviceAuth:
+                Task { @MainActor in
+                    try await performDeviceAuthentication(
+                        reason: "User \(viewModel.userSession.user.username) requires device authentication"
+                    )
+
+                    viewModel.set(newPolicy: signInPolicy, newPin: pin)
+                    router.popLast()
+                }
             case .promptForNewPin:
                 onPinCompletion = {
+                    viewModel.set(newPolicy: signInPolicy, newPin: pin)
                     router.popLast()
                 }
 
@@ -163,17 +195,32 @@ struct UserLocalSecurityView: View {
             Button {
                 checkOldPolicy()
             } label: {
-                Text("Save")
-                    .foregroundStyle(accentColor.overlayColor)
-                    .font(.headline)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 10)
-                    .background {
-                        accentColor
+                Group {
+                    if signInPolicy == .requirePin, signInPolicy == viewModel.userSession.user.signInPolicy {
+                        Text("Change Pin")
+                    } else {
+                        Text("Save")
                     }
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .foregroundStyle(accentColor.overlayColor)
+                .font(.headline)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 10)
+                .background {
+                    accentColor
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .opacity(signInPolicy == viewModel.userSession.user.signInPolicy ? 0 : 1)
+        }
+        .trackingSize($listSize)
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel)
+        } message: { error in
+            Text(error.localizedDescription)
         }
         .alert(
             "Enter Pin",
@@ -186,7 +233,7 @@ struct UserLocalSecurityView: View {
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Sign In") {
+            Button("Continue") {
                 completion()
             }
 
@@ -195,7 +242,7 @@ struct UserLocalSecurityView: View {
             Text("Enter pin for \(viewModel.userSession.user.username)")
         }
         .alert(
-            "Enter Pin",
+            "Set Pin",
             isPresented: $isPresentingNewPinPrompt,
             presenting: onPinCompletion
         ) { completion in
@@ -205,7 +252,7 @@ struct UserLocalSecurityView: View {
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Sign In") {
+            Button("Set") {
                 completion()
             }
 

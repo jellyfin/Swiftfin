@@ -21,6 +21,8 @@ extension UserSignInView {
         private var signInPolicy: UserAccessPolicy
 
         @State
+        private var listSize: CGSize = .zero
+        @State
         private var updateSignInPolicy: UserAccessPolicy
 
         init(signInPolicy: Binding<UserAccessPolicy>) {
@@ -32,41 +34,42 @@ extension UserSignInView {
             List {
 
                 Section {
-                    CaseIterablePicker(title: "Access", selection: $updateSignInPolicy)
+                    CaseIterablePicker(title: "Security", selection: $updateSignInPolicy)
                 } footer: {
                     // TODO: descriptions of each section
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text(
-                            "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings."
+                            "Additional security for users signed in to this device. This does not change any Jellyfin server user settings."
                         )
 
+                        // frame necessary with bug within BulletedList
                         BulletedList {
 
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("Device Authentication")
+                                Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                     .fontWeight(.semibold)
 
-                                Text("Require local device authentication when signing in to the user.")
+                                Text("Require device authentication when signing in to the user.")
                             }
                             .padding(.bottom, 15)
 
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("Pin")
+                                Text(UserAccessPolicy.requirePin.displayTitle)
                                     .fontWeight(.semibold)
 
-                                #warning("TODO: add unrecoverable message")
-                                Text("Require a local pin when signing in to the user.")
+                                Text("Require a local pin when signing in to the user. This pin is unrecoverable.")
                             }
                             .padding(.bottom, 15)
 
                             VStack(alignment: .leading, spacing: 5) {
-                                Text("None")
+                                Text(UserAccessPolicy.none.displayTitle)
                                     .fontWeight(.semibold)
 
                                 Text("Save the user to this device without any local authentication.")
                             }
                         }
+                        .frame(width: max(10, listSize.width - 50))
                     }
                 }
             }
@@ -78,6 +81,7 @@ extension UserSignInView {
             .onChange(of: updateSignInPolicy) { _ in
                 signInPolicy = updateSignInPolicy
             }
+            .trackingSize($listSize)
         }
     }
 }

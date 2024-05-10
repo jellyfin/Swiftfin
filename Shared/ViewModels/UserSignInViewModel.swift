@@ -307,7 +307,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
 
         // TODO: remove when implemented periodic cleanup elsewhere
-        StoredValues[.Temp.userSignInPolicy] = .save
+        StoredValues[.Temp.userSignInPolicy] = .none
         StoredValues[.Temp.userLocalPin] = ""
     }
 

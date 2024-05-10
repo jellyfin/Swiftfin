@@ -629,6 +629,8 @@
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
 		E193D5512719432400900D82 /* ServerDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */; };
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
+		E19D41A72BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */; };
+		E19D41A82BEEDC5F0082B8B2 /* UserLocalSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
 		E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
@@ -1289,6 +1291,7 @@
 		E193D54A271941D300900D82 /* ServerListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerListView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
+		E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalSecurityViewModel.swift; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamInfoView.swift; sourceTree = "<group>"; };
 		E1A1528128FD126C00600579 /* VerticalAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalAlignment.swift; sourceTree = "<group>"; };
@@ -1606,6 +1609,7 @@
 				E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */,
 				E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
+				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				BD0BA2292AD6501300306A8D /* VideoPlayerManager */,
 				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
@@ -3780,6 +3784,7 @@
 				E12376B32A33DFAC001F5B44 /* ItemOverviewView.swift in Sources */,
 				E1A7F0E02BD4EC7400620DDD /* Dictionary.swift in Sources */,
 				E1CAF6602BA345830087D991 /* MediaViewModel.swift in Sources */,
+				E19D41A82BEEDC5F0082B8B2 /* UserLocalSecurityViewModel.swift in Sources */,
 				E111D8FA28D0400900400001 /* PagingLibraryView.swift in Sources */,
 				E1EA9F6B28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				BD0BA22F2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */,
@@ -4201,6 +4206,7 @@
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
 				E18E01AB288746AF0022598C /* PillHStack.swift in Sources */,
 				E1401CAB2938140A00E8B599 /* LightAppIcon.swift in Sources */,
+				E19D41A72BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift in Sources */,
 				E18E01E4288747230022598C /* CompactLogoScrollView.swift in Sources */,
 				E15D63EF2BD6DFC200AA665D /* SystemImageable.swift in Sources */,
 				E18E0207288749200022598C /* AttributeStyleModifier.swift in Sources */,

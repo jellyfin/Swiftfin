@@ -14,10 +14,12 @@ import LocalAuthentication
 import OrderedCollections
 import SwiftUI
 
-// TODO: authentication view during face ID
+// TODO: authentication view during device authentication
 //       - could use provided UI, but is iOS 16+
-//       - could just ignore for iOS 15
+//       - could just ignore for iOS 15, or basic view
 // TODO: user ordering
+//       - name
+//       - last signed in date
 
 struct SelectUserView: View {
 
@@ -145,7 +147,7 @@ struct SelectUserView: View {
                     isPresentingLocalPin = true
                     return
                 }
-            case .save: ()
+            case .none: ()
             }
 
             viewModel.send(.signIn(user, pin: pin))
@@ -552,12 +554,12 @@ struct SelectUserView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-                
+
                 self.error = eventError
                 self.isPresentingError = true
             case let .signedIn(user):
                 UIDevice.feedback(.success)
-                
+
                 Defaults[.lastSignedInUserID] = user.id
                 Container.userSession.reset()
                 Notifications[.didSignIn].post()

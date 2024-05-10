@@ -13,18 +13,18 @@ import Foundation
 
 enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
 
+    case none
     case requireDeviceAuthentication
     case requirePin
-    case save
 
     var displayTitle: String {
         switch self {
+        case .none:
+            "None"
         case .requireDeviceAuthentication:
             "Device Authentication"
         case .requirePin:
             "Pin"
-        case .save:
-            "Save"
         }
     }
 }

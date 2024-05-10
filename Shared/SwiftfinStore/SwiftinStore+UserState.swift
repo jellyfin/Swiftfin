@@ -9,6 +9,7 @@
 import CoreStore
 import Foundation
 import JellyfinAPI
+import KeychainSwift
 import Pulse
 import UIKit
 
@@ -62,7 +63,7 @@ extension UserState {
 extension UserState {
 
     /// Deletes the model that this state represents and
-    /// all settings from `Defaults` and `StoredValues`
+    /// all settings from `Defaults` `Keychain`, and `StoredValues`
     func delete() throws {
         try SwiftfinStore.dataStack.perform { transaction in
             guard let storedUser = try transaction.fetchOne(From<UserModel>().where(\.$id == id)) else {
@@ -77,6 +78,9 @@ extension UserState {
         }
 
         UserDefaults.userSuite(id: id).removeAll()
+
+        let keychain = KeychainSwift()
+        keychain.delete("\(id)-pin")
     }
 
     /// Deletes user settings from `UserDefaults` and `StoredValues`

@@ -46,7 +46,7 @@ extension StoredValues.Keys {
             "userSignInPolicy",
             ownerID: "temporary",
             domain: "userSignInPolicy",
-            default: .save
+            default: .none
         )
 
         static let userLocalPin: Key<String> = TempKey(
