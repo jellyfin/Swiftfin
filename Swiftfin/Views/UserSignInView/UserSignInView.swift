@@ -8,8 +8,11 @@
 
 import Defaults
 import Factory
+import LocalAuthentication
 import Stinsen
 import SwiftUI
+
+// TODO: ignore biometric authentication `canceled by user` NSError
 
 struct UserSignInView: View {
 
@@ -44,6 +47,67 @@ struct UserSignInView: View {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
+    // TODO: local pin stuff
+
+    private func openQuickConnect() {
+        Task {
+            if signInPolicy == .requireDeviceAuthentication {
+                try await performDeviceAuthentication(
+                    reason: "Require device authentication to sign in to the Quick Connect user on this device"
+                )
+            }
+
+            router.route(to: \.quickConnect, viewModel.quickConnect)
+        }
+    }
+
+    private func signInUserPassword() {
+        Task {
+            if signInPolicy == .requireDeviceAuthentication {
+                try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
+            }
+
+            viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+        }
+    }
+
+    // error logging/presentation is handled within here, just
+    // use try+thrown error in local Task for early return
+    private func performDeviceAuthentication(reason: String) async throws {
+        let context = LAContext()
+        var policyError: NSError?
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &policyError) else {
+            viewModel.logger.critical("\(policyError!.localizedDescription)")
+
+            await MainActor.run {
+                self
+                    .error =
+                    JellyfinAPIError(
+                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                    )
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+
+        do {
+            try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "I think it's funny")
+        } catch {
+            print(type(of: error))
+            print(error)
+            viewModel.logger.critical("\(error.localizedDescription)")
+
+            await MainActor.run {
+                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+    }
+
     @ViewBuilder
     private var signInSection: some View {
         Section {
@@ -58,9 +122,7 @@ struct UserSignInView: View {
             UnmaskSecureField(L10n.password, text: $password) {
                 focusedTextField = nil
 
-                if username.isNotEmpty {
-                    viewModel.send(.signIn(username: username, password: password))
-                }
+                signInUserPassword()
             }
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -69,15 +131,6 @@ struct UserSignInView: View {
             Text(L10n.signInToServer(viewModel.server.name))
         } footer: {
             switch signInPolicy {
-            case .doNotSave:
-                HStack {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                        .backport
-                        .fontWeight(.bold)
-
-                    Text("This user will not be saved.")
-                }
             case .requireDeviceAuthentication:
                 HStack {
                     Image(systemName: "exclamationmark.circle.fill")
@@ -109,7 +162,8 @@ struct UserSignInView: View {
         } else {
             ListRowButton(L10n.signIn) {
                 focusedTextField = nil
-                viewModel.send(.signIn(username: username, password: password))
+
+                signInUserPassword()
             }
             .disabled(username.isEmpty)
             .foregroundStyle(
@@ -122,7 +176,7 @@ struct UserSignInView: View {
         if viewModel.isQuickConnectEnabled {
             Section {
                 ListRowButton(L10n.quickConnect) {
-                    router.route(to: \.quickConnect, viewModel.quickConnect)
+                    openQuickConnect()
                 }
                 .disabled(viewModel.state == .signingIn)
                 .foregroundStyle(
@@ -176,6 +230,10 @@ struct UserSignInView: View {
         .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
             router.dismissCoordinator()
         }
+        .onChange(of: signInPolicy) { newValue in
+            // necessary for Quick Connect sign in
+            StoredValues[.Temp.userSignInPolicy] = newValue
+        }
         .onReceive(viewModel.events) { event in
             switch event {
             case let .duplicateUser(duplicateUser):
@@ -201,7 +259,7 @@ struct UserSignInView: View {
             viewModel.send(.getPublicData)
         }
         .topBarTrailing {
-            if viewModel.state == .signingIn {
+            if viewModel.state == .signingIn || viewModel.backgroundStates.contains(.gettingPublicData) {
                 ProgressView()
             }
 

@@ -29,8 +29,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CFBundledisplayTitle</key>
-	<string>Swiftfin</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -51,6 +49,8 @@
 		<string>_googlecast._tcp</string>
 		<string>_F007D354._googlecast._tcp</string>
 	</array>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use FaceID to lock and access local users.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>${PRODUCT_NAME} uses the local network to connect to your Jellyfin server &amp; discover Cast-enabled devices on your WiFi
 network.</string>

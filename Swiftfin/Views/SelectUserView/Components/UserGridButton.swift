@@ -109,18 +109,16 @@ extension SelectUserView {
                         }
                     }
 
-                    VStack {
-                        Text(user.username)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(labelForegroundStyle)
-                            .lineLimit(1)
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
 
-                        if showServer {
-                            Text(server.name)
-                                .font(.footnote)
-                                .foregroundStyle(.secondary)
-                        }
+                    if showServer {
+                        Text(server.name)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

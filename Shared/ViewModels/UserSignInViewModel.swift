@@ -13,6 +13,7 @@ import Factory
 import Foundation
 import Get
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 #warning("TODO: NSURLErrorDomain Code=-999 cancelled error on sign in")
@@ -39,10 +40,14 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case getPublicData
-        case signIn(username: String, password: String)
+        case signIn(username: String, password: String, policy: UserSignInPolicy)
         case signInDuplicate(UserState, replace: Bool)
-        case signInQuickConnect(secret: String)
+        case signInQuickConnect(secret: String, policy: UserSignInPolicy)
         case cancel
+    }
+
+    enum BackgroundState: Hashable {
+        case gettingPublicData
     }
 
     // MARK: State
@@ -52,6 +57,8 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         case signingIn
     }
 
+    @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     var isQuickConnectEnabled = false
     @Published
@@ -85,7 +92,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
                     guard let self else { return }
 
                     Task {
-                        await self.send(.signInQuickConnect(secret: secret))
+                        await self.send(.signInQuickConnect(secret: secret, policy: StoredValues[.Temp.userSignInPolicy]))
                     }
                 }
             }
@@ -96,27 +103,37 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         switch action {
         case .getPublicData:
             Task { [weak self] in
-                let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()
-                let publicUsers = try await self?.retrievePublicUsers()
-                let serverMessage = try await self?.retrieveServerDisclaimer()
+                do {
 
-                guard let self else { return }
+                    await MainActor.run {
+                        let _ = self?.backgroundStates.append(.gettingPublicData)
+                    }
 
-                await MainActor.run {
-                    self.isQuickConnectEnabled = isQuickConnectEnabled ?? false
-                    self.publicUsers = publicUsers ?? []
-                    self.serverDisclaimer = serverMessage
+                    let isQuickConnectEnabled = try await self?.retrieveQuickConnectEnabled()
+                    let publicUsers = try await self?.retrievePublicUsers()
+                    let serverMessage = try await self?.retrieveServerDisclaimer()
+
+                    guard let self else { return }
+
+                    await MainActor.run {
+                        self.backgroundStates.remove(.gettingPublicData)
+                        self.isQuickConnectEnabled = isQuickConnectEnabled ?? false
+                        self.publicUsers = publicUsers ?? []
+                        self.serverDisclaimer = serverMessage
+                    }
+                } catch {
+                    self?.backgroundStates.remove(.gettingPublicData)
                 }
             }
             .store(in: &cancellables)
 
             return state
-        case let .signIn(username, password):
+        case let .signIn(username, password, policy):
             signInTask?.cancel()
 
             signInTask = Task {
                 do {
-                    let user = try await signIn(username: username, password: password)
+                    let user = try await signIn(username: username, password: password, policy: policy)
 
                     if isDuplicate(user: user) {
                         await MainActor.run {
@@ -156,12 +173,12 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             }
 
             return state
-        case let .signInQuickConnect(secret):
+        case let .signInQuickConnect(secret, policy):
             signInTask?.cancel()
 
             signInTask = Task {
                 do {
-                    let user = try await signIn(secret: secret)
+                    let user = try await signIn(secret: secret, policy: policy)
 
                     if isDuplicate(user: user) {
                         await MainActor.run {
@@ -198,7 +215,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func signIn(username: String, password: String) async throws -> UserState {
+    private func signIn(username: String, password: String, policy: UserSignInPolicy) async throws -> UserState {
         let username = username
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
@@ -219,6 +236,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         StoredValues[.Temp.userData] = userData
+        StoredValues[.Temp.userSignInPolicy] = policy
 
         return UserState(
             accessToken: accessToken,
@@ -228,7 +246,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         )
     }
 
-    private func signIn(secret: String) async throws -> UserState {
+    private func signIn(secret: String, policy: UserSignInPolicy) async throws -> UserState {
 
         let response = try await server.client.signIn(quickConnectSecret: secret)
 
@@ -242,6 +260,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         StoredValues[.Temp.userData] = userData
+        StoredValues[.Temp.userSignInPolicy] = policy
 
         return UserState(
             accessToken: accessToken,
@@ -280,7 +299,8 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
             return newUser.state
         }
 
-        StoredValues[.User.data(id: user.id)] = StoredValues[.Temp.userData]
+        user.data = StoredValues[.Temp.userData]
+        user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
     }
 
     private func retrievePublicUsers() async throws -> [UserDto] {

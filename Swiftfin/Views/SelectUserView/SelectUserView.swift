@@ -9,9 +9,11 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
+import LocalAuthentication
 import OrderedCollections
 import SwiftUI
 
+// TODO: authentication view during face ID
 // TODO: user ordering
 
 struct SelectUserView: View {
@@ -41,6 +43,8 @@ struct SelectUserView: View {
     @State
     private var contentSize: CGSize = .zero
     @State
+    private var error: Error? = nil
+    @State
     private var gridItems: OrderedSet<UserGridItem> = []
     @State
     private var gridItemSize: CGSize = .zero
@@ -48,6 +52,8 @@ struct SelectUserView: View {
     private var isEditingUsers: Bool = false
     @State
     private var isPresentingConfirmDeleteUsers = false
+    @State
+    private var isPresentingError: Bool = false
     @State
     private var padGridItemColumnCount: Int = 1
     @State
@@ -117,6 +123,52 @@ struct SelectUserView: View {
                 .keys
                 .first { $0.id == id }?
                 .splashScreenImageSource()
+        }
+    }
+
+    private func select(user: UserState) {
+        Task { @MainActor in
+            if user.signInPolicy == .requireDeviceAuthentication {
+                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+            }
+
+            UIDevice.feedback(.success)
+            viewModel.send(.signIn(user))
+        }
+    }
+
+    // error logging/presentation is handled within here, just
+    // use try+thrown error in local Task for early return
+    private func performDeviceAuthentication(reason: String) async throws {
+        let context = LAContext()
+        var policyError: NSError?
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &policyError) else {
+            viewModel.logger.critical("\(policyError!.localizedDescription)")
+
+            await MainActor.run {
+                self
+                    .error =
+                    JellyfinAPIError(
+                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                    )
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+
+        do {
+            try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "I think it's funny")
+        } catch {
+            viewModel.logger.critical("\(error.localizedDescription)")
+
+            await MainActor.run {
+                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
         }
     }
 
@@ -218,8 +270,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
-                    UIDevice.feedback(.success)
-                    viewModel.send(.signIn(user))
+                    select(user: user)
                 }
             } onDelete: {
                 selectedUsers.insert(user)
@@ -265,8 +316,7 @@ struct SelectUserView: View {
                 if isEditingUsers {
                     selectedUsers.toggle(value: user)
                 } else {
-                    UIDevice.feedback(.success)
-                    viewModel.send(.signIn(user))
+                    select(user: user)
                 }
             } onDelete: {
                 selectedUsers.insert(user)

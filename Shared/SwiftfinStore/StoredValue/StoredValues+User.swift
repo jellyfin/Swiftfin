@@ -66,6 +66,17 @@ extension StoredValues.Keys {
 
     enum User {
 
+        // Doesn't use `CurrentUserKey` because data may be
+        // retrieved and stored without a user session
+        static func data(id: String) -> Key<UserDto> {
+            UserKey(
+                "userData",
+                ownerID: id,
+                domain: "userData",
+                default: .init()
+            )
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
@@ -101,14 +112,12 @@ extension StoredValues.Keys {
             )
         }
 
-        // Doesn't use `CurrentUserKey` because data may be
-        // retrieved and stored without a user session
-        static func data(id: String) -> Key<UserDto> {
+        static func signInPolicy(id: String) -> Key<UserSignInPolicy> {
             UserKey(
-                "userData",
+                "signInPolicy",
                 ownerID: id,
-                domain: "userData",
-                default: .init()
+                domain: "signInPolicy",
+                default: .save
             )
         }
     }

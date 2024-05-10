@@ -37,6 +37,29 @@ extension SwiftfinStore.State {
 
 extension UserState {
 
+    typealias Key = StoredValues.Key
+
+    var data: UserDto {
+        get {
+            StoredValues[.User.data(id: id)]
+        }
+        nonmutating set {
+            StoredValues[.User.data(id: id)] = newValue
+        }
+    }
+
+    var signInPolicy: UserSignInPolicy {
+        get {
+            StoredValues[.User.signInPolicy(id: id)]
+        }
+        nonmutating set {
+            StoredValues[.User.signInPolicy(id: id)] = newValue
+        }
+    }
+}
+
+extension UserState {
+
     /// Deletes the model that this state represents and
     /// all settings from `Defaults` and `StoredValues`
     func delete() throws {

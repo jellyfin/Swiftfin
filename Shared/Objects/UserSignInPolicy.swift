@@ -8,17 +8,17 @@
 
 import Foundation
 
+// TODO: require remote sign in every time
+//       - actually found to be a bit difficult?
+
 enum UserSignInPolicy: String, CaseIterable, Codable, Displayable {
 
-    case doNotSave
     case requireDeviceAuthentication
     case requirePin
     case save
 
     var displayTitle: String {
         switch self {
-        case .doNotSave:
-            "Do Not Save"
         case .requireDeviceAuthentication:
             "Device Authentication"
         case .requirePin:

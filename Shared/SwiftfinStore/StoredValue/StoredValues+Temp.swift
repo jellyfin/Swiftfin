@@ -42,6 +42,13 @@ extension StoredValues.Keys {
 
     enum Temp {
 
+        static let userSignInPolicy: Key<UserSignInPolicy> = TempKey(
+            "userSignInPolicy",
+            ownerID: "temporary",
+            domain: "userSignInPolicy",
+            default: .save
+        )
+
         static let userData: Key<UserDto> = TempKey(
             "tempUserData",
             ownerID: "temporary",

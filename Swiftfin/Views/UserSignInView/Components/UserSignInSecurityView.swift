@@ -42,21 +42,12 @@ extension UserSignInView {
                         )
 
                         BulletedList {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Do Not Save")
-                                    .fontWeight(.semibold)
-
-                                Text("Does not save the user to this device. Some Swiftfin features may be disabled.")
-                                    .lineLimit(5)
-                            }
-                            .padding(.bottom, 15)
 
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Device Authentication")
                                     .fontWeight(.semibold)
 
-                                Text("Require local device authentication when signing into the user.")
-                                    .lineLimit(5)
+                                Text("Require local device authentication when signing in to the user.")
                             }
                             .padding(.bottom, 15)
 
@@ -64,8 +55,7 @@ extension UserSignInView {
                                 Text("Pin")
                                     .fontWeight(.semibold)
 
-                                Text("Require a local pin when signing into the user.")
-                                    .lineLimit(5)
+                                Text("Require a local pin when signing in to the user.")
                             }
                             .padding(.bottom, 15)
 
@@ -74,7 +64,6 @@ extension UserSignInView {
                                     .fontWeight(.semibold)
 
                                 Text("Save the user to this device without any local authentication.")
-                                    .lineLimit(5)
                             }
                         }
                     }
