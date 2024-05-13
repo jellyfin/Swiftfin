@@ -16,16 +16,47 @@ struct ServerCheckView: View {
     @StateObject
     private var viewModel = ServerCheckViewModel()
 
+    @ViewBuilder
+    private func errorView<E: Error>(_ error: E) -> some View {
+        VStack(spacing: 10) {
+            Image(systemName: "xmark.circle.fill")
+                .font(.system(size: 72))
+                .foregroundColor(Color.red)
+
+            Text(viewModel.userSession.server.name)
+                .fontWeight(.semibold)
+                .foregroundStyle(.secondary)
+
+            Text(error.localizedDescription)
+                .frame(minWidth: 50, maxWidth: 240)
+                .multilineTextAlignment(.center)
+
+            PrimaryButton(title: L10n.retry)
+                .onSelect {
+                    viewModel.send(.checkServer)
+                }
+                .frame(maxWidth: 300)
+                .frame(height: 50)
+        }
+    }
+
     var body: some View {
         WrappedView {
             switch viewModel.state {
             case .initial, .connecting, .connected:
                 ProgressView()
             case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.checkServer)
-                    }
+                errorView(error)
+            }
+        }
+        .navigationTitle("Server Check")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                Image(uiImage: .jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 30)
             }
         }
         .onFirstAppear {
