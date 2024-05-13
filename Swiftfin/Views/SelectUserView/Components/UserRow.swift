@@ -133,15 +133,20 @@ extension SelectUserView {
                                 if isEditing, isSelected {
                                     Image(systemName: "checkmark.circle.fill")
                                         .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 20, height: 20)
+                                        .backport
+                                        .fontWeight(.bold)
+                                        .aspectRatio(1, contentMode: .fit)
+                                        .frame(width: 24, height: 24)
                                         .symbolRenderingMode(.palette)
                                         .foregroundStyle(accentColor.overlayColor, accentColor)
+
                                 } else if isEditing {
                                     Image(systemName: "circle")
                                         .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 20, height: 20)
+                                        .backport
+                                        .fontWeight(.bold)
+                                        .aspectRatio(1, contentMode: .fit)
+                                        .frame(width: 24, height: 24)
                                         .foregroundStyle(.secondary)
                                 }
                             }

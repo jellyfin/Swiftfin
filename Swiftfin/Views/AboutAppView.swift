@@ -43,7 +43,8 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(.logoGithub)
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {
@@ -56,7 +57,8 @@ struct AboutAppView: View {
                             .resizable()
                             .backport
                             .fontWeight(.bold)
-                            .frame(width: 20, height: 20)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {
@@ -67,7 +69,8 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(systemName: "gearshape.fill")
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {
