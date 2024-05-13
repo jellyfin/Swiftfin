@@ -15,8 +15,6 @@ import Nuke
 import Stinsen
 import SwiftUI
 
-#warning("TODO: take a look at changing server url while not signed in, don't think it's right")
-
 final class MainCoordinator: NavigationCoordinatable {
 
     @Injected(LogManager.service)
