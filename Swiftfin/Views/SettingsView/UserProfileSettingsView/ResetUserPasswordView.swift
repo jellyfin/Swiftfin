@@ -100,7 +100,7 @@ struct ResetUserPasswordView: View {
                     .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
                 }
             } footer: {
-                Text("Changes the user password into the Jellyfin server. This does not change Swiftfin local security settings.")
+                Text("Changes the Jellyfin server user password. This does not change any Swiftfin settings.")
             }
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)

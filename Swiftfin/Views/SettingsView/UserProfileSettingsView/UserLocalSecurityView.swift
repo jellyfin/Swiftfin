@@ -80,7 +80,7 @@ struct UserLocalSecurityView: View {
                 self
                     .error =
                     JellyfinAPIError(
-                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
                 self.isPresentingError = true
             }
@@ -94,7 +94,7 @@ struct UserLocalSecurityView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.error = JellyfinAPIError("Unable to perform device authentication")
                 self.isPresentingError = true
             }
 

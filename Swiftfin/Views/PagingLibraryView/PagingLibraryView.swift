@@ -256,7 +256,7 @@ struct PagingLibraryView<Element: Poster>: View {
     // TODO: becoming too large for typechecker during development, should break up somehow
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
@@ -270,7 +270,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)

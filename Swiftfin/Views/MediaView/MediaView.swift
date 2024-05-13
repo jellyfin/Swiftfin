@@ -72,7 +72,7 @@ struct MediaView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 contentView
@@ -82,7 +82,7 @@ struct MediaView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
         .topBarTrailing {

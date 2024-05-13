@@ -58,7 +58,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 contentView
@@ -68,7 +68,7 @@ struct HomeView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
             viewModel.send(.refresh)
         }

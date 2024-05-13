@@ -41,14 +41,19 @@ struct ServerCheckView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .initial, .connecting, .connected:
-                ProgressView()
+                ZStack {
+                    Color.clear
+
+                    ProgressView()
+                }
             case let .error(error):
                 errorView(error)
             }
         }
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .navigationTitle("Server Check")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

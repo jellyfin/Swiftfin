@@ -12,11 +12,10 @@ import LocalAuthentication
 import Stinsen
 import SwiftUI
 
-// TODO: ignore biometric authentication `canceled by user` NSError
+// TODO: ignore device authentication `canceled by user` NSError
 // TODO: fix duplicate user
 //       - could be good to replace access token
-//       - need to think about change in policy
-//       - remember to check against current pin/device auth
+//       - check against current user policy
 
 struct UserSignInView: View {
 
@@ -142,7 +141,7 @@ struct UserSignInView: View {
                 self
                     .error =
                     JellyfinAPIError(
-                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
                 self.isPresentingError = true
             }
@@ -151,12 +150,12 @@ struct UserSignInView: View {
         }
 
         do {
-            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "I think it's funny")
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.error = JellyfinAPIError("Unable to perform device authentication")
                 self.isPresentingError = true
             }
 

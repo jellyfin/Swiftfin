@@ -30,6 +30,7 @@ final class UserSession {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
+            sessionConfiguration: .swiftfin,
             sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger()),
             accessToken: user.accessToken
         )
