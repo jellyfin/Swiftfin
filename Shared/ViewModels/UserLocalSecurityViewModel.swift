@@ -58,7 +58,6 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
     }
 
     func check(oldPin: String) throws {
-        let keychain = KeychainSwift()
 
         if let storedPin = keychain.get("\(userSession.user.id)-pin") {
             if oldPin != storedPin {
@@ -68,9 +67,7 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
         }
     }
 
-    func set(newPolicy: UserAccessPolicy, newPin: String) {
-
-        let keychain = KeychainSwift()
+    func set(newPolicy: UserAccessPolicy, newPin: String, newPinHint: String) {
 
         if newPolicy == .requirePin {
             keychain.set(newPin, forKey: "\(userSession.user.id)-pin")
@@ -79,5 +76,6 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
         }
 
         userSession.user.signInPolicy = newPolicy
+        userSession.user.pinHint = newPinHint
     }
 }

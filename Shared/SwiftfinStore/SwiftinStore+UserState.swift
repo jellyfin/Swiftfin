@@ -49,6 +49,15 @@ extension UserState {
         }
     }
 
+    var pinHint: String {
+        get {
+            StoredValues[.User.pinHint(id: id)]
+        }
+        nonmutating set {
+            StoredValues[.User.pinHint(id: id)] = newValue
+        }
+    }
+
     // TODO: rename to accessPolicy and fix all uses
     var signInPolicy: UserAccessPolicy {
         get {
@@ -79,7 +88,7 @@ extension UserState {
 
         UserDefaults.userSuite(id: id).removeAll()
 
-        let keychain = KeychainSwift()
+        let keychain = Keychain.service()
         keychain.delete("\(id)-pin")
     }
 

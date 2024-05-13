@@ -77,28 +77,12 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             }
         case let .signIn(user, pin):
 
-            // TODO: make a service?
-            let keychain = KeychainSwift()
-
             if user.signInPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
                 if pin != storedPin {
                     eventSubject.send(.error(.init("Incorrect pin for \(user.username)")))
 
                     return .content
                 }
-            }
-
-            // TODO: needs to be moved elsewhere and implicitly cancelleable, or other mechanism
-            //       fetches user data
-            Task {
-                guard let userServer = servers.keys.first(where: { $0.id == user.serverID }) else {
-                    assertionFailure("?")
-                    return
-                }
-
-                let userData = try await user.getUserData(server: userServer)
-
-                StoredValues[.User.data(id: user.id)] = userData
             }
 
             eventSubject.send(.signedIn(user))

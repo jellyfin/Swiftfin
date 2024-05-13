@@ -26,8 +26,8 @@ final class SelectUserCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var userSignIn = makeUserSignIn
 
-    func makeAdvancedSettings() -> NavigationViewCoordinator<BasicAppSettingsCoordinator> {
-        NavigationViewCoordinator(BasicAppSettingsCoordinator())
+    func makeAdvancedSettings() -> NavigationViewCoordinator<AppSettingsCoordinator> {
+        NavigationViewCoordinator(AppSettingsCoordinator())
     }
 
     func makeConnectToServer() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

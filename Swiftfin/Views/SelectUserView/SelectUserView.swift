@@ -20,6 +20,8 @@ import SwiftUI
 // TODO: user ordering
 //       - name
 //       - last signed in date
+// TODO: for random splash screen, instead have a random sorted array
+//       for failure cases
 
 struct SelectUserView: View {
 
@@ -160,14 +162,14 @@ struct SelectUserView: View {
         let context = LAContext()
         var policyError: NSError?
 
-        guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &policyError) else {
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
             viewModel.logger.critical("\(policyError!.localizedDescription)")
 
             await MainActor.run {
                 self
                     .error =
                     JellyfinAPIError(
-                        "Unable to perform biometric authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
                 self.isPresentingError = true
             }
@@ -176,12 +178,12 @@ struct SelectUserView: View {
         }
 
         do {
-            try await context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "I think it's funny")
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform biometric authentication")
+                self.error = JellyfinAPIError("Unable to perform device authentication")
                 self.isPresentingError = true
             }
 
@@ -635,9 +637,13 @@ struct SelectUserView: View {
 
             Button("Cancel", role: .cancel) {}
         } message: {
-            let username = selectedUsers.first?.username ?? .emptyDash
+            if let user = selectedUsers.first, user.pinHint.isNotEmpty {
+                Text(user.pinHint)
+            } else {
+                let username = selectedUsers.first?.username ?? .emptyDash
 
-            Text("Enter pin for \(username)")
+                Text("Enter pin for \(username)")
+            }
         }
     }
 }

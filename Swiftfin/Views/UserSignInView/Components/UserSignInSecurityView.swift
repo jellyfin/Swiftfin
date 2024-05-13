@@ -18,15 +18,24 @@ extension UserSignInView {
         private var router: UserSignInCoordinator.Router
 
         @Binding
+        private var pinHint: String
+        @Binding
         private var signInPolicy: UserAccessPolicy
 
         @State
         private var listSize: CGSize = .zero
         @State
+        private var updatePinHint: String
+        @State
         private var updateSignInPolicy: UserAccessPolicy
 
-        init(signInPolicy: Binding<UserAccessPolicy>) {
+        init(
+            pinHint: Binding<String>,
+            signInPolicy: Binding<UserAccessPolicy>
+        ) {
+            self._pinHint = pinHint
             self._signInPolicy = signInPolicy
+            self._updatePinHint = State(initialValue: pinHint.wrappedValue)
             self._updateSignInPolicy = State(initialValue: signInPolicy.wrappedValue)
         }
 
@@ -72,14 +81,33 @@ extension UserSignInView {
                         .frame(width: max(10, listSize.width - 50))
                     }
                 }
+
+                if signInPolicy == .requirePin {
+                    Section {
+                        TextField("Hint", text: $updatePinHint)
+                    } header: {
+                        Text("Hint")
+                    } footer: {
+                        Text("Set a hint when prompting for the pin.")
+                    }
+                }
             }
+            .animation(.linear, value: signInPolicy)
             .navigationTitle("Security")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.popLast()
             }
-            .onChange(of: updateSignInPolicy) { _ in
-                signInPolicy = updateSignInPolicy
+            .onChange(of: updatePinHint) { newValue in
+                let truncated = String(newValue.prefix(120))
+                updatePinHint = truncated
+                pinHint = truncated
+            }
+            .onChange(of: updatePinHint) { newValue in
+                pinHint = newValue
+            }
+            .onChange(of: updateSignInPolicy) { newValue in
+                signInPolicy = newValue
             }
             .trackingSize($listSize)
         }

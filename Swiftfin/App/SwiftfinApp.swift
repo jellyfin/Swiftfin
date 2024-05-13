@@ -41,6 +41,8 @@ struct SwiftfinApp: App {
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
 
+        UIScrollView.appearance().keyboardDismissMode = .onDrag
+
         // Sometimes the tab bar won't appear properly on push, always have material background
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
     }

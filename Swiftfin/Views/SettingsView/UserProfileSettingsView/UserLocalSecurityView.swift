@@ -15,6 +15,7 @@ import SwiftUI
 // TODO: present toast when authentication successfully changed
 // TODO: pop is just a workaround to get change published from usersession.
 //       find fix and don't pop when successfully changed
+// TODO: could cleanup/refactor greatly
 
 struct UserLocalSecurityView: View {
 
@@ -39,6 +40,8 @@ struct UserLocalSecurityView: View {
     @State
     private var pin: String = ""
     @State
+    private var pinHint: String = ""
+    @State
     private var signInPolicy: UserAccessPolicy = .none
 
     @StateObject
@@ -61,7 +64,7 @@ struct UserLocalSecurityView: View {
             return
         }
 
-        viewModel.set(newPolicy: signInPolicy, newPin: pin)
+        viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
     }
 
     // error logging/presentation is handled within here, just
@@ -86,7 +89,7 @@ struct UserLocalSecurityView: View {
         }
 
         do {
-            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: "I think it's funny")
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
         } catch {
             viewModel.logger.critical("\(error.localizedDescription)")
 
@@ -139,11 +142,22 @@ struct UserLocalSecurityView: View {
                     .frame(width: max(10, listSize.width - 50))
                 }
             }
+
+            if signInPolicy == .requirePin {
+                Section {
+                    TextField("Hint", text: $pinHint)
+                } header: {
+                    Text("Hint")
+                } footer: {
+                    Text("Set a hint when prompting for the pin.")
+                }
+            }
         }
         .animation(.linear, value: signInPolicy)
         .navigationTitle("Security")
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
+            pinHint = viewModel.userSession.user.pinHint
             signInPolicy = viewModel.userSession.user.signInPolicy
         }
         .onReceive(viewModel.events) { event in
@@ -178,12 +192,12 @@ struct UserLocalSecurityView: View {
                         reason: "User \(viewModel.userSession.user.username) requires device authentication"
                     )
 
-                    viewModel.set(newPolicy: signInPolicy, newPin: pin)
+                    viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
                     router.popLast()
                 }
             case .promptForNewPin:
                 onPinCompletion = {
-                    viewModel.set(newPolicy: signInPolicy, newPin: pin)
+                    viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
                     router.popLast()
                 }
 

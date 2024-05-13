@@ -78,6 +78,9 @@ extension SelectUserView {
         var body: some View {
             if serverSelection == .all {
                 Menu {
+
+                    Text("Select server")
+
                     ForEach(servers) { server in
                         Button {
                             action(server)

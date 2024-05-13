@@ -14,7 +14,8 @@ import JellyfinAPI
 import Nuke
 import Stinsen
 import SwiftUI
-import WidgetKit
+
+#warning("TODO: take a look at changing server url while not signed in, don't think it's right")
 
 final class MainCoordinator: NavigationCoordinatable {
 
@@ -27,24 +28,27 @@ final class MainCoordinator: NavigationCoordinatable {
     var mainTab = makeMainTab
     @Root
     var selectUser = makeSelectUser
+    @Root
+    var serverCheck = makeServerCheck
 
     @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
-    @Route(.fullScreen)
     var liveVideoPlayer = makeLiveVideoPlayer
+    @Route(.modal)
+    var settings = makeSettings
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
     init() {
 
         if Container.userSession() != nil, !Defaults[.signOutOnClose] {
-            stack = NavigationStack(initial: \MainCoordinator.mainTab)
+            stack = NavigationStack(initial: \.serverCheck)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.selectUser)
         }
 
-        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB
+        // TODO: move these to the App instead?
 
-        WidgetCenter.shared.reloadAllTimelines()
-        UIScrollView.appearance().keyboardDismissMode = .onDrag
+        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB
 
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
@@ -56,13 +60,19 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didSignIn() {
         logger.info("Signed in")
-        root(\.mainTab)
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.serverCheck)
+        }
     }
 
     @objc
     func didSignOut() {
         logger.info("Signed out")
-        root(\.selectUser)
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.selectUser)
+        }
     }
 
     @objc
@@ -88,12 +98,22 @@ final class MainCoordinator: NavigationCoordinatable {
         Notifications[.didSignIn].post()
     }
 
+    func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
+        NavigationViewCoordinator(SettingsCoordinator())
+    }
+
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
         NavigationViewCoordinator(SelectUserCoordinator())
+    }
+
+    func makeServerCheck() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerCheckView()
+        }
     }
 
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {

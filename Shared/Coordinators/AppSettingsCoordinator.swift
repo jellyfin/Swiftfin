@@ -10,9 +10,9 @@ import PulseUI
 import Stinsen
 import SwiftUI
 
-final class BasicAppSettingsCoordinator: NavigationCoordinatable {
+final class AppSettingsCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \BasicAppSettingsCoordinator.start)
+    let stack = NavigationStack(initial: \AppSettingsCoordinator.start)
 
     @Root
     var start = makeStart

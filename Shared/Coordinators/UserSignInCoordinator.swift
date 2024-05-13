@@ -13,6 +13,11 @@ import SwiftUI
 
 final class UserSignInCoordinator: NavigationCoordinatable {
 
+    struct SecurityParameters {
+        let pinHint: Binding<String>
+        let signInPolicy: Binding<UserAccessPolicy>
+    }
+
     let stack = NavigationStack(initial: \UserSignInCoordinator.start)
 
     @Root
@@ -38,9 +43,12 @@ final class UserSignInCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeSecurity(signInPolicy: Binding<UserAccessPolicy>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeSecurity(parameters: SecurityParameters) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            UserSignInView.SecurityView(signInPolicy: signInPolicy)
+            UserSignInView.SecurityView(
+                pinHint: parameters.pinHint,
+                signInPolicy: parameters.signInPolicy
+            )
         }
     }
     #endif

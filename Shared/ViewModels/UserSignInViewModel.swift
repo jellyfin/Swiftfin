@@ -302,13 +302,13 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         user.data = StoredValues[.Temp.userData]
         user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
 
-        // TODO: make a service?
-        let keychain = KeychainSwift()
         keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
+        user.pinHint = StoredValues[.Temp.userLocalPinHint]
 
         // TODO: remove when implemented periodic cleanup elsewhere
         StoredValues[.Temp.userSignInPolicy] = .none
         StoredValues[.Temp.userLocalPin] = ""
+        StoredValues[.Temp.userLocalPinHint] = ""
     }
 
     private func retrievePublicUsers() async throws -> [UserDto] {

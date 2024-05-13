@@ -50,8 +50,6 @@ struct ResetUserPasswordView: View {
                 .textInputAutocapitalization(.none)
                 .focused($focusedPassword, equals: 0)
                 .disabled(viewModel.state == .resetting)
-            } header: {
-                Text("Changes the user password into the Jellyfin server. This does not change Swiftfin local security settings.")
             }
 
             Section("New Password") {
@@ -85,20 +83,24 @@ struct ResetUserPasswordView: View {
                 }
             }
 
-            if viewModel.state == .resetting {
-                ListRowButton(L10n.cancel) {
-                    viewModel.send(.cancel)
-                    focusedPassword = 0
+            Section {
+                if viewModel.state == .resetting {
+                    ListRowButton(L10n.cancel) {
+                        viewModel.send(.cancel)
+                        focusedPassword = 0
+                    }
+                    .foregroundStyle(.red, .red.opacity(0.2))
+                } else {
+                    ListRowButton("Reset") {
+                        focusedPassword = nil
+                        viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
+                    }
+                    .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
+                    .foregroundStyle(accentColor.overlayColor, accentColor)
+                    .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
                 }
-                .foregroundStyle(.red, .red.opacity(0.2))
-            } else {
-                ListRowButton("Reset") {
-                    focusedPassword = nil
-                    viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
-                }
-                .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
-                .foregroundStyle(accentColor.overlayColor, accentColor)
-                .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
+            } footer: {
+                Text("Changes the user password into the Jellyfin server. This does not change Swiftfin local security settings.")
             }
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)

@@ -12,6 +12,7 @@ import Foundation
 import JellyfinAPI
 
 // TODO: also have matching properties on `UserState` that get/set values
+// TODO: cleanup/organize
 
 // MARK: keys
 
@@ -68,6 +69,17 @@ extension StoredValues.Keys {
 
         // Doesn't use `CurrentUserKey` because data may be
         // retrieved and stored without a user session
+        static func accessPolicy(id: String) -> Key<UserAccessPolicy> {
+            UserKey(
+                "accessPolicy",
+                ownerID: id,
+                domain: "accessPolicy",
+                default: .none
+            )
+        }
+
+        // Doesn't use `CurrentUserKey` because data may be
+        // retrieved and stored without a user session
         static func data(id: String) -> Key<UserDto> {
             UserKey(
                 "userData",
@@ -112,12 +124,12 @@ extension StoredValues.Keys {
             )
         }
 
-        static func accessPolicy(id: String) -> Key<UserAccessPolicy> {
+        static func pinHint(id: String) -> Key<String> {
             UserKey(
-                "accessPolicy",
+                "pinHint",
                 ownerID: id,
-                domain: "accessPolicy",
-                default: .none
+                domain: "pinHint",
+                default: ""
             )
         }
     }

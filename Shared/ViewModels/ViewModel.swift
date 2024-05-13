@@ -9,11 +9,15 @@
 import Combine
 import Factory
 import Foundation
+import KeychainSwift
 
 class ViewModel: ObservableObject {
 
     @Injected(Container.dataStack)
     var dataStack
+
+    @Injected(Keychain.service)
+    var keychain
 
     @Injected(LogManager.service)
     var logger

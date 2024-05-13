@@ -46,6 +46,8 @@ struct UserSignInView: View {
     @State
     private var pin: String = ""
     @State
+    private var pinHint: String = ""
+    @State
     private var signInPolicy: UserAccessPolicy = .none
     @State
     private var username: String = ""
@@ -294,8 +296,12 @@ struct UserSignInView: View {
         .onChange(of: pin) { newValue in
             StoredValues[.Temp.userLocalPin] = newValue
         }
+        .onChange(of: pinHint) { newValue in
+            StoredValues[.Temp.userLocalPinHint] = newValue
+        }
         .onChange(of: signInPolicy) { newValue in
-            // necessary for Quick Connect sign in
+            // necessary for Quick Connect sign in, but could
+            // just use for general sign in
             StoredValues[.Temp.userSignInPolicy] = newValue
         }
         .onReceive(viewModel.events) { event in
@@ -328,7 +334,11 @@ struct UserSignInView: View {
             }
 
             Button("Security", systemImage: "gearshape.fill") {
-                router.route(to: \.security, $signInPolicy)
+                let parameters = UserSignInCoordinator.SecurityParameters(
+                    pinHint: $pinHint,
+                    signInPolicy: $signInPolicy
+                )
+                router.route(to: \.security, parameters)
             }
         }
         .alert(

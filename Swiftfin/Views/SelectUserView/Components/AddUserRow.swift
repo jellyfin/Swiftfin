@@ -13,13 +13,13 @@ extension SelectUserView {
 
     struct AddUserRow: View {
 
-        @Binding
-        private var serverSelection: SelectUserServerSelection
-
         @Environment(\.colorScheme)
         private var colorScheme
         @Environment(\.isEnabled)
         private var isEnabled
+
+        @Binding
+        private var serverSelection: SelectUserServerSelection
 
         private let action: (ServerState) -> Void
         private let servers: OrderedSet<ServerState>
@@ -83,6 +83,9 @@ extension SelectUserView {
         var body: some View {
             if serverSelection == .all {
                 Menu {
+
+                    Text("Select server")
+
                     ForEach(servers) { server in
                         Button {
                             action(server)

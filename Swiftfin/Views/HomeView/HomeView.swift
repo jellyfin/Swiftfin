@@ -22,6 +22,8 @@ struct HomeView: View {
     private var recentlyAddedPosterType
 
     @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
+    @EnvironmentObject
     private var router: HomeCoordinator.Router
 
     @StateObject
@@ -77,8 +79,11 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            SettingsBarButton(viewModel: viewModel) {
-                router.route(to: \.settings)
+            SettingsBarButton(
+                server: viewModel.userSession.server,
+                user: viewModel.userSession.user
+            ) {
+                mainRouter.route(to: \.settings)
             }
         }
         .sinceLastDisappear { interval in

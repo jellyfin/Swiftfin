@@ -10,6 +10,8 @@ import Defaults
 import Stinsen
 import SwiftUI
 
+// TODO: move sign out-stuff into super user when implemented
+
 struct AppSettingsView: View {
 
     @Default(.accentColor)
@@ -27,7 +29,7 @@ struct AppSettingsView: View {
     private var signOutOnClose
 
     @EnvironmentObject
-    private var router: BasicAppSettingsCoordinator.Router
+    private var router: AppSettingsCoordinator.Router
 
     @StateObject
     private var viewModel = SettingsViewModel()

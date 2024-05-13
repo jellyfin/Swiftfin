@@ -631,6 +631,9 @@
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
 		E19D41A72BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */; };
 		E19D41A82BEEDC5F0082B8B2 /* UserLocalSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */; };
+		E19D41AA2BF077130082B8B2 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41A92BF077130082B8B2 /* Keychain.swift */; };
+		E19D41AC2BF288110082B8B2 /* ServerCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */; };
+		E19D41AE2BF288320082B8B2 /* ServerCheckViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
 		E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
@@ -754,8 +757,8 @@
 		E1D37F592B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D37F572B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift */; };
 		E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF7B2719D05000A11E64 /* AppSettingsView.swift */; };
 		E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
-		E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
-		E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */; };
+		E1D4BF8A2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */; };
+		E1D4BF8B2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */; };
 		E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */; };
 		E1D5C39628DF90C100CDBEFB /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D5C39528DF90C100CDBEFB /* Slider.swift */; };
 		E1D5C39928DF914700CDBEFB /* CapsuleSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D5C39828DF914700CDBEFB /* CapsuleSlider.swift */; };
@@ -1292,6 +1295,9 @@
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
 		E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalSecurityViewModel.swift; sourceTree = "<group>"; };
+		E19D41A92BF077130082B8B2 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCheckView.swift; sourceTree = "<group>"; };
+		E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCheckViewModel.swift; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamInfoView.swift; sourceTree = "<group>"; };
 		E1A1528128FD126C00600579 /* VerticalAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalAlignment.swift; sourceTree = "<group>"; };
@@ -1382,7 +1388,7 @@
 		E1D37F572B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceProfile+SwiftfinProfile.swift"; sourceTree = "<group>"; };
 		E1D4BF7B2719D05000A11E64 /* AppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsView.swift; sourceTree = "<group>"; };
 		E1D4BF802719D22800A11E64 /* AppAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAppearance.swift; sourceTree = "<group>"; };
-		E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsCoordinator.swift; sourceTree = "<group>"; };
+		E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsCoordinator.swift; sourceTree = "<group>"; };
 		E1D4BF8E271A079A00A11E64 /* BasicAppSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicAppSettingsView.swift; sourceTree = "<group>"; };
 		E1D5C39528DF90C100CDBEFB /* Slider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		E1D5C39828DF914700CDBEFB /* CapsuleSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapsuleSlider.swift; sourceTree = "<group>"; };
@@ -1607,6 +1613,7 @@
 				E1BCDB4E2BE1F491009F6744 /* ResetUserPasswordViewModel.swift */,
 				62E632DB267D2E130063E547 /* SearchViewModel.swift */,
 				E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */,
+				E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */,
 				E173DA5326D050F500CC4EB7 /* ServerDetailViewModel.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
@@ -1992,6 +1999,7 @@
 				E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */,
 				E1AA331C2782541500F6439C /* PrimaryButton.swift */,
 				E1D3043428D1763100587289 /* SeeAllButton.swift */,
+				E17DC74C2BE7601E00B42379 /* SettingsBarButton.swift */,
 				E1D5C39728DF914100CDBEFB /* Slider */,
 				E1581E26291EF59800D6C640 /* SplitContentView.swift */,
 				E1D27EE62BBC955F00152D16 /* UnmaskSecureField.swift */,
@@ -2054,7 +2062,7 @@
 		62C29E9D26D0FE5900C1D2E7 /* Coordinators */ = {
 			isa = PBXGroup;
 			children = (
-				E1D4BF892719D3D000A11E64 /* BasicAppSettingsCoordinator.swift */,
+				E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */,
 				E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */,
 				E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */,
 				E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */,
@@ -2544,6 +2552,7 @@
 				E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */,
 				53EE24E5265060780068F029 /* SearchView.swift */,
 				E10B1EAF2BD9769500A92EAF /* SelectUserView */,
+				E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */,
 				E173DA4F26D048D600CC4EB7 /* ServerDetailView.swift */,
 				E1E5D54A2783E26100692DFE /* SettingsView */,
 				E1171A1A28A2215800FA1AF5 /* UserSignInView */,
@@ -2628,6 +2637,7 @@
 			children = (
 				E154965B296CA2EF00C4EF88 /* DownloadManager.swift */,
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
+				E19D41A92BF077130082B8B2 /* Keychain.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
 				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
@@ -2694,7 +2704,6 @@
 				E168BD0E289A4162001A6922 /* LatestInLibraryView.swift */,
 				E12CC1B028D1008F00678D5D /* NextUpView.swift */,
 				E12CC1BD28D11F4500678D5D /* RecentlyAddedView.swift */,
-				E17DC74C2BE7601E00B42379 /* SettingsBarButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3736,7 +3745,7 @@
 				E1A1529128FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
 				E187A60529AD2E25008387E6 /* StepperView.swift in Sources */,
 				E1575E71293E77B5001665B1 /* RepeatingTimer.swift in Sources */,
-				E1D4BF8B2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
+				E1D4BF8B2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
 				E10231452BCF8A51009D71FC /* ChannelProgram.swift in Sources */,
 				E146A9D92BE6E9830034DA1E /* StoredValue.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
@@ -4133,6 +4142,7 @@
 				E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */,
 				E1559A76294D960C00C1FFBC /* MainOverlay.swift in Sources */,
 				E14EDECC2B8FB709000F00A4 /* ItemYear.swift in Sources */,
+				E19D41AA2BF077130082B8B2 /* Keychain.swift in Sources */,
 				E1DE2B4A2B97ECB900F6715F /* ErrorView.swift in Sources */,
 				E104C870296E087200C1C3F9 /* IndicatorSettingsView.swift in Sources */,
 				E12A9EF829499E0100731C3A /* JellyfinClient.swift in Sources */,
@@ -4332,6 +4342,7 @@
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				E15756342936851D00976E1F /* NativeVideoPlayerSettingsView.swift in Sources */,
 				E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */,
+				E19D41AE2BF288320082B8B2 /* ServerCheckViewModel.swift in Sources */,
 				E1BDF2F329524C3B00CC0294 /* ChaptersActionButton.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */,
@@ -4379,6 +4390,7 @@
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1B490442967E26300D3EDCE /* PersistentLogHandler.swift in Sources */,
+				E19D41AC2BF288110082B8B2 /* ServerCheckView.swift in Sources */,
 				E1D5C39928DF914700CDBEFB /* CapsuleSlider.swift in Sources */,
 				62E1DCC3273CE19800C9AE76 /* URL.swift in Sources */,
 				E11BDF7A2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
@@ -4392,7 +4404,7 @@
 				E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */,
 				C46DD8DC2A8DC3420046A504 /* LiveVideoPlayer.swift in Sources */,
 				E11BDF972B865F550045C54A /* ItemTag.swift in Sources */,
-				E1D4BF8A2719D3D000A11E64 /* BasicAppSettingsCoordinator.swift in Sources */,
+				E1D4BF8A2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
 				E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
