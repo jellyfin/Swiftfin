@@ -19,7 +19,7 @@ final class RecentlyAddedLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
         // Why doesn't `super.init(title:id:pageSize)` init work?
         if let customPageSize {
-            super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded, id: "recentlyAdded"), pageSize: 10)
+            super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded, id: "recentlyAdded"), pageSize: customPageSize)
         } else {
             super.init(parent: TitledLibraryParent(displayTitle: L10n.recentlyAdded, id: "recentlyAdded"))
         }
