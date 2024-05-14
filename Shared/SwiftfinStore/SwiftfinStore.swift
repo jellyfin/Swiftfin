@@ -62,7 +62,6 @@ extension SwiftfinStore {
             _ = dataStack.addStorage(storage) { result in
                 switch result {
                 case .success:
-                    print("Successfully migrated datastack")
                     continuation.resume()
                 case let .failure(error):
                     LogManager.service().error("Failed creating datastack with: \(error.localizedDescription)")
