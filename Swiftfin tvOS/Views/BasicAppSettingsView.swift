@@ -10,72 +10,81 @@ import Defaults
 import Stinsen
 import SwiftUI
 
-struct BasicAppSettingsView: View {
+#warning("TODO: implement")
 
-    @EnvironmentObject
-    private var router: BasicAppSettingsCoordinator.Router
-
-    @ObservedObject
-    var viewModel: SettingsViewModel
-
-    @State
-    private var resetUserSettingsSelected: Bool = false
-    @State
-    private var removeAllServersSelected: Bool = false
+struct AppSettingsView: View {
 
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
-            }
-            .contentView {
-
-                Section {
-
-                    Button {
-                        TextPairView(
-                            leading: L10n.version,
-                            trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
-                        )
-                    }
-
-                    ChevronButton(title: "Logs")
-                        .onSelect {
-                            router.route(to: \.log)
-                        }
-                }
-
-                Section {
-
-                    Button {
-                        resetUserSettingsSelected = true
-                    } label: {
-                        L10n.resetUserSettings.text
-                    }
-
-                    Button {
-                        removeAllServersSelected = true
-                    } label: {
-                        Text("Remove All Servers")
-                    }
-                }
-            }
-            .withDescriptionTopPadding()
-            .navigationTitle(L10n.settings)
-            .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
-                Button(L10n.reset, role: .destructive) {
-                    viewModel.resetUserSettings()
-                }
-            } message: {
-                Text("Reset all settings back to defaults.")
-            }
-            .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
-                Button(L10n.reset, role: .destructive) {
-                    viewModel.removeAllServers()
-                }
-            }
+        Text("TODO")
     }
 }
+
+// struct BasicAppSettingsView: View {
+//
+//    @EnvironmentObject
+//    private var router: BasicAppSettingsCoordinator.Router
+//
+//    @ObservedObject
+//    var viewModel: SettingsViewModel
+//
+//    @State
+//    private var resetUserSettingsSelected: Bool = false
+//    @State
+//    private var removeAllServersSelected: Bool = false
+//
+//    var body: some View {
+//        SplitFormWindowView()
+//            .descriptionView {
+//                Image(.jellyfinBlobBlue)
+//                    .resizable()
+//                    .aspectRatio(contentMode: .fit)
+//                    .frame(maxWidth: 400)
+//            }
+//            .contentView {
+//
+//                Section {
+//
+//                    Button {
+//                        TextPairView(
+//                            leading: L10n.version,
+//                            trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
+//                        )
+//                    }
+//
+//                    ChevronButton(title: "Logs")
+//                        .onSelect {
+//                            router.route(to: \.log)
+//                        }
+//                }
+//
+//                Section {
+//
+//                    Button {
+//                        resetUserSettingsSelected = true
+//                    } label: {
+//                        L10n.resetUserSettings.text
+//                    }
+//
+//                    Button {
+//                        removeAllServersSelected = true
+//                    } label: {
+//                        Text("Remove All Servers")
+//                    }
+//                }
+//            }
+//            .withDescriptionTopPadding()
+//            .navigationTitle(L10n.settings)
+//            .alert(L10n.resetUserSettings, isPresented: $resetUserSettingsSelected) {
+//                Button(L10n.reset, role: .destructive) {
+////                    viewModel.resetUserSettings()
+//                }
+//            } message: {
+//                Text("Reset all settings back to defaults.")
+//            }
+//            .alert("Remove All Servers", isPresented: $removeAllServersSelected) {
+//                Button(L10n.reset, role: .destructive) {
+////                    viewModel.removeAllServers()
+//                }
+//            }
+//    }
+// }

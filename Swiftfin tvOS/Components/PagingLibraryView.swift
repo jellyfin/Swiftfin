@@ -21,7 +21,7 @@ struct PagingLibraryView<Element: Poster>: View {
     private var cinematicBackground
     @Default(.Customization.Library.posterType)
     private var posterType
-    @Default(.Customization.Library.viewType)
+    @Default(.Customization.Library.displayType)
     private var viewType
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
@@ -47,7 +47,7 @@ struct PagingLibraryView<Element: Poster>: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
 
         let initialPosterType = Defaults[.Customization.Library.posterType]
-        let initialViewType = Defaults[.Customization.Library.viewType]
+        let initialViewType = Defaults[.Customization.Library.displayType]
 
         self._layout = State(
             initialValue: Self.makeLayout(

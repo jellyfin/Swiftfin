@@ -10,22 +10,18 @@ import SwiftUI
 
 struct AboutAppView: View {
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
-
     @ObservedObject
     var viewModel: SettingsViewModel
 
     var body: some View {
         List {
             Section {
-                VStack(alignment: .center) {
+                VStack(alignment: .center, spacing: 10) {
 
-                    Image(uiImage: viewModel.currentAppIcon.iconPreview)
+                    Image(.jellyfinBlobBlue)
                         .resizable()
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(150 / 6.4)
-                        .shadow(radius: 5)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(height: 150)
 
                     // App name, not to be localized
                     Text("Swiftfin")
@@ -47,7 +43,8 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(.logoGithub)
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {
@@ -58,7 +55,10 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(systemName: "plus.circle.fill")
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .backport
+                            .fontWeight(.bold)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {
@@ -69,7 +69,8 @@ struct AboutAppView: View {
                     .leadingView {
                         Image(systemName: "gearshape.fill")
                             .resizable()
-                            .frame(width: 20, height: 20)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
                             .foregroundColor(.primary)
                     }
                     .onSelect {

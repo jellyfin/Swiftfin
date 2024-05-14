@@ -49,11 +49,15 @@ extension UIDevice {
     }
 
     static func feedback(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(type)
+        #endif
     }
 
     static func impact(_ type: UIImpactFeedbackGenerator.FeedbackStyle) {
+        #if os(iOS)
         UIImpactFeedbackGenerator(style: type).impactOccurred()
+        #endif
     }
     #endif
 }

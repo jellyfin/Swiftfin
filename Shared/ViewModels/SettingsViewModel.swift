@@ -17,6 +17,8 @@ final class SettingsViewModel: ViewModel {
 
     @Published
     var currentAppIcon: any AppIcon = PrimaryAppIcon.primary
+    @Published
+    var servers: [ServerState] = []
 
     override init() {
 
@@ -28,35 +30,31 @@ final class SettingsViewModel: ViewModel {
 
         if let appicon = PrimaryAppIcon.createCase(iconName: iconName) {
             currentAppIcon = appicon
-            super.init()
-            return
         }
 
         if let appicon = DarkAppIcon.createCase(iconName: iconName) {
             currentAppIcon = appicon
-            super.init()
-            return
         }
 
         if let appicon = InvertedDarkAppIcon.createCase(iconName: iconName) {
             currentAppIcon = appicon
-            super.init()
-            return
         }
 
         if let appicon = InvertedLightAppIcon.createCase(iconName: iconName) {
             currentAppIcon = appicon
-            super.init()
-            return
         }
 
         if let appicon = LightAppIcon.createCase(iconName: iconName) {
             currentAppIcon = appicon
-            super.init()
-            return
         }
 
         super.init()
+
+        do {
+            servers = try getServers()
+        } catch {
+            logger.critical("Could not retrieve servers")
+        }
     }
 
     func select(icon: any AppIcon) {
@@ -78,21 +76,17 @@ final class SettingsViewModel: ViewModel {
         }
     }
 
+    private func getServers() throws -> [ServerState] {
+        try SwiftfinStore
+            .dataStack
+            .fetchAll(From<ServerModel>())
+            .map(\.state)
+            .sorted(using: \.name)
+    }
+
     func signOut() {
-        Defaults[.lastServerUserID] = nil
-        Container.userSession.reset()
+        Defaults[.lastSignedInUserID] = nil
+        UserSession.current.reset()
         Notifications[.didSignOut].post()
-    }
-
-    func resetUserSettings() {
-        UserDefaults.generalSuite.removeAll()
-    }
-
-    func removeAllServers() {
-        guard let allServers = try? SwiftfinStore.dataStack.fetchAll(From<ServerModel>()) else { return }
-
-        try? SwiftfinStore.dataStack.perform { transaction in
-            transaction.delete(allServers)
-        }
     }
 }

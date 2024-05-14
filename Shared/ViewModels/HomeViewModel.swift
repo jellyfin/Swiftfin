@@ -85,24 +85,26 @@ final class HomeViewModel: ViewModel, Stateful {
             backgroundStates.append(.refresh)
 
             backgroundRefreshTask = Task { [weak self] in
-                guard let self else { return }
                 do {
+                    self?.nextUpViewModel.send(.refresh)
+                    self?.recentlyAddedViewModel.send(.refresh)
 
-                    nextUpViewModel.send(.refresh)
-                    recentlyAddedViewModel.send(.refresh)
-
-                    let resumeItems = try await getResumeItems()
+                    let resumeItems = try await self?.getResumeItems() ?? []
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
+                        guard let self else { return }
                         self.resumeItems.elements = resumeItems
                         self.backgroundStates.remove(.refresh)
                     }
+                } catch is CancellationError {
+                    // cancelled
                 } catch {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
+                        guard let self else { return }
                         self.backgroundStates.remove(.refresh)
                         self.send(.error(.init(error.localizedDescription)))
                     }
@@ -127,20 +129,22 @@ final class HomeViewModel: ViewModel, Stateful {
             refreshTask?.cancel()
 
             refreshTask = Task { [weak self] in
-                guard let self else { return }
                 do {
-
-                    try await self.refresh()
+                    try await self?.refresh()
 
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
+                        guard let self else { return }
                         self.state = .content
                     }
+                } catch is CancellationError {
+                    // cancelled
                 } catch {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
+                        guard let self else { return }
                         self.send(.error(.init(error.localizedDescription)))
                     }
                 }

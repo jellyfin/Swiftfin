@@ -39,6 +39,7 @@ struct MediaView: View {
                     case .favorites:
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
+                            id: "favorites",
                             filters: .favorites
                         )
                         router.route(to: \.library, viewModel)

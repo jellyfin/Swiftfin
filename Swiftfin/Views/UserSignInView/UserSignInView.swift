@@ -6,57 +6,252 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
+import Factory
+import LocalAuthentication
 import Stinsen
 import SwiftUI
 
+// TODO: ignore device authentication `canceled by user` NSError
+// TODO: fix duplicate user
+//       - could be good to replace access token
+//       - check against current user policy
+
 struct UserSignInView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
 
-    @ObservedObject
-    var viewModel: UserSignInViewModel
+    @FocusState
+    private var focusedTextField: Int?
 
     @State
-    private var isPresentingSignInError: Bool = false
+    private var duplicateUser: UserState? = nil
+    @State
+    private var error: Error? = nil
+    @State
+    private var isPresentingDuplicateUser: Bool = false
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var isPresentingLocalPin: Bool = false
+    @State
+    private var onPinCompletion: (() -> Void)? = nil
     @State
     private var password: String = ""
     @State
+    private var pin: String = ""
+    @State
+    private var pinHint: String = ""
+    @State
+    private var signInPolicy: UserAccessPolicy = .none
+    @State
     private var username: String = ""
+
+    @StateObject
+    private var viewModel: UserSignInViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
+    }
+
+    // TODO: don't have multiple ways to handle device authentication vs required pin
+
+    private func openQuickConnect(needsPin: Bool = true) {
+        Task {
+            switch signInPolicy {
+            case .none: ()
+            case .requireDeviceAuthentication:
+                try await performDeviceAuthentication(
+                    reason: "Require device authentication to sign in to the Quick Connect user on this device"
+                )
+            case .requirePin:
+                if needsPin {
+                    onPinCompletion = {
+                        router.route(to: \.quickConnect, viewModel.quickConnect)
+                    }
+                    isPresentingLocalPin = true
+                    return
+                }
+            }
+
+            router.route(to: \.quickConnect, viewModel.quickConnect)
+        }
+    }
+
+    private func signInUserPassword(needsPin: Bool = true) {
+        Task {
+            switch signInPolicy {
+            case .none: ()
+            case .requireDeviceAuthentication:
+                try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
+            case .requirePin:
+                if needsPin {
+                    onPinCompletion = {
+                        viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+                    }
+                    isPresentingLocalPin = true
+                    return
+                }
+            }
+
+            viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+        }
+    }
+
+    private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
+        Task {
+            switch user.signInPolicy {
+            case .none: ()
+            case .requireDeviceAuthentication:
+                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+            case .requirePin:
+                onPinCompletion = {
+                    viewModel.send(.signInDuplicate(user, replace: replace))
+                }
+                isPresentingLocalPin = true
+                return
+            }
+
+            viewModel.send(.signInDuplicate(user, replace: replace))
+        }
+    }
+
+    private func performPinAuthentication() async throws {
+        isPresentingLocalPin = true
+
+        guard pin.count > 4, pin.count < 30 else {
+            throw JellyfinAPIError("Pin auth failed")
+        }
+    }
+
+    // error logging/presentation is handled within here, just
+    // use try+thrown error in local Task for early return
+    private func performDeviceAuthentication(reason: String) async throws {
+        let context = LAContext()
+        var policyError: NSError?
+
+        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &policyError) else {
+            viewModel.logger.critical("\(policyError!.localizedDescription)")
+
+            await MainActor.run {
+                self
+                    .error =
+                    JellyfinAPIError(
+                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
+                    )
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+
+        do {
+            try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
+        } catch {
+            viewModel.logger.critical("\(error.localizedDescription)")
+
+            await MainActor.run {
+                self.error = JellyfinAPIError("Unable to perform device authentication")
+                self.isPresentingError = true
+            }
+
+            throw JellyfinAPIError("Device auth failed")
+        }
+    }
 
     @ViewBuilder
     private var signInSection: some View {
         Section {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-
-            UnmaskSecureField(L10n.password, text: $password)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-
-            if case .signingIn = viewModel.state {
-                Button(role: .destructive) {
-                    viewModel.send(.cancelSignIn)
-                } label: {
-                    L10n.cancel.text
+                .textInputAutocapitalization(.never)
+                .focused($focusedTextField, equals: 0)
+                .onSubmit {
+                    focusedTextField = 1
                 }
-            } else {
-                Button {
-                    viewModel.send(.signInWithUserPass(username: username, password: password))
-                } label: {
-                    L10n.signIn.text
-                }
-                .disabled(username.isEmpty)
+
+            UnmaskSecureField(L10n.password, text: $password) {
+                focusedTextField = nil
+
+                signInUserPassword()
             }
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($focusedTextField, equals: 1)
         } header: {
-            L10n.signInToServer(viewModel.server.name).text
+            Text(L10n.signInToServer(viewModel.server.name))
+        } footer: {
+            switch signInPolicy {
+            case .requireDeviceAuthentication:
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require device authentication.")
+                }
+            case .requirePin:
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require a pin.")
+                }
+            case .none:
+                EmptyView()
+            }
+        }
+
+        if case .signingIn = viewModel.state {
+            ListRowButton(L10n.cancel) {
+                viewModel.send(.cancel)
+            }
+            .foregroundStyle(.red, .red.opacity(0.2))
+        } else {
+            ListRowButton(L10n.signIn) {
+                focusedTextField = nil
+
+                signInUserPassword()
+            }
+            .disabled(username.isEmpty)
+            .foregroundStyle(
+                accentColor.overlayColor,
+                accentColor
+            )
+            .opacity(username.isEmpty ? 0.5 : 1)
+        }
+
+        if viewModel.isQuickConnectEnabled {
+            Section {
+                ListRowButton(L10n.quickConnect) {
+                    openQuickConnect()
+                }
+                .disabled(viewModel.state == .signingIn)
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+            }
+        }
+
+        if let disclaimer = viewModel.serverDisclaimer {
+            Section("Disclaimer") {
+                Text(disclaimer)
+                    .font(.callout)
+            }
         }
     }
 
     @ViewBuilder
     private var publicUsersSection: some View {
-        Section {
+        Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
                 L10n.noPublicUsers.text
                     .font(.callout)
@@ -64,77 +259,133 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserSignInView(viewModel: viewModel, publicUser: user)
-                        .disabled(viewModel.isLoading)
-                }
-            }
-        } header: {
-            HStack {
-                L10n.publicUsers.text
-
-                Spacer()
-
-                Button {
-                    Task {
-                        try? await viewModel.getPublicUsers()
+                    PublicUserRow(
+                        user: user,
+                        client: viewModel.server.client
+                    ) {
+                        username = user.name ?? ""
+                        password = ""
+                        focusedTextField = 1
                     }
-                } label: {
-                    Image(systemName: "arrow.clockwise.circle.fill")
                 }
-                .disabled(viewModel.isLoading)
             }
         }
-        .headerProminence(.increased)
-    }
-
-    var errorText: some View {
-        var text: String?
-        if case let .error(error) = viewModel.state {
-            text = error.localizedDescription
-        }
-        return Text(text ?? .emptyDash)
     }
 
     var body: some View {
         List {
             signInSection
 
-            if viewModel.quickConnectEnabled {
-                Button {
-                    router.route(to: \.quickConnect)
-                } label: {
-                    L10n.quickConnect.text
-                }
-            }
-
             publicUsersSection
         }
-        .onChange(of: viewModel.state) { newState in
-            if case .error = newState {
-                // If we encountered the error as we switched from quick connect navigation to this view,
-                // it's possible that the alert doesn't show, so wait a little bit
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    isPresentingSignInError = true
-                }
+        .animation(.linear, value: viewModel.isQuickConnectEnabled)
+        .interactiveDismissDisabled(viewModel.state == .signingIn)
+        .navigationTitle(L10n.signIn)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton(disabled: viewModel.state == .signingIn) {
+            router.dismissCoordinator()
+        }
+        .onChange(of: isPresentingLocalPin) { newValue in
+            if newValue {
+                pin = ""
+            } else {
+                onPinCompletion = nil
+            }
+        }
+        .onChange(of: pin) { newValue in
+            StoredValues[.Temp.userLocalPin] = newValue
+        }
+        .onChange(of: pinHint) { newValue in
+            StoredValues[.Temp.userLocalPinHint] = newValue
+        }
+        .onChange(of: signInPolicy) { newValue in
+            // necessary for Quick Connect sign in, but could
+            // just use for general sign in
+            StoredValues[.Temp.userSignInPolicy] = newValue
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .duplicateUser(duplicateUser):
+                UIDevice.impact(.medium)
+
+                self.duplicateUser = duplicateUser
+                isPresentingDuplicateUser = true
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+
+                error = eventError
+                isPresentingError = true
+            case let .signedIn(user):
+                UIDevice.feedback(.success)
+
+                Defaults[.lastSignedInUserID] = user.id
+                UserSession.current.reset()
+                Notifications[.didSignIn].post()
+            }
+        }
+        .onFirstAppear {
+            focusedTextField = 0
+            viewModel.send(.getPublicData)
+        }
+        .topBarTrailing {
+            if viewModel.state == .signingIn || viewModel.backgroundStates.contains(.gettingPublicData) {
+                ProgressView()
+            }
+
+            Button("Security", systemImage: "gearshape.fill") {
+                let parameters = UserSignInCoordinator.SecurityParameters(
+                    pinHint: $pinHint,
+                    signInPolicy: $signInPolicy
+                )
+                router.route(to: \.security, parameters)
             }
         }
         .alert(
-            L10n.error,
-            isPresented: $isPresentingSignInError
-        ) {
+            Text("Duplicate User"),
+            isPresented: $isPresentingDuplicateUser,
+            presenting: duplicateUser
+        ) { _ in
+
+            // TODO: uncomment when duplicate user fixed
+//            Button(L10n.signIn) {
+//                signInUplicate(user: user, replace: false)
+//            }
+
+//            Button("Replace") {
+//                signInUplicate(user: user, replace: true)
+//            }
+
             Button(L10n.dismiss, role: .cancel)
-        } message: {
-            errorText
+        } message: { duplicateUser in
+            Text("\(duplicateUser.username) is already saved")
         }
-        .navigationTitle(L10n.signIn)
-        .onAppear {
-            Task {
-                try? await viewModel.checkQuickConnect()
-                try? await viewModel.getPublicUsers()
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert(
+            "Set Pin",
+            isPresented: $isPresentingLocalPin,
+            presenting: onPinCompletion
+        ) { completion in
+
+            TextField("Pin", text: $pin)
+                .keyboardType(.numberPad)
+
+            // bug in SwiftUI: having .disabled will dismiss
+            // alert but not call the closure (for length)
+            Button("Sign In") {
+                completion()
             }
-        }
-        .onDisappear {
-            viewModel.send(.cancelSignIn)
+
+            Button(L10n.cancel, role: .cancel) {}
+        } message: { _ in
+            Text("Set pin for new user.")
         }
     }
 }

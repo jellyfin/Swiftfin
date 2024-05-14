@@ -8,13 +8,22 @@
 
 import SwiftUI
 
-struct ServerDetailView: View {
+struct EditServerView: View {
+
+    @EnvironmentObject
+    private var router: SelectUserCoordinator.Router
+
+    @Environment(\.isEditing)
+    private var isEditing
+
+    @State
+    private var isPresentingConfirmDeletion: Bool = false
 
     @StateObject
-    private var viewModel: ServerDetailViewModel
+    private var viewModel: EditServerViewModel
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: ServerDetailViewModel(server: server))
+        self._viewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
     }
 
     var body: some View {
@@ -26,30 +35,41 @@ struct ServerDetailView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section(header: L10n.serverDetails.text) {
-
+                Section(L10n.server) {
                     TextPairView(
                         leading: L10n.name,
                         trailing: viewModel.server.name
                     )
+                }
 
-                    TextPairView(
-                        leading: L10n.url,
-                        trailing: viewModel.server.currentURL.absoluteString
-                    )
+                Section("URL") {
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        if url == viewModel.server.currentURL {
+                            Button(url.absoluteString, systemImage: "checkmark") {}
+                        } else {
+                            Button(url.absoluteString) {
+                                viewModel.setCurrentURL(to: url)
+                            }
+                        }
+                    }
+                }
 
-                    TextPairView(
-                        leading: L10n.version,
-                        trailing: viewModel.server.version
-                    )
-
-                    TextPairView(
-                        leading: L10n.operatingSystem,
-                        trailing: viewModel.server.os
-                    )
+                if isEditing {
+                    ListRowButton("Delete") {
+                        isPresentingConfirmDeletion = true
+                    }
+                    .foregroundStyle(.primary, .red.opacity(0.5))
                 }
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.server)
+            .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
+                Button("Delete", role: .destructive) {
+                    viewModel.delete()
+                    router.popLast()
+                }
+            } message: {
+                Text("Are you sure you want to delete \(viewModel.server.name) and all of its connected users?")
+            }
     }
 }

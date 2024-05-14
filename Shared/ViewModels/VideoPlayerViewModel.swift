@@ -30,8 +30,6 @@ class VideoPlayerViewModel: ViewModel {
 
     var hlsPlaybackURL: URL {
 
-        let userSession = Container.userSession()
-
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
             isStatic: true,
             tag: mediaSource.eTag,

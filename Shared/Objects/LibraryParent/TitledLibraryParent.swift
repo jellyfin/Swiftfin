@@ -13,6 +13,11 @@ import JellyfinAPI
 struct TitledLibraryParent: LibraryParent {
 
     let displayTitle: String
-    let id: String? = nil
+    let id: String?
     let libraryType: BaseItemKind? = nil
+
+    init(displayTitle: String, id: String? = nil) {
+        self.displayTitle = displayTitle
+        self.id = id
+    }
 }

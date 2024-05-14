@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import Factory
 import Foundation
 import SwiftUI
 
@@ -20,6 +21,8 @@ struct HomeView: View {
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
 
+    @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
     @EnvironmentObject
     private var router: HomeCoordinator.Router
 
@@ -55,7 +58,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 contentView
@@ -65,7 +68,7 @@ struct HomeView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
             viewModel.send(.refresh)
         }
@@ -76,11 +79,11 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            Button {
-                router.route(to: \.settings)
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .accessibilityLabel(L10n.settings)
+            SettingsBarButton(
+                server: viewModel.userSession.server,
+                user: viewModel.userSession.user
+            ) {
+                mainRouter.route(to: \.settings)
             }
         }
         .sinceLastDisappear { interval in

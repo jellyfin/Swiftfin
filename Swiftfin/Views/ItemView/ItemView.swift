@@ -6,10 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Introspect
 import JellyfinAPI
 import SwiftUI
-import WidgetKit
 
 // TODO: try to make views simpler so there isn't one per media type, but per view type
 //       - basic (episodes, collection) vs more fancy (rest)

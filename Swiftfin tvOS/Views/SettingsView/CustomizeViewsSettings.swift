@@ -28,7 +28,7 @@ struct CustomizeViewsSettings: View {
     private var similarPosterType
     @Default(.Customization.searchPosterType)
     private var searchPosterType
-    @Default(.Customization.Library.viewType)
+    @Default(.Customization.Library.displayType)
     private var libraryViewType
 
     @Default(.Customization.Library.cinematicBackground)

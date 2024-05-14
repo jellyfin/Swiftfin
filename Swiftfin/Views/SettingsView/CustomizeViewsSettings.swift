@@ -9,15 +9,14 @@
 import Defaults
 import SwiftUI
 
+// TODO: will be entirely re-organized
+
 struct CustomizeViewsSettings: View {
 
     @Default(.Customization.itemViewType)
     private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
     private var cinematicItemViewTypeUsePrimaryImage
-
-    @Default(.hapticFeedback)
-    private var hapticFeedback
 
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
@@ -41,10 +40,17 @@ struct CustomizeViewsSettings: View {
     private var similarPosterType
     @Default(.Customization.searchPosterType)
     private var searchPosterType
-    @Default(.Customization.Library.viewType)
-    private var libraryViewType
+    @Default(.Customization.Library.displayType)
+    private var libraryDisplayType
+    @Default(.Customization.Library.posterType)
+    private var libraryPosterType
     @Default(.Customization.Library.listColumnCount)
     private var listColumnCount
+
+    @Default(.Customization.Library.rememberLayout)
+    private var rememberLibraryLayout
+    @Default(.Customization.Library.rememberSort)
+    private var rememberLibrarySort
 
     @Default(.Customization.Episodes.useSeriesLandscapeBackdrop)
     private var useSeriesLandscapeBackdrop
@@ -72,8 +78,6 @@ struct CustomizeViewsSettings: View {
                         L10n.usePrimaryImageDescription.text
                     }
                 }
-
-                Toggle(L10n.hapticFeedback, isOn: $hapticFeedback)
             }
 
             Section {
@@ -108,7 +112,7 @@ struct CustomizeViewsSettings: View {
                 L10n.missingItems.text
             }
 
-            Section {
+            Section(L10n.posters) {
 
                 ChevronButton(title: L10n.indicators)
                     .onSelect {
@@ -126,11 +130,14 @@ struct CustomizeViewsSettings: View {
                 CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
 
                 CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
+            }
 
-                // TODO: figure out how we can do the same Menu as the library menu picker?
-                CaseIterablePicker(title: L10n.library, selection: $libraryViewType)
+            Section("Libraries") {
+                CaseIterablePicker(title: L10n.library, selection: $libraryDisplayType)
 
-                if libraryViewType == .list, UIDevice.isPad {
+                CaseIterablePicker(title: L10n.posters, selection: $libraryPosterType)
+
+                if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
                         title: "Columns",
                         value: $listColumnCount,
@@ -138,9 +145,18 @@ struct CustomizeViewsSettings: View {
                         step: 1
                     )
                 }
+            }
 
-            } header: {
-                L10n.posters.text
+            Section {
+                Toggle("Remember layout", isOn: $rememberLibraryLayout)
+            } footer: {
+                Text("Remember layout for individual libraries")
+            }
+
+            Section {
+                Toggle("Remember sorting", isOn: $rememberLibrarySort)
+            } footer: {
+                Text("Remember sorting for individual libraries")
             }
 
             Section {

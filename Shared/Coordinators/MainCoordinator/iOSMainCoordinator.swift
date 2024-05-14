@@ -14,7 +14,6 @@ import JellyfinAPI
 import Nuke
 import Stinsen
 import SwiftUI
-import WidgetKit
 
 final class MainCoordinator: NavigationCoordinatable {
 
@@ -26,27 +25,28 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var mainTab = makeMainTab
     @Root
-    var serverList = makeServerList
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
+    var selectUser = makeSelectUser
+    @Root
+    var serverCheck = makeServerCheck
+
     @Route(.fullScreen)
     var liveVideoPlayer = makeLiveVideoPlayer
-
-    private var cancellables = Set<AnyCancellable>()
+    @Route(.modal)
+    var settings = makeSettings
+    @Route(.fullScreen)
+    var videoPlayer = makeVideoPlayer
 
     init() {
 
-        if Container.userSession().authenticated {
-            stack = NavigationStack(initial: \MainCoordinator.mainTab)
+        if UserSession.current() != nil, !Defaults[.signOutOnClose] {
+            stack = NavigationStack(initial: \.serverCheck)
         } else {
-            stack = NavigationStack(initial: \MainCoordinator.serverList)
+            stack = NavigationStack(initial: \MainCoordinator.selectUser)
         }
 
-        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
+        // TODO: move these to the App instead?
 
-        WidgetCenter.shared.reloadAllTimelines()
-        UIScrollView.appearance().keyboardDismissMode = .onDrag
+        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB
 
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
@@ -58,13 +58,19 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didSignIn() {
         logger.info("Signed in")
-        root(\.mainTab)
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.serverCheck)
+        }
     }
 
     @objc
     func didSignOut() {
         logger.info("Signed out")
-        root(\.serverList)
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.selectUser)
+        }
     }
 
     @objc
@@ -84,18 +90,28 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didChangeCurrentServerURL(_ notification: Notification) {
 
-        guard Container.userSession().authenticated else { return }
+        guard UserSession.current() != nil else { return }
 
-        Container.userSession.reset()
+        UserSession.current.reset()
         Notifications[.didSignIn].post()
+    }
+
+    func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
+        NavigationViewCoordinator(SettingsCoordinator())
     }
 
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }
 
-    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
-        NavigationViewCoordinator(ServerListCoordinator())
+    func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
+        NavigationViewCoordinator(SelectUserCoordinator())
+    }
+
+    func makeServerCheck() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerCheckView()
+        }
     }
 
     func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {

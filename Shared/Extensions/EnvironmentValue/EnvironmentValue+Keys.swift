@@ -11,6 +11,10 @@ import SwiftUI
 
 extension EnvironmentValues {
 
+    struct AccentColor: EnvironmentKey {
+        static let defaultValue: Binding<Color> = .constant(Color.jellyfinPurple)
+    }
+
     struct AudioOffsetKey: EnvironmentKey {
         static let defaultValue: Binding<Int> = .constant(0)
     }
@@ -23,8 +27,16 @@ extension EnvironmentValues {
         static let defaultValue: Binding<VideoPlayer.OverlayType> = .constant(.main)
     }
 
+    struct IsEditingKey: EnvironmentKey {
+        static let defaultValue: Bool = false
+    }
+
     struct IsScrubbingKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
+    }
+
+    struct IsSelectedKey: EnvironmentKey {
+        static let defaultValue: Bool = false
     }
 
     struct PlaybackSpeedKey: EnvironmentKey {

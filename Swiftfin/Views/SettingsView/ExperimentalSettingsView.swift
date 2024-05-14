@@ -13,8 +13,6 @@ struct ExperimentalSettingsView: View {
 
     @Default(.Experimental.forceDirectPlay)
     private var forceDirectPlay
-    @Default(.Experimental.syncSubtitleStateWithAdjacent)
-    private var syncSubtitleStateWithAdjacent
     @Default(.Experimental.liveTVForceDirectPlay)
     private var liveTVForceDirectPlay
 

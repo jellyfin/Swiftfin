@@ -30,14 +30,6 @@ extension ItemView {
 
         let content: () -> Content
 
-        private var topOpacity: CGFloat {
-            let start = UIScreen.main.bounds.height * 0.5
-            let end = UIScreen.main.bounds.height * 0.65
-            let diff = end - start
-            let opacity = clamp((scrollViewOffset - start) / diff, min: 0, max: 1)
-            return opacity
-        }
-
         @ViewBuilder
         private var headerView: some View {
             ImageView(viewModel.item.imageSource(
