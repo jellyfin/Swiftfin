@@ -45,14 +45,11 @@ extension SelectUserView {
         var body: some View {
             VStack {
                 Button {
-//                    if let selectedServer {
-//                        action(selectedServer)
-//                    }
-
-                    action(servers.first!)
+                    if let selectedServer {
+                        action(selectedServer)
+                    }
                 } label: {
                     ZStack {
-//                    Color.tertiarySystemBackground
                         Color.secondarySystemFill
 
                         RelativeSystemImageView(systemName: "plus")

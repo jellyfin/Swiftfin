@@ -13,6 +13,8 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+// TODO: user deletion
+
 struct SelectUserView: View {
 
     private enum UserGridItem: Hashable {
@@ -42,6 +44,8 @@ struct SelectUserView: View {
     private var padGridItemColumnCount: Int = 1
     @State
     private var scrollViewOffset: CGFloat = 0
+    @State
+    private var splashScreenImageSource: ImageSource? = nil
 
     @StateObject
     private var viewModel = SelectUserViewModel()
@@ -82,6 +86,29 @@ struct SelectUserView: View {
                 .appending(.addUser)
 
             return OrderedSet(items)
+        }
+    }
+
+    // For all server selection, .all is random
+    private func makeSplashScreenImageSource(
+        serverSelection: SelectUserServerSelection,
+        allServersSelection: SelectUserServerSelection
+    ) -> ImageSource? {
+        switch (serverSelection, allServersSelection) {
+        case (.all, .all):
+            return viewModel
+                .servers
+                .keys
+                .randomElement()?
+                .splashScreenImageSource()
+
+        // need to evaluate server with id selection first
+        case let (.server(id), _), let (.all, .server(id)):
+            return viewModel
+                .servers
+                .keys
+                .first { $0.id == id }?
+                .splashScreenImageSource()
         }
     }
 
@@ -149,16 +176,6 @@ struct SelectUserView: View {
 
     // MARK: userView
 
-//    HStack {
-//        Image(.jellyfinBlobBlue)
-//            .resizable()
-//            .aspectRatio(contentMode: .fit)
-//            .frame(height: 100)
-//            .edgePadding()
-//    }
-//    .frame(maxWidth: .infinity)
-//    .background(Material.thin.opacity(scrollViewOffset > 20 ? 1 : 0))
-
     @ViewBuilder
     private var userView: some View {
         VStack {
@@ -185,19 +202,76 @@ struct SelectUserView: View {
             }
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
+        .background {
+            if let splashScreenImageSource {
+                ZStack {
+                    Color.clear
+
+                    ImageView(splashScreenImageSource)
+                        .aspectRatio(contentMode: .fill)
+                        .id(splashScreenImageSource)
+                        .transition(.opacity)
+                        .animation(.linear, value: splashScreenImageSource)
+
+                    Color.black
+                        .opacity(0.9)
+                }
+                .ignoresSafeArea()
+            }
+        }
+    }
+
+    // MARK: emptyView
+
+    @ViewBuilder
+    private var emptyView: some View {
+        ZStack {
+            VStack {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                    .edgePadding()
+
+                Color.clear
+            }
+
+            VStack(spacing: 50) {
+                L10n.connectToJellyfinServerStart.text
+                    .font(.body)
+                    .frame(minWidth: 50, maxWidth: 500)
+                    .multilineTextAlignment(.center)
+
+                Button {
+                    router.route(to: \.connectToServer)
+                } label: {
+                    L10n.connect.text
+                        .font(.callout)
+                        .fontWeight(.bold)
+                        .frame(width: 400, height: 75)
+                        .background(Color.jellyfinPurple)
+                }
+                .buttonStyle(.card)
+            }
+        }
     }
 
     var body: some View {
         ZStack {
-//            if viewModel.servers.isEmpty {
-//                Text("TODO")
-//            } else {
-            userView
-//            }
+            if viewModel.servers.isEmpty {
+                emptyView
+            } else {
+                userView
+            }
         }
         .ignoresSafeArea()
         .onAppear {
             viewModel.send(.getServers)
+
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: serverSelection,
+                allServersSelection: .all
+            )
 
 //            gridItems = OrderedSet(
 //                (0 ..< 20)
@@ -209,8 +283,21 @@ struct SelectUserView: View {
 //                    }
 //            )
         }
+        .onChange(of: serverSelection) { newValue in
+            gridItems = makeGridItems(for: newValue)
+
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: newValue,
+                allServersSelection: .all
+            )
+        }
         .onChange(of: viewModel.servers) { _ in
             gridItems = makeGridItems(for: serverSelection)
+
+            splashScreenImageSource = makeSplashScreenImageSource(
+                serverSelection: serverSelection,
+                allServersSelection: .all
+            )
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -251,48 +338,5 @@ struct SelectUserView: View {
 //                selectUserAllServersSplashscreen = serverSelection
             }
         }
-    }
-}
-
-// #Preview {
-//    SelectUserView()
-// }
-
-struct FullScreenMenu<Content: View>: View {
-
-    private let content: () -> Content
-    private let title: String
-
-    init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
-        self.title = title
-        self.content = content
-    }
-
-    var body: some View {
-        ZStack {
-            Color.black
-                .opacity(0.2)
-
-            HStack {
-                Spacer()
-
-                VStack {
-                    Text(title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    List {
-                        content()
-                    }
-                    .frame(width: 560)
-                }
-                .padding(.top, 20)
-                .frame(width: 600)
-                .background(Material.regular, in: RoundedRectangle(cornerRadius: 30))
-                .padding(100)
-                .shadow(radius: 50)
-            }
-        }
-        .ignoresSafeArea()
     }
 }

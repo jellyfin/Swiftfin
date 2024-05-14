@@ -10,6 +10,15 @@ import SwiftUI
 
 struct EditServerView: View {
 
+    @EnvironmentObject
+    private var router: SelectUserCoordinator.Router
+
+    @Environment(\.isEditing)
+    private var isEditing
+
+    @State
+    private var isPresentingConfirmDeletion: Bool = false
+
     @StateObject
     private var viewModel: EditServerViewModel
 
@@ -44,8 +53,23 @@ struct EditServerView: View {
                         }
                     }
                 }
+
+                if isEditing {
+                    ListRowButton("Delete") {
+                        isPresentingConfirmDeletion = true
+                    }
+                    .foregroundStyle(.primary, .red.opacity(0.5))
+                }
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.server)
+            .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
+                Button("Delete", role: .destructive) {
+                    viewModel.delete()
+                    router.popLast()
+                }
+            } message: {
+                Text("Are you sure you want to delete \(viewModel.server.name) and all of its connected users?")
+            }
     }
 }

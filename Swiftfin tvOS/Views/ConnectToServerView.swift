@@ -116,14 +116,34 @@ struct ConnectToServerView: View {
     }
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                connectSection
+        VStack {
+            HStack {
+                Spacer()
+
+                if viewModel.state == .connecting {
+                    ProgressView()
+                }
+            }
+            .frame(height: 100)
+            .overlay {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                    .edgePadding()
             }
 
-            VStack(alignment: .leading) {
-                localServersSection
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    connectSection
+                }
+
+                VStack(alignment: .leading) {
+                    localServersSection
+                }
             }
+
+            Spacer()
         }
         .onFirstAppear {
             isURLFocused = true
@@ -147,11 +167,6 @@ struct ConnectToServerView: View {
             guard viewModel.state != .connecting else { return }
 
             viewModel.send(.searchForServers)
-        }
-        .topBarTrailing {
-            if viewModel.state == .connecting {
-                ProgressView()
-            }
         }
         .alert(
             L10n.error.text,

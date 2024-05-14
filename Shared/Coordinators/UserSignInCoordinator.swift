@@ -23,9 +23,10 @@ final class UserSignInCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    #if os(iOS)
     @Route(.modal)
     var quickConnect = makeQuickConnect
+
+    #if os(iOS)
     @Route(.modal)
     var security = makeSecurity
     #endif
@@ -36,13 +37,13 @@ final class UserSignInCoordinator: NavigationCoordinatable {
         self.server = server
     }
 
-    #if os(iOS)
     func makeQuickConnect(quickConnect: QuickConnect) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             QuickConnectView(quickConnect: quickConnect)
         }
     }
 
+    #if os(iOS)
     func makeSecurity(parameters: SecurityParameters) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             UserSignInView.SecurityView(

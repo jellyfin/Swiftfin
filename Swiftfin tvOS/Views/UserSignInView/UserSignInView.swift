@@ -13,7 +13,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-#warning("TODO: implement")
+// TODO: change public users from list to grid
 
 struct UserSignInView: View {
 
@@ -59,8 +59,6 @@ struct UserSignInView: View {
 
             TextField(L10n.password, text: $password) {
                 focusedTextField = nil
-
-//                signInUserPassword()
             }
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -70,9 +68,6 @@ struct UserSignInView: View {
         }
 
         if case .signingIn = viewModel.state {
-//            ListRowButton(L10n.cancel) {
-//                viewModel.send(.cancel)
-//            }
             Button(L10n.cancel) {
                 viewModel.send(.cancel)
             }
@@ -91,6 +86,19 @@ struct UserSignInView: View {
             .opacity(username.isEmpty ? 0.5 : 1)
         }
 
+        if viewModel.isQuickConnectEnabled {
+            Section {
+                ListRowButton(L10n.quickConnect) {
+                    router.route(to: \.quickConnect, viewModel.quickConnect)
+                }
+                .disabled(viewModel.state == .signingIn)
+                .foregroundStyle(
+                    accentColor.overlayColor,
+                    accentColor
+                )
+            }
+        }
+
         if let disclaimer = viewModel.serverDisclaimer {
             Section("Disclaimer") {
                 Text(disclaimer)
@@ -99,16 +107,58 @@ struct UserSignInView: View {
         }
     }
 
+    @ViewBuilder
+    private var publisUsersSection: some View {
+        Section(L10n.publicUsers) {
+            if viewModel.publicUsers.isEmpty {
+                L10n.noPublicUsers.text
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+            } else {
+                ForEach(viewModel.publicUsers, id: \.id) { user in
+                    PublicUserRow(
+                        user: user,
+                        client: viewModel.server.client
+                    ) {
+                        username = user.name ?? ""
+                        password = ""
+                        focusedTextField = 1
+                    }
+                }
+            }
+        }
+    }
+
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                signInSection
+        VStack {
+            HStack {
+                Spacer()
+
+                if viewModel.state == .signingIn {
+                    ProgressView()
+                }
+            }
+            .frame(height: 100)
+            .overlay {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                    .edgePadding()
             }
 
-            VStack(alignment: .leading) {
-                Color.red
-                    .opacity(0.5)
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    signInSection
+                }
+
+                VStack(alignment: .leading) {
+                    publisUsersSection
+                }
             }
+
+            Spacer()
         }
         .onReceive(viewModel.events) { event in
             switch event {

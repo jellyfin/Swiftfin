@@ -12,8 +12,9 @@ import Nuke
 import Stinsen
 import SwiftUI
 
-#warning("TODO: cleanup like iOS")
-#warning("TODO: server check")
+// TODO: clean up like iOS
+//       - move some things to App
+// TODO: server check flow
 
 final class MainCoordinator: NavigationCoordinatable {
 
