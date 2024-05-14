@@ -23,6 +23,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
+    var loading = makeLoading
+    @Root
     var mainTab = makeMainTab
     @Root
     var selectUser = makeSelectUser
@@ -38,10 +40,33 @@ final class MainCoordinator: NavigationCoordinatable {
 
     init() {
 
-        if UserSession.current() != nil, !Defaults[.signOutOnClose] {
-            stack = NavigationStack(initial: \.serverCheck)
-        } else {
-            stack = NavigationStack(initial: \MainCoordinator.selectUser)
+        stack = NavigationStack(initial: \.loading)
+
+        Task {
+            do {
+                print(try! SwiftfinStore.requiresMigration())
+                try await SwiftfinStore.setupDataStack()
+
+                if UserSession.current() != nil, !Defaults[.signOutOnClose] {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.serverCheck)
+                        }
+                    }
+                } else {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.selectUser)
+                        }
+                    }
+                }
+
+            } catch {
+                print(error.localizedDescription)
+                fatalError()
+            }
+
+            try! await SwiftfinStore.setupDataStack()
         }
 
         // TODO: move these to the App instead?
@@ -54,6 +79,8 @@ final class MainCoordinator: NavigationCoordinatable {
         Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
         Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
     }
+
+    private func didFinishMigration() {}
 
     @objc
     func didSignIn() {
@@ -94,6 +121,19 @@ final class MainCoordinator: NavigationCoordinatable {
 
         UserSession.current.reset()
         Notifications[.didSignIn].post()
+    }
+
+    func makeLoading() -> some View {
+        ZStack {
+            Color.red
+
+            VStack {
+                ProgressView()
+
+                Text("Loading")
+                    .bold()
+            }
+        }
     }
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {

@@ -238,12 +238,15 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         StoredValues[.Temp.userData] = userData
         StoredValues[.Temp.userSignInPolicy] = policy
 
-        return UserState(
-            accessToken: accessToken,
+        let newState = UserState(
             id: id,
             serverID: server.id,
             username: username
         )
+
+        newState.accessToken = accessToken
+
+        return newState
     }
 
     private func signIn(secret: String, policy: UserAccessPolicy) async throws -> UserState {
@@ -262,12 +265,15 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         StoredValues[.Temp.userData] = userData
         StoredValues[.Temp.userSignInPolicy] = policy
 
-        return UserState(
-            accessToken: accessToken,
+        let newState = UserState(
             id: id,
             serverID: server.id,
             username: username
         )
+
+        newState.accessToken = accessToken
+
+        return newState
     }
 
     private func isDuplicate(user: UserState) -> Bool {
@@ -288,8 +294,6 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         let user = try dataStack.perform { transaction in
             let newUser = transaction.create(Into<UserModel>())
 
-            newUser.accessToken = user.accessToken
-            newUser.appleTVID = ""
             newUser.id = user.id
             newUser.username = user.username
 
@@ -338,19 +342,10 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
     // server has same id, but new access token
     private func setNewAccessToken(user: UserState) {
         do {
-            let newState = try dataStack.perform { transaction in
-                let existingUser = try self.dataStack.fetchOne(From<UserModel>().where(\.$id == user.id))
-                guard let editUser = transaction.edit(existingUser) else {
-                    logger.critical("Could not find user to set new access token")
-                    throw JellyfinAPIError("An internal error has occurred")
-                }
+            guard let existingUser = try dataStack.fetchOne(From<UserModel>().where(\.$id == user.id)) else { return }
+            existingUser.state.accessToken = user.accessToken
 
-                editUser.accessToken = user.accessToken
-
-                return editUser.state
-            }
-
-            eventSubject.send(.signedIn(newState))
+            eventSubject.send(.signedIn(existingUser.state))
         } catch {
             logger.critical("\(error.localizedDescription)")
         }

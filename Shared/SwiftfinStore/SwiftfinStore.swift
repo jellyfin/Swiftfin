@@ -12,8 +12,8 @@ import Foundation
 import JellyfinAPI
 
 typealias AnyStoredData = SwiftfinStore.V2.AnyData
-typealias ServerModel = SwiftfinStore.V1.StoredServer
-typealias UserModel = SwiftfinStore.V1.StoredUser
+typealias ServerModel = SwiftfinStore.V2.StoredServer
+typealias UserModel = SwiftfinStore.V2.StoredUser
 
 typealias ServerState = SwiftfinStore.State.Server
 typealias UserState = SwiftfinStore.State.User
@@ -34,49 +34,32 @@ enum SwiftfinStore {
 
 // MARK: dataStack
 
+// TODO: cleanup
+
 extension SwiftfinStore {
 
-    static var dataStack: DataStack {
-        let _dataStack = DataStack(
+    static let dataStack: DataStack = {
+        DataStack(
             V1.schema,
             V2.schema,
             migrationChain: ["V1", "V2"]
         )
+    }()
 
-        let storage = SQLiteStore(fileName: "Swiftfin.sqlite")
+    private static let storage: SQLiteStore = {
+        SQLiteStore(
+            fileName: "Swiftfin.sqlite",
+            migrationMappingProviders: [Mappings.userV1_V2]
+        )
+    }()
 
-        _ = _dataStack.addStorage(storage) { result in
-            switch result {
-            case .success:
-                print("Successfully migrated datastack")
-            case let .failure(error):
-                LogManager.service().error("Failed creating datastack with: \(error.localizedDescription)")
-            }
-        }
-
-        return _dataStack
+    static func requiresMigration() throws -> Bool {
+        try dataStack.requiredMigrationsForStorage(storage).isNotEmpty
     }
 
-//    fileprivate static var _dataStack: DataStack!
-
-//    private(set) static var dataStack: DataStack {
-//        get {
-//            _dataStack
-//        }
-//        set {
-//            _dataStack = newValue
-//        }
-//    }
-
-    func setupDataStack() async throws {
+    static func setupDataStack() async throws {
         try await withCheckedThrowingContinuation { continuation in
-            let _dataStack = DataStack(
-                V1.schema,
-                V2.schema,
-                migrationChain: ["V1", "V2"]
-            )
-
-            _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite")) { result in
+            _ = dataStack.addStorage(storage) { result in
                 switch result {
                 case .success:
                     print("Successfully migrated datastack")

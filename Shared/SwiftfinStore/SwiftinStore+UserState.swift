@@ -13,22 +13,22 @@ import KeychainSwift
 import Pulse
 import UIKit
 
+// Note: it is kind of backwards to have a "state" object with a mix of
+//       non-mutable and "mutable" values, but it just works.
+
 extension SwiftfinStore.State {
 
     struct User: Hashable, Identifiable {
 
-        let accessToken: String
         let id: String
         let serverID: String
         let username: String
 
         init(
-            accessToken: String,
             id: String,
             serverID: String,
             username: String
         ) {
-            self.accessToken = accessToken
             self.id = id
             self.serverID = serverID
             self.username = username
@@ -39,6 +39,20 @@ extension SwiftfinStore.State {
 extension UserState {
 
     typealias Key = StoredValues.Key
+
+    var accessToken: String {
+        get {
+            guard let accessToken = Keychain.service().get("\(id)-accessToken") else {
+                assertionFailure("access token missing in keychain")
+                return ""
+            }
+
+            return accessToken
+        }
+        nonmutating set {
+            Keychain.service().set(newValue, forKey: "\(id)-accessToken")
+        }
+    }
 
     var data: UserDto {
         get {

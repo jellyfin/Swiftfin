@@ -533,6 +533,8 @@
 		E1763A6A2BF3D177004DF6AB /* PublicUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserRow.swift */; };
 		E1763A6D2BF3DE17004DF6AB /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1763A6C2BF3DE17004DF6AB /* JellyfinAPI */; };
 		E1763A6F2BF3DE23004DF6AB /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E1763A6E2BF3DE23004DF6AB /* JellyfinAPI */; };
+		E1763A712BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
+		E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
@@ -1240,6 +1242,7 @@
 		E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
 		E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenMenu.swift; sourceTree = "<group>"; };
 		E1763A692BF3D177004DF6AB /* PublicUserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserRow.swift; sourceTree = "<group>"; };
+		E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+Mappings.swift"; sourceTree = "<group>"; };
 		E178859A2780F1F40094FBCF /* tvOSSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSSlider.swift; sourceTree = "<group>"; };
 		E178859D2780F53B0094FBCF /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
 		E17885A3278105170094FBCF /* SFSymbolButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFSymbolButton.swift; sourceTree = "<group>"; };
@@ -2327,6 +2330,7 @@
 			children = (
 				E146A9DD2BE6E9DC0034DA1E /* StoredValue */,
 				E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */,
+				E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */,
 				E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */,
 				E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */,
 				E10B1EB82BD9ACE900A92EAF /* V1Schema */,
@@ -3925,6 +3929,7 @@
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
+				E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
@@ -4471,6 +4476,7 @@
 				E15D4F072B1B12C300442DB8 /* Backport.swift in Sources */,
 				E10B1ED02BD9AFF200A92EAF /* V2UserModel.swift in Sources */,
 				E1549660296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
+				E1763A712BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
 				5338F74E263B61370014BF09 /* ConnectToServerView.swift in Sources */,
 				E1D8429529346C6400D1041A /* BasicStepper.swift in Sources */,
 				E18E01EA288747230022598C /* MovieItemView.swift in Sources */,
