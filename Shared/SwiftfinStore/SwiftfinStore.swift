@@ -31,13 +31,6 @@ enum SwiftfinStore {
     enum State {}
 }
 
-extension Container {
-
-    static let dataStack = Factory<DataStack>(scope: .singleton) {
-        SwiftfinStore.dataStack
-    }
-}
-
 // MARK: dataStack
 
 extension SwiftfinStore {
@@ -55,4 +48,8 @@ extension SwiftfinStore {
 
         return _dataStack
     }()
+
+    static let service = Factory<DataStack>(scope: .singleton) {
+        SwiftfinStore.dataStack
+    }
 }

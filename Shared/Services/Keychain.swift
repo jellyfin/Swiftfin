@@ -12,6 +12,7 @@ import KeychainSwift
 
 enum Keychain {
 
+    // TODO: take a look at all security options
     static let service = Factory<KeychainSwift>(scope: .singleton) {
         KeychainSwift()
     }

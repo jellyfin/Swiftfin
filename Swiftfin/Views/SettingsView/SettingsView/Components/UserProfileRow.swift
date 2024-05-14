@@ -13,17 +13,13 @@ extension SettingsView {
 
     struct UserProfileRow: View {
 
-        @Injected(Container.userSession)
+        @Injected(UserSession.current)
         private var userSession: UserSession!
 
         let action: () -> Void
 
         @ViewBuilder
         private var imageView: some View {
-//            if let image = userSession.user.image {
-//                Image(uiImage: image)
-//                    .resizable()
-//            } else {
             ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
                 .placeholder { _ in
                     SystemImageContentView(systemName: "person.fill", ratio: 0.5)
@@ -31,7 +27,6 @@ extension SettingsView {
                 .failure {
                     SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                 }
-//            }
         }
 
         var body: some View {

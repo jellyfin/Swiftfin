@@ -319,7 +319,7 @@ struct UserSignInView: View {
                 UIDevice.feedback(.success)
 
                 Defaults[.lastSignedInUserID] = user.id
-                Container.userSession.reset()
+                UserSession.current.reset()
                 Notifications[.didSignIn].post()
             }
         }

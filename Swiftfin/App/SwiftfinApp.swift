@@ -66,7 +66,7 @@ struct SwiftfinApp: App {
 
                 if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
                     Defaults[.lastSignedInUserID] = nil
-                    Container.userSession.reset()
+                    UserSession.current.reset()
                     Notifications[.didSignOut].post()
                 }
             }

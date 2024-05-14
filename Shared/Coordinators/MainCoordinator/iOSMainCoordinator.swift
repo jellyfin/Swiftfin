@@ -38,7 +38,7 @@ final class MainCoordinator: NavigationCoordinatable {
 
     init() {
 
-        if Container.userSession() != nil, !Defaults[.signOutOnClose] {
+        if UserSession.current() != nil, !Defaults[.signOutOnClose] {
             stack = NavigationStack(initial: \.serverCheck)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.selectUser)
@@ -90,9 +90,9 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didChangeCurrentServerURL(_ notification: Notification) {
 
-        guard Container.userSession() != nil else { return }
+        guard UserSession.current() != nil else { return }
 
-        Container.userSession.reset()
+        UserSession.current.reset()
         Notifications[.didSignIn].post()
     }
 

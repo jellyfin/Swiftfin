@@ -26,7 +26,7 @@ extension StoredValues.Keys {
         domain: String,
         default defaultValue: Value
     ) -> Key<Value> {
-        guard let name, let currentUser = Container.userSession()?.user else {
+        guard let name, let currentUser = UserSession.current()?.user else {
             return Key(always: defaultValue)
         }
 

@@ -172,7 +172,7 @@ struct UserSignInView: View {
                 router.dismissCoordinator()
 
                 Defaults[.lastSignedInUserID] = user.id
-                Container.userSession.reset()
+                UserSession.current.reset()
                 Notifications[.didSignIn].post()
             }
         }

@@ -30,7 +30,7 @@ final class MainCoordinator: NavigationCoordinatable {
 
     init() {
 
-        if Container.userSession() != nil {
+        if UserSession.current() != nil {
             stack = NavigationStack(initial: \MainCoordinator.mainTab)
         } else {
             stack = NavigationStack(initial: \MainCoordinator.selectUser)

@@ -40,7 +40,7 @@ class DownloadTask: NSObject, ObservableObject {
 
     @Injected(LogManager.service)
     private var logger
-    @Injected(Container.userSession)
+    @Injected(UserSession.current)
     private var userSession: UserSession!
 
     @Published
