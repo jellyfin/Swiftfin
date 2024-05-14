@@ -24,20 +24,43 @@ final class MainCoordinator: NavigationCoordinatable {
     var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
+    var loading = makeLoading
+    @Root
     var mainTab = makeMainTab
     @Root
     var selectUser = makeSelectUser
 
     init() {
 
-        if UserSession.current() != nil {
-            stack = NavigationStack(initial: \MainCoordinator.mainTab)
-        } else {
-            stack = NavigationStack(initial: \MainCoordinator.selectUser)
+        stack = NavigationStack(initial: \.loading)
+
+        Task {
+            do {
+                try await SwiftfinStore.setupDataStack()
+
+                if UserSession.current() != nil {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.mainTab)
+                        }
+                    }
+                } else {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.selectUser)
+                        }
+                    }
+                }
+
+            } catch {
+                await MainActor.run {
+                    logger.critical("\(error.localizedDescription)")
+                    Notifications[.didFailMigration].post()
+                }
+            }
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
 
@@ -61,6 +84,12 @@ final class MainCoordinator: NavigationCoordinatable {
 
         withAnimation(.linear(duration: 0.1)) {
             let _ = root(\.selectUser)
+        }
+    }
+
+    func makeLoading() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AppLoadingView()
         }
     }
 

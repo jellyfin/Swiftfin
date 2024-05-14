@@ -15,6 +15,10 @@ import Nuke
 import Stinsen
 import SwiftUI
 
+// TODO: could possibly clean up
+//       - only go to loading if migrations necessary
+//       - account for other migrations (Defaults)
+
 final class MainCoordinator: NavigationCoordinatable {
 
     @Injected(LogManager.service)
@@ -44,7 +48,6 @@ final class MainCoordinator: NavigationCoordinatable {
 
         Task {
             do {
-                print(try! SwiftfinStore.requiresMigration())
                 try await SwiftfinStore.setupDataStack()
 
                 if UserSession.current() != nil, !Defaults[.signOutOnClose] {
@@ -62,11 +65,11 @@ final class MainCoordinator: NavigationCoordinatable {
                 }
 
             } catch {
-                print(error.localizedDescription)
-                fatalError()
+                await MainActor.run {
+                    logger.critical("\(error.localizedDescription)")
+                    Notifications[.didFailMigration].post()
+                }
             }
-
-            try! await SwiftfinStore.setupDataStack()
         }
 
         // TODO: move these to the App instead?
@@ -123,16 +126,9 @@ final class MainCoordinator: NavigationCoordinatable {
         Notifications[.didSignIn].post()
     }
 
-    func makeLoading() -> some View {
-        ZStack {
-            Color.red
-
-            VStack {
-                ProgressView()
-
-                Text("Loading")
-                    .bold()
-            }
+    func makeLoading() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AppLoadingView()
         }
     }
 

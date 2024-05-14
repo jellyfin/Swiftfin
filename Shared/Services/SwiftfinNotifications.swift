@@ -76,6 +76,7 @@ extension Notifications.Key {
     static let didChangeCurrentServerURL = NotificationKey("didChangeCurrentServerURL")
     static let didSendStopReport = NotificationKey("didSendStopReport")
     static let didRequestGlobalRefresh = NotificationKey("didRequestGlobalRefresh")
+    static let didFailMigration = NotificationKey("didFailMigration")
 
     static let itemMetadataDidChange = NotificationKey("itemMetadataDidChange")
 
