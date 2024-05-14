@@ -68,6 +68,8 @@ class EditServerViewModel: ViewModel {
             }
 
             Notifications[.didChangeCurrentServerURL].post(object: newState)
+
+            self.server = newState
         } catch {
             logger.critical("\(error.localizedDescription)")
         }

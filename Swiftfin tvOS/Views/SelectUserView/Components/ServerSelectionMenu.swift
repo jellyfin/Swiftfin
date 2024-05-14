@@ -21,6 +21,9 @@ extension SelectUserView {
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
+        @State
+        private var isPresentingServers: Bool = false
+
         private var selectedServer: ServerState? {
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
                let server = viewModel.servers.keys.first(where: { server in server.id == id })
@@ -40,7 +43,14 @@ extension SelectUserView {
         }
 
         var body: some View {
-            Button {} label: {
+            Button {
+                let parameters = SelectUserCoordinator.SelectServerParameters(
+                    selection: _serverSelection,
+                    viewModel: viewModel
+                )
+
+                router.route(to: \.selectServer, parameters)
+            } label: {
                 ZStack {
 
                     Group {

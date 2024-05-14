@@ -26,17 +26,23 @@ struct EditServerView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section(L10n.serverDetails) {
-
+                Section(L10n.server) {
                     TextPairView(
                         leading: L10n.name,
                         trailing: viewModel.server.name
                     )
+                }
 
-//                    TextPairView(
-//                        leading: L10n.url,
-//                        trailing: viewModel.server.currentURL.absoluteString
-//                    )
+                Section("URL") {
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        if url == viewModel.server.currentURL {
+                            Button(url.absoluteString, systemImage: "checkmark") {}
+                        } else {
+                            Button(url.absoluteString) {
+                                viewModel.setCurrentURL(to: url)
+                            }
+                        }
+                    }
                 }
             }
             .withDescriptionTopPadding()
