@@ -36,15 +36,16 @@ enum SwiftfinStore {
 
 extension SwiftfinStore {
 
-    static let dataStack: DataStack = {
-
+    static var dataStack: DataStack {
         let _dataStack = DataStack(
             V1.schema,
             V2.schema,
             migrationChain: ["V1", "V2"]
         )
 
-        _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite")) { result in
+        let storage = SQLiteStore(fileName: "Swiftfin.sqlite")
+
+        _ = _dataStack.addStorage(storage) { result in
             switch result {
             case .success:
                 print("Successfully migrated datastack")
@@ -54,7 +55,39 @@ extension SwiftfinStore {
         }
 
         return _dataStack
-    }()
+    }
+
+//    fileprivate static var _dataStack: DataStack!
+
+//    private(set) static var dataStack: DataStack {
+//        get {
+//            _dataStack
+//        }
+//        set {
+//            _dataStack = newValue
+//        }
+//    }
+
+    func setupDataStack() async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            let _dataStack = DataStack(
+                V1.schema,
+                V2.schema,
+                migrationChain: ["V1", "V2"]
+            )
+
+            _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite")) { result in
+                switch result {
+                case .success:
+                    print("Successfully migrated datastack")
+                    continuation.resume()
+                case let .failure(error):
+                    LogManager.service().error("Failed creating datastack with: \(error.localizedDescription)")
+                    continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
+                }
+            }
+        }
+    }
 
     static let service = Factory<DataStack>(scope: .singleton) {
         SwiftfinStore.dataStack
