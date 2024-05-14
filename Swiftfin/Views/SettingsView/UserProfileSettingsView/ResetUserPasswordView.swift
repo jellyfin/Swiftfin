@@ -42,7 +42,7 @@ struct ResetUserPasswordView: View {
     var body: some View {
         List {
 
-            Section {
+            Section("Current Password") {
                 UnmaskSecureField("Current Password", text: $currentPassword) {
                     focusedPassword = 1
                 }

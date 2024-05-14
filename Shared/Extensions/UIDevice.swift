@@ -39,6 +39,7 @@ extension UIDevice {
         #endif
     }
 
+    #if os(iOS)
     static var isPortrait: Bool {
         current.orientation.isPortrait
     }
@@ -58,4 +59,5 @@ extension UIDevice {
         UIImpactFeedbackGenerator(style: type).impactOccurred()
         #endif
     }
+    #endif
 }

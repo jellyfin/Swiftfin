@@ -54,16 +54,6 @@ struct ServerCheckView: View {
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .navigationTitle("Server Check")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Image(uiImage: .jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 30)
-            }
-        }
         .onFirstAppear {
             viewModel.send(.checkServer)
         }

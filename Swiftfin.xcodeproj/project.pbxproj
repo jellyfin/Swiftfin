@@ -635,6 +635,10 @@
 		E19D41AC2BF288110082B8B2 /* ServerCheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */; };
 		E19D41AE2BF288320082B8B2 /* ServerCheckViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */; };
 		E19D41B02BF2B7540082B8B2 /* URLSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AF2BF2B7540082B8B2 /* URLSessionConfiguration.swift */; };
+		E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = E19D41B12BF2BFA50082B8B2 /* KeychainSwift */; };
+		E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AF2BF2B7540082B8B2 /* URLSessionConfiguration.swift */; };
+		E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1194F4F2BEB1E3000888DB6 /* StoredValues+Temp.swift */; };
+		E19D41B52BF2C0130082B8B2 /* V2AnyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A8142BE58C2F00A54B18 /* V2AnyData.swift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
 		E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
@@ -1492,6 +1496,7 @@
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
+				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
 				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */,
@@ -3439,6 +3444,7 @@
 				E1153DD12BBB649C00424D36 /* SVGKit */,
 				E132D3CE2BD217AA0058A2DF /* CollectionVGrid */,
 				E1AEFA3A2BE36D5E00CFAFD8 /* JellyfinAPI */,
+				E19D41B12BF2BFA50082B8B2 /* KeychainSwift */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3881,6 +3887,7 @@
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
+				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
@@ -3905,6 +3912,7 @@
 				E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E102315B2BCF8AF8009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
+				E19D41B52BF2C0130082B8B2 /* V2AnyData.swift in Sources */,
 				E102315C2BCF8AF8009D71FC /* ProgramsView.swift in Sources */,
 				E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
 				E1A1528B28FD22F600600579 /* TextPairView.swift in Sources */,
@@ -3912,6 +3920,7 @@
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
+				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
 				E1575E8C293E7B1E001665B1 /* UIScreen.swift in Sources */,
 				C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */,
@@ -5278,6 +5287,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E192608128D2D0DB002314B4 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = Factory;
+		};
+		E19D41B12BF2BFA50082B8B2 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
 		};
 		E19DDEC62948EF9900954E10 /* OrderedCollections */ = {
 			isa = XCSwiftPackageProductDependency;
