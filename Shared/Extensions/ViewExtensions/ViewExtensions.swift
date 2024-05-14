@@ -328,6 +328,10 @@ extension View {
         )
     }
 
+    func scroll(ifLargerThan height: CGFloat) -> some View {
+        modifier(ScrollIfLargerThanModifier(height: height))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout

@@ -2738,6 +2738,7 @@
 				E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */,
 				E43918652AD5C8310045A18C /* OnScenePhaseChangedModifier.swift */,
 				E13316FD2ADE42B6009BF865 /* OnSizeChangedModifier.swift */,
+				E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */,
 				E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */,
 				E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */,
 			);
@@ -3100,7 +3101,6 @@
 				E1194F4D2BEABA9100888DB6 /* NavigationBarCloseButton.swift */,
 				E113133028BDB6D600930F75 /* NavigationBarDrawerButtons */,
 				E11895B12893842D0042947B /* NavigationBarOffset */,
-				E145EB472BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";

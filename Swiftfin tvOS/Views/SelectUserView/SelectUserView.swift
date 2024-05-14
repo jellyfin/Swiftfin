@@ -195,7 +195,17 @@ struct SelectUserView: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            viewModel.send(.getServers)
+//            viewModel.send(.getServers)
+
+            gridItems = OrderedSet(
+                (0 ..< 20)
+                    .map { i in
+                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
+                    }
+                    .map { u in
+                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
+                    }
+            )
         }
         .onChange(of: viewModel.servers) { _ in
             gridItems = makeGridItems(for: serverSelection)
@@ -242,13 +252,6 @@ struct SelectUserView: View {
     }
 }
 
-extension View {
-
-    func scroll(ifLargerThan height: CGFloat) -> some View {
-        modifier(ScrollIfLargerThanModifier(height: height))
-    }
-}
-
-#Preview {
-    SelectUserView()
-}
+// #Preview {
+//    SelectUserView()
+// }
