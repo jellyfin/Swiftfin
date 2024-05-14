@@ -52,15 +52,6 @@ struct SwiftfinApp: App {
                         Notifications[.didSignOut].post()
                     }
                 }
-                .onNotification(UIApplication.willTerminateNotification) { _ in
-                    if Defaults[.signOutOnClose] {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            Defaults[.lastSignedInUserID] = nil
-                            UserSession.current.reset()
-                            Notifications[.didSignOut].post()
-                        }
-                    }
-                }
         }
     }
 }
