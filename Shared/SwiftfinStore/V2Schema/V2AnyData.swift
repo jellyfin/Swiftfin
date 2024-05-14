@@ -13,9 +13,7 @@ import Factory
 import Foundation
 import SwiftUI
 
-typealias AnyStoredData = SwiftfinStore.V1.AnyData
-
-extension SwiftfinStore.V1 {
+extension SwiftfinStore.V2 {
 
     /// Used to store arbitrary data with a `name` and `ownerID`.
     ///

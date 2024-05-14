@@ -18,6 +18,7 @@ extension SwiftfinStore.V2 {
         entities: [
             Entity<StoredServer>("Server"),
             Entity<StoredUser>("User"),
+            Entity<AnyData>("AnyData")
         ]
 //        versionLock: [
 //            "Server": [0xC831_8BCA_3734_8B36, 0x78F9_E383_4EC4_0409, 0xC32D_7C44_D347_6825, 0x8593_766E_CEC6_0CFD],

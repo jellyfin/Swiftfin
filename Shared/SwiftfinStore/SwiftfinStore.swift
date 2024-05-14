@@ -11,6 +11,7 @@ import Factory
 import Foundation
 import JellyfinAPI
 
+typealias AnyStoredData = SwiftfinStore.V2.AnyData
 typealias ServerModel = SwiftfinStore.V1.StoredServer
 typealias UserModel = SwiftfinStore.V1.StoredUser
 
