@@ -7,154 +7,248 @@
 //
 
 import CollectionVGrid
+import Defaults
 import Factory
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
-#warning("TODO: implement")
-
 struct SelectUserView: View {
+
+    private enum UserGridItem: Hashable {
+        case user(UserState, server: ServerState)
+        case addUser
+    }
+
+    @Default(.selectUserServerSelection)
+    private var serverSelection
+
+    @EnvironmentObject
+    private var router: SelectUserCoordinator.Router
+
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var error: Error? = nil
+    @State
+    private var gridItems: OrderedSet<UserGridItem> = []
+    @State
+    private var gridItemSize: CGSize = .zero
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var padGridItemColumnCount: Int = 1
+    @State
+    private var scrollViewOffset: CGFloat = 0
+
+    @StateObject
+    private var viewModel = SelectUserViewModel()
+
+    private var selectedServer: ServerState? {
+        if case let SelectUserServerSelection.server(id: id) = serverSelection,
+           let server = viewModel.servers.keys.first(where: { server in server.id == id })
+        {
+            return server
+        }
+
+        return nil
+    }
+
+    private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
+        switch serverSelection {
+        case .all:
+            let items = viewModel.servers
+                .map { server, users in
+                    users.map { (server: server, user: $0) }
+                }
+                .flatMap { $0 }
+                .sorted(using: \.user.username)
+                .reversed()
+                .map { UserGridItem.user($0.user, server: $0.server) }
+                .appending(.addUser)
+
+            return OrderedSet(items)
+        case let .server(id: id):
+            guard let server = viewModel.servers.keys.first(where: { server in server.id == id }) else {
+                assertionFailure("server with ID not found?")
+                return [.addUser]
+            }
+
+            let items = viewModel.servers[server]!
+                .sorted(using: \.username)
+                .map { UserGridItem.user($0, server: server) }
+                .appending(.addUser)
+
+            return OrderedSet(items)
+        }
+    }
+
+    // MARK: grid
+
+    private func gridItemOffset(index: Int) -> CGFloat {
+        let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
+
+        guard lastRowIndices.contains(index) else { return 0 }
+
+        let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
+        return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding * 2.5) / 2
+    }
 
     @ViewBuilder
     private var gridContentView: some View {
         let columns = Array(repeating: GridItem(.flexible(), spacing: EdgeInsets.edgePadding * 2.5), count: 5)
 
         LazyVGrid(columns: columns, spacing: EdgeInsets.edgePadding * 2.5) {
-            ForEach(0 ..< 4) { _ in
-                Button {} label: {
-                    Color.blue
-                        .aspectRatio(1, contentMode: .fill)
-                        .clipShape(.circle)
-                }
-                .buttonStyle(.card)
+            ForEach(Array(gridItems.enumerated().map(\.offset)), id: \.hashValue) { index in
+                let item = gridItems[index]
+
+                gridItemView(for: item)
+                    .trackingSize($gridItemSize)
+                    .offset(x: gridItemOffset(index: index))
+            }
+        }
+        .padding(EdgeInsets.edgePadding * 2.5)
+        .onChange(of: gridItemSize) { newValue in
+            let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
+
+            padGridItemColumnCount = columns
+        }
+    }
+
+    @ViewBuilder
+    private func gridItemView(for item: UserGridItem) -> some View {
+        switch item {
+        case let .user(user, server):
+            UserGridButton(
+                user: user,
+                server: server,
+                showServer: serverSelection == .all
+            ) {
+//                if isEditingUsers {
+//                    selectedUsers.toggle(value: user)
+//                } else {
+                viewModel.send(.signIn(user, pin: ""))
+//                }
+            } onDelete: {
+//                selectedUsers.insert(user)
+//                isPresentingConfirmDeleteUsers = true
+            }
+//            .environment(\.isEditing, isEditingUsers)
+//            .environment(\.isSelected, selectedUsers.contains(user))
+        case .addUser:
+            AddUserButton(
+                serverSelection: $serverSelection,
+                servers: viewModel.servers.keys
+            ) { server in
+                router.route(to: \.userSignIn, server)
             }
         }
     }
 
-    var body: some View {
-        VStack(spacing: 0) {
+    // MARK: userView
+
+//    HStack {
+//        Image(.jellyfinBlobBlue)
+//            .resizable()
+//            .aspectRatio(contentMode: .fit)
+//            .frame(height: 100)
+//            .edgePadding()
+//    }
+//    .frame(maxWidth: .infinity)
+//    .background(Material.thin.opacity(scrollViewOffset > 20 ? 1 : 0))
+
+    @ViewBuilder
+    private var userView: some View {
+        VStack {
+            ZStack {
+                Color.clear
+                    .trackingSize($contentSize)
+
+                VStack(spacing: 0) {
+
+                    Color.clear
+                        .frame(height: 100)
+
+                    gridContentView
+                }
+                .scroll(ifLargerThan: contentSize.height - 100)
+                .scrollViewOffset($scrollViewOffset)
+            }
+
             HStack {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .padding()
+                ServerSelectionMenu(
+                    selection: $serverSelection,
+                    viewModel: viewModel
+                )
             }
+        }
+        .animation(.linear(duration: 0.1), value: scrollViewOffset)
+    }
 
-            ScrollView {
-                gridContentView
-                    .edgePadding()
-            }
-
-//            HStack {
-//                Rectangle()
-//                    .fill(Color.red)
-//                    .frame(height: 150)
+    var body: some View {
+        ZStack {
+//            if viewModel.servers.isEmpty {
+//                Text("TODO")
+//            } else {
+            userView
 //            }
         }
         .ignoresSafeArea()
+        .onAppear {
+            viewModel.send(.getServers)
+        }
+        .onChange(of: viewModel.servers) { _ in
+            gridItems = makeGridItems(for: serverSelection)
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                self.error = eventError
+                self.isPresentingError = true
+            case let .signedIn(user):
+                Defaults[.lastSignedInUserID] = user.id
+                Container.userSession.reset()
+                Notifications[.didSignIn].post()
+            }
+        }
+        .onNotification(.didConnectToServer) { notification in
+            if let server = notification.object as? ServerState {
+                viewModel.send(.getServers)
+                serverSelection = .server(id: server.id)
+            }
+        }
+        .onNotification(.didChangeCurrentServerURL) { notification in
+            if let server = notification.object as? ServerState {
+                viewModel.send(.getServers)
+                serverSelection = .server(id: server.id)
+            }
+        }
+        .onNotification(.didDeleteServer) { notification in
+            viewModel.send(.getServers)
+
+            if let server = notification.object as? ServerState {
+                if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+                    if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                        serverSelection = .server(id: first.id)
+                    } else {
+                        serverSelection = .all
+                    }
+                }
+
+                // change splash screen selection if necessary
+//                selectUserAllServersSplashscreen = serverSelection
+            }
+        }
+    }
+}
+
+extension View {
+
+    func scroll(ifLargerThan height: CGFloat) -> some View {
+        modifier(ScrollIfLargerThanModifier(height: height))
     }
 }
 
 #Preview {
     SelectUserView()
 }
-
-// struct UserListView: View {
-//
-//    @EnvironmentObject
-//    private var router: UserListCoordinator.Router
-//
-//    @State
-//    private var longPressedUser: SwiftfinStore.State.User?
-//
-//    @StateObject
-//    private var viewModel: UserListViewModel
-//
-//    init(server: ServerState) {
-//        self._viewModel = StateObject(wrappedValue: UserListViewModel(server: server))
-//    }
-//
-//    @ViewBuilder
-//    private var listView: some View {
-//        CollectionVGrid(
-//            viewModel.users,
-//            layout: .minWidth(
-//                250,
-//                insets: EdgeInsets.edgeInsets,
-//                itemSpacing: EdgeInsets.edgePadding,
-//                lineSpacing: EdgeInsets.edgePadding
-//            )
-//        ) { user in
-//            UserProfileButton(user: user)
-//                .onSelect {
-//                    viewModel.signIn(user: user)
-//                }
-//                .onLongPressGesture {
-//                    longPressedUser = user
-//                }
-//        }
-//    }
-//
-//    @ViewBuilder
-//    private var noUserView: some View {
-//        VStack(spacing: 50) {
-//            L10n.signInGetStarted.text
-//                .frame(maxWidth: 500)
-//                .multilineTextAlignment(.center)
-//                .font(.body)
-//
-//            Button {
-//                router.route(to: \.userSignIn, viewModel.server)
-//            } label: {
-//                L10n.signIn.text
-//                    .bold()
-//                    .font(.callout)
-//                    .frame(width: 400, height: 75)
-//                    .background(Color.jellyfinPurple)
-//            }
-//            .buttonStyle(.card)
-//        }
-//    }
-//
-//    var body: some View {
-//        ZStack {
-//
-//            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
-//                .ignoresSafeArea()
-//
-//            Color.black
-//                .opacity(0.9)
-//                .ignoresSafeArea()
-//
-//            if viewModel.users.isEmpty {
-//                noUserView
-//                    .offset(y: -50)
-//            } else {
-//                listView
-//            }
-//        }
-//        .navigationTitle(viewModel.server.name)
-//        .if(viewModel.users.isNotEmpty) { view in
-//            view.toolbar {
-//                ToolbarItem(placement: .topBarTrailing) {
-//                    Button {
-//                        router.route(to: \.userSignIn, viewModel.server)
-//                    } label: {
-//                        Image(systemName: "person.crop.circle.fill.badge.plus")
-//                    }
-//                }
-//            }
-//        }
-//        .alert(item: $longPressedUser) { user in
-//            Alert(
-//                title: Text(user.username),
-//                primaryButton: .destructive(L10n.remove.text, action: { viewModel.remove(user: user) }),
-//                secondaryButton: .cancel()
-//            )
-//        }
-//        .onAppear {
-//            viewModel.fetchUsers()
-//        }
-//    }
-// }

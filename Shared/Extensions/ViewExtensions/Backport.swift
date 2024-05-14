@@ -45,7 +45,7 @@ extension Backport where Content: View {
         if #available(iOS 16, tvOS 16, *) {
             content.scrollDisabled(disabled)
         } else {
-            content.introspect(.scrollView, on: .iOS(.v15)) { scrollView in
+            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
                 scrollView.isScrollEnabled = !disabled
             }
         }
@@ -82,4 +82,17 @@ extension Backport where Content: View {
         }
     }
     #endif
+}
+
+// MARK: ButtonBorderShape
+
+extension ButtonBorderShape {
+
+    static let circleBackport: ButtonBorderShape = {
+        if #available(iOS 17, tvOS 16.4, *) {
+            return ButtonBorderShape.circle
+        } else {
+            return ButtonBorderShape.roundedRectangle
+        }
+    }()
 }

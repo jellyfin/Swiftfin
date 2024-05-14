@@ -7,6 +7,8 @@
 //
 
 import CollectionVGrid
+import Defaults
+import Factory
 import JellyfinAPI
 import Stinsen
 import SwiftUI
@@ -15,170 +17,146 @@ import SwiftUI
 
 struct UserSignInView: View {
 
-    let server: ServerState
+    @Default(.accentColor)
+    private var accentColor
+
+    @EnvironmentObject
+    private var router: UserSignInCoordinator.Router
+
+    @FocusState
+    private var focusedTextField: Int?
+
+    @State
+    private var duplicateUser: UserState? = nil
+    @State
+    private var error: Error? = nil
+    @State
+    private var isPresentingDuplicateUser: Bool = false
+    @State
+    private var isPresentingError: Bool = false
+    @State
+    private var password: String = ""
+    @State
+    private var username: String = ""
+
+    @StateObject
+    private var viewModel: UserSignInViewModel
+
+    init(server: ServerState) {
+        self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
+    }
+
+    @ViewBuilder
+    private var signInSection: some View {
+        Section {
+            TextField(L10n.username, text: $username)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
+                .focused($focusedTextField, equals: 0)
+                .onSubmit {
+                    focusedTextField = 1
+                }
+
+            TextField(L10n.password, text: $password) {
+                focusedTextField = nil
+
+//                signInUserPassword()
+            }
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($focusedTextField, equals: 1)
+        } header: {
+            Text(L10n.signInToServer(viewModel.server.name))
+        }
+
+        if case .signingIn = viewModel.state {
+//            ListRowButton(L10n.cancel) {
+//                viewModel.send(.cancel)
+//            }
+            Button(L10n.cancel) {
+                viewModel.send(.cancel)
+            }
+            .foregroundStyle(.red, .red.opacity(0.2))
+        } else {
+            Button(L10n.signIn) {
+                focusedTextField = nil
+
+                viewModel.send(.signIn(username: username, password: password, policy: .none))
+            }
+            .disabled(username.isEmpty)
+            .foregroundStyle(
+                accentColor.overlayColor,
+                accentColor
+            )
+            .opacity(username.isEmpty ? 0.5 : 1)
+        }
+
+        if let disclaimer = viewModel.serverDisclaimer {
+            Section("Disclaimer") {
+                Text(disclaimer)
+                    .font(.callout)
+            }
+        }
+    }
 
     var body: some View {
-        Text("TODO")
+        HStack {
+            VStack(alignment: .leading) {
+                signInSection
+            }
+
+            VStack(alignment: .leading) {
+                Color.red
+                    .opacity(0.5)
+            }
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .duplicateUser(duplicateUser):
+                self.duplicateUser = duplicateUser
+                isPresentingDuplicateUser = true
+            case let .error(eventError):
+                error = eventError
+                isPresentingError = true
+            case let .signedIn(user):
+                router.dismissCoordinator()
+
+                Defaults[.lastSignedInUserID] = user.id
+                Container.userSession.reset()
+                Notifications[.didSignIn].post()
+            }
+        }
+        .onFirstAppear {
+            focusedTextField = 0
+            viewModel.send(.getPublicData)
+        }
+        .alert(
+            Text("Duplicate User"),
+            isPresented: $isPresentingDuplicateUser,
+            presenting: duplicateUser
+        ) { _ in
+
+            // TODO: uncomment when duplicate user fixed
+//            Button(L10n.signIn) {
+//                signInUplicate(user: user, replace: false)
+//            }
+
+//            Button("Replace") {
+//                signInUplicate(user: user, replace: true)
+//            }
+
+            Button(L10n.dismiss, role: .cancel)
+        } message: { duplicateUser in
+            Text("\(duplicateUser.username) is already saved")
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .cancel)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
     }
 }
-
-// struct UserSignInView: View {
-//    enum FocusedField {
-//        case username
-//        case password
-//    }
-//
-//    @FocusState
-//    private var focusedField: FocusedField?
-//
-//    @ObservedObject
-//    var viewModel: UserSignInViewModel
-//
-//    @State
-//    private var isPresentingQuickConnect: Bool = false
-//    @State
-//    private var isPresentingSignInError: Bool = false
-//    @State
-//    private var password: String = ""
-//    @State
-//    private var username: String = ""
-//
-//    @ViewBuilder
-//    private var signInForm: some View {
-//        VStack(alignment: .leading) {
-//            Section {
-//                TextField(L10n.username, text: $username)
-//                    .disableAutocorrection(true)
-//                    .autocapitalization(.none)
-//                    .focused($focusedField, equals: .username)
-//
-//                SecureField(L10n.password, text: $password)
-//                    .disableAutocorrection(true)
-//                    .autocapitalization(.none)
-//                    .focused($focusedField, equals: .password)
-//
-//                Button {
-//                    viewModel.send(.signInWithUserPass(username: username, password: password))
-//                } label: {
-//                    HStack {
-//                        if case viewModel.state = .signingIn {
-//                            ProgressView()
-//                        }
-//
-//                        L10n.connect.text
-//                            .bold()
-//                            .font(.callout)
-//                    }
-//                    .frame(height: 75)
-//                    .frame(maxWidth: .infinity)
-//                    .background(viewModel.isLoading || username.isEmpty ? .secondary : Color.jellyfinPurple)
-//                }
-//                .disabled(viewModel.isLoading || username.isEmpty)
-//                .buttonStyle(.card)
-//
-//                Button {
-//                    isPresentingQuickConnect = true
-//                } label: {
-//                    L10n.quickConnect.text
-//                        .frame(height: 75)
-//                        .frame(maxWidth: .infinity)
-//                        .background(Color.jellyfinPurple)
-//                }
-//                .buttonStyle(.card)
-//            } header: {
-//                L10n.signInToServer(viewModel.server.name).text
-//            }
-//        }
-//    }
-//
-//    @ViewBuilder
-//    private var publicUsersGrid: some View {
-//        VStack {
-//            L10n.publicUsers.text
-//                .font(.title3)
-//                .fontWeight(.semibold)
-//                .frame(maxWidth: .infinity)
-//
-//            if viewModel.publicUsers.isEmpty {
-//                L10n.noPublicUsers.text
-//                    .font(.callout)
-//                    .foregroundColor(.secondary)
-//                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                    .offset(y: -50)
-//            } else {
-//                CollectionVGrid(
-//                    viewModel.publicUsers,
-//                    layout: .minWidth(250, insets: .init(20), itemSpacing: 20, lineSpacing: 20)
-//                ) { user in
-//                    UserProfileButton(user: user)
-//                        .onSelect {
-//                            username = user.name ?? ""
-//                            focusedField = .password
-//                        }
-//                }
-//            }
-//        }
-//    }
-//
-//    var errorText: some View {
-//        var text: String?
-//        if case let .error(error) = viewModel.state {
-//            text = error.localizedDescription
-//        }
-//        return Text(text ?? .emptyDash)
-//    }
-//
-//    var body: some View {
-//        ZStack {
-//            ImageView(viewModel.userSession.client.fullURL(with: Paths.getSplashscreen()))
-//                .ignoresSafeArea()
-//
-//            Color.black
-//                .opacity(0.9)
-//                .ignoresSafeArea()
-//
-//            HStack(alignment: .top) {
-//                signInForm
-//                    .frame(maxWidth: .infinity)
-//
-//                publicUsersGrid
-//                    .frame(maxWidth: .infinity)
-//            }
-//            .edgesIgnoringSafeArea(.bottom)
-//        }
-//        .navigationTitle(L10n.signIn)
-//        .onChange(of: viewModel.state) { _ in
-//            // If we encountered the error as we switched from quick connect cover to this view,
-//            // it's possible that the alert doesn't show, so wait a little bit
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//                isPresentingSignInError = true
-//            }
-//        }
-//        .alert(
-//            L10n.error,
-//            isPresented: $isPresentingSignInError
-//        ) {
-//            Button(L10n.dismiss, role: .cancel)
-//        } message: {
-//            errorText
-//        }
-//        .blurFullScreenCover(isPresented: $isPresentingQuickConnect) {
-//            QuickConnectView(
-//                viewModel: viewModel.quickConnectViewModel,
-//                isPresentingQuickConnect: $isPresentingQuickConnect,
-//                signIn: { authSecret in
-//                    self.viewModel.send(.signInWithQuickConnect(authSecret: authSecret))
-//                }
-//            )
-//        }
-//        .onAppear {
-//            Task {
-//                try? await viewModel.checkQuickConnect()
-//                try? await viewModel.getPublicUsers()
-//            }
-//        }
-//        .onDisappear {
-//            viewModel.send(.cancelSignIn)
-//        }
-//    }
-// }

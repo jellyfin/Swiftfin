@@ -23,7 +23,11 @@ extension ItemView {
                     Group {
                         if viewModel.item.userData?.isPlayed ?? false {
                             Image(systemName: "checkmark.circle.fill")
-                                .paletteOverlayRendering(color: .white)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(
+                                    .primary,
+                                    Color.jellyfinPurple
+                                )
                         } else {
                             Image(systemName: "checkmark.circle")
                         }

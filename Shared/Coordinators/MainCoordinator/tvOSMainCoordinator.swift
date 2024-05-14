@@ -12,6 +12,9 @@ import Nuke
 import Stinsen
 import SwiftUI
 
+#warning("TODO: cleanup like iOS")
+#warning("TODO: server check")
+
 final class MainCoordinator: NavigationCoordinatable {
 
     @Injected(LogManager.service)
@@ -44,14 +47,20 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        logger.info("Received `didSignIn` from NSNotificationCenter.")
-        root(\.mainTab)
+        logger.info("Signed in")
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.mainTab)
+        }
     }
 
     @objc
     func didSignOut() {
-        logger.info("Received `didSignOut` from NSNotificationCenter.")
-        root(\.selectUser)
+        logger.info("Signed out")
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.selectUser)
+        }
     }
 
     func makeMainTab() -> MainTabCoordinator {
