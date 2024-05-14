@@ -15,7 +15,7 @@ extension SwiftfinStore.V1 {
         modelVersion: "V1",
         entities: [
             Entity<StoredServer>("Server"),
-            Entity<StoredUser>("User")
+            Entity<StoredUser>("User"),
         ],
         versionLock: [
             "Server": [

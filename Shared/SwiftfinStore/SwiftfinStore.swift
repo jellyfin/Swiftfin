@@ -39,13 +39,19 @@ extension SwiftfinStore {
     static let dataStack: DataStack = {
 
         let _dataStack = DataStack(
-            V1.schema
+            V1.schema,
+            V2.schema,
+            migrationChain: ["V1", "V2"]
         )
 
-        try! _dataStack.addStorageAndWait(SQLiteStore(
-            fileName: "Swiftfin.sqlite",
-            localStorageOptions: .recreateStoreOnModelMismatch
-        ))
+        _ = _dataStack.addStorage(SQLiteStore(fileName: "Swiftfin.sqlite")) { result in
+            switch result {
+            case .success:
+                print("Successfully migrated datastack")
+            case let .failure(error):
+                LogManager.service().error("Failed creating datastack with: \(error.localizedDescription)")
+            }
+        }
 
         return _dataStack
     }()
