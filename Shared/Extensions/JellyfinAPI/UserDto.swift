@@ -6,26 +6,25 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Factory
 import Foundation
-import Get
 import JellyfinAPI
-import UIKit
 
 extension UserDto {
 
-    func profileImageSource(client: JellyfinClient, maxWidth: CGFloat, maxHeight: CGFloat) -> ImageSource {
-        let scaleWidth = UIScreen.main.scale(maxWidth)
-        let scaleHeight = UIScreen.main.scale(maxHeight)
-
-        let request = Paths.getUserImage(
-            userID: id ?? "",
-            imageType: "Primary",
-            parameters: .init(maxWidth: scaleWidth, maxHeight: scaleHeight)
+    func profileImageSource(
+        client: JellyfinClient,
+        maxWidth: CGFloat? = nil,
+        maxHeight: CGFloat? = nil
+    ) -> ImageSource {
+        UserState(
+            id: id ?? "",
+            serverID: "",
+            username: ""
         )
-
-        let profileImageURL = client.fullURL(with: request)
-
-        return ImageSource(url: profileImageURL)
+        .profileImageSource(
+            client: client,
+            maxWidth: maxWidth,
+            maxHeight: maxHeight
+        )
     }
 }

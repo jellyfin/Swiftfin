@@ -6,194 +6,190 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
-import Stinsen
 import SwiftUI
 
 struct ConnectToServerView: View {
 
+    @Default(.accentColor)
+    private var accentColor
+
     @EnvironmentObject
-    private var router: ConnectToServerCoodinator.Router
+    private var router: SelectUserCoordinator.Router
 
-    @ObservedObject
-    var viewModel: ConnectToServerViewModel
+    @FocusState
+    private var isURLFocused: Bool
 
     @State
-    private var connectionError: Error?
+    private var duplicateServer: ServerState? = nil
     @State
-    private var connectionTask: Task<Void, Never>?
+    private var error: Error? = nil
     @State
-    private var duplicateServer: (server: ServerState, url: URL)?
-    @State
-    private var isConnecting: Bool = false
-    @State
-    private var isPresentingConnectionError: Bool = false
-    @State
-    private var isPresentingDuplicateServerAlert: Bool = false
+    private var isPresentingDuplicateServer: Bool = false
     @State
     private var isPresentingError: Bool = false
     @State
-    private var url = ""
+    private var url: String = ""
 
-    private func connectToServer(at url: String) {
-        let task = Task {
-            isConnecting = true
-            connectionError = nil
+    @StateObject
+    private var viewModel = ConnectToServerViewModel()
 
-            do {
-                let serverConnection = try await viewModel.connectToServer(url: url)
-
-                if viewModel.isDuplicate(server: serverConnection.server) {
-                    duplicateServer = serverConnection
-                    isPresentingDuplicateServerAlert = true
-                } else {
-                    try viewModel.save(server: serverConnection.server)
-                    router.route(to: \.userSignIn, serverConnection.server)
-                }
-            } catch {
-                connectionError = error
-                isPresentingConnectionError = true
-            }
-
-            isConnecting = false
-        }
-
-        connectionTask = task
-    }
+    private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
     @ViewBuilder
-    private var connectForm: some View {
-        VStack(alignment: .leading) {
-
-            L10n.connectToJellyfinServer.text
-
+    private var connectSection: some View {
+        Section(L10n.connectToServer) {
             TextField(L10n.serverURL, text: $url)
                 .disableAutocorrection(true)
-                .autocapitalization(.none)
+                .textInputAutocapitalization(.never)
                 .keyboardType(.URL)
+                .focused($isURLFocused)
+        }
 
-            if isConnecting {
-                Button {
-                    connectionTask?.cancel()
-                    isConnecting = false
-                } label: {
-                    L10n.cancel.text
-                        .foregroundColor(.red)
-                        .bold()
-                        .font(.callout)
-                        .frame(height: 75)
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.card)
-            } else {
-                Button {
-                    if !url.contains("://") {
-                        url = "http://" + url
-                    }
-                    connectToServer(at: url)
-                } label: {
-                    L10n.connect.text
-                        .bold()
-                        .font(.callout)
-                        .frame(height: 75)
-                        .frame(maxWidth: .infinity)
-                        .background {
-                            if isConnecting || url.isEmpty {
-                                Color.secondary
-                            } else {
-                                Color.jellyfinPurple
-                            }
-                        }
-                }
-                .disabled(isConnecting || url.isEmpty)
-                .buttonStyle(.card)
+        if viewModel.state == .connecting {
+//            ListRowButton(L10n.cancel) {
+//                viewModel.send(.cancel)
+//            }
+            Button(L10n.cancel) {
+                viewModel.send(.cancel)
             }
-
-            Spacer()
+            .foregroundStyle(.red, .red.opacity(0.2))
+        } else {
+//            ListRowButton(L10n.connect) {
+//                isURLFocused = false
+//                viewModel.send(.connect(url))
+//            }
+            Button(L10n.connect) {
+                isURLFocused = false
+                viewModel.send(.connect(url))
+            }
+            .disabled(url.isEmpty)
+            .foregroundStyle(
+                accentColor.overlayColor,
+                accentColor
+            )
+            .opacity(url.isEmpty ? 0.5 : 1)
         }
     }
 
-    @ViewBuilder
-    private var searchingDiscoverServers: some View {
-        HStack(spacing: 5) {
-            ProgressView()
-
-            L10n.searchingDots.text
-                .foregroundColor(.secondary)
-        }
-    }
-
-    @ViewBuilder
-    private var noLocalServersFound: some View {
-        L10n.noLocalServersFound.text
-            .font(.callout)
-            .foregroundColor(.secondary)
-    }
-
-    @ViewBuilder
-    private var publicServers: some View {
-        VStack(alignment: .center) {
-
+    private func localServerButton(for server: ServerState) -> some View {
+        Button {
+            url = server.currentURL.absoluteString
+            viewModel.send(.connect(server.currentURL.absoluteString))
+        } label: {
             HStack {
-                L10n.localServers.text
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                VStack(alignment: .leading) {
+                    Text(server.name)
+                        .font(.headline)
+                        .fontWeight(.semibold)
 
-                SFSymbolButton(systemName: "arrow.clockwise")
-                    .onSelect {
-                        viewModel.discoverServers()
-                    }
-                    .frame(width: 30, height: 30)
-                    .disabled(viewModel.isSearching || viewModel.isLoading)
+                    Text(server.currentURL.absoluteString)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
             }
+        }
+        .disabled(viewModel.state == .connecting)
+        .buttonStyle(.plain)
+    }
 
-            if viewModel.isSearching {
-                searchingDiscoverServers
-                    .frame(maxHeight: .infinity)
-            } else if viewModel.discoveredServers.isEmpty {
-                noLocalServersFound
-                    .frame(maxHeight: .infinity)
+    private var localServersSection: some View {
+        Section(L10n.localServers) {
+            if viewModel.localServers.isEmpty {
+                L10n.noLocalServersFound.text
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
             } else {
-                ScrollView {
-                    VStack {
-                        ForEach(viewModel.discoveredServers, id: \.id) { server in
-                            ServerButton(server: server)
-                                .onSelect {
-                                    connectToServer(at: server.currentURL.absoluteString)
-                                }
-                        }
-                    }
-                    .padding()
+                ForEach(viewModel.localServers) { server in
+                    localServerButton(for: server)
                 }
             }
         }
     }
 
     var body: some View {
-        HStack(alignment: .top) {
-            connectForm
-                .frame(maxWidth: .infinity)
+        VStack {
+            HStack {
+                Spacer()
 
-            publicServers
-                .frame(maxWidth: .infinity)
+                if viewModel.state == .connecting {
+                    ProgressView()
+                }
+            }
+            .frame(height: 100)
+            .overlay {
+                Image(.jellyfinBlobBlue)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: 100)
+                    .edgePadding()
+            }
+
+            HStack(alignment: .top) {
+                VStack(alignment: .leading) {
+                    connectSection
+                }
+
+                VStack(alignment: .leading) {
+                    localServersSection
+                }
+            }
+
+            Spacer()
         }
-        .navigationTitle(L10n.connect.text)
-        .onAppear {
-            viewModel.discoverServers()
+        .onFirstAppear {
+            isURLFocused = true
+            viewModel.send(.searchForServers)
         }
-//        .alert(item: $viewModel.errorMessage) { _ in
-//            Alert(
-//                title: Text(viewModel.alertTitle),
-//                message: Text(viewModel.errorMessage?.message ?? L10n.unknownError),
-//                dismissButton: .cancel()
-//            )
-//        }
-//        .alert(item: $viewModel.addServerURIPayload) { _ in
-//            Alert(
-//                title: L10n.existingServer.text,
-//                message: L10n.serverAlreadyExistsPrompt(viewModel.addServerURIPayload?.server.name ?? .emptyDash).text,
-//                dismissButton: .cancel()
-//            )
-//        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .connected(server):
+                Notifications[.didConnectToServer].post(object: server)
+                router.popLast()
+            case let .duplicateServer(server):
+                duplicateServer = server
+                isPresentingDuplicateServer = true
+            case let .error(eventError):
+                error = eventError
+                isPresentingError = true
+                isURLFocused = true
+            }
+        }
+        .onReceive(timer) { _ in
+            guard viewModel.state != .connecting else { return }
+
+            viewModel.send(.searchForServers)
+        }
+        .alert(
+            L10n.error.text,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { _ in
+            Button(L10n.dismiss, role: .destructive)
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert(
+            L10n.server.text,
+            isPresented: $isPresentingDuplicateServer,
+            presenting: duplicateServer
+        ) { server in
+            Button(L10n.dismiss, role: .destructive)
+
+            Button(L10n.addURL) {
+                viewModel.send(.addNewURL(server))
+                router.popLast()
+            }
+        } message: { server in
+            Text("\(server.name) is already connected.")
+        }
     }
 }

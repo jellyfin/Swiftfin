@@ -13,7 +13,7 @@ import JellyfinAPI
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     init() {
-        super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp))
+        super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp, id: "nextUp"))
     }
 
     override func get(page: Int) async throws -> [BaseItemDto] {

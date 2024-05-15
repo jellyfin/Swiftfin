@@ -13,9 +13,6 @@ extension iPadOSSeriesItemView {
 
     struct ContentView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
-
         @ObservedObject
         var viewModel: SeriesItemViewModel
 

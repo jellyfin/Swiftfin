@@ -7,6 +7,8 @@
 //
 
 import CoreStore
+import Defaults
+import Factory
 import Logging
 import Pulse
 import PulseLogHandler
@@ -35,7 +37,21 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainCoordinator().view()
+            MainCoordinator()
+                .view()
+                .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
+                    Defaults[.backgroundTimeStamp] = Date.now
+                }
+                .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+                    // TODO: needs to check if any background playback is happening
+                    let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+
+                    if Defaults[.signOutOnBackground], backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                        Defaults[.lastSignedInUserID] = nil
+                        UserSession.current.reset()
+                        Notifications[.didSignOut].post()
+                    }
+                }
         }
     }
 }

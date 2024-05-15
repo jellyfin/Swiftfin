@@ -19,15 +19,17 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     #if os(iOS)
     @Route(.push)
-    var about = makeAbout
-    @Route(.push)
-    var appIconSelector = makeAppIconSelector
-    @Route(.push)
     var log = makeLog
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
-    var quickConnect = makeQuickConnectSettings
+    var quickConnect = makeQuickConnectAuthorize
+    @Route(.push)
+    var resetUserPassword = makeResetUserPassword
+    @Route(.push)
+    var localSecurity = makeLocalSecurity
+    @Route(.push)
+    var userProfile = makeUserProfileSettings
 
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
@@ -63,31 +65,30 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     #endif
 
-    private let viewModel: SettingsViewModel
-
-    init() {
-        viewModel = .init()
-    }
-
     #if os(iOS)
-    @ViewBuilder
-    func makeAbout() -> some View {
-        AboutAppView(viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    func makeAppIconSelector() -> some View {
-        AppIconSelectorView(viewModel: viewModel)
-    }
-
     @ViewBuilder
     func makeNativePlayerSettings() -> some View {
         NativeVideoPlayerSettingsView()
     }
 
     @ViewBuilder
-    func makeQuickConnectSettings() -> some View {
-        QuickConnectSettingsView(viewModel: .init())
+    func makeQuickConnectAuthorize() -> some View {
+        QuickConnectAuthorizeView()
+    }
+
+    @ViewBuilder
+    func makeResetUserPassword() -> some View {
+        ResetUserPasswordView()
+    }
+
+    @ViewBuilder
+    func makeLocalSecurity() -> some View {
+        UserLocalSecurityView()
+    }
+
+    @ViewBuilder
+    func makeUserProfileSettings(viewModel: SettingsViewModel) -> some View {
+        UserProfileSettingsView(viewModel: viewModel)
     }
 
     @ViewBuilder
@@ -107,7 +108,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeServerDetail(server: ServerState) -> some View {
-        ServerDetailView(server: server)
+        EditServerView(server: server)
     }
 
     #if DEBUG
@@ -145,19 +146,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                IndicatorSettingsView()
-            }
-        )
+        NavigationViewCoordinator {
+            IndicatorSettingsView()
+        }
     }
 
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                ServerDetailView(server: server)
-            }
-        )
+        NavigationViewCoordinator {
+            EditServerView(server: server)
+        }
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
@@ -172,6 +169,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        SettingsView(viewModel: viewModel)
+        SettingsView()
     }
 }

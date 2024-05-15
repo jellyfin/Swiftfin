@@ -47,9 +47,12 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
                     if selection.contains(element) {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 20, height: 20)
-                            .paletteOverlayRendering()
+                            .backport
+                            .fontWeight(.bold)
+                            .aspectRatio(1, contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
                     }
                 }
             }

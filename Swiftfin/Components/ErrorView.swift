@@ -9,10 +9,10 @@
 import SwiftUI
 
 // TODO: should use environment refresh instead?
-struct ErrorView<_Error: Error>: View {
+struct ErrorView<ErrorType: Error>: View {
 
-    private let error: _Error
-    private var onRetry: () -> Void
+    private let error: ErrorType
+    private var onRetry: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 20) {
@@ -24,20 +24,22 @@ struct ErrorView<_Error: Error>: View {
                 .frame(minWidth: 50, maxWidth: 240)
                 .multilineTextAlignment(.center)
 
-            PrimaryButton(title: L10n.retry)
-                .onSelect(onRetry)
-                .frame(maxWidth: 300)
-                .frame(height: 50)
+            if let onRetry {
+                PrimaryButton(title: L10n.retry)
+                    .onSelect(onRetry)
+                    .frame(maxWidth: 300)
+                    .frame(height: 50)
+            }
         }
     }
 }
 
 extension ErrorView {
 
-    init(error: _Error) {
+    init(error: ErrorType) {
         self.init(
             error: error,
-            onRetry: {}
+            onRetry: nil
         )
     }
 

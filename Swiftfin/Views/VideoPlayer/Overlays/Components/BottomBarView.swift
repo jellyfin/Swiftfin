@@ -154,7 +154,7 @@ extension VideoPlayer.Overlay {
                 guard chapterSlider else { return }
                 let newChapter = viewModel.chapter(from: newValue)
                 if newChapter != currentChapter {
-                    if isScrubbing && Defaults[.hapticFeedback] {
+                    if isScrubbing {
                         UIDevice.impact(.light)
                     }
 

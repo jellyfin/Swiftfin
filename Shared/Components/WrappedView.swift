@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+// TODO: mainly used as a view to hold views for states
+//       but doesn't work with animations/transitions.
+//       Look at alternative with just ZStack and remove
+
 struct WrappedView<Content: View>: View {
 
     @ViewBuilder

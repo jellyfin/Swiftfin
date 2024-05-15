@@ -196,8 +196,6 @@ extension View {
         }
     }
 
-    // TODO: have width/height tracked binding
-
     func onSizeChanged(perform action: @escaping (CGSize) -> Void) -> some View {
         onSizeChanged { size, _ in
             action(size)
@@ -244,15 +242,6 @@ extension View {
         overlay {
             BlurView(style: style)
         }
-    }
-
-    /// Applies the `.palette` symbol rendering mode and a foreground style
-    /// where the primary style is the passed `Color`'s `overlayColor` and the
-    /// secondary style is the passed `Color`.
-    ///
-    /// If `color == nil`, then `accentColor` from the environment is used.
-    func paletteOverlayRendering(color: Color? = nil) -> some View {
-        modifier(PaletteOverlayRenderingModifier(color: color))
     }
 
     @ViewBuilder
@@ -321,7 +310,7 @@ extension View {
         }
     }
 
-    func onNotification(_ name: NSNotification.Name, perform action: @escaping () -> Void) -> some View {
+    func onNotification(_ name: NSNotification.Name, perform action: @escaping (Notification) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
                 notification: name,
@@ -330,13 +319,50 @@ extension View {
         )
     }
 
+    func onNotification(_ swiftfinNotification: Notifications.Key, perform action: @escaping (Notification) -> Void) -> some View {
+        modifier(
+            OnReceiveNotificationModifier(
+                notification: swiftfinNotification.underlyingNotification.name,
+                onReceive: action
+            )
+        )
+    }
+
+    func scroll(ifLargerThan height: CGFloat) -> some View {
+        modifier(ScrollIfLargerThanModifier(height: height))
+    }
+
+    // MARK: debug
+
+    // Useful modifiers during development for layout
+
     #if DEBUG
-    // Useful modifier during development
-    func debugBackground(_ color: Color = Color.red, opacity: CGFloat = 0.5) -> some View {
+    func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
         background {
-            color
-                .opacity(opacity)
+            Rectangle()
+                .fill(fill)
         }
+    }
+
+    func debugVLine<S: ShapeStyle>(_ fill: S) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .frame(width: 4)
+        }
+    }
+
+    func debugHLine<S: ShapeStyle>(_ fill: S) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .frame(height: 4)
+        }
+    }
+
+    func debugCross<S: ShapeStyle>(_ fill: S = .red) -> some View {
+        debugVLine(fill)
+            .debugHLine(fill)
     }
     #endif
 }

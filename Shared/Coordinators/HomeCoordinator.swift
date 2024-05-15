@@ -17,8 +17,6 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    @Route(.modal)
-    var settings = makeSettings
 
     #if os(tvOS)
     @Route(.modal)
@@ -31,10 +29,6 @@ final class HomeCoordinator: NavigationCoordinatable {
     @Route(.push)
     var library = makeLibrary
     #endif
-
-    func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
-        NavigationViewCoordinator(SettingsCoordinator())
-    }
 
     #if os(tvOS)
     func makeItem(item: BaseItemDto) -> NavigationViewCoordinator<ItemCoordinator> {

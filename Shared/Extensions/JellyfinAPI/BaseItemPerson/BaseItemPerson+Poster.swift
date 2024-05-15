@@ -23,11 +23,12 @@ extension BaseItemPerson: Poster {
 
     func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
 
+        guard let client = UserSession.current()?.client else { return [] }
+
         // TODO: figure out what to do about screen scaling with .main being deprecated
         //       - maxWidth assume already scaled?
         let scaleWidth: Int? = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
 
-        let client = Container.userSession().client
         let imageRequestParameters = Paths.GetItemImageParameters(
             maxWidth: scaleWidth ?? Int(maxWidth),
             tag: primaryImageTag

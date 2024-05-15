@@ -32,7 +32,7 @@ final class FilterCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeStart() -> some View {
         #if os(tvOS)
-        Text(verbatim: .emptyDash)
+        AssertionFailureView("Not implemented")
         #else
         FilterView(viewModel: parameters.viewModel, type: parameters.type)
         #endif

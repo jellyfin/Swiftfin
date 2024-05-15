@@ -77,9 +77,6 @@ extension ItemView.iPadOSCinematicScrollView {
 
     struct OverlayView: View {
 
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
-
         @ObservedObject
         var viewModel: ItemViewModel
 

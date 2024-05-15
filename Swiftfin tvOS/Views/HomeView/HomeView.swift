@@ -8,7 +8,6 @@
 
 import Defaults
 import Foundation
-import Introspect
 import JellyfinAPI
 import SwiftUI
 

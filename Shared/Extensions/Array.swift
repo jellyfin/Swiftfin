@@ -30,10 +30,6 @@ extension Array {
         try filter(predicate).count
     }
 
-    func oneSatisfies(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
-        try contains(where: predicate)
-    }
-
     func prepending(_ element: Element) -> [Element] {
         [element] + self
     }

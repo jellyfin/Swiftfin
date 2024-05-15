@@ -9,22 +9,22 @@
 import Combine
 import Factory
 import Foundation
+import KeychainSwift
 
 class ViewModel: ObservableObject {
+
+    @Injected(SwiftfinStore.service)
+    var dataStack
+
+    @Injected(Keychain.service)
+    var keychain
 
     @Injected(LogManager.service)
     var logger
 
-    @Injected(Container.userSession)
-    var userSession
-
-    // TODO: remove on transition to Stateful
-    @Published
-    var error: ErrorMessage? = nil
-
-    // TODO: remove on transition to Stateful
-    @Published
-    var isLoading = false
+    /// The current *signed in* user session
+    @Injected(UserSession.current)
+    var userSession: UserSession!
 
     var cancellables = Set<AnyCancellable>()
 

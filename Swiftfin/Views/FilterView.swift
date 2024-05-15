@@ -38,7 +38,7 @@ struct FilterView: View {
             router.dismissCoordinator()
         }
         .topBarTrailing {
-            Button {
+            Button(L10n.reset) {
                 switch type {
                 case .genres:
                     viewModel.currentFilters.genres = ItemFilterCollection.default.genres
@@ -55,8 +55,6 @@ struct FilterView: View {
                 case .years:
                     viewModel.currentFilters.years = ItemFilterCollection.default.years
                 }
-            } label: {
-                L10n.reset.text
             }
             .environment(
                 \.isEnabled,

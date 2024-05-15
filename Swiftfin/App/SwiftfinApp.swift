@@ -8,6 +8,7 @@
 
 import CoreStore
 import Defaults
+import Factory
 import Logging
 import PreferencesView
 import Pulse
@@ -20,20 +21,10 @@ struct SwiftfinApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self)
     var appDelegate
 
+    @StateObject
+    private var valueObservation = ValueObservation()
+
     init() {
-
-        // Defaults
-        Task {
-            for await newValue in Defaults.updates(.accentColor) {
-                UIApplication.shared.setAccentColor(newValue.uiColor)
-            }
-        }
-
-        Task {
-            for await newValue in Defaults.updates(.appAppearance) {
-                UIApplication.shared.setAppearance(newValue.style)
-            }
-        }
 
         // Logging
         LoggingSystem.bootstrap { label in
@@ -50,6 +41,8 @@ struct SwiftfinApp: App {
         CoreStoreDefaults.dataStack = SwiftfinStore.dataStack
         CoreStoreDefaults.logger = SwiftfinCorestoreLogger()
 
+        UIScrollView.appearance().keyboardDismissMode = .onDrag
+
         // Sometimes the tab bar won't appear properly on push, always have material background
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
     }
@@ -62,8 +55,20 @@ struct SwiftfinApp: App {
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
             .ignoresSafeArea()
-            .onOpenURL { url in
-                AppURLHandler.shared.processDeepLink(url: url)
+            .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
+                Defaults[.backgroundTimeStamp] = Date.now
+            }
+            .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+
+                // TODO: needs to check if any background playback is happening
+                //       - atow, background video playback isn't officially supported
+                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+
+                if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                    Defaults[.lastSignedInUserID] = nil
+                    UserSession.current.reset()
+                    Notifications[.didSignOut].post()
+                }
             }
         }
     }

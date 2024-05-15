@@ -99,32 +99,35 @@ extension CaseIterablePicker {
 
 // MARK: Label
 
-extension CaseIterablePicker where Element: SystemImageable {
+// TODO: I didn't entirely like the forced label design that this
+//       uses, decide whether to actually keep
 
-    init(title: String, selection: Binding<Element?>) {
-        self.init(
-            selection: selection,
-            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
-            title: title,
-            hasNone: true,
-            noneStyle: .text
-        )
-    }
-
-    init(title: String, selection: Binding<Element>) {
-        let binding = Binding<Element?> {
-            selection.wrappedValue
-        } set: { newValue, _ in
-            precondition(newValue != nil, "Should not have nil new value with non-optional binding")
-            selection.wrappedValue = newValue!
-        }
-
-        self.init(
-            selection: binding,
-            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
-            title: title,
-            hasNone: false,
-            noneStyle: .text
-        )
-    }
-}
+// extension CaseIterablePicker where Element: SystemImageable {
+//
+//    init(title: String, selection: Binding<Element?>) {
+//        self.init(
+//            selection: selection,
+//            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
+//            title: title,
+//            hasNone: true,
+//            noneStyle: .text
+//        )
+//    }
+//
+//    init(title: String, selection: Binding<Element>) {
+//        let binding = Binding<Element?> {
+//            selection.wrappedValue
+//        } set: { newValue, _ in
+//            precondition(newValue != nil, "Should not have nil new value with non-optional binding")
+//            selection.wrappedValue = newValue!
+//        }
+//
+//        self.init(
+//            selection: binding,
+//            label: { Label($0.displayTitle, systemImage: $0.systemImage) },
+//            title: title,
+//            hasNone: false,
+//            noneStyle: .text
+//        )
+//    }
+// }

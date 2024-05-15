@@ -10,15 +10,14 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: rename `AboutItemView`
+
 extension ItemView {
 
     struct AboutView: View {
 
         @Default(.accentColor)
         private var accentColor
-
-        @EnvironmentObject
-        private var router: ItemCoordinator.Router
 
         @ObservedObject
         var viewModel: ItemViewModel

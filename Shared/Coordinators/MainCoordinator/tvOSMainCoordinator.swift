@@ -12,6 +12,10 @@ import Nuke
 import Stinsen
 import SwiftUI
 
+// TODO: clean up like iOS
+//       - move some things to App
+// TODO: server check flow
+
 final class MainCoordinator: NavigationCoordinatable {
 
     @Injected(LogManager.service)
@@ -20,20 +24,43 @@ final class MainCoordinator: NavigationCoordinatable {
     var stack: Stinsen.NavigationStack<MainCoordinator>
 
     @Root
+    var loading = makeLoading
+    @Root
     var mainTab = makeMainTab
     @Root
-    var serverList = makeServerList
+    var selectUser = makeSelectUser
 
     init() {
 
-        if Container.userSession().authenticated {
-            stack = NavigationStack(initial: \MainCoordinator.mainTab)
-        } else {
-            stack = NavigationStack(initial: \MainCoordinator.serverList)
+        stack = NavigationStack(initial: \.loading)
+
+        Task {
+            do {
+                try await SwiftfinStore.setupDataStack()
+
+                if UserSession.current() != nil {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.mainTab)
+                        }
+                    }
+                } else {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.selectUser)
+                        }
+                    }
+                }
+
+            } catch {
+                await MainActor.run {
+                    logger.critical("\(error.localizedDescription)")
+                    Notifications[.didFailMigration].post()
+                }
+            }
         }
 
         ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-        DataLoader.sharedUrlCache.diskCapacity = 1000 * 1024 * 1024 // 1000MB disk
 
         UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
 
@@ -44,21 +71,33 @@ final class MainCoordinator: NavigationCoordinatable {
 
     @objc
     func didSignIn() {
-        logger.info("Received `didSignIn` from NSNotificationCenter.")
-        root(\.mainTab)
+        logger.info("Signed in")
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.mainTab)
+        }
     }
 
     @objc
     func didSignOut() {
-        logger.info("Received `didSignOut` from NSNotificationCenter.")
-        root(\.serverList)
+        logger.info("Signed out")
+
+        withAnimation(.linear(duration: 0.1)) {
+            let _ = root(\.selectUser)
+        }
+    }
+
+    func makeLoading() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AppLoadingView()
+        }
     }
 
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
     }
 
-    func makeServerList() -> NavigationViewCoordinator<ServerListCoordinator> {
-        NavigationViewCoordinator(ServerListCoordinator())
+    func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
+        NavigationViewCoordinator(SelectUserCoordinator())
     }
 }

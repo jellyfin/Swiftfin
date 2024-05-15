@@ -15,6 +15,16 @@ struct Backport<Content> {
 
 extension Backport where Content: View {
 
+    /// Note: has no effect on iOS/tvOS 15
+    @ViewBuilder
+    func fontWeight(_ weight: Font.Weight?) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content.fontWeight(weight)
+        } else {
+            content
+        }
+    }
+
     @ViewBuilder
     func lineLimit(_ limit: Int, reservesSpace: Bool = false) -> some View {
         if #available(iOS 16, tvOS 16, *) {
@@ -26,6 +36,17 @@ extension Backport where Content: View {
 
                 content
                     .lineLimit(limit)
+            }
+        }
+    }
+
+    @ViewBuilder
+    func scrollDisabled(_ disabled: Bool) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content.scrollDisabled(disabled)
+        } else {
+            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
+                scrollView.isScrollEnabled = !disabled
             }
         }
     }
@@ -61,4 +82,17 @@ extension Backport where Content: View {
         }
     }
     #endif
+}
+
+// MARK: ButtonBorderShape
+
+extension ButtonBorderShape {
+
+    static let circleBackport: ButtonBorderShape = {
+        if #available(iOS 17, tvOS 16.4, *) {
+            return ButtonBorderShape.circle
+        } else {
+            return ButtonBorderShape.roundedRectangle
+        }
+    }()
 }

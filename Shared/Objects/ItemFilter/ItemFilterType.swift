@@ -19,7 +19,6 @@ enum ItemFilterType: String, CaseIterable, Defaults.Serializable {
     case traits
     case years
 
-    // TODO: rename to something indicating plurality instead of concrete type?
     var selectorType: SelectorType {
         switch self {
         case .genres, .tags, .traits, .years:

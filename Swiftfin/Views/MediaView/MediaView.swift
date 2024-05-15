@@ -50,8 +50,10 @@ struct MediaView: View {
                     case .downloads:
                         router.route(to: \.downloads)
                     case .favorites:
+                        // TODO: favorites should have its own view instead of a library
                         let viewModel = ItemLibraryViewModel(
                             title: L10n.favorites,
+                            id: "favorites",
                             filters: .favorites
                         )
                         router.route(to: \.library, viewModel)
@@ -70,7 +72,7 @@ struct MediaView: View {
     }
 
     var body: some View {
-        WrappedView {
+        ZStack {
             switch viewModel.state {
             case .content:
                 contentView
@@ -80,11 +82,11 @@ struct MediaView: View {
                 DelayedProgressView()
             }
         }
-        .transition(.opacity.animation(.linear(duration: 0.2)))
+        .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
         .navigationTitle(L10n.allMedia)
         .topBarTrailing {
-            if viewModel.isLoading {
+            if viewModel.state == .refreshing {
                 ProgressView()
             }
         }
