@@ -48,6 +48,8 @@ extension HomeView {
                                 .fontWeight(.semibold)
                         }
                         .edgePadding(.leading)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 200, alignment: .bottomLeading)
                 }
                 .onSelect { item in
                     router.route(to: \.item, item)
