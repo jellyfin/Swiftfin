@@ -34,7 +34,7 @@ struct PlaybackSettingsView: View {
         Form {
             Section {
 
-                ChevronButton(title: L10n.videoPlayer)
+                ChevronButton(L10n.videoPlayer)
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)
                     }
@@ -67,7 +67,7 @@ struct PlaybackSettingsView: View {
             if viewModel.videoStreams.isNotEmpty {
                 Section(L10n.video) {
                     ForEach(viewModel.videoStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, mediaStream)
                             }
@@ -78,7 +78,7 @@ struct PlaybackSettingsView: View {
             if viewModel.audioStreams.isNotEmpty {
                 Section(L10n.audio) {
                     ForEach(viewModel.audioStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, mediaStream)
                             }
@@ -89,7 +89,7 @@ struct PlaybackSettingsView: View {
             if viewModel.subtitleStreams.isNotEmpty {
                 Section(L10n.subtitle) {
                     ForEach(viewModel.subtitleStreams, id: \.displayTitle) { mediaStream in
-                        ChevronButton(title: mediaStream.displayTitle ?? .emptyDash)
+                        ChevronButton(mediaStream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, mediaStream)
                             }

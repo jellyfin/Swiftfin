@@ -24,7 +24,7 @@ struct MediaSourceInfoView: View {
             {
                 Section(L10n.video) {
                     ForEach(videoStreams, id: \.self) { stream in
-                        ChevronButton(title: stream.displayTitle ?? .emptyDash)
+                        ChevronButton(stream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, stream)
                             }
@@ -37,7 +37,7 @@ struct MediaSourceInfoView: View {
             {
                 Section(L10n.audio) {
                     ForEach(audioStreams, id: \.self) { stream in
-                        ChevronButton(title: stream.displayTitle ?? .emptyDash)
+                        ChevronButton(stream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, stream)
                             }
@@ -50,7 +50,7 @@ struct MediaSourceInfoView: View {
             {
                 Section(L10n.subtitle) {
                     ForEach(subtitleStreams, id: \.self) { stream in
-                        ChevronButton(title: stream.displayTitle ?? .emptyDash)
+                        ChevronButton(stream.displayTitle ?? .emptyDash)
                             .onSelect {
                                 router.route(to: \.mediaStreamInfo, stream)
                             }

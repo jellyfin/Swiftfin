@@ -91,7 +91,7 @@ struct ResetUserPasswordView: View {
                     }
                     .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
-                    ListRowButton("Reset") {
+                    ListRowButton("Save") {
                         focusedPassword = nil
                         viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                     }

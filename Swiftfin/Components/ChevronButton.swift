@@ -44,7 +44,7 @@ struct ChevronButton: View {
 
 extension ChevronButton {
 
-    init(title: String, subtitle: String? = nil) {
+    init(_ title: String, subtitle: String? = nil) {
         self.init(
             title: title,
             subtitle: subtitle,

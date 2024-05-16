@@ -65,7 +65,7 @@ struct CaseIterablePicker<Element: CaseIterable & Displayable & Hashable>: View 
 
 extension CaseIterablePicker {
 
-    init(title: String, selection: Binding<Element?>) {
+    init(_ title: String, selection: Binding<Element?>) {
         self.init(
             selection: selection,
             label: { Text($0.displayTitle) },
@@ -75,7 +75,7 @@ extension CaseIterablePicker {
         )
     }
 
-    init(title: String, selection: Binding<Element>) {
+    init(_ title: String, selection: Binding<Element>) {
         let binding = Binding<Element?> {
             selection.wrappedValue
         } set: { newValue, _ in

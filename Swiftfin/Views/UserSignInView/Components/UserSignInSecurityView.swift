@@ -43,7 +43,7 @@ extension UserSignInView {
             List {
 
                 Section {
-                    CaseIterablePicker(title: "Security", selection: $updateSignInPolicy)
+                    CaseIterablePicker("Security", selection: $updateSignInPolicy)
                 } footer: {
                     // TODO: descriptions of each section
 
