@@ -14,6 +14,7 @@ import SwiftUI
 // TODO: Figure out proper tab bar handling with the collection offset
 // TODO: list columns
 // TODO: list row view (LibraryRow)
+// TODO: fix paging for next item focusing the tab
 
 struct PagingLibraryView<Element: Poster>: View {
 
@@ -156,6 +157,9 @@ struct PagingLibraryView<Element: Poster>: View {
             case (_, .list):
                 listItemView(item: item)
             }
+        }
+        .onReachedBottomEdge(offset: .rows(3)) {
+            viewModel.send(.getNextPage)
         }
     }
 

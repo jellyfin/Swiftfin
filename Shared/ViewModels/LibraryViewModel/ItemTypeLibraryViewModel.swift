@@ -38,6 +38,8 @@ final class ItemTypeLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = itemTypes
         parameters.isRecursive = true
+        parameters.sortBy = [ItemSortBy.name.rawValue]
+        parameters.sortOrder = [.ascending]
 
         // Page size
         if let page {
