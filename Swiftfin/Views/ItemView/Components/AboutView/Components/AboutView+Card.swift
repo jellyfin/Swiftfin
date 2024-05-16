@@ -48,7 +48,6 @@ extension ItemView.AboutView {
                     }
                     .padding()
                 }
-                .aspectRatio(330 / 200, contentMode: .fit)
             }
             .buttonStyle(.plain)
         }

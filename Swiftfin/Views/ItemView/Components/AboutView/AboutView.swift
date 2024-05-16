@@ -6,8 +6,10 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 // TODO: rename `AboutItemView`
@@ -20,6 +22,14 @@ extension ItemView {
 
     struct AboutView: View {
 
+        private enum AboutViewItem: Hashable {
+
+            case image
+            case overview
+            case mediaSource(MediaSourceInfo)
+            case ratings
+        }
+
         @Default(.accentColor)
         private var accentColor
 
@@ -28,6 +38,27 @@ extension ItemView {
 
         @State
         private var contentSize: CGSize = .zero
+        @State
+        private var items: OrderedSet<AboutViewItem>
+
+        init(viewModel: ItemViewModel) {
+            self.viewModel = viewModel
+
+            var items: OrderedSet<AboutViewItem> = [
+                .image,
+                .overview,
+            ]
+
+            if let mediaSources = viewModel.item.mediaSources {
+                items.append(contentsOf: mediaSources.map { AboutViewItem.mediaSource($0) })
+            }
+
+            if viewModel.item.hasRatings {
+                items.append(.ratings)
+            }
+
+            self._items = State(initialValue: items)
+        }
 
         // TODO: break out into a general solution for general use?
         // use similar math from CollectionHStack
@@ -59,6 +90,28 @@ extension ItemView {
             return max(0, itemWidth)
         }
 
+        private var cardSize: CGSize {
+            let height = UIDevice.isPad ? padImageWidth * 3 / 2 : phoneImageWidth * 3 / 2
+            let width = height * 1.65
+
+            return CGSize(width: width, height: height)
+        }
+
+        private var imageView: some View {
+            ZStack {
+                Color.clear
+
+                ImageView(
+                    viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
+                        .item.imageSource(.primary, maxWidth: 300)
+                )
+                .accessibilityIgnoresInvertColors()
+            }
+            .posterStyle(.portrait)
+            .posterShadow()
+            .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
+        }
+
         var body: some View {
             VStack(alignment: .leading) {
                 L10n.about.text
@@ -67,34 +120,28 @@ extension ItemView {
                     .accessibility(addTraits: [.isHeader])
                     .edgePadding(.horizontal)
 
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: EdgeInsets.edgePadding / 2) {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(
-                                viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
-                                    .item.imageSource(.primary, maxWidth: 300)
-                            )
-                            .accessibilityIgnoresInvertColors()
-                        }
-                        .posterStyle(.portrait, contentMode: .fit)
-                        .posterShadow()
-                        .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
-
+                CollectionHStack($items, variadicWidths: true) { item in
+                    switch item {
+                    case .image:
+                        imageView
+                    case .overview:
                         OverviewCard(item: viewModel.item)
-
-                        if let mediaSources = viewModel.item.mediaSources {
-                            ForEach(mediaSources) { source in
-                                MediaSourcesCard(subtitle: mediaSources.count > 1 ? source.displayTitle : nil, source: source)
-                            }
-                        }
-
+                            .frame(width: cardSize.width, height: cardSize.height)
+                    case let .mediaSource(source):
+                        MediaSourcesCard(
+                            subtitle: (viewModel.item.mediaSources ?? []).count > 1 ? source.displayTitle : nil,
+                            source: source
+                        )
+                        .frame(width: cardSize.width, height: cardSize.height)
+                    case .ratings:
                         RatingsCard(item: viewModel.item)
+                            .frame(width: cardSize.width, height: cardSize.height)
                     }
-                    .edgePadding(.horizontal)
-                    .padding(.bottom)
                 }
+                .clipsToBounds(false)
+                .insets(horizontal: EdgeInsets.edgePadding)
+                .itemSpacing(EdgeInsets.edgePadding / 2)
+                .scrollBehavior(.continuousLeadingEdge)
             }
             .trackingSize($contentSize)
         }
