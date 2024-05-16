@@ -16,7 +16,7 @@ struct CollectionItemView: View {
     var viewModel: CollectionItemViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             ContentView(viewModel: viewModel)
                 .edgePadding(.bottom)
         }
