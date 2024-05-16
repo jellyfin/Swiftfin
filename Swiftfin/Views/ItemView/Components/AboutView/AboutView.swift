@@ -11,6 +11,10 @@ import JellyfinAPI
 import SwiftUI
 
 // TODO: rename `AboutItemView`
+// TODO: see what to do about bottom padding
+//       - don't like it adds more than the edge
+//       - just have this determine bottom padding
+//         instead of scrollviews?
 
 extension ItemView {
 
@@ -22,6 +26,39 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        @State
+        private var contentSize: CGSize = .zero
+
+        // TODO: break out into a general solution for general use?
+        // use similar math from CollectionHStack
+        private var padImageWidth: CGFloat {
+            let portraitMinWidth: CGFloat = 140
+            let contentWidth = contentSize.width
+            let usableWidth = contentWidth - EdgeInsets.edgePadding * 2
+            var columns = CGFloat(Int(usableWidth / portraitMinWidth))
+            let preItemSpacing = (columns - 1) * (EdgeInsets.edgePadding / 2)
+            let preTotalNegative = EdgeInsets.edgePadding * 2 + preItemSpacing
+
+            if columns * portraitMinWidth + preTotalNegative > contentWidth {
+                columns -= 1
+            }
+
+            let itemSpacing = (columns - 1) * (EdgeInsets.edgePadding / 2)
+            let totalNegative = EdgeInsets.edgePadding * 2 + itemSpacing
+            let itemWidth = (contentWidth - totalNegative) / columns
+
+            return max(0, itemWidth)
+        }
+
+        private var phoneImageWidth: CGFloat {
+            let contentWidth = contentSize.width
+            let usableWidth = contentWidth - EdgeInsets.edgePadding * 2
+            let itemSpacing = (EdgeInsets.edgePadding / 2) * 2
+            let itemWidth = (usableWidth - itemSpacing) / 3
+
+            return max(0, itemWidth)
+        }
+
         var body: some View {
             VStack(alignment: .leading) {
                 L10n.about.text
@@ -31,15 +68,19 @@ extension ItemView {
                     .edgePadding(.horizontal)
 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ImageView(
-                            viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
-                                .item.imageSource(.primary, maxWidth: 300)
-                        )
-                        .posterStyle(.portrait)
+                    HStack(spacing: EdgeInsets.edgePadding / 2) {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(
+                                viewModel.item.type == .episode ? viewModel.item.seriesImageSource(.primary, maxWidth: 300) : viewModel
+                                    .item.imageSource(.primary, maxWidth: 300)
+                            )
+                            .accessibilityIgnoresInvertColors()
+                        }
+                        .posterStyle(.portrait, contentMode: .fit)
                         .posterShadow()
-                        .frame(width: 130)
-                        .accessibilityIgnoresInvertColors()
+                        .frame(width: UIDevice.isPad ? padImageWidth : phoneImageWidth)
 
                         OverviewCard(item: viewModel.item)
 
@@ -52,8 +93,10 @@ extension ItemView {
                         RatingsCard(item: viewModel.item)
                     }
                     .edgePadding(.horizontal)
+                    .padding(.bottom)
                 }
             }
+            .trackingSize($contentSize)
         }
     }
 }

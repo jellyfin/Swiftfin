@@ -288,7 +288,7 @@
 		E12186DE2718F1C50010884C /* Defaults in Frameworks */ = {isa = PBXBuildFile; productRef = E12186DD2718F1C50010884C /* Defaults */; };
 		E122A9132788EAAD0060FA63 /* MediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStream.swift */; };
 		E122A9142788EAAD0060FA63 /* MediaStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E122A9122788EAAD0060FA63 /* MediaStream.swift */; };
-		E12376AE2A33D680001F5B44 /* AboutViewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12376AD2A33D680001F5B44 /* AboutViewCard.swift */; };
+		E12376AE2A33D680001F5B44 /* AboutView+Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12376AD2A33D680001F5B44 /* AboutView+Card.swift */; };
 		E12376B02A33D6AE001F5B44 /* AboutViewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12376AF2A33D6AE001F5B44 /* AboutViewCard.swift */; };
 		E12376B12A33DB33001F5B44 /* MediaSourceInfoCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */; };
 		E12376B32A33DFAC001F5B44 /* ItemOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12376B22A33DFAC001F5B44 /* ItemOverviewView.swift */; };
@@ -1115,7 +1115,7 @@
 		E11CEB8F28999D84003E74C7 /* EpisodeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemView.swift; sourceTree = "<group>"; };
 		E11CEB9328999D9E003E74C7 /* EpisodeItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemContentView.swift; sourceTree = "<group>"; };
 		E122A9122788EAAD0060FA63 /* MediaStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStream.swift; sourceTree = "<group>"; };
-		E12376AD2A33D680001F5B44 /* AboutViewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewCard.swift; sourceTree = "<group>"; };
+		E12376AD2A33D680001F5B44 /* AboutView+Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AboutView+Card.swift"; sourceTree = "<group>"; };
 		E12376AF2A33D6AE001F5B44 /* AboutViewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewCard.swift; sourceTree = "<group>"; };
 		E12376B22A33DFAC001F5B44 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
 		E129428428F080B500796AC6 /* OnReceiveNotificationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnReceiveNotificationModifier.swift; sourceTree = "<group>"; };
@@ -2879,7 +2879,7 @@
 		E18ACA932A15A3D800BB4F35 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E12376AD2A33D680001F5B44 /* AboutViewCard.swift */,
+				E12376AD2A33D680001F5B44 /* AboutView+Card.swift */,
 				E1E750662A33E9B400B2C1EE /* MediaSourcesCard.swift */,
 				E1E750652A33E9B400B2C1EE /* OverviewCard.swift */,
 				E1E750672A33E9B400B2C1EE /* RatingsCard.swift */,
@@ -4393,7 +4393,7 @@
 				E1A1529028FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
 				E11042752B8013DF00821020 /* Stateful.swift in Sources */,
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
-				E12376AE2A33D680001F5B44 /* AboutViewCard.swift in Sources */,
+				E12376AE2A33D680001F5B44 /* AboutView+Card.swift in Sources */,
 				E1A2C154279A7D5A005EC829 /* UIApplication.swift in Sources */,
 				E1D8428F2933F2D900D1041A /* MediaSourceInfo.swift in Sources */,
 				E1BDF2EC2952290200CC0294 /* AspectFillActionButton.swift in Sources */,
