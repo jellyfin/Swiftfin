@@ -23,8 +23,8 @@ extension ItemView.AboutView {
             } label: {
                 ZStack(alignment: .leading) {
 
-                    Color.secondarySystemFill
-                        .cornerRadius(10)
+                    Color.systemFill
+                        .cornerRadius(ratio: 1 / 45, of: \.height)
 
                     VStack(alignment: .leading, spacing: 5) {
                         Text(title)
@@ -48,7 +48,6 @@ extension ItemView.AboutView {
                     }
                     .padding()
                 }
-                .frame(width: 330, height: 195)
             }
             .buttonStyle(.plain)
         }

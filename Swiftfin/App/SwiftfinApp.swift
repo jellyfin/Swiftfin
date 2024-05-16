@@ -45,6 +45,11 @@ struct SwiftfinApp: App {
 
         // Sometimes the tab bar won't appear properly on push, always have material background
         UITabBar.appearance().scrollEdgeAppearance = UITabBarAppearance(idiom: .unspecified)
+
+        // don't keep last user id
+        if Defaults[.signOutOnClose] {
+            Defaults[.lastSignedInUserID] = nil
+        }
     }
 
     var body: some Scene {

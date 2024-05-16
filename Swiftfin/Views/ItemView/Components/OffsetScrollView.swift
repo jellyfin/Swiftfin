@@ -50,7 +50,7 @@ extension ItemView {
         }
 
         var body: some View {
-            ScrollView {
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     overlay()
                         .frame(height: (size.height + safeAreaInsets.vertical) * heightRatio)

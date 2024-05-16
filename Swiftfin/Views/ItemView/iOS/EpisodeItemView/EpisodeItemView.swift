@@ -15,7 +15,7 @@ struct EpisodeItemView: View {
     var viewModel: EpisodeItemViewModel
 
     var body: some View {
-        ScrollView {
+        ScrollView(showsIndicators: false) {
             ContentView(viewModel: viewModel)
                 .edgePadding(.bottom)
         }

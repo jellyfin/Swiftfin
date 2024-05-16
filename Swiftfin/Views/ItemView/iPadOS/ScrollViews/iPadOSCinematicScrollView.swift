@@ -36,7 +36,7 @@ extension ItemView {
                     ImageView(viewModel.item.imageSource(.backdrop, maxWidth: 1920))
                 }
             }
-            .aspectRatio(contentMode: .fill)
+            .aspectRatio(1.77, contentMode: .fill)
         }
 
         var body: some View {
