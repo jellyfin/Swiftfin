@@ -16,6 +16,7 @@ struct HourMinutePicker: UIViewRepresentable {
         let picker = UIDatePicker(frame: .zero)
         picker.translatesAutoresizingMaskIntoConstraints = false
         picker.datePickerMode = .countDownTimer
+        picker.countDownDuration = interval.wrappedValue
 
         context.coordinator.add(picker: picker)
         context.coordinator.interval = interval
