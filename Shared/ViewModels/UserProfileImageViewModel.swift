@@ -72,9 +72,6 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func upload(image: UIImage) async throws {
-
-        try await Task.sleep(nanoseconds: 5_000_000_000)
-
         let request = Paths.postUserImage(
             userID: userSession.user.id,
             imageType: "Primary",
