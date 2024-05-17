@@ -10,34 +10,6 @@ import PulseUI
 import Stinsen
 import SwiftUI
 
-final class UserProfileImageCoordinator: NavigationCoordinatable {
-
-    let stack = Stinsen.NavigationStack(initial: \UserProfileImageCoordinator.start)
-
-    @Root
-    var start = makeStart
-
-    @Route(.push)
-    var cropImage = makeCropImage
-
-    private let viewModel: SettingsViewModel
-
-    init(viewModel: SettingsViewModel) {
-        self.viewModel = viewModel
-    }
-
-    func makeCropImage(image: UIImage) -> some View {
-        SquareImageCropView(
-            image: image
-        )
-    }
-
-    @ViewBuilder
-    func makeStart() -> some View {
-        UserProfileImagePicker()
-    }
-}
-
 final class SettingsCoordinator: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
@@ -117,7 +89,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makePhotoPicker(viewModel: SettingsViewModel) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
-        NavigationViewCoordinator(UserProfileImageCoordinator(viewModel: viewModel))
+        NavigationViewCoordinator(UserProfileImageCoordinator())
     }
 
     @ViewBuilder

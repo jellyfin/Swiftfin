@@ -277,6 +277,8 @@
 		E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */; };
 		E11BDF972B865F550045C54A /* ItemTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF962B865F550045C54A /* ItemTag.swift */; };
 		E11BDF982B865F550045C54A /* ItemTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11BDF962B865F550045C54A /* ItemTag.swift */; };
+		E11C15352BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */; };
+		E11C15362BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */; };
 		E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E11CEB8B28998552003E74C7 /* View-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8A28998552003E74C7 /* View-iOS.swift */; };
 		E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8C28999B4A003E74C7 /* Font.swift */; };
@@ -1116,6 +1118,7 @@
 		E11BDF762B8513B40045C54A /* ItemGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemGenre.swift; sourceTree = "<group>"; };
 		E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCaseIterable.swift; sourceTree = "<group>"; };
 		E11BDF962B865F550045C54A /* ItemTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTag.swift; sourceTree = "<group>"; };
+		E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageCoordinator.swift; sourceTree = "<group>"; };
 		E11CEB8A28998552003E74C7 /* View-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View-iOS.swift"; sourceTree = "<group>"; };
 		E11CEB8C28999B4A003E74C7 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
 		E11CEB8F28999D84003E74C7 /* EpisodeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeItemView.swift; sourceTree = "<group>"; };
@@ -2117,8 +2120,9 @@
 				E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */,
 				E1A1528F28FD23D600600579 /* PlaybackSettingsCoordinator.swift */,
 				6220D0B626D5EE1100B8E046 /* SearchCoordinator.swift */,
-				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
 				E13DD4012717EE79009D4DAF /* SelectUserCoordinator.swift */,
+				6220D0B026D5EC9900B8E046 /* SettingsCoordinator.swift */,
+				E11C15342BF7C505006BC9B6 /* UserProfileImageCoordinator.swift */,
 				E13DD3F127179378009D4DAF /* UserSignInCoordinator.swift */,
 				E18A8E8428D60D0000333B9A /* VideoPlayerCoordinator.swift */,
 				E1A1528C28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift */,
@@ -3869,6 +3873,7 @@
 				C45C36552A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
 				E178859E2780F53B0094FBCF /* SliderView.swift in Sources */,
 				E1575E95293E7B1E001665B1 /* Font.swift in Sources */,
+				E11C15362BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */,
 				E172D3AE2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				E11E374D293E7EC9009EF240 /* ItemFields.swift in Sources */,
 				E1575E6E293E77B5001665B1 /* SpecialFeatureType.swift in Sources */,
@@ -4430,6 +4435,7 @@
 				E1AA331F2782639D00F6439C /* OverlayType.swift in Sources */,
 				E12376AE2A33D680001F5B44 /* AboutView+Card.swift in Sources */,
 				E1A2C154279A7D5A005EC829 /* UIApplication.swift in Sources */,
+				E11C15352BF7C505006BC9B6 /* UserProfileImageCoordinator.swift in Sources */,
 				E1D8428F2933F2D900D1041A /* MediaSourceInfo.swift in Sources */,
 				E1BDF2EC2952290200CC0294 /* AspectFillActionButton.swift in Sources */,
 				BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */,

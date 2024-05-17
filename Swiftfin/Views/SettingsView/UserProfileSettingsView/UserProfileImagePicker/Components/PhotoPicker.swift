@@ -9,6 +9,10 @@
 import PhotosUI
 import SwiftUI
 
+// TODO: polish: when image is picked, instead of loading it here
+//       which takes ~1-2s, show some kind of loading indicator
+//       on this view or push to another view that will go to crop
+
 extension UserProfileImagePicker {
 
     struct PhotoPicker: UIViewControllerRepresentable {
