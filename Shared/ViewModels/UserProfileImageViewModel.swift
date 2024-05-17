@@ -56,6 +56,8 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
                         self.eventSubject.send(.uploaded)
                         self.state = .initial
                     }
+                } catch is CancellationError {
+                    // cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))

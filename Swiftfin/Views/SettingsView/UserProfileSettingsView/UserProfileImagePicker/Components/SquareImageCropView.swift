@@ -38,40 +38,38 @@ struct SquareImageCropView: View {
         .navigationBarBackButtonHidden(viewModel.state == .uploading)
         .topBarTrailing {
 
-            Button("Rotate", systemImage: "rotate.right") {
-                proxy.rotate()
+            if viewModel.state == .initial {
+                Button("Rotate", systemImage: "rotate.right") {
+                    proxy.rotate()
+                }
+                .foregroundStyle(.gray)
             }
-            .foregroundStyle(.gray)
-            .disabled(viewModel.state == .uploading)
 
-            Button {
-                proxy.crop()
-            } label: {
-                Text("Save")
-                    .foregroundStyle(accentColor.overlayColor)
-                    .font(.headline)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 10)
-                    .background {
-                        accentColor
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            .disabled(viewModel.state == .uploading)
-            .opacity(viewModel.state == .uploading ? 0 : 1)
-            .overlay {
-                if viewModel.state == .uploading {
-                    ProgressView()
+            if viewModel.state == .uploading {
+                Button(L10n.cancel) {
+                    viewModel.send(.cancel)
+                }
+                .foregroundStyle(.red)
+            } else {
+                Button {
+                    proxy.crop()
+                } label: {
+                    Text("Save")
+                        .foregroundStyle(accentColor.overlayColor)
+                        .font(.headline)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 10)
+                        .background {
+                            accentColor
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
             }
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
                 if viewModel.state == .uploading {
-                    Button(L10n.cancel) {
-                        viewModel.send(.cancel)
-                    }
-                    .foregroundStyle(.red)
+                    ProgressView()
                 } else {
                     Button("Reset") {
                         proxy.reset()
@@ -177,15 +175,11 @@ struct _SquareImageCropView: UIViewControllerRepresentable {
         func cropViewControllerDidFailToCrop(
             _ cropViewController: CropViewController,
             original: UIImage
-        ) {
-            print("a")
-        }
+        ) {}
 
         func cropViewControllerDidBeginResize(
             _ cropViewController: CropViewController
-        ) {
-            print("b")
-        }
+        ) {}
 
         func cropViewControllerDidEndResize(
             _ cropViewController: Mantis.CropViewController,
