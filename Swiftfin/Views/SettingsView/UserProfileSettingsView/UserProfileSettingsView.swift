@@ -6,10 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import SwiftUI
 
 struct UserProfileSettingsView: View {
+
+    @Default(.accentColor)
+    private var accentColor
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -50,6 +54,9 @@ struct UserProfileSettingsView: View {
                             Image(systemName: "pencil.circle.fill")
                                 .resizable()
                                 .frame(width: 30, height: 30)
+                                .shadow(radius: 10)
+                                .symbolRenderingMode(.palette)
+                                .foregroundStyle(accentColor.overlayColor, accentColor)
                         }
                     }
 

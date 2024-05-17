@@ -6,81 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Combine
 import Defaults
-import JellyfinAPI
 import Mantis
 import SwiftUI
-
-class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
-
-    enum Action: Equatable {
-        case cancel
-        case upload(UIImage)
-    }
-
-    enum Event: Hashable {
-        case error(JellyfinAPIError)
-        case uploaded
-    }
-
-    enum State: Hashable {
-        case initial
-        case uploading
-    }
-
-    @Published
-    var state: State = .initial
-
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-    private var uploadCancellable: AnyCancellable?
-
-    func respond(to action: Action) -> State {
-        switch action {
-        case .cancel:
-            uploadCancellable?.cancel()
-
-            return .initial
-        case let .upload(image):
-
-            uploadCancellable = Task {
-                do {
-                    try await upload(image: image)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.uploaded)
-                        self.state = .initial
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                        self.state = .initial
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .uploading
-        }
-    }
-
-    private func upload(image: UIImage) async throws {
-        let request = Paths.postUserImage(
-            userID: userSession.user.id,
-            imageType: "Primary",
-            index: nil,
-            image.jpegData(compressionQuality: 1)?.base64EncodedData()
-        )
-
-        let _ = try await userSession.client.send(request)
-    }
-}
 
 struct SquareImageCropView: View {
 
@@ -106,6 +34,8 @@ struct SquareImageCropView: View {
             viewModel.send(.upload($0))
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
+        .interactiveDismissDisabled(viewModel.state == .uploading)
+        .navigationBarBackButtonHidden(viewModel.state == .uploading)
         .topBarTrailing {
 
             Button("Rotate", systemImage: "rotate.right") {
@@ -137,11 +67,18 @@ struct SquareImageCropView: View {
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Button("Reset") {
-                    proxy.reset()
+                if viewModel.state == .uploading {
+                    Button(L10n.cancel) {
+                        viewModel.send(.cancel)
+                    }
+                    .foregroundStyle(.red)
+                } else {
+                    Button("Reset") {
+                        proxy.reset()
+                    }
+                    .foregroundStyle(.yellow)
+                    .disabled(viewModel.state == .uploading)
                 }
-                .foregroundStyle(.yellow)
-                .disabled(viewModel.state == .uploading)
             }
         }
         .ignoresSafeArea()
