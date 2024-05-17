@@ -39,7 +39,7 @@ struct UserProfileSettingsView: View {
             Section {
                 VStack(alignment: .center) {
                     Button {
-                        // TODO: photo picker
+                        router.route(to: \.photoPicker, viewModel)
                     } label: {
                         ZStack(alignment: .bottomTrailing) {
                             imageView
@@ -47,10 +47,9 @@ struct UserProfileSettingsView: View {
                                 .clipShape(.circle)
                                 .shadow(radius: 5)
 
-                            // TODO: uncomment when photo picker implemented
-//                            Image(systemName: "pencil.circle.fill")
-//                                .resizable()
-//                                .frame(width: 30, height: 30)
+                            Image(systemName: "pencil.circle.fill")
+                                .resizable()
+                                .frame(width: 30, height: 30)
                         }
                     }
 
