@@ -62,7 +62,7 @@ struct CustomizeViewsSettings: View {
 
                 Section {
 
-                    ChevronButton(title: "Indicators")
+                    ChevronButton("Indicators")
                         .onSelect {
                             router.route(to: \.indicatorSettings)
                         }

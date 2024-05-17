@@ -37,21 +37,21 @@ struct AppSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(title: L10n.about)
+            ChevronButton(L10n.about)
                 .onSelect {
                     router.route(to: \.about, viewModel)
                 }
 
             Section(L10n.accessibility) {
 
-                ChevronButton(title: L10n.appIcon)
+                ChevronButton(L10n.appIcon)
                     .onSelect {
                         router.route(to: \.appIconSelector, viewModel)
                     }
 
                 if !selectUserUseSplashscreen {
                     CaseIterablePicker(
-                        title: L10n.appearance,
+                        L10n.appearance,
                         selection: $appearance
                     )
                 }
@@ -85,7 +85,7 @@ struct AppSettingsView: View {
 
             SignOutIntervalSection()
 
-            ChevronButton(title: L10n.logs)
+            ChevronButton(L10n.logs)
                 .onSelect {
                     router.route(to: \.log)
                 }

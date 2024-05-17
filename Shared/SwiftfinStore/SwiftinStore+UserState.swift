@@ -115,7 +115,7 @@ extension UserState {
         try SwiftfinStore.dataStack.perform { transaction in
             let userData = try transaction.fetchAll(
                 From<AnyStoredData>()
-                    .where(\.$ownerID == id)
+                    .where(combineByAnd: Where(\.$ownerID == id), Where("%K BEGINSWITH %@", "domain", "setting"))
             )
 
             transaction.delete(userData)

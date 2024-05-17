@@ -41,7 +41,7 @@ struct SettingsView: View {
                     }
 
                     ChevronButton(
-                        title: L10n.server,
+                        L10n.server,
                         subtitle: viewModel.userSession.server.name
                     )
                     .onSelect {
@@ -60,7 +60,7 @@ struct SettingsView: View {
 
                     InlineEnumToggle(title: "Video Player Type", selection: $videoPlayerType)
 
-                    ChevronButton(title: L10n.videoPlayer)
+                    ChevronButton(L10n.videoPlayer)
                         .onSelect {
                             router.route(to: \.videoPlayerSettings)
                         }
@@ -70,12 +70,12 @@ struct SettingsView: View {
 
                 Section {
 
-                    ChevronButton(title: L10n.customize)
+                    ChevronButton(L10n.customize)
                         .onSelect {
                             router.route(to: \.customizeViewsSettings)
                         }
 
-                    ChevronButton(title: L10n.experimental)
+                    ChevronButton(L10n.experimental)
                         .onSelect {
                             router.route(to: \.experimentalSettings)
                         }
@@ -86,7 +86,7 @@ struct SettingsView: View {
 
                 Section {
 
-                    ChevronButton(title: "Logs")
+                    ChevronButton("Logs")
                         .onSelect {
                             router.route(to: \.log)
                         }

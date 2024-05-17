@@ -12,7 +12,7 @@ import JellyfinAPI
 // Note: Temporary values to avoid refactoring or
 //       reduce complexity at local sites.
 //
-//       Values can be cleaned up at any time so and are
+//       Values can be cleaned up at any time and are
 //       meant to have a short lifetime.
 
 extension StoredValues.Keys {

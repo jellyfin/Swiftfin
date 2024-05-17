@@ -39,7 +39,7 @@ struct AboutAppView: View {
                     trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
-                ChevronButton(title: L10n.sourceCode)
+                ChevronButton(L10n.sourceCode)
                     .leadingView {
                         Image(.logoGithub)
                             .resizable()
@@ -51,7 +51,7 @@ struct AboutAppView: View {
                         UIApplication.shared.open(.swiftfinGithub)
                     }
 
-                ChevronButton(title: L10n.bugsAndFeatures)
+                ChevronButton(L10n.bugsAndFeatures)
                     .leadingView {
                         Image(systemName: "plus.circle.fill")
                             .resizable()
@@ -65,7 +65,7 @@ struct AboutAppView: View {
                         UIApplication.shared.open(.swiftfinGithubIssues)
                     }
 
-                ChevronButton(title: L10n.settings)
+                ChevronButton(L10n.settings)
                     .leadingView {
                         Image(systemName: "gearshape.fill")
                             .resizable()

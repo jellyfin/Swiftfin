@@ -106,7 +106,7 @@ struct UserLocalSecurityView: View {
         List {
 
             Section {
-                CaseIterablePicker(title: "Security", selection: $signInPolicy)
+                CaseIterablePicker("Security", selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(

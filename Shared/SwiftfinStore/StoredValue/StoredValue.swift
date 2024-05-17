@@ -11,8 +11,6 @@ import CoreStore
 import Foundation
 import SwiftUI
 
-// TODO: observation
-
 /// A property wrapper for a stored `AnyData` object.
 @propertyWrapper
 struct StoredValue<Value: Codable>: DynamicProperty {
@@ -115,6 +113,9 @@ extension StoredValue {
             } else {
                 // Stored value doesn't exist but we want to observe it.
                 // Create default and get new publisher
+
+                // TODO: this still store unnecessary data if never changed,
+                //       observe if changes were made and delete on deinit
 
                 do {
                     try AnyStoredData.store(

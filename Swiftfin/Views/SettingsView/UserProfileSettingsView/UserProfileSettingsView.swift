@@ -17,6 +17,9 @@ struct UserProfileSettingsView: View {
     @ObservedObject
     var viewModel: SettingsViewModel
 
+    @State
+    private var isPresentingConfirmReset: Bool = false
+
     @ViewBuilder
     private var imageView: some View {
         ImageView(
@@ -63,23 +66,45 @@ struct UserProfileSettingsView: View {
             }
 
             Section {
-                ChevronButton(title: L10n.quickConnect)
+                ChevronButton(L10n.quickConnect)
                     .onSelect {
                         router.route(to: \.quickConnect)
                     }
 
-                ChevronButton(title: "Password")
+                ChevronButton("Password")
                     .onSelect {
                         router.route(to: \.resetUserPassword)
                     }
             }
 
             Section {
-                ChevronButton(title: "Local Security")
+                ChevronButton("Security")
                     .onSelect {
                         router.route(to: \.localSecurity)
                     }
             }
+
+            Section {
+                // TODO: move under future "Storage" tab
+                //       when downloads implemented
+                Button("Reset Settings") {
+                    isPresentingConfirmReset = true
+                }
+                .foregroundStyle(.red)
+            } footer: {
+                Text("Reset Swiftfin user settings")
+            }
+        }
+        .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
+            Button("Reset", role: .destructive) {
+                do {
+                    try viewModel.userSession.user.deleteSettings()
+                } catch {
+                    viewModel.logger.error("Unable to reset user settings: \(error.localizedDescription)")
+                }
+            }
+        } message: {
+            Text("Are you sure you want to reset all user settings?")
         }
     }
 }

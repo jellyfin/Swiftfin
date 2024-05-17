@@ -39,7 +39,7 @@ struct SettingsView: View {
 
                 // TODO: admin users go to dashboard instead
                 ChevronButton(
-                    title: L10n.server,
+                    L10n.server,
                     subtitle: viewModel.userSession.server.name
                 )
                 .onSelect {
@@ -58,30 +58,30 @@ struct SettingsView: View {
 
             Section(L10n.videoPlayer) {
                 CaseIterablePicker(
-                    title: L10n.videoPlayerType,
+                    L10n.videoPlayerType,
                     selection: $videoPlayerType
                 )
 
-                ChevronButton(title: L10n.nativePlayer)
+                ChevronButton(L10n.nativePlayer)
                     .onSelect {
                         router.route(to: \.nativePlayerSettings)
                     }
 
-                ChevronButton(title: L10n.videoPlayer)
+                ChevronButton(L10n.videoPlayer)
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)
                     }
             }
 
             Section(L10n.accessibility) {
-                CaseIterablePicker(title: L10n.appearance, selection: $appearance)
+                CaseIterablePicker(L10n.appearance, selection: $appearance)
 
-                ChevronButton(title: L10n.customize)
+                ChevronButton(L10n.customize)
                     .onSelect {
                         router.route(to: \.customizeViewsSettings)
                     }
 
-                ChevronButton(title: L10n.experimental)
+                ChevronButton(L10n.experimental)
                     .onSelect {
                         router.route(to: \.experimentalSettings)
                     }
@@ -93,14 +93,14 @@ struct SettingsView: View {
                 Text(L10n.accentColorDescription)
             }
 
-            ChevronButton(title: L10n.logs)
+            ChevronButton(L10n.logs)
                 .onSelect {
                     router.route(to: \.log)
                 }
 
             #if DEBUG
 
-            ChevronButton(title: "Debug")
+            ChevronButton("Debug")
                 .onSelect {
                     router.route(to: \.debugSettings)
                 }
