@@ -21,20 +21,28 @@ struct UserProfileSettingsView: View {
     @ObservedObject
     var viewModel: SettingsViewModel
 
+    @State
+    private var isPresentingProfileImageOptions: Bool = false
+
     @ViewBuilder
     private var imageView: some View {
-        ImageView(
-            viewModel.userSession.user.profileImageSource(
-                client: viewModel.userSession.client,
-                maxWidth: 120,
-                maxHeight: 120
+        RedrawOnNotificationView(name: .init("didChangeUserProfileImage")) {
+            ImageView(
+                viewModel.userSession.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 120
+                )
             )
-        )
-        .placeholder { _ in
-            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-        }
-        .failure {
-            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+            .pipeline(.Swiftfin.branding)
+            .image { image in
+                image.posterBorder(ratio: 1 / 2, of: \.width)
+            }
+            .placeholder { _ in
+                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+            }
+            .failure {
+                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+            }
         }
     }
 
@@ -43,12 +51,13 @@ struct UserProfileSettingsView: View {
             Section {
                 VStack(alignment: .center) {
                     Button {
-                        router.route(to: \.photoPicker, viewModel)
+                        isPresentingProfileImageOptions = true
                     } label: {
                         ZStack(alignment: .bottomTrailing) {
                             imageView
-                                .frame(width: 150, height: 150)
+                                .aspectRatio(contentMode: .fill)
                                 .clipShape(.circle)
+                                .frame(width: 150, height: 150)
                                 .shadow(radius: 5)
 
                             Image(systemName: "pencil.circle.fill")
@@ -85,6 +94,16 @@ struct UserProfileSettingsView: View {
                     .onSelect {
                         router.route(to: \.localSecurity)
                     }
+            }
+        }
+        .confirmationDialog("Profile Image", isPresented: $isPresentingProfileImageOptions) {
+
+            Button("Select Image") {
+                router.route(to: \.photoPicker, viewModel)
+            }
+
+            Button("Delete", role: .destructive) {
+                viewModel.deleteCurrentUserProfileImage()
             }
         }
     }

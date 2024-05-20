@@ -59,6 +59,11 @@ extension URL {
         }
     }
 
+    // doesn't have `?` but doesn't matter
+    func pathAndQuery() -> String? {
+        path + (query ?? "")
+    }
+
     var sizeOnDisk: Int {
         do {
             guard let size = try directoryTotalAllocatedSize(includingSubfolders: true) else { return -1 }

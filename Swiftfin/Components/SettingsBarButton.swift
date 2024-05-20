@@ -35,10 +35,9 @@ struct SettingsBarButton: View {
                             client: server.client,
                             maxWidth: 120
                         ))
+                        .pipeline(.Swiftfin.branding)
                         .image { image in
                             image
-                                .clipShape(.circle)
-                                .aspectRatio(1, contentMode: .fit)
                                 .posterBorder(ratio: 1 / 2, of: \.width)
                                 .onAppear {
                                     isUserImage = true
@@ -48,6 +47,8 @@ struct SettingsBarButton: View {
                             Color.clear
                         }
                     }
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(.circle)
                 }
         }
         .accessibilityLabel(L10n.settings)

@@ -57,6 +57,7 @@ extension UserSignInView {
                         Color.clear
 
                         ImageView(user.profileImageSource(client: client, maxWidth: 120))
+                            .pipeline(.Swiftfin.branding)
                             .image { image in
                                 image
                                     .posterBorder(ratio: 0.5, of: \.width)

@@ -20,13 +20,15 @@ extension SettingsView {
 
         @ViewBuilder
         private var imageView: some View {
-            ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
-                .placeholder { _ in
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
-                .failure {
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
+//            ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120))
+//                .pipeline(.Swiftfin.branding)
+//                .placeholder { _ in
+//                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+//                }
+//                .failure {
+//                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+//                }
+            Color.red
         }
 
         var body: some View {
@@ -35,7 +37,7 @@ extension SettingsView {
             } label: {
                 HStack {
                     imageView
-                        .aspectRatio(1, contentMode: .fill)
+                        .aspectRatio(contentMode: .fill)
                         .clipShape(.circle)
                         .frame(width: 50, height: 50)
 

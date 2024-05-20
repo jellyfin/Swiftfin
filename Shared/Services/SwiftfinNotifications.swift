@@ -82,4 +82,6 @@ extension Notifications.Key {
 
     static let didConnectToServer = NotificationKey("didConnectToServer")
     static let didDeleteServer = NotificationKey("didDeleteServer")
+
+    static let didChangeUserProfileImage = NotificationKey("didChangeUserProfileImage")
 }

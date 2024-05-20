@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import Nuke
 import UIKit
 
 class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
@@ -80,5 +81,23 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         )
 
         let _ = try await userSession.client.send(request)
+
+        let profileImageURL = userSession.user.profileImageSource(
+            client: userSession.client,
+            maxWidth: 120
+        ).url
+
+        await MainActor.run {
+            if DataCache.Swiftfin.branding?.containsData(for: profileImageURL?.absoluteString ?? "none") ?? false {
+                DataCache.Swiftfin.branding?.removeData(for: profileImageURL?.absoluteString ?? "none")
+                print("should have removed data")
+            } else {
+                print("here")
+            }
+
+            DataCache.Swiftfin.branding?.flush()
+
+            Notifications[.didChangeUserProfileImage].post()
+        }
     }
 }

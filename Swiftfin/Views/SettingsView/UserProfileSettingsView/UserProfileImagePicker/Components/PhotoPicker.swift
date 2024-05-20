@@ -9,6 +9,8 @@
 import PhotosUI
 import SwiftUI
 
+// TODO: polish: find way to deselect image on appear
+//       - from popping from cropping
 // TODO: polish: when image is picked, instead of loading it here
 //       which takes ~1-2s, show some kind of loading indicator
 //       on this view or push to another view that will go to crop
@@ -25,7 +27,7 @@ extension UserProfileImagePicker {
             self.onSelectedImage = onSelectedImage
         }
 
-        func makeUIViewController(context: Context) -> some UIViewController {
+        func makeUIViewController(context: Context) -> PHPickerViewController {
 
             var configuration = PHPickerConfiguration(photoLibrary: .shared())
 
@@ -43,7 +45,7 @@ extension UserProfileImagePicker {
             return picker
         }
 
-        func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
+        func updateUIViewController(_ uiViewController: PHPickerViewController, context: Context) {}
 
         func makeCoordinator() -> Coordinator {
             Coordinator()

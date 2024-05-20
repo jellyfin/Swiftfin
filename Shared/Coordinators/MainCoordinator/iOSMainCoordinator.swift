@@ -74,8 +74,6 @@ final class MainCoordinator: NavigationCoordinatable {
 
         // TODO: move these to the App instead?
 
-        ImageCache.shared.costLimit = 1000 * 1024 * 1024 // 125MB
-
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))

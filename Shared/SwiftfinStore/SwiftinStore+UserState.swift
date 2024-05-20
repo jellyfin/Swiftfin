@@ -140,15 +140,14 @@ extension UserState {
         return response.value
     }
 
+    // we will always crop to a square, so just use width
     func profileImageSource(
         client: JellyfinClient,
-        maxWidth: CGFloat? = nil,
-        maxHeight: CGFloat? = nil
+        maxWidth: CGFloat? = nil
     ) -> ImageSource {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
-        let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
 
-        let parameters = Paths.GetUserImageParameters(maxWidth: scaleWidth, maxHeight: scaleHeight)
+        let parameters = Paths.GetUserImageParameters(maxWidth: scaleWidth)
         let request = Paths.getUserImage(
             userID: id,
             imageType: "Primary",
