@@ -46,7 +46,7 @@ fileprivate extension Container.Scope {
 
 extension UserSession {
 
-    static let current = Factory<UserSession?>(scope: .singleton) {
+    static let current = Factory<UserSession?>(scope: .cached) {
 
         if let lastUserID = Defaults[.lastSignedInUserID],
            let user = try? SwiftfinStore.dataStack.fetchOne(

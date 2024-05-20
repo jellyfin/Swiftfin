@@ -84,10 +84,3 @@ extension ImagePipeline.Swiftfin {
         $0.dataCache = DataCache.Swiftfin.branding
     }
 }
-
-extension Hashable {
-
-    var hashString: String {
-        "\(hashValue)"
-    }
-}
