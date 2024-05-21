@@ -366,20 +366,3 @@ extension View {
     }
     #endif
 }
-
-struct RedrawOnNotificationView<Content: View>: View {
-
-    @State
-    private var id = 0
-
-    let name: NSNotification.Name
-    let content: () -> Content
-
-    var body: some View {
-        content()
-            .id(id)
-            .onNotification(name) { _ in
-                id += 1
-            }
-    }
-}

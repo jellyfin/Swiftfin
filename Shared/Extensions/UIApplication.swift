@@ -34,6 +34,10 @@ extension UIApplication {
     }
 
     func setAppearance(_ newAppearance: UIUserInterfaceStyle) {
-        keyWindow?.overrideUserInterfaceStyle = newAppearance
+        guard let keyWindow else { return }
+
+        UIView.transition(with: keyWindow, duration: 0.2, options: .transitionCrossDissolve) {
+            keyWindow.overrideUserInterfaceStyle = newAppearance
+        }
     }
 }

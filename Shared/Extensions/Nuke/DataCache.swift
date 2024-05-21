@@ -10,32 +10,29 @@ import CoreStore
 import Foundation
 import Nuke
 
-// TODO: delete user/server images on object deletion
 // TODO: when `Storage` is implemented, could allow limits on sizes
+
+// Note: For better support with multi-url servers, ignore the
+//       host and only use path + query which has ids and tags
 
 extension DataCache {
     enum Swiftfin {}
 }
 
-extension ImagePipeline {
-    enum Swiftfin {}
-}
-
 extension DataCache.Swiftfin {
-
-    // For better support with multi-url servers, ignore the
-    // host and only use path + query which has ids and tags
 
     static let `default`: DataCache? = {
         let dataCache = try? DataCache(name: "org.jellyfin.swiftfin") { name in
             URL(string: name)?.pathAndQuery() ?? name
         }
 
-        dataCache?.sizeLimit = 1024 * 1024 * 1000 // 1GB
+        dataCache?.sizeLimit = 1024 * 1024 * 500 // 500 MB
 
         return dataCache
     }()
 
+    /// The `DataCache` used for images that should have longer lifetimes and usable
+    /// without a connection, like user profile images and server splashscreens.
     static let branding: DataCache? = {
         guard let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
@@ -64,7 +61,6 @@ extension DataCache.Swiftfin {
                 return "\(server.id)-splashscreen"
             } else {
                 return (URL(string: name)?.pathAndQuery() ?? name)
-                    .hashString
             }
         }
 
@@ -72,15 +68,4 @@ extension DataCache.Swiftfin {
 
         return dataCache
     }()
-}
-
-extension ImagePipeline.Swiftfin {
-
-    static let `default`: ImagePipeline = ImagePipeline {
-        $0.dataCache = DataCache.Swiftfin.default
-    }
-
-    static let branding: ImagePipeline = ImagePipeline {
-        $0.dataCache = DataCache.Swiftfin.branding
-    }
 }

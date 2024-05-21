@@ -96,7 +96,11 @@ struct UserProfileSettingsView: View {
                     }
             }
         }
-        .confirmationDialog("Profile Image", isPresented: $isPresentingProfileImageOptions) {
+        .confirmationDialog(
+            "Profile Image",
+            isPresented: $isPresentingProfileImageOptions,
+            titleVisibility: .visible
+        ) {
 
             Button("Select Image") {
                 router.route(to: \.photoPicker, viewModel)

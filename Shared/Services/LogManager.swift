@@ -22,21 +22,30 @@ enum LogManager {
 
     static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
         var configuration = NetworkLogger.Configuration()
-        configuration.willHandleEvent = { event -> LoggerStore.Event? in
-            switch event {
-            case let .networkTaskCreated(networkTask):
-                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
-                    return nil
-                }
-            case let .networkTaskCompleted(networkTask):
-                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
-                    return nil
-                }
-            default: ()
-            }
 
-            return event
-        }
+        // TODO: this used to be necessary to stop the mass of image requests
+        //       clogging the logs, however don't seem necessary anymore?
+        //       Find out how to get images to be logged and have an option to
+        //       turn it on, via SuperUser.
+
+        #warning("TODO: remove authentication headers")
+        #warning("TODO: remove password fields in bodies")
+
+//        configuration.willHandleEvent = { event -> LoggerStore.Event? in
+//            switch event {
+//            case let .networkTaskCreated(networkTask):
+//                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+//                    return nil
+//                }
+//            case let .networkTaskCompleted(networkTask):
+//                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+//                    return nil
+//                }
+//            default: ()
+//            }
+//
+//            return event
+//        }
 
         return NetworkLogger(configuration: configuration)
     }

@@ -147,7 +147,10 @@ extension UserState {
     ) -> ImageSource {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
 
-        let parameters = Paths.GetUserImageParameters(maxWidth: scaleWidth)
+        let parameters = Paths.GetUserImageParameters(
+            tag: data.primaryImageTag,
+            maxWidth: scaleWidth
+        )
         let request = Paths.getUserImage(
             userID: id,
             imageType: "Primary",

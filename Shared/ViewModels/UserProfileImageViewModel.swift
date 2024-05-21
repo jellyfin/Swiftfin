@@ -73,29 +73,35 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func upload(image: UIImage) async throws {
-        let request = Paths.postUserImage(
+
+        let contentType: String
+        let imageData: Data
+
+        if let pngData = image.pngData()?.base64EncodedData() {
+            contentType = "image/png"
+            imageData = pngData
+        } else if let jpgData = image.jpegData(compressionQuality: 1)?.base64EncodedData() {
+            contentType = "image/jpeg"
+            imageData = jpgData
+        } else {
+            logger.error("Unable to convert given profile image to png/jpg")
+            throw JellyfinAPIError("An internal error occurred")
+        }
+
+        var request = Paths.postUserImage(
             userID: userSession.user.id,
             imageType: "Primary",
-            index: nil,
-            image.jpegData(compressionQuality: 1)?.base64EncodedData()
+            imageData
         )
+        request.headers = ["Content-Type": contentType]
 
         let _ = try await userSession.client.send(request)
 
-        let profileImageURL = userSession.user.profileImageSource(
-            client: userSession.client,
-            maxWidth: 120
-        ).url
+        let currentUserRequest = Paths.getCurrentUser
+        let response = try await userSession.client.send(currentUserRequest)
 
         await MainActor.run {
-            if DataCache.Swiftfin.branding?.containsData(for: profileImageURL?.absoluteString ?? "none") ?? false {
-                DataCache.Swiftfin.branding?.removeData(for: profileImageURL?.absoluteString ?? "none")
-                print("should have removed data")
-            } else {
-                print("here")
-            }
-
-            DataCache.Swiftfin.branding?.flush()
+            userSession.user.data = response.value
 
             Notifications[.didChangeUserProfileImage].post()
         }
