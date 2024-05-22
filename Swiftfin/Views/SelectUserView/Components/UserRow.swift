@@ -77,6 +77,7 @@ extension SelectUserView {
                 Color.clear
 
                 ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
+                    .pipeline(.Swiftfin.branding)
                     .image { image in
                         image
                             .posterBorder(ratio: 1 / 2, of: \.width)
@@ -93,7 +94,7 @@ extension SelectUserView {
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .aspectRatio(1, contentMode: .fill)
+            .aspectRatio(contentMode: .fill)
             .clipShape(.circle)
         }
 

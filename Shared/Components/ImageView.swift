@@ -11,18 +11,6 @@ import Nuke
 import NukeUI
 import SwiftUI
 
-private let imagePipeline = {
-
-    ImageDecoderRegistry.shared.register { context in
-        guard let mimeType = context.urlResponse?.mimeType else { return nil }
-        return mimeType.contains("svg") ? ImageDecoders.Empty() : nil
-    }
-
-    return ImagePipeline(configuration: .withDataCache)
-}()
-
-// TODO: Binding inits?
-//       - instead of removing first source on failure, just safe index into sources
 // TODO: currently SVGs are only supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
 // TODO: `LazyImage` uses a transaction for view swapping, which will fade out old views
@@ -37,6 +25,7 @@ struct ImageView: View {
     private var sources: [ImageSource]
 
     private var image: (Image) -> any View
+    private var pipeline: ImagePipeline
     private var placeholder: ((ImageSource) -> any View)?
     private var failure: () -> any View
 
@@ -70,7 +59,7 @@ struct ImageView: View {
                         }
                 }
             }
-            .pipeline(imagePipeline)
+            .pipeline(pipeline)
         } else {
             failure()
                 .eraseToAnyView()
@@ -81,43 +70,29 @@ struct ImageView: View {
 extension ImageView {
 
     init(_ source: ImageSource) {
-        self.init(
-            sources: [source].compacted(using: \.url),
-            image: { $0 },
-            placeholder: nil,
-            failure: { EmptyView() }
-        )
+        self.init([source].compacted(using: \.url))
     }
 
     init(_ sources: [ImageSource]) {
         self.init(
             sources: sources.compacted(using: \.url),
             image: { $0 },
+            pipeline: .shared,
             placeholder: nil,
             failure: { EmptyView() }
         )
     }
 
     init(_ source: URL?) {
-        self.init(
-            sources: [ImageSource(url: source)],
-            image: { $0 },
-            placeholder: nil,
-            failure: { EmptyView() }
-        )
+        self.init([ImageSource(url: source)])
     }
 
     init(_ sources: [URL?]) {
         let imageSources = sources
-            .compactMap { $0 }
+            .compacted()
             .map { ImageSource(url: $0) }
 
-        self.init(
-            sources: imageSources,
-            image: { $0 },
-            placeholder: nil,
-            failure: { EmptyView() }
-        )
+        self.init(imageSources)
     }
 }
 
@@ -127,6 +102,10 @@ extension ImageView {
 
     func image(@ViewBuilder _ content: @escaping (Image) -> any View) -> Self {
         copy(modifying: \.image, with: content)
+    }
+
+    func pipeline(_ pipeline: ImagePipeline) -> Self {
+        copy(modifying: \.pipeline, with: pipeline)
     }
 
     func placeholder(@ViewBuilder _ content: @escaping (ImageSource) -> any View) -> Self {

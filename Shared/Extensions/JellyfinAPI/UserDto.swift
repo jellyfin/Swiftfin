@@ -13,8 +13,7 @@ extension UserDto {
 
     func profileImageSource(
         client: JellyfinClient,
-        maxWidth: CGFloat? = nil,
-        maxHeight: CGFloat? = nil
+        maxWidth: CGFloat? = nil
     ) -> ImageSource {
         UserState(
             id: id ?? "",
@@ -23,8 +22,7 @@ extension UserDto {
         )
         .profileImageSource(
             client: client,
-            maxWidth: maxWidth,
-            maxHeight: maxHeight
+            maxWidth: maxWidth
         )
     }
 }

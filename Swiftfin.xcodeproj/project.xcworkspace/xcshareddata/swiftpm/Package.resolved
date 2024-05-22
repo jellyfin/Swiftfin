@@ -1,5 +1,5 @@
 {
-  "originHash" : "68a42015b2d42a14d418b6e13427443de55c970d5b3764bbc969e1b3f8c3a78b",
+  "originHash" : "323b2ad9aaa9c000faf264d68272f0e9fab1349d9f910a0b95ee6aea10460f31",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "7204e5f717ea571efb4600ecb71c2412e0dec921"
+        "revision" : "b50b5241df5fc1d71e5a09f6a87731c67c2a79e5"
       }
     },
     {
@@ -110,12 +110,21 @@
       }
     },
     {
+      "identity" : "mantis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/guoyingtao/Mantis",
+      "state" : {
+        "revision" : "ccc498ea429774d948a0a8aacacde207f7ffff48",
+        "version" : "2.21.0"
+      }
+    },
+    {
       "identity" : "nuke",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "8e431251dea0081b6ab154dab61a6ec74e4b6577",
-        "version" : "12.6.0"
+        "revision" : "7395c7a9dcd390bbcfad17a731d8d529602702c6",
+        "version" : "12.7.0"
       }
     },
     {
@@ -123,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "4f34c4f91cda623a7627e6d5e35dbbbb514b8daa",
-        "version" : "4.1.1"
+        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
+        "version" : "4.2.0"
       }
     },
     {
@@ -195,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "7dc5b287f8040e4ad5038739850b758e78f77808",
-        "version" : "1.1.4"
+        "revision" : "0cd2a5a5895306bc21d54a2254302d24a9a571e4",
+        "version" : "1.1.3"
       }
     },
     {

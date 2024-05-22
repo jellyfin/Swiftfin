@@ -31,23 +31,29 @@ struct SettingsBarButton: View {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(
-                            client: server.client,
-                            maxWidth: 120
-                        ))
-                        .image { image in
-                            image
-                                .clipShape(.circle)
-                                .aspectRatio(1, contentMode: .fit)
-                                .posterBorder(ratio: 1 / 2, of: \.width)
-                                .onAppear {
-                                    isUserImage = true
-                                }
-                        }
-                        .placeholder { _ in
-                            Color.clear
+                        RedrawOnNotificationView(.didChangeUserProfileImage) {
+                            ImageView(user.profileImageSource(
+                                client: server.client,
+                                maxWidth: 120
+                            ))
+                            .pipeline(.Swiftfin.branding)
+                            .image { image in
+                                image
+                                    .posterBorder(ratio: 1 / 2, of: \.width)
+                                    .onAppear {
+                                        isUserImage = true
+                                    }
+                            }
+                            .placeholder { _ in
+                                Color.clear
+                            }
+                            .onDisappear {
+                                isUserImage = false
+                            }
                         }
                     }
+                    .aspectRatio(contentMode: .fill)
+                    .clipShape(.circle)
                 }
         }
         .accessibilityLabel(L10n.settings)

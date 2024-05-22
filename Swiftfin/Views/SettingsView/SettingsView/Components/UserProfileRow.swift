@@ -20,13 +20,16 @@ extension SettingsView {
 
         @ViewBuilder
         private var imageView: some View {
-            ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120, maxHeight: 120))
-                .placeholder { _ in
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
-                .failure {
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
+            RedrawOnNotificationView(.didChangeUserProfileImage) {
+                ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120))
+                    .pipeline(.Swiftfin.branding)
+                    .placeholder { _ in
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    }
+                    .failure {
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    }
+            }
         }
 
         var body: some View {
@@ -34,6 +37,10 @@ extension SettingsView {
                 action()
             } label: {
                 HStack {
+
+                    // TODO: check properly with non-uniform images and look for workaround
+                    // Note: for an unknown reason, using a non uniform aspect ratio will cause a
+                    //       "view origin is invalid" crash within SwiftUI
                     imageView
                         .aspectRatio(1, contentMode: .fill)
                         .clipShape(.circle)

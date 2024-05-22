@@ -17,26 +17,34 @@ import Pulse
 enum LogManager {
 
     static let service = Factory<Logger>(scope: .singleton) {
-        .init(label: "Swiftfin")
+        Logger(label: "org.jellyfin.swiftfin")
     }
+
+    // TODO: make rules for logging sessions and redacting
 
     static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
         var configuration = NetworkLogger.Configuration()
-        configuration.willHandleEvent = { event -> LoggerStore.Event? in
-            switch event {
-            case let .networkTaskCreated(networkTask):
-                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
-                    return nil
-                }
-            case let .networkTaskCompleted(networkTask):
-                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
-                    return nil
-                }
-            default: ()
-            }
 
-            return event
-        }
+        // TODO: this used to be necessary to stop the mass of image requests
+        //       clogging the logs, however don't seem necessary anymore?
+        //       Find out how to get images to be logged and have an option to
+        //       turn it on, via SuperUser.
+
+//        configuration.willHandleEvent = { event -> LoggerStore.Event? in
+//            switch event {
+//            case let .networkTaskCreated(networkTask):
+//                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+//                    return nil
+//                }
+//            case let .networkTaskCompleted(networkTask):
+//                if networkTask.originalRequest.url?.absoluteString.range(of: "/Images") != nil {
+//                    return nil
+//                }
+//            default: ()
+//            }
+//
+//            return event
+//        }
 
         return NetworkLogger(configuration: configuration)
     }

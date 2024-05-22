@@ -84,7 +84,7 @@ extension SelectUserView {
             if serverSelection == .all {
                 Menu {
 
-                    Text("Select server")
+                    Text("Select Server")
 
                     ForEach(servers) { server in
                         Button {

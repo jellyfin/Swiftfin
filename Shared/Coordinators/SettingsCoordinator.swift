@@ -28,6 +28,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var resetUserPassword = makeResetUserPassword
     @Route(.push)
     var localSecurity = makeLocalSecurity
+    @Route(.modal)
+    var photoPicker = makePhotoPicker
     @Route(.push)
     var userProfile = makeUserProfileSettings
 
@@ -84,6 +86,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeLocalSecurity() -> some View {
         UserLocalSecurityView()
+    }
+
+    func makePhotoPicker(viewModel: SettingsViewModel) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
+        NavigationViewCoordinator(UserProfileImageCoordinator())
     }
 
     @ViewBuilder

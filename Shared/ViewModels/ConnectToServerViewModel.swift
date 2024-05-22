@@ -182,13 +182,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
         if url.scheme != response.scheme ||
             url.host != response.host
         {
-            var newURL = response.absoluteString.trimmingSuffix(Paths.getPublicSystemInfo.url?.absoluteString ?? "")
-
-            // if ended in a "/"
-            if url.absoluteString.last == "/" {
-                newURL.append("/")
-            }
-
+            let newURL = response.absoluteString.trimmingSuffix(
+                Paths.getPublicSystemInfo.url?.absoluteString ?? ""
+            )
             return URL(string: newURL) ?? url
         }
 
