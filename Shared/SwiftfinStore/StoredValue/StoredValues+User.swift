@@ -92,7 +92,7 @@ extension StoredValues.Keys {
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
-                domain: "libraryDisplayType",
+                domain: "setting-libraryDisplayType",
                 default: Defaults[.Customization.Library.displayType]
             )
         }
@@ -100,7 +100,7 @@ extension StoredValues.Keys {
         static func libraryListColumnCount(parentID: String?) -> Key<Int> {
             CurrentUserKey(
                 parentID,
-                domain: "libraryListColumnCount",
+                domain: "setting-libraryListColumnCount",
                 default: Defaults[.Customization.Library.listColumnCount]
             )
         }
@@ -108,7 +108,7 @@ extension StoredValues.Keys {
         static func libraryPosterType(parentID: String?) -> Key<PosterDisplayType> {
             CurrentUserKey(
                 parentID,
-                domain: "libraryPosterType",
+                domain: "setting-libraryPosterType",
                 default: Defaults[.Customization.Library.posterType]
             )
         }
@@ -119,7 +119,7 @@ extension StoredValues.Keys {
         static func libraryFilters(parentID: String?) -> Key<ItemFilterCollection> {
             CurrentUserKey(
                 parentID,
-                domain: "libraryFilters",
+                domain: "setting-libraryFilters",
                 default: ItemFilterCollection.default
             )
         }

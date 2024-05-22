@@ -51,7 +51,7 @@ struct AppSettingsView: View {
 //                        )
 //                    }
 //
-//                    ChevronButton(title: "Logs")
+//                    ChevronButton("Logs")
 //                        .onSelect {
 //                            router.route(to: \.log)
 //                        }

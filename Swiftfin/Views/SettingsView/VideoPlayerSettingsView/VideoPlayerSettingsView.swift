@@ -65,14 +65,14 @@ struct VideoPlayerSettingsView: View {
     var body: some View {
         Form {
 
-            ChevronButton(title: L10n.gestures)
+            ChevronButton(L10n.gestures)
                 .onSelect {
                     router.route(to: \.gestureSettings)
                 }
 
-            CaseIterablePicker(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            CaseIterablePicker(title: L10n.jumpForwardLength, selection: $jumpForwardLength)
+            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 
@@ -91,7 +91,7 @@ struct VideoPlayerSettingsView: View {
 
             Section(L10n.buttons) {
 
-                CaseIterablePicker(title: L10n.playbackButtons, selection: $playbackButtonType)
+                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
                     HStack {
@@ -100,12 +100,12 @@ struct VideoPlayerSettingsView: View {
                     }
                 }
 
-                ChevronButton(title: L10n.barButtons)
+                ChevronButton(L10n.barButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $barActionButtons)
                     }
 
-                ChevronButton(title: L10n.menuButtons)
+                ChevronButton(L10n.menuButtons)
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $menuActionButtons)
                     }
@@ -119,12 +119,12 @@ struct VideoPlayerSettingsView: View {
                     Text(L10n.sliderColor)
                 }
 
-                CaseIterablePicker(title: L10n.sliderType, selection: $sliderType)
+                CaseIterablePicker(L10n.sliderType, selection: $sliderType)
             }
 
             Section {
 
-                ChevronButton(title: L10n.subtitleFont, subtitle: subtitleFontName)
+                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
                         router.route(to: \.fontPicker, $subtitleFontName)
                     }
@@ -150,9 +150,9 @@ struct VideoPlayerSettingsView: View {
 
                 Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
-                CaseIterablePicker(title: L10n.timestampType, selection: $timestampType)
+                CaseIterablePicker(L10n.timestampType, selection: $timestampType)
 
-                CaseIterablePicker(title: L10n.trailingValue, selection: $trailingTimestampType)
+                CaseIterablePicker(L10n.trailingValue, selection: $trailingTimestampType)
             }
 
             Section(L10n.transition) {

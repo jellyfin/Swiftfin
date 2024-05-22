@@ -68,7 +68,7 @@ struct CustomizeViewsSettings: View {
 
             if UIDevice.isPhone {
                 Section {
-                    CaseIterablePicker(title: L10n.items, selection: $itemViewType)
+                    CaseIterablePicker(L10n.items, selection: $itemViewType)
                 }
 
                 if itemViewType == .cinematic {
@@ -91,12 +91,12 @@ struct CustomizeViewsSettings: View {
 
             Section {
 
-                ChevronButton(title: L10n.library)
+                ChevronButton(L10n.library)
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
                     }
 
-                ChevronButton(title: L10n.search)
+                ChevronButton(L10n.search)
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                     }
@@ -114,28 +114,28 @@ struct CustomizeViewsSettings: View {
 
             Section(L10n.posters) {
 
-                ChevronButton(title: L10n.indicators)
+                ChevronButton(L10n.indicators)
                     .onSelect {
                         router.route(to: \.indicatorSettings)
                     }
 
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
-                CaseIterablePicker(title: L10n.next, selection: $nextUpPosterType)
+                CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
 
-                CaseIterablePicker(title: L10n.recentlyAdded, selection: $recentlyAddedPosterType)
+                CaseIterablePicker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
 
-                CaseIterablePicker(title: L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
+                CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
-                CaseIterablePicker(title: L10n.recommended, selection: $similarPosterType)
+                CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
 
-                CaseIterablePicker(title: L10n.search, selection: $searchPosterType)
+                CaseIterablePicker(L10n.search, selection: $searchPosterType)
             }
 
             Section("Libraries") {
-                CaseIterablePicker(title: L10n.library, selection: $libraryDisplayType)
+                CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
 
-                CaseIterablePicker(title: L10n.posters, selection: $libraryPosterType)
+                CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
 
                 if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
