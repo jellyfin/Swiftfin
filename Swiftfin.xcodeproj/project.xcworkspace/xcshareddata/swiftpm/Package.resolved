@@ -1,5 +1,5 @@
 {
-  "originHash" : "21b542772f5cb32657a828d7eecfb4101fc2c4f6bc6a3fd1bc170f129a727a71",
+  "originHash" : "323b2ad9aaa9c000faf264d68272f0e9fab1349d9f910a0b95ee6aea10460f31",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -92,6 +92,15 @@
       }
     },
     {
+      "identity" : "jellyfin-sdk-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
+      "state" : {
+        "revision" : "eae2ab5ed7caf770d79afbcdae08aab48df27a6e",
+        "version" : "0.3.4"
+      }
+    },
+    {
       "identity" : "keychain-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/evgenyneu/keychain-swift",
@@ -114,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "4625c73ea00a9fb4b4f3e28d95d0021a44af7e59",
-        "version" : "12.5.0"
+        "revision" : "7395c7a9dcd390bbcfad17a731d8d529602702c6",
+        "version" : "12.7.0"
       }
     },
     {
@@ -123,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "d647e99f06abc94d63579e335ad4ce368195c149",
-        "version" : "4.0.5"
+        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
+        "version" : "4.2.0"
       }
     },
     {

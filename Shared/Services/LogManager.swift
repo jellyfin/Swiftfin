@@ -17,7 +17,7 @@ import Pulse
 enum LogManager {
 
     static let service = Factory<Logger>(scope: .singleton) {
-        .init(label: "Swiftfin")
+        Logger(label: "org.jellyfin.swiftfin")
     }
 
     static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
@@ -29,7 +29,6 @@ enum LogManager {
         //       turn it on, via SuperUser.
 
         #warning("TODO: remove authentication headers")
-        #warning("TODO: remove password fields in bodies")
 
 //        configuration.willHandleEvent = { event -> LoggerStore.Event? in
 //            switch event {

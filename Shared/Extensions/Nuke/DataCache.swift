@@ -31,14 +31,16 @@ extension DataCache.Swiftfin {
         return dataCache
     }()
 
-    /// The `DataCache` used for images that should have longer lifetimes and usable
-    /// without a connection, like user profile images and server splashscreens.
+    /// The `DataCache` used for images that should have longer lifetimes, usable without a
+    /// connection, and not affected by other caching size limits.
+    ///
+    /// Current 150 MB is more than necessary.
     static let branding: DataCache? = {
         guard let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
         }
 
-        let path = root.appendingPathComponent("org.jellyfin.swiftfin.branding", isDirectory: true)
+        let path = root.appendingPathComponent("Cache/org.jellyfin.swiftfin.branding", isDirectory: true)
 
         let dataCache = try? DataCache(path: path) { name in
 
@@ -60,11 +62,9 @@ extension DataCache.Swiftfin {
 
                 return "\(server.id)-splashscreen"
             } else {
-                return (URL(string: name)?.pathAndQuery() ?? name)
+                return URL(string: name)?.pathAndQuery() ?? name
             }
         }
-
-        dataCache?.sizeLimit = 1024 * 1024 * 300 // 300 MB
 
         return dataCache
     }()

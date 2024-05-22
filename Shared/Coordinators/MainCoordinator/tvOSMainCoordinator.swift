@@ -60,10 +60,6 @@ final class MainCoordinator: NavigationCoordinatable {
             }
         }
 
-        ImageCache.shared.costLimit = 125 * 1024 * 1024 // 125MB memory
-
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.label]
-
         // Notification setup for state
         Notifications[.didSignIn].subscribe(self, selector: #selector(didSignIn))
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))

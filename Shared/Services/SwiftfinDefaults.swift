@@ -90,7 +90,7 @@ extension Defaults.Keys {
     static let selectUserUseSplashscreen: Key<Bool> = AppKey("selectUserUseSplashscreen", default: true)
 
     static let signOutOnBackground: Key<Bool> = AppKey("signOutOnBackground", default: true)
-    static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: true)
+    static let signOutOnClose: Key<Bool> = AppKey("signOutOnClose", default: false)
 }
 
 // MARK: User

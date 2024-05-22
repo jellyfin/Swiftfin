@@ -175,7 +175,7 @@ struct ConnectToServerView: View {
                 router.popLast()
             }
         } message: { server in
-            Text("\(server.name) is already connected.")
+            L10n.serverAlreadyExistsPrompt(server.name).text
         }
     }
 }

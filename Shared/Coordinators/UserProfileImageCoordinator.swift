@@ -20,13 +20,21 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
     var cropImage = makeCropImage
 
     func makeCropImage(image: UIImage) -> some View {
+        #if os(iOS)
         UserProfileImagePicker.SquareImageCropView(
             image: image
         )
+        #else
+        AssertionFailureView("not implemented")
+        #endif
     }
 
     @ViewBuilder
     func makeStart() -> some View {
+        #if os(iOS)
         UserProfileImagePicker()
+        #else
+        AssertionFailureView("not implemented")
+        #endif
     }
 }
