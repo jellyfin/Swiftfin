@@ -19,6 +19,8 @@ enum LogManager {
     static let service = Factory<Logger>(scope: .singleton) {
         Logger(label: "org.jellyfin.swiftfin")
     }
+    
+    // TODO: make rules for logging sessions and redacting
 
     static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
         var configuration = NetworkLogger.Configuration()
@@ -27,8 +29,6 @@ enum LogManager {
         //       clogging the logs, however don't seem necessary anymore?
         //       Find out how to get images to be logged and have an option to
         //       turn it on, via SuperUser.
-
-        #warning("TODO: remove authentication headers")
 
 //        configuration.willHandleEvent = { event -> LoggerStore.Event? in
 //            switch event {
