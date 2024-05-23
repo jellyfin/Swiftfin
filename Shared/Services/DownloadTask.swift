@@ -50,7 +50,8 @@ class DownloadTask: NSObject, ObservableObject {
 
     private var downloadTask: Task<Void, Never>?
 
-    let item: BaseItemDto
+    public var item: BaseItemDto
+    public var localPlaybackInfo: PlaybackProgressInfo
 
     var imagesFolder: URL? {
         item.downloadFolder?.appendingPathComponent("Images")
@@ -62,6 +63,15 @@ class DownloadTask: NSObject, ObservableObject {
 
     init(item: BaseItemDto) {
         self.item = item
+        self.localPlaybackInfo = PlaybackProgressInfo(
+            audioStreamIndex: 1,
+            isPaused: false,
+            itemID: self.item.id!,
+            mediaSourceID: nil,
+            positionTicks: 0,
+            sessionID: nil,
+            subtitleStreamIndex: 1
+        )
     }
 
     func createFolder() throws {

@@ -221,7 +221,7 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
-
+        static let offlineMode: Key<Bool> = UserKey("offlineMode", default: false)
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
         static let forceDirectPlay: Key<Bool> = UserKey("forceDirectPlay", default: false)
         static let liveTVForceDirectPlay: Key<Bool> = UserKey("liveTVForceDirectPlay", default: false)

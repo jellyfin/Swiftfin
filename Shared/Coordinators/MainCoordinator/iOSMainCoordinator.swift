@@ -21,6 +21,9 @@ import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
 
+    @Default(.Experimental.offlineMode)
+    private var offlineMode
+
     @Injected(LogManager.service)
     private var logger
 
@@ -31,7 +34,7 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var mainTab = makeMainTab
     @Root
-    var offlineTab = makeOfflineTab
+    var offlineView = makeOffline
     @Root
     var selectUser = makeSelectUser
     @Root
@@ -140,8 +143,8 @@ final class MainCoordinator: NavigationCoordinatable {
         MainTabCoordinator()
     }
 
-    func makeOfflineTab() -> OfflineTabCoordinator {
-        OfflineTabCoordinator()
+    func makeOffline() -> NavigationViewCoordinator<DownloadListCoordinator> {
+        NavigationViewCoordinator(DownloadListCoordinator())
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {

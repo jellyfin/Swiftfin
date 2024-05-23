@@ -116,7 +116,9 @@ class DownloadManager: ObservableObject {
 
         let task = DownloadTask(item: offlineItem)
         task.expectedSize = Int64(offlineItem.mediaSources!.first!.size!)
+
         task.state = .complete
+
         return task
     }
 }

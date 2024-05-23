@@ -18,7 +18,6 @@ class ServerCheckViewModel: ViewModel, Stateful {
 
     enum State: Hashable {
         case connecting
-        case offline
         case connected
         case error(JellyfinAPIError)
         case initial
@@ -46,11 +45,7 @@ class ServerCheckViewModel: ViewModel, Stateful {
                     }
                 } catch {
                     await MainActor.run {
-                        if (error as NSError).code == NSURLErrorNotConnectedToInternet {
-                            self.state = .offline
-                        } else {
-                            self.state = .error(.init(error.localizedDescription))
-                        }
+                        self.state = .error(.init(error.localizedDescription))
                     }
                 }
             }

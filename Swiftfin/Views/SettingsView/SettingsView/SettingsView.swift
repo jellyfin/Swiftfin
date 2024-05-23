@@ -16,7 +16,8 @@ struct SettingsView: View {
 
     @Default(.userAccentColor)
     private var accentColor
-
+    @Default(.Experimental.offlineMode)
+    private var offlineMode
     @Default(.userAppearance)
     private var appearance
     @Default(.VideoPlayer.videoPlayerType)
@@ -24,6 +25,9 @@ struct SettingsView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
+
+    @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
 
     @StateObject
     private var viewModel = SettingsViewModel()
@@ -38,23 +42,34 @@ struct SettingsView: View {
                 }
 
                 // TODO: admin users go to dashboard instead
-                ChevronButton(
-                    L10n.server,
-                    subtitle: viewModel.userSession.server.name
-                )
-                .onSelect {
-                    router.route(to: \.serverDetail, viewModel.userSession.server)
+                if !offlineMode {
+                    ChevronButton(
+                        L10n.server,
+                        subtitle: viewModel.userSession.server.name
+                    )
+                    .onSelect {
+                        router.route(to: \.serverDetail, viewModel.userSession.server)
+                    }
                 }
             }
 
-            ListRowButton(L10n.switchUser) {
-                UIDevice.impact(.medium)
-
-                router.dismissCoordinator {
-                    viewModel.signOut()
+            if offlineMode {
+                ListRowButton("Go Online") {
+                    router.dismissCoordinator()
+                    offlineMode = false
+                    mainRouter.root(\.serverCheck)
                 }
+                .foregroundStyle(accentColor.overlayColor, accentColor)
+            } else {
+                ListRowButton(L10n.switchUser) {
+                    UIDevice.impact(.medium)
+
+                    router.dismissCoordinator {
+                        viewModel.signOut()
+                    }
+                }
+                .foregroundStyle(accentColor.overlayColor, accentColor)
             }
-            .foregroundStyle(accentColor.overlayColor, accentColor)
 
             Section(L10n.videoPlayer) {
                 CaseIterablePicker(

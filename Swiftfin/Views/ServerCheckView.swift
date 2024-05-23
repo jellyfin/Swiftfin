@@ -6,9 +6,13 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 struct ServerCheckView: View {
+
+    @Default(.Experimental.offlineMode)
+    private var offlineMode
 
     @EnvironmentObject
     private var router: MainCoordinator.Router
@@ -37,13 +41,23 @@ struct ServerCheckView: View {
                 }
                 .frame(maxWidth: 300)
                 .frame(height: 50)
+
+            Text("or")
+            PrimaryButton(title: "Go offline")
+                .onSelect {
+                    offlineMode = true
+                    router.root(\.offlineView)
+                }
+                .foregroundStyle(.foreground)
+                .frame(maxWidth: 300)
+                .frame(height: 50)
         }
     }
 
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .connecting, .connected, .offline:
+            case .initial, .connecting, .connected:
                 ZStack {
                     Color.clear
 
@@ -61,11 +75,6 @@ struct ServerCheckView: View {
             if newState == .connected {
                 withAnimation(.linear(duration: 0.1)) {
                     let _ = router.root(\.mainTab)
-                }
-            }
-            if newState == .offline {
-                withAnimation(.linear(duration: 0.1)) {
-                    let _ = router.root(\.offlineTab)
                 }
             }
         }
