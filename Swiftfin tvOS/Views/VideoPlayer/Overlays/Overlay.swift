@@ -50,6 +50,11 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.1), value: currentOverlayType)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environmentObject(overlayTimer)
+                .onChange(of: isPresentingOverlay) { _ in
+                    if !isPresentingOverlay {
+                        currentOverlayType = .main
+                    }
+                }
                 .onChange(of: currentOverlayType) { newValue in
                     if [.smallMenu, .chapters].contains(newValue) {
                         overlayTimer.pause()
@@ -69,34 +74,33 @@ extension VideoPlayer {
 //                    isPresentingOverlay = true
 //                    overlayTimer.start(5)
 //                }
-//                .onMenuPressed {
-//
-//                    overlayTimer.start(5)
-//                    confirmCloseWorkItem?.cancel()
-//
-//                    if isPresentingOverlay && currentOverlayType == .confirmClose {
-//                        proxy.stop()
-//                        router.dismissCoordinator()
-//                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
-//                        currentOverlayType = .main
-//                    } else {
-//                        withAnimation {
-//                            currentOverlayType = .confirmClose
-//                            isPresentingOverlay = true
-//                        }
-//
-//                        let task = DispatchWorkItem {
-//                            withAnimation {
-//                                isPresentingOverlay = false
-//                                overlayTimer.stop()
-//                            }
-//                        }
-//
-//                        confirmCloseWorkItem = task
-//
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-//                    }
-//                }
+                .onExitCommand {
+                    overlayTimer.start(5)
+                    confirmCloseWorkItem?.cancel()
+
+                    if isPresentingOverlay && currentOverlayType == .confirmClose {
+                        proxy.stop()
+                        router.dismissCoordinator()
+                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
+                        currentOverlayType = .main
+                    } else {
+                        withAnimation {
+                            currentOverlayType = .confirmClose
+                            isPresentingOverlay = true
+                        }
+
+                        let task = DispatchWorkItem {
+                            withAnimation {
+                                isPresentingOverlay = false
+                                overlayTimer.stop()
+                            }
+                        }
+
+                        confirmCloseWorkItem = task
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+                    }
+                }
         }
     }
 }
