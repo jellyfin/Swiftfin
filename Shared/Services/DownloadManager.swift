@@ -80,6 +80,13 @@ class DownloadManager: ObservableObject {
     }
 
     func remove(task: DownloadTask) {
+        do {
+            try FileManager.default.removeItem(at: task.item.downloadFolder!)
+        } catch {
+            logger.error("Error deleting item: \(error.localizedDescription)")
+            return
+        }
+        task.state = .ready
         downloads.removeAll(where: { $0.item == task.item })
     }
 
@@ -108,6 +115,7 @@ class DownloadManager: ObservableObject {
         guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else { return nil }
 
         let task = DownloadTask(item: offlineItem)
+        task.expectedSize = Int64(offlineItem.mediaSources!.first!.size!)
         task.state = .complete
         return task
     }

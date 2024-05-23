@@ -98,13 +98,18 @@ extension DownloadTaskView {
                             }
                             .frame(maxWidth: 300)
                             .frame(height: 50)
+                        Text("Size: \(downloadTask.expectedSize.sizeLable)")
+                            .font(.subheadline)
+                            .fontWeight(.regular)
+                            .padding(.horizontal)
+                        PrimaryButton(title: "Delete")
+                            .onSelect {
+                                downloadManager.remove(task: downloadTask)
+                            }
+                            .frame(maxWidth: 200)
+                            .frame(height: 50)
                     }
                 }
-
-//                Text("Media Info")
-//                    .font(.title2)
-//                    .fontWeight(.semibold)
-//                    .padding(.horizontal)
             }
             .alert(
                 L10n.error,

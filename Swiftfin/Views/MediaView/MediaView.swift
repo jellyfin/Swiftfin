@@ -64,6 +64,18 @@ struct MediaView: View {
         }
     }
 
+    private var offlineView: some View {
+        CollectionVGrid(
+            $viewModel.mediaItems,
+            layout: UIDevice.isPhone ? phoneLayout : padLayout
+        ) { mediaType in
+            MediaItem(viewModel: viewModel, type: mediaType)
+                .onSelect {
+                    router.route(to: \.downloads)
+                }
+        }
+    }
+
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {

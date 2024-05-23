@@ -24,6 +24,13 @@ extension FixedWidthInteger {
             .appending(minutesText)
             .appending(secondsText)
     }
+
+    var sizeLable: String {
+        let bcf = ByteCountFormatter()
+        bcf.allowedUnits = [.useMB, .useGB]
+        bcf.countStyle = .file
+        return bcf.string(fromByteCount: Int64(self))
+    }
 }
 
 extension Int {

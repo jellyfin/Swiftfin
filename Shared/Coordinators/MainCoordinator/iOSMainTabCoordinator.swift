@@ -6,20 +6,35 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import Stinsen
 import SwiftUI
 
 final class MainTabCoordinator: TabCoordinatable {
 
-    var child = TabChild(startingItems: [
-        \MainTabCoordinator.home,
-        \MainTabCoordinator.search,
-        \MainTabCoordinator.media,
-    ])
+    var child: TabChild
+
+    init() {
+        self.child = TabChild(startingItems: [
+            \MainTabCoordinator.home,
+            \MainTabCoordinator.search,
+            \MainTabCoordinator.media,
+        ])
+        if Defaults[.Experimental.downloads] {
+            self.child = TabChild(startingItems: [
+                \MainTabCoordinator.home,
+                \MainTabCoordinator.search,
+                \MainTabCoordinator.media,
+                \MainTabCoordinator.downloads,
+            ])
+        }
+    }
 
     @Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
     var home = makeHome
+    @Route(tabItem: makeDownloadsTab, onTapped: onDownloadsTapped)
+    var downloads = makeDownloads
     @Route(tabItem: makeSearchTab, onTapped: onSearchTapped)
     var search = makeSearch
     @Route(tabItem: makeMediaTab, onTapped: onMediaTapped)
@@ -39,6 +54,22 @@ final class MainTabCoordinator: TabCoordinatable {
     func makeHomeTab(isActive: Bool) -> some View {
         Image(systemName: "house")
         L10n.home.text
+    }
+
+    @ViewBuilder
+    func makeDownloadsTab(isActive: Bool) -> some View {
+        Image(systemName: "square.and.arrow.down.fill")
+        L10n.downloads.text
+    }
+
+    func makeDownloads() -> NavigationViewCoordinator<DownloadListCoordinator> {
+        NavigationViewCoordinator(DownloadListCoordinator())
+    }
+
+    func onDownloadsTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<DownloadListCoordinator>) {
+        if isRepeat {
+            coordinator.child.popToRoot()
+        }
     }
 
     func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {

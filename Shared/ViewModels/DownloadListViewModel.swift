@@ -22,4 +22,9 @@ class DownloadListViewModel: ViewModel {
 
         items = downloadManager.downloadedItems()
     }
+
+    func remove(task: DownloadTask) {
+        downloadManager.remove(task: task)
+        items.removeAll(where: { $0.item == task.item })
+    }
 }

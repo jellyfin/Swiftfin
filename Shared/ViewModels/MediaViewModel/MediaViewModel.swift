@@ -81,6 +81,7 @@ final class MediaViewModel: ViewModel, Stateful {
                 return .collectionFolder(userView)
             }
             .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+            .prepending(.downloads)
 
         await MainActor.run {
             mediaItems.elements = media

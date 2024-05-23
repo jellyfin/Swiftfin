@@ -43,6 +43,8 @@ class DownloadTask: NSObject, ObservableObject {
     @Injected(UserSession.current)
     private var userSession: UserSession!
 
+    public var expectedSize: Int64 = -1
+
     @Published
     var state: State = .ready
 
@@ -119,6 +121,8 @@ class DownloadTask: NSObject, ObservableObject {
         guard let downloadFolder = item.downloadFolder else { return }
 
         let request = Paths.getDownload(itemID: item.id!)
+        self.expectedSize = Int64(item.mediaSources!.first!.size!)
+
         let response = try await userSession.client.download(for: request, delegate: self)
 
         let subtype = response.response.mimeSubtype
@@ -269,7 +273,7 @@ extension DownloadTask: URLSessionDownloadDelegate {
         totalBytesWritten: Int64,
         totalBytesExpectedToWrite: Int64
     ) {
-        let progress = Double(totalBytesWritten) / Double(totalBytesExpectedToWrite)
+        let progress = Double(totalBytesWritten) / Double(expectedSize)
 
         DispatchQueue.main.async {
             self.state = .downloading(progress)

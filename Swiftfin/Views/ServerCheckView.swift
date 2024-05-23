@@ -43,7 +43,7 @@ struct ServerCheckView: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
-            case .initial, .connecting, .connected:
+            case .initial, .connecting, .connected, .offline:
                 ZStack {
                     Color.clear
 
@@ -61,6 +61,11 @@ struct ServerCheckView: View {
             if newState == .connected {
                 withAnimation(.linear(duration: 0.1)) {
                     let _ = router.root(\.mainTab)
+                }
+            }
+            if newState == .offline {
+                withAnimation(.linear(duration: 0.1)) {
+                    let _ = router.root(\.offlineTab)
                 }
             }
         }

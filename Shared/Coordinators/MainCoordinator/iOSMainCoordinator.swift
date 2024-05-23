@@ -31,6 +31,8 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var mainTab = makeMainTab
     @Root
+    var offlineTab = makeOfflineTab
+    @Root
     var selectUser = makeSelectUser
     @Root
     var serverCheck = makeServerCheck
@@ -136,6 +138,10 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeMainTab() -> MainTabCoordinator {
         MainTabCoordinator()
+    }
+
+    func makeOfflineTab() -> OfflineTabCoordinator {
+        OfflineTabCoordinator()
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
