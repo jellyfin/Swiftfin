@@ -28,7 +28,7 @@ struct ItemOverviewView: View {
                 }
 
                 if let itemOverview = item.overview {
-                    Text(itemOverview)
+                    Text(itemOverview.htmlToString)
                         .font(.body)
                         .multilineTextAlignment(.leading)
                 }
