@@ -6,50 +6,66 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import Foundation
 import JellyfinAPI
 
 class DownloadVideoPlayerManager: VideoPlayerManager {
+
+    @Injected(Container.downloadManager)
+    private var downloadManager
 
     private var task: DownloadTask? = nil
     init(downloadTask: DownloadTask) {
         super.init()
         guard let playbackURL = downloadTask.getMediaURL() else {
             logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")
-
             return
         }
 
-        let itemProgressFile = URL.downloads
-            .appendingPathComponent(downloadTask.id)
-            .appendingPathComponent("Metadata")
-            .appendingPathComponent("Progress.json")
+        let offlineProgress = downloadTask.getPlaybackInfo()
+        downloadTask.localPlaybackInfo = offlineProgress
+        downloadTask.item.userData?.playbackPositionTicks = downloadTask.localPlaybackInfo.positionTicks ?? 0
 
-        do {
-            let jsonDecoder = JSONDecoder()
-            let itemProgressData = FileManager.default.contents(atPath: itemProgressFile.path)!
-            let offlineProgress = try jsonDecoder.decode(PlaybackProgressInfo.self, from: itemProgressData)
-            downloadTask.localPlaybackInfo = offlineProgress
-            downloadTask.item.userData?.playbackPositionTicks = downloadTask.localPlaybackInfo.positionTicks!
-        } catch {}
+        self.task = downloadTask
 
         self.currentViewModel = .init(
             playbackURL: playbackURL,
             item: downloadTask.item,
             mediaSource: .init(),
-            playSessionID: "",
+            playSessionID: offlineProgress.playSessionID ?? "",
             videoStreams: downloadTask.item.videoStreams,
             audioStreams: downloadTask.item.audioStreams,
             subtitleStreams: downloadTask.item.subtitleStreams,
-            selectedAudioStreamIndex: downloadTask.localPlaybackInfo.audioStreamIndex!,
-            selectedSubtitleStreamIndex: downloadTask.localPlaybackInfo.subtitleStreamIndex!,
+            selectedAudioStreamIndex: downloadTask.localPlaybackInfo.audioStreamIndex ?? 1,
+            selectedSubtitleStreamIndex: downloadTask.localPlaybackInfo.subtitleStreamIndex ?? -1,
             chapters: downloadTask.item.fullChapterInfo,
             streamType: .direct
         )
-        self.task = downloadTask
     }
 
-    override func getAdjacentEpisodes(for item: BaseItemDto) {}
+    override func getAdjacentEpisodes(for item: BaseItemDto) {
+        Task { @MainActor in
+
+            let (prev, next) = downloadManager.getAdjacent(item: item)
+
+            var nextViewModel: VideoPlayerViewModel?
+            var previousViewModel: VideoPlayerViewModel?
+
+            if let next {
+                nextViewModel = try next.offlinePlayerViewModel()
+            }
+
+            if let prev {
+                previousViewModel = try prev.offlinePlayerViewModel()
+            }
+
+            await MainActor.run {
+                self.nextViewModel = nextViewModel
+                self.previousViewModel = previousViewModel
+            }
+        }
+    }
 
     override func sendStartReport() {
         updateProgress()
@@ -79,23 +95,7 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
                 sessionID: currentViewModel.playSessionID,
                 subtitleStreamIndex: subtitleTrackIndex
             )
-
-            guard let metadataFolder = task?.metadataFolder else { return }
-
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.outputFormatting = .prettyPrinted
-
-            let itemJsonData = try! jsonEncoder.encode(progressInfo)
-            let itemJson = String(data: itemJsonData, encoding: .utf8)
-            let itemFileURL = metadataFolder.appendingPathComponent("Progress.json")
-
-            do {
-                try FileManager.default.createDirectory(at: metadataFolder, withIntermediateDirectories: true)
-
-                try itemJson?.write(to: itemFileURL, atomically: true, encoding: .utf8)
-            } catch {
-                logger.error("Error saving item progress: \(error.localizedDescription)")
-            }
+            self.task?.savePlaybackInfo(progress: progressInfo)
         }
     }
 }

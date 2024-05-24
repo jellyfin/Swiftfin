@@ -16,6 +16,7 @@ extension Container {
     static let downloadManager = Factory(scope: .singleton) {
         let manager = DownloadManager()
         manager.clearTmp()
+
         return manager
     }
 }
@@ -29,8 +30,8 @@ class DownloadManager: ObservableObject {
     private(set) var downloads: [DownloadTask] = []
 
     fileprivate init() {
-
         createDownloadDirectory()
+        self.downloads = self.downloadedItems()
     }
 
     private func createDownloadDirectory() {
@@ -90,6 +91,39 @@ class DownloadManager: ObservableObject {
         downloads.removeAll(where: { $0.item == task.item })
     }
 
+    func getAdjacent(item: BaseItemDto) -> (DownloadTask?, DownloadTask?) {
+        var previousEpisode: DownloadTask?
+        var nextEpisode: DownloadTask?
+
+        let seriesId = item.seriesID
+        guard let seasonID = item.seasonID else { return (nil, nil) }
+
+        guard let indexNumber = item.indexNumber else { return (nil, nil) }
+        let indexNumberEnd = item.indexNumber ?? -1
+
+        for download in downloads {
+            if download.item.seriesID != seriesId {
+                continue
+            }
+            if download.item.seasonID != seasonID {
+                continue
+            }
+
+            guard let downloadIndexNumber = download.item.indexNumber else { continue }
+            let downloadIndexNumberEnd = download.item.indexNumberEnd ?? -1
+            if indexNumber - downloadIndexNumber == 1 || indexNumber - downloadIndexNumberEnd == 1 {
+                previousEpisode = download
+                continue
+            }
+            if indexNumber - downloadIndexNumber == -1 || indexNumberEnd - downloadIndexNumber == 1 {
+                nextEpisode = download
+                continue
+            }
+        }
+
+        return (previousEpisode, nextEpisode)
+    }
+
     func downloadedItems() -> [DownloadTask] {
         do {
             let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
@@ -102,7 +136,6 @@ class DownloadManager: ObservableObject {
     }
 
     private func parseDownloadItem(with id: String) -> DownloadTask? {
-
         let itemMetadataFile = URL.downloads
             .appendingPathComponent(id)
             .appendingPathComponent("Metadata")

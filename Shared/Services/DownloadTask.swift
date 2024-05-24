@@ -321,3 +321,58 @@ extension DownloadTask: Identifiable {
         item.id!
     }
 }
+
+extension DownloadTask {
+    func getPlaybackInfo() -> PlaybackProgressInfo {
+        let itemProgressFile = URL.downloads
+            .appendingPathComponent(self.id)
+            .appendingPathComponent("Metadata")
+            .appendingPathComponent("Progress.json")
+
+        let jsonDecoder = JSONDecoder()
+        guard let itemProgressData = FileManager.default.contents(atPath: itemProgressFile.path) else { return self.localPlaybackInfo }
+
+        guard let offlineProgress = try? jsonDecoder.decode(PlaybackProgressInfo.self, from: itemProgressData)
+        else { return self.localPlaybackInfo }
+
+        return offlineProgress
+    }
+
+    func savePlaybackInfo(progress: PlaybackProgressInfo) {
+        guard let metadataFolder = metadataFolder else { return }
+
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+
+        let itemJsonData = try! jsonEncoder.encode(progress)
+        let itemJson = String(data: itemJsonData, encoding: .utf8)
+        let itemFileURL = metadataFolder.appendingPathComponent("Progress.json")
+
+        do {
+            try FileManager.default.createDirectory(at: metadataFolder, withIntermediateDirectories: true)
+
+            try itemJson?.write(to: itemFileURL, atomically: true, encoding: .utf8)
+        } catch {
+            logger.error("Error saving item progress: \(error.localizedDescription)")
+        }
+    }
+
+    func offlinePlayerViewModel() throws -> VideoPlayerViewModel {
+        guard let playbackURL = self.getMediaURL() else { throw JellyfinAPIError("no media found") }
+        let offlineProgress = self.getPlaybackInfo()
+
+        return .init(
+            playbackURL: playbackURL,
+            item: self.item,
+            mediaSource: .init(),
+            playSessionID: offlineProgress.playSessionID ?? "",
+            videoStreams: self.item.videoStreams,
+            audioStreams: self.item.audioStreams,
+            subtitleStreams: self.item.subtitleStreams,
+            selectedAudioStreamIndex: self.localPlaybackInfo.audioStreamIndex ?? 1,
+            selectedSubtitleStreamIndex: self.localPlaybackInfo.subtitleStreamIndex ?? -1,
+            chapters: self.item.fullChapterInfo,
+            streamType: .direct
+        )
+    }
+}
