@@ -7,11 +7,14 @@
 //
 
 #if os(iOS)
+import Factory
 import Foundation
 import Stinsen
 import SwiftUI
 
 final class DownloadListCoordinator: NavigationCoordinatable {
+    @Injected(Container.downloadManager)
+    private var downloadManager
 
     let stack = NavigationStack(initial: \DownloadListCoordinator.start)
 
@@ -20,13 +23,13 @@ final class DownloadListCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var downloadTask = makeDownloadTask
 
-    func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
+    func makeDownloadTask(downloadTask: DownloadEntity) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }
 
     @ViewBuilder
     private func makeStart() -> DownloadListView {
-        DownloadListView(viewModel: .init())
+        DownloadListView(viewModel: .init(), downloadManager: downloadManager)
     }
 }
 #endif

@@ -215,19 +215,19 @@ extension BaseItemDto {
 //            .appendingPathComponent(userSession.user.id)
 
         switch type {
-        case .movie, .episode:
+        case .movie:
             return root
                 .appendingPathComponent(id)
-//        case .episode:
-//            guard let seasonID = seasonID,
-//                  let seriesID = seriesID
-//            else {
-//                return nil
-//            }
-//            return root
-//                .appendingPathComponent(seriesID)
-//                .appendingPathComponent(seasonID)
-//                .appendingPathComponent(id)
+        case .episode:
+            guard let seasonID = seasonID,
+                  let seriesID = seriesID
+            else {
+                return nil
+            }
+            return root
+                .appendingPathComponent(seriesID)
+                .appendingPathComponent(seasonID)
+                .appendingPathComponent(id)
         default:
             return nil
         }

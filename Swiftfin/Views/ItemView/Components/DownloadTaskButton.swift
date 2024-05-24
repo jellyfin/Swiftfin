@@ -15,9 +15,9 @@ struct DownloadTaskButton: View {
     @ObservedObject
     private var downloadManager: DownloadManager
     @ObservedObject
-    private var downloadTask: DownloadTask
+    private var downloadTask: DownloadEntity
 
-    private var onSelect: (DownloadTask) -> Void
+    private var onSelect: (DownloadEntity) -> Void
 
     var body: some View {
         Button {
@@ -52,7 +52,7 @@ extension DownloadTaskButton {
         self.downloadManager = downloadManager
     }
 
-    func onSelect(_ action: @escaping (DownloadTask) -> Void) -> Self {
+    func onSelect(_ action: @escaping (DownloadEntity) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

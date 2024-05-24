@@ -15,7 +15,7 @@ import JellyfinAPI
 // TODO: Only move items if entire download successful
 // TODO: Better state for which stage of downloading
 
-class DownloadTask: NSObject, ObservableObject {
+class DownloadEntity: NSObject, ObservableObject {
 
     enum DownloadError: Error {
 
@@ -103,7 +103,7 @@ class DownloadTask: NSObject, ObservableObject {
             saveMetadata()
 
             await MainActor.run {
-                self.state = .complete
+                Container.downloadManager().markReady(task: self)
             }
         }
 
@@ -274,7 +274,7 @@ class DownloadTask: NSObject, ObservableObject {
 
 // MARK: URLSessionDownloadDelegate
 
-extension DownloadTask: URLSessionDownloadDelegate {
+extension DownloadEntity: URLSessionDownloadDelegate {
 
     func urlSession(
         _ session: URLSession,
@@ -315,14 +315,14 @@ extension DownloadTask: URLSessionDownloadDelegate {
     }
 }
 
-extension DownloadTask: Identifiable {
+extension DownloadEntity: Identifiable {
 
     var id: String {
         item.id!
     }
 }
 
-extension DownloadTask {
+extension DownloadEntity {
     func getPlaybackInfo() -> PlaybackProgressInfo {
         let itemProgressFile = URL.downloads
             .appendingPathComponent(self.id)

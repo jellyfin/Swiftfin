@@ -78,7 +78,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
+    func makeDownloadTask(downloadTask: DownloadEntity) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }
     #endif

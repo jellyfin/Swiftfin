@@ -7,12 +7,15 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 // NOTE: All settings *MUST* be surrounded by DEBUG compiler conditional as usage site
 
 #if DEBUG
 struct DebugSettingsView: View {
+    @Injected(Container.downloadManager)
+    private var downloadManager
 
     @Default(.sendProgressReports)
     private var sendProgressReports
@@ -21,6 +24,7 @@ struct DebugSettingsView: View {
         Form {
 
             Toggle("Send Progress Reports", isOn: $sendProgressReports)
+            Button("Erase all downloads", action: downloadManager.eraseAllDownloads)
         }
         .navigationTitle("Debug")
     }

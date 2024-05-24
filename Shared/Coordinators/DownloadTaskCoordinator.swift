@@ -18,9 +18,9 @@ final class DownloadTaskCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let downloadTask: DownloadTask
+    let downloadTask: DownloadEntity
 
-    init(downloadTask: DownloadTask) {
+    init(downloadTask: DownloadEntity) {
         self.downloadTask = downloadTask
     }
 

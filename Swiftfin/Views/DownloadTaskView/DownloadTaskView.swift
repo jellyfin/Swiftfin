@@ -15,7 +15,7 @@ struct DownloadTaskView: View {
     private var router: DownloadTaskCoordinator.Router
 
     @ObservedObject
-    var downloadTask: DownloadTask
+    var downloadTask: DownloadEntity
 
     var body: some View {
         ScrollView(showsIndicators: false) {

@@ -27,11 +27,19 @@ class DownloadManager: ObservableObject {
     private var logger
 
     @Published
-    private(set) var downloads: [DownloadTask] = []
+    private(set) var downloads: [DownloadEntity] = []
+
+    private var queue: [DownloadEntity] = []
 
     fileprivate init() {
         createDownloadDirectory()
         self.downloads = self.downloadedItems()
+    }
+
+    func eraseAllDownloads() {
+        try? FileManager.default.removeItem(at: URL.downloads)
+        createDownloadDirectory()
+        self.downloads = []
     }
 
     private func createDownloadDirectory() {
@@ -52,15 +60,16 @@ class DownloadManager: ObservableObject {
         }
     }
 
-    func download(task: DownloadTask) {
+    func download(task: DownloadEntity) {
         guard !downloads.contains(where: { $0.item == task.item }) else { return }
+        guard !queue.contains(where: { $0.item == task.item }) else { return }
 
-        downloads.append(task)
+        queue.append(task)
 
         task.download()
     }
 
-    func task(for item: BaseItemDto) -> DownloadTask? {
+    func task(for item: BaseItemDto) -> DownloadEntity? {
         if let currentlyDownloading = downloads.first(where: { $0.item == item }) {
             return currentlyDownloading
         } else {
@@ -68,19 +77,20 @@ class DownloadManager: ObservableObject {
             guard let downloadFolder = item.downloadFolder else { return nil }
             guard FileManager.default.fileExists(atPath: downloadFolder.path, isDirectory: &isDir) else { return nil }
 
-            return parseDownloadItem(with: item.id!)
+            return parseDownloadItem(metaPath: downloadFolder.path)
         }
     }
 
-    func cancel(task: DownloadTask) {
+    func cancel(task: DownloadEntity) {
         guard downloads.contains(where: { $0.item == task.item }) else { return }
+        guard queue.contains(where: { $0.item == task.item }) else { return }
 
         task.cancel()
 
         remove(task: task)
     }
 
-    func remove(task: DownloadTask) {
+    func remove(task: DownloadEntity) {
         do {
             try FileManager.default.removeItem(at: task.item.downloadFolder!)
         } catch {
@@ -88,12 +98,21 @@ class DownloadManager: ObservableObject {
             return
         }
         task.state = .ready
+        queue.removeAll(where: { $0.item == task.item })
         downloads.removeAll(where: { $0.item == task.item })
     }
 
-    func getAdjacent(item: BaseItemDto) -> (DownloadTask?, DownloadTask?) {
-        var previousEpisode: DownloadTask?
-        var nextEpisode: DownloadTask?
+    func markReady(task: DownloadEntity) {
+        guard queue.contains(where: { $0.item == task.item }) else { return }
+        task.state = .complete
+
+        queue.removeAll(where: { $0.item == task.item })
+        downloads.append(task)
+    }
+
+    func getAdjacent(item: BaseItemDto) -> (DownloadEntity?, DownloadEntity?) {
+        var previousEpisode: DownloadEntity?
+        var nextEpisode: DownloadEntity?
 
         let seriesId = item.seriesID
         guard let seasonID = item.seasonID else { return (nil, nil) }
@@ -124,10 +143,16 @@ class DownloadManager: ObservableObject {
         return (previousEpisode, nextEpisode)
     }
 
-    func downloadedItems() -> [DownloadTask] {
+    func downloadedItems() -> [DownloadEntity] {
         do {
             let downloadContents = try FileManager.default.contentsOfDirectory(atPath: URL.downloads.path)
-            return downloadContents.compactMap(parseDownloadItem(with:))
+            var output: [DownloadEntity] = []
+            for id in downloadContents {
+                let contentFolder = URL.downloads.appendingPathComponent(id)
+                let contents = parseDownloadFolder(path: contentFolder)
+                output.append(contentsOf: contents)
+            }
+            return output
         } catch {
             logger.error("Error retrieving all downloads: \(error.localizedDescription)")
 
@@ -135,19 +160,44 @@ class DownloadManager: ObservableObject {
         }
     }
 
-    private func parseDownloadItem(with id: String) -> DownloadTask? {
-        let itemMetadataFile = URL.downloads
-            .appendingPathComponent(id)
-            .appendingPathComponent("Metadata")
-            .appendingPathComponent("Item.json")
+    private func parseDownloadFolder(path: URL) -> [DownloadEntity] {
+        let movieMetadataFile = path.appendingPathComponent("Metadata").appendingPathComponent("Item.json")
+        if FileManager.default.fileExists(atPath: movieMetadataFile.path) {
+            guard let movieItem = parseDownloadItem(metaPath: movieMetadataFile.path) else { return [] }
+            return [movieItem]
+        }
 
-        guard let itemMetadataData = FileManager.default.contents(atPath: itemMetadataFile.path) else { return nil }
+        var folderContent: [DownloadEntity] = []
+
+        do {
+            let seriesContents = try FileManager.default.contentsOfDirectory(atPath: path.path)
+            for seasonID in seriesContents {
+                let seasonPath = path.appendingPathComponent(seasonID)
+                let seasonContent = try FileManager.default.contentsOfDirectory(atPath: seasonPath.path)
+                for episodeID in seasonContent {
+                    let episodePath = seasonPath.appendingPathComponent(episodeID)
+                    guard let episodeItem = parseDownloadItem(
+                        metaPath: episodePath.appendingPathComponent("Metadata")
+                            .appendingPathComponent("Item.json").path
+                    ) else { continue }
+                    folderContent.append(episodeItem)
+                }
+            }
+        } catch {
+            return []
+        }
+
+        return folderContent
+    }
+
+    private func parseDownloadItem(metaPath: String) -> DownloadEntity? {
+        guard let itemMetadataData = FileManager.default.contents(atPath: metaPath) else { return nil }
 
         let jsonDecoder = JSONDecoder()
 
         guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else { return nil }
 
-        let task = DownloadTask(item: offlineItem)
+        let task = DownloadEntity(item: offlineItem)
         task.expectedSize = Int64(offlineItem.mediaSources!.first!.size!)
 
         task.state = .complete

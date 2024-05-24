@@ -15,8 +15,8 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
     @Injected(Container.downloadManager)
     private var downloadManager
 
-    private var task: DownloadTask? = nil
-    init(downloadTask: DownloadTask) {
+    private var task: DownloadEntity? = nil
+    init(downloadTask: DownloadEntity) {
         super.init()
         guard let playbackURL = downloadTask.getMediaURL() else {
             logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")

@@ -15,15 +15,21 @@ class DownloadListViewModel: ViewModel {
     private var downloadManager
 
     @Published
-    var items: [DownloadTask] = []
+    var items: [DownloadEntity] = []
 
     override init() {
         super.init()
 
-        items = downloadManager.downloadedItems()
+        items = downloadManager.downloads
+        // TODO: check if this works properly
+//        _ = downloadManager.objectWillChange.sink(receiveValue: refresh)
     }
 
-    func remove(task: DownloadTask) {
+    func refresh() {
+        items = downloadManager.downloads
+    }
+
+    func remove(task: DownloadEntity) {
         downloadManager.remove(task: task)
         items.removeAll(where: { $0.item == task.item })
     }

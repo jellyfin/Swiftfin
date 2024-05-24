@@ -15,6 +15,9 @@ extension DownloadTaskView {
 
     struct ContentView: View {
 
+        @Default(.Experimental.offlineMode)
+        private var offlineMode
+
         @Default(.accentColor)
         private var accentColor
 
@@ -27,7 +30,7 @@ extension DownloadTaskView {
         private var router: DownloadTaskCoordinator.Router
 
         @ObservedObject
-        var downloadTask: DownloadTask
+        var downloadTask: DownloadEntity
 
         @State
         private var isPresentingVideoPlayerTypeError: Bool = false
@@ -36,12 +39,15 @@ extension DownloadTaskView {
             VStack(alignment: .leading, spacing: 10) {
 
                 VStack(alignment: .center) {
-                    ImageView(downloadTask.item.landscapeImageSources(maxWidth: 600))
-                        .frame(maxHeight: 300)
-                        .aspectRatio(1.77, contentMode: .fill)
-                        .cornerRadius(10)
-                        .padding(.horizontal)
-                        .posterShadow()
+                    ImageView(
+                        offlineMode ? [ImageSource(url: downloadTask.getImageURL(name: "Primary"))] : downloadTask.item
+                            .landscapeImageSources(maxWidth: 600)
+                    )
+                    .frame(maxHeight: 300)
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+                    .posterShadow()
 
                     ShelfView(downloadTask: downloadTask)
 
@@ -132,7 +138,7 @@ extension DownloadTaskView.ContentView {
     struct ShelfView: View {
 
         @ObservedObject
-        var downloadTask: DownloadTask
+        var downloadTask: DownloadEntity
 
         var body: some View {
             VStack(alignment: .center, spacing: 10) {

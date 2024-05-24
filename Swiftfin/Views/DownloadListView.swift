@@ -13,16 +13,16 @@ struct DownloadListView: View {
     @EnvironmentObject
     private var mainRouter: MainCoordinator.Router
 
-    @Injected(Container.downloadManager)
-    private var downloadManager
-
     @ObservedObject
     var viewModel: DownloadListViewModel
 
+    @ObservedObject
+    var downloadManager: DownloadManager
+
     var body: some View {
         ScrollView(showsIndicators: false) {
-            ForEach(viewModel.items) { item in
-                DownloadTaskRow(viewModel: viewModel, downloadTask: item)
+            ForEach(downloadManager.downloads) { item in
+                DownloadTaskRow(downloadManager: downloadManager, downloadTask: item)
                 RowDivider()
             }
         }
@@ -42,12 +42,12 @@ struct DownloadListView: View {
 extension DownloadListView {
     struct DownloadTaskRow: View {
         @ObservedObject
-        var viewModel: DownloadListViewModel
+        var downloadManager: DownloadManager
 
         @EnvironmentObject
         private var router: DownloadListCoordinator.Router
 
-        let downloadTask: DownloadTask
+        let downloadTask: DownloadEntity
 
         var body: some View {
             Button {
@@ -73,7 +73,7 @@ extension DownloadListView {
 
                     Spacer()
                     Button {
-                        viewModel.remove(task: downloadTask)
+                        downloadManager.remove(task: downloadTask)
                     } label: {
                         Image(systemName: "trash")
                             .foregroundColor(.red)
