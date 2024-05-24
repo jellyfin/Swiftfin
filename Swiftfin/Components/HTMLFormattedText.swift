@@ -6,6 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import SwiftUI
+
 struct HTMLFormattedText: UIViewRepresentable {
     let text: String
     private let textView = UITextView()
