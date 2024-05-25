@@ -49,6 +49,9 @@ struct PagingLibraryView<Element: Poster>: View {
     private var defaultListColumnCount: Int
     @Default
     private var defaultPosterType: PosterDisplayType
+
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
     @Default(.Customization.Library.letterPickerOrientation)
     private var letterPickerOrientation
 
@@ -253,32 +256,25 @@ struct PagingLibraryView<Element: Poster>: View {
         .proxy(collectionVGridProxy)
     }
 
+    @ViewBuilder
     private func contentLetterBarView(content: some View) -> some View {
-        switch letterPickerOrientation {
-        case .none:
-            return AnyView(content)
-        case .trailing:
-            return AnyView(
-                Group {
-                    HStack(spacing: 0) {
-                        content
-                            .frame(maxWidth: .infinity)
-                        LetterPickerBar(viewModel: viewModel.filterViewModel!)
-                            .padding(1)
-                    }
+        if letterPickerEnabled {
+            switch letterPickerOrientation {
+            case .trailing:
+                HStack(spacing: 0) {
+                    content
+                        .frame(maxWidth: .infinity)
+                    LetterPickerBar(viewModel: viewModel.filterViewModel!)
                 }
-            )
-        case .leading:
-            return AnyView(
-                Group {
-                    HStack(spacing: 0) {
-                        LetterPickerBar(viewModel: viewModel.filterViewModel!)
-                            .padding(1)
-                        content
-                            .frame(maxWidth: .infinity)
-                    }
+            case .leading:
+                HStack(spacing: 0) {
+                    LetterPickerBar(viewModel: viewModel.filterViewModel!)
+                    content
+                        .frame(maxWidth: .infinity)
                 }
-            )
+            }
+        } else {
+            content
         }
     }
 
@@ -296,13 +292,13 @@ struct PagingLibraryView<Element: Poster>: View {
                     contentLetterBarView(content: contentView)
                 }
             case let .error(error):
-                contentLetterBarView(content: errorView(with: error))
+                errorView(with: error)
             case .initial, .refreshing:
                 contentLetterBarView(content: DelayedProgressView())
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        // .ignoresSafeArea()
+        .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in

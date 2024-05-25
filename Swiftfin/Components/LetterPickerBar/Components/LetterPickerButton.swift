@@ -16,52 +16,40 @@ extension LetterPickerBar {
         @Default(.accentColor)
         private var accentColor
 
-        private let filterLetter: String
-        private let activated: Bool
+        @Environment(\.isSelected)
+        private var isSelected
+
+        private let filterLetter: ItemLetter
         private let viewModel: FilterViewModel
-        private var onSelect: () -> Void
+
+        init(filterLetter: ItemLetter, viewModel: FilterViewModel) {
+            self.filterLetter = filterLetter
+            self.viewModel = viewModel
+        }
 
         var body: some View {
             Button {
-                if viewModel.currentFilters.letter.first?.value != filterLetter {
-                    viewModel.currentFilters.letter = [ItemLetter(stringLiteral: filterLetter)]
+                if !viewModel.currentFilters.letter.contains(filterLetter) {
+                    viewModel.currentFilters.letter = [ItemLetter(stringLiteral: filterLetter.value)]
                 } else {
                     viewModel.currentFilters.letter = []
                 }
             } label: {
                 Text(
-                    filterLetter
+                    filterLetter.value
                 )
+                .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
                 .font(.headline)
                 .frame(width: 15, height: 15)
-                .foregroundColor(activated ? Color.white : accentColor)
+                .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor)
                 .padding(.vertical, 2)
                 .fixedSize(horizontal: false, vertical: true)
                 .background {
                     RoundedRectangle(cornerRadius: 5)
                         .frame(width: 20, height: 20)
-                        .foregroundColor(activated ? accentColor.opacity(0.5) : Color.clear)
+                        .foregroundStyle(isSelected ? accentColor.opacity(0.5) : Color.clear)
                 }
             }
         }
-    }
-}
-
-extension LetterPickerBar.LetterPickerButton {
-    init(
-        filterLetter: String,
-        activated: Bool,
-        viewModel: FilterViewModel
-    ) {
-        self.init(
-            filterLetter: filterLetter,
-            activated: activated,
-            viewModel: viewModel,
-            onSelect: {}
-        )
-    }
-
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
     }
 }

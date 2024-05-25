@@ -314,6 +314,8 @@ internal enum L10n {
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
+  /// Orientation
+  internal static let orientation = L10n.tr("Localizable", "orientation", fallback: "Orientation")
   /// Other
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Other User

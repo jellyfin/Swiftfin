@@ -12,37 +12,24 @@ import SwiftUI
 struct LetterPickerBar: View {
 
     @ObservedObject
-    var viewModel: FilterViewModel
-    private var onSelect: (FilterCoordinator.Parameters) -> Void
+    private var viewModel: FilterViewModel
 
-    enum Orientation: String, CaseIterable, Defaults.Serializable, Displayable {
-
-        case none
-        case leading
-        case trailing
-
-        var displayTitle: String {
-            switch self {
-            case .none:
-                return L10n.none
-            case .leading:
-                return L10n.left
-            case .trailing:
-                return L10n.right
-            }
-        }
+    init(viewModel: FilterViewModel) {
+        self.viewModel = viewModel
     }
 
     @ViewBuilder
     private var letterPickerBody: some View {
         VStack(spacing: 0) {
-            ForEach(ItemLetter.allCases, id: \.self) { filterLetter in
+            Spacer()
+            ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(
-                    filterLetter: filterLetter.value,
-                    activated: viewModel.currentFilters.letter.contains { $0.value == filterLetter.value },
+                    filterLetter: filterLetter,
                     viewModel: viewModel
                 )
+                .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
             }
+            Spacer()
         }
     }
 
@@ -53,22 +40,10 @@ struct LetterPickerBar: View {
                     letterPickerBody
                         .frame(maxWidth: .infinity)
                 }
-                .padding(1)
             } else {
                 letterPickerBody
             }
         }
-        .frame(width: 40)
-    }
-}
-
-extension LetterPickerBar {
-    init(viewModel: FilterViewModel) {
-        self.viewModel = viewModel
-        self.onSelect = { _ in }
-    }
-
-    func onSelect(_ action: @escaping (FilterCoordinator.Parameters) -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+        .frame(width: 30, alignment: .center)
     }
 }

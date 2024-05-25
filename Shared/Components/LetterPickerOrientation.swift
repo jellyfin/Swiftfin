@@ -11,14 +11,11 @@ import SwiftUI
 
 enum LetterPickerOrientation: String, CaseIterable, Defaults.Serializable, Displayable {
 
-    case none
     case leading
     case trailing
 
     var displayTitle: String {
         switch self {
-        case .none:
-            return L10n.none
         case .leading:
             return L10n.left
         case .trailing:
