@@ -23,7 +23,7 @@ final class OfflineViewModel: ViewModel, Stateful {
     enum Action: Equatable {
         case backgroundRefresh
         case error(JellyfinAPIError)
-        case setIsPlayed(Bool, BaseItemDto)
+        case setIsPlayed(Bool, DownloadEntity)
         case removeDownload(DownloadEntity)
         case refresh
     }
@@ -88,28 +88,16 @@ final class OfflineViewModel: ViewModel, Stateful {
             backgroundStates.append(.refresh)
 
             backgroundRefreshTask = Task { [weak self] in
-                do {
-                    self?.nextUpViewModel.send(.refresh)
+                self?.nextUpViewModel.send(.refresh)
 
-                    let resumeItems = try await self?.getResumeItems() ?? []
+                let resumeItems = self?.getResumeItems() ?? []
 
-                    guard !Task.isCancelled else { return }
+                guard !Task.isCancelled else { return }
 
-                    await MainActor.run {
-                        guard let self else { return }
-                        self.resumeItems.elements = resumeItems
-                        self.backgroundStates.remove(.refresh)
-                    }
-                } catch is CancellationError {
-                    // cancelled
-                } catch {
-                    guard !Task.isCancelled else { return }
-
-                    await MainActor.run {
-                        guard let self else { return }
-                        self.backgroundStates.remove(.refresh)
-                        self.send(.error(.init(error.localizedDescription)))
-                    }
+                await MainActor.run {
+                    guard let self else { return }
+                    self.resumeItems.elements = resumeItems
+                    self.backgroundStates.remove(.refresh)
                 }
             }
             .asAnyCancellable()
@@ -125,7 +113,7 @@ final class OfflineViewModel: ViewModel, Stateful {
             return state
         case let .setIsPlayed(isPlayed, item): ()
             Task {
-                try await setIsPlayed(isPlayed, for: item)
+                setIsPlayed(isPlayed, for: item)
 
                 self.send(.backgroundRefresh)
             }
@@ -185,7 +173,7 @@ final class OfflineViewModel: ViewModel, Stateful {
         downloadManager.downloads.first { download in download.item.id == item.id }!
     }
 
-    private func getResumeItems() async throws -> [DownloadEntity] {
+    private func getResumeItems() -> [DownloadEntity] {
         // TODO: settings for resume percentage
         downloadManager.downloads.filter { item in item.item.userData?.playedPercentage ?? 0 > 5 }
     }
@@ -217,21 +205,17 @@ final class OfflineViewModel: ViewModel, Stateful {
         return response.value.configuration?.latestItemsExcludes ?? []
     }
 
-    private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {
-        let request: Request<UserItemDataDto>
-
-        if isPlayed {
-            request = Paths.markPlayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-        } else {
-            request = Paths.markUnplayedItem(
-                userID: userSession.user.id,
-                itemID: item.id!
-            )
-        }
-
-        let _ = try await userSession.client.send(request)
+    private func setIsPlayed(_ isPlayed: Bool, for item: DownloadEntity) {
+        let progressInfo = PlaybackProgressInfo(
+            audioStreamIndex: item.localPlaybackInfo.audioStreamIndex,
+            isPaused: false,
+            itemID: item.item.id,
+            mediaSourceID: item.item.id,
+            playSessionID: nil,
+            positionTicks: 0,
+            sessionID: nil,
+            subtitleStreamIndex: item.localPlaybackInfo.subtitleStreamIndex
+        )
+        item.savePlaybackInfo(progress: progressInfo)
     }
 }

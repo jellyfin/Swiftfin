@@ -365,6 +365,12 @@ extension DownloadEntity {
     }
 
     func savePlaybackInfo(progress: PlaybackProgressInfo) {
+        self.localPlaybackInfo = progress
+        let position = self.localPlaybackInfo.positionTicks ?? 0
+        self.item.userData?.playbackPositionTicks = position
+        let runtime = self.item.runTimeTicks ?? 0
+        self.item.userData?.playedPercentage = Double(position) / Double(runtime) * 100
+
         guard let metadataFolder = metadataFolder else { return }
 
         let jsonEncoder = JSONEncoder()

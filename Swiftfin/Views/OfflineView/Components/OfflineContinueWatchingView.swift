@@ -52,11 +52,11 @@ extension OfflineView {
                         }
                     }
                     .contextMenu {
-//                        Button {
-//                            viewModel.send(.setIsPlayed(true, item))
-//                        } label: {
-//                            Label(L10n.played, systemImage: "checkmark.circle")
-//                        }
+                        Button {
+                            viewModel.send(.setIsPlayed(true, download))
+                        } label: {
+                            Label(L10n.played, systemImage: "checkmark.circle")
+                        }
 
 //                        Button(role: .destructive) {
 //                            viewModel.send(.setIsPlayed(false, item))
