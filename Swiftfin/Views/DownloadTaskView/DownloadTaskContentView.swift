@@ -54,12 +54,14 @@ extension DownloadTaskView {
                     // TODO: Break into subview
                     switch downloadTask.state {
                     case .ready, .cancelled:
-                        PrimaryButton(title: "Download")
-                            .onSelect {
-                                downloadManager.download(task: downloadTask)
-                            }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+                        if !offlineMode {
+                            PrimaryButton(title: "Download")
+                                .onSelect {
+                                    downloadManager.download(task: downloadTask)
+                                }
+                                .frame(maxWidth: 300)
+                                .frame(height: 50)
+                        }
                     case let .downloading(progress):
                         HStack {
                             CircularProgressView(progress: progress)

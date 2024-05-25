@@ -13,7 +13,10 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-class HomeViewModel: ViewModel, Stateful {
+final class OfflineViewModel: ViewModel, Stateful {
+
+    @Injected(Container.downloadManager)
+    private var downloadManager
 
     // MARK: Action
 
@@ -21,6 +24,7 @@ class HomeViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case error(JellyfinAPIError)
         case setIsPlayed(Bool, BaseItemDto)
+        case removeDownload(DownloadEntity)
         case refresh
     }
 
@@ -40,9 +44,9 @@ class HomeViewModel: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var libraries: [LatestInLibraryViewModel] = []
+    var resumeItems: OrderedSet<DownloadEntity> = []
     @Published
-    var resumeItems: OrderedSet<BaseItemDto> = []
+    private(set) var libraries: [DownloadLibraryViewModel] = []
 
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
@@ -60,7 +64,6 @@ class HomeViewModel: ViewModel, Stateful {
     private var refreshTask: AnyCancellable?
 
     var nextUpViewModel: NextUpLibraryViewModel = .init()
-    var recentlyAddedViewModel: RecentlyAddedLibraryViewModel = .init()
 
     override init() {
         super.init()
@@ -87,7 +90,6 @@ class HomeViewModel: ViewModel, Stateful {
             backgroundRefreshTask = Task { [weak self] in
                 do {
                     self?.nextUpViewModel.send(.refresh)
-                    self?.recentlyAddedViewModel.send(.refresh)
 
                     let resumeItems = try await self?.getResumeItems() ?? []
 
@@ -115,6 +117,12 @@ class HomeViewModel: ViewModel, Stateful {
             return state
         case let .error(error):
             return .error(error)
+        case let .removeDownload(task):
+            Task {
+                downloadManager.remove(task: task)
+                self.send(.backgroundRefresh)
+            }
+            return state
         case let .setIsPlayed(isPlayed, item): ()
             Task {
                 try await setIsPlayed(isPlayed, for: item)
@@ -158,10 +166,9 @@ class HomeViewModel: ViewModel, Stateful {
     private func refresh() async throws {
 
         await nextUpViewModel.send(.refresh)
-        await recentlyAddedViewModel.send(.refresh)
 
         let resumeItems = try await getResumeItems()
-        let libraries = try await getLibraries()
+        let libraries = getLibraries()
 
         for library in libraries {
             await library.send(.refresh)
@@ -173,30 +180,33 @@ class HomeViewModel: ViewModel, Stateful {
         }
     }
 
-    private func getResumeItems() async throws -> [BaseItemDto] {
-        var parameters = Paths.GetResumeItemsParameters()
-        parameters.enableUserData = true
-        parameters.fields = .MinimumFields
-        parameters.includeItemTypes = [.movie, .episode]
-        parameters.limit = 20
-
-        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
+    func getDownloadForItem(item: BaseItemDto) -> DownloadEntity {
+        // TODO: handle errors properly
+        downloadManager.downloads.first { download in download.item.id == item.id }!
     }
 
-    private func getLibraries() async throws -> [LatestInLibraryViewModel] {
+    private func getResumeItems() async throws -> [DownloadEntity] {
+        // TODO: settings for resume percentage
+        downloadManager.downloads.filter { item in item.item.userData?.playedPercentage ?? 0 > 5 }
+    }
 
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        async let userViews = userSession.client.send(userViewsPath)
-
-        async let excludedLibraryIDs = getExcludedLibraries()
-
-        return try await (userViews.value.items ?? [])
-            .intersection(["movies", "tvshows"], using: \.collectionType)
-            .subtracting(excludedLibraryIDs, using: \.id)
-            .map { LatestInLibraryViewModel(parent: $0) }
+    private func getLibraries() -> [DownloadLibraryViewModel] {
+        [
+            DownloadLibraryViewModel(
+                downloadManager.downloads.filter { item in item.item.seriesID != nil }.map { item in item.item },
+                parent: TitledLibraryParent(
+                    displayTitle: "Episodes",
+                    id: "episodes"
+                )
+            ),
+            DownloadLibraryViewModel(
+                downloadManager.downloads.filter { item in item.item.seriesID == nil }.map { item in item.item },
+                parent: TitledLibraryParent(
+                    displayTitle: "Movies",
+                    id: "movies"
+                )
+            ),
+        ]
     }
 
     // TODO: use the more updated server/user data when implemented

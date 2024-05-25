@@ -202,6 +202,8 @@ class DownloadManager: ObservableObject {
 
         task.state = .complete
 
+        task.updatePlaybackInfo()
+
         return task
     }
 }

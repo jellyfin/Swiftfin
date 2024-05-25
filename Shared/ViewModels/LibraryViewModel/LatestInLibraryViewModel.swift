@@ -12,7 +12,6 @@ import JellyfinAPI
 final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
 
     override func get(page: Int) async throws -> [BaseItemDto] {
-
         let parameters = parameters()
         let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)

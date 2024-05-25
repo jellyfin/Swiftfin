@@ -6,16 +6,18 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import Files
 import Foundation
 import Get
 import JellyfinAPI
+import UIKit
 
 // TODO: Only move items if entire download successful
 // TODO: Better state for which stage of downloading
 
-class DownloadEntity: NSObject, ObservableObject {
+public class DownloadEntity: NSObject, ObservableObject {
 
     enum DownloadError: Error {
 
@@ -99,6 +101,7 @@ class DownloadEntity: NSObject, ObservableObject {
             }
             await downloadBackdropImage()
             await downloadPrimaryImage()
+            await downloadThumbImage()
 
             saveMetadata()
 
@@ -162,7 +165,7 @@ class DownloadEntity: NSObject, ObservableObject {
             guard let url = item.imageSource(.backdrop, maxWidth: 600).url else { return }
             imageURL = url
         case .episode:
-            guard let url = item.imageSource(.primary, maxWidth: 600).url else { return }
+            guard let url = item.seriesImageSource(.backdrop, maxWidth: 600).url else { return }
             imageURL = url
         default:
             return
@@ -174,6 +177,33 @@ class DownloadEntity: NSObject, ObservableObject {
         ) else { return }
 
         let filename = getImageFilename(from: response, secondary: "Backdrop")
+        saveImage(from: response, filename: filename)
+    }
+
+    private func downloadThumbImage() async {
+
+        guard let type = item.type else { return }
+
+        let imageURL: URL
+
+        // TODO: move to BaseItemDto
+        switch type {
+        case .movie, .series:
+            guard let url = item.imageSource(.thumb, maxWidth: 600).url else { return }
+            imageURL = url
+        case .episode:
+            guard let url = item.seriesImageSource(.thumb, maxWidth: 600).url else { return }
+            imageURL = url
+        default:
+            return
+        }
+
+        guard let response = try? await userSession.client.download(
+            for: .init(url: imageURL).withResponse(URL.self),
+            delegate: self
+        ) else { return }
+
+        let filename = getImageFilename(from: response, secondary: "Thumb")
         saveImage(from: response, filename: filename)
     }
 
@@ -276,7 +306,7 @@ class DownloadEntity: NSObject, ObservableObject {
 
 extension DownloadEntity: URLSessionDownloadDelegate {
 
-    func urlSession(
+    public func urlSession(
         _ session: URLSession,
         downloadTask: URLSessionDownloadTask,
         didWriteData bytesWritten: Int64,
@@ -290,9 +320,9 @@ extension DownloadEntity: URLSessionDownloadDelegate {
         }
     }
 
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {}
 
-    func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
+    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         guard let error else { return }
 
         DispatchQueue.main.async {
@@ -303,7 +333,7 @@ extension DownloadEntity: URLSessionDownloadDelegate {
         }
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         guard let error else { return }
 
         DispatchQueue.main.async {
@@ -312,30 +342,26 @@ extension DownloadEntity: URLSessionDownloadDelegate {
             Container.downloadManager()
                 .remove(task: self)
         }
-    }
-}
-
-extension DownloadEntity: Identifiable {
-
-    var id: String {
-        item.id!
     }
 }
 
 extension DownloadEntity {
-    func getPlaybackInfo() -> PlaybackProgressInfo {
-        let itemProgressFile = URL.downloads
-            .appendingPathComponent(self.id)
-            .appendingPathComponent("Metadata")
-            .appendingPathComponent("Progress.json")
+    func updatePlaybackInfo() {
+        guard let metadataFolder = metadataFolder else { return }
+
+        let itemProgressFile = metadataFolder.appendingPathComponent("Progress.json")
 
         let jsonDecoder = JSONDecoder()
-        guard let itemProgressData = FileManager.default.contents(atPath: itemProgressFile.path) else { return self.localPlaybackInfo }
+        guard let itemProgressData = FileManager.default.contents(atPath: itemProgressFile.path) else { return }
 
         guard let offlineProgress = try? jsonDecoder.decode(PlaybackProgressInfo.self, from: itemProgressData)
-        else { return self.localPlaybackInfo }
+        else { return }
 
-        return offlineProgress
+        self.localPlaybackInfo = offlineProgress
+        let position = self.localPlaybackInfo.positionTicks ?? 0
+        self.item.userData?.playbackPositionTicks = position
+        let runtime = self.item.runTimeTicks ?? 0
+        self.item.userData?.playedPercentage = Double(position) / Double(runtime) * 100
     }
 
     func savePlaybackInfo(progress: PlaybackProgressInfo) {
@@ -359,13 +385,13 @@ extension DownloadEntity {
 
     func offlinePlayerViewModel() throws -> VideoPlayerViewModel {
         guard let playbackURL = self.getMediaURL() else { throw JellyfinAPIError("no media found") }
-        let offlineProgress = self.getPlaybackInfo()
+        self.updatePlaybackInfo()
 
         return .init(
             playbackURL: playbackURL,
             item: self.item,
             mediaSource: .init(),
-            playSessionID: offlineProgress.playSessionID ?? "",
+            playSessionID: self.localPlaybackInfo.playSessionID ?? "",
             videoStreams: self.item.videoStreams,
             audioStreams: self.item.audioStreams,
             subtitleStreams: self.item.subtitleStreams,
@@ -374,5 +400,94 @@ extension DownloadEntity {
             chapters: self.item.fullChapterInfo,
             streamType: .direct
         )
+    }
+}
+
+extension DownloadEntity: Displayable {
+    var displayTitle: String {
+        item.name ?? .emptyDash
+    }
+}
+
+extension DownloadEntity: Poster {
+    var subtitle: String? {
+        switch item.type {
+        case .episode:
+            item.seasonEpisodeLabel
+        case .video:
+            item.extraType?.displayTitle
+        default:
+            nil
+        }
+    }
+
+    var showTitle: Bool {
+        switch item.type {
+        case .episode, .series, .movie, .boxSet, .collectionFolder:
+            Defaults[.Customization.showPosterLabels]
+        default:
+            true
+        }
+    }
+
+    var systemImage: String {
+        switch item.type {
+        case .boxSet:
+            "film.stack"
+        case .channel, .tvChannel, .liveTvChannel, .program:
+            "tv"
+        case .episode, .movie, .series:
+            "film"
+        case .folder:
+            "folder.fill"
+        case .person:
+            "person.fill"
+        default:
+            "circle"
+        }
+    }
+
+    func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+        switch item.type {
+        case .episode:
+            // TODO: offline series image source
+            [item.seriesImageSource(.primary, maxWidth: maxWidth)]
+        case .channel, .tvChannel, .liveTvChannel, .movie, .series:
+            [ImageSource(url: self.getImageURL(name: "Primary"))]
+        default:
+            []
+        }
+    }
+
+    func landscapeImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+        switch item.type {
+        case .episode:
+            if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
+                [
+                    // TODO: offline series image source
+                    ImageSource(url: self.getImageURL(name: "Thumb")),
+                    ImageSource(url: self.getImageURL(name: "Backdrop")),
+                    ImageSource(url: self.getImageURL(name: "Primary")),
+                ]
+            } else {
+                [ImageSource(url: self.getImageURL(name: "Primary"))]
+            }
+        case .folder, .program, .video:
+            [ImageSource(url: self.getImageURL(name: "Primary"))]
+        default:
+            [
+                ImageSource(url: self.getImageURL(name: "Thumb")),
+                ImageSource(url: self.getImageURL(name: "Backdrop")),
+            ]
+        }
+    }
+
+    func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
+        switch item.type {
+        case .episode:
+            [ImageSource(url: self.getImageURL(name: "Backdrop"))]
+        default:
+            [ImageSource(url: self.getImageURL(name: "Backdrop"))]
+        }
     }
 }

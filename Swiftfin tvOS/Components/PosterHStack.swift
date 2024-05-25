@@ -12,7 +12,7 @@ import SwiftUI
 
 // TODO: trailing content refactor?
 
-struct PosterHStack<Item: Poster>: View {
+struct PosterHStack<Item: DownloadEntity>: View {
 
     private var title: String?
     private var type: PosterDisplayType

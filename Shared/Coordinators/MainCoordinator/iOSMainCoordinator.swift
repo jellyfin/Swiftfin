@@ -55,6 +55,14 @@ final class MainCoordinator: NavigationCoordinatable {
             do {
                 try await SwiftfinStore.setupDataStack()
 
+                if offlineMode {
+                    await MainActor.run {
+                        withAnimation(.linear(duration: 0.1)) {
+                            let _ = root(\.offlineView)
+                        }
+                    }
+                    return
+                }
                 if UserSession.current() != nil, !Defaults[.signOutOnClose] {
                     await MainActor.run {
                         withAnimation(.linear(duration: 0.1)) {

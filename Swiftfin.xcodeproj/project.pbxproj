@@ -141,6 +141,18 @@
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */; };
 		6334175D287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175C287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift */; };
+		9AB0FEB02C00EFFC0061ED6C /* DownloadMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB0FEAF2C00EFFC0061ED6C /* DownloadMovie.swift */; };
+		9AB0FEB12C00EFFC0061ED6C /* DownloadMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB0FEAF2C00EFFC0061ED6C /* DownloadMovie.swift */; };
+		9AB0FEB32C00F0460061ED6C /* DownloadEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB0FEB22C00F0460061ED6C /* DownloadEpisode.swift */; };
+		9AB0FEB42C00F0460061ED6C /* DownloadEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB0FEB22C00F0460061ED6C /* DownloadEpisode.swift */; };
+		9AB87D622C01EE080060E891 /* OfflineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D612C01EE080060E891 /* OfflineView.swift */; };
+		9AB87D642C01EE360060E891 /* OfflineViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D632C01EE360060E891 /* OfflineViewModel.swift */; };
+		9AB87D662C01F04C0060E891 /* DownloadLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D652C01F04C0060E891 /* DownloadLibraryViewModel.swift */; };
+		9AB87D682C01F64C0060E891 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D672C01F64C0060E891 /* Components.swift */; };
+		9AB87D6B2C01F6830060E891 /* OfflineLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D6A2C01F6830060E891 /* OfflineLibraryView.swift */; };
+		9AB87D6D2C01FB0B0060E891 /* OfflineNextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D6C2C01FB0B0060E891 /* OfflineNextUpView.swift */; };
+		9AB87D6F2C01FB770060E891 /* OfflineContinueWatchingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D6E2C01FB770060E891 /* OfflineContinueWatchingView.swift */; };
+		9AB87D712C01FE4F0060E891 /* OfflineCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AB87D702C01FE4F0060E891 /* OfflineCoordinator.swift */; };
 		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
 		BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
@@ -418,8 +430,8 @@
 		E1545BD82BDC55C300D9578F /* ResetUserPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */; };
 		E1546777289AF46E00087E35 /* CollectionItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546776289AF46E00087E35 /* CollectionItemView.swift */; };
 		E154677A289AF48200087E35 /* CollectionItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1546779289AF48200087E35 /* CollectionItemContentView.swift */; };
-		E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549655296CA2EF00C4EF88 /* DownloadTask.swift */; };
-		E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549655296CA2EF00C4EF88 /* DownloadTask.swift */; };
+		E154965E296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549655296CA2EF00C4EF88 /* DownloadEntity.swift */; };
+		E154965F296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549655296CA2EF00C4EF88 /* DownloadEntity.swift */; };
 		E1549660296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */; };
 		E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */; };
 		E1549662296CA2EF00C4EF88 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* UserSession.swift */; };
@@ -1034,6 +1046,16 @@
 		6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectAuthorizeView.swift; sourceTree = "<group>"; };
 		6334175C287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectAuthorizeViewModel.swift; sourceTree = "<group>"; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
+		9AB0FEAF2C00EFFC0061ED6C /* DownloadMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadMovie.swift; sourceTree = "<group>"; };
+		9AB0FEB22C00F0460061ED6C /* DownloadEpisode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadEpisode.swift; sourceTree = "<group>"; };
+		9AB87D612C01EE080060E891 /* OfflineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineView.swift; sourceTree = "<group>"; };
+		9AB87D632C01EE360060E891 /* OfflineViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineViewModel.swift; sourceTree = "<group>"; };
+		9AB87D652C01F04C0060E891 /* DownloadLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadLibraryViewModel.swift; sourceTree = "<group>"; };
+		9AB87D672C01F64C0060E891 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		9AB87D6A2C01F6830060E891 /* OfflineLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineLibraryView.swift; sourceTree = "<group>"; };
+		9AB87D6C2C01FB0B0060E891 /* OfflineNextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineNextUpView.swift; sourceTree = "<group>"; };
+		9AB87D6E2C01FB770060E891 /* OfflineContinueWatchingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineContinueWatchingView.swift; sourceTree = "<group>"; };
+		9AB87D702C01FE4F0060E891 /* OfflineCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCoordinator.swift; sourceTree = "<group>"; };
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineVideoPlayerManager.swift; sourceTree = "<group>"; };
 		BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadVideoPlayerManager.swift; sourceTree = "<group>"; };
@@ -1213,7 +1235,7 @@
 		E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetUserPasswordView.swift; sourceTree = "<group>"; };
 		E1546776289AF46E00087E35 /* CollectionItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemView.swift; sourceTree = "<group>"; };
 		E1546779289AF48200087E35 /* CollectionItemContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionItemContentView.swift; sourceTree = "<group>"; };
-		E1549655296CA2EF00C4EF88 /* DownloadTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
+		E1549655296CA2EF00C4EF88 /* DownloadEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadEntity.swift; sourceTree = "<group>"; };
 		E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinDefaults.swift; sourceTree = "<group>"; };
 		E1549657296CA2EF00C4EF88 /* UserSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
 		E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
@@ -1674,6 +1696,7 @@
 				BD0BA2292AD6501300306A8D /* VideoPlayerManager */,
 				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
 				625CB57B2678CE1000530A6E /* ViewModel.swift */,
+				9AB87D632C01EE360060E891 /* OfflineViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -2141,8 +2164,29 @@
 				E18A8E8428D60D0000333B9A /* VideoPlayerCoordinator.swift */,
 				E1A1528C28FD23AC00600579 /* VideoPlayerSettingsCoordinator.swift */,
 				E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */,
+				9AB87D702C01FE4F0060E891 /* OfflineCoordinator.swift */,
 			);
 			path = Coordinators;
+			sourceTree = "<group>";
+		};
+		9AB87D602C01EDF50060E891 /* OfflineView */ = {
+			isa = PBXGroup;
+			children = (
+				9AB87D692C01F6670060E891 /* Components */,
+				9AB87D612C01EE080060E891 /* OfflineView.swift */,
+				9AB87D672C01F64C0060E891 /* Components.swift */,
+			);
+			path = OfflineView;
+			sourceTree = "<group>";
+		};
+		9AB87D692C01F6670060E891 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				9AB87D6A2C01F6830060E891 /* OfflineLibraryView.swift */,
+				9AB87D6C2C01FB0B0060E891 /* OfflineNextUpView.swift */,
+				9AB87D6E2C01FB770060E891 /* OfflineContinueWatchingView.swift */,
+			);
+			path = Components;
 			sourceTree = "<group>";
 		};
 		AE8C3157265D6F5E008AA076 /* Resources */ = {
@@ -2592,6 +2636,7 @@
 		E13DD3D027165886009D4DAF /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9AB87D602C01EDF50060E891 /* OfflineView */,
 				E18E01F3288747580022598C /* AboutAppView.swift */,
 				E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */,
 				E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */,
@@ -2725,7 +2770,9 @@
 			isa = PBXGroup;
 			children = (
 				E154965B296CA2EF00C4EF88 /* DownloadManager.swift */,
-				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
+				9AB0FEAF2C00EFFC0061ED6C /* DownloadMovie.swift */,
+				9AB0FEB22C00F0460061ED6C /* DownloadEpisode.swift */,
+				E1549655296CA2EF00C4EF88 /* DownloadEntity.swift */,
 				E19D41A92BF077130082B8B2 /* Keychain.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
@@ -3455,6 +3502,7 @@
 				E12CC1AD28D0FAEA00678D5D /* NextUpLibraryViewModel.swift */,
 				E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */,
 				E12CC1BA28D11E1000678D5D /* RecentlyAddedViewModel.swift */,
+				9AB87D652C01F04C0060E891 /* DownloadLibraryViewModel.swift */,
 			);
 			path = LibraryViewModel;
 			sourceTree = "<group>";
@@ -3850,6 +3898,7 @@
 				E1549663296CA2EF00C4EF88 /* UserSession.swift in Sources */,
 				531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */,
 				E145EB232BDCCA43003BF6F3 /* BulletedList.swift in Sources */,
+				9AB0FEB42C00F0460061ED6C /* DownloadEpisode.swift in Sources */,
 				E104DC972B9E7E29008F506D /* AssertionFailureView.swift in Sources */,
 				E1E1643E28BB074000323B0A /* SelectorView.swift in Sources */,
 				E1A1529128FD23D600600579 /* PlaybackSettingsCoordinator.swift in Sources */,
@@ -3958,6 +4007,7 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */,
+				9AB0FEB12C00EFFC0061ED6C /* DownloadMovie.swift in Sources */,
 				E11E0E8D2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */,
 				E1E2F8462B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4151,7 +4201,7 @@
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
 				E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */,
 				E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */,
-				E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
+				E154965F296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */,
 				E154967E296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift in Sources */,
 				E1B90C8A2BC475E7007027C8 /* ScalingButtonStyle.swift in Sources */,
 				E1DABAFE2A27B982008AC34A /* RatingsCard.swift in Sources */,
@@ -4223,7 +4273,7 @@
 				E18CE0AF28A222240092E7F1 /* PublicUserRow.swift in Sources */,
 				E129429828F4785200796AC6 /* CaseIterablePicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
-				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
+				E154965E296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
 				E1763A742BF3FA4C004DF6AB /* AppLoadingView.swift in Sources */,
@@ -4239,6 +4289,7 @@
 				E18A8E8528D60D0000333B9A /* VideoPlayerCoordinator.swift in Sources */,
 				E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */,
 				E1A3E4CD2BB7D8C8005C59F8 /* Label-iOS.swift in Sources */,
+				9AB87D6B2C01F6830060E891 /* OfflineLibraryView.swift in Sources */,
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */,
 				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
@@ -4264,6 +4315,7 @@
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
+				9AB87D642C01EE360060E891 /* OfflineViewModel.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E102314D2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
@@ -4322,9 +4374,11 @@
 				E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */,
 				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
 				E1194F4E2BEABA9100888DB6 /* NavigationBarCloseButton.swift in Sources */,
+				9AB87D682C01F64C0060E891 /* Components.swift in Sources */,
 				E113133428BE988200930F75 /* NavigationBarFilterDrawer.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E1D37F552B9CEF4600343D2B /* DeviceProfile+NativeProfile.swift in Sources */,
+				9AB87D712C01FE4F0060E891 /* OfflineCoordinator.swift in Sources */,
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
@@ -4345,6 +4399,7 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
+				9AB0FEB02C00EFFC0061ED6C /* DownloadMovie.swift in Sources */,
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4371,6 +4426,7 @@
 				E17AC9732955007A003D2BC2 /* DownloadTaskButton.swift in Sources */,
 				E145EB4F2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift in Sources */,
 				E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */,
+				9AB87D622C01EE080060E891 /* OfflineView.swift in Sources */,
 				E13DD3F5271793BB009D4DAF /* UserSignInView.swift in Sources */,
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
@@ -4411,6 +4467,7 @@
 				E1D8424F2932F7C400D1041A /* OverviewView.swift in Sources */,
 				E113133628BE98AA00930F75 /* FilterDrawerButton.swift in Sources */,
 				E1DE84142B9531C1008CCE21 /* OrderedSectionSelectorView.swift in Sources */,
+				9AB87D6F2C01FB770060E891 /* OfflineContinueWatchingView.swift in Sources */,
 				E13DD3FC2717EAE8009D4DAF /* SelectUserView.swift in Sources */,
 				E18E01DE288747230022598C /* iPadOSSeriesItemView.swift in Sources */,
 				E1D37F4E2B9CEDC400343D2B /* DeviceProfile.swift in Sources */,
@@ -4439,6 +4496,7 @@
 				E18A8E8328D60BC400333B9A /* VideoPlayer.swift in Sources */,
 				E1CCF12E28ABF989006CAC9E /* PosterDisplayType.swift in Sources */,
 				E10B1EC12BD9AD6100A92EAF /* V1UserModel.swift in Sources */,
+				9AB87D662C01F04C0060E891 /* DownloadLibraryViewModel.swift in Sources */,
 				E1E7506A2A33E9B400B2C1EE /* RatingsCard.swift in Sources */,
 				E1D842912933F87500D1041A /* ItemFields.swift in Sources */,
 				E1BDF2F729524ECD00CC0294 /* PlaybackSpeedActionButton.swift in Sources */,
@@ -4502,6 +4560,7 @@
 				E10B1EB62BD98C6600A92EAF /* AddUserRow.swift in Sources */,
 				E1DD20412BE1EB8C00C0DE51 /* AddUserButton.swift in Sources */,
 				E1D37F582B9CEF4B00343D2B /* DeviceProfile+SwiftfinProfile.swift in Sources */,
+				9AB0FEB32C00F0460061ED6C /* DownloadEpisode.swift in Sources */,
 				E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */,
 				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E14EA15E2BF6F72900DE757A /* PhotoPicker.swift in Sources */,
@@ -4527,6 +4586,7 @@
 				E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */,
 				E18A8E7D28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
+				9AB87D6D2C01FB0B0060E891 /* OfflineNextUpView.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1B490442967E26300D3EDCE /* PersistentLogHandler.swift in Sources */,
 				E19D41AC2BF288110082B8B2 /* ServerCheckView.swift in Sources */,

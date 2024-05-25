@@ -23,17 +23,14 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
             return
         }
 
-        let offlineProgress = downloadTask.getPlaybackInfo()
-        downloadTask.localPlaybackInfo = offlineProgress
-        downloadTask.item.userData?.playbackPositionTicks = downloadTask.localPlaybackInfo.positionTicks ?? 0
-
+        downloadTask.updatePlaybackInfo()
         self.task = downloadTask
 
         self.currentViewModel = .init(
             playbackURL: playbackURL,
             item: downloadTask.item,
             mediaSource: .init(),
-            playSessionID: offlineProgress.playSessionID ?? "",
+            playSessionID: downloadTask.localPlaybackInfo.playSessionID ?? "",
             videoStreams: downloadTask.item.videoStreams,
             audioStreams: downloadTask.item.audioStreams,
             subtitleStreams: downloadTask.item.subtitleStreams,

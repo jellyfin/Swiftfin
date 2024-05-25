@@ -62,11 +62,11 @@ final class MainTabCoordinator: TabCoordinatable {
         L10n.downloads.text
     }
 
-    func makeDownloads() -> NavigationViewCoordinator<DownloadListCoordinator> {
-        NavigationViewCoordinator(DownloadListCoordinator())
+    func makeDownloads() -> NavigationViewCoordinator<OfflineCoordinator> {
+        NavigationViewCoordinator(OfflineCoordinator())
     }
 
-    func onDownloadsTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<DownloadListCoordinator>) {
+    func onDownloadsTapped(isRepeat: Bool, coordinator: NavigationViewCoordinator<OfflineCoordinator>) {
         if isRepeat {
             coordinator.child.popToRoot()
         }
