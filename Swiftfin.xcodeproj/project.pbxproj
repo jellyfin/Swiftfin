@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
+		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
+		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
@@ -917,6 +919,8 @@
 
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
+		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
+		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -1634,6 +1638,23 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
+			isa = PBXGroup;
+			children = (
+				4E16FD4F2C0183C500110147 /* Components */,
+				4E16FD522C01840C00110147 /* LetterPickerBar.swift */,
+			);
+			path = LetterPickerBar;
+			sourceTree = "<group>";
+		};
+		4E16FD4F2C0183C500110147 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E16FD502C0183DB00110147 /* LetterPickerButton.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
@@ -2045,6 +2066,7 @@
 				E1921B7528E63306003A5238 /* GestureView.swift */,
 				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
 				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
+				4E16FD4E2C0183B500110147 /* LetterPickerBar */,
 				E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */,
 				E1FE69AF28C2DA4A0021BC93 /* NavigationBarFilterDrawer */,
 				E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */,
@@ -4345,6 +4367,7 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
+				4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */,
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4479,6 +4502,7 @@
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
 				E15756342936851D00976E1F /* NativeVideoPlayerSettingsView.swift in Sources */,
 				E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */,
+				4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */,
 				E19D41AE2BF288320082B8B2 /* ServerCheckViewModel.swift in Sources */,
 				E1BDF2F329524C3B00CC0294 /* ChaptersActionButton.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,

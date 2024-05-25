@@ -145,6 +145,9 @@ extension Defaults.Keys {
                 "libraryEnabledDrawerFilters",
                 default: ItemFilterType.allCases
             )
+            static let letterPickerOrientation: Key<LetterPickerBar.Orientation> = .init(
+                "letterPickerOrientation", default: .trailing
+            )
             static let displayType: Key<LibraryDisplayType> = UserKey("libraryViewType", default: .grid)
             static let posterType: Key<PosterDisplayType> = UserKey("libraryPosterType", default: .portrait)
             static let listColumnCount: Key<Int> = UserKey("listColumnCount", default: 1)

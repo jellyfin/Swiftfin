@@ -49,6 +49,8 @@ struct PagingLibraryView<Element: Poster>: View {
     private var defaultListColumnCount: Int
     @Default
     private var defaultPosterType: PosterDisplayType
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
 
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
@@ -251,6 +253,35 @@ struct PagingLibraryView<Element: Poster>: View {
         .proxy(collectionVGridProxy)
     }
 
+    private func contentLetterBarView(content: some View) -> some View {
+        switch letterPickerOrientation {
+        case .none:
+            return AnyView(content)
+        case .trailing:
+            return AnyView(
+                Group {
+                    HStack(spacing: 0) {
+                        content
+                            .frame(maxWidth: .infinity)
+                        LetterPickerBar(viewModel: viewModel.filterViewModel!)
+                            .padding(1)
+                    }
+                }
+            )
+        case .leading:
+            return AnyView(
+                Group {
+                    HStack(spacing: 0) {
+                        LetterPickerBar(viewModel: viewModel.filterViewModel!)
+                            .padding(1)
+                        content
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            )
+        }
+    }
+
     // MARK: body
 
     // TODO: becoming too large for typechecker during development, should break up somehow
@@ -260,18 +291,18 @@ struct PagingLibraryView<Element: Poster>: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    L10n.noResults.text
+                    contentLetterBarView(content: L10n.noResults.text)
                 } else {
-                    contentView
+                    contentLetterBarView(content: contentView)
                 }
             case let .error(error):
-                errorView(with: error)
+                contentLetterBarView(content: errorView(with: error))
             case .initial, .refreshing:
-                DelayedProgressView()
+                contentLetterBarView(content: DelayedProgressView())
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
-        .ignoresSafeArea()
+        // .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in
