@@ -96,8 +96,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jellyfin/jellyfin-sdk-swift.git",
       "state" : {
-        "revision" : "eae2ab5ed7caf770d79afbcdae08aab48df27a6e",
-        "version" : "0.3.4"
+        "revision" : "a0e848a7aaec55991610818de6128b15cfcec725",
+        "version" : "0.4.0"
       }
     },
     {

@@ -39,7 +39,7 @@ extension DeviceProfile {
             context: .streaming,
             maxAudioChannels: "8",
             minSegments: 2,
-            protocol: "hls",
+            protocol: .hls,
             type: .video,
             videoCodec: "hevc,h264,av1,vp9,vc1,mpeg4,h263,mpeg2video,mpeg1video,mjpeg" // vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1
             // not supported in mp4

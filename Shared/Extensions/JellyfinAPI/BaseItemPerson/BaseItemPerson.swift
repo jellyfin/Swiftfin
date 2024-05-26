@@ -57,6 +57,6 @@ extension BaseItemPerson {
 
     var isDisplayed: Bool {
         guard let type = type else { return false }
-        return DisplayedType(rawValue: type) != nil
+        return PersonKind.supportedCases.contains(type)
     }
 }

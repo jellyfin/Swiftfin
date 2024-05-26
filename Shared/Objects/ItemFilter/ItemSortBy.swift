@@ -9,37 +9,100 @@
 import Foundation
 import JellyfinAPI
 
-// TODO: Remove when JellyfinAPI generates 10.9.0 schema
+extension ItemSortBy: Displayable {
 
-enum ItemSortBy: String, CaseIterable, Displayable, Codable {
-
-    case premiereDate = "PremiereDate"
-    case name = "SortName"
-    case dateAdded = "DateCreated"
-    case random = "Random"
-
-    // TODO: Localize
+    // TODO: only localize ones that we actually want
+    
     var displayTitle: String {
         switch self {
+        case .default:
+            "Default"
+        case .airedEpisodeOrder:
+            "Aired Episode"
+        case .album:
+            "Album"
+        case .albumArtist:
+            "Album Artist"
+        case .artist:
+            "Artist"
+        case .dateCreated:
+            "Date Added"
+        case .officialRating:
+            "Official Rating"
+        case .datePlayed:
+            "Date Played"
         case .premiereDate:
-            return "Premiere date"
+            "Premiere Date"
+        case .startDate:
+            "Start Date"
+        case .sortName:
+            "Sort Name"
         case .name:
-            return "Name"
-        case .dateAdded:
-            return "Date added"
+            "Name"
         case .random:
-            return "Random"
+            "Random"
+        case .runtime:
+            "Runtime"
+        case .communityRating:
+            "Community Rating"
+        case .productionYear:
+            "Production Year"
+        case .playCount:
+            "Play Count"
+        case .criticRating:
+            "Critic Rating"
+        case .isFolder:
+            "Folder"
+        case .isUnplayed:
+            "Unplayed"
+        case .isPlayed:
+            "Played"
+        case .seriesSortName:
+            "Series"
+        case .videoBitRate:
+            "Video Bit Rate"
+        case .airTime:
+            "Air Time"
+        case .studio:
+            "Studio"
+        case .isFavoriteOrLiked:
+            "Favorite or Liked"
+        case .dateLastContentAdded:
+            "Last Content Added"
+        case .seriesDatePlayed:
+            "Series Date Played"
+        case .parentIndexNumber:
+            "Parent Index Number"
+        case .indexNumber:
+            "Index Number"
+        case .similarityScore:
+            "Similarity Score"
+        case .searchScore:
+            "Search Score"
         }
     }
 }
 
 extension ItemSortBy: ItemFilter {
-
+    
     var value: String {
         rawValue
     }
 
     init(from anyFilter: AnyItemFilter) {
         self.init(rawValue: anyFilter.value)!
+    }
+}
+
+extension ItemSortBy: SupportedCaseIterable {
+    
+    // TODO: add more
+    static var supportedCases: [ItemSortBy] {
+        [
+            .premiereDate,
+            .name,
+            .dateCreated,
+            .random
+        ]
     }
 }

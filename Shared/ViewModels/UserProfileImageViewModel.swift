@@ -90,7 +90,6 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         var request = Paths.postUserImage(
             userID: userSession.user.id,
-            imageType: "Primary",
             imageData
         )
         request.headers = ["Content-Type": contentType]

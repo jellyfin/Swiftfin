@@ -91,7 +91,7 @@ final class SeriesItemViewModel: ItemViewModel {
         parameters.limit = 1
         parameters.parentID = item.id
 
-        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let request = Paths.getResumeItems(parameters: parameters)
         let response = try await userSession.client.send(request)
 
         return response.value.items?.first

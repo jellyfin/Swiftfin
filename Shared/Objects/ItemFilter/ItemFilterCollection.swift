@@ -28,14 +28,14 @@ struct ItemFilterCollection: Codable, Defaults.Serializable, Hashable {
         traits: [ItemTrait.isFavorite]
     )
     static let recent: ItemFilterCollection = .init(
-        sortBy: [ItemSortBy.dateAdded],
+        sortBy: [ItemSortBy.dateCreated],
         sortOrder: [ItemSortOrder.descending]
     )
 
     /// A collection that has all statically available values
     static let all: ItemFilterCollection = .init(
         letter: ItemLetter.allCases,
-        sortBy: ItemSortBy.allCases,
+        sortBy: ItemSortBy.supportedCases,
         sortOrder: ItemSortOrder.allCases,
         traits: ItemTrait.supportedCases
     )

@@ -75,7 +75,7 @@ extension MediaStream {
         }
 
         if let value = videoRange {
-            properties.append(.init(title: "Video Range", subtitle: value))
+            properties.append(.init(title: "Video Range", subtitle: value.rawValue))
         }
 
         if let value = isInterlaced {

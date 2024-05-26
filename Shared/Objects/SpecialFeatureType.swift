@@ -34,6 +34,10 @@ extension SpecialFeatureType: Displayable {
             return "Theme Song"
         case .themeVideo:
             return "Theme Video"
+        case .featurette:
+            return "Featurette"
+        case .short:
+            return "Short"
         }
     }
 

@@ -65,7 +65,7 @@ extension DeviceProfile {
                 context: .streaming,
                 maxAudioChannels: "8",
                 minSegments: 2,
-                protocol: "hls",
+                protocol: .hls,
                 type: .video,
                 videoCodec: "hevc,h264,mpeg4"
             ),

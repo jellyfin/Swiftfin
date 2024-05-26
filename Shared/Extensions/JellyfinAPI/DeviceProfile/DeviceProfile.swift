@@ -21,11 +21,7 @@ extension DeviceProfile {
             deviceProfile = swiftfinProfile()
         }
 
-        let codecProfiles: [CodecProfile] = sharedCodecProfiles()
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
-
-        deviceProfile.codecProfiles = codecProfiles
-        deviceProfile.responseProfiles = responseProfiles
+        deviceProfile.codecProfiles = sharedCodecProfiles()
 
         if let maxBitrate {
             deviceProfile.maxStaticBitrate = maxBitrate
