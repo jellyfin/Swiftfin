@@ -56,8 +56,8 @@ final class MainTabCoordinator: TabCoordinatable {
     func makeTvTab(isActive: Bool) -> some View {
         HStack {
             Image(systemName: "tv")
-                // Fixes the TV Show Icon not shifting from White to Black when Active
-                .symbolRenderingMode(.monochrome)
+            // Fixes the TV Show Icon not shifting from White to Black when Active
+            .symbolRenderingMode(.monochrome)
             L10n.tvShows.text
         }
     }
