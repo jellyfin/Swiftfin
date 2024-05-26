@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import PreferencesView
 import SwiftUI
 import VLCUI
 
@@ -21,6 +22,8 @@ extension VideoPlayer {
         private var proxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
+        @EnvironmentObject
+        private var videoPlayerManager: VideoPlayerManager
 
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?
@@ -69,38 +72,64 @@ extension VideoPlayer {
                         isPresentingOverlay = false
                     }
                 }
-//                .onSelectPressed {
-//                    currentOverlayType = .main
-//                    isPresentingOverlay = true
-//                    overlayTimer.start(5)
-//                }
-                .onExitCommand {
-                    overlayTimer.start(5)
-                    confirmCloseWorkItem?.cancel()
-
-                    if isPresentingOverlay && currentOverlayType == .confirmClose {
-                        proxy.stop()
-                        router.dismissCoordinator()
-                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
-                        currentOverlayType = .main
-                    } else {
-                        withAnimation {
-                            currentOverlayType = .confirmClose
-                            isPresentingOverlay = true
-                        }
-
-                        let task = DispatchWorkItem {
-                            withAnimation {
+                .pressCommands {
+                    PressCommandAction(title: "Back Command", press: .menu, action: menuPress)
+                    PressCommandAction(title: "Play Pause", press: .playPause) {
+                        if videoPlayerManager.state == .playing {
+                            videoPlayerManager.proxy.pause()
+                            withAnimation(.linear(duration: 0.3)) {
+                                isPresentingOverlay = true
+                            }
+                        } else if videoPlayerManager.state == .paused {
+                            videoPlayerManager.proxy.play()
+                            withAnimation(.linear(duration: 0.3)) {
                                 isPresentingOverlay = false
-                                overlayTimer.stop()
                             }
                         }
+                    }
+                    PressCommandAction(title: "Arrow Press", press: .upArrow, action: arrowPress)
+                    PressCommandAction(title: "Arrow Press", press: .downArrow, action: arrowPress)
+                    PressCommandAction(title: "Arrow Press", press: .leftArrow, action: arrowPress)
+                    PressCommandAction(title: "Arrow Press", press: .rightArrow, action: arrowPress)
+                    PressCommandAction(title: "Select", press: .select, action: arrowPress)
+                }
+        }
 
-                        confirmCloseWorkItem = task
+        func arrowPress() {
+            if isPresentingOverlay { return }
+            currentOverlayType = .main
+            overlayTimer.start(5)
+            withAnimation {
+                isPresentingOverlay = true
+            }
+        }
 
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+        func menuPress() {
+            overlayTimer.start(5)
+            confirmCloseWorkItem?.cancel()
+
+            if isPresentingOverlay && currentOverlayType == .confirmClose {
+                proxy.stop()
+                router.dismissCoordinator()
+            } else if isPresentingOverlay && currentOverlayType == .smallMenu {
+                currentOverlayType = .main
+            } else {
+                withAnimation {
+                    currentOverlayType = .confirmClose
+                    isPresentingOverlay = true
+                }
+
+                let task = DispatchWorkItem {
+                    withAnimation {
+                        isPresentingOverlay = false
+                        overlayTimer.stop()
                     }
                 }
+
+                confirmCloseWorkItem = task
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+            }
         }
     }
 }

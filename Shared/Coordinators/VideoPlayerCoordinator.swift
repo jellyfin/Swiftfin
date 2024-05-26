@@ -52,7 +52,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            VideoPlayer(manager: self.videoPlayerManager)
+            PreferencesView {
+                VideoPlayer(manager: self.videoPlayerManager)
+            }
+            .ignoresSafeArea()
         } else {
             NativeVideoPlayer(manager: self.videoPlayerManager)
         }

@@ -73,19 +73,6 @@ struct VideoPlayer: View {
                 .environmentObject(videoPlayerManager.proxy)
                 .environment(\.isPresentingOverlay, $isPresentingOverlay)
                 .environment(\.isScrubbing, $isScrubbing)
-                .onPlayPauseCommand(perform: {
-                    if videoPlayerManager.state == .playing {
-                        videoPlayerManager.proxy.pause()
-                        withAnimation(.linear(duration: 0.3)) {
-                            isPresentingOverlay = true
-                        }
-                    } else if videoPlayerManager.state == .paused {
-                        videoPlayerManager.proxy.play()
-                        withAnimation(.linear(duration: 0.3)) {
-                            isPresentingOverlay = false
-                        }
-                    }
-                })
         }
         .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
             guard !newValue.isNaN && !newValue.isInfinite else {
@@ -96,10 +83,6 @@ struct VideoPlayer: View {
                     .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
             }
         }
-        .onDisappear(perform: {
-            videoPlayerManager.proxy.stop()
-            router.dismissCoordinator()
-        })
     }
 
     @ViewBuilder

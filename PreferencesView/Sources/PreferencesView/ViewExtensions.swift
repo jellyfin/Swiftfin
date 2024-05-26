@@ -10,6 +10,10 @@ import SwiftUI
 
 public extension View {
 
+    func pressCommands(@PressCommandsBuilder _ commands: @escaping () -> [PressCommandAction]) -> some View {
+        preference(key: PressCommandsPreferenceKey.self, value: commands())
+    }
+
     #if os(iOS)
     func keyCommands(@KeyCommandsBuilder _ commands: @escaping () -> [KeyCommandAction]) -> some View {
         preference(key: KeyCommandsPreferenceKey.self, value: commands())

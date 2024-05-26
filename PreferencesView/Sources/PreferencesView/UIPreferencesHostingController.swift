@@ -8,6 +8,38 @@
 
 import SwiftUI
 
+public struct PressCommandAction {
+    let title: String
+    let press: UIPress.PressType
+    let action: () -> Void
+
+    public init(
+        title: String,
+        press: UIPress.PressType,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.press = press
+        self.action = action
+    }
+}
+
+extension PressCommandAction: Equatable {
+
+    public static func == (lhs: PressCommandAction, rhs: PressCommandAction) -> Bool {
+        lhs.press == rhs.press
+    }
+}
+
+struct PressCommandsPreferenceKey: PreferenceKey {
+
+    static var defaultValue: [PressCommandAction] = []
+
+    static func reduce(value: inout [PressCommandAction], nextValue: () -> [PressCommandAction]) {
+        value.append(contentsOf: nextValue())
+    }
+}
+
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
@@ -27,6 +59,10 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
                 .onPreferenceChange(SupportedOrientationsPreferenceKey.self) {
                     box.value?._orientations = $0
                 }
+            #else
+                .onPreferenceChange(PressCommandsPreferenceKey.self) {
+                    box.value?._pressCommandActions = $0
+                }
             #endif
         )
 
@@ -38,6 +74,16 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private var _pressCommandActions: [PressCommandAction] = []
+
+    override public func pressesBegan(_ presses: Set<UIPress>, with event: UIPressesEvent?) {
+        guard let buttonPress = presses.first?.type else { return }
+
+        guard let action = _pressCommandActions
+            .first(where: { $0.press == buttonPress }) else { return }
+        action.action()
     }
 
     #if os(iOS)

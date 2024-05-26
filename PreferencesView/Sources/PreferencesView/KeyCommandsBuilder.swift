@@ -35,3 +35,31 @@ public enum KeyCommandsBuilder {
         components.flatMap { $0 }
     }
 }
+
+@resultBuilder
+public enum PressCommandsBuilder {
+
+    public static func buildBlock(_ components: [PressCommandAction]...) -> [PressCommandAction] {
+        components.flatMap { $0 }
+    }
+
+    public static func buildExpression(_ expression: PressCommandAction) -> [PressCommandAction] {
+        [expression]
+    }
+
+    public static func buildOptional(_ component: [PressCommandAction]?) -> [PressCommandAction] {
+        component ?? []
+    }
+
+    public static func buildEither(first component: [PressCommandAction]) -> [PressCommandAction] {
+        component
+    }
+
+    public static func buildEither(second component: [PressCommandAction]) -> [PressCommandAction] {
+        component
+    }
+
+    public static func buildArray(_ components: [[PressCommandAction]]) -> [PressCommandAction] {
+        components.flatMap { $0 }
+    }
+}
