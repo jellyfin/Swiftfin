@@ -260,7 +260,7 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func contentLetterBarView(content: some View) -> some View {
-        if letterPickerEnabled && viewModel.filterViewModel != nil {
+        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
             switch letterPickerOrientation {
             case .trailing:
                 HStack(spacing: 0) {
