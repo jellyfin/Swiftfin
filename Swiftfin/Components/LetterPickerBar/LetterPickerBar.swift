@@ -10,18 +10,15 @@ import Defaults
 import SwiftUI
 
 struct LetterPickerBar: View {
-
     @ObservedObject
     private var viewModel: FilterViewModel
-
-    static let isScrolling: Bool = ItemLetter.allCases.count > 27
 
     init(viewModel: FilterViewModel) {
         self.viewModel = viewModel
     }
 
     @ViewBuilder
-    private var letterPickerBody: some View {
+    var body: some View {
         VStack(spacing: 0) {
             Spacer()
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
@@ -30,22 +27,11 @@ struct LetterPickerBar: View {
                     viewModel: viewModel
                 )
                 .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
+                .frame(maxWidth: .infinity)
             }
             Spacer()
         }
-    }
-
-    var body: some View {
-        Group {
-            if LetterPickerBar.isScrolling {
-                ScrollView(showsIndicators: false) {
-                    letterPickerBody
-                        .frame(maxWidth: .infinity)
-                }
-            } else {
-                letterPickerBody
-            }
-        }
+        .scrollOnOverflow()
         .frame(width: 30, alignment: .center)
     }
 }
