@@ -73,8 +73,8 @@ extension VideoPlayer {
                     }
                 }
                 .pressCommands {
-                    PressCommandAction(title: "Back Command", press: .menu, action: menuPress)
-                    PressCommandAction(title: "Play Pause", press: .playPause) {
+                    PressCommandAction(title: L10n.back, press: .menu, action: menuPress)
+                    PressCommandAction(title: L10n.playAndPause, press: .playPause) {
                         if videoPlayerManager.state == .playing {
                             videoPlayerManager.proxy.pause()
                             withAnimation(.linear(duration: 0.3)) {
@@ -87,11 +87,11 @@ extension VideoPlayer {
                             }
                         }
                     }
-                    PressCommandAction(title: "Arrow Press", press: .upArrow, action: arrowPress)
-                    PressCommandAction(title: "Arrow Press", press: .downArrow, action: arrowPress)
-                    PressCommandAction(title: "Arrow Press", press: .leftArrow, action: arrowPress)
-                    PressCommandAction(title: "Arrow Press", press: .rightArrow, action: arrowPress)
-                    PressCommandAction(title: "Select", press: .select, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .upArrow, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .downArrow, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .leftArrow, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .rightArrow, action: arrowPress)
+                    PressCommandAction(title: L10n.pressDownForMenu, press: .select, action: arrowPress)
                 }
         }
 

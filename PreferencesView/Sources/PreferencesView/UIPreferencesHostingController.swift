@@ -8,38 +8,6 @@
 
 import SwiftUI
 
-public struct PressCommandAction {
-    let title: String
-    let press: UIPress.PressType
-    let action: () -> Void
-
-    public init(
-        title: String,
-        press: UIPress.PressType,
-        action: @escaping () -> Void
-    ) {
-        self.title = title
-        self.press = press
-        self.action = action
-    }
-}
-
-extension PressCommandAction: Equatable {
-
-    public static func == (lhs: PressCommandAction, rhs: PressCommandAction) -> Bool {
-        lhs.press == rhs.press
-    }
-}
-
-struct PressCommandsPreferenceKey: PreferenceKey {
-
-    static var defaultValue: [PressCommandAction] = []
-
-    static func reduce(value: inout [PressCommandAction], nextValue: () -> [PressCommandAction]) {
-        value.append(contentsOf: nextValue())
-    }
-}
-
 public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     init<Content: View>(@ViewBuilder content: @escaping () -> Content) {
