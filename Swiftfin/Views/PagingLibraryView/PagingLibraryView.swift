@@ -50,11 +50,18 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default
     private var defaultPosterType: PosterDisplayType
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
+
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
     @State
     private var layout: CollectionVGridLayout
+    @State
+    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -251,6 +258,34 @@ struct PagingLibraryView<Element: Poster>: View {
         .proxy(collectionVGridProxy)
     }
 
+    @ViewBuilder
+    private func contentLetterBarView(content: some View) -> some View {
+        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
+            switch letterPickerOrientation {
+            case .trailing:
+                HStack(spacing: 0) {
+                    content
+                        .frame(maxWidth: .infinity)
+
+                    LetterPickerBar(viewModel: filterViewModel)
+                        .padding(.top, safeArea.top)
+                        .padding(.bottom, safeArea.bottom)
+                }
+            case .leading:
+                HStack(spacing: 0) {
+                    LetterPickerBar(viewModel: filterViewModel)
+                        .padding(.top, safeArea.top)
+                        .padding(.bottom, safeArea.bottom)
+
+                    content
+                        .frame(maxWidth: .infinity)
+                }
+            }
+        } else {
+            content
+        }
+    }
+
     // MARK: body
 
     // TODO: becoming too large for typechecker during development, should break up somehow
@@ -260,18 +295,21 @@ struct PagingLibraryView<Element: Poster>: View {
             switch viewModel.state {
             case .content:
                 if viewModel.elements.isEmpty {
-                    L10n.noResults.text
+                    contentLetterBarView(content: L10n.noResults.text)
                 } else {
-                    contentView
+                    contentLetterBarView(content: contentView)
                 }
             case let .error(error):
                 errorView(with: error)
             case .initial, .refreshing:
-                DelayedProgressView()
+                contentLetterBarView(content: DelayedProgressView())
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .onSizeChanged { _, safeArea in
+            self.safeArea = safeArea
+        }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in

@@ -23,6 +23,10 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    var letterPickerOrientation
     @Default(.Customization.Library.enabledDrawerFilters)
     private var libraryEnabledDrawerFilters
     @Default(.Customization.Search.enabledDrawerFilters)
@@ -90,6 +94,15 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
+
+                Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
+
+                if letterPickerEnabled {
+                    CaseIterablePicker(
+                        L10n.orientation,
+                        selection: $letterPickerOrientation
+                    )
+                }
 
                 ChevronButton(L10n.library)
                     .onSelect {
