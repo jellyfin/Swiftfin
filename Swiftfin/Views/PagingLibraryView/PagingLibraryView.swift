@@ -60,6 +60,8 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @State
     private var layout: CollectionVGridLayout
+    @State
+    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -258,17 +260,23 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func contentLetterBarView(content: some View) -> some View {
-        if letterPickerEnabled {
+        if letterPickerEnabled && viewModel.filterViewModel != nil {
             switch letterPickerOrientation {
             case .trailing:
                 HStack(spacing: 0) {
                     content
                         .frame(maxWidth: .infinity)
+
                     LetterPickerBar(viewModel: viewModel.filterViewModel!)
+                        .padding(.top, safeArea.top)
+                        .padding(.bottom, safeArea.bottom)
                 }
             case .leading:
                 HStack(spacing: 0) {
                     LetterPickerBar(viewModel: viewModel.filterViewModel!)
+                        .padding(.top, safeArea.top)
+                        .padding(.bottom, safeArea.bottom)
+
                     content
                         .frame(maxWidth: .infinity)
                 }
@@ -278,11 +286,8 @@ struct PagingLibraryView<Element: Poster>: View {
         }
     }
 
-    // MARK: body
-
-    // TODO: becoming too large for typechecker during development, should break up somehow
-
-    var body: some View {
+    @ViewBuilder
+    private func bodyContentView() -> some View {
         ZStack {
             switch viewModel.state {
             case .content:
@@ -299,6 +304,13 @@ struct PagingLibraryView<Element: Poster>: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .onSizeChanged { _, safeArea in
+            if LetterPickerBar.isScrolling {
+                if self.safeArea != safeArea {
+                    self.safeArea = safeArea
+                }
+            }
+        }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in
@@ -309,179 +321,187 @@ struct PagingLibraryView<Element: Poster>: View {
                 router.route(to: \.filter, $0)
             }
         }
-        .onChange(of: defaultDisplayType) { newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+    }
 
-            if UIDevice.isPhone {
-                layout = Self.phoneLayout(
-                    posterType: defaultPosterType,
-                    viewType: newValue
-                )
-            } else {
-                layout = Self.padLayout(
-                    posterType: defaultPosterType,
-                    viewType: newValue,
-                    listColumnCount: defaultListColumnCount
-                )
-            }
-        }
-        .onChange(of: defaultListColumnCount) { newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+    // MARK: body
 
-            if UIDevice.isPad {
-                layout = Self.padLayout(
-                    posterType: defaultPosterType,
-                    viewType: defaultDisplayType,
-                    listColumnCount: newValue
-                )
-            }
-        }
-        .onChange(of: defaultPosterType) { newValue in
-            guard !Defaults[.Customization.Library.rememberLayout] else { return }
+    // TODO: becoming too large for typechecker during development, should break up somehow
 
-            if UIDevice.isPhone {
-                if defaultDisplayType == .list {
-                    collectionVGridProxy.layout()
-                } else {
+    var body: some View {
+        bodyContentView()
+            .onChange(of: defaultDisplayType) { newValue in
+                guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+                if UIDevice.isPhone {
                     layout = Self.phoneLayout(
-                        posterType: newValue,
-                        viewType: defaultDisplayType
+                        posterType: defaultPosterType,
+                        viewType: newValue
                     )
-                }
-            } else {
-                if defaultDisplayType == .list {
-                    collectionVGridProxy.layout()
                 } else {
                     layout = Self.padLayout(
-                        posterType: newValue,
-                        viewType: defaultDisplayType,
+                        posterType: defaultPosterType,
+                        viewType: newValue,
                         listColumnCount: defaultListColumnCount
                     )
                 }
             }
-        }
-        .onChange(of: displayType) { newValue in
-            if UIDevice.isPhone {
-                layout = Self.phoneLayout(
-                    posterType: posterType,
-                    viewType: newValue
-                )
-            } else {
-                layout = Self.padLayout(
-                    posterType: posterType,
-                    viewType: newValue,
-                    listColumnCount: listColumnCount
-                )
-            }
-        }
-        .onChange(of: listColumnCount) { newValue in
-            if UIDevice.isPad {
-                layout = Self.padLayout(
-                    posterType: posterType,
-                    viewType: displayType,
-                    listColumnCount: newValue
-                )
-            }
-        }
-        .onChange(of: posterType) { newValue in
-            if UIDevice.isPhone {
-                if displayType == .list {
-                    collectionVGridProxy.layout()
-                } else {
-                    layout = Self.phoneLayout(
-                        posterType: newValue,
-                        viewType: displayType
+            .onChange(of: defaultListColumnCount) { newValue in
+                guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+                if UIDevice.isPad {
+                    layout = Self.padLayout(
+                        posterType: defaultPosterType,
+                        viewType: defaultDisplayType,
+                        listColumnCount: newValue
                     )
                 }
-            } else {
-                if displayType == .list {
-                    collectionVGridProxy.layout()
+            }
+            .onChange(of: defaultPosterType) { newValue in
+                guard !Defaults[.Customization.Library.rememberLayout] else { return }
+
+                if UIDevice.isPhone {
+                    if defaultDisplayType == .list {
+                        collectionVGridProxy.layout()
+                    } else {
+                        layout = Self.phoneLayout(
+                            posterType: newValue,
+                            viewType: defaultDisplayType
+                        )
+                    }
+                } else {
+                    if defaultDisplayType == .list {
+                        collectionVGridProxy.layout()
+                    } else {
+                        layout = Self.padLayout(
+                            posterType: newValue,
+                            viewType: defaultDisplayType,
+                            listColumnCount: defaultListColumnCount
+                        )
+                    }
+                }
+            }
+            .onChange(of: displayType) { newValue in
+                if UIDevice.isPhone {
+                    layout = Self.phoneLayout(
+                        posterType: posterType,
+                        viewType: newValue
+                    )
                 } else {
                     layout = Self.padLayout(
-                        posterType: newValue,
-                        viewType: displayType,
+                        posterType: posterType,
+                        viewType: newValue,
                         listColumnCount: listColumnCount
                     )
                 }
             }
-        }
-        .onChange(of: rememberLayout) { newValue in
-            let newDisplayType = newValue ? displayType : defaultDisplayType
-            let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
-            let newPosterType = newValue ? posterType : defaultPosterType
-
-            if UIDevice.isPhone {
-                layout = Self.phoneLayout(
-                    posterType: newPosterType,
-                    viewType: newDisplayType
-                )
-            } else {
-                layout = Self.padLayout(
-                    posterType: newPosterType,
-                    viewType: newDisplayType,
-                    listColumnCount: newListColumnCount
-                )
-            }
-        }
-        .onChange(of: viewModel.filterViewModel?.currentFilters) { newValue in
-            guard let newValue, let id = viewModel.parent?.id else { return }
-
-            if Defaults[.Customization.Library.rememberSort] {
-                let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
-                    .mutating(\.sortBy, with: newValue.sortBy)
-                    .mutating(\.sortOrder, with: newValue.sortOrder)
-
-                StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
-            }
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .gotRandomItem(item):
-                switch item {
-                case let item as BaseItemDto:
-                    router.route(to: \.item, item)
-                case let item as BaseItemPerson:
-                    let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
-                    router.route(to: \.library, viewModel)
-                default:
-                    assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
+            .onChange(of: listColumnCount) { newValue in
+                if UIDevice.isPad {
+                    layout = Self.padLayout(
+                        posterType: posterType,
+                        viewType: displayType,
+                        listColumnCount: newValue
+                    )
                 }
             }
-        }
-        .onFirstAppear {
-            if viewModel.state == .initial {
-                viewModel.send(.refresh)
+            .onChange(of: posterType) { newValue in
+                if UIDevice.isPhone {
+                    if displayType == .list {
+                        collectionVGridProxy.layout()
+                    } else {
+                        layout = Self.phoneLayout(
+                            posterType: newValue,
+                            viewType: displayType
+                        )
+                    }
+                } else {
+                    if displayType == .list {
+                        collectionVGridProxy.layout()
+                    } else {
+                        layout = Self.padLayout(
+                            posterType: newValue,
+                            viewType: displayType,
+                            listColumnCount: listColumnCount
+                        )
+                    }
+                }
             }
-        }
-        .topBarTrailing {
+            .onChange(of: rememberLayout) { newValue in
+                let newDisplayType = newValue ? displayType : defaultDisplayType
+                let newListColumnCount = newValue ? listColumnCount : defaultListColumnCount
+                let newPosterType = newValue ? posterType : defaultPosterType
 
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
-                ProgressView()
-            }
-
-            Menu {
-
-                if Defaults[.Customization.Library.rememberLayout] {
-                    LibraryViewTypeToggle(
-                        posterType: $posterType,
-                        viewType: $displayType,
-                        listColumnCount: $listColumnCount
+                if UIDevice.isPhone {
+                    layout = Self.phoneLayout(
+                        posterType: newPosterType,
+                        viewType: newDisplayType
                     )
                 } else {
-                    LibraryViewTypeToggle(
-                        posterType: $defaultPosterType,
-                        viewType: $defaultDisplayType,
-                        listColumnCount: $defaultListColumnCount
+                    layout = Self.padLayout(
+                        posterType: newPosterType,
+                        viewType: newDisplayType,
+                        listColumnCount: newListColumnCount
                     )
                 }
-
-                Button(L10n.random, systemImage: "dice.fill") {
-                    viewModel.send(.getRandomItem)
-                }
-                .disabled(viewModel.elements.isEmpty)
-            } label: {
-                Image(systemName: "ellipsis.circle")
             }
-        }
+            .onChange(of: viewModel.filterViewModel?.currentFilters) { newValue in
+                guard let newValue, let id = viewModel.parent?.id else { return }
+
+                if Defaults[.Customization.Library.rememberSort] {
+                    let newStoredFilters = StoredValues[.User.libraryFilters(parentID: id)]
+                        .mutating(\.sortBy, with: newValue.sortBy)
+                        .mutating(\.sortOrder, with: newValue.sortOrder)
+
+                    StoredValues[.User.libraryFilters(parentID: id)] = newStoredFilters
+                }
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .gotRandomItem(item):
+                    switch item {
+                    case let item as BaseItemDto:
+                        router.route(to: \.item, item)
+                    case let item as BaseItemPerson:
+                        let viewModel = ItemLibraryViewModel(parent: item, filters: .default)
+                        router.route(to: \.library, viewModel)
+                    default:
+                        assertionFailure("Used an unexpected type within a `PagingLibaryView`?")
+                    }
+                }
+            }
+            .onFirstAppear {
+                if viewModel.state == .initial {
+                    viewModel.send(.refresh)
+                }
+            }
+            .topBarTrailing {
+
+                if viewModel.backgroundStates.contains(.gettingNextPage) {
+                    ProgressView()
+                }
+
+                Menu {
+
+                    if Defaults[.Customization.Library.rememberLayout] {
+                        LibraryViewTypeToggle(
+                            posterType: $posterType,
+                            viewType: $displayType,
+                            listColumnCount: $listColumnCount
+                        )
+                    } else {
+                        LibraryViewTypeToggle(
+                            posterType: $defaultPosterType,
+                            viewType: $defaultDisplayType,
+                            listColumnCount: $defaultListColumnCount
+                        )
+                    }
+
+                    Button(L10n.random, systemImage: "dice.fill") {
+                        viewModel.send(.getRandomItem)
+                    }
+                    .disabled(viewModel.elements.isEmpty)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
     }
 }

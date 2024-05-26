@@ -14,6 +14,8 @@ struct LetterPickerBar: View {
     @ObservedObject
     private var viewModel: FilterViewModel
 
+    static let isScrolling: Bool = ItemLetter.allCases.count > 27
+
     init(viewModel: FilterViewModel) {
         self.viewModel = viewModel
     }
@@ -35,7 +37,7 @@ struct LetterPickerBar: View {
 
     var body: some View {
         Group {
-            if ItemLetter.allCases.count > 27 {
+            if LetterPickerBar.isScrolling {
                 ScrollView(showsIndicators: false) {
                     letterPickerBody
                         .frame(maxWidth: .infinity)
