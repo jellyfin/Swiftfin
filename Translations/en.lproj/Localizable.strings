@@ -1,5 +1,8 @@
-﻿/* MARK: Development */
+/* MARK: Development */
 
+
+/* Represents a Settings Section for settings that are not fully ready */
+"experimental" = "Experimental";
 
 /* Represents media types that are not currently implemented */
 "notImplementedYetWithType" = "Type: %@ not implemented yet :(";
@@ -14,10 +17,17 @@
 /* Go back to the previous screen/form */
 "back" = "Back";
 
+/* Stop the current operation or reset the screen/form */
 "cancel" = "Cancel";
+
+/* Leave/close the current menu */
+"close" = "Close";
 
 /* Proceed or continue to the next screen as a proceed opposed to an agreement */
 "continue" = "Continue";
+
+/* Dismiss a message or popup */
+"dismiss" = "Dismiss";
 
 /* Feature/Setting is inactive */
 "disabled" = "Disabled";
@@ -43,11 +53,17 @@
 /* Proceed with the current values on the screen/form */
 "ok" = "Ok";
 
+/* Refresh the current view */
+"refresh" = "Refresh";
+
 /* Reload the current view */
 "reload" = "Reload";
 
 /* Reset the form/screen back to the default/previous values */
 "reset" = "Reset";
+
+/* Retry an action typical after it failed the first time */
+"retry" = "Retry";
 
 /* Expand a section to see all items */
 "seeAll" = "See All";
@@ -100,6 +116,9 @@
 /* MARK: Item - Shows */
 
 
+/* Label used to designate an Episode contained within a Show Library */
+"episodes" = "Episodes";
+
 /* Represents the label that will exist in place of an episode view if there are no episodes */
 "noEpisodesAvailable" = "No episodes available";
 
@@ -107,11 +126,14 @@
 /* MARK: Libraries - Generic */
 
 
-/* Represents the the Label for Episodes */
-"episodes" = "Episodes";
-
-/* Represents the the Label for Libraries */
+/* Label used to designate a Library */
 "library" = "Library";
+
+/* Library Item has been watch by this user */
+"played" = "Played";
+
+/* Library Item has not been watch by this user */
+"unplayed" = "Unplayed";
 
 
 /* MARK: Libraries - Filtering/Sorting */
@@ -145,11 +167,17 @@
 "tags" = "Tags";
 
 
-/* MARK: Libraries - Types*/
+/* MARK: Libraries - Types */
 
 
 /* Represents the the Library Labels for Live TV Channels */
 "channels" = "Channels";
+
+/* Label for the Grid Feature that formats the Library Items in a Grid */
+"grid" = "Grid";
+
+/* Label for the List Feature that formats the Library Items in a List */
+"list" = "List";
 
 /* Represents the the Library Labels for Movie Media Types */
 "movies" = "Movies";
@@ -159,6 +187,9 @@
 
 /* Represents the the Library Labels for Live TV Programs */
 "programs" = "Programs";
+
+/* Label for the Random Feature that sends the users to a Random Library Item */
+"random" = "Random";
 
 /* Represents the the Library Labels for Show Media Types with a single Season */
 "season" = "Season";
@@ -189,8 +220,20 @@
 /* MARK: Media */
 
 
-/* Represents the section Label for the Media View */
+/* Section Label for the Media View */
 "allMedia" = "All Media";
+
+/* Section Label for the Media's Downloaded Media Section */
+"downloads" = "Downloads";
+
+/* Section Label for the Media's Favorite Section */
+"favorites" = "Favorites";
+
+/* Section Label for the Media's Live TV Section */
+"liveTV" = "Live TV";
+
+/* Section Label for all Media Library Sections */
+"media" = "Media";
 
 
 /* MARK: Media Casting */
@@ -203,14 +246,49 @@
 "selectCastDestination" = "Select Cast Destination";
 
 
+/* MARK: Player Overlay */
+
+
+/* Overlay Label for Selecting Audio Information/Settings */
+"audio" = "Audio";
+
+/* Overlay Label for jumping backwards in the media based on the Jump configuration in Playback Settings */
+"jumpBackward" = "Jump Backward";
+
+/* Overlay Label for jumping forward in the media based on the Jump configuration in Playback Settings */
+"jumpForward" = "Jump Forward";
+
+/* Overlay Label for going to the next episode in a show */
+"nextItem" = "Next Item";
+
+/* Overlay Label for Playing/Pausing currently watched content*/
+"playAndPause" = "Play / Pause";
+
+/* Overlay Label for going back to previous episode in a show */
+"previousItem" = "Previous Item";
+
+/* Overlay Label for Selecting Subtitle/Caption Information/Settings */
+"subtitle" = "Subtitle";
+
+/* Overlay Label for Selecting Video Information/Settings */
+"video" = "Video";
+
+
 /* MARK: Search */
 
 
 /* Represents the Section Label for the Search View */
 "search" = "Search";
 
-/* Represents the Search action designated as in-progress or an option on the view */
+/* Represents the Search action designated as in-progress or an option on the view. Also used during Server Discovery */
 "searchDots" = "Search…";
+
+
+/* MARK: Settings */
+
+
+/* Section Label for the Settings Screen */
+"settings" = "Settings";
 
 
 /* MARK: Settings - Accessibility */
@@ -222,11 +300,17 @@
 /* Represents the Appearance setting label */
 "appearance" = "Appearance";
 
+/* Setting for Compact Text spacing as opposed to Normal Spacing */
+"compact" = "Compact";
+
 /* Represents the dark theme setting */
 "dark" = "Dark";
 
 /* Represents the light theme setting */
 "light" = "Light";
+
+/* Setting for Normal Text spacing as opposed to Compact Spacing */
+"normal" = "Normal";
 
 /* Represents the system theme setting */
 "system" = "System";
@@ -235,11 +319,20 @@
 /* MARK: Settings - App Icon */
 
 
+/* Section Header Label for changing the Swiftfin App Icon */
+"appIcon" = "App Icon";
+
 /* Represents the label for all Jellyfin Icons that are Blue regardless of Backgound/Color Invert */
 "blue" = "Blue";
 
 /* Represents the label for all Jellyfin Icons that are Green regardless of Backgound/Color Invert */
 "green" = "Green";
+
+/* App Icons that are Colored with the Selected Color but have a Black Background */
+"invertedDark" = "Inverted Dark";
+
+/* App Icons that are Colored with the Selected Color but have a White Background */
+"invertedLight" = "Inverted Light";
 
 /* Represents the label for all Jellyfin Icons that are Orange regardless of Backgound/Color Invert */
 "orange" = "Orange";
@@ -261,6 +354,16 @@
 "advanced" = "Advanced";
 
 
+/* MARK: Settings - Customization */
+
+
+/* Label for the setting to use the Primary Image for Media Items */
+"usePrimaryImage" = "Use Primary Image";
+
+/* Label the message explainging the 'User Primary Image' setting */
+"usePrimaryImageDescription" = "Uses the primary image and hides the logo.";
+
+
 /* MARK: Settings - Letter Picker */
 
 
@@ -280,14 +383,44 @@
 /* MARK: Settings - Playback */
 
 
+/* Section header for all Playback Gestures settings */
+"gestures" = "Gestures";
+
+/* Section Title for setting how far backwards the jump backwards button goes */
+"jumpBackwardLength" = "Jump Backward Length";
+
+/* Section Title for setting how far forward the jump forward button goes */
+"jumpForwardLength" = "Jump Forward Length";
+
+/* Message Describing if gesture for jumping forward/backward is enabled */
+"jumpGesturesEnabled" = "Jump Gestures Enabled";
+
+/* Indicates that Swiftfin playback is using AVKit */
+"nativePlayer" = "Native Player";
+
 /* Represents the Playback section label */
 "playback" = "Playback";
+
+/* Message Describing the current enabled status of the Player's Gesture Lock */
+"playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
 
 /* Represents the Playback Settings section label */
 "playbackSettings" = "Playback settings";
 
 /* Represents the Playback Speed section label */
 "playbackSpeed" = "Playback Speed";
+
+/* Message Describing the current enabled status of the Player's Gesture to Seek on the Timeline for currently playing content */
+"seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
+
+/* Message Describing the current enabled status of the Player's Gestures for System Contols like Volume/Brightness */
+"systemControlGesturesEnabled" = "System Control Gestures Enabled";
+
+/* Section Title for the Video Player Settings Section */
+"videoPlayer" = "Video Player";
+
+/* Section Title for the Video Player Type Setting between VLC, and AVKit */
+"videoPlayerType" = "Video Player Type";
 
 
 /* MARK: Settings - Reset */
@@ -321,6 +454,24 @@
 
 /* MARK: Settings - System */
 
+
+/* Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Issue Tracking */
+"bugsAndFeatures" = "Bugs and Features";
+
+/* tvOS Setting whether going back on the remote should close Swiftfin or if it should provide a confirmation first */
+"confirmClose" = "Confirm Close";
+
+/* Section Label for the logs generated by Swiftfin */
+"logs" = "Logs";
+
+/* Section of the Jellyfin/System screen directing users to the Swiftfin GitHub to see the source code */
+"sourceCode" = "Source Code";
+
+/* Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Feature Requesting */
+"requestFeature" = "Request a Feature";
+
+/* Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Issue Reporting */
+"reportIssue" = "Report an Issue";
 
 /* Section Label for details about the current connected Jellyfin Server */
 "serverDetails" = "Server Details";
@@ -380,8 +531,23 @@
 /* Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information */
 "serverURL" = "Server URL";
 
+/* Button label that takes the confirms the user information and attempts to sign them in*/
+"signIn" = "Sign In";
+
+/* Message on first setup pointing the user to sign in */
+"signInGetStarted" = "Sign in to get started";
+
+/* Message on indicating the server that the user is signing in to */
+"signInToServer" = "Sign In to %s";
+
 /* Represents the label used in the User Settings to change users and go to the Server Selection/Login page */
 "switchUser" = "Switch User";
+
+/* The Server Add/Sign in process has failed and this message is displayed */
+"unableToConnectServer" = "Unable to connect to server";
+
+/* Label indicating the Jellyfin Server URL */
+"url" = "URL";
 
 /* Represents the label used to head the section where a username needs to be provided to connect to a server */
 "username" = "Username";
@@ -446,34 +612,23 @@
 
 /* MARK: TODO - Cleanup*/
 
-
 "showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
 "color" = "Color";
 "aspectFill" = "Aspect Fill";
 "seeMore" = "See More";
 "defaultScheme" = "Default Scheme";
 "networking" = "Networking";
-"settings" = "Settings";
 "searchingDots" = "Searching…";
 "noTitle" = "No title";
-"retry" = "Retry";
 "recentlyAdded" = "Recently Added";
 "overview" = "Overview";
 "noOverviewAvailable" = "No overview available";
 "castAndCrew" = "Cast & Crew";
-"normal" = "Normal";
-"compact" = "Compact";
 "series" = "Series";
 "information" = "Information";
-"media" = "Media";
-"favorites" = "Favorites";
-"liveTV" = "Live TV";
-"downloads" = "Downloads";
 "name" = "Name";
-"url" = "URL";
 "version" = "Version";
 "remove" = "Remove";
-"experimental" = "Experimental";
 "playPreviousItem" = "Play Previous Item";
 "playNextItem" = "Play Next Item";
 "autoPlay" = "Auto Play";
@@ -481,25 +636,12 @@
 "overlay" = "Overlay";
 "overlayType" = "Overlay Type";
 "user" = "User";
-"nativePlayer" = "Native Player";
-"videoPlayer" = "Video Player";
-"videoPlayerType" = "Video Player Type";
-"gestures" = "Gestures";
-"jumpForwardLength" = "Jump Forward Length";
-"jumpBackwardLength" = "Jump Backward Length";
-"jumpGesturesEnabled" = "Jump Gestures Enabled";
-"systemControlGesturesEnabled" = "System Control Gestures Enabled";
-"playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
-"seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
 "audioOffset" = "Audio Offset";
 "resumeOffset" = "Resume Offset";
 "resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
 "resume5SecondOffset" = "Resume 5 Second Offset";
 "showPosterLabels" = "Show Poster Labels";
 "showCastAndCrew" = "Show Cast & Crew";
-"signInGetStarted" = "Sign in to get started";
-"signIn" = "Sign In";
-"signInToServer" = "Sign In to %s";
 "audio" = "Audio";
 "subtitles" = "Subtitles";
 "playbackSpeed" = "Playback Speed";
@@ -518,17 +660,14 @@
 "larger" = "Larger";
 "largest" = "Largest";
 "jumpLengthSeconds" = "%s seconds";
-"unableToConnectServer" = "Unable to connect to server";
 "present" = "Present";
 "oneUser" = "1 user";
 "multipleUsers" = "%d users";
 "notAvailableSlash" = "N/A";
 "next" = "Next";
-"refresh" = "Refresh";
 "recommended" = "Recommended";
 "about" = "About";
 "pressDownForMenu" = "Press Down for Menu";
-"confirmClose" = "Confirm Close";
 "cinematicViews" = "Cinematic Views";
 "none" = "None";
 "missing" = "Missing";
@@ -547,12 +686,6 @@
 "requestFeature" = "Request a Feature";
 "reportIssue" = "Report an Issue";
 "showFlattenView" = "Flatten Library Items";
-"playAndPause" = "Play / Pause";
-"jumpForward" = "Jump Forward";
-"jumpBackward" = "Jump Backward";
-"close" = "Close";
-"nextItem" = "Next Item";
-"previousItem" = "Previous Item";
 "unableToFindHost" = "Unable to find host";
 "publicUsers" = "Public Users";
 "noPublicUsers" = "No public Users";
@@ -560,23 +693,11 @@
 "compactPoster" = "Compact Poster";
 "compactLogo" = "Compact Logo";
 "cinematic" = "Cinematic";
-"bugsAndFeatures" = "Bugs and Features";
-"invertedDark" = "Inverted Dark";
-"invertedLight" = "Inverted Light";
-"appIcon" = "App Icon";
 "accentColor" = "Accent Color";
 "accentColorDescription" = "Some views may need an app restart to update.";
-"dismiss" = "Dismiss";
-"played" = "Played";
-"unplayed" = "Unplayed";
-"video" = "Video";
-"audio" = "Audio";
-"subtitle" = "Subtitle";
 "specialFeatures" = "Special Features";
 "collections" = "Collections";
 "people" = "People";
-"usePrimaryImage" = "Use Primary Image";
-"usePrimaryImageDescription" = "Uses the primary image and hides the logo.";
 "hapticFeedback" = "Haptic Feedback";
 "indicators" = "Indicators";
 "posters" = "Posters";
@@ -585,10 +706,6 @@
 "progress" = "Progress";
 "indicators" = "Indicators";
 "ratings" = "Ratings";
-"random" = "Random";
-"grid" = "Grid";
-"list" = "List";
-"logs" = "Logs";
 "buttons" = "Buttons";
 "playbackButtons" = "Playback Buttons";
 "barButtons" = "Bar Buttons";
