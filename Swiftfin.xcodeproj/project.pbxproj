@@ -4600,12 +4600,9 @@
 				E18CE0AF28A222240092E7F1 /* PublicUserRow.swift in Sources */,
 				E129429828F4785200796AC6 /* CaseIterablePicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
-<<<<<<< HEAD
 				E154965E296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */,
-=======
 				4EF7A3E22C031FEB00CC58A2 /* LetterPickerOverflow.swift in Sources */,
 				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
->>>>>>> origin/main
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
 				E1763A742BF3FA4C004DF6AB /* AppLoadingView.swift in Sources */,
@@ -4744,11 +4741,8 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
-<<<<<<< HEAD
 				9AB0FEB02C00EFFC0061ED6C /* DownloadMovie.swift in Sources */,
-=======
 				4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */,
->>>>>>> origin/main
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
