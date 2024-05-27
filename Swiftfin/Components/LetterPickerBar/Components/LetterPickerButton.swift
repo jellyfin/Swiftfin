@@ -19,36 +19,31 @@ extension LetterPickerBar {
         @Environment(\.isSelected)
         private var isSelected
 
-        private let filterLetter: ItemLetter
+        private let letter: ItemLetter
         private let viewModel: FilterViewModel
 
-        init(filterLetter: ItemLetter, viewModel: FilterViewModel) {
-            self.filterLetter = filterLetter
+        init(letter: ItemLetter, viewModel: FilterViewModel) {
+            self.letter = letter
             self.viewModel = viewModel
         }
 
         var body: some View {
             Button {
-                if !viewModel.currentFilters.letter.contains(filterLetter) {
-                    viewModel.currentFilters.letter = [ItemLetter(stringLiteral: filterLetter.value)]
+                if !viewModel.currentFilters.letter.contains(letter) {
+                    viewModel.currentFilters.letter = [ItemLetter(stringLiteral: letter.value)]
                 } else {
                     viewModel.currentFilters.letter = []
                 }
             } label: {
-                Text(
-                    filterLetter.value
-                )
-                .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
-                .font(.headline)
-                .frame(width: 15, height: 15)
-                .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor)
-                .padding(.vertical, 2)
-                .fixedSize(horizontal: false, vertical: true)
-                .background {
+                ZStack {
                     RoundedRectangle(cornerRadius: 5)
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(isSelected ? accentColor.opacity(0.5) : Color.clear)
+                        .foregroundStyle(isSelected ? accentColor : Color.clear)
+
+                    Text(letter.value)
+                        .font(.headline)
+                        .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor)
                 }
+                .frame(width: 20, height: 20)
             }
         }
     }

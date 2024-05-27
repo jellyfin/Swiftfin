@@ -190,7 +190,7 @@ struct SelectUserView: View {
 
                     gridContentView
                 }
-                .scroll(ifLargerThan: contentSize.height - 100)
+                .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
             }
 

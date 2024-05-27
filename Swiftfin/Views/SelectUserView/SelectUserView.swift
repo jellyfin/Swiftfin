@@ -20,8 +20,6 @@ import SwiftUI
 // TODO: user ordering
 //       - name
 //       - last signed in date
-// TODO: for random splash screen, instead have a random sorted array
-//       for failure cases
 
 struct SelectUserView: View {
 
@@ -46,8 +44,6 @@ struct SelectUserView: View {
     private var router: SelectUserCoordinator.Router
 
     @State
-    private var contentSafeAreaInsets: EdgeInsets = .zero
-    @State
     private var contentSize: CGSize = .zero
     @State
     private var error: Error? = nil
@@ -70,7 +66,7 @@ struct SelectUserView: View {
     @State
     private var selectedUsers: Set<UserState> = []
     @State
-    private var splashScreenImageSource: ImageSource? = nil
+    private var splashScreenImageSources: [ImageSource] = []
 
     @StateObject
     private var viewModel = SelectUserViewModel()
@@ -115,25 +111,27 @@ struct SelectUserView: View {
     }
 
     // For all server selection, .all is random
-    private func makeSplashScreenImageSource(
+    private func makeSplashScreenImageSources(
         serverSelection: SelectUserServerSelection,
         allServersSelection: SelectUserServerSelection
-    ) -> ImageSource? {
+    ) -> [ImageSource] {
         switch (serverSelection, allServersSelection) {
         case (.all, .all):
             return viewModel
                 .servers
                 .keys
-                .randomElement()?
-                .splashScreenImageSource()
+                .shuffled()
+                .map { $0.splashScreenImageSource() }
 
         // need to evaluate server with id selection first
         case let (.server(id), _), let (.all, .server(id)):
-            return viewModel
-                .servers
-                .keys
-                .first { $0.id == id }?
-                .splashScreenImageSource()
+            return [
+                viewModel
+                    .servers
+                    .keys
+                    .first { $0.id == id }?
+                    .splashScreenImageSource() ?? .init(),
+            ]
         }
     }
 
@@ -252,7 +250,7 @@ struct SelectUserView: View {
             }
         }
         .edgePadding()
-        .scroll(ifLargerThan: contentSize.height - 100)
+        .scrollIfLargerThanContainer(padding: 100)
         .onChange(of: gridItemSize) { newValue in
             let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
 
@@ -274,7 +272,7 @@ struct SelectUserView: View {
             }
         }
         .edgePadding()
-        .scroll(ifLargerThan: contentSize.height - 100)
+        .scrollIfLargerThanContainer(padding: 100)
     }
 
     @ViewBuilder
@@ -386,9 +384,8 @@ struct SelectUserView: View {
         VStack(spacing: 0) {
             ZStack {
                 Color.clear
-                    .onSizeChanged { size, safeAreaInsets in
+                    .onSizeChanged { size, _ in
                         contentSize = size
-                        contentSafeAreaInsets = safeAreaInsets
                     }
 
                 switch userListDisplayType {
@@ -433,16 +430,16 @@ struct SelectUserView: View {
             }
         }
         .background {
-            if selectUserUseSplashscreen, let splashScreenImageSource {
+            if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
                 ZStack {
                     Color.clear
 
-                    ImageView(splashScreenImageSource)
+                    ImageView(splashScreenImageSources)
                         .pipeline(.Swiftfin.branding)
                         .aspectRatio(contentMode: .fill)
-                        .id(splashScreenImageSource)
+                        .id(splashScreenImageSources)
                         .transition(.opacity)
-                        .animation(.linear, value: splashScreenImageSource)
+                        .animation(.linear, value: splashScreenImageSources)
 
                     Color.black
                         .opacity(0.9)
@@ -515,7 +512,7 @@ struct SelectUserView: View {
         .onAppear {
             viewModel.send(.getServers)
 
-            splashScreenImageSource = makeSplashScreenImageSource(
+            splashScreenImageSources = makeSplashScreenImageSources(
                 serverSelection: serverSelection,
                 allServersSelection: selectUserAllServersSplashscreen
             )
@@ -537,7 +534,7 @@ struct SelectUserView: View {
             }
         }
         .onChange(of: selectUserAllServersSplashscreen) { newValue in
-            splashScreenImageSource = makeSplashScreenImageSource(
+            splashScreenImageSources = makeSplashScreenImageSources(
                 serverSelection: serverSelection,
                 allServersSelection: newValue
             )
@@ -545,7 +542,7 @@ struct SelectUserView: View {
         .onChange(of: serverSelection) { newValue in
             gridItems = makeGridItems(for: newValue)
 
-            splashScreenImageSource = makeSplashScreenImageSource(
+            splashScreenImageSources = makeSplashScreenImageSources(
                 serverSelection: newValue,
                 allServersSelection: selectUserAllServersSplashscreen
             )
