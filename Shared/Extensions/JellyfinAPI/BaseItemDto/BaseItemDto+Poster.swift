@@ -68,9 +68,9 @@ extension BaseItemDto: Poster {
         case .episode:
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 [
+                    imageSource(.primary, maxWidth: maxWidth),
                     seriesImageSource(.thumb, maxWidth: maxWidth),
                     seriesImageSource(.backdrop, maxWidth: maxWidth),
-                    imageSource(.primary, maxWidth: maxWidth),
                 ]
             } else {
                 [imageSource(.primary, maxWidth: maxWidth)]

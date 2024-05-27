@@ -47,19 +47,25 @@ extension OfflineView {
                 }
                 .contextMenu { item in
                     Button(role: .destructive) {
-                        offlineViewModel.send(.removeDownload(offlineViewModel.getDownloadForItem(item: item)))
+                        if let task = offlineViewModel.getDownloadForItem(item: item) {
+                            offlineViewModel.send(.removeDownload(task))
+                        }
                     } label: {
                         Label(L10n.remove, systemImage: "trash")
                     }
                 }
                 .onSelect { item in
                     // TODO: offline item view
-                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        mainRouter.route(
-                            to: \.videoPlayer,
-                            DownloadVideoPlayerManager(downloadTask: offlineViewModel.getDownloadForItem(item: item))
-                        )
-                    }
+                    router.route(to: \.item, item)
+//                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+//                        mainRouter.route(
+//                            to: \.videoPlayer,
+//                            DownloadVideoPlayerManager(
+//                                downloadTask: offlineViewModel.getDownloadForItem(item: item),
+//                                offlineViewModel: offlineViewModel
+//                            )
+//                        )
+//                    }
                 }
             }
         }

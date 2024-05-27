@@ -9,21 +9,25 @@
 import Factory
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
 class DownloadVideoPlayerManager: VideoPlayerManager {
 
     @Injected(Container.downloadManager)
     private var downloadManager
 
+    private var offlineView: OfflineViewModel
+
     private var task: DownloadEntity? = nil
-    init(downloadTask: DownloadEntity) {
+    init(downloadTask: DownloadEntity, offlineViewModel: OfflineViewModel) {
+        self.offlineView = offlineViewModel
+
         super.init()
         guard let playbackURL = downloadTask.getMediaURL() else {
             logger.error("Download task does not have media url for item: \(downloadTask.item.displayTitle)")
             return
         }
 
-        downloadTask.updatePlaybackInfo()
         self.task = downloadTask
 
         self.currentViewModel = .init(
@@ -65,7 +69,7 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
     }
 
     override func sendStartReport() {
-        updateProgress()
+//        updateProgress()
     }
 
     override func sendPauseReport() {
@@ -82,17 +86,11 @@ class DownloadVideoPlayerManager: VideoPlayerManager {
 
     private func updateProgress() {
         Task {
-            let progressInfo = PlaybackProgressInfo(
-                audioStreamIndex: audioTrackIndex,
-                isPaused: false,
-                itemID: currentViewModel.item.id,
-                mediaSourceID: currentViewModel.item.id,
-                playSessionID: currentViewModel.playSessionID,
-                positionTicks: currentProgressHandler.seconds * 10_000_000,
-                sessionID: currentViewModel.playSessionID,
-                subtitleStreamIndex: subtitleTrackIndex
-            )
-            self.task?.savePlaybackInfo(progress: progressInfo)
+            self.task?.savePlaybackInfo(positionTicks: currentProgressHandler.seconds * 10_000_000)
+            // update downloads view
+            await MainActor.run {
+                offlineView.send(.backgroundRefresh)
+            }
         }
     }
 }

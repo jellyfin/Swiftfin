@@ -23,8 +23,10 @@ final class OfflineCoordinator: NavigationCoordinatable {
     @Route(.push)
     var library = makeLibrary
 
-    func makeItem(item: BaseItemDto) -> ItemCoordinator {
-        ItemCoordinator(item: item)
+    var viewModel = OfflineViewModel()
+
+    func makeItem(item: BaseItemDto) -> OfflineItemCoordinator {
+        OfflineItemCoordinator(item: item, viewModel: viewModel)
     }
 
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
@@ -33,6 +35,6 @@ final class OfflineCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        OfflineView()
+        OfflineView(viewModel: viewModel)
     }
 }

@@ -40,7 +40,7 @@ extension DownloadTaskView {
 
                 VStack(alignment: .center) {
                     ImageView(
-                        offlineMode ? [ImageSource(url: downloadTask.getImageURL(name: "Primary"))] : downloadTask.item
+                        offlineMode ? downloadTask.item.portraitImageSources() : downloadTask.item
                             .landscapeImageSources(maxWidth: 600)
                     )
                     .frame(maxHeight: 300)
@@ -70,6 +70,8 @@ extension DownloadTaskView {
 
                             Text("\(Int(progress * 100))%")
                                 .foregroundColor(.secondary)
+                            Text("\(Int(progress * Double(downloadTask.expectedSize)).sizeLable)/\(downloadTask.expectedSize.sizeLable)")
+                                .foregroundColor(.secondary)
 
                             Spacer()
 
@@ -95,17 +97,17 @@ extension DownloadTaskView {
                         }
                     case .complete:
                         PrimaryButton(title: L10n.play)
-                            .onSelect {
-                                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                                    router.dismissCoordinator {
-                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
-                                    }
-                                } else {
-                                    isPresentingVideoPlayerTypeError = true
-                                }
-                            }
-                            .frame(maxWidth: 300)
-                            .frame(height: 50)
+//                            .onSelect {
+//                                if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+//                                    router.dismissCoordinator {
+//                                        mainCoordinator.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: downloadTask))
+//                                    }
+//                                } else {
+//                                    isPresentingVideoPlayerTypeError = true
+//                                }
+//                            }
+                                .frame(maxWidth: 300)
+                                .frame(height: 50)
                         Text("Size: \(downloadTask.expectedSize.sizeLable)")
                             .font(.subheadline)
                             .fontWeight(.regular)
@@ -180,6 +182,13 @@ extension DownloadTaskView.ContentView {
                     if let runtime = downloadTask.item.runTimeLabel {
                         Text(runtime)
                     }
+                }
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+
+                DotHStack {
+                    Text(downloadTask.expectedSize.sizeLable)
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)

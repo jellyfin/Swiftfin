@@ -151,8 +151,8 @@ final class MainCoordinator: NavigationCoordinatable {
         MainTabCoordinator()
     }
 
-    func makeOffline() -> NavigationViewCoordinator<DownloadListCoordinator> {
-        NavigationViewCoordinator(DownloadListCoordinator())
+    func makeOffline() -> NavigationViewCoordinator<OfflineCoordinator> {
+        NavigationViewCoordinator(OfflineCoordinator())
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {

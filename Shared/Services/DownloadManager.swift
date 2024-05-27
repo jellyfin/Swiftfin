@@ -29,6 +29,9 @@ class DownloadManager: ObservableObject {
     @Published
     private(set) var downloads: [DownloadEntity] = []
 
+    // series and season shells
+    private(set) var shellDownloads: [DownloadEntity] = []
+
     private var queue: [DownloadEntity] = []
 
     fileprivate init() {
@@ -82,7 +85,6 @@ class DownloadManager: ObservableObject {
     }
 
     func cancel(task: DownloadEntity) {
-        guard downloads.contains(where: { $0.item == task.item }) else { return }
         guard queue.contains(where: { $0.item == task.item }) else { return }
 
         task.cancel()
@@ -95,7 +97,6 @@ class DownloadManager: ObservableObject {
             try FileManager.default.removeItem(at: task.item.downloadFolder!)
         } catch {
             logger.error("Error deleting item: \(error.localizedDescription)")
-            return
         }
         task.state = .ready
         queue.removeAll(where: { $0.item == task.item })
@@ -163,8 +164,10 @@ class DownloadManager: ObservableObject {
     private func parseDownloadFolder(path: URL) -> [DownloadEntity] {
         let movieMetadataFile = path.appendingPathComponent("Metadata").appendingPathComponent("Item.json")
         if FileManager.default.fileExists(atPath: movieMetadataFile.path) {
-            guard let movieItem = parseDownloadItem(metaPath: movieMetadataFile.path) else { return [] }
-            return [movieItem]
+            let movieItem = parseDownloadItem(metaPath: movieMetadataFile.path)
+            if movieItem != nil {
+                return [movieItem!]
+            }
         }
 
         var folderContent: [DownloadEntity] = []
@@ -190,6 +193,15 @@ class DownloadManager: ObservableObject {
         return folderContent
     }
 
+    public func getItem(item: BaseItemDto) -> DownloadEntity? {
+        if let mediaItem = (downloads.first { download in download.item.id == item.id }) {
+            return mediaItem
+        }
+
+        guard let shellItem = (shellDownloads.first { shell in shell.item.id == item.id }) else { return nil }
+        return shellItem
+    }
+
     private func parseDownloadItem(metaPath: String) -> DownloadEntity? {
         guard let itemMetadataData = FileManager.default.contents(atPath: metaPath) else { return nil }
 
@@ -198,12 +210,13 @@ class DownloadManager: ObservableObject {
         guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else { return nil }
 
         let task = DownloadEntity(item: offlineItem)
+        if offlineItem.type != .episode && offlineItem.type != .movie || offlineItem.mediaSources == nil {
+            // TODO: do this in any other way (this is really hacky)
+            shellDownloads.append(DownloadEntity(item: offlineItem))
+            return nil
+        }
         task.expectedSize = Int64(offlineItem.mediaSources!.first!.size!)
-
         task.state = .complete
-
-        task.updatePlaybackInfo()
-
         return task
     }
 }

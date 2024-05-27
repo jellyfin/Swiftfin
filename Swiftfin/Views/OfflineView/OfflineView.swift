@@ -23,8 +23,8 @@ struct OfflineView: View {
     @EnvironmentObject
     private var router: HomeCoordinator.Router
 
-    @StateObject
-    private var viewModel = OfflineViewModel()
+    @ObservedObject
+    var viewModel: OfflineViewModel
 
     private var contentView: some View {
         ScrollView {
@@ -65,6 +65,9 @@ struct OfflineView: View {
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .onAppear {
             viewModel.send(.refresh)
         }
         .navigationTitle(L10n.downloads)

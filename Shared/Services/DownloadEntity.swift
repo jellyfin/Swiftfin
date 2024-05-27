@@ -32,7 +32,6 @@ public class DownloadEntity: NSObject, ObservableObject {
     }
 
     enum State {
-
         case cancelled
         case complete
         case downloading(Double)
@@ -63,8 +62,32 @@ public class DownloadEntity: NSObject, ObservableObject {
         item.downloadFolder?.appendingPathComponent("Metadata")
     }
 
+    var seriesMetadataFolder: URL? {
+        guard let seriesID = item.seriesID else { return nil }
+        return URL.downloads.appendingPathComponent(seriesID).appendingPathComponent("Metadata")
+    }
+
+    var seriesImagesFolder: URL? {
+        guard let seriesID = item.seriesID else { return nil }
+        return URL.downloads.appendingPathComponent(seriesID).appendingPathComponent("Images")
+    }
+
+    var seasonMetadataFolder: URL? {
+        guard let seasonID = item.seasonID else { return nil }
+        return URL.downloads.appendingPathComponent(seasonID).appendingPathComponent("Metadata")
+    }
+
+    var seasonImagesFolder: URL? {
+        guard let seasonID = item.seasonID else { return nil }
+        return URL.downloads.appendingPathComponent(seasonID).appendingPathComponent("Images")
+    }
+
     init(item: BaseItemDto) {
         self.item = item
+        if item.mediaSources != nil {
+            self.expectedSize = Int64(item.mediaSources!.first!.size!)
+        }
+
         self.localPlaybackInfo = PlaybackProgressInfo(
             audioStreamIndex: 1,
             isPaused: false,
@@ -102,7 +125,14 @@ public class DownloadEntity: NSObject, ObservableObject {
             await downloadBackdropImage()
             await downloadPrimaryImage()
             await downloadThumbImage()
+            if item.type == .episode {
+                await downloadSeriesData()
+                await downloadSeasonMetadata()
+            }
 
+            do {
+                try await loadFullItem()
+            } catch {}
             saveMetadata()
 
             await MainActor.run {
@@ -134,7 +164,6 @@ public class DownloadEntity: NSObject, ObservableObject {
         guard let downloadFolder = item.downloadFolder else { return }
 
         let request = Paths.getDownload(itemID: item.id!)
-        self.expectedSize = Int64(item.mediaSources!.first!.size!)
 
         let response = try await userSession.client.download(for: request, delegate: self)
 
@@ -171,13 +200,7 @@ public class DownloadEntity: NSObject, ObservableObject {
             return
         }
 
-        guard let response = try? await userSession.client.download(
-            for: .init(url: imageURL).withResponse(URL.self),
-            delegate: self
-        ) else { return }
-
-        let filename = getImageFilename(from: response, secondary: "Backdrop")
-        saveImage(from: response, filename: filename)
+        await downloadImage(url: imageURL, imageFolder: imagesFolder, name: "Backdrop")
     }
 
     private func downloadThumbImage() async {
@@ -198,13 +221,114 @@ public class DownloadEntity: NSObject, ObservableObject {
             return
         }
 
-        guard let response = try? await userSession.client.download(
-            for: .init(url: imageURL).withResponse(URL.self),
-            delegate: self
-        ) else { return }
+        await downloadImage(url: imageURL, imageFolder: imagesFolder, name: "Thumb")
+    }
 
-        let filename = getImageFilename(from: response, secondary: "Thumb")
-        saveImage(from: response, filename: filename)
+    private func downloadSeriesData() async {
+        guard let type = item.type else { return }
+        if type != .episode {
+            return
+        }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.allCases
+        parameters.ids = [item.seriesID!]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+
+        var item: BaseItemDto
+        do {
+            let response = try await userSession.client.send(request)
+            guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
+            item = fullItem
+        } catch {
+            logger.error("Error downloading series metadata for episode: \(error.localizedDescription)")
+            return
+        }
+
+        guard let seriesMetadataFolder else { return }
+        guard let seriesImagesFolder else { return }
+
+        do {
+            try FileManager.default.createDirectory(at: seriesMetadataFolder, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: seriesImagesFolder, withIntermediateDirectories: true)
+
+            try saveItemFile(folder: seriesMetadataFolder, item: item)
+        } catch {
+            logger.error("Error saving series metadata: \(error.localizedDescription)")
+        }
+
+        guard let primary = item.imageSource(.primary, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seriesImagesFolder, name: "Primary")
+        guard let primary = item.imageSource(.backdrop, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seriesImagesFolder, name: "Backdrop")
+        guard let primary = item.imageSource(.thumb, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seriesImagesFolder, name: "Thumb")
+    }
+
+    private func downloadSeasonMetadata() async {
+        guard let type = item.type else { return }
+        if type != .episode {
+            return
+        }
+
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.allCases
+        parameters.ids = [item.seasonID!]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+
+        var item: BaseItemDto
+        do {
+            let response = try await userSession.client.send(request)
+            guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
+            item = fullItem
+        } catch {
+            logger.error("Error downloading season metadata for episode: \(error.localizedDescription)")
+            return
+        }
+
+        guard let seasonMetadataFolder else { return }
+        guard let seasonImagesFolder else { return }
+
+        do {
+            try FileManager.default.createDirectory(at: seasonMetadataFolder, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: seasonImagesFolder, withIntermediateDirectories: true)
+
+            try saveItemFile(folder: seasonMetadataFolder, item: item)
+        } catch {
+            logger.error("Error saving season metadata: \(error.localizedDescription)")
+        }
+
+        guard let primary = item.imageSource(.primary, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seasonMetadataFolder, name: "Primary")
+        guard let primary = item.imageSource(.backdrop, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seasonMetadataFolder, name: "Backdrop")
+        guard let primary = item.imageSource(.thumb, maxWidth: 600).url else { return }
+        await downloadImage(url: primary, imageFolder: seasonMetadataFolder, name: "Thumb")
+    }
+
+    private func loadItemFile(folder: URL) -> BaseItemDto? {
+        let itemFileURL = folder.appendingPathComponent("Item.json")
+        guard let itemMetadataData = FileManager.default.contents(atPath: itemFileURL.path) else { return nil }
+        let jsonDecoder = JSONDecoder()
+
+        guard let offlineItem = try? jsonDecoder.decode(BaseItemDto.self, from: itemMetadataData) else { return nil }
+
+        return offlineItem
+    }
+
+    private func saveItemFile(folder: URL, item: BaseItemDto) throws {
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+
+        let itemJsonData = try jsonEncoder.encode(item)
+        let itemJson = String(data: itemJsonData, encoding: .utf8)
+        let itemFileURL = folder.appendingPathComponent("Item.json")
+
+        try itemJson?.write(to: itemFileURL, atomically: true, encoding: .utf8)
     }
 
     private func downloadPrimaryImage() async {
@@ -221,25 +345,28 @@ public class DownloadEntity: NSObject, ObservableObject {
             return
         }
 
+        await downloadImage(url: imageURL, imageFolder: imagesFolder, name: "Primary")
+    }
+
+    private func downloadImage(url: URL, imageFolder: URL?, name: String) async {
         guard let response = try? await userSession.client.download(
-            for: .init(url: imageURL).withResponse(URL.self),
+            for: .init(url: url).withResponse(URL.self),
             delegate: self
         ) else { return }
 
-        let filename = getImageFilename(from: response, secondary: "Primary")
-        saveImage(from: response, filename: filename)
+        saveImage(from: response, folder: imageFolder, filename: name)
     }
 
-    private func saveImage(from response: Response<URL>?, filename: String) {
+    private func saveImage(from response: Response<URL>?, folder: URL?, filename: String) {
 
-        guard let response, let imagesFolder else { return }
+        guard let response, let folder else { return }
 
         do {
-            try FileManager.default.createDirectory(at: imagesFolder, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
             try FileManager.default.moveItem(
                 at: response.value,
-                to: imagesFolder.appendingPathComponent(filename)
+                to: folder.appendingPathComponent(filename)
             )
         } catch {
             logger.error("Error saving image: \(error.localizedDescription)")
@@ -254,6 +381,19 @@ public class DownloadEntity: NSObject, ObservableObject {
             let imageExtension = response.response.mimeSubtype ?? "png"
             return "\(secondary).\(imageExtension)"
         }
+    }
+
+    private func loadFullItem() async throws {
+        var parameters = Paths.GetItemsByUserIDParameters()
+        parameters.enableUserData = true
+        parameters.fields = ItemFields.allCases
+        parameters.ids = [item.id!]
+
+        let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        guard let fullItem = response.value.items?.first else { throw JellyfinAPIError("Full item not in response") }
+        item = fullItem
     }
 
     private func saveMetadata() {
@@ -275,14 +415,14 @@ public class DownloadEntity: NSObject, ObservableObject {
         }
     }
 
-    func getImageURL(name: String) -> URL? {
+    func getImageURL(name: String, folder: URL?) -> URL? {
         do {
-            guard let imagesFolder else { return nil }
-            let images = try FileManager.default.contentsOfDirectory(atPath: imagesFolder.path)
+            guard let folder else { return nil }
+            let images = try FileManager.default.contentsOfDirectory(atPath: folder.path)
 
             guard let imageFilename = images.first(where: { $0.starts(with: name) }) else { return nil }
 
-            return imagesFolder.appendingPathComponent(imageFilename)
+            return folder.appendingPathComponent(imageFilename)
         } catch {
             return nil
         }
@@ -346,6 +486,16 @@ extension DownloadEntity: URLSessionDownloadDelegate {
 }
 
 extension DownloadEntity {
+    var seriesItem: BaseItemDto? {
+        guard let seriesMetadataFolder else { return nil }
+        return loadItemFile(folder: seriesMetadataFolder)
+    }
+
+    var seasonItem: BaseItemDto? {
+        guard let seasonMetadataFolder else { return nil }
+        return loadItemFile(folder: seasonMetadataFolder)
+    }
+
     func updatePlaybackInfo() {
         guard let metadataFolder = metadataFolder else { return }
 
@@ -364,29 +514,16 @@ extension DownloadEntity {
         self.item.userData?.playedPercentage = Double(position) / Double(runtime) * 100
     }
 
-    func savePlaybackInfo(progress: PlaybackProgressInfo) {
-        self.localPlaybackInfo = progress
-        let position = self.localPlaybackInfo.positionTicks ?? 0
-        self.item.userData?.playbackPositionTicks = position
+    func savePlaybackInfo(positionTicks: Int) {
+        self.item.userData?.playbackPositionTicks = positionTicks
         let runtime = self.item.runTimeTicks ?? 0
-        self.item.userData?.playedPercentage = Double(position) / Double(runtime) * 100
+        self.item.userData?.playedPercentage = Double(positionTicks) / Double(runtime) * 100
+        saveMetadata()
+    }
 
-        guard let metadataFolder = metadataFolder else { return }
-
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
-
-        let itemJsonData = try! jsonEncoder.encode(progress)
-        let itemJson = String(data: itemJsonData, encoding: .utf8)
-        let itemFileURL = metadataFolder.appendingPathComponent("Progress.json")
-
-        do {
-            try FileManager.default.createDirectory(at: metadataFolder, withIntermediateDirectories: true)
-
-            try itemJson?.write(to: itemFileURL, atomically: true, encoding: .utf8)
-        } catch {
-            logger.error("Error saving item progress: \(error.localizedDescription)")
-        }
+    func setIsPlayed(played: Bool) {
+        self.item.userData?.isPlayed = played
+        saveMetadata()
     }
 
     func offlinePlayerViewModel() throws -> VideoPlayerViewModel {
@@ -457,9 +594,9 @@ extension DownloadEntity: Poster {
         switch item.type {
         case .episode:
             // TODO: offline series image source
-            [item.seriesImageSource(.primary, maxWidth: maxWidth)]
+            [ImageSource(url: self.getImageURL(name: "Primary", folder: seriesImagesFolder))]
         case .channel, .tvChannel, .liveTvChannel, .movie, .series:
-            [ImageSource(url: self.getImageURL(name: "Primary"))]
+            [ImageSource(url: self.getImageURL(name: "Primary", folder: imagesFolder))]
         default:
             []
         }
@@ -471,19 +608,19 @@ extension DownloadEntity: Poster {
             if Defaults[.Customization.Episodes.useSeriesLandscapeBackdrop] {
                 [
                     // TODO: offline series image source
-                    ImageSource(url: self.getImageURL(name: "Thumb")),
-                    ImageSource(url: self.getImageURL(name: "Backdrop")),
-                    ImageSource(url: self.getImageURL(name: "Primary")),
+                    ImageSource(url: self.getImageURL(name: "Thumb", folder: imagesFolder)),
+                    ImageSource(url: self.getImageURL(name: "Backdrop", folder: imagesFolder)),
+                    ImageSource(url: self.getImageURL(name: "Primary", folder: imagesFolder)),
                 ]
             } else {
-                [ImageSource(url: self.getImageURL(name: "Primary"))]
+                [ImageSource(url: self.getImageURL(name: "Primary", folder: imagesFolder))]
             }
         case .folder, .program, .video:
-            [ImageSource(url: self.getImageURL(name: "Primary"))]
+            [ImageSource(url: self.getImageURL(name: "Primary", folder: imagesFolder))]
         default:
             [
-                ImageSource(url: self.getImageURL(name: "Thumb")),
-                ImageSource(url: self.getImageURL(name: "Backdrop")),
+                ImageSource(url: self.getImageURL(name: "Thumb", folder: imagesFolder)),
+                ImageSource(url: self.getImageURL(name: "Backdrop", folder: imagesFolder)),
             ]
         }
     }
@@ -491,9 +628,9 @@ extension DownloadEntity: Poster {
     func cinematicImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
         switch item.type {
         case .episode:
-            [ImageSource(url: self.getImageURL(name: "Backdrop"))]
+            [ImageSource(url: self.getImageURL(name: "Backdrop", folder: imagesFolder))]
         default:
-            [ImageSource(url: self.getImageURL(name: "Backdrop"))]
+            [ImageSource(url: self.getImageURL(name: "Backdrop", folder: imagesFolder))]
         }
     }
 }

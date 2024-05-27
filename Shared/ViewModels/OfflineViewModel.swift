@@ -63,7 +63,7 @@ final class OfflineViewModel: ViewModel, Stateful {
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
 
-    var nextUpViewModel: NextUpLibraryViewModel = .init()
+    var nextUpViewModel: OfflineNextUpLibraryViewModel = .init()
 
     override init() {
         super.init()
@@ -155,7 +155,11 @@ final class OfflineViewModel: ViewModel, Stateful {
 
         await nextUpViewModel.send(.refresh)
 
-        let resumeItems = try await getResumeItems()
+        await MainActor.run {
+            self.resumeItems.elements = []
+        }
+
+        let resumeItems = getResumeItems()
         let libraries = getLibraries()
 
         for library in libraries {
@@ -168,9 +172,9 @@ final class OfflineViewModel: ViewModel, Stateful {
         }
     }
 
-    func getDownloadForItem(item: BaseItemDto) -> DownloadEntity {
+    func getDownloadForItem(item: BaseItemDto) -> DownloadEntity? {
         // TODO: handle errors properly
-        downloadManager.downloads.first { download in download.item.id == item.id }!
+        downloadManager.downloads.first { download in download.item.id == item.id }
     }
 
     private func getResumeItems() -> [DownloadEntity] {
@@ -179,12 +183,17 @@ final class OfflineViewModel: ViewModel, Stateful {
     }
 
     private func getLibraries() -> [DownloadLibraryViewModel] {
-        [
+        let series = downloadManager.downloads
+            .filter { item in item.item.seriesID != nil }
+            .map { item in item.seriesItem }.uniqued()
+            .compactMap { $0 }
+
+        return [
             DownloadLibraryViewModel(
-                downloadManager.downloads.filter { item in item.item.seriesID != nil }.map { item in item.item },
+                series,
                 parent: TitledLibraryParent(
-                    displayTitle: "Episodes",
-                    id: "episodes"
+                    displayTitle: "Shows",
+                    id: "shows"
                 )
             ),
             DownloadLibraryViewModel(
@@ -197,25 +206,12 @@ final class OfflineViewModel: ViewModel, Stateful {
         ]
     }
 
-    // TODO: use the more updated server/user data when implemented
     private func getExcludedLibraries() async throws -> [String] {
-        let currentUserPath = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserPath)
-
-        return response.value.configuration?.latestItemsExcludes ?? []
+        []
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: DownloadEntity) {
-        let progressInfo = PlaybackProgressInfo(
-            audioStreamIndex: item.localPlaybackInfo.audioStreamIndex,
-            isPaused: false,
-            itemID: item.item.id,
-            mediaSourceID: item.item.id,
-            playSessionID: nil,
-            positionTicks: 0,
-            sessionID: nil,
-            subtitleStreamIndex: item.localPlaybackInfo.subtitleStreamIndex
-        )
-        item.savePlaybackInfo(progress: progressInfo)
+        item.savePlaybackInfo(positionTicks: 0)
+        item.setIsPlayed(played: isPlayed)
     }
 }

@@ -15,6 +15,8 @@ struct DownloadTaskButton: View {
     @ObservedObject
     private var downloadManager: DownloadManager
     @ObservedObject
+    private var viewModel: ItemViewModel
+    @ObservedObject
     private var downloadTask: DownloadEntity
 
     private var onSelect: (DownloadEntity) -> Void
@@ -50,6 +52,9 @@ extension DownloadTaskButton {
         self.downloadTask = downloadManager.task(for: item) ?? .init(item: item)
         self.onSelect = { _ in }
         self.downloadManager = downloadManager
+
+        // TODO: what?
+        self.viewModel = .init(item: item)
     }
 
     func onSelect(_ action: @escaping (DownloadEntity) -> Void) -> Self {

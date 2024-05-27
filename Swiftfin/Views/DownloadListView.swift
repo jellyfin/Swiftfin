@@ -54,7 +54,7 @@ extension DownloadListView {
                 router.route(to: \.downloadTask, downloadTask)
             } label: {
                 HStack(alignment: .center) {
-                    ImageView(downloadTask.getImageURL(name: "Primary"))
+                    ImageView(downloadTask.landscapeImageSources())
                         .failure {
                             Color.secondary
                                 .opacity(0.8)

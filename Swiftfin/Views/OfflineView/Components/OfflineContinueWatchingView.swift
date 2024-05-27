@@ -78,7 +78,10 @@ extension OfflineView {
                     .onSelect {
                         // TODO: offline item view
                         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                            mainRouter.route(to: \.videoPlayer, DownloadVideoPlayerManager(downloadTask: download))
+                            mainRouter.route(
+                                to: \.videoPlayer,
+                                DownloadVideoPlayerManager(downloadTask: download, offlineViewModel: viewModel)
+                            )
                         } else {
                             isPresentingVideoPlayerTypeError = true
                         }

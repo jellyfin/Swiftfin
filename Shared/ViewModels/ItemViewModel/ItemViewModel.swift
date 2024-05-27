@@ -42,7 +42,7 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     @Published
-    private(set) var item: BaseItemDto {
+    public var item: BaseItemDto {
         willSet {
             switch item.type {
             case .episode, .movie:
@@ -109,7 +109,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     // MARK: respond
 
-    func respond(to action: Action) -> State {
+    public func respond(to action: Action) -> State {
         switch action {
         case .backgroundRefresh:
 
@@ -248,7 +248,7 @@ class ItemViewModel: ViewModel, Stateful {
 
     func onRefresh() async throws {}
 
-    private func getFullItem() async throws -> BaseItemDto {
+    func getFullItem() async throws -> BaseItemDto {
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true

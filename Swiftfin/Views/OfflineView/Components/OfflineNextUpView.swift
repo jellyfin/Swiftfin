@@ -40,7 +40,9 @@ extension OfflineView {
                 }
                 .contextMenu { item in
                     Button {
-                        offlineViewModel.send(.setIsPlayed(true, offlineViewModel.getDownloadForItem(item: item)))
+                        if let task = offlineViewModel.getDownloadForItem(item: item) {
+                            offlineViewModel.send(.setIsPlayed(true, task))
+                        }
                     } label: {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }
