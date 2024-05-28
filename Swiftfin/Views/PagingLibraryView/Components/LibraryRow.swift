@@ -68,54 +68,51 @@ extension PagingLibraryView {
             }
         }
 
+        @ViewBuilder
+        private var rowContent: some View {
+            HStack {
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(item.displayTitle)
+                        .font(posterType == .landscape ? .subheadline : .callout)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+
+                    accessoryView
+                        .font(.caption)
+                        .foregroundColor(Color(UIColor.lightGray))
+                }
+
+                Spacer()
+            }
+        }
+
+        @ViewBuilder
+        private var rowLeading: some View {
+            ZStack {
+                Color.clear
+
+                imageView(from: item)
+                    .failure {
+                        SystemImageContentView(systemName: item.systemImage)
+                    }
+            }
+            .posterStyle(posterType)
+            .frame(width: posterType == .landscape ? 110 : 60)
+            .posterShadow()
+            .padding(.vertical, 8)
+        }
+
         // MARK: body
 
         var body: some View {
-            ZStack(alignment: .bottomTrailing) {
-                Button {
-                    onSelect()
-                } label: {
-                    HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
-                        ZStack {
-                            Color.clear
-
-                            imageView(from: item)
-                                .failure {
-                                    SystemImageContentView(systemName: item.systemImage)
-                                }
-                        }
-                        .posterStyle(posterType)
-                        .frame(width: posterType == .landscape ? 110 : 60)
-                        .posterShadow()
-                        .padding(.vertical, 8)
-
-                        HStack {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text(item.displayTitle)
-                                    .font(posterType == .landscape ? .subheadline : .callout)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.primary)
-                                    .lineLimit(2)
-                                    .multilineTextAlignment(.leading)
-
-                                accessoryView
-                                    .font(.caption)
-                                    .foregroundColor(Color(UIColor.lightGray))
-                            }
-
-                            Spacer()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .onSizeChanged { newSize in
-                            contentWidth = newSize.width
-                        }
-                    }
-                }
-
-                Color.secondarySystemFill
-                    .frame(width: contentWidth, height: 1)
+            ListRow {
+                rowLeading
+            } content: {
+                rowContent
             }
-            .edgePadding(.horizontal)
+//            .edgePadding(.horizontal)
         }
     }
 }

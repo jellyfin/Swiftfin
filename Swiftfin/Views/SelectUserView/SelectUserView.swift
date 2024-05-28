@@ -319,7 +319,6 @@ struct SelectUserView: View {
                     listItemView(for: item)
                 }
             }
-            .edgePadding()
         }
     }
 
