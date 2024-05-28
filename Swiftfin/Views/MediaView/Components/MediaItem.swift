@@ -62,6 +62,7 @@ extension MediaView {
             }
         }
 
+        @ViewBuilder
         private var titleLabel: some View {
             Text(mediaType.displayTitle)
                 .font(.title2)

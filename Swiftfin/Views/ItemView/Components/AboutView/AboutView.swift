@@ -97,6 +97,7 @@ extension ItemView {
             return CGSize(width: width, height: height)
         }
 
+        @ViewBuilder
         private var imageView: some View {
             ZStack {
                 Color.clear

@@ -24,9 +24,6 @@ extension SelectUserView {
         @Environment(\.isSelected)
         private var isSelected
 
-        @State
-        private var contentSize: CGSize = .zero
-
         private let user: UserState
         private let server: ServerState
         private let showServer: Bool
@@ -53,6 +50,7 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
+        @ViewBuilder
         private var personView: some View {
             ZStack {
                 Group {
@@ -98,73 +96,62 @@ extension SelectUserView {
             .clipShape(.circle)
         }
 
+        @ViewBuilder
+        private var rowContent: some View {
+            HStack {
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+
+                    if showServer {
+                        Text(server.name)
+                            .font(.footnote)
+                            .foregroundColor(Color(UIColor.lightGray))
+                    }
+                }
+
+                Spacer()
+
+                if isEditing, isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.overlayColor, accentColor)
+
+                } else if isEditing {
+                    Image(systemName: "circle")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+
         var body: some View {
-            ZStack(alignment: .bottomTrailing) {
-                Button {
-                    action()
-                } label: {
-                    ZStack {
-                        Color.clear
-
-                        HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
-
-                            userImage
-                                .frame(width: 80)
-                                .padding(.vertical, 8)
-
-                            HStack {
-
-                                VStack(alignment: .leading, spacing: 5) {
-                                    Text(user.username)
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
-                                        .foregroundStyle(labelForegroundStyle)
-                                        .lineLimit(2)
-                                        .multilineTextAlignment(.leading)
-
-                                    if showServer {
-                                        Text(server.name)
-                                            .font(.footnote)
-                                            .foregroundColor(Color(UIColor.lightGray))
-                                    }
-                                }
-
-                                Spacer()
-
-                                if isEditing, isSelected {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .resizable()
-                                        .backport
-                                        .fontWeight(.bold)
-                                        .aspectRatio(1, contentMode: .fit)
-                                        .frame(width: 24, height: 24)
-                                        .symbolRenderingMode(.palette)
-                                        .foregroundStyle(accentColor.overlayColor, accentColor)
-
-                                } else if isEditing {
-                                    Image(systemName: "circle")
-                                        .resizable()
-                                        .backport
-                                        .fontWeight(.bold)
-                                        .aspectRatio(1, contentMode: .fit)
-                                        .frame(width: 24, height: 24)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .trackingSize($contentSize)
-                        }
-                    }
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                userImage
+                    .frame(width: 80)
+                    .padding(.vertical, 8)
+            } content: {
+                rowContent
+            }
+            .onSelect(perform: action)
+            .contextMenu {
+                Button("Delete", role: .destructive) {
+                    onDelete()
                 }
-                .contextMenu {
-                    Button("Delete", role: .destructive) {
-                        onDelete()
-                    }
-                }
-                .foregroundStyle(.primary, .secondary)
-
-                Color.secondarySystemFill
-                    .frame(width: contentSize.width, height: 1)
             }
         }
     }

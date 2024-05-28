@@ -60,6 +60,7 @@ struct SystemImageContentView: View {
         self.title = title
     }
 
+    @ViewBuilder
     private var imageView: some View {
         Image(systemName: systemName)
             .resizable()
