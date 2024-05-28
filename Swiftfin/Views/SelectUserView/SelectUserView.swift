@@ -354,6 +354,7 @@ struct SelectUserView: View {
         }
     }
 
+    @ViewBuilder
     private var deleteUsersButton: some View {
         Button {
             isPresentingConfirmDeleteUsers = true
@@ -453,6 +454,7 @@ struct SelectUserView: View {
 
     // MARK: emptyView
 
+    @ViewBuilder
     private var emptyView: some View {
         VStack(spacing: 10) {
             L10n.connectToJellyfinServerStart.text

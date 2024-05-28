@@ -25,6 +25,7 @@ extension ChannelLibraryView {
         private var onSelect: () -> Void
         private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
+        @ViewBuilder
         private var channelLogo: some View {
             VStack {
                 ZStack {

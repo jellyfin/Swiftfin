@@ -44,39 +44,54 @@ extension SelectUserView {
             self.servers = servers
         }
 
-        private var content: some View {
-            HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+        @ViewBuilder
+        private var rowContent: some View {
+            HStack {
 
-                ZStack {
-                    Group {
-                        if colorScheme == .light {
-                            Color.secondarySystemFill
-                        } else {
-                            Color.tertiarySystemBackground
-                        }
+                Text("Add User")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(isEnabled ? .primary : .secondary)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+
+                Spacer()
+            }
+        }
+
+        @ViewBuilder
+        private var rowLeading: some View {
+            ZStack {
+                Group {
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
                     }
-                    .posterShadow()
-
-                    RelativeSystemImageView(systemName: "plus")
-                        .foregroundStyle(.secondary)
                 }
-                .aspectRatio(1, contentMode: .fill)
-                .clipShape(.circle)
-                .frame(width: 80)
-                .padding(.vertical, 8)
+                .posterShadow()
 
-                HStack {
+                RelativeSystemImageView(systemName: "plus")
+                    .foregroundStyle(.secondary)
+            }
+            .aspectRatio(1, contentMode: .fill)
+            .clipShape(.circle)
+            .frame(width: 80)
+            .padding(.vertical, 8)
+        }
 
-                    Text("Add User")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(isEnabled ? .primary : .secondary)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
-
-                    Spacer()
+        @ViewBuilder
+        private var content: some View {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                rowLeading
+            } content: {
+                rowContent
+            }
+            .isSeparatorVisible(false)
+            .onSelect {
+                if let selectedServer {
+                    action(selectedServer)
                 }
-                .frame(maxWidth: .infinity)
             }
         }
 
@@ -100,15 +115,9 @@ extension SelectUserView {
                 .disabled(!isEnabled)
                 .foregroundStyle(.primary, .secondary)
             } else {
-                Button {
-                    if let selectedServer {
-                        action(selectedServer)
-                    }
-                } label: {
-                    content
-                }
-                .disabled(!isEnabled)
-                .foregroundStyle(.primary, .secondary)
+                content
+                    .disabled(!isEnabled)
+                    .foregroundStyle(.primary, .secondary)
             }
         }
     }

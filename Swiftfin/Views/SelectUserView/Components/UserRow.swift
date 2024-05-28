@@ -50,6 +50,7 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
+        @ViewBuilder
         private var personView: some View {
             ZStack {
                 Group {
@@ -139,7 +140,7 @@ extension SelectUserView {
         }
 
         var body: some View {
-            ListRow {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 userImage
                     .frame(width: 80)
                     .padding(.vertical, 8)

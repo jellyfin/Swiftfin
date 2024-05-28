@@ -233,6 +233,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,

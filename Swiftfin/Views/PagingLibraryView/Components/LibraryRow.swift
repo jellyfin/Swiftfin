@@ -18,7 +18,7 @@ extension PagingLibraryView {
         private var contentWidth: CGFloat = 0
 
         private let item: Element
-        private var onSelect: () -> Void
+        private var action: () -> Void
         private let posterType: PosterDisplayType
 
         private func imageView(from element: Element) -> ImageView {
@@ -107,12 +107,12 @@ extension PagingLibraryView {
         // MARK: body
 
         var body: some View {
-            ListRow {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 rowLeading
             } content: {
                 rowContent
             }
-//            .edgePadding(.horizontal)
+            .onSelect(perform: action)
         }
     }
 }
@@ -122,12 +122,12 @@ extension PagingLibraryView.LibraryRow {
     init(item: Element, posterType: PosterDisplayType) {
         self.init(
             item: item,
-            onSelect: {},
+            action: {},
             posterType: posterType
         )
     }
 
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+    func onSelect(perform action: @escaping () -> Void) -> Self {
+        copy(modifying: \.action, with: action)
     }
 }

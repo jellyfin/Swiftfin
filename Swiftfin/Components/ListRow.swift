@@ -13,45 +13,62 @@ import SwiftUI
 // Meant to be used when making a custom list without `List` or `Form`
 struct ListRow<Leading: View, Content: View>: View {
 
+    @State
+    private var contentSize: CGSize = .zero
+
     private let leading: () -> Leading
     private let content: () -> Content
     private var action: () -> Void
-    private var insets: CGFloat
+    private var insets: EdgeInsets
+    private var isSeparatorVisible: Bool
 
     var body: some View {
-        Button {
-            action()
-        } label: {
-            HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
+        ZStack(alignment: .bottomTrailing) {
 
-                leading()
+            Button {
+                action()
+            } label: {
+                HStack(alignment: .center, spacing: EdgeInsets.edgePadding) {
 
-                ZStack(alignment: .bottom) {
+                    leading()
+
                     content()
                         .frame(maxHeight: .infinity)
-
-                    Color.secondarySystemFill
-                        .frame(height: 1, alignment: .bottom)
+                        .trackingSize($contentSize)
                 }
+                .padding(.top, insets.top)
+                .padding(.bottom, insets.bottom)
+                .padding(.leading, insets.leading)
+                .padding(.trailing, insets.trailing)
             }
-            .padding()
+            .foregroundStyle(.primary, .secondary)
+
+            Color.secondarySystemFill
+                .frame(width: contentSize.width, height: 1)
+                .padding(.trailing, insets.trailing)
+                .visible(isSeparatorVisible)
         }
-        .foregroundStyle(.primary, .secondary)
     }
 }
 
 extension ListRow {
 
     init(
-        insets: CGFloat = 0,
+        insets: EdgeInsets = .zero,
         @ViewBuilder leading: @escaping () -> Leading,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
             leading: leading,
             content: content,
-            action: {}
+            action: {},
+            insets: insets,
+            isSeparatorVisible: true
         )
+    }
+
+    func isSeparatorVisible(_ isVisible: Bool) -> Self {
+        copy(modifying: \.isSeparatorVisible, with: isVisible)
     }
 
     func onSelect(perform action: @escaping () -> Void) -> Self {

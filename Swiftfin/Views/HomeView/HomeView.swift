@@ -29,6 +29,7 @@ struct HomeView: View {
     @StateObject
     private var viewModel = HomeViewModel()
 
+    @ViewBuilder
     private var contentView: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 10) {

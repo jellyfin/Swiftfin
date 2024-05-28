@@ -100,6 +100,7 @@ struct ConnectToServerView: View {
         .buttonStyle(.plain)
     }
 
+    @ViewBuilder
     private var localServersSection: some View {
         Section(L10n.localServers) {
             if viewModel.localServers.isEmpty {
