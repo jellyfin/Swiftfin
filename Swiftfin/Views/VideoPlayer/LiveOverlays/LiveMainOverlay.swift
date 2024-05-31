@@ -28,9 +28,6 @@ extension LiveVideoPlayer {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-
         @StateObject
         private var overlayTimer: TimerProxy = .init()
 
@@ -38,58 +35,58 @@ extension LiveVideoPlayer {
             ZStack {
                 VStack {
                     Overlay.LiveTopBarView()
-                        .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
-                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
-                        }
-                        .if(UIDevice.isPad) { view in
-                            view.padding(.top)
-                                .padding2(.horizontal)
-                        }
-                        .background {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .black.opacity(0.9), location: 0),
-                                    .init(color: .clear, location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .visible(playbackButtonType == .compact)
-                        }
-                        .visible(!isScrubbing && isPresentingOverlay)
+//                        .if(UIDevice.hasNotch) { view in
+//                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
+//                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+//                        }
+                            .if(UIDevice.isPad) { view in
+                                view.padding(.top)
+                                    .padding2(.horizontal)
+                            }
+                            .background {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .black.opacity(0.9), location: 0),
+                                        .init(color: .clear, location: 1),
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .visible(playbackButtonType == .compact)
+                            }
+                            .visible(!isScrubbing && isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     Overlay.LiveBottomBarView()
-                        .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
-                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
-                        }
-                        .if(UIDevice.isPad) { view in
-                            view.padding2(.bottom)
-                                .padding2(.horizontal)
-                        }
-                        .background {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0),
-                                    .init(color: .black.opacity(0.5), location: 0.5),
-                                    .init(color: .black.opacity(0.5), location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .visible(isScrubbing || playbackButtonType == .compact)
-                        }
-                        .background {
-                            Color.clear
-                                .allowsHitTesting(true)
-                                .contentShape(Rectangle())
-                                .allowsHitTesting(true)
-                        }
-                        .visible(isScrubbing || isPresentingOverlay)
+//                        .if(UIDevice.hasNotch) { view in
+//                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
+//                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
+//                        }
+                            .if(UIDevice.isPad) { view in
+                                view.padding2(.bottom)
+                                    .padding2(.horizontal)
+                            }
+                            .background {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .clear, location: 0),
+                                        .init(color: .black.opacity(0.5), location: 0.5),
+                                        .init(color: .black.opacity(0.5), location: 1),
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .visible(isScrubbing || playbackButtonType == .compact)
+                            }
+                            .background {
+                                Color.clear
+                                    .allowsHitTesting(true)
+                                    .contentShape(Rectangle())
+                                    .allowsHitTesting(true)
+                            }
+                            .visible(isScrubbing || isPresentingOverlay)
                 }
 
                 if playbackButtonType == .large {

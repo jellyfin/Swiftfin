@@ -18,21 +18,20 @@ extension VideoPlayer.Overlay {
         private var menuActionButtons
 
         @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-        @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
         @ViewBuilder
         private var advancedButton: some View {
-            Button {
-                splitContentViewProxy.present()
-            } label: {
-                HStack {
-                    Image(systemName: "gearshape.fill")
-
-                    Text(L10n.advanced)
-                }
-            }
+            Text("TODO")
+//            Button {
+//                splitContentViewProxy.present()
+//            } label: {
+//                HStack {
+//                    Image(systemName: "gearshape.fill")
+//
+//                    Text(L10n.advanced)
+//                }
+//            }
         }
 
         @ViewBuilder
