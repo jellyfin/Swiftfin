@@ -6,14 +6,35 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct SliderSection: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+extension VideoPlayerSettingsView {
+    struct SliderSection: View {
 
-#Preview {
-    SliderSection()
+        @Default(.VideoPlayer.Overlay.chapterSlider)
+        private var chapterSlider
+
+        @Default(.VideoPlayer.Overlay.sliderColor)
+        private var sliderColor
+
+        @Default(.VideoPlayer.Overlay.sliderType)
+        private var sliderType
+
+        @EnvironmentObject
+        private var router: VideoPlayerSettingsCoordinator.Router
+
+        var body: some View {
+            Section(L10n.slider) {
+
+                Toggle(L10n.chapterSlider, isOn: $chapterSlider)
+
+                ColorPicker(selection: $sliderColor, supportsOpacity: false) {
+                    Text(L10n.sliderColor)
+                }
+
+                CaseIterablePicker(L10n.sliderType, selection: $sliderType)
+            }
+        }
+    }
 }
