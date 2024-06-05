@@ -150,6 +150,8 @@
 		BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
 		BD0BA22E2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */; };
 		BD0BA22F2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */; };
+		BD3957752C112A330078CEF8 /* ButtonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3957742C112A330078CEF8 /* ButtonSection.swift */; };
+		BD3957772C112AD30078CEF8 /* SliderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3957762C112AD30078CEF8 /* SliderSection.swift */; };
 		C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
 		C44FA6E02AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44FA6DE2AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift */; };
 		C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = C44FA6DF2AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift */; };
@@ -1047,6 +1049,8 @@
 		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineVideoPlayerManager.swift; sourceTree = "<group>"; };
 		BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadVideoPlayerManager.swift; sourceTree = "<group>"; };
+		BD3957742C112A330078CEF8 /* ButtonSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonSection.swift; sourceTree = "<group>"; };
+		BD3957762C112AD30078CEF8 /* SliderSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderSection.swift; sourceTree = "<group>"; };
 		C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTypeLibraryViewModel.swift; sourceTree = "<group>"; };
 		C44FA6DE2AACD19C00EDEB56 /* LiveSmallPlaybackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveSmallPlaybackButton.swift; sourceTree = "<group>"; };
 		C44FA6DF2AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveLargePlaybackButtons.swift; sourceTree = "<group>"; };
@@ -3233,6 +3237,8 @@
 			children = (
 				E1BDF2EA2951491600CC0294 /* Components */,
 				E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */,
+				BD3957742C112A330078CEF8 /* ButtonSection.swift */,
+				BD3957762C112AD30078CEF8 /* SliderSection.swift */,
 			);
 			path = VideoPlayerSettingsView;
 			sourceTree = "<group>";
@@ -4515,6 +4521,7 @@
 				BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */,
 				E14EA1672BF70F9C00DE757A /* SquareImageCropView.swift in Sources */,
 				E1BDF2F529524E6400CC0294 /* PlayNextItemActionButton.swift in Sources */,
+				BD3957772C112AD30078CEF8 /* SliderSection.swift in Sources */,
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
 				E14EA1692BF7330A00DE757A /* UserProfileImageViewModel.swift in Sources */,
 				E18ACA952A15A3E100BB4F35 /* (null) in Sources */,
@@ -4592,6 +4599,7 @@
 				E11BDF972B865F550045C54A /* ItemTag.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
 				E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */,
+				BD3957752C112A330078CEF8 /* ButtonSection.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
 				E1194F502BEB1E3000888DB6 /* StoredValues+Temp.swift in Sources */,

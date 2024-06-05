@@ -13,23 +13,12 @@ struct VideoPlayerSettingsView: View {
 
     // TODO: Organize
 
-    @Default(.VideoPlayer.autoPlayEnabled)
-    private var autoPlayEnabled
-
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
-
-    @Default(.VideoPlayer.showJumpButtons)
-    private var showJumpButtons
-
-    @Default(.VideoPlayer.barActionButtons)
-    private var barActionButtons
-    @Default(.VideoPlayer.menuActionButtons)
-    private var menuActionButtons
 
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
@@ -40,8 +29,6 @@ struct VideoPlayerSettingsView: View {
 
     @Default(.VideoPlayer.Overlay.chapterSlider)
     private var chapterSlider
-    @Default(.VideoPlayer.Overlay.playbackButtonType)
-    private var playbackButtonType
     @Default(.VideoPlayer.Overlay.sliderColor)
     private var sliderColor
     @Default(.VideoPlayer.Overlay.sliderType)
@@ -89,27 +76,7 @@ struct VideoPlayerSettingsView: View {
                 Text(L10n.resumeOffsetDescription)
             }
 
-            Section(L10n.buttons) {
-
-                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
-
-                Toggle(isOn: $showJumpButtons) {
-                    HStack {
-                        Image(systemName: "goforward")
-                        Text(L10n.jump)
-                    }
-                }
-
-                ChevronButton(L10n.barButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $barActionButtons)
-                    }
-
-                ChevronButton(L10n.menuButtons)
-                    .onSelect {
-                        router.route(to: \.actionButtonSelector, $menuActionButtons)
-                    }
-            }
+            ButtonSection()
 
             Section(L10n.slider) {
 
@@ -162,11 +129,5 @@ struct VideoPlayerSettingsView: View {
             }
         }
         .navigationTitle(L10n.videoPlayer)
-        .onChange(of: barActionButtons) { newValue in
-            autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
-        }
-        .onChange(of: menuActionButtons) { newValue in
-            autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
-        }
     }
 }
