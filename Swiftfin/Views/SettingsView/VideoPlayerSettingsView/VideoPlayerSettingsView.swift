@@ -20,13 +20,6 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @Default(.VideoPlayer.Subtitle.subtitleFontName)
-    private var subtitleFontName
-    @Default(.VideoPlayer.Subtitle.subtitleSize)
-    private var subtitleSize
-    @Default(.VideoPlayer.Subtitle.subtitleColor)
-    private var subtitleColor
-
     @Default(.VideoPlayer.Overlay.trailingTimestampType)
     private var trailingTimestampType
     @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
@@ -73,29 +66,7 @@ struct VideoPlayerSettingsView: View {
 
             SliderSection()
 
-            Section {
-
-                ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
-                    .onSelect {
-                        router.route(to: \.fontPicker, $subtitleFontName)
-                    }
-
-                BasicStepper(
-                    title: L10n.subtitleSize,
-                    value: $subtitleSize,
-                    range: 8 ... 24,
-                    step: 1
-                )
-
-                ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text(L10n.subtitleColor)
-                }
-            } header: {
-                Text(L10n.subtitle)
-            } footer: {
-                // TODO: better wording
-                Text("Settings only affect some subtitle types")
-            }
+            SubtitleSection()
 
             Section(L10n.timestamp) {
 
