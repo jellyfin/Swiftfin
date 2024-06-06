@@ -47,7 +47,7 @@ struct UserSignInView: View {
     @State
     private var pinHint: String = ""
     @State
-    private var signInPolicy: UserAccessPolicy = .none
+    private var accessPolicy: UserAccessPolicy = .none
     @State
     private var username: String = ""
 
@@ -62,7 +62,7 @@ struct UserSignInView: View {
 
     private func openQuickConnect(needsPin: Bool = true) {
         Task {
-            switch signInPolicy {
+            switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(
@@ -84,21 +84,21 @@ struct UserSignInView: View {
 
     private func signInUserPassword(needsPin: Bool = true) {
         Task {
-            switch signInPolicy {
+            switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
-                        viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+                        viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
                     }
                     isPresentingLocalPin = true
                     return
                 }
             }
 
-            viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+            viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
         }
     }
 
@@ -185,7 +185,7 @@ struct UserSignInView: View {
         } header: {
             Text(L10n.signInToServer(viewModel.server.name))
         } footer: {
-            switch signInPolicy {
+            switch accessPolicy {
             case .requireDeviceAuthentication:
                 HStack {
                     Image(systemName: "exclamationmark.circle.fill")
@@ -300,10 +300,10 @@ struct UserSignInView: View {
         .onChange(of: pinHint) { newValue in
             StoredValues[.Temp.userLocalPinHint] = newValue
         }
-        .onChange(of: signInPolicy) { newValue in
+        .onChange(of: accessPolicy) { newValue in
             // necessary for Quick Connect sign in, but could
             // just use for general sign in
-            StoredValues[.Temp.userSignInPolicy] = newValue
+            StoredValues[.Temp.userAccessPolicy] = newValue
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -337,7 +337,7 @@ struct UserSignInView: View {
             Button("Security", systemImage: "gearshape.fill") {
                 let parameters = UserSignInCoordinator.SecurityParameters(
                     pinHint: $pinHint,
-                    signInPolicy: $signInPolicy
+                    accessPolicy: $accessPolicy
                 )
                 router.route(to: \.security, parameters)
             }
