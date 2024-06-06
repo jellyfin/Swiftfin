@@ -272,8 +272,6 @@ struct UserSignInView: View {
         }
     }
 
-    // TODO: Received this error:
-    // The compiler is unable to type-check this expression in reasonable time; try breaking up the expression into distinct sub-expressions
     var body: some View {
         List {
             signInSection
