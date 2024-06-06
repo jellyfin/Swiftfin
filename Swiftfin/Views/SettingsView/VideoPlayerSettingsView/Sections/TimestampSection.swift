@@ -19,9 +19,6 @@ extension VideoPlayerSettingsView {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
-        @EnvironmentObject
-        private var router: VideoPlayerSettingsCoordinator.Router
-
         var body: some View {
             Section(L10n.timestamp) {
 

@@ -11,8 +11,6 @@ import SwiftUI
 
 struct VideoPlayerSettingsView: View {
 
-    // TODO: Organize
-
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
