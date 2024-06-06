@@ -18,6 +18,8 @@ struct HomeView: View {
 
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
+    @Default(.Customization.showRecentlyAdded)
+    private var showRecentlyAdded
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
 
@@ -38,7 +40,9 @@ struct HomeView: View {
 
                 NextUpView(homeViewModel: viewModel)
 
-                RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                if showRecentlyAdded {
+                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                }
 
                 ForEach(viewModel.libraries) { viewModel in
                     LatestInLibraryView(viewModel: viewModel)

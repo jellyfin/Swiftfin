@@ -19,6 +19,9 @@ struct HomeView: View {
     @StateObject
     private var viewModel = HomeViewModel()
 
+    @Default(.Customization.showRecentlyAdded)
+    private var showRecentlyAdded
+
     @ViewBuilder
     private var contentView: some View {
         ScrollView {
@@ -29,10 +32,13 @@ struct HomeView: View {
 
                     NextUpView(viewModel: viewModel.nextUpViewModel)
 
-                    RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                    if showRecentlyAdded {
+                        RecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                    }
                 } else {
-                    CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
-
+                    if showRecentlyAdded {
+                        CinematicRecentlyAddedView(viewModel: viewModel.recentlyAddedViewModel)
+                    }
                     NextUpView(viewModel: viewModel.nextUpViewModel)
                 }
 
