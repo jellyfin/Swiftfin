@@ -304,7 +304,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         user.data = StoredValues[.Temp.userData]
-        user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
+        user.accessPolicy = StoredValues[.Temp.userSignInPolicy]
 
         keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
         user.pinHint = StoredValues[.Temp.userLocalPinHint]

@@ -15,7 +15,7 @@ final class UserSignInCoordinator: NavigationCoordinatable {
 
     struct SecurityParameters {
         let pinHint: Binding<String>
-        let signInPolicy: Binding<UserAccessPolicy>
+        let accessPolicy: Binding<UserAccessPolicy>
     }
 
     let stack = NavigationStack(initial: \UserSignInCoordinator.start)
@@ -48,7 +48,7 @@ final class UserSignInCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator {
             UserSignInView.SecurityView(
                 pinHint: parameters.pinHint,
-                signInPolicy: parameters.signInPolicy
+                accessPolicy: parameters.accessPolicy
             )
         }
     }

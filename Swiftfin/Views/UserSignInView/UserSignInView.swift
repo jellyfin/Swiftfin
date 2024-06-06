@@ -104,7 +104,7 @@ struct UserSignInView: View {
 
     private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
         Task {
-            switch user.signInPolicy {
+            switch user.accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
