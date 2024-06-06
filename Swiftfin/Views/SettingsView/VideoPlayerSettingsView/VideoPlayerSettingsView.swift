@@ -20,11 +20,6 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset
 
-    @Default(.VideoPlayer.Transition.pauseOnBackground)
-    private var pauseOnBackground
-    @Default(.VideoPlayer.Transition.playOnActive)
-    private var playOnActive
-
     @EnvironmentObject
     private var router: VideoPlayerSettingsCoordinator.Router
 
@@ -63,11 +58,7 @@ struct VideoPlayerSettingsView: View {
 
             TimestampSection()
 
-            Section(L10n.transition) {
-
-                Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
-                Toggle(L10n.playOnActive, isOn: $playOnActive)
-            }
+            TransitionSection()
         }
         .navigationTitle(L10n.videoPlayer)
     }
