@@ -37,6 +37,27 @@ struct ConnectToServerView: View {
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
 
+    private func handleConnection(_ event: ConnectToServerViewModel.Event) {
+        switch event {
+        case let .connected(server):
+            UIDevice.feedback(.success)
+
+            Notifications[.didConnectToServer].post(object: server)
+            router.popLast()
+        case let .duplicateServer(server):
+            UIDevice.feedback(.warning)
+
+            duplicateServer = server
+            isPresentingDuplicateServer = true
+        case let .error(eventError):
+            UIDevice.feedback(.error)
+
+            error = eventError
+            isPresentingError = true
+            isURLFocused = true
+        }
+    }
+
     @ViewBuilder
     private var connectSection: some View {
         Section(L10n.connectToServer) {
@@ -126,24 +147,7 @@ struct ConnectToServerView: View {
             viewModel.send(.searchForServers)
         }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case let .connected(server):
-                UIDevice.feedback(.success)
-
-                Notifications[.didConnectToServer].post(object: server)
-                router.popLast()
-            case let .duplicateServer(server):
-                UIDevice.feedback(.warning)
-
-                duplicateServer = server
-                isPresentingDuplicateServer = true
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-
-                error = eventError
-                isPresentingError = true
-                isURLFocused = true
-            }
+            handleConnection(event)
         }
         .onReceive(timer) { _ in
             guard viewModel.state != .connecting else { return }
