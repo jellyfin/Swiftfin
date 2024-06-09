@@ -58,6 +58,27 @@ struct UserSignInView: View {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
+    private func handleSignIn(_ event: UserSignInViewModel.Event) {
+        switch event {
+        case let .duplicateUser(duplicateUser):
+            UIDevice.impact(.medium)
+
+            self.duplicateUser = duplicateUser
+            isPresentingDuplicateUser = true
+        case let .error(eventError):
+            UIDevice.feedback(.error)
+
+            error = eventError
+            isPresentingError = true
+        case let .signedIn(user):
+            UIDevice.feedback(.success)
+
+            Defaults[.lastSignedInUserID] = user.id
+            UserSession.current.reset()
+            Notifications[.didSignIn].post()
+        }
+    }
+
     // TODO: don't have multiple ways to handle device authentication vs required pin
 
     private func openQuickConnect(needsPin: Bool = true) {
@@ -369,27 +390,6 @@ struct UserSignInView: View {
             Button(L10n.cancel, role: .cancel) {}
         } message: { _ in
             Text("Set pin for new user.")
-        }
-    }
-
-    func handleSignIn(_ event: UserSignInViewModel.Event) {
-        switch event {
-        case let .duplicateUser(duplicateUser):
-            UIDevice.impact(.medium)
-
-            self.duplicateUser = duplicateUser
-            isPresentingDuplicateUser = true
-        case let .error(eventError):
-            UIDevice.feedback(.error)
-
-            error = eventError
-            isPresentingError = true
-        case let .signedIn(user):
-            UIDevice.feedback(.success)
-
-            Defaults[.lastSignedInUserID] = user.id
-            UserSession.current.reset()
-            Notifications[.didSignIn].post()
         }
     }
 }
