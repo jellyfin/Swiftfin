@@ -3254,7 +3254,6 @@
 			isa = PBXGroup;
 			children = (
 				E1BDF2EA2951491600CC0294 /* Components */,
-				BD39577A2C113F780078CEF8 /* Sections */,
 				E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */,
 			);
 			path = VideoPlayerSettingsView;
@@ -3264,6 +3263,7 @@
 			isa = PBXGroup;
 			children = (
 				E1BDF2E82951490400CC0294 /* ActionButtonSelectorView.swift */,
+				BD39577A2C113F780078CEF8 /* Sections */,
 			);
 			path = Components;
 			sourceTree = "<group>";
