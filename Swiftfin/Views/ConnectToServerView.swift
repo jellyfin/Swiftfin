@@ -36,7 +36,7 @@ struct ConnectToServerView: View {
     private var viewModel = ConnectToServerViewModel()
 
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
-    
+
     private func handleConnection(_ event: ConnectToServerViewModel.Event) {
         switch event {
         case let .connected(server):
