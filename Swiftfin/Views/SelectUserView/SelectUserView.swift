@@ -139,7 +139,7 @@ struct SelectUserView: View {
         Task { @MainActor in
             selectedUsers.insert(user)
 
-            switch user.signInPolicy {
+            switch user.accessPolicy {
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
             case .requirePin:

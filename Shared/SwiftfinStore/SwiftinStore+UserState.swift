@@ -72,8 +72,7 @@ extension UserState {
         }
     }
 
-    // TODO: rename to accessPolicy and fix all uses
-    var signInPolicy: UserAccessPolicy {
+    var accessPolicy: UserAccessPolicy {
         get {
             StoredValues[.User.accessPolicy(id: id)]
         }
