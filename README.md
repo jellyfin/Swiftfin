@@ -19,15 +19,20 @@
 
 ## ⚡️ Download
 
-**✨New! Available on the App Store**
-
-Learn more on our [announcement post](https://jellyfin.org/posts/2022/12/29/swiftfin/).
-
 <a href="https://apps.apple.com/us/app/swiftfin/id1604098728">
   <img height=75 alt="Download on the Apple App Store" src="./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"/>
 </a>
 
-A [TestFlight](./TESTFLIGHT.md) instance is also available.
+## 🛠️ TestFlight
+
+Use the TestFlight version to test new features and bug fixes before being published to the App Store. We are grateful for your time and resources for reporting new bugs.
+
+> [!NOTE]
+> As of June 11, 2024, only iOS has a TestFlight version. tvOS is planned for the near future.
+
+<a href="https://testflight.apple.com/join/SqNPfdxq">
+  <img height=75 alt="Get the beta on TestFlight" src="./Resources/Get_the_beta_on_Testflight.svg"/>
+</a>
 
 ## ⚙️ Development
 
