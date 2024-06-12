@@ -15,7 +15,7 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @Injected(Container.downloadManager)
+        @Injected(\.downloadManager)
         private var downloadManager: DownloadManager
 
         @EnvironmentObject
