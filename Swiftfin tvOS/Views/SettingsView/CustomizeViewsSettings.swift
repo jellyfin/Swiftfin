@@ -94,9 +94,9 @@ struct CustomizeViewsSettings: View {
                     Toggle("Random Image", isOn: $libraryRandomImage)
 
                     Toggle("Show Favorites", isOn: $showFavorites)
-                    
+
                     Toggle("Show Recently Added", isOn: $showRecentlyAdded)
-                    
+
                 } header: {
                     L10n.library.text
                 }
