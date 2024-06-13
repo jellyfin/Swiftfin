@@ -12,13 +12,6 @@ import Foundation
 import JellyfinAPI
 
 extension Container {
-
-//    static let downloadManager = Factory(scope: .singleton) {
-//        let manager = DownloadManager()
-//        manager.clearTmp()
-//        return manager
-//    }
-
     var downloadManager: Factory<DownloadManager> { self { DownloadManager() }.shared }
 }
 

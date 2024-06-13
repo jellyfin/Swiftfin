@@ -26,11 +26,6 @@ extension Container {
 }
 
 struct LogManager {
-
-//    static let service = Factory<Logger>(scope: .singleton) {
-//        Logger(label: "org.jellyfin.swiftfin")
-//    }
-
     // TODO: make rules for logging sessions and redacting
 
 //    static let pulseNetworkLogger = Factory<NetworkLogger>(scope: .singleton) {
