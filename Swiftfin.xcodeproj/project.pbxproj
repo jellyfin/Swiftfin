@@ -4637,11 +4637,8 @@
 				E18CE0AF28A222240092E7F1 /* PublicUserRow.swift in Sources */,
 				E129429828F4785200796AC6 /* CaseIterablePicker.swift in Sources */,
 				E18E01E5288747230022598C /* CinematicScrollView.swift in Sources */,
-<<<<<<< HEAD
 				E154965E296CA2EF00C4EF88 /* DownloadEntity.swift in Sources */,
 				4EF7A3E22C031FEB00CC58A2 /* LetterPickerOverflow.swift in Sources */,
-=======
->>>>>>> main
 				E154965E296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				535BAE9F2649E569005FA86D /* ItemView.swift in Sources */,
 				E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
@@ -4755,11 +4752,8 @@
 				E1BAFE102BE921270069C4D7 /* SwiftfinApp+ValueObservation.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */,
-<<<<<<< HEAD
 				9A46E1BF2C04AFE40000FF76 /* OfflineiPadOSMovieItemView.swift in Sources */,
-=======
 				E1A8FDEC2C0574A800D0A51C /* ListRow.swift in Sources */,
->>>>>>> main
 				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
 				E1194F4E2BEABA9100888DB6 /* NavigationBarCloseButton.swift in Sources */,
 				9A46E2072C04AFF90000FF76 /* OfflineAttributeHStack.swift in Sources */,
@@ -4804,12 +4798,8 @@
 				E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */,
 				E102313B2BCF8A3C009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1937A61288F32DB00CB80AA /* Poster.swift in Sources */,
-<<<<<<< HEAD
-				E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanModifier.swift in Sources */,
 				9A46E1BD2C04AFE40000FF76 /* OfflineiPadOSEpisodeItemView.swift in Sources */,
-=======
 				E145EB482BE0C136003BF6F3 /* ScrollIfLargerThanContainerModifier.swift in Sources */,
->>>>>>> main
 				E1CAF65F2BA345830087D991 /* MediaViewModel.swift in Sources */,
 				E1EA9F6A28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */,
 				E133328D2953AE4B00EE76AB /* CircularProgressView.swift in Sources */,
