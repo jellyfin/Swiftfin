@@ -47,7 +47,7 @@ struct UserSignInView: View {
     @State
     private var pinHint: String = ""
     @State
-    private var signInPolicy: UserAccessPolicy = .none
+    private var accessPolicy: UserAccessPolicy = .none
     @State
     private var username: String = ""
 
@@ -58,11 +58,32 @@ struct UserSignInView: View {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
 
+    private func handleSignIn(_ event: UserSignInViewModel.Event) {
+        switch event {
+        case let .duplicateUser(duplicateUser):
+            UIDevice.impact(.medium)
+
+            self.duplicateUser = duplicateUser
+            isPresentingDuplicateUser = true
+        case let .error(eventError):
+            UIDevice.feedback(.error)
+
+            error = eventError
+            isPresentingError = true
+        case let .signedIn(user):
+            UIDevice.feedback(.success)
+
+            Defaults[.lastSignedInUserID] = user.id
+            UserSession.current.reset()
+            Notifications[.didSignIn].post()
+        }
+    }
+
     // TODO: don't have multiple ways to handle device authentication vs required pin
 
     private func openQuickConnect(needsPin: Bool = true) {
         Task {
-            switch signInPolicy {
+            switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(
@@ -84,27 +105,27 @@ struct UserSignInView: View {
 
     private func signInUserPassword(needsPin: Bool = true) {
         Task {
-            switch signInPolicy {
+            switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
-                        viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+                        viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
                     }
                     isPresentingLocalPin = true
                     return
                 }
             }
 
-            viewModel.send(.signIn(username: username, password: password, policy: signInPolicy))
+            viewModel.send(.signIn(username: username, password: password, policy: accessPolicy))
         }
     }
 
     private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
         Task {
-            switch user.signInPolicy {
+            switch user.accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
                 try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
@@ -185,7 +206,7 @@ struct UserSignInView: View {
         } header: {
             Text(L10n.signInToServer(viewModel.server.name))
         } footer: {
-            switch signInPolicy {
+            switch accessPolicy {
             case .requireDeviceAuthentication:
                 HStack {
                     Image(systemName: "exclamationmark.circle.fill")
@@ -298,30 +319,13 @@ struct UserSignInView: View {
         .onChange(of: pinHint) { newValue in
             StoredValues[.Temp.userLocalPinHint] = newValue
         }
-        .onChange(of: signInPolicy) { newValue in
+        .onChange(of: accessPolicy) { newValue in
             // necessary for Quick Connect sign in, but could
             // just use for general sign in
-            StoredValues[.Temp.userSignInPolicy] = newValue
+            StoredValues[.Temp.userAccessPolicy] = newValue
         }
         .onReceive(viewModel.events) { event in
-            switch event {
-            case let .duplicateUser(duplicateUser):
-                UIDevice.impact(.medium)
-
-                self.duplicateUser = duplicateUser
-                isPresentingDuplicateUser = true
-            case let .error(eventError):
-                UIDevice.feedback(.error)
-
-                error = eventError
-                isPresentingError = true
-            case let .signedIn(user):
-                UIDevice.feedback(.success)
-
-                Defaults[.lastSignedInUserID] = user.id
-                UserSession.current.reset()
-                Notifications[.didSignIn].post()
-            }
+            handleSignIn(event)
         }
         .onFirstAppear {
             focusedTextField = 0
@@ -335,7 +339,7 @@ struct UserSignInView: View {
             Button("Security", systemImage: "gearshape.fill") {
                 let parameters = UserSignInCoordinator.SecurityParameters(
                     pinHint: $pinHint,
-                    signInPolicy: $signInPolicy
+                    accessPolicy: $accessPolicy
                 )
                 router.route(to: \.security, parameters)
             }

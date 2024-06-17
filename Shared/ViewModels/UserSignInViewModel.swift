@@ -92,7 +92,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
                     guard let self else { return }
 
                     Task {
-                        await self.send(.signInQuickConnect(secret: secret, policy: StoredValues[.Temp.userSignInPolicy]))
+                        await self.send(.signInQuickConnect(secret: secret, policy: StoredValues[.Temp.userAccessPolicy]))
                     }
                 }
             }
@@ -236,7 +236,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         StoredValues[.Temp.userData] = userData
-        StoredValues[.Temp.userSignInPolicy] = policy
+        StoredValues[.Temp.userAccessPolicy] = policy
 
         let newState = UserState(
             id: id,
@@ -263,7 +263,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         StoredValues[.Temp.userData] = userData
-        StoredValues[.Temp.userSignInPolicy] = policy
+        StoredValues[.Temp.userAccessPolicy] = policy
 
         let newState = UserState(
             id: id,
@@ -304,13 +304,13 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
         }
 
         user.data = StoredValues[.Temp.userData]
-        user.signInPolicy = StoredValues[.Temp.userSignInPolicy]
+        user.accessPolicy = StoredValues[.Temp.userAccessPolicy]
 
         keychain.set(StoredValues[.Temp.userLocalPin], forKey: "\(user.id)-pin")
         user.pinHint = StoredValues[.Temp.userLocalPinHint]
 
         // TODO: remove when implemented periodic cleanup elsewhere
-        StoredValues[.Temp.userSignInPolicy] = .none
+        StoredValues[.Temp.userAccessPolicy] = .none
         StoredValues[.Temp.userLocalPin] = ""
         StoredValues[.Temp.userLocalPinHint] = ""
     }

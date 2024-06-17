@@ -144,6 +144,7 @@ struct PagingLibraryView<Element: Poster>: View {
         Button(item.displayTitle)
     }
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,

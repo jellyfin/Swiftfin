@@ -30,6 +30,7 @@ extension UserSignInView {
             self.action = action
         }
 
+        @ViewBuilder
         private var personView: some View {
             ZStack {
                 Group {

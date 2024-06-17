@@ -20,6 +20,7 @@ struct MediaView: View {
     @StateObject
     private var viewModel = MediaViewModel()
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.mediaItems,

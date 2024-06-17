@@ -158,7 +158,7 @@ struct UserLocalSecurityView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             pinHint = viewModel.userSession.user.pinHint
-            signInPolicy = viewModel.userSession.user.signInPolicy
+            signInPolicy = viewModel.userSession.user.accessPolicy
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -210,7 +210,7 @@ struct UserLocalSecurityView: View {
                 checkOldPolicy()
             } label: {
                 Group {
-                    if signInPolicy == .requirePin, signInPolicy == viewModel.userSession.user.signInPolicy {
+                    if signInPolicy == .requirePin, signInPolicy == viewModel.userSession.user.accessPolicy {
                         Text("Change Pin")
                     } else {
                         Text("Save")

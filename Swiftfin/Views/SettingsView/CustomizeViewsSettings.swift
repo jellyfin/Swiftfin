@@ -38,6 +38,8 @@ struct CustomizeViewsSettings: View {
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
+    @Default(.Customization.showRecentlyAdded)
+    private var showRecentlyAdded
     @Default(.Customization.latestInLibraryPosterType)
     private var latestInLibraryPosterType
     @Default(.Customization.similarPosterType)
@@ -158,6 +160,10 @@ struct CustomizeViewsSettings: View {
                         step: 1
                     )
                 }
+            }
+
+            Section("Home") {
+                Toggle("Show recently added", isOn: $showRecentlyAdded)
             }
 
             Section {

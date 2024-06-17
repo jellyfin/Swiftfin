@@ -23,8 +23,7 @@ struct AboutAppView: View {
                         .aspectRatio(1, contentMode: .fit)
                         .frame(height: 150)
 
-                    // App name, not to be localized
-                    Text("Swiftfin")
+                    Text(verbatim: "Swiftfin")
                         .fontWeight(.semibold)
                         .font(.title2)
                 }
