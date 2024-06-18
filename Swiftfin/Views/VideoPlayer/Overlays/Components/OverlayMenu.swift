@@ -83,6 +83,20 @@ extension VideoPlayer.Overlay {
         }
 
         @ViewBuilder
+        private var lockOverlayButton: some View {
+            ActionButtons.LockOverlay { lockOverlayEnabled in
+                HStack {
+                    if lockOverlayEnabled {
+                        Image(systemName: "lock.fill")
+                    } else {
+                        Image(systemName: "lock.open")
+                    }
+                    L10n.lockOverlay.text
+                }
+            }
+        }
+
+        @ViewBuilder
         private var chaptersButton: some View {
             if viewModel.chapters.isNotEmpty {
                 ActionButtons.Chapters {
@@ -159,6 +173,8 @@ extension VideoPlayer.Overlay {
                         audioTrackMenu
                     case .autoPlay:
                         autoPlayButton
+                    case .lockOverlay:
+                        lockOverlayButton
                     case .chapters:
                         chaptersButton
                     case .playbackSpeed:

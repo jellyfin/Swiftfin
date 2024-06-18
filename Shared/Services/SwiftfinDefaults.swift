@@ -172,6 +172,7 @@ extension Defaults.Keys {
     enum VideoPlayer {
 
         static let autoPlayEnabled: Key<Bool> = UserKey("autoPlayEnabled", default: true)
+        static let lockOverlayEnabled: Key<Bool> = UserKey("lockOverlayEnabled", default: false)
         static let barActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "barActionButtons",
             default: VideoPlayerActionButton.defaultBarActionButtons

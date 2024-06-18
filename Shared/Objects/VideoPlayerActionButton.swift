@@ -21,6 +21,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
     case playNextItem
     case playPreviousItem
     case subtitles
+    case lockOverlay
 
     var displayTitle: String {
         switch self {
@@ -32,6 +33,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
             return "Audio"
         case .autoPlay:
             return "Auto Play"
+        case .lockOverlay:
+            return "Lock Overlay"
         case .chapters:
             return "Chapters"
         case .playbackSpeed:
@@ -59,6 +62,8 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
             return "speaker.wave.2"
         case .autoPlay:
             return "play.circle.fill"
+        case .lockOverlay:
+            return "lock.fill"
         case .chapters:
             return "list.bullet.circle"
         case .playbackSpeed:
