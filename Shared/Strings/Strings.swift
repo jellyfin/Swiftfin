@@ -236,6 +236,8 @@ internal enum L10n {
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
   /// Local Servers
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local Servers")
+  /// Toggle Lock Overlay
+  internal static let lockOverlay = L10n.tr("Localizable", "lockOverlay", fallback: "Toggle Lock Overlay")
   /// Login
   internal static let login = L10n.tr("Localizable", "login", fallback: "Login")
   /// Login to %@
