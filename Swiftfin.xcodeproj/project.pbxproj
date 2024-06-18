@@ -175,6 +175,7 @@
 		C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */; };
 		C46DD8EF2A8FB56E0046A504 /* LiveBottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */; };
 		C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* MediaView.swift */; };
+		DAE4532E2C22001300AEBEAE /* LockOverlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE4532D2C22001300AEBEAE /* LockOverlayButton.swift */; };
 		E1002B642793CEE800E47059 /* ChapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfo.swift */; };
 		E1002B652793CEE800E47059 /* ChapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfo.swift */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
@@ -1075,6 +1076,7 @@
 		C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMainOverlay.swift; sourceTree = "<group>"; };
 		C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveBottomBarView.swift; sourceTree = "<group>"; };
 		C4E508172703E8190045C9AB /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
+		DAE4532D2C22001300AEBEAE /* LockOverlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockOverlayButton.swift; sourceTree = "<group>"; };
 		E1002B632793CEE700E47059 /* ChapterInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterInfo.swift; sourceTree = "<group>"; };
 		E10231292BCF8A08009D71FC /* iOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
 		E102312A2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tvOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
@@ -3281,6 +3283,7 @@
 				E1BDF2F429524E6400CC0294 /* PlayNextItemActionButton.swift */,
 				E1BDF2F829524FDA00CC0294 /* PlayPreviousItemActionButton.swift */,
 				E1BDF2FA2952502300CC0294 /* SubtitleActionButton.swift */,
+				DAE4532D2C22001300AEBEAE /* LockOverlayButton.swift */,
 			);
 			path = ActionButtons;
 			sourceTree = "<group>";
@@ -4466,6 +4469,7 @@
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */,
 				E43918662AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
+				DAE4532E2C22001300AEBEAE /* LockOverlayButton.swift in Sources */,
 				E1579EA72B97DC1500A31CA1 /* Eventful.swift in Sources */,
 				E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */,
 				E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,

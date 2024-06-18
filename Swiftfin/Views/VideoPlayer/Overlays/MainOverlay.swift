@@ -16,6 +16,9 @@ extension VideoPlayer {
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
 
+        @Default(.VideoPlayer.lockOverlayEnabled)
+        private var lockOverlayEnabled
+
         @Environment(\.currentOverlayType)
         @Binding
         private var currentOverlayType
@@ -61,7 +64,6 @@ extension VideoPlayer {
 
                     Spacer()
                         .allowsHitTesting(false)
-
                     Overlay.BottomBarView()
                         .if(UIDevice.hasNotch) { view in
                             view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
@@ -89,18 +91,18 @@ extension VideoPlayer {
                                 .contentShape(Rectangle())
                                 .allowsHitTesting(true)
                         }
-                        .visible(isScrubbing || isPresentingOverlay)
+                        .visible(isScrubbing || isPresentingOverlay && !lockOverlayEnabled)
                 }
 
                 if playbackButtonType == .large {
                     Overlay.LargePlaybackButtons()
-                        .visible(!isScrubbing && isPresentingOverlay)
+                        .visible(!isScrubbing && isPresentingOverlay && !lockOverlayEnabled)
                 }
             }
             .environmentObject(overlayTimer)
             .background {
                 Color.black
-                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
+                    .opacity(!isScrubbing && playbackButtonType == .large && !lockOverlayEnabled && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
