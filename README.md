@@ -2,10 +2,14 @@
   <img alt="Swiftfin" src="./Resources/primary-wide.svg">
 
   <h1>Swiftfin</h1>
+  <img src="https://img.shields.io/badge/iOS-15+-red"/>
+  <img src="https://img.shields.io/badge/tvOS-17+-red"/>
+  <img src="https://img.shields.io/badge/Jellyfin-10.8.13-9962be"/>
+  
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
   </a>
-  <a href="https://matrix.to/#/+jellyfin:matrix.org">
+  <a href="https://matrix.to/#/#jellyfin:matrix.org">
     <img src="https://img.shields.io/matrix/jellyfin:matrix.org">
   </a>
   <a href="https://discord.gg/zHBxVSXdBV">
