@@ -57,6 +57,8 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var isRecursive: Bool? = true
 
         // TODO: determine `includeItemTypes` better
+        //       - look at parent collection type if necessary
+        //       - condense supported values
 
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {
