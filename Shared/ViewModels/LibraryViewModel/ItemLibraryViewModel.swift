@@ -56,11 +56,15 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         var includeItemTypes: [BaseItemKind] = [.movie, .series, .boxSet]
         var isRecursive: Bool? = true
 
+        // TODO: determine `includeItemTypes` better
+        //       - look at parent collection type if necessary
+        //       - condense supported values
+
         if let libraryType = parent?.libraryType, let id = parent?.id {
             switch libraryType {
-            case .collectionFolder:
+            case .collectionFolder, .userView:
                 libraryID = id
-            case .folder, .userView:
+            case .folder:
                 libraryID = id
                 isRecursive = nil
                 includeItemTypes = [.movie, .series, .boxSet, .folder, .collectionFolder]
