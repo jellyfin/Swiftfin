@@ -45,7 +45,7 @@ struct DownloadTaskButton: View {
 extension DownloadTaskButton {
 
     init(item: BaseItemDto) {
-        let downloadManager = Container.shared.downloadManager.resolve()
+        let downloadManager = Container.shared.downloadManager()
 
         self.downloadTask = downloadManager.task(for: item) ?? .init(item: item)
         self.onSelect = { _ in }

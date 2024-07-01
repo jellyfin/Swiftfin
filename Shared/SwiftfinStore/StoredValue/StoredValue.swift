@@ -126,7 +126,7 @@ extension StoredValue {
                         domain: key.domain
                     )
                 } catch {
-                    Container.shared.logService.resolve().error("Unable to store and create publisher for: \(key)")
+                    Container.shared.logService().error("Unable to store and create publisher for: \(key)")
 
                     return nil
                 }

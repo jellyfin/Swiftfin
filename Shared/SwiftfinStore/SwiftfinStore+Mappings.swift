@@ -34,7 +34,7 @@ extension SwiftfinStore.Mappings {
 
                         // move access token to Keychain
                         if let id = sourceObject["id"] as? String, let accessToken = sourceObject["accessToken"] as? String {
-                            Container.shared.keychainService.resolve().set(accessToken, forKey: "\(id)-accessToken")
+                            Container.shared.keychainService().set(accessToken, forKey: "\(id)-accessToken")
                         } else {
                             fatalError("wtf")
                         }

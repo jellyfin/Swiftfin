@@ -68,7 +68,7 @@ extension SwiftfinStore {
                 case .success:
                     continuation.resume()
                 case let .failure(error):
-                    Container.shared.logService.resolve().error("Failed creating datastack with: \(error.localizedDescription)")
+                    Container.shared.logService().error("Failed creating datastack with: \(error.localizedDescription)")
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }

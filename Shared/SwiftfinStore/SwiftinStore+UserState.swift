@@ -43,7 +43,7 @@ extension UserState {
 
     var accessToken: String {
         get {
-            guard let accessToken = Container.shared.keychainService.resolve().get("\(id)-accessToken") else {
+            guard let accessToken = Container.shared.keychainService().get("\(id)-accessToken") else {
                 assertionFailure("access token missing in keychain")
                 return ""
             }
@@ -51,7 +51,7 @@ extension UserState {
             return accessToken
         }
         nonmutating set {
-            Container.shared.keychainService.resolve().set(newValue, forKey: "\(id)-accessToken")
+            Container.shared.keychainService().set(newValue, forKey: "\(id)-accessToken")
         }
     }
 
@@ -102,7 +102,7 @@ extension UserState {
 
         UserDefaults.userSuite(id: id).removeAll()
 
-        let keychain = Container.shared.keychainService.resolve()
+        let keychain = Container.shared.keychainService()
         keychain.delete("\(id)-pin")
     }
 
@@ -130,7 +130,7 @@ extension UserState {
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger.resolve()),
+            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger()),
             accessToken: accessToken
         )
 

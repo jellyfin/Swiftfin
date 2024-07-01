@@ -38,7 +38,7 @@ final class MainCoordinator: NavigationCoordinatable {
             do {
                 try await SwiftfinStore.setupDataStack()
 
-                if Container.shared.currentUserSession.resolve() != nil {
+                if Container.shared.currentUserSession() != nil {
                     await MainActor.run {
                         withAnimation(.linear(duration: 0.1)) {
                             let _ = root(\.mainTab)
