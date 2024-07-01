@@ -57,7 +57,7 @@ struct UserSignInView: View {
                     focusedTextField = 1
                 }
 
-            TextField(L10n.password, text: $password) {
+            SecureField(L10n.password, text: $password) {
                 focusedTextField = nil
             }
             .autocorrectionDisabled()
@@ -65,24 +65,22 @@ struct UserSignInView: View {
             .focused($focusedTextField, equals: 1)
         } header: {
             Text(L10n.signInToServer(viewModel.server.name))
+                .font(.title3)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
 
         if case .signingIn = viewModel.state {
-            Button(L10n.cancel) {
+            ListRowButton(L10n.cancel) {
                 viewModel.send(.cancel)
             }
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
-            Button(L10n.signIn) {
+            ListRowButton(L10n.signIn) {
                 focusedTextField = nil
 
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
             .disabled(username.isEmpty)
-            .foregroundStyle(
-                accentColor.overlayColor,
-                accentColor
-            )
             .opacity(username.isEmpty ? 0.5 : 1)
         }
 
@@ -109,104 +107,121 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var publisUsersSection: some View {
-        Section(L10n.publicUsers) {
+        Section {
             if viewModel.publicUsers.isEmpty {
                 L10n.noPublicUsers.text
                     .font(.callout)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
             } else {
-                ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserRow(
-                        user: user,
-                        client: viewModel.server.client
-                    ) {
-                        username = user.name ?? ""
-                        password = ""
-                        focusedTextField = 1
+                HStack {
+                    Grid {
+                        GridRow {
+                            ForEach(viewModel.publicUsers, id: \.id) { user in
+                                PublicUserGrid(
+                                    user: user,
+                                    client: viewModel.server.client
+                                ) {
+                                    username = user.name ?? ""
+                                    password = ""
+                                    focusedTextField = 1
+                                }
+                            }
+                        }
                     }
                 }
             }
+        } header: {
+            Text(L10n.publicUsers)
+                .font(.title3)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
     }
 
     var body: some View {
-        VStack {
-            HStack {
+        ZStack(alignment: .center) {
+            VStack {
+                HStack {
+                    Image(.jellyfinBlobBlue)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 100)
+                        .edgePadding()
+                }
+
+                VStack {
+                    Spacer()
+
+                    VStack(alignment: .center) {
+                        publisUsersSection
+                    }
+
+                    Spacer()
+
+                    VStack(alignment: .leading) {
+                        signInSection
+                    }
+                    .frame(maxWidth: 800)
+
+                    Spacer()
+                }
+
                 Spacer()
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case let .duplicateUser(duplicateUser):
+                    self.duplicateUser = duplicateUser
+                    isPresentingDuplicateUser = true
+                case let .error(eventError):
+                    error = eventError
+                    isPresentingError = true
+                case let .signedIn(user):
+                    router.dismissCoordinator()
 
-                if viewModel.state == .signingIn {
-                    ProgressView()
+                    Defaults[.lastSignedInUserID] = user.id
+                    UserSession.current.reset()
+                    Notifications[.didSignIn].post()
                 }
             }
-            .frame(height: 100)
-            .overlay {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
+            .onFirstAppear {
+                focusedTextField = 0
+                viewModel.send(.getPublicData)
+            }
+            .alert(
+                Text("Duplicate User"),
+                isPresented: $isPresentingDuplicateUser,
+                presenting: duplicateUser
+            ) { _ in
+
+                // TODO: uncomment when duplicate user fixed
+                //            Button(L10n.signIn) {
+                //                signInUplicate(user: user, replace: false)
+                //            }
+
+                //            Button("Replace") {
+                //                signInUplicate(user: user, replace: true)
+                //            }
+
+                Button(L10n.dismiss, role: .cancel)
+            } message: { duplicateUser in
+                Text("\(duplicateUser.username) is already saved")
+            }
+            .alert(
+                L10n.error.text,
+                isPresented: $isPresentingError,
+                presenting: error
+            ) { _ in
+                Button(L10n.dismiss, role: .cancel)
+            } message: { error in
+                Text(error.localizedDescription)
             }
 
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    signInSection
-                }
-
-                VStack(alignment: .leading) {
-                    publisUsersSection
-                }
+            if viewModel.state == .signingIn {
+                Color.black.opacity(0.5)
+                    .edgesIgnoringSafeArea(.all)
+                ProgressView()
             }
-
-            Spacer()
-        }
-        .onReceive(viewModel.events) { event in
-            switch event {
-            case let .duplicateUser(duplicateUser):
-                self.duplicateUser = duplicateUser
-                isPresentingDuplicateUser = true
-            case let .error(eventError):
-                error = eventError
-                isPresentingError = true
-            case let .signedIn(user):
-                router.dismissCoordinator()
-
-                Defaults[.lastSignedInUserID] = user.id
-                UserSession.current.reset()
-                Notifications[.didSignIn].post()
-            }
-        }
-        .onFirstAppear {
-            focusedTextField = 0
-            viewModel.send(.getPublicData)
-        }
-        .alert(
-            Text("Duplicate User"),
-            isPresented: $isPresentingDuplicateUser,
-            presenting: duplicateUser
-        ) { _ in
-
-            // TODO: uncomment when duplicate user fixed
-//            Button(L10n.signIn) {
-//                signInUplicate(user: user, replace: false)
-//            }
-
-//            Button("Replace") {
-//                signInUplicate(user: user, replace: true)
-//            }
-
-            Button(L10n.dismiss, role: .cancel)
-        } message: { duplicateUser in
-            Text("\(duplicateUser.username) is already saved")
-        }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel)
-        } message: { error in
-            Text(error.localizedDescription)
         }
     }
 }
