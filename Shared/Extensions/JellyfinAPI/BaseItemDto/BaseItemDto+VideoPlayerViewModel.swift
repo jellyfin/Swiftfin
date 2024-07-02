@@ -21,7 +21,7 @@ extension BaseItemDto {
         let tempOverkillBitrate = 360_000_000
         let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
 
-        let userSession = UserSession.current()!
+        let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
@@ -56,7 +56,7 @@ extension BaseItemDto {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
         }
 
-        let userSession = UserSession.current()!
+        let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(

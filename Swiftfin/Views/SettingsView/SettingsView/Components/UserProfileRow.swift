@@ -13,7 +13,7 @@ extension SettingsView {
 
     struct UserProfileRow: View {
 
-        @Injected(UserSession.current)
+        @Injected(\.currentUserSession)
         private var userSession: UserSession!
 
         let action: () -> Void

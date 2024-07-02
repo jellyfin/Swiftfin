@@ -193,8 +193,7 @@ extension BaseItemDto {
                     parameters: parameters
                 )
 
-                let imageURL = UserSession
-                    .current()!
+                let imageURL = Container.shared.currentUserSession()!
                     .client
                     .fullURL(with: request)
 

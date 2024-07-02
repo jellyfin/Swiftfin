@@ -8,6 +8,7 @@
 
 import Combine
 import CoreStore
+import Factory
 import Foundation
 import Get
 import JellyfinAPI
@@ -146,7 +147,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
-            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger())
+            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
         )
 
         let response = try await client.send(Paths.getPublicSystemInfo)

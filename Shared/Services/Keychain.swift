@@ -10,10 +10,8 @@ import Factory
 import Foundation
 import KeychainSwift
 
-enum Keychain {
+extension Container {
 
     // TODO: take a look at all security options
-    static let service = Factory<KeychainSwift>(scope: .singleton) {
-        KeychainSwift()
-    }
+    var keychainService: Factory<KeychainSwift> { self { KeychainSwift() }.singleton }
 }

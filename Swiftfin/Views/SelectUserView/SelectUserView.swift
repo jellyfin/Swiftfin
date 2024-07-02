@@ -562,7 +562,7 @@ struct SelectUserView: View {
                 UIDevice.feedback(.success)
 
                 Defaults[.lastSignedInUserID] = user.id
-                UserSession.current.reset()
+                Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }
         }

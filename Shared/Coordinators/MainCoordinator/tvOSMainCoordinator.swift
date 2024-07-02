@@ -18,7 +18,7 @@ import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
 
-    @Injected(LogManager.service)
+    @Injected(\.logService)
     private var logger
 
     var stack: Stinsen.NavigationStack<MainCoordinator>
@@ -38,7 +38,7 @@ final class MainCoordinator: NavigationCoordinatable {
             do {
                 try await SwiftfinStore.setupDataStack()
 
-                if UserSession.current() != nil {
+                if Container.shared.currentUserSession() != nil {
                     await MainActor.run {
                         withAnimation(.linear(duration: 0.1)) {
                             let _ = root(\.mainTab)

@@ -31,7 +31,7 @@ final class UserSession {
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: server.currentURL),
             sessionConfiguration: .swiftfin,
-            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger()),
+            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger()),
             accessToken: user.accessToken
         )
 
@@ -39,32 +39,27 @@ final class UserSession {
     }
 }
 
-fileprivate extension Container.Scope {
+extension Container {
+    var currentUserSession: Factory<UserSession?> {
+        self {
+            if let lastUserID = Defaults[.lastSignedInUserID],
+               let user = try? SwiftfinStore.dataStack.fetchOne(
+                   From<UserModel>().where(\.$id == lastUserID)
+               )
+            {
+                guard let server = user.server,
+                      let _ = SwiftfinStore.dataStack.fetchExisting(server)
+                else {
+                    fatalError("No associated server for last user")
+                }
 
-//    static let userSessionScope = .
-}
-
-extension UserSession {
-
-    static let current = Factory<UserSession?>(scope: .cached) {
-
-        if let lastUserID = Defaults[.lastSignedInUserID],
-           let user = try? SwiftfinStore.dataStack.fetchOne(
-               From<UserModel>().where(\.$id == lastUserID)
-           )
-        {
-            guard let server = user.server,
-                  let existingServer = SwiftfinStore.dataStack.fetchExisting(server)
-            else {
-                fatalError("No associated server for last user")
+                return .init(
+                    server: server.state,
+                    user: user.state
+                )
             }
 
-            return .init(
-                server: server.state,
-                user: user.state
-            )
-        }
-
-        return nil
+            return nil
+        }.cached
     }
 }

@@ -18,7 +18,7 @@ extension DownloadTaskView {
         @Default(.accentColor)
         private var accentColor
 
-        @Injected(Container.downloadManager)
+        @Injected(\.downloadManager)
         private var downloadManager
 
         @EnvironmentObject
