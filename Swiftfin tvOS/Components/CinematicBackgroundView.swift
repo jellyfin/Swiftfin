@@ -22,7 +22,7 @@ struct CinematicBackgroundView<Item: Poster>: View {
 
     var body: some View {
         RotateContentView(proxy: proxy)
-            .onChange(of: viewModel.currentItem) { newItem in
+            .onChange(of: viewModel.currentItem) { _, newItem in
                 proxy.update {
                     ImageView(newItem?.cinematicImageSources(maxWidth: nil) ?? [])
                         .placeholder { _ in

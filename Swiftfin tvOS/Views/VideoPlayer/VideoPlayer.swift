@@ -74,7 +74,7 @@ struct VideoPlayer: View {
                 .environment(\.isPresentingOverlay, $isPresentingOverlay)
                 .environment(\.isScrubbing, $isScrubbing)
         }
-        .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
+        .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { _, newValue in
             guard !newValue.isNaN && !newValue.isInfinite else {
                 return
             }
@@ -102,7 +102,7 @@ struct VideoPlayer: View {
             }
         }
         .ignoresSafeArea()
-        .onChange(of: isScrubbing) { newValue in
+        .onChange(of: isScrubbing) { _, newValue in
             guard !newValue else { return }
             videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
         }

@@ -133,7 +133,7 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.send(.getSuggestions)
         }
-        .onChange(of: searchQuery) { newValue in
+        .onChange(of: searchQuery) { _, newValue in
             viewModel.send(.search(query: newValue))
         }
         .searchable(text: $searchQuery, prompt: L10n.search)

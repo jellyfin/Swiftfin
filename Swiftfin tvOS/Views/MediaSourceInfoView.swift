@@ -110,7 +110,7 @@ struct MediaSourceInfoView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .onChange(of: selectedMediaStream) { newValue in
+        .onChange(of: selectedMediaStream) { _, newValue in
             guard let newValue else { return }
             lastSelectedMediaStream = newValue
         }

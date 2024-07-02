@@ -196,7 +196,7 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel.send(.refresh)
             }
         }
-        .onChange(of: focusedItem) { newValue in
+        .onChange(of: focusedItem) { _, newValue in
             guard let newValue else {
                 withAnimation {
                     presentBackground = false
