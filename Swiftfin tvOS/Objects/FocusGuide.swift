@@ -56,7 +56,7 @@ struct FocusGuideModifier: ViewModifier {
                 })
                 .focused($focusDirection, equals: .bottom)
         }
-        .onChange(of: focusDirection) { focusDirection in
+        .onChange(of: focusDirection) { _, focusDirection in
             guard let focusDirection = focusDirection else { return }
             switch focusDirection {
             case .top:
@@ -70,7 +70,7 @@ struct FocusGuideModifier: ViewModifier {
             case .content: ()
             }
         }
-        .onChange(of: focusGuide.focusedTag) { newTag in
+        .onChange(of: focusGuide.focusedTag) { _, newTag in
             if newTag == focusConstructor.tag {
                 if let onContentFocus = onContentFocus {
                     onContentFocus()

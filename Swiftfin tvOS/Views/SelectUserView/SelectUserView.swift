@@ -137,7 +137,7 @@ struct SelectUserView: View {
             }
         }
         .padding(EdgeInsets.edgePadding * 2.5)
-        .onChange(of: gridItemSize) { newValue in
+        .onChange(of: gridItemSize) { _, newValue in
             let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
 
             padGridItemColumnCount = columns
@@ -283,7 +283,7 @@ struct SelectUserView: View {
 //                    }
 //            )
         }
-        .onChange(of: serverSelection) { newValue in
+        .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
 
             splashScreenImageSource = makeSplashScreenImageSource(
@@ -291,7 +291,7 @@ struct SelectUserView: View {
                 allServersSelection: .all
             )
         }
-        .onChange(of: viewModel.servers) { _ in
+        .onChange(of: viewModel.servers) { _, _ in
             gridItems = makeGridItems(for: serverSelection)
 
             splashScreenImageSource = makeSplashScreenImageSource(

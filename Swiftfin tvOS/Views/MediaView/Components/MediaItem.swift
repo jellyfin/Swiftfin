@@ -107,7 +107,7 @@ extension MediaView {
             }
             .buttonStyle(.card)
             .onFirstAppear(perform: setImageSources)
-            .onChange(of: useRandomImage) { _ in
+            .onChange(of: useRandomImage) { _, _ in
                 setImageSources()
             }
         }
