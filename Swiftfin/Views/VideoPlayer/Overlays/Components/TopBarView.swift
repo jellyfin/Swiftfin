@@ -18,8 +18,6 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
         @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-        @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
         @EnvironmentObject
         private var viewModel: VideoPlayerViewModel

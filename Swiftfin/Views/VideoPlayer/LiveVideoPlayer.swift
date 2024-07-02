@@ -53,8 +53,6 @@ struct LiveVideoPlayer: View {
 
     @ObservedObject
     private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-    @StateObject
-    private var splitContentViewProxy: SplitContentViewProxy = .init()
     @ObservedObject
     private var videoPlayerManager: LiveVideoPlayerManager
 
@@ -76,106 +74,107 @@ struct LiveVideoPlayer: View {
     private let gestureStateHandler: VideoPlayer.GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
 
-    @ViewBuilder
-    private var playerView: some View {
-        SplitContentView(splitContentWidth: 400)
-            .proxy(splitContentViewProxy)
-            .content {
-                ZStack {
-                    VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
-                        .proxy(videoPlayerManager.proxy)
-                        .onTicksUpdated { ticks, _ in
-
-                            let newSeconds = ticks / 1000
-                            var newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
-                            if newProgress.isInfinite || newProgress.isNaN {
-                                newProgress = 0
-                            }
-                            currentProgressHandler.progress = newProgress
-                            currentProgressHandler.seconds = newSeconds
-
-                            guard !isScrubbing else { return }
-                            currentProgressHandler.scrubbedProgress = newProgress
-                        }
-                        .onStateUpdated { state, _ in
-
-                            videoPlayerManager.onStateUpdated(newState: state)
-
-                            if state == .ended {
-                                if let _ = videoPlayerManager.nextViewModel,
-                                   Defaults[.VideoPlayer.autoPlayEnabled]
-                                {
-                                    videoPlayerManager.selectNextViewModel()
-                                } else {
-                                    router.dismissCoordinator {}
-                                }
-                            }
-                        }
-
-                    GestureView()
-                        .onHorizontalPan {
-                            handlePan(action: horizontalPanGesture, state: $0, point: $1.x, velocity: $2, translation: $3)
-                        }
-                        .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
-                        .onLongPress(minimumDuration: 2, handleLongPress)
-                        .onPinch(handlePinchGesture)
-                        .onTap(samePointPadding: 10, samePointTimeout: 0.7, handleTapGesture)
-                        .onDoubleTouch(handleDoubleTouchGesture)
-                        .onVerticalPan {
-                            if $1.x <= 0.5 {
-                                handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
-                            } else {
-                                handlePan(action: verticalGestureRight, state: $0, point: -$1.y, velocity: $2, translation: $3)
-                            }
-                        }
-
-                    LiveVideoPlayer.Overlay()
-                        .environmentObject(splitContentViewProxy)
-                        .environmentObject(videoPlayerManager)
-                        .environmentObject(videoPlayerManager.currentProgressHandler)
-                        .environmentObject(videoPlayerManager.currentViewModel!)
-                        .environmentObject(videoPlayerManager.proxy)
-                        .environment(\.aspectFilled, $isAspectFilled)
-                        .environment(\.isPresentingOverlay, $isPresentingOverlay)
-                        .environment(\.isScrubbing, $isScrubbing)
-                        .environment(\.playbackSpeed, $playbackSpeed)
-                }
-            }
-            .splitContent {
-                // Wrapped due to navigation controller popping due to published changes
-                WrappedView {
-                    NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
-                }
-                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
-                .environmentObject(splitContentViewProxy)
-                .environmentObject(videoPlayerManager)
-                .environmentObject(videoPlayerManager.currentViewModel)
-                .environment(\.audioOffset, $audioOffset)
-                .environment(\.subtitleOffset, $subtitleOffset)
-            }
-            .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
-                guard !newValue.isNaN && !newValue.isInfinite else {
-                    return
-                }
-                DispatchQueue.main.async {
-                    videoPlayerManager.currentProgressHandler
-                        .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
-                }
-            }
-            .overlay(alignment: .top) {
-                UpdateView(proxy: updateViewProxy)
-                    .padding(.top)
-            }
-            .videoPlayerKeyCommands(
-                gestureStateHandler: gestureStateHandler,
-                updateViewProxy: updateViewProxy
-            )
-    }
+//    @ViewBuilder
+//    private var playerView: some View {
+//        SplitContentView(splitContentWidth: 400)
+//            .proxy(splitContentViewProxy)
+//            .content {
+//                ZStack {
+//                    VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
+//                        .proxy(videoPlayerManager.proxy)
+//                        .onTicksUpdated { ticks, _ in
+//
+//                            let newSeconds = ticks / 1000
+//                            var newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
+//                            if newProgress.isInfinite || newProgress.isNaN {
+//                                newProgress = 0
+//                            }
+//                            currentProgressHandler.progress = newProgress
+//                            currentProgressHandler.seconds = newSeconds
+//
+//                            guard !isScrubbing else { return }
+//                            currentProgressHandler.scrubbedProgress = newProgress
+//                        }
+//                        .onStateUpdated { state, _ in
+//
+//                            videoPlayerManager.onStateUpdated(newState: state)
+//
+//                            if state == .ended {
+//                                if let _ = videoPlayerManager.nextViewModel,
+//                                   Defaults[.VideoPlayer.autoPlayEnabled]
+//                                {
+//                                    videoPlayerManager.selectNextViewModel()
+//                                } else {
+//                                    router.dismissCoordinator {}
+//                                }
+//                            }
+//                        }
+//
+//                    GestureView()
+//                        .onHorizontalPan {
+//                            handlePan(action: horizontalPanGesture, state: $0, point: $1.x, velocity: $2, translation: $3)
+//                        }
+//                        .onHorizontalSwipe(translation: 100, velocity: 1500, sameSwipeDirectionTimeout: 1, handleHorizontalSwipe)
+//                        .onLongPress(minimumDuration: 2, handleLongPress)
+//                        .onPinch(handlePinchGesture)
+//                        .onTap(samePointPadding: 10, samePointTimeout: 0.7, handleTapGesture)
+//                        .onDoubleTouch(handleDoubleTouchGesture)
+//                        .onVerticalPan {
+//                            if $1.x <= 0.5 {
+//                                handlePan(action: verticalGestureLeft, state: $0, point: -$1.y, velocity: $2, translation: $3)
+//                            } else {
+//                                handlePan(action: verticalGestureRight, state: $0, point: -$1.y, velocity: $2, translation: $3)
+//                            }
+//                        }
+//
+//                    LiveVideoPlayer.Overlay()
+//                        .environmentObject(splitContentViewProxy)
+//                        .environmentObject(videoPlayerManager)
+//                        .environmentObject(videoPlayerManager.currentProgressHandler)
+//                        .environmentObject(videoPlayerManager.currentViewModel!)
+//                        .environmentObject(videoPlayerManager.proxy)
+//                        .environment(\.aspectFilled, $isAspectFilled)
+//                        .environment(\.isPresentingOverlay, $isPresentingOverlay)
+//                        .environment(\.isScrubbing, $isScrubbing)
+//                        .environment(\.playbackSpeed, $playbackSpeed)
+//                }
+//            }
+//            .splitContent {
+//                // Wrapped due to navigation controller popping due to published changes
+//                WrappedView {
+//                    NavigationViewCoordinator(PlaybackSettingsCoordinator()).view()
+//                }
+//                .cornerRadius(20, corners: [.topLeft, .bottomLeft])
+//                .environmentObject(splitContentViewProxy)
+//                .environmentObject(videoPlayerManager)
+//                .environmentObject(videoPlayerManager.currentViewModel)
+//                .environment(\.audioOffset, $audioOffset)
+//                .environment(\.subtitleOffset, $subtitleOffset)
+//            }
+//            .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
+//                guard !newValue.isNaN && !newValue.isInfinite else {
+//                    return
+//                }
+//                DispatchQueue.main.async {
+//                    videoPlayerManager.currentProgressHandler
+//                        .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
+//                }
+//            }
+//            .overlay(alignment: .top) {
+//                UpdateView(proxy: updateViewProxy)
+//                    .padding(.top)
+//            }
+//            .videoPlayerKeyCommands(
+//                gestureStateHandler: gestureStateHandler,
+//                updateViewProxy: updateViewProxy
+//            )
+//    }
 
     var body: some View {
         Group {
             if let _ = videoPlayerManager.currentViewModel {
-                playerView
+//                playerView
+                Text("TODO")
             } else {
                 VideoPlayer.LoadingView()
             }
