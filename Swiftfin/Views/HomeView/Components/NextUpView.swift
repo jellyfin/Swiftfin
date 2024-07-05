@@ -22,14 +22,16 @@ extension HomeView {
         private var router: HomeCoordinator.Router
 
         @ObservedObject
-        var homeViewModel: HomeViewModel
+        var viewModel: NextUpLibraryViewModel
+
+        private var onSetPlayed: (BaseItemDto) -> Void
 
         var body: some View {
-            if homeViewModel.nextUpViewModel.elements.isNotEmpty {
+            if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.nextUp,
                     type: nextUpPosterType,
-                    items: $homeViewModel.nextUpViewModel.elements
+                    items: $viewModel.elements
                 )
                 .content { item in
                     if item.type == .episode {
@@ -40,7 +42,7 @@ extension HomeView {
                 }
                 .contextMenu { item in
                     Button {
-                        homeViewModel.send(.setIsPlayed(true, item))
+                        onSetPlayed(item)
                     } label: {
                         Label(L10n.played, systemImage: "checkmark.circle")
                     }
@@ -51,10 +53,24 @@ extension HomeView {
                 .trailing {
                     SeeAllButton()
                         .onSelect {
-                            router.route(to: \.library, homeViewModel.nextUpViewModel)
+                            router.route(to: \.library, viewModel)
                         }
                 }
             }
         }
+    }
+}
+
+extension HomeView.NextUpView {
+
+    init(viewModel: NextUpLibraryViewModel) {
+        self.init(
+            viewModel: viewModel,
+            onSetPlayed: { _ in }
+        )
+    }
+
+    func onSetPlayed(perform action: @escaping (BaseItemDto) -> Void) -> Self {
+        copy(modifying: \.onSetPlayed, with: action)
     }
 }
