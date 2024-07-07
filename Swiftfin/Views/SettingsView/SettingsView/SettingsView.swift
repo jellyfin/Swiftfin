@@ -74,12 +74,10 @@ struct SettingsView: View {
                         router.route(to: \.videoPlayerSettings)
                     }
 
-                Section(L10n.videoPlayer) {
-                    CaseIterablePicker(
-                        L10n.maximumBitrate,
-                        selection: $appMaximumBitrate
-                    )
-                }
+                CaseIterablePicker(
+                    L10n.maximumBitrate,
+                    selection: $appMaximumBitrate
+                )
             }
 
             Section(L10n.accessibility) {

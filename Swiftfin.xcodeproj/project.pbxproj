@@ -3218,9 +3218,9 @@
 		E1AD105326D96F5A003E4A08 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E762AAD2C3A1A95004D1579 /* BitrateSelection.swift */,
 				E102314C2BCF8A7E009D71FC /* AlternateLayoutView.swift */,
 				E104DC952B9E7E29008F506D /* AssertionFailureView.swift */,
+				4E762AAD2C3A1A95004D1579 /* BitrateSelection.swift */,
 				E18E0203288749200022598C /* BlurView.swift */,
 				E145EB212BDCCA43003BF6F3 /* BulletedList.swift */,
 				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
