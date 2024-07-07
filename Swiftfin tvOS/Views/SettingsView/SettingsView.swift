@@ -15,6 +15,8 @@ struct SettingsView: View {
 
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    @Default(.VideoPlayer.appMaximumBitrate)
+    private var appMaximumBitrate
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -64,6 +66,8 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.videoPlayerSettings)
                         }
+
+                    InlineEnumToggle(title: L10n.maximumBitrate, selection: $appMaximumBitrate)
                 } header: {
                     L10n.videoPlayer.text
                 }

@@ -18,15 +18,17 @@ extension BaseItemDto {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         // TODO: fix bitrate settings
-        let tempOverkillBitrate = 360_000_000
-        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
+        // TODO: Change the 360_000_000 to be a setting set at the player level. This way, the lower value of the App Setting and the Playback Setting is used.
+        let maximumBitrate = min(360_000_000, Defaults[.VideoPlayer.appMaximumBitrate].rawValue)
+
+        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maximumBitrate)
 
         let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: tempOverkillBitrate
+            maxStreamingBitrate: maximumBitrate
         )
 
         let request = Paths.getPostedPlaybackInfo(

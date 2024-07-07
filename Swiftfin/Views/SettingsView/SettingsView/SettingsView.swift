@@ -21,6 +21,8 @@ struct SettingsView: View {
     private var appearance
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
+    @Default(.VideoPlayer.appMaximumBitrate)
+    private var appMaximumBitrate
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -71,6 +73,13 @@ struct SettingsView: View {
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)
                     }
+
+                Section(L10n.videoPlayer) {
+                    CaseIterablePicker(
+                        L10n.maximumBitrate,
+                        selection: $appMaximumBitrate
+                    )
+                }
             }
 
             Section(L10n.accessibility) {
