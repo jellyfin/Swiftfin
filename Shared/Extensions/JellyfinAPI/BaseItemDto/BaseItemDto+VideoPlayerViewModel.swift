@@ -102,6 +102,7 @@ extension BaseItemDto {
             playSessionID: response.value.playSessionID!
         )
     }
+
     private func maxBitrate(testSize: Int = 102_400) async throws -> Int {
 
         let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
@@ -111,7 +112,7 @@ extension BaseItemDto {
             let userSession = Container.shared.currentUserSession()!
 
             let testStartTime = Date()
-            _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+            try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
             let testDuration = Date().timeIntervalSince(testStartTime)
             let testSizeBits = Double(testSize * 8)
             let testBitrate = testSizeBits / testDuration
