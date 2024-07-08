@@ -7,10 +7,13 @@
 //
 
 import Defaults
+import Foundation
+import JellyfinAPI
 
-enum BitrateSelection: String, CaseIterable, Defaults.Serializable, Displayable {
+enum PlaybackBitrate: String, CaseIterable, Defaults.Serializable, Displayable {
 
     case auto
+    case max
     case mbps120
     case mbps80
     case mbps60
@@ -30,6 +33,8 @@ enum BitrateSelection: String, CaseIterable, Defaults.Serializable, Displayable 
         switch self {
         case .auto:
             return L10n.bitrateAuto
+        case .max:
+            return L10n.bitrateMax
         case .mbps120:
             return L10n.bitrateMbps120
         case .mbps80:
@@ -64,6 +69,8 @@ enum BitrateSelection: String, CaseIterable, Defaults.Serializable, Displayable 
     var rawValue: Int {
         switch self {
         case .auto:
+            return 0
+        case .max:
             return 360_000_000
         case .mbps120:
             return 120_000_000

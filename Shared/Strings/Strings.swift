@@ -58,10 +58,12 @@ internal enum L10n {
   internal static let bitrateAuto = L10n.tr("Localizable", "bitrateAuto", fallback: "Auto")
   /// 480p - 1.5 Mbps
   internal static let bitrateKbps1500 = L10n.tr("Localizable", "bitrateKbps1500", fallback: "480p - 1.5 Mbps")
-  /// 480p - 420 Kbps
-  internal static let bitrateKbps420 = L10n.tr("Localizable", "bitrateKbps420", fallback: "480p - 420 Kbps")
+  /// 360p - 420 Kbps
+  internal static let bitrateKbps420 = L10n.tr("Localizable", "bitrateKbps420", fallback: "360p - 420 Kbps")
   /// 480p - 720 Kbps
   internal static let bitrateKbps720 = L10n.tr("Localizable", "bitrateKbps720", fallback: "480p - 720 Kbps")
+  /// Maximum
+  internal static let bitrateMax = L10n.tr("Localizable", "bitrateMax", fallback: "Maximum")
   /// 1080p - 10 Mbps
   internal static let bitrateMbps10 = L10n.tr("Localizable", "bitrateMbps10", fallback: "1080p - 10 Mbps")
   /// 4K - 120 Mbps
@@ -82,8 +84,8 @@ internal enum L10n {
   internal static let bitrateMbps60 = L10n.tr("Localizable", "bitrateMbps60", fallback: "1080p - 60 Mbps")
   /// 720p - 8 Mbps
   internal static let bitrateMbps8 = L10n.tr("Localizable", "bitrateMbps8", fallback: "720p - 8 Mbps")
-  /// 1080p - 80 Mbps
-  internal static let bitrateMbps80 = L10n.tr("Localizable", "bitrateMbps80", fallback: "1080p - 80 Mbps")
+  /// 4K - 80 Mbps
+  internal static let bitrateMbps80 = L10n.tr("Localizable", "bitrateMbps80", fallback: "4K - 80 Mbps")
   /// Blue
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
   /// Bugs and Features

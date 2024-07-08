@@ -17,18 +17,17 @@ extension BaseItemDto {
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        // TODO: fix bitrate settings
-        // TODO: Change the 360_000_000 to be a setting set at the player level. This way, the lower value of the App Setting and the Playback Setting is used.
-        let maximumBitrate = min(360_000_000, Defaults[.VideoPlayer.appMaximumBitrate].rawValue)
 
-        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maximumBitrate)
+        let maxBitrate = try await maxBitrate(testSize: 5_000_000)
+
+        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
 
         let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: maximumBitrate
+            maxStreamingBitrate: maxBitrate
         )
 
         let request = Paths.getPostedPlaybackInfo(
@@ -51,9 +50,10 @@ extension BaseItemDto {
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        // TODO: fix bitrate settings
-        let tempOverkillBitrate = 360_000_000
-        var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
+
+        let maxBitrate = try await maxBitrate(testSize: 5_000_000)
+
+        var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
         if Defaults[.Experimental.liveTVForceDirectPlay] {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
         }
@@ -63,7 +63,7 @@ extension BaseItemDto {
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: tempOverkillBitrate
+            maxStreamingBitrate: maxBitrate
         )
 
         let request = Paths.getPostedPlaybackInfo(
@@ -101,5 +101,27 @@ extension BaseItemDto {
             with: self,
             playSessionID: response.value.playSessionID!
         )
+    }
+
+    private func maxBitrate(testSize: Int = 102_400) async throws -> Int {
+
+        let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
+        // let playerBitrate = Defaults[.VideoPlayer.playerMaximumBitrate]
+
+        if settingBitrate == PlaybackBitrate.auto {
+
+            let userSession = Container.shared.currentUserSession()!
+
+            let testStartTime = Date()
+            let testMaxBitrate = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+            let testDuration = Date().timeIntervalSince(testStartTime)
+            let testSizeBits = Double(testSize * 8)
+            let testBitrate = testSizeBits / testDuration
+
+            return Int(testBitrate)
+            // return min(testBitrate, playerBitrate.rawValue)
+        }
+        return settingBitrate.rawValue
+        // return min(settingBitrate.rawValue, playerBitrate.rawValue)
     }
 }
