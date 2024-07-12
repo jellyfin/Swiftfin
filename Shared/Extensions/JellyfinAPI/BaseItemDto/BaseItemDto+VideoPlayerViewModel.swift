@@ -13,9 +13,7 @@ import JellyfinAPI
 import Logging
 
 extension BaseItemDto {
-
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
-
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
 
         let maxBitrate = try await maxBitrate(testSize: 5_000_000)
@@ -48,7 +46,6 @@ extension BaseItemDto {
     }
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
-
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
 
         let maxBitrate = try await maxBitrate(testSize: 5_000_000)
@@ -104,11 +101,9 @@ extension BaseItemDto {
     }
 
     private func maxBitrate(testSize: Int = 102_400) async throws -> Int {
-
         let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
         if settingBitrate == PlaybackBitrate.auto {
-
             let userSession = Container.shared.currentUserSession()!
 
             let testStartTime = Date()
