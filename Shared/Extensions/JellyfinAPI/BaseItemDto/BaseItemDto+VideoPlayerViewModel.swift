@@ -16,8 +16,7 @@ extension BaseItemDto {
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
 
-        let maxBitrate = try await maxBitrate(testSize: 5_000_000)
-
+        let maxBitrate = try await getMaxBitrate()
         let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
 
         let userSession = Container.shared.currentUserSession()!
@@ -48,8 +47,7 @@ extension BaseItemDto {
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
 
-        let maxBitrate = try await maxBitrate(testSize: 5_000_000)
-
+        let maxBitrate = try await getMaxBitrate()
         var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
         if Defaults[.Experimental.liveTVForceDirectPlay] {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
@@ -100,16 +98,17 @@ extension BaseItemDto {
         )
     }
 
-    private func maxBitrate(testSize: Int = 102_400) async throws -> Int {
+    private func getMaxBitrate() async throws -> Int {
         let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
         if settingBitrate == PlaybackBitrate.auto {
+            let settingBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
             let userSession = Container.shared.currentUserSession()!
 
             let testStartTime = Date()
-            try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+            try await userSession.client.send(Paths.getBitrateTestBytes(size: settingBitrateTestSize.rawValue))
             let testDuration = Date().timeIntervalSince(testStartTime)
-            let testSizeBits = Double(testSize * 8)
+            let testSizeBits = Double(settingBitrateTestSize.rawValue * 8)
             let testBitrate = testSizeBits / testDuration
 
             return Int(testBitrate)

@@ -56,6 +56,8 @@ internal enum L10n {
   internal static let barButtons = L10n.tr("Localizable", "barButtons", fallback: "Bar Buttons")
   /// Auto
   internal static let bitrateAuto = L10n.tr("Localizable", "bitrateAuto", fallback: "Auto")
+  /// Longer tests result in a more accurate bitrate but may delay playback
+  internal static let bitrateDurationDescription = L10n.tr("Localizable", "bitrateDurationDescription", fallback: "Longer tests result in a more accurate bitrate but may delay playback")
   /// 480p - 1.5 Mbps
   internal static let bitrateKbps1500 = L10n.tr("Localizable", "bitrateKbps1500", fallback: "480p - 1.5 Mbps")
   /// 360p - 420 Kbps
@@ -276,6 +278,10 @@ internal enum L10n {
   }
   /// Logs
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
+  /// Longer
+  internal static let longer = L10n.tr("Localizable", "longer", fallback: "Longer")
+  /// Longest
+  internal static let longest = L10n.tr("Localizable", "longest", fallback: "Longest")
   /// Maximum Bitrate
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
   /// Media
@@ -534,6 +540,10 @@ internal enum L10n {
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
   /// Settings
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
+  /// Shorter
+  internal static let shorter = L10n.tr("Localizable", "shorter", fallback: "Shorter")
+  /// Shortest
+  internal static let shortest = L10n.tr("Localizable", "shortest", fallback: "Shortest")
   /// Show Cast & Crew
   internal static let showCastAndCrew = L10n.tr("Localizable", "showCastAndCrew", fallback: "Show Cast & Crew")
   /// Show Chapters Info In Bottom Overlay
@@ -578,6 +588,8 @@ internal enum L10n {
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
   /// Sports
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
+  /// Standard
+  internal static let standard = L10n.tr("Localizable", "standard", fallback: "Standard")
   /// STUDIO
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "STUDIO")
   /// Studios
@@ -604,6 +616,8 @@ internal enum L10n {
   internal static let systemControlGesturesEnabled = L10n.tr("Localizable", "systemControlGesturesEnabled", fallback: "System Control Gestures Enabled")
   /// Tags
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
+  /// Test Duration
+  internal static let testDuration = L10n.tr("Localizable", "testDuration", fallback: "Test Duration")
   /// Timestamp
   internal static let timestamp = L10n.tr("Localizable", "timestamp", fallback: "Timestamp")
   /// Timestamp Type

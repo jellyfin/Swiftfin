@@ -14,6 +14,10 @@
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
+		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
+		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
+		4E73E2AE2C420207002D2A78 /* MaximumBitrateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */; };
+		4E73E2B02C4211CA002D2A78 /* MaximumBitrateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2AF2C4211CA002D2A78 /* MaximumBitrateSettingsView.swift */; };
 		4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
 		4E762AAF2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
@@ -934,6 +938,9 @@
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
+		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
+		4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
+		4E73E2AF2C4211CA002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -1679,6 +1686,7 @@
 			isa = PBXGroup;
 			children = (
 				4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */,
+				4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */,
 			);
 			path = PlaybackBitrate;
 			sourceTree = "<group>";
@@ -3480,6 +3488,7 @@
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */,
 				E16AF11B292C98A7001422A8 /* GestureSettingsView.swift */,
+				4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */,
 				E15756332936851D00976E1F /* NativeVideoPlayerSettingsView.swift */,
 				E1545BD62BDC559500D9578F /* UserProfileSettingsView */,
 				E1BE1CEB2BDB68BC008176A9 /* SettingsView */,
@@ -3494,6 +3503,7 @@
 				E1CEFBF627914E6400F60429 /* CustomizeViewsSettings.swift */,
 				E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */,
 				E104C872296E0D0A00C1C3F9 /* IndicatorSettingsView.swift */,
+				4E73E2AF2C4211CA002D2A78 /* MaximumBitrateSettingsView.swift */,
 				5398514426B64DA100101B49 /* SettingsView.swift */,
 				E1549679296CB4B000C4EF88 /* VideoPlayerSettingsView.swift */,
 			);
@@ -3931,6 +3941,7 @@
 				E187A60529AD2E25008387E6 /* StepperView.swift in Sources */,
 				E1575E71293E77B5001665B1 /* RepeatingTimer.swift in Sources */,
 				E1D4BF8B2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
+				4E73E2B02C4211CA002D2A78 /* MaximumBitrateSettingsView.swift in Sources */,
 				E10231452BCF8A51009D71FC /* ChannelProgram.swift in Sources */,
 				E146A9D92BE6E9830034DA1E /* StoredValue.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
@@ -3994,6 +4005,7 @@
 				E14EA16A2BF7333B00DE757A /* UserProfileImageViewModel.swift in Sources */,
 				E1575E98293E7B1E001665B1 /* UIApplication.swift in Sources */,
 				E12376B12A33DB33001F5B44 /* MediaSourceInfoCoordinator.swift in Sources */,
+				4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */,
 				E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */,
 				E13DD3ED27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E1763A272BF303C9004DF6AB /* ServerSelectionMenu.swift in Sources */,
@@ -4556,6 +4568,7 @@
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
 				E14EA1692BF7330A00DE757A /* UserProfileImageViewModel.swift in Sources */,
 				E18ACA952A15A3E100BB4F35 /* (null) in Sources */,
+				4E73E2AE2C420207002D2A78 /* MaximumBitrateSettingsView.swift in Sources */,
 				E1D5C39B28DF993400CDBEFB /* ThumbSlider.swift in Sources */,
 				E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */,
 				E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
@@ -4656,6 +4669,7 @@
 				E1A3E4C72BB74E50005C59F8 /* EpisodeCard.swift in Sources */,
 				E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */,
 				E1D3043528D1763100587289 /* SeeAllButton.swift in Sources */,
+				4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */,
 				E172D3B22BACA569007B4647 /* EpisodeContent.swift in Sources */,
 				E13F05EC28BC9000003499D2 /* LibraryDisplayType.swift in Sources */,
 				4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */,

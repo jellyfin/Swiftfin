@@ -172,6 +172,7 @@ extension Defaults.Keys {
     enum VideoPlayer {
 
         static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
+        static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .standard)
         static let autoPlayEnabled: Key<Bool> = UserKey("autoPlayEnabled", default: true)
         static let barActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "barActionButtons",
