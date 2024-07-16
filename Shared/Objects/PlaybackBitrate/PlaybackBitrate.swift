@@ -64,17 +64,4 @@ enum PlaybackBitrate: Int, CaseIterable, Defaults.Serializable, Displayable {
             return L10n.bitrateKbps420
         }
     }
-
-    static func filterValues(
-        lessThan max: PlaybackBitrate? = nil,
-        lessThanOrEqual maxOrEqual: PlaybackBitrate? = nil
-    ) -> [PlaybackBitrate] {
-        self.allCases.filter {
-            $0 == .auto || (
-                ((max == .auto || maxOrEqual == .auto) && $0.rawValue >= 0) ||
-                    (max != nil && $0.rawValue < max!.rawValue) ||
-                    (maxOrEqual != nil && $0.rawValue <= maxOrEqual!.rawValue)
-            )
-        }
-    }
 }
