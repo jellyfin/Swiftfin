@@ -15,8 +15,9 @@ import Logging
 extension BaseItemDto {
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
+        let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
-        let maxBitrate = try await getMaxBitrate()
+        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
 
         let userSession = Container.shared.currentUserSession()!
@@ -46,8 +47,9 @@ extension BaseItemDto {
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
+        let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
-        let maxBitrate = try await getMaxBitrate()
+        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
         if Defaults[.Experimental.liveTVForceDirectPlay] {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
@@ -98,21 +100,26 @@ extension BaseItemDto {
         )
     }
 
-    private func getMaxBitrate() async throws -> Int {
-        let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
+    private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
+        let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrateTest]
 
-        if settingBitrate == PlaybackBitrate.auto {
-            let settingBitrateTestSize = Defaults[.VideoPlayer.appMaximumBitrateTest]
-            let userSession = Container.shared.currentUserSession()!
-
-            let testStartTime = Date()
-            try await userSession.client.send(Paths.getBitrateTestBytes(size: settingBitrateTestSize.rawValue))
-            let testDuration = Date().timeIntervalSince(testStartTime)
-            let testSizeBits = Double(settingBitrateTestSize.rawValue * 8)
-            let testBitrate = testSizeBits / testDuration
-
-            return Int(testBitrate)
+        guard bitrate != .auto else {
+            return try await testBitrate(with: settingBitrate.rawValue)
         }
-        return settingBitrate.rawValue
+        return bitrate.rawValue
+    }
+
+    private func testBitrate(with testSize: Int) async throws -> Int {
+        precondition(testSize > 0, "testSize must be greater than zero")
+
+        let userSession = Container.shared.currentUserSession()!
+
+        let testStartTime = Date()
+        try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+        let testDuration = Date().timeIntervalSince(testStartTime)
+        let testSizeBits = Double(testSize * 8)
+        let testBitrate = testSizeBits / testDuration
+
+        return Int(testBitrate)
     }
 }

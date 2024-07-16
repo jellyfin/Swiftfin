@@ -70,13 +70,11 @@ enum PlaybackBitrate: Int, CaseIterable, Defaults.Serializable, Displayable {
         lessThanOrEqual maxOrEqual: PlaybackBitrate? = nil
     ) -> [PlaybackBitrate] {
         self.allCases.filter {
-            if let max = max {
-                return $0.rawValue < max.rawValue
-            } else if let maxOrEqual = maxOrEqual {
-                return $0.rawValue <= maxOrEqual.rawValue
-            } else {
-                return true
-            }
+            $0 == .auto || (
+                ((max == .auto || maxOrEqual == .auto) && $0.rawValue >= 0) ||
+                    (max != nil && $0.rawValue < max!.rawValue) ||
+                    (maxOrEqual != nil && $0.rawValue <= maxOrEqual!.rawValue)
+            )
         }
     }
 }
