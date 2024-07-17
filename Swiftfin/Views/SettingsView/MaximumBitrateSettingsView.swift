@@ -26,13 +26,13 @@ struct MaximumBitrateSettingsView: View {
 
                 if appMaximumBitrate == PlaybackBitrate.auto {
                     CaseIterablePicker(
-                        L10n.testDuration,
+                        L10n.testSize,
                         selection: $appMaximumBitrateTest
                     )
                 }
             } footer: {
                 if appMaximumBitrate == PlaybackBitrate.auto {
-                    Text(L10n.bitrateDurationDescription)
+                    Text(L10n.bitrateTestDescription)
                 }
             }
         }

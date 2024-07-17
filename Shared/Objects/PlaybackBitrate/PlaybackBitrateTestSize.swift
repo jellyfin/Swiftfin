@@ -11,24 +11,24 @@ import Foundation
 import JellyfinAPI
 
 enum PlaybackBitrateTestSize: Int, CaseIterable, Defaults.Serializable, Displayable {
-    case longest = 10_000_000
-    case longer = 7_500_000
-    case standard = 5_000_000
-    case shorter = 2_500_000
-    case shortest = 1_000_000
+    case largest = 10_000_000
+    case larger = 7_500_000
+    case regular = 5_000_000
+    case smaller = 2_500_000
+    case smallest = 1_000_000
 
     var displayTitle: String {
         switch self {
-        case .longest:
-            return L10n.longest
-        case .longer:
-            return L10n.longer
-        case .standard:
-            return L10n.standard
-        case .shorter:
-            return L10n.shorter
-        case .shortest:
-            return L10n.shortest
+        case .largest:
+            return L10n.largest
+        case .larger:
+            return L10n.larger
+        case .regular:
+            return L10n.regular
+        case .smaller:
+            return L10n.smaller
+        case .smallest:
+            return L10n.smallest
         }
     }
 }
