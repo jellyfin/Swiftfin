@@ -142,8 +142,6 @@ internal enum L10n {
   internal static let discoveredServers = L10n.tr("Localizable", "discoveredServers", fallback: "Discovered Servers")
   /// Dismiss a message or popup
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
-  /// Represents the the Filter Labels for Library/Search Sorting
-  internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
   /// Section Label for the Media's Downloaded Media Section
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Button label to edit jump lengths
@@ -174,7 +172,7 @@ internal enum L10n {
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
   /// Represents the label for all Jellyfin Icons that are Green regardless of Backgound/Color Invert
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
-  /// Label for the Grid Feature that formats the Library Items in a Grid
+  /// Label Header to set the Library Layout to a Grid
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
   /// Go back to the Home screen/form
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
@@ -212,15 +210,19 @@ internal enum L10n {
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
   }
+  /// Label Header to set the Library Layout Section
+  internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
   /// The Letter Picker Bar will be on the Left/Leading side of the Library
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
+  /// Represents the Letter Picker Filter label
+  internal static let letter = L10n.tr("Localizable", "letter", fallback: "Letter")
   /// Represents the Letter Picker Enabled section label
   internal static let letterPicker = L10n.tr("Localizable", "letterPicker", fallback: "Letter Picker")
   /// Label used to designate a Library
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// Represents the light theme setting
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
-  /// Label for the List Feature that formats the Library Items in a List
+  /// Label Header to set the Library Layout to a List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Section Label for the Media's Live TV Section
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
@@ -284,8 +286,6 @@ internal enum L10n {
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
   /// Represents the Letter Picker Orientation section label
   internal static let orientation = L10n.tr("Localizable", "orientation", fallback: "Orientation")
-  /// Represents the the Library Labels for Other Media Types
-  internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
   /// Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
   /// Option for pausing the Player when it's sent to the background
@@ -390,22 +390,16 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// The Letter Picker Bar will be on the Right/Trailing side of the Library
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
-  /// Label for runtime information
-  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Label for scrub current time
   internal static let scrubCurrentTime = L10n.tr("Localizable", "scrubCurrentTime", fallback: "Scrub Current Time")
   /// Represents the Section Label for the Search View
   internal static let search = L10n.tr("Localizable", "search", fallback: "Search")
   /// Represents the Search action designated as in-progress or an option on the view. Also used during Server Discovery
   internal static let searchDots = L10n.tr("Localizable", "searchDots", fallback: "Search…")
-  /// Represents the the Library Labels for Show Media Types with a single Season
-  internal static let season = L10n.tr("Localizable", "season", fallback: "Season")
   /// Represents the Media Item label to denote a Show's Season & Episode
   internal static func seasonAndEpisode(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "seasonAndEpisode", String(describing: p1), String(describing: p2), fallback: "S%1$@:E%2$@")
   }
-  /// Represents the the Library Labels for Show Media Types with multiple Seasons
-  internal static let seasons = L10n.tr("Localizable", "seasons", fallback: "Seasons")
   /// Expand a section to see all items
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
   /// Message Describing the current enabled status of the Player's Gesture to Seek on the Timeline for currently playing content
@@ -468,8 +462,6 @@ internal enum L10n {
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
   /// Button Label to indicate that this Filter Object sets the Library Order by an Item/Filter
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
-  /// Represents the the Filter Labels for Library/Search Sorting based on Item Attribute
-  internal static let sortBy = L10n.tr("Localizable", "sortBy", fallback: "Sort by")
   /// Label for source code
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source Code")
   /// Label for special features section
@@ -542,6 +534,8 @@ internal enum L10n {
   internal static let videoPlayer = L10n.tr("Localizable", "videoPlayer", fallback: "Video Player")
   /// Section Title for the Video Player Type Setting between VLC, and AVKit
   internal static let videoPlayerType = L10n.tr("Localizable", "videoPlayerType", fallback: "Video Player Type")
+  /// Represents the the Filter Labels for Library/Search Filtering based on Item Years
+  internal static let years = L10n.tr("Localizable", "years", fallback: "Years")
   /// Represents the label for all Jellyfin Icons that are Yellow regardless of Backgound/Color Invert
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
 }

@@ -113,7 +113,9 @@
 /* Label for subtitles settings/selection */
 "subtitles" = "Subtitles";
 
+
 /* MARK: Item - Shows */
+
 
 /* Label indicating a show airs on s specific day of the week */
 "airWithDate" = "Airs %s";
@@ -158,10 +160,6 @@
 /* Option for compact poster view */
 "compactPoster" = "Compact Poster";
 
-
-/* MARK: Valid Above This Line */
-
-
 /* Represents the Media Item button label to start a Media Item playback */
 "play" = "Play";
 
@@ -173,9 +171,6 @@
 
 /* Label for ratings section */
 "ratings" = "Ratings";
-
-/* Label for runtime information */
-"runtime" = "Runtime";
 
 /* Label for special features section */
 "specialFeatures" = "Special Features";
@@ -200,9 +195,6 @@
 /* MARK: Libraries - Filtering/Sorting */
 
 
-/* Represents the the Filter Labels for Library/Search Sorting */
-"displayOrder" = "Display order";
-
 /* Represents the the Favorited Labels for Library/Search Filters */
 "favorited" = "Favorited";
 
@@ -221,14 +213,14 @@
 /* Button Label to indicate that this Filter Object sets the Library Order by an Item/Filter */
 "sort" = "Sort";
 
-/* Represents the the Filter Labels for Library/Search Sorting based on Item Attribute */
-"sortBy" = "Sort by";
-
 /* Represents the the Filter Labels for Library/Search Filtering based on Item Studio */
 "studios" = "Studios";
 
 /* Represents the the Filter Labels for Library/Search Filtering based on Item Tag(s) */
 "tags" = "Tags";
+
+/* Represents the the Filter Labels for Library/Search Filtering based on Item Years */
+"years" = "Years";
 
 
 /* MARK: Libraries - Types */
@@ -240,29 +232,23 @@
 /* Represents the the Library Labels for Collections/Boxsets */
 "collections" = "Collections";
 
-/* Label for the Grid Feature that formats the Library Items in a Grid */
+/* Label Header to set the Library Layout to a Grid*/
 "grid" = "Grid";
 
-/* Label for the List Feature that formats the Library Items in a List */
+/* Label Header to set the Library Layout Section */
+"layout" = "Layout";
+
+/* Label Header to set the Library Layout to a List*/
 "list" = "List";
 
 /* Represents the the Library Labels for Movie Media Types */
 "movies" = "Movies";
-
-/* Represents the the Library Labels for Other Media Types */
-"other" = "Other";
 
 /* Represents the the Library Labels for Live TV Programs */
 "programs" = "Programs";
 
 /* Label for the Random Feature that sends the users to a Random Library Item */
 "random" = "Random";
-
-/* Represents the the Library Labels for Show Media Types with a single Season */
-"season" = "Season";
-
-/* Represents the the Library Labels for Show Media Types with multiple Seasons */
-"seasons" = "Seasons";
 
 /* Represents the the Library Labels for Series / Shows Media Type */
 "series" = "Series";
@@ -286,6 +272,7 @@
 /* Represents the the Library Labels for Live TV Programs/Shows that are Sports Content */
 "sports" = "Sports";
 
+/* MARK: Valid Above This Line */
 
 /* MARK: Media */
 
@@ -539,6 +526,9 @@
 
 /* The Letter Picker Bar will be on the Left/Leading side of the Library */
 "left" = "Left";
+
+/* Represents the Letter Picker Filter label */
+"letter" = "Letter";
 
 /* Represents the Letter Picker Enabled section label */
 "letterPicker" = "Letter Picker";
@@ -914,6 +904,7 @@
 //"close" = "Close";
 //"continueWatching" = "Continue Watching";
 //"defaultScheme" = "Default Scheme";
+//"displayOrder" = "Display order";
 //"file" = "File";
 //"information" = "Information";
 //"loading" = "Loading";
@@ -924,6 +915,7 @@
 //"noCodec" = "No Codec";
 //"notAvailableSlash" = "N/A";
 //"ok" = "Ok";
+//"other" = "Other";
 //"otherUser" = "Other User";
 //"overview" = "Overview";
 //"playNext" = "Play Next";
@@ -933,7 +925,11 @@
 //"reload" = "Reload";
 //"remove" = "Remove";
 //"removeFromResume" = "Remove From Resume";
+//"runtime" = "Runtime";
+//"season" = "Season";
+//"seasons" = "Seasons";
 //"servers" = "Servers";
+//"sortBy" = "Sort by";
 //"tooManyRedirects" = "Too Many Redirects";
 //"tryAgain" = "Try again";
 //"unknown" = "Unknown";
