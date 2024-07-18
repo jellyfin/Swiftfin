@@ -10,626 +10,588 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
-  /// About
+  /// Label to denote the section about a media item
   internal static let about = L10n.tr("Localizable", "about", fallback: "About")
-  /// Accent Color
+  /// Label for accent color selection
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
-  /// Some views may need an app restart to update.
+  /// Label explaining a restart may be required
   internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
-  /// Accessibility
+  /// Represents the Accessibility section label
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
-  /// Add URL
+  /// Represents the label used to offer the user the ability to designate an additional URL for an existing Jellyfin Server
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
-  /// Advanced
+  /// Represents the Advanced section label
   internal static let advanced = L10n.tr("Localizable", "advanced", fallback: "Advanced")
-  /// Airs %s
+  /// Label indicating a show airs on s specific day of the week
   internal static func airWithDate(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "airWithDate", p1, fallback: "Airs %s")
   }
-  /// All Genres
-  internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
-  /// All Media
+  /// Section Label for the Media View
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
-  /// Appearance
+  /// Represents the Appearance setting label
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
-  /// App Icon
+  /// Section Header Label for changing the Swiftfin App Icon
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
-  /// Apply
+  /// Apply/Save the current values on the screen/form
   internal static let apply = L10n.tr("Localizable", "apply", fallback: "Apply")
-  /// Aspect Fill
+  /// Option for aspect fill display mode
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect Fill")
-  /// Audio
+  /// Overlay Label for Selecting Audio Information/Settings
   internal static let audio = L10n.tr("Localizable", "audio", fallback: "Audio")
-  /// Audio & Captions
+  /// Section Label for Audio, Captions/Subtitles configuration on the Video Playback Overlay
   internal static let audioAndCaptions = L10n.tr("Localizable", "audioAndCaptions", fallback: "Audio & Captions")
-  /// Audio Offset
+  /// Label for audio offset settings
   internal static let audioOffset = L10n.tr("Localizable", "audioOffset", fallback: "Audio Offset")
-  /// Audio Track
+  /// Section label on the video player overlay to select the audio track for playback
   internal static let audioTrack = L10n.tr("Localizable", "audioTrack", fallback: "Audio Track")
-  /// Authorize
+  /// Represents the final step in the Quick Connect Authentication process using Swiftifn to Authorize another device
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
-  /// Auto Play
+  /// Option to enable auto play
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto Play")
-  /// Back
+  /// Go back to the previous screen/form
   internal static let back = L10n.tr("Localizable", "back", fallback: "Back")
-  /// Bar Buttons
+  /// Label for bar buttons settings
   internal static let barButtons = L10n.tr("Localizable", "barButtons", fallback: "Bar Buttons")
-  /// Blue
+  /// Option for automatic bitrate selection
+  internal static let bitrateAuto = L10n.tr("Localizable", "bitrateAuto", fallback: "Auto")
+  /// Option to set the bitrate to 480p quality at 1.5 Mbps
+  internal static let bitrateKbps1500 = L10n.tr("Localizable", "bitrateKbps1500", fallback: "480p - 1.5 Mbps")
+  /// Option to set the bitrate to 360p quality at 420 Kbps
+  internal static let bitrateKbps420 = L10n.tr("Localizable", "bitrateKbps420", fallback: "360p - 420 Kbps")
+  /// Option to set the bitrate to 480p quality at 720 Kbps
+  internal static let bitrateKbps720 = L10n.tr("Localizable", "bitrateKbps720", fallback: "480p - 720 Kbps")
+  /// Option for the maximum bitrate
+  internal static let bitrateMax = L10n.tr("Localizable", "bitrateMax", fallback: "Maximum")
+  /// Option to set the bitrate to 1080p quality at 10 Mbps
+  internal static let bitrateMbps10 = L10n.tr("Localizable", "bitrateMbps10", fallback: "1080p - 10 Mbps")
+  /// Option to set the bitrate to 4K quality at 120 Mbps
+  internal static let bitrateMbps120 = L10n.tr("Localizable", "bitrateMbps120", fallback: "4K - 120 Mbps")
+  /// Option to set the bitrate to 1080p quality at 15 Mbps
+  internal static let bitrateMbps15 = L10n.tr("Localizable", "bitrateMbps15", fallback: "1080p - 15 Mbps")
+  /// Option to set the bitrate to 1080p quality at 20 Mbps
+  internal static let bitrateMbps20 = L10n.tr("Localizable", "bitrateMbps20", fallback: "1080p - 20 Mbps")
+  /// Option to set the bitrate to 480p quality at 3 Mbps
+  internal static let bitrateMbps3 = L10n.tr("Localizable", "bitrateMbps3", fallback: "480p - 3 Mbps")
+  /// Option to set the bitrate to 720p quality at 4 Mbps
+  internal static let bitrateMbps4 = L10n.tr("Localizable", "bitrateMbps4", fallback: "720p - 4 Mbps")
+  /// Option to set the bitrate to 1080p quality at 40 Mbps
+  internal static let bitrateMbps40 = L10n.tr("Localizable", "bitrateMbps40", fallback: "1080p - 40 Mbps")
+  /// Option to set the bitrate to 720p quality at 6 Mbps
+  internal static let bitrateMbps6 = L10n.tr("Localizable", "bitrateMbps6", fallback: "720p - 6 Mbps")
+  /// Option to set the bitrate to 1080p quality at 60 Mbps
+  internal static let bitrateMbps60 = L10n.tr("Localizable", "bitrateMbps60", fallback: "1080p - 60 Mbps")
+  /// Option to set the bitrate to 720p quality at 8 Mbps
+  internal static let bitrateMbps8 = L10n.tr("Localizable", "bitrateMbps8", fallback: "720p - 8 Mbps")
+  /// Option to set the bitrate to 4K quality at 80 Mbps
+  internal static let bitrateMbps80 = L10n.tr("Localizable", "bitrateMbps80", fallback: "4K - 80 Mbps")
+  /// Description for bitrate test duration indicating larger tests provide more accurate bitrates but may delay playback
+  internal static let bitrateTestDescription = L10n.tr("Localizable", "bitrateTestDescription", fallback: "Larger tests result in a more accurate bitrate but may delay playback")
+  /// Represents the label for all Jellyfin Icons that are Blue regardless of Backgound/Color Invert
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
-  /// Bugs and Features
+  /// Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Issue Tracking
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and Features")
-  /// Buttons
+  /// Label for buttons section
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
-  /// Cancel
+  /// Stop the current operation or reset the screen/form
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
-  /// Cannot connect to host
-  internal static let cannotConnectToHost = L10n.tr("Localizable", "cannotConnectToHost", fallback: "Cannot connect to host")
-  /// CAST
-  internal static let cast = L10n.tr("Localizable", "cast", fallback: "CAST")
-  /// Cast & Crew
+  /// Label for cast and crew information
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & Crew")
-  /// Change Server
+  /// Represents the label for the button that takes the user to the Server selection screen
   internal static let changeServer = L10n.tr("Localizable", "changeServer", fallback: "Change Server")
-  /// Channels
+  /// Represents the the Library Labels for Live TV Channels
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
-  /// Chapters
+  /// Label for chapters section
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
-  /// Chapter Slider
+  /// Label for chapter slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter Slider")
-  /// Cinematic
+  /// Label for cinematic view
   internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
-  /// Cinematic Views
+  /// Label for cinematic views
   internal static let cinematicViews = L10n.tr("Localizable", "cinematicViews", fallback: "Cinematic Views")
-  /// Close
+  /// Leave/close the current menu
   internal static let close = L10n.tr("Localizable", "close", fallback: "Close")
-  /// Closed Captions
+  /// Label for indicating Closed Captions or Subtitles for a media item
   internal static let closedCaptions = L10n.tr("Localizable", "closedCaptions", fallback: "Closed Captions")
-  /// Collections
+  /// Represents the the Library Labels for Collections/Boxsets
   internal static let collections = L10n.tr("Localizable", "collections", fallback: "Collections")
-  /// Color
+  /// Label for color selection
   internal static let color = L10n.tr("Localizable", "color", fallback: "Color")
-  /// Coming soon
-  internal static let comingSoon = L10n.tr("Localizable", "comingSoon", fallback: "Coming soon")
-  /// Compact
+  /// Setting for Compact Text spacing as opposed to Normal Spacing
   internal static let compact = L10n.tr("Localizable", "compact", fallback: "Compact")
-  /// Compact Logo
+  /// Option for compact logo view
   internal static let compactLogo = L10n.tr("Localizable", "compactLogo", fallback: "Compact Logo")
-  /// Compact Poster
+  /// Option for compact poster view
   internal static let compactPoster = L10n.tr("Localizable", "compactPoster", fallback: "Compact Poster")
-  /// Confirm Close
+  /// tvOS Setting whether going back on the remote should close Swiftfin or if it should provide a confirmation first
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
-  /// Connect
+  /// Represents the Connect Button label for the Server Details provided
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
-  /// Connect Manually
-  internal static let connectManually = L10n.tr("Localizable", "connectManually", fallback: "Connect Manually")
-  /// Connect to Jellyfin
-  internal static let connectToJellyfin = L10n.tr("Localizable", "connectToJellyfin", fallback: "Connect to Jellyfin")
-  /// Connect to a Jellyfin server
+  /// Represents the first Connect to Server label on a new installation
   internal static let connectToJellyfinServer = L10n.tr("Localizable", "connectToJellyfinServer", fallback: "Connect to a Jellyfin server")
-  /// Connect to a Jellyfin server to get started
+  /// Represents the first Connect to Server label on a new installation
   internal static let connectToJellyfinServerStart = L10n.tr("Localizable", "connectToJellyfinServerStart", fallback: "Connect to a Jellyfin server to get started")
-  /// Connect to Server
+  /// Represents the Connect Button label for the Server Details provided
   internal static let connectToServer = L10n.tr("Localizable", "connectToServer", fallback: "Connect to Server")
-  /// Containers
-  internal static let containers = L10n.tr("Localizable", "containers", fallback: "Containers")
-  /// Continue
+  /// Proceed or continue to the next screen as a proceed opposed to an agreement
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
-  /// Continue Watching
+  /// Represents the Home View section for items that are in-progress files
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
-  /// Current
+  /// Label for current item
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
-  /// Current Position
+  /// Label in the overlay to indicate the current time for the watched content
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
-  /// Customize
+  /// Button label to customize settings
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
-  /// Dark
+  /// Represents the dark theme setting
   internal static let dark = L10n.tr("Localizable", "dark", fallback: "Dark")
-  /// Default Scheme
-  internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
-  /// Delivery
+  /// Section Title for Media Stream Info Views for Stream Delivery Properties
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
-  /// DIRECTOR
-  internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
-  /// Disabled
+  /// Feature/Setting is inactive
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
-  /// Discovered Servers
+  /// Represents the section label for Jellyfin Server(s) that were found during Jellyfin Server Discovery
   internal static let discoveredServers = L10n.tr("Localizable", "discoveredServers", fallback: "Discovered Servers")
-  /// Dismiss
+  /// Dismiss a message or popup
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
-  /// Display order
+  /// Represents the the Filter Labels for Library/Search Sorting
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
-  /// Downloads
+  /// Section Label for the Media's Downloaded Media Section
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
-  /// Edit Jump Lengths
+  /// Button label to edit jump lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
-  /// Empty Next Up
-  internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
-  /// Enabled
+  /// Feature/Setting is active
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
-  /// Episode Landscape Poster
+  /// Label for episode landscape poster
   internal static let episodeLandscapePoster = L10n.tr("Localizable", "episodeLandscapePoster", fallback: "Episode Landscape Poster")
-  /// Episode %1$@
+  /// Label for episode number
   internal static func episodeNumber(_ p1: Any) -> String {
     return L10n.tr("Localizable", "episodeNumber", String(describing: p1), fallback: "Episode %1$@")
   }
-  /// Episodes
+  /// Label used to designate an Episode contained within a Show Library
   internal static let episodes = L10n.tr("Localizable", "episodes", fallback: "Episodes")
-  /// Error
+  /// Generic error for handling uncaught & unexpected interactions
   internal static let error = L10n.tr("Localizable", "error", fallback: "Error")
-  /// Existing Server
-  internal static let existingServer = L10n.tr("Localizable", "existingServer", fallback: "Existing Server")
-  /// Existing User
-  internal static let existingUser = L10n.tr("Localizable", "existingUser", fallback: "Existing User")
-  /// Experimental
+  /// Represents a Settings Section for settings that are not fully ready
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
-  /// Favorited
+  /// Represents the the Favorited Labels for Library/Search Filters
   internal static let favorited = L10n.tr("Localizable", "favorited", fallback: "Favorited")
-  /// Favorites
+  /// Section Label for the Media's Favorite Section
   internal static let favorites = L10n.tr("Localizable", "favorites", fallback: "Favorites")
-  /// File
+  /// A Media/Subtitle object as a File on a Server System or local device
   internal static let file = L10n.tr("Localizable", "file", fallback: "File")
-  /// Filter Results
-  internal static let filterResults = L10n.tr("Localizable", "filterResults", fallback: "Filter Results")
-  /// Filters
+  /// Represents the the Filter Labels for Library/Search Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
-  /// Genres
+  /// Represents the the Filter Labels for Library/Search Filtering based on Item Genre(s)
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
-  /// Gestures
+  /// Section header for all Playback Gestures settings
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
-  /// Green
+  /// Represents the label for all Jellyfin Icons that are Green regardless of Backgound/Color Invert
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
-  /// Grid
+  /// Label for the Grid Feature that formats the Library Items in a Grid
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
-  /// Haptic Feedback
-  internal static let hapticFeedback = L10n.tr("Localizable", "hapticFeedback", fallback: "Haptic Feedback")
-  /// Home
+  /// Go back to the Home screen/form
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
-  /// Indicators
+  /// Label for indicators settings
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
-  /// Information
+  /// Label for information section
   internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
-  /// Inverted Dark
+  /// App Icons that are Colored with the Selected Color but have a Black Background
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
-  /// Inverted Light
+  /// App Icons that are Colored with the Selected Color but have a White Background
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted Light")
-  /// Items
+  /// Generic term for Movies/Episodes/Shows... etc
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
-  /// Jump
+  /// Label for jump button
   internal static let jump = L10n.tr("Localizable", "jump", fallback: "Jump")
-  /// Jump Backward
+  /// Overlay Label for jumping backwards in the media based on the Jump configuration in Playback Settings
   internal static let jumpBackward = L10n.tr("Localizable", "jumpBackward", fallback: "Jump Backward")
-  /// Jump Backward Length
+  /// Section Title for setting how far backwards the jump backwards button goes
   internal static let jumpBackwardLength = L10n.tr("Localizable", "jumpBackwardLength", fallback: "Jump Backward Length")
-  /// Jump Forward
+  /// Overlay Label for jumping forward in the media based on the Jump configuration in Playback Settings
   internal static let jumpForward = L10n.tr("Localizable", "jumpForward", fallback: "Jump Forward")
-  /// Jump Forward Length
+  /// Section Title for setting how far forward the jump forward button goes
   internal static let jumpForwardLength = L10n.tr("Localizable", "jumpForwardLength", fallback: "Jump Forward Length")
-  /// Jump Gestures Enabled
+  /// Message Describing if gesture for jumping forward/backward is enabled
   internal static let jumpGesturesEnabled = L10n.tr("Localizable", "jumpGesturesEnabled", fallback: "Jump Gestures Enabled")
-  /// %s seconds
+  /// Label for jump length in seconds
   internal static func jumpLengthSeconds(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "jumpLengthSeconds", p1, fallback: "%s seconds")
   }
-  /// Kids
+  /// Represents the the Library Labels for Live TV Programs/Shows that are Kids Content
   internal static let kids = L10n.tr("Localizable", "kids", fallback: "Kids")
-  /// Larger
+  /// Option for a larger than regular item type
   internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
-  /// Largest
+  /// Option for the largest item type
   internal static let largest = L10n.tr("Localizable", "largest", fallback: "Largest")
-  /// Latest %@
+  /// Represents the Home View section for All media items that are new for each Media Type
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
   }
-  /// Left
+  /// The Letter Picker Bar will be on the Left/Leading side of the Library
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
-  /// Letter Picker
+  /// Represents the Letter Picker Enabled section label
   internal static let letterPicker = L10n.tr("Localizable", "letterPicker", fallback: "Letter Picker")
-  /// Library
+  /// Label used to designate a Library
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
-  /// Light
+  /// Represents the light theme setting
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
-  /// List
+  /// Label for the List Feature that formats the Library Items in a List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
-  /// Live TV
+  /// Section Label for the Media's Live TV Section
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
-  /// Loading
+  /// View is loading data
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
-  /// Local Servers
+  /// Represents the section label for local/LAN Jellyfin Server(s) that were found during Jellyfin Server Discovery
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local Servers")
-  /// Login
-  internal static let login = L10n.tr("Localizable", "login", fallback: "Login")
-  /// Login to %@
-  internal static func loginToWithString(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "loginToWithString", String(describing: p1), fallback: "Login to %@")
-  }
-  /// Logs
+  /// Section Label for the logs generated by Swiftfin
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
-  /// Media
+  /// Option to set the maximum bitrate for playback
+  internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
+  /// Section Label for all Media Library Sections
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
-  /// Menu Buttons
+  /// Label for video player menu buttons
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu Buttons")
-  /// Missing
+  /// Label indicating missing items
   internal static let missing = L10n.tr("Localizable", "missing", fallback: "Missing")
-  /// Missing Items
+  /// Label for missing items section
   internal static let missingItems = L10n.tr("Localizable", "missingItems", fallback: "Missing Items")
-  /// More Like This
+  /// Represents the the Media Item section for Jellyfin recommendations
   internal static let moreLikeThis = L10n.tr("Localizable", "moreLikeThis", fallback: "More Like This")
-  /// Movies
+  /// Represents the the Library Labels for Movie Media Types
   internal static let movies = L10n.tr("Localizable", "movies", fallback: "Movies")
-  /// %d users
-  internal static func multipleUsers(_ p1: Int) -> String {
-    return L10n.tr("Localizable", "multipleUsers", p1, fallback: "%d users")
-  }
-  /// Name
+  /// Label indicating something's name
   internal static let name = L10n.tr("Localizable", "name", fallback: "Name")
-  /// Native Player
+  /// Indicates that Swiftfin playback is using AVKit
   internal static let nativePlayer = L10n.tr("Localizable", "nativePlayer", fallback: "Native Player")
-  /// Networking
-  internal static let networking = L10n.tr("Localizable", "networking", fallback: "Networking")
-  /// Network timed out
-  internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
-  /// News
+  /// Represents the the Library Labels for Live TV Programs/Shows that are News/Current Events Content
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
-  /// Next
+  /// Button label for the next item
   internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
-  /// Next Item
+  /// Overlay Label for going to the next episode in a show
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
-  /// Next Up
+  /// Represents the Home View section for Show items are in-progress Seasons
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
-  /// No Cast devices found..
+  /// Represents the Media Casting Device selection when no Media Casting Devices were found
   internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
-  /// No Codec
+  /// Label indicating no codec is available
   internal static let noCodec = L10n.tr("Localizable", "noCodec", fallback: "No Codec")
-  /// No episodes available
+  /// Represents the label that will exist in place of an episode view if there are no episodes
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
-  /// No local servers found
+  /// Message Label to designate that the Server Discovery process did not find any local/LAN Server(s)
   internal static let noLocalServersFound = L10n.tr("Localizable", "noLocalServersFound", fallback: "No local servers found")
-  /// None
+  /// Label indicating none
   internal static let `none` = L10n.tr("Localizable", "none", fallback: "None")
-  /// No overview available
+  /// Label indicating no overview is available
   internal static let noOverviewAvailable = L10n.tr("Localizable", "noOverviewAvailable", fallback: "No overview available")
-  /// No public Users
+  /// Message indicating there are no public users
   internal static let noPublicUsers = L10n.tr("Localizable", "noPublicUsers", fallback: "No public Users")
-  /// No results.
+  /// Used as a catch when the Library and/or Filtering results in no value content
   internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results.")
-  /// Normal
+  /// Setting for Normal Text spacing as opposed to Compact Spacing
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
-  /// N/A
+  /// Label for not available
   internal static let notAvailableSlash = L10n.tr("Localizable", "notAvailableSlash", fallback: "N/A")
-  /// Type: %@ not implemented yet :(
+  /// Represents media types that are not currently implemented
   internal static func notImplementedYetWithType(_ p1: Any) -> String {
     return L10n.tr("Localizable", "notImplementedYetWithType", String(describing: p1), fallback: "Type: %@ not implemented yet :(")
   }
-  /// No title
+  /// Label indicating no title is available
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
-  /// Ok
+  /// Proceed with the current values on the screen/form
   internal static let ok = L10n.tr("Localizable", "ok", fallback: "Ok")
-  /// 1 user
-  internal static let oneUser = L10n.tr("Localizable", "oneUser", fallback: "1 user")
-  /// On Now
+  /// Represents the the Library Labels for Live TV Programs/Shows that are on Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
-  /// Operating System
+  /// Section Label for OS running the current connected Jellyfin Server
   internal static let operatingSystem = L10n.tr("Localizable", "operatingSystem", fallback: "Operating System")
-  /// Orange
+  /// Represents the label for all Jellyfin Icons that are Orange regardless of Backgound/Color Invert
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
-  /// Order
+  /// Button Label to indicate that this Filter Object sets the Library Order Ascending/Descending by the Sort Types
   internal static let order = L10n.tr("Localizable", "order", fallback: "Order")
-  /// Orientation
+  /// Represents the Letter Picker Orientation section label
   internal static let orientation = L10n.tr("Localizable", "orientation", fallback: "Orientation")
-  /// Other
+  /// Represents the the Library Labels for Other Media Types
   internal static let other = L10n.tr("Localizable", "other", fallback: "Other")
-  /// Other User
-  internal static let otherUser = L10n.tr("Localizable", "otherUser", fallback: "Other User")
-  /// Overlay
-  internal static let overlay = L10n.tr("Localizable", "overlay", fallback: "Overlay")
-  /// Overlay Type
-  internal static let overlayType = L10n.tr("Localizable", "overlayType", fallback: "Overlay Type")
-  /// Overview
+  /// Label for overview information
   internal static let overview = L10n.tr("Localizable", "overview", fallback: "Overview")
-  /// Page %1$@ of %2$@
-  internal static func pageOfWithNumbers(_ p1: Any, _ p2: Any) -> String {
-    return L10n.tr("Localizable", "pageOfWithNumbers", String(describing: p1), String(describing: p2), fallback: "Page %1$@ of %2$@")
-  }
-  /// Password
+  /// Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
-  /// Pause on background
+  /// Option for pausing the Player when it's sent to the background
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
-  /// People
+  /// Label for people section of the Search View
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
-  /// Play
+  /// Represents the Media Item button label to start a Media Item playback
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
-  /// Play / Pause
+  /// Overlay Label for Playing/Pausing currently watched content
   internal static let playAndPause = L10n.tr("Localizable", "playAndPause", fallback: "Play / Pause")
-  /// Playback
+  /// Represents the Playback section label
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
-  /// Playback Buttons
+  /// Label for playback buttons
   internal static let playbackButtons = L10n.tr("Localizable", "playbackButtons", fallback: "Playback Buttons")
-  /// Playback settings
+  /// Represents the Playback Settings section label
   internal static let playbackSettings = L10n.tr("Localizable", "playbackSettings", fallback: "Playback settings")
-  /// Playback Speed
+  /// Label for playback speed settings
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed", fallback: "Playback Speed")
-  /// Played
+  /// Library Item has been watch by this user
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
-  /// Player Gestures Lock Gesture Enabled
+  /// Message Describing the current enabled status of the Player's Gesture Lock
   internal static let playerGesturesLockGestureEnabled = L10n.tr("Localizable", "playerGesturesLockGestureEnabled", fallback: "Player Gestures Lock Gesture Enabled")
-  /// Play From Beginning
+  /// Option to play from the beginning
   internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From Beginning")
-  /// Play Next
+  /// Represents the Media Item button label to start the Media Item playback for a Collection of Items
   internal static let playNext = L10n.tr("Localizable", "playNext", fallback: "Play Next")
-  /// Play Next Item
+  /// Button label to play the next item
   internal static let playNextItem = L10n.tr("Localizable", "playNextItem", fallback: "Play Next Item")
-  /// Play on active
+  /// Option for resuming the Player when it's sent back to the foreground
   internal static let playOnActive = L10n.tr("Localizable", "playOnActive", fallback: "Play on active")
-  /// Play Previous Item
+  /// Button label to play the previous item
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play Previous Item")
-  /// Posters
+  /// Label for Media Items posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
-  /// Present
+  /// Label for a show that is active until present
   internal static let present = L10n.tr("Localizable", "present", fallback: "Present")
-  /// Press Down for Menu
+  /// Label for press down for menu
   internal static let pressDownForMenu = L10n.tr("Localizable", "pressDownForMenu", fallback: "Press Down for Menu")
-  /// Previous Item
+  /// Overlay Label for going back to previous episode in a show
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous Item")
-  /// Primary
+  /// Represents the label for the default Jellyfin Icon for Swiftfin
   internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
-  /// Programs
+  /// Represents the the Library Labels for Live TV Programs
   internal static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
-  /// Progress
+  /// Label for playback progress
   internal static let progress = L10n.tr("Localizable", "progress", fallback: "Progress")
-  /// Public Users
+  /// Represents the section label for public users
   internal static let publicUsers = L10n.tr("Localizable", "publicUsers", fallback: "Public Users")
-  /// Quick Connect
+  /// Represents the Quick Connect Section title Label
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
-  /// Quick Connect code
+  /// Represents the Quick Connect Section title Label for where the Code is input
   internal static let quickConnectCode = L10n.tr("Localizable", "quickConnectCode", fallback: "Quick Connect code")
-  /// Invalid Quick Connect code
+  /// Represents the Quick Connect message label when Quick Connect authorization for another device fails due to incorrect code
   internal static let quickConnectInvalidError = L10n.tr("Localizable", "quickConnectInvalidError", fallback: "Invalid Quick Connect code")
-  /// Note: Quick Connect not enabled
+  /// Represents the Quick Connect message label when Quick Connect authorization for another device fails due to being disabled on Server
   internal static let quickConnectNotEnabled = L10n.tr("Localizable", "quickConnectNotEnabled", fallback: "Note: Quick Connect not enabled")
-  /// 1. Open the Jellyfin app on your phone or web browser and sign in with your account
+  /// Represents the Quick Connect message message for step 1 when adding an account to Swiftfin using Quick Connect from another device
   internal static let quickConnectStep1 = L10n.tr("Localizable", "quickConnectStep1", fallback: "1. Open the Jellyfin app on your phone or web browser and sign in with your account")
-  /// 2. Open the user menu and go to the Quick Connect page
+  /// Represents the Quick Connect message message for step 2 when adding an account to Swiftfin using Quick Connect from another device
   internal static let quickConnectStep2 = L10n.tr("Localizable", "quickConnectStep2", fallback: "2. Open the user menu and go to the Quick Connect page")
-  /// 3. Enter the following code:
+  /// Represents the Quick Connect message message for step 3 when adding an account to Swiftfin using Quick Connect from another device
   internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "3. Enter the following code:")
-  /// Authorizing Quick Connect successful. Please continue on your other device.
+  /// Represents the Quick Connect message label when Quick Connect authorization for another device succeeds
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
-  /// Random
+  /// Label for the Random Feature that sends the users to a Random Library Item
   internal static let random = L10n.tr("Localizable", "random", fallback: "Random")
-  /// Random Image
+  /// Media Items will use a Random Image opposed to their Cover Image
   internal static let randomImage = L10n.tr("Localizable", "randomImage", fallback: "Random Image")
-  /// Rated
-  internal static let rated = L10n.tr("Localizable", "rated", fallback: "Rated")
-  /// Ratings
+  /// Label for ratings section
   internal static let ratings = L10n.tr("Localizable", "ratings", fallback: "Ratings")
-  /// Recently Added
+  /// Label for recently added items
   internal static let recentlyAdded = L10n.tr("Localizable", "recentlyAdded", fallback: "Recently Added")
-  /// Recommended
+  /// Label for recommended items
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
-  /// Red
+  /// Represents the label for all Jellyfin Icons that are Red regardless of Backgound/Color Invert
   internal static let red = L10n.tr("Localizable", "red", fallback: "Red")
-  /// Refresh
+  /// Refresh the current view
   internal static let refresh = L10n.tr("Localizable", "refresh", fallback: "Refresh")
-  /// Regular
+  /// Option for the a standard/regular item type
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
-  /// Released
+  /// Label indicating the released date
   internal static let released = L10n.tr("Localizable", "released", fallback: "Released")
-  /// Reload
+  /// Reload the current view
   internal static let reload = L10n.tr("Localizable", "reload", fallback: "Reload")
-  /// Remaining Time
+  /// Label in the overlay to indicate time remaining in the watched content
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
-  /// Remove
+  /// Button label to remove an item
   internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
-  /// Remove All Servers
+  /// Represents a label for a button to remove all Users & Servers in Swiftfin
   internal static let removeAllServers = L10n.tr("Localizable", "removeAllServers", fallback: "Remove All Servers")
-  /// Remove All Users
+  /// Represents a label for a button to remove all Users from a Jellyfin Server in Swiftfin
   internal static let removeAllUsers = L10n.tr("Localizable", "removeAllUsers", fallback: "Remove All Users")
-  /// Remove From Resume
+  /// Option to remove from resume
   internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume", fallback: "Remove From Resume")
-  /// Report an Issue
+  /// Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Issue Reporting
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
-  /// Request a Feature
+  /// Section of the Jellyfin/System screen directing users to the Swiftfin GitHub for Feature Requesting
   internal static let requestFeature = L10n.tr("Localizable", "requestFeature", fallback: "Request a Feature")
-  /// Reset
+  /// Reset the form/screen back to the default/previous values
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
-  /// Reset all settings back to defaults.
+  /// Message explaining
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
-  /// Reset App Settings
+  /// Section Label for Full App Settings Reset
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
-  /// Reset User Settings
+  /// Section Label for User Settings Reset
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
-  /// Resume 5 Second Offset
+  /// Option for a 5-second resume offset
   internal static let resume5SecondOffset = L10n.tr("Localizable", "resume5SecondOffset", fallback: "Resume 5 Second Offset")
-  /// Resume Offset
+  /// Label for resume offset settings
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume Offset")
-  /// Resume content seconds before the recorded resume time
+  /// Description for resume offset settings
   internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time")
-  /// Retrieving media information
+  /// Message indicating media information is being retrieved
   internal static let retrievingMediaInformation = L10n.tr("Localizable", "retrievingMediaInformation", fallback: "Retrieving media information")
-  /// Retry
+  /// Retry an action typical after it failed the first time
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
-  /// Right
+  /// The Letter Picker Bar will be on the Right/Trailing side of the Library
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
-  /// Runtime
+  /// Label for runtime information
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
-  /// Scrub Current Time
+  /// Label for scrub current time
   internal static let scrubCurrentTime = L10n.tr("Localizable", "scrubCurrentTime", fallback: "Scrub Current Time")
-  /// Search
+  /// Represents the Section Label for the Search View
   internal static let search = L10n.tr("Localizable", "search", fallback: "Search")
-  /// Search…
+  /// Represents the Search action designated as in-progress or an option on the view. Also used during Server Discovery
   internal static let searchDots = L10n.tr("Localizable", "searchDots", fallback: "Search…")
-  /// Searching…
-  internal static let searchingDots = L10n.tr("Localizable", "searchingDots", fallback: "Searching…")
-  /// Season
+  /// Represents the the Library Labels for Show Media Types with a single Season
   internal static let season = L10n.tr("Localizable", "season", fallback: "Season")
-  /// S%1$@:E%2$@
+  /// Represents the Media Item label to denote a Show's Season & Episode
   internal static func seasonAndEpisode(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "seasonAndEpisode", String(describing: p1), String(describing: p2), fallback: "S%1$@:E%2$@")
   }
-  /// Seasons
+  /// Represents the the Library Labels for Show Media Types with multiple Seasons
   internal static let seasons = L10n.tr("Localizable", "seasons", fallback: "Seasons")
-  /// See All
+  /// Expand a section to see all items
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
-  /// Seek Slide Gesture Enabled
+  /// Message Describing the current enabled status of the Player's Gesture to Seek on the Timeline for currently playing content
   internal static let seekSlideGestureEnabled = L10n.tr("Localizable", "seekSlideGestureEnabled", fallback: "Seek Slide Gesture Enabled")
-  /// See More
+  /// Button label to see more content
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
-  /// Select Cast Destination
+  /// Represents the Media Casting Device selection label
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
-  /// Series
+  /// Represents the the Library Labels for Series / Shows Media Type
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
-  /// Series Backdrop
+  /// Label for series backdrop
   internal static let seriesBackdrop = L10n.tr("Localizable", "seriesBackdrop", fallback: "Series Backdrop")
-  /// Server
+  /// Generic term for the Active Jellyfin Server
   internal static let server = L10n.tr("Localizable", "server", fallback: "Server")
-  /// Server %s is already connected
+  /// Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password
   internal static func serverAlreadyConnected(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "serverAlreadyConnected", p1, fallback: "Server %s is already connected")
   }
-  /// Server %s already exists. Add new URL?
+  /// Represents the label used to offer the user the ability to designate an additional URL for an existing Jellyfin Server
   internal static func serverAlreadyExistsPrompt(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "serverAlreadyExistsPrompt", p1, fallback: "Server %s already exists. Add new URL?")
   }
-  /// Server Details
+  /// Section Label for details about the current connected Jellyfin Server
   internal static let serverDetails = L10n.tr("Localizable", "serverDetails", fallback: "Server Details")
-  /// Server Information
+  /// Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information
   internal static let serverInformation = L10n.tr("Localizable", "serverInformation", fallback: "Server Information")
-  /// Servers
+  /// Generic term for one or more Jellyfin Server
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
-  /// Server URL
+  /// Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
-  /// Settings
+  /// Section Label for the Settings Screen
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
-  /// Show Cast & Crew
+  /// Option to show cast and crew information
   internal static let showCastAndCrew = L10n.tr("Localizable", "showCastAndCrew", fallback: "Show Cast & Crew")
-  /// Show Chapters Info In Bottom Overlay
+  /// Option to enable chapters info in the bottom overlay
   internal static let showChaptersInfoInBottomOverlay = L10n.tr("Localizable", "showChaptersInfoInBottomOverlay", fallback: "Show Chapters Info In Bottom Overlay")
-  /// Flatten Library Items
+  /// Option to flatten library items
   internal static let showFlattenView = L10n.tr("Localizable", "showFlattenView", fallback: "Flatten Library Items")
-  /// Show Missing Episodes
+  /// Option to show missing episodes
   internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes", fallback: "Show Missing Episodes")
-  /// Show Missing Seasons
+  /// Option to show missing seasons
   internal static let showMissingSeasons = L10n.tr("Localizable", "showMissingSeasons", fallback: "Show Missing Seasons")
-  /// Show Poster Labels
+  /// Option to show poster labels
   internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels", fallback: "Show Poster Labels")
-  /// Signed in as %@
-  internal static func signedInAsWithString(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "signedInAsWithString", String(describing: p1), fallback: "Signed in as %@")
-  }
-  /// Sign In
+  /// Button label that confirms the user information and attempts to sign them in
   internal static let signIn = L10n.tr("Localizable", "signIn", fallback: "Sign In")
-  /// Sign in to get started
+  /// Message on first setup pointing the user to sign in
   internal static let signInGetStarted = L10n.tr("Localizable", "signInGetStarted", fallback: "Sign in to get started")
-  /// Sign In to %s
+  /// Message indicating the server that the user is signing in to
   internal static func signInToServer(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "signInToServer", p1, fallback: "Sign In to %s")
   }
-  /// Slider
+  /// Label for slider settings
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
-  /// Slider Color
+  /// Label for slider color
   internal static let sliderColor = L10n.tr("Localizable", "sliderColor", fallback: "Slider Color")
-  /// Slider Type
+  /// Label for slider type
   internal static let sliderType = L10n.tr("Localizable", "sliderType", fallback: "Slider Type")
-  /// Smaller
+  /// Option for a smaller than regular item type
   internal static let smaller = L10n.tr("Localizable", "smaller", fallback: "Smaller")
-  /// Smallest
+  /// Option for the smallest item type
   internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
-  /// Sort
+  /// Button Label to indicate that this Filter Object sets the Library Order by an Item/Filter
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
-  /// Sort by
+  /// Represents the the Filter Labels for Library/Search Sorting based on Item Attribute
   internal static let sortBy = L10n.tr("Localizable", "sortBy", fallback: "Sort by")
-  /// Source Code
+  /// Label for source code
   internal static let sourceCode = L10n.tr("Localizable", "sourceCode", fallback: "Source Code")
-  /// Special Features
+  /// Label for special features section
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
-  /// Sports
+  /// Represents the the Library Labels for Live TV Programs/Shows that are Sports Content
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
-  /// STUDIO
-  internal static let studio = L10n.tr("Localizable", "studio", fallback: "STUDIO")
-  /// Studios
+  /// Represents the the Filter Labels for Library/Search Filtering based on Item Studio
   internal static let studios = L10n.tr("Localizable", "studios", fallback: "Studios")
-  /// Subtitle
+  /// Overlay Label for Selecting Subtitle/Caption Information/Settings
   internal static let subtitle = L10n.tr("Localizable", "subtitle", fallback: "Subtitle")
-  /// Subtitle Color
+  /// Section Label to for a configuration to customize subtitle color
   internal static let subtitleColor = L10n.tr("Localizable", "subtitleColor", fallback: "Subtitle Color")
-  /// Subtitle Font
+  /// Section Label to for a configuration to customize subtitle font
   internal static let subtitleFont = L10n.tr("Localizable", "subtitleFont", fallback: "Subtitle Font")
-  /// Subtitle Offset
+  /// Section Label to for a configuration to offset subtitles at playback
   internal static let subtitleOffset = L10n.tr("Localizable", "subtitleOffset", fallback: "Subtitle Offset")
-  /// Subtitles
+  /// Label for subtitles settings/selection
   internal static let subtitles = L10n.tr("Localizable", "subtitles", fallback: "Subtitles")
-  /// Subtitle Size
+  /// Section Label to for a configuration to customize subtitle size
   internal static let subtitleSize = L10n.tr("Localizable", "subtitleSize", fallback: "Subtitle Size")
-  /// Suggestions
-  internal static let suggestions = L10n.tr("Localizable", "suggestions", fallback: "Suggestions")
-  /// Switch User
+  /// Represents the label used in the User Settings to change users and go to the Server Selection/Login page
   internal static let switchUser = L10n.tr("Localizable", "switchUser", fallback: "Switch User")
-  /// System
+  /// Represents the system theme setting
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
-  /// System Control Gestures Enabled
+  /// Message Describing the current enabled status of the Player's Gestures for System Contols like Volume/Brightness
   internal static let systemControlGesturesEnabled = L10n.tr("Localizable", "systemControlGesturesEnabled", fallback: "System Control Gestures Enabled")
-  /// Tags
+  /// Represents the the Filter Labels for Library/Search Filtering based on Item Tag(s)
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
-  /// Timestamp
+  /// Option to set the test sizes for bitrate testing
+  internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
+  /// Label for timestamp settings
   internal static let timestamp = L10n.tr("Localizable", "timestamp", fallback: "Timestamp")
-  /// Timestamp Type
+  /// Label for timestamp type
   internal static let timestampType = L10n.tr("Localizable", "timestampType", fallback: "Timestamp Type")
-  /// Too Many Redirects
+  /// Message indicating too many redirects
   internal static let tooManyRedirects = L10n.tr("Localizable", "tooManyRedirects", fallback: "Too Many Redirects")
-  /// Trailing Value
+  /// Label for trailing value
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing Value")
-  /// Transition
+  /// Label to denote the Transition Section
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
-  /// Try again
+  /// Re-attempt to load a previously failed object
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain", fallback: "Try again")
-  /// TV Shows
+  /// Represents the the Library Labels for Show Media Types
   internal static let tvShows = L10n.tr("Localizable", "tvShows", fallback: "TV Shows")
-  /// Unable to connect to server
+  /// The Server Add/Sign in process has failed and this message is displayed
   internal static let unableToConnectServer = L10n.tr("Localizable", "unableToConnectServer", fallback: "Unable to connect to server")
-  /// Unable to find host
+  /// Message indicating the host could not be found
   internal static let unableToFindHost = L10n.tr("Localizable", "unableToFindHost", fallback: "Unable to find host")
-  /// Unaired
+  /// Label indicating a show that has not aired
   internal static let unaired = L10n.tr("Localizable", "unaired", fallback: "Unaired")
-  /// Unauthorized
+  /// Message indicating unauthorized access
   internal static let unauthorized = L10n.tr("Localizable", "unauthorized", fallback: "Unauthorized")
-  /// Unauthorized user
+  /// Message indicating an unauthorized user
   internal static let unauthorizedUser = L10n.tr("Localizable", "unauthorizedUser", fallback: "Unauthorized user")
-  /// Unknown
+  /// Generic label for unknown objects
   internal static let unknown = L10n.tr("Localizable", "unknown", fallback: "Unknown")
-  /// Unknown Error
+  /// Generic error for handling uncaught & unexpected interactions
   internal static let unknownError = L10n.tr("Localizable", "unknownError", fallback: "Unknown Error")
-  /// Unplayed
+  /// Library Item has not been watch by this user
   internal static let unplayed = L10n.tr("Localizable", "unplayed", fallback: "Unplayed")
-  /// URL
+  /// Label indicating the Jellyfin Server URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
-  /// Use Primary Image
+  /// Label for the setting to use the Primary Image for Media Items
   internal static let usePrimaryImage = L10n.tr("Localizable", "usePrimaryImage", fallback: "Use Primary Image")
-  /// Uses the primary image and hides the logo.
+  /// Label the message explainging the 'User Primary Image' setting
   internal static let usePrimaryImageDescription = L10n.tr("Localizable", "usePrimaryImageDescription", fallback: "Uses the primary image and hides the logo.")
-  /// User
+  /// Label for user settings
   internal static let user = L10n.tr("Localizable", "user", fallback: "User")
-  /// User %s is already signed in
-  internal static func userAlreadySignedIn(_ p1: UnsafePointer<CChar>) -> String {
-    return L10n.tr("Localizable", "userAlreadySignedIn", p1, fallback: "User %s is already signed in")
-  }
-  /// Username
+  /// Represents the label used to head the section where a username needs to be provided to connect to a server
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
-  /// Version
+  /// Label for the server version field
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
-  /// Video
+  /// Overlay Label for Selecting Video Information/Settings
   internal static let video = L10n.tr("Localizable", "video", fallback: "Video")
-  /// Video Player
+  /// Section Title for the Video Player Settings Section
   internal static let videoPlayer = L10n.tr("Localizable", "videoPlayer", fallback: "Video Player")
-  /// Video Player Type
+  /// Section Title for the Video Player Type Setting between VLC, and AVKit
   internal static let videoPlayerType = L10n.tr("Localizable", "videoPlayerType", fallback: "Video Player Type")
-  /// Who's watching?
-  internal static let whosWatching = L10n.tr("Localizable", "WhosWatching", fallback: "Who's watching?")
-  /// WIP
-  internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
-  /// Yellow
+  /// Represents the label for all Jellyfin Icons that are Yellow regardless of Backgound/Color Invert
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
-  /// Your Favorites
-  internal static let yourFavorites = L10n.tr("Localizable", "yourFavorites", fallback: "Your Favorites")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

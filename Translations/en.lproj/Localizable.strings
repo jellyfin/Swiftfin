@@ -8,6 +8,16 @@
 "notImplementedYetWithType" = "Type: %@ not implemented yet :(";
 
 
+/* MARK: Error Handling */
+
+
+/* Label indicating no overview is available */
+"noOverviewAvailable" = "No overview available";
+
+/* Message indicating too many redirects */
+"tooManyRedirects" = "Too Many Redirects";
+
+
 /* MARK: General */
 
 
@@ -17,6 +27,9 @@
 /* Go back to the previous screen/form */
 "back" = "Back";
 
+/* Label for buttons section */
+"buttons" = "Buttons";
+
 /* Stop the current operation or reset the screen/form */
 "cancel" = "Cancel";
 
@@ -25,6 +38,9 @@
 
 /* Proceed or continue to the next screen as a proceed opposed to an agreement */
 "continue" = "Continue";
+
+/* Label for current item */
+"current" = "Current";
 
 /* Dismiss a message or popup */
 "dismiss" = "Dismiss";
@@ -44,11 +60,26 @@
 /* Go back to the Home screen/form */
 "home" = "Home";
 
+/* Label for information section */
+"information" = "Information";
+
 /* Generic term for Movies/Episodes/Shows... etc */
 "items" = "Items";
 
 /* View is loading data */
 "loading" = "Loading";
+
+/* Label indicating missing items */
+"missing" = "Missing";
+
+/* Label indicating something's name */
+"name" = "Name";
+
+/* Button label for the next item */
+"next" = "Next";
+
+/* Label indicating none */
+"none" = "None";
 
 /* Proceed with the current values on the screen/form */
 "ok" = "Ok";
@@ -59,6 +90,9 @@
 /* Reload the current view */
 "reload" = "Reload";
 
+/* Button label to remove an item */
+"remove" = "Remove";
+
 /* Reset the form/screen back to the default/previous values */
 "reset" = "Reset";
 
@@ -67,6 +101,9 @@
 
 /* Expand a section to see all items */
 "seeAll" = "See All";
+
+/* Button label to see more content */
+"seeMore" = "See More";
 
 /* Generic term for the Active Jellyfin Server */
 "server" = "Server";
@@ -96,31 +133,121 @@
 /* Represents the Home View section for Show items are in-progress Seasons */
 "nextUp" = "Next Up";
 
+/* Label for recently added items */
+"recentlyAdded" = "Recently Added";
+
+/* Option to remove from resume */
+"removeFromResume" = "Remove From Resume";
+
 
 /* MARK: Item - Generic */
 
 
+/* Label for chapter slider */
+"chapterSlider" = "Chapter Slider";
+
+/* Label for chapters section */
+"chapters" = "Chapters";
+
+/* Label for missing items section */
+"missingItems" = "Missing Items";
+
 /* Represents the the Media Item section for Jellyfin recommendations */
 "moreLikeThis" = "More Like This";
 
-/* Represents the Media Item button label to start a Media Item playback */
-"play" = "Play";
+/* Label for not available */
+"notAvailableSlash" = "N/A";
+
+/* Label indicating no codec is available */
+"noCodec" = "No Codec";
+
+/* Label indicating no title is available */
+"noTitle" = "No title";
 
 /* Represents the Media Item button label to start the Media Item playback for a Collection of Items */
 "playNext" = "Play Next";
 
-/* Represents the Media Item label to denote a Show's Season & Episode */
-"seasonAndEpisode" = "S%1$@:E%2$@";
+/* Message indicating media information is being retrieved */
+"retrievingMediaInformation" = "Retrieving media information";
+
+/* Label indicating the released date */
+"released" = "Released";
+
+/* Label for subtitles settings/selection */
+"subtitles" = "Subtitles";
 
 
 /* MARK: Item - Shows */
 
+/* Label indicating a show airs on s specific day of the week */
+"airWithDate" = "Airs %s";
 
 /* Label used to designate an Episode contained within a Show Library */
 "episodes" = "Episodes";
 
+/* Label for episode landscape poster */
+"episodeLandscapePoster" = "Episode Landscape Poster";
+
+/* Label for episode number */
+"episodeNumber" = "Episode %1$@";
+
 /* Represents the label that will exist in place of an episode view if there are no episodes */
 "noEpisodesAvailable" = "No episodes available";
+
+/* Label for a show that is active until present */
+"present" = "Present";
+
+/* Represents the Media Item label to denote a Show's Season & Episode */
+"seasonAndEpisode" = "S%1$@:E%2$@";
+
+/* Label for series backdrop */
+"seriesBackdrop" = "Series Backdrop";
+
+/* Label indicating a show that has not aired */
+"unaired" = "Unaired";
+
+
+/* MARK: Item - View */
+
+
+/* Label to denote the section about a media item */
+"about" = "About";
+
+/* Label for cast and crew information */
+"castAndCrew" = "Cast & Crew";
+
+/* Label for cinematic view */
+"cinematic" = "Cinematic";
+
+/* Label for cinematic views */
+"cinematicViews" = "Cinematic Views";
+
+/* Option for compact logo view */
+"compactLogo" = "Compact Logo";
+
+/* Option for compact poster view */
+"compactPoster" = "Compact Poster";
+
+/* Label for overview information */
+"overview" = "Overview";
+
+/* Represents the Media Item button label to start a Media Item playback */
+"play" = "Play";
+
+/* Label for Media Items posters */
+"posters" = "Posters";
+
+/* Label for recommended items */
+"recommended" = "Recommended";
+
+/* Label for ratings section */
+"ratings" = "Ratings";
+
+/* Label for runtime information */
+"runtime" = "Runtime";
+
+/* Label for special features section */
+"specialFeatures" = "Special Features";
 
 
 /* MARK: Libraries - Generic */
@@ -132,6 +259,9 @@
 /* Library Item has been watch by this user */
 "played" = "Played";
 
+/* Media Items will use a Random Image opposed to their Cover Image */
+"randomImage" = "Random Image";
+
 /* Library Item has not been watch by this user */
 "unplayed" = "Unplayed";
 
@@ -141,6 +271,9 @@
 
 /* Represents the the Filter Labels for Library/Search Sorting */
 "displayOrder" = "Display order";
+
+/* Represents the the Favorited Labels for Library/Search Filters */
+"favorited" = "Favorited";
 
 /* Represents the the Filter Labels for Library/Search Filters */
 "filters" = "Filters";
@@ -173,6 +306,9 @@
 /* Represents the the Library Labels for Live TV Channels */
 "channels" = "Channels";
 
+/* Represents the the Library Labels for Collections/Boxsets */
+"collections" = "Collections";
+
 /* Label for the Grid Feature that formats the Library Items in a Grid */
 "grid" = "Grid";
 
@@ -196,6 +332,9 @@
 
 /* Represents the the Library Labels for Show Media Types with multiple Seasons */
 "seasons" = "Seasons";
+
+/* Represents the the Library Labels for Series / Shows Media Type */
+"series" = "Series";
 
 /* Represents the the Library Labels for Show Media Types */
 "tvShows" = "TV Shows";
@@ -277,6 +416,9 @@
 /* MARK: Search */
 
 
+/* Label for people section of the Search View */
+"people" = "People";
+
 /* Represents the Section Label for the Search View */
 "search" = "Search";
 
@@ -354,8 +496,105 @@
 "advanced" = "Advanced";
 
 
+/* MARK: Settings - Bitrate Options */
+
+
+/* Option for automatic bitrate selection */
+"bitrateAuto" = "Auto";
+
+/* Option to set the bitrate to 480p quality at 1.5 Mbps */
+"bitrateKbps1500" = "480p - 1.5 Mbps";
+
+/* Option to set the bitrate to 360p quality at 420 Kbps */
+"bitrateKbps420" = "360p - 420 Kbps";
+
+/* Option to set the bitrate to 480p quality at 720 Kbps */
+"bitrateKbps720" = "480p - 720 Kbps";
+
+/* Option for the maximum bitrate */
+"bitrateMax" = "Maximum";
+
+/* Option to set the bitrate to 1080p quality at 10 Mbps */
+"bitrateMbps10" = "1080p - 10 Mbps";
+
+/* Option to set the bitrate to 1080p quality at 15 Mbps */
+"bitrateMbps15" = "1080p - 15 Mbps";
+
+/* Option to set the bitrate to 1080p quality at 20 Mbps */
+"bitrateMbps20" = "1080p - 20 Mbps";
+
+/* Option to set the bitrate to 1080p quality at 40 Mbps */
+"bitrateMbps40" = "1080p - 40 Mbps";
+
+/* Option to set the bitrate to 1080p quality at 60 Mbps */
+"bitrateMbps60" = "1080p - 60 Mbps";
+
+/* Option to set the bitrate to 4K quality at 80 Mbps */
+"bitrateMbps80" = "4K - 80 Mbps";
+
+/* Option to set the bitrate to 4K quality at 120 Mbps */
+"bitrateMbps120" = "4K - 120 Mbps";
+
+/* Option to set the bitrate to 480p quality at 3 Mbps */
+"bitrateMbps3" = "480p - 3 Mbps";
+
+/* Option to set the bitrate to 720p quality at 4 Mbps */
+"bitrateMbps4" = "720p - 4 Mbps";
+
+/* Option to set the bitrate to 720p quality at 6 Mbps */
+"bitrateMbps6" = "720p - 6 Mbps";
+
+/* Option to set the bitrate to 720p quality at 8 Mbps */
+"bitrateMbps8" = "720p - 8 Mbps";
+
+/* Description for bitrate test duration indicating larger tests provide more accurate bitrates but may delay playback */
+"bitrateTestDescription" = "Larger tests result in a more accurate bitrate but may delay playback";
+
+/* Option to set the maximum bitrate for playback */
+"maximumBitrate" = "Maximum Bitrate";
+
+/* Option to set the test sizes for bitrate testing */
+"testSize" = "Test Size";
+
+
 /* MARK: Settings - Customization */
 
+
+/* Label for accent color selection */
+"accentColor" = "Accent Color";
+
+/* Label explaining a restart may be required */
+"accentColorDescription" = "Some views may need an app restart to update.";
+
+/* Label for color selection */
+"color" = "Color";
+
+/* Button label to customize settings */
+"customize" = "Customize";
+
+/* Button label to edit jump lengths */
+"editJumpLengths" = "Edit Jump Lengths";
+
+/* Label for indicators settings */
+"indicators" = "Indicators";
+
+/* Option to show cast and crew information */
+"showCastAndCrew" = "Show Cast & Crew";
+
+/* Option to enable chapters info in the bottom overlay */
+"showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
+
+/* Option to flatten library items */
+"showFlattenView" = "Flatten Library Items";
+
+/* Option to show missing episodes */
+"showMissingEpisodes" = "Show Missing Episodes";
+
+/* Option to show missing seasons */
+"showMissingSeasons" = "Show Missing Seasons";
+
+/* Option to show poster labels */
+"showPosterLabels" = "Show Poster Labels";
 
 /* Label for the setting to use the Primary Image for Media Items */
 "usePrimaryImage" = "Use Primary Image";
@@ -382,9 +621,14 @@
 
 /* MARK: Settings - Playback */
 
+/* Option to enable auto play */
+"autoPlay" = "Auto Play";
 
 /* Section header for all Playback Gestures settings */
 "gestures" = "Gestures";
+
+/* Label for jump button */
+"jump" = "Jump";
 
 /* Section Title for setting how far backwards the jump backwards button goes */
 "jumpBackwardLength" = "Jump Backward Length";
@@ -395,6 +639,12 @@
 /* Message Describing if gesture for jumping forward/backward is enabled */
 "jumpGesturesEnabled" = "Jump Gestures Enabled";
 
+/* Label for jump length in seconds */
+"jumpLengthSeconds" = "%s seconds";
+
+/* Label for video player menu buttons */
+"menuButtons" = "Menu Buttons";
+
 /* Indicates that Swiftfin playback is using AVKit */
 "nativePlayer" = "Native Player";
 
@@ -404,14 +654,36 @@
 /* Message Describing the current enabled status of the Player's Gesture Lock */
 "playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
 
+/* Label for playback buttons */
+"playbackButtons" = "Playback Buttons";
+
+/* Label for playback speed settings */
+"playbackSpeed" = "Playback Speed";
+
 /* Represents the Playback Settings section label */
 "playbackSettings" = "Playback settings";
 
-/* Represents the Playback Speed section label */
-"playbackSpeed" = "Playback Speed";
+/* Label for resume offset settings */
+"resumeOffset" = "Resume Offset";
+
+/* Description for resume offset settings */
+"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
+
+/* Option for a 5-second resume offset */
+"resume5SecondOffset" = "Resume 5 Second Offset";
 
 /* Message Describing the current enabled status of the Player's Gesture to Seek on the Timeline for currently playing content */
 "seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
+
+/* Label for slider settings */
+"slider" = "Slider";
+
+/* Label for slider color */
+"sliderColor" = "Slider Color";
+
+/* Label for slider type */
+"sliderType" = "Slider Type";
+
 
 /* Message Describing the current enabled status of the Player's Gestures for System Contols like Volume/Brightness */
 "systemControlGesturesEnabled" = "System Control Gestures Enabled";
@@ -434,6 +706,25 @@
 
 /* Section Label for Full App Settings Reset */
 "resetAppSettings" = "Reset App Settings";
+
+
+/* MARK: Settings - Sizes */
+
+
+/* Option for a larger than regular item type */
+"larger" = "Larger";
+
+/* Option for the largest item type */
+"largest" = "Largest";
+
+/* Option for a smaller than regular item type */
+"smaller" = "Smaller";
+
+/* Option for the smallest item type */
+"smallest" = "Smallest";
+
+/* Option for the a standard/regular item type */
+"regular" = "Regular";
 
 
 /* MARK: Settings - Subtitles */
@@ -476,8 +767,14 @@
 /* Section Label for details about the current connected Jellyfin Server */
 "serverDetails" = "Server Details";
 
+/* Label for source code */
+"sourceCode" = "Source Code";
+
 /* Section Label for OS running the current connected Jellyfin Server */
 "operatingSystem" = "Operating System";
+
+/* Label for the server version field */
+"version" = "Version";
 
 
 /* MARK: Server Selection & Login */
@@ -498,7 +795,7 @@
 /* Represents the first Connect to Server label on a new installation */
 "connectToJellyfinServerStart" = "Connect to a Jellyfin server to get started";
 
-/* Represents the Connect Button label for the Server Details provide */
+/* Represents the Connect Button label for the Server Details provided */
 "connectToServer" = "Connect to Server";
 
 /* Represents the section label for Jellyfin Server(s) that were found during Jellyfin Server Discovery */
@@ -510,14 +807,20 @@
 /* Message Label to designate that the Server Discovery process did not find any local/LAN Server(s) */
 "noLocalServersFound" = "No local servers found";
 
+/* Message indicating there are no public users */
+"noPublicUsers" = "No public Users";
+
 /* Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password */
 "password" = "Password";
 
-/* Represents a label for a button to remove all Users from a Jellyfin Server in Swiftfin */
-"removeAllUsers" = "Remove All Users";
+/* Represents the section label for public users */
+"publicUsers" = "Public Users";
 
 /* Represents a label for a button to remove all Users & Servers in Swiftfin */
 "removeAllServers" = "Remove All Servers";
+
+/* Represents a label for a button to remove all Users from a Jellyfin Server in Swiftfin */
+"removeAllUsers" = "Remove All Users";
 
 /* Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password */
 "serverAlreadyConnected" = "Server %s is already connected";
@@ -531,13 +834,13 @@
 /* Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information */
 "serverURL" = "Server URL";
 
-/* Button label that takes the confirms the user information and attempts to sign them in*/
+/* Button label that confirms the user information and attempts to sign them in */
 "signIn" = "Sign In";
 
 /* Message on first setup pointing the user to sign in */
 "signInGetStarted" = "Sign in to get started";
 
-/* Message on indicating the server that the user is signing in to */
+/* Message indicating the server that the user is signing in to */
 "signInToServer" = "Sign In to %s";
 
 /* Represents the label used in the User Settings to change users and go to the Server Selection/Login page */
@@ -546,8 +849,20 @@
 /* The Server Add/Sign in process has failed and this message is displayed */
 "unableToConnectServer" = "Unable to connect to server";
 
+/* Message indicating the host could not be found */
+"unableToFindHost" = "Unable to find host";
+
+/* Message indicating unauthorized access */
+"unauthorized" = "Unauthorized";
+
+/* Message indicating an unauthorized user */
+"unauthorizedUser" = "Unauthorized user";
+
 /* Label indicating the Jellyfin Server URL */
 "url" = "URL";
+
+/* Label for user settings */
+"user" = "User";
 
 /* Represents the label used to head the section where a username needs to be provided to connect to a server */
 "username" = "Username";
@@ -560,14 +875,30 @@
 "delivery" = "Delivery";
 
 
+/* MARK: TVOS Specific */
+
+
+/* Label for press down for menu */
+"pressDownForMenu" = "Press Down for Menu";
+
+
 /* MARK: Video Player */
 
+
+/* Option for aspect fill display mode */
+"aspectFill" = "Aspect Fill";
 
 /* Section Label for Audio, Captions/Subtitles configuration on the Video Playback Overlay */
 "audioAndCaptions" = "Audio & Captions";
 
+/* Label for audio offset settings */
+"audioOffset" = "Audio Offset";
+
 /* Section label on the video player overlay to select the audio track for playback */
 "audioTrack" = "Audio Track";
+
+/* Label for bar buttons settings */
+"barButtons" = "Bar Buttons";
 
 /* Label for indicating Closed Captions or Subtitles for a media item */
 "closedCaptions" = "Closed Captions";
@@ -577,6 +908,39 @@
 
 /* Label in the overlay to indicate time remaining in the watched content */
 "remainingTime" = "Remaining Time";
+
+/* Option for pausing the Player when it's sent to the background */
+"pauseOnBackground" = "Pause on background";
+
+/* Option for resuming the Player when it's sent back to the foreground */
+"playOnActive" = "Play on active";
+
+/* Option to play from the beginning */
+"playFromBeginning" = "Play From Beginning";
+
+/* Button label to play the next item */
+"playNextItem" = "Play Next Item";
+
+/* Button label to play the previous item */
+"playPreviousItem" = "Play Previous Item";
+
+/* Label for playback progress */
+"progress" = "Progress";
+
+/* Label for scrub current time */
+"scrubCurrentTime" = "Scrub Current Time";
+
+/* Label for trailing value */
+"trailingValue" = "Trailing Value";
+
+/* Label to denote the Transition Section */
+"transition" = "Transition";
+
+/* Label for timestamp settings */
+"timestamp" = "Timestamp";
+
+/* Label for timestamp type */
+"timestampType" = "Timestamp Type";
 
 
 /* MARK: Quick Connect */
@@ -610,122 +974,11 @@
 "quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
 
 
-/* MARK: TODO - Cleanup*/
+/* MARK: TODO - Unused */
 
-"showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
-"color" = "Color";
-"aspectFill" = "Aspect Fill";
-"seeMore" = "See More";
-"defaultScheme" = "Default Scheme";
-"networking" = "Networking";
-"searchingDots" = "Searching…";
-"noTitle" = "No title";
-"recentlyAdded" = "Recently Added";
-"overview" = "Overview";
-"noOverviewAvailable" = "No overview available";
-"castAndCrew" = "Cast & Crew";
-"series" = "Series";
-"information" = "Information";
-"name" = "Name";
-"version" = "Version";
-"remove" = "Remove";
-"playPreviousItem" = "Play Previous Item";
-"playNextItem" = "Play Next Item";
-"autoPlay" = "Auto Play";
-"editJumpLengths" = "Edit Jump Lengths";
-"overlay" = "Overlay";
-"overlayType" = "Overlay Type";
-"user" = "User";
-"audioOffset" = "Audio Offset";
-"resumeOffset" = "Resume Offset";
-"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
-"resume5SecondOffset" = "Resume 5 Second Offset";
-"showPosterLabels" = "Show Poster Labels";
-"showCastAndCrew" = "Show Cast & Crew";
-"audio" = "Audio";
-"subtitles" = "Subtitles";
-"playbackSpeed" = "Playback Speed";
-"networkTimedOut" = "Network timed out";
-"cannotConnectToHost" = "Cannot connect to host";
-"unauthorizedUser" = "Unauthorized user";
-"unauthorized" = "Unauthorized";
-"released" = "Released";
-"rated" = "Rated";
-"runtime" = "Runtime";
-"containers" = "Containers";
-"noCodec" = "No Codec";
-"smallest" = "Smallest";
-"smaller" = "Smaller";
-"regular" = "Regular";
-"larger" = "Larger";
-"largest" = "Largest";
-"jumpLengthSeconds" = "%s seconds";
-"present" = "Present";
-"oneUser" = "1 user";
-"multipleUsers" = "%d users";
-"notAvailableSlash" = "N/A";
-"next" = "Next";
-"recommended" = "Recommended";
-"about" = "About";
-"pressDownForMenu" = "Press Down for Menu";
-"cinematicViews" = "Cinematic Views";
-"none" = "None";
-"missing" = "Missing";
-"unaired" = "Unaired";
-"airWithDate" = "Airs %s";
-"missingItems" = "Missing Items";
-"showMissingSeasons" = "Show Missing Seasons";
-"showMissingEpisodes" = "Show Missing Episodes";
-"removeFromResume" = "Remove From Resume";
-"playFromBeginning" = "Play From Beginning";
-"customize" = "Customize";
-"tooManyRedirects" = "Too Many Redirects";
-"chapters" = "Chapters";
-"current" = "Current";
-"sourceCode" = "Source Code";
-"requestFeature" = "Request a Feature";
-"reportIssue" = "Report an Issue";
-"showFlattenView" = "Flatten Library Items";
-"unableToFindHost" = "Unable to find host";
-"publicUsers" = "Public Users";
-"noPublicUsers" = "No public Users";
-"episodeNumber" = "Episode %1$@";
-"compactPoster" = "Compact Poster";
-"compactLogo" = "Compact Logo";
-"cinematic" = "Cinematic";
-"accentColor" = "Accent Color";
-"accentColorDescription" = "Some views may need an app restart to update.";
-"specialFeatures" = "Special Features";
-"collections" = "Collections";
-"people" = "People";
-"hapticFeedback" = "Haptic Feedback";
-"indicators" = "Indicators";
-"posters" = "Posters";
-"seriesBackdrop" = "Series Backdrop";
-"episodeLandscapePoster" = "Episode Landscape Poster";
-"progress" = "Progress";
-"indicators" = "Indicators";
-"ratings" = "Ratings";
-"buttons" = "Buttons";
-"playbackButtons" = "Playback Buttons";
-"barButtons" = "Bar Buttons";
-"menuButtons" = "Menu Buttons";
-"jump" = "Jump";
-"slider" = "Slider";
-"chapterSlider" = "Chapter Slider";
-"sliderColor" = "Slider Color";
-"sliderType" = "Slider Type";
-"timestamp" = "Timestamp";
-"scrubCurrentTime" = "Scrub Current Time";
-"timestampType" = "Timestamp Type";
-"trailingValue" = "Trailing Value";
-"transition" = "Transition";
-"pauseOnBackground" = "Pause on background";
-"playOnActive" = "Play on active";
-"retrievingMediaInformation" = "Retrieving media information";
 
-/* Unused */
-
+//"defaultScheme" = "Default Scheme";
 //"login" = "Login";
 //"loginToWithString" = "Login to %@";
+//"networking" = "Networking";
 //"otherUser" = "Other User";
