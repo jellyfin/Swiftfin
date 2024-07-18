@@ -36,8 +36,6 @@ internal enum L10n {
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect Fill")
   /// Overlay Label for Selecting Audio Information/Settings
   internal static let audio = L10n.tr("Localizable", "audio", fallback: "Audio")
-  /// Section Label for Audio, Captions/Subtitles configuration on the Video Playback Overlay
-  internal static let audioAndCaptions = L10n.tr("Localizable", "audioAndCaptions", fallback: "Audio & Captions")
   /// Label for audio offset settings
   internal static let audioOffset = L10n.tr("Localizable", "audioOffset", fallback: "Audio Offset")
   /// Section label on the video player overlay to select the audio track for playback
@@ -92,8 +90,6 @@ internal enum L10n {
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Label for cast and crew information
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & Crew")
-  /// Represents the label for the button that takes the user to the Server selection screen
-  internal static let changeServer = L10n.tr("Localizable", "changeServer", fallback: "Change Server")
   /// Represents the the Library Labels for Live TV Channels
   internal static let channels = L10n.tr("Localizable", "channels", fallback: "Channels")
   /// Label for chapters section
@@ -119,8 +115,6 @@ internal enum L10n {
   /// Represents the Connect Button label for the Server Details provided
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
   /// Represents the first Connect to Server label on a new installation
-  internal static let connectToJellyfinServer = L10n.tr("Localizable", "connectToJellyfinServer", fallback: "Connect to a Jellyfin server")
-  /// Represents the first Connect to Server label on a new installation
   internal static let connectToJellyfinServerStart = L10n.tr("Localizable", "connectToJellyfinServerStart", fallback: "Connect to a Jellyfin server to get started")
   /// Represents the Connect Button label for the Server Details provided
   internal static let connectToServer = L10n.tr("Localizable", "connectToServer", fallback: "Connect to Server")
@@ -138,14 +132,10 @@ internal enum L10n {
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Feature/Setting is inactive
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
-  /// Represents the section label for Jellyfin Server(s) that were found during Jellyfin Server Discovery
-  internal static let discoveredServers = L10n.tr("Localizable", "discoveredServers", fallback: "Discovered Servers")
   /// Dismiss a message or popup
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
   /// Section Label for the Media's Downloaded Media Section
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
-  /// Button label to edit jump lengths
-  internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Feature/Setting is active
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
   /// Label for episode landscape poster
@@ -202,10 +192,6 @@ internal enum L10n {
   }
   /// Represents the the Library Labels for Live TV Programs/Shows that are Kids Content
   internal static let kids = L10n.tr("Localizable", "kids", fallback: "Kids")
-  /// Option for a larger than regular item type
-  internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
-  /// Option for the largest item type
-  internal static let largest = L10n.tr("Localizable", "largest", fallback: "Largest")
   /// Represents the Home View section for All media items that are new for each Media Type
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
@@ -254,8 +240,6 @@ internal enum L10n {
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
   /// Represents the Home View section for Show items are in-progress Seasons
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
-  /// Represents the Media Casting Device selection when no Media Casting Devices were found
-  internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
   /// Represents the label that will exist in place of an episode view if there are no episodes
   internal static let noEpisodesAvailable = L10n.tr("Localizable", "noEpisodesAvailable", fallback: "No episodes available")
   /// Message Label to designate that the Server Discovery process did not find any local/LAN Server(s)
@@ -308,8 +292,6 @@ internal enum L10n {
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
   /// Message Describing the current enabled status of the Player's Gesture Lock
   internal static let playerGesturesLockGestureEnabled = L10n.tr("Localizable", "playerGesturesLockGestureEnabled", fallback: "Player Gestures Lock Gesture Enabled")
-  /// Option to play from the beginning
-  internal static let playFromBeginning = L10n.tr("Localizable", "playFromBeginning", fallback: "Play From Beginning")
   /// Button label to play the next item
   internal static let playNextItem = L10n.tr("Localizable", "playNextItem", fallback: "Play Next Item")
   /// Option for resuming the Player when it's sent back to the foreground
@@ -318,8 +300,6 @@ internal enum L10n {
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play Previous Item")
   /// Label for Media Items posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
-  /// Label for press down for menu
-  internal static let pressDownForMenu = L10n.tr("Localizable", "pressDownForMenu", fallback: "Press Down for Menu")
   /// Overlay Label for going back to previous episode in a show
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous Item")
   /// Represents the label for the default Jellyfin Icon for Swiftfin
@@ -358,8 +338,6 @@ internal enum L10n {
   internal static let recommended = L10n.tr("Localizable", "recommended", fallback: "Recommended")
   /// Represents the label for all Jellyfin Icons that are Red regardless of Backgound/Color Invert
   internal static let red = L10n.tr("Localizable", "red", fallback: "Red")
-  /// Option for the a standard/regular item type
-  internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Label in the overlay to indicate time remaining in the watched content
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
   /// Represents a label for a button to remove all Users & Servers in Swiftfin
@@ -372,12 +350,8 @@ internal enum L10n {
   internal static let requestFeature = L10n.tr("Localizable", "requestFeature", fallback: "Request a Feature")
   /// Reset the form/screen back to the default/previous values
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
-  /// Message explaining
-  internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
   /// Section Label for Full App Settings Reset
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
-  /// Section Label for User Settings Reset
-  internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
   /// Option for a 5-second resume offset
   internal static let resume5SecondOffset = L10n.tr("Localizable", "resume5SecondOffset", fallback: "Resume 5 Second Offset")
   /// Label for resume offset settings
@@ -390,12 +364,10 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// The Letter Picker Bar will be on the Right/Trailing side of the Library
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
-  /// Label for scrub current time
+  /// Label for the current time scrub setting
   internal static let scrubCurrentTime = L10n.tr("Localizable", "scrubCurrentTime", fallback: "Scrub Current Time")
   /// Represents the Section Label for the Search View
   internal static let search = L10n.tr("Localizable", "search", fallback: "Search")
-  /// Represents the Search action designated as in-progress or an option on the view. Also used during Server Discovery
-  internal static let searchDots = L10n.tr("Localizable", "searchDots", fallback: "Search…")
   /// Represents the Media Item label to denote a Show's Season & Episode
   internal static func seasonAndEpisode(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "seasonAndEpisode", String(describing: p1), String(describing: p2), fallback: "S%1$@:E%2$@")
@@ -406,18 +378,12 @@ internal enum L10n {
   internal static let seekSlideGestureEnabled = L10n.tr("Localizable", "seekSlideGestureEnabled", fallback: "Seek Slide Gesture Enabled")
   /// Button label to see more content
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
-  /// Represents the Media Casting Device selection label
-  internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
   /// Represents the the Library Labels for Series / Shows Media Type
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Label for series backdrop
   internal static let seriesBackdrop = L10n.tr("Localizable", "seriesBackdrop", fallback: "Series Backdrop")
   /// Generic term for the Active Jellyfin Server
   internal static let server = L10n.tr("Localizable", "server", fallback: "Server")
-  /// Represents the section label for where a User Password needs to go. Also found in the User Settings to change/reset password
-  internal static func serverAlreadyConnected(_ p1: UnsafePointer<CChar>) -> String {
-    return L10n.tr("Localizable", "serverAlreadyConnected", p1, fallback: "Server %s is already connected")
-  }
   /// Represents the label used to offer the user the ability to designate an additional URL for an existing Jellyfin Server
   internal static func serverAlreadyExistsPrompt(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "serverAlreadyExistsPrompt", p1, fallback: "Server %s already exists. Add new URL?")
@@ -425,17 +391,9 @@ internal enum L10n {
   /// Section Label for details about the current connected Jellyfin Server
   internal static let serverDetails = L10n.tr("Localizable", "serverDetails", fallback: "Server Details")
   /// Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information
-  internal static let serverInformation = L10n.tr("Localizable", "serverInformation", fallback: "Server Information")
-  /// Represents the label used to head the section where Server Information is configured for new devices or on tvOS to designate the Server information
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
   /// Section Label for the Settings Screen
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
-  /// Option to show cast and crew information
-  internal static let showCastAndCrew = L10n.tr("Localizable", "showCastAndCrew", fallback: "Show Cast & Crew")
-  /// Option to enable chapters info in the bottom overlay
-  internal static let showChaptersInfoInBottomOverlay = L10n.tr("Localizable", "showChaptersInfoInBottomOverlay", fallback: "Show Chapters Info In Bottom Overlay")
-  /// Option to flatten library items
-  internal static let showFlattenView = L10n.tr("Localizable", "showFlattenView", fallback: "Flatten Library Items")
   /// Option to show missing episodes
   internal static let showMissingEpisodes = L10n.tr("Localizable", "showMissingEpisodes", fallback: "Show Missing Episodes")
   /// Option to show missing seasons
@@ -444,8 +402,6 @@ internal enum L10n {
   internal static let showPosterLabels = L10n.tr("Localizable", "showPosterLabels", fallback: "Show Poster Labels")
   /// Button label that confirms the user information and attempts to sign them in
   internal static let signIn = L10n.tr("Localizable", "signIn", fallback: "Sign In")
-  /// Message on first setup pointing the user to sign in
-  internal static let signInGetStarted = L10n.tr("Localizable", "signInGetStarted", fallback: "Sign in to get started")
   /// Message indicating the server that the user is signing in to
   internal static func signInToServer(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "signInToServer", p1, fallback: "Sign In to %s")
@@ -456,10 +412,6 @@ internal enum L10n {
   internal static let sliderColor = L10n.tr("Localizable", "sliderColor", fallback: "Slider Color")
   /// Label for slider type
   internal static let sliderType = L10n.tr("Localizable", "sliderType", fallback: "Slider Type")
-  /// Option for a smaller than regular item type
-  internal static let smaller = L10n.tr("Localizable", "smaller", fallback: "Smaller")
-  /// Option for the smallest item type
-  internal static let smallest = L10n.tr("Localizable", "smallest", fallback: "Smallest")
   /// Button Label to indicate that this Filter Object sets the Library Order by an Item/Filter
   internal static let sort = L10n.tr("Localizable", "sort", fallback: "Sort")
   /// Label for source code
@@ -486,8 +438,6 @@ internal enum L10n {
   internal static let switchUser = L10n.tr("Localizable", "switchUser", fallback: "Switch User")
   /// Represents the system theme setting
   internal static let system = L10n.tr("Localizable", "system", fallback: "System")
-  /// Message Describing the current enabled status of the Player's Gestures for System Contols like Volume/Brightness
-  internal static let systemControlGesturesEnabled = L10n.tr("Localizable", "systemControlGesturesEnabled", fallback: "System Control Gestures Enabled")
   /// Represents the the Filter Labels for Library/Search Filtering based on Item Tag(s)
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
   /// Option to set the test sizes for bitrate testing
@@ -504,14 +454,10 @@ internal enum L10n {
   internal static let tvShows = L10n.tr("Localizable", "tvShows", fallback: "TV Shows")
   /// The Server Add/Sign in process has failed and this message is displayed
   internal static let unableToConnectServer = L10n.tr("Localizable", "unableToConnectServer", fallback: "Unable to connect to server")
-  /// Message indicating the host could not be found
-  internal static let unableToFindHost = L10n.tr("Localizable", "unableToFindHost", fallback: "Unable to find host")
   /// Label indicating a show that has not aired
   internal static let unaired = L10n.tr("Localizable", "unaired", fallback: "Unaired")
   /// Message indicating unauthorized access
   internal static let unauthorized = L10n.tr("Localizable", "unauthorized", fallback: "Unauthorized")
-  /// Message indicating an unauthorized user
-  internal static let unauthorizedUser = L10n.tr("Localizable", "unauthorizedUser", fallback: "Unauthorized user")
   /// Unknown
   internal static let unknown = L10n.tr("Localizable", "unknown", fallback: "Unknown")
   /// Library Item has not been watch by this user
