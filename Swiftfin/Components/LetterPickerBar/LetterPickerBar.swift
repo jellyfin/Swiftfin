@@ -10,28 +10,26 @@ import Defaults
 import SwiftUI
 
 struct LetterPickerBar: View {
-    @ObservedObject
-    private var viewModel: FilterViewModel
 
-    init(viewModel: FilterViewModel) {
-        self.viewModel = viewModel
-    }
+    @ObservedObject
+    var viewModel: FilterViewModel
 
     @ViewBuilder
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
+
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(
-                    filterLetter: filterLetter,
+                    letter: filterLetter,
                     viewModel: viewModel
                 )
                 .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
-                .frame(maxWidth: .infinity)
             }
+
             Spacer()
         }
-        .scrollOnOverflow()
+        .scrollIfLargerThanContainer()
         .frame(width: 30, alignment: .center)
     }
 }

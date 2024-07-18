@@ -20,7 +20,7 @@ extension UserSignInView {
         @Binding
         private var pinHint: String
         @Binding
-        private var signInPolicy: UserAccessPolicy
+        private var accessPolicy: UserAccessPolicy
 
         @State
         private var listSize: CGSize = .zero
@@ -31,12 +31,12 @@ extension UserSignInView {
 
         init(
             pinHint: Binding<String>,
-            signInPolicy: Binding<UserAccessPolicy>
+            accessPolicy: Binding<UserAccessPolicy>
         ) {
             self._pinHint = pinHint
-            self._signInPolicy = signInPolicy
+            self._accessPolicy = accessPolicy
             self._updatePinHint = State(initialValue: pinHint.wrappedValue)
-            self._updateSignInPolicy = State(initialValue: signInPolicy.wrappedValue)
+            self._updateSignInPolicy = State(initialValue: accessPolicy.wrappedValue)
         }
 
         var body: some View {
@@ -82,7 +82,7 @@ extension UserSignInView {
                     }
                 }
 
-                if signInPolicy == .requirePin {
+                if accessPolicy == .requirePin {
                     Section {
                         TextField("Hint", text: $updatePinHint)
                     } header: {
@@ -92,7 +92,7 @@ extension UserSignInView {
                     }
                 }
             }
-            .animation(.linear, value: signInPolicy)
+            .animation(.linear, value: accessPolicy)
             .navigationTitle("Security")
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
@@ -107,7 +107,7 @@ extension UserSignInView {
                 pinHint = newValue
             }
             .onChange(of: updateSignInPolicy) { newValue in
-                signInPolicy = newValue
+                accessPolicy = newValue
             }
             .trackingSize($listSize)
         }

@@ -51,6 +51,18 @@ extension Backport where Content: View {
         }
     }
 
+    @ViewBuilder
+    func scrollIndicators(_ visibility: Backport.ScrollIndicatorVisibility) -> some View {
+        if #available(iOS 16, tvOS 16, *) {
+            content.scrollIndicators(visibility.supportedValue)
+        } else {
+            content.introspect(.scrollView, on: .iOS(.v15), .tvOS(.v15)) { scrollView in
+                scrollView.showsHorizontalScrollIndicator = visibility == .visible
+                scrollView.showsVerticalScrollIndicator = visibility == .visible
+            }
+        }
+    }
+
     #if os(iOS)
 
     // TODO: - remove comment when migrated away from Stinsen

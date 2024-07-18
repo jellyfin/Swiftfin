@@ -2,10 +2,14 @@
   <img alt="Swiftfin" src="./Resources/primary-wide.svg">
 
   <h1>Swiftfin</h1>
+  <img src="https://img.shields.io/badge/iOS-15+-red"/>
+  <img src="https://img.shields.io/badge/tvOS-17+-red"/>
+  <img src="https://img.shields.io/badge/Jellyfin-10.8.13-9962be"/>
+  
   <a href="https://translate.jellyfin.org/engage/swiftfin/">
     <img src="https://translate.jellyfin.org/widgets/swiftfin/-/svg-badge.svg"/>
   </a>
-  <a href="https://matrix.to/#/+jellyfin:matrix.org">
+  <a href="https://matrix.to/#/#jellyfin:matrix.org">
     <img src="https://img.shields.io/matrix/jellyfin:matrix.org">
   </a>
   <a href="https://discord.gg/zHBxVSXdBV">
@@ -19,15 +23,20 @@
 
 ## ⚡️ Download
 
-**✨New! Available on the App Store**
-
-Learn more on our [announcement post](https://jellyfin.org/posts/2022/12/29/swiftfin/).
-
 <a href="https://apps.apple.com/us/app/swiftfin/id1604098728">
   <img height=75 alt="Download on the Apple App Store" src="./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg"/>
 </a>
 
-A [TestFlight](./TESTFLIGHT.md) instance is also available.
+## 🛠️ TestFlight
+
+Use the TestFlight version to test new features and bug fixes before being published to the App Store. We are grateful for your time and resources for reporting new bugs.
+
+> [!NOTE]
+> As of June 11, 2024, only iOS has a TestFlight version. tvOS is planned for the near future.
+
+<a href="https://testflight.apple.com/join/SqNPfdxq">
+  <img height=75 alt="Get the beta on TestFlight" src="./Resources/Get_the_beta_on_Testflight.svg"/>
+</a>
 
 ## ⚙️ Development
 

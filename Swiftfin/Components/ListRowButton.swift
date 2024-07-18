@@ -8,6 +8,9 @@
 
 import SwiftUI
 
+// TODO: come up with better name along with `ListRow`
+
+// Meant to be used within `List` or `Form`
 struct ListRowButton: View {
 
     let title: String

@@ -11,7 +11,7 @@ import Foundation
 
 class SwiftfinNotification {
 
-    @Injected(Notifications.service)
+    @Injected(\.notificationCenter)
     private var notificationService
 
     let name: Notification.Name
@@ -37,9 +37,11 @@ class SwiftfinNotification {
     }
 }
 
-enum Notifications {
+extension Container {
+    var notificationCenter: Factory<NotificationCenter> { self { NotificationCenter.default }.singleton }
+}
 
-    static let service = Factory(scope: .singleton) { NotificationCenter.default }
+enum Notifications {
 
     struct Key: Hashable {
 

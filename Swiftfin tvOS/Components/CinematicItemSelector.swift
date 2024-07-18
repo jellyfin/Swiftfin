@@ -86,7 +86,7 @@ struct CinematicItemSelector<Item: Poster>: View {
         }
         .frame(height: UIScreen.main.bounds.height - 75)
         .frame(maxWidth: .infinity)
-        .onChange(of: focusedItem) { newValue in
+        .onChange(of: focusedItem) { _, newValue in
             guard let newValue else { return }
             viewModel.select(item: newValue)
         }

@@ -33,6 +33,7 @@ struct MediaView: View {
         .columns(2)
     }
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.mediaItems,

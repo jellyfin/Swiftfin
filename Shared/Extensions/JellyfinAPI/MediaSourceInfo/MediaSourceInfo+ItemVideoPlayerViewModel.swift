@@ -18,7 +18,7 @@ extension MediaSourceInfo {
 
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
-        let userSession: UserSession! = UserSession.current()
+        let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
         let streamType: StreamType
 
@@ -68,7 +68,7 @@ extension MediaSourceInfo {
 
     func liveVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
-        let userSession: UserSession! = UserSession.current()
+        let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
         let streamType: StreamType
 

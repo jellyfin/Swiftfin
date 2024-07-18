@@ -180,6 +180,7 @@ struct PagingLibraryView<Element: Poster>: View {
     // Note: if parent is a folders then other items will have labels,
     //       so an empty content view is necessary
 
+    @ViewBuilder
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
             .content {
@@ -199,6 +200,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .portrait)
             .content {
@@ -218,6 +220,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(item: item, posterType: posterType)
             .onSelect {
@@ -233,7 +236,8 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    private var contentView: some View {
+    @ViewBuilder
+    private var gridView: some View {
         CollectionVGrid(
             $viewModel.elements,
             layout: $layout
@@ -256,33 +260,40 @@ struct PagingLibraryView<Element: Poster>: View {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
+        .scrollIndicatorsVisible(false)
     }
 
     @ViewBuilder
-    private func contentLetterBarView(content: some View) -> some View {
+    private var innerContent: some View {
+        switch viewModel.state {
+        case .content:
+            if viewModel.elements.isEmpty {
+                L10n.noResults.text
+            } else {
+                gridView
+            }
+        case .initial, .refreshing:
+            DelayedProgressView()
+        default:
+            AssertionFailureView("Expected view for unexpected state")
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
         if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
-            switch letterPickerOrientation {
-            case .trailing:
-                HStack(spacing: 0) {
-                    content
-                        .frame(maxWidth: .infinity)
+            ZStack(alignment: letterPickerOrientation.alignment) {
+                innerContent
+                    .padding(letterPickerOrientation.edge, 35)
+                    .frame(maxWidth: .infinity)
 
-                    LetterPickerBar(viewModel: filterViewModel)
-                        .padding(.top, safeArea.top)
-                        .padding(.bottom, safeArea.bottom)
-                }
-            case .leading:
-                HStack(spacing: 0) {
-                    LetterPickerBar(viewModel: filterViewModel)
-                        .padding(.top, safeArea.top)
-                        .padding(.bottom, safeArea.bottom)
-
-                    content
-                        .frame(maxWidth: .infinity)
-                }
+                LetterPickerBar(viewModel: filterViewModel)
+                    .padding(.top, safeArea.top)
+                    .padding(.bottom, safeArea.bottom)
+                    .padding(letterPickerOrientation.edge, 10)
             }
         } else {
-            content
+            innerContent
         }
     }
 
@@ -292,17 +303,13 @@ struct PagingLibraryView<Element: Poster>: View {
 
     var body: some View {
         ZStack {
+            Color.clear
+
             switch viewModel.state {
-            case .content:
-                if viewModel.elements.isEmpty {
-                    contentLetterBarView(content: L10n.noResults.text)
-                } else {
-                    contentLetterBarView(content: contentView)
-                }
+            case .content, .initial, .refreshing:
+                contentView
             case let .error(error):
                 errorView(with: error)
-            case .initial, .refreshing:
-                contentLetterBarView(content: DelayedProgressView())
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)

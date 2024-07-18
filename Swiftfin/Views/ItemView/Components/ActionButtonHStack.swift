@@ -15,7 +15,10 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        @Injected(Container.downloadManager)
+        @Default(.accentColor)
+        private var accentColor
+
+        @Injected(\.downloadManager)
         private var downloadManager: DownloadManager
 
         @EnvironmentObject
@@ -42,7 +45,7 @@ extension ItemView {
                             .symbolRenderingMode(.palette)
                             .foregroundStyle(
                                 .primary,
-                                Color.jellyfinPurple
+                                accentColor
                             )
                     } else {
                         Image(systemName: "checkmark.circle")

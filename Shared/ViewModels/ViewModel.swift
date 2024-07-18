@@ -13,17 +13,17 @@ import KeychainSwift
 
 class ViewModel: ObservableObject {
 
-    @Injected(SwiftfinStore.service)
+    @Injected(\.dataStore)
     var dataStack
 
-    @Injected(Keychain.service)
+    @Injected(\.keychainService)
     var keychain
 
-    @Injected(LogManager.service)
+    @Injected(\.logService)
     var logger
 
     /// The current *signed in* user session
-    @Injected(UserSession.current)
+    @Injected(\.currentUserSession)
     var userSession: UserSession!
 
     var cancellables = Set<AnyCancellable>()

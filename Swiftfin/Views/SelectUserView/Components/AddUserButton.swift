@@ -44,6 +44,7 @@ extension SelectUserView {
             self.servers = servers
         }
 
+        @ViewBuilder
         private var content: some View {
             VStack(alignment: .center) {
                 ZStack {

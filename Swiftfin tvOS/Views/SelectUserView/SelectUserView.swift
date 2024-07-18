@@ -137,7 +137,7 @@ struct SelectUserView: View {
             }
         }
         .padding(EdgeInsets.edgePadding * 2.5)
-        .onChange(of: gridItemSize) { newValue in
+        .onChange(of: gridItemSize) { _, newValue in
             let columns = Int(contentSize.width / (newValue.width + EdgeInsets.edgePadding))
 
             padGridItemColumnCount = columns
@@ -190,7 +190,7 @@ struct SelectUserView: View {
 
                     gridContentView
                 }
-                .scroll(ifLargerThan: contentSize.height - 100)
+                .scrollIfLargerThanContainer(padding: 100)
                 .scrollViewOffset($scrollViewOffset)
             }
 
@@ -283,7 +283,7 @@ struct SelectUserView: View {
 //                    }
 //            )
         }
-        .onChange(of: serverSelection) { newValue in
+        .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
 
             splashScreenImageSource = makeSplashScreenImageSource(
@@ -291,7 +291,7 @@ struct SelectUserView: View {
                 allServersSelection: .all
             )
         }
-        .onChange(of: viewModel.servers) { _ in
+        .onChange(of: viewModel.servers) { _, _ in
             gridItems = makeGridItems(for: serverSelection)
 
             splashScreenImageSource = makeSplashScreenImageSource(
@@ -306,7 +306,7 @@ struct SelectUserView: View {
                 self.isPresentingError = true
             case let .signedIn(user):
                 Defaults[.lastSignedInUserID] = user.id
-                UserSession.current.reset()
+                Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }
         }

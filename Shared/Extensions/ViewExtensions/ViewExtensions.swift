@@ -328,13 +328,13 @@ extension View {
         )
     }
 
-    func scroll(ifLargerThan height: CGFloat) -> some View {
-        modifier(ScrollIfLargerThanModifier(height: height))
+    func scrollIfLargerThanContainer(padding: CGFloat = 0) -> some View {
+        modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
     // MARK: debug
 
-    // Useful modifiers during development for layout
+    // Useful modifiers during development for layout without RocketSim
 
     #if DEBUG
     func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {

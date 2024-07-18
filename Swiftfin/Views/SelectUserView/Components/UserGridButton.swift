@@ -50,6 +50,7 @@ extension SelectUserView {
             return isSelected ? .primary : .secondary
         }
 
+        @ViewBuilder
         private var personView: some View {
             ZStack {
                 Group {

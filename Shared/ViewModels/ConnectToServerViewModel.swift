@@ -8,6 +8,7 @@
 
 import Combine
 import CoreStore
+import Factory
 import Foundation
 import Get
 import JellyfinAPI
@@ -140,13 +141,14 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
 
         let formattedURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
             .trimmingCharacters(in: .objectReplacement)
+            .trimmingCharacters(in: ["/"])
             .prepending("http://", if: !url.contains("://"))
 
         guard let url = URL(string: formattedURL) else { throw JellyfinAPIError("Invalid URL") }
 
         let client = JellyfinClient(
             configuration: .swiftfinConfiguration(url: url),
-            sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger())
+            sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
         )
 
         let response = try await client.send(Paths.getPublicSystemInfo)
@@ -199,6 +201,9 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
     }
 
     private func save(server: ServerState) async throws {
+
+        let publicInfo = try await server.getPublicSystemInfo()
+
         try dataStack.perform { transaction in
             let newServer = transaction.create(Into<ServerModel>())
 
@@ -208,8 +213,6 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
             newServer.id = server.id
             newServer.users = []
         }
-
-        let publicInfo = try await server.getPublicSystemInfo()
 
         StoredValues[.Server.publicInfo(id: server.id)] = publicInfo
     }

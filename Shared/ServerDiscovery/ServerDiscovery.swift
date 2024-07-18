@@ -13,7 +13,7 @@ import UDPBroadcast
 
 class ServerDiscovery {
 
-    @Injected(LogManager.service)
+    @Injected(\.logService)
     private var logger
 
     private var connection: UDPBroadcastConnection?
