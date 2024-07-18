@@ -14,27 +14,15 @@
 /* Label indicating no overview is available */
 "noOverviewAvailable" = "No overview available";
 
-/* Message indicating too many redirects */
-"tooManyRedirects" = "Too Many Redirects";
-
 
 /* MARK: General */
 
-
-/* Apply/Save the current values on the screen/form */
-"apply" = "Apply";
-
-/* Go back to the previous screen/form */
-"back" = "Back";
 
 /* Label for buttons section */
 "buttons" = "Buttons";
 
 /* Stop the current operation or reset the screen/form */
 "cancel" = "Cancel";
-
-/* Leave/close the current menu */
-"close" = "Close";
 
 /* Proceed or continue to the next screen as a proceed opposed to an agreement */
 "continue" = "Continue";
@@ -54,20 +42,11 @@
 /* Generic error for handling uncaught & unexpected interactions */
 "error" = "Error";
 
-/* A Media/Subtitle object as a File on a Server System or local device */
-"file" = "File";
-
 /* Go back to the Home screen/form */
 "home" = "Home";
 
-/* Label for information section */
-"information" = "Information";
-
 /* Generic term for Movies/Episodes/Shows... etc */
 "items" = "Items";
-
-/* View is loading data */
-"loading" = "Loading";
 
 /* Label indicating missing items */
 "missing" = "Missing";
@@ -80,18 +59,6 @@
 
 /* Label indicating none */
 "none" = "None";
-
-/* Proceed with the current values on the screen/form */
-"ok" = "Ok";
-
-/* Refresh the current view */
-"refresh" = "Refresh";
-
-/* Reload the current view */
-"reload" = "Reload";
-
-/* Button label to remove an item */
-"remove" = "Remove";
 
 /* Reset the form/screen back to the default/previous values */
 "reset" = "Reset";
@@ -108,24 +75,12 @@
 /* Generic term for the Active Jellyfin Server */
 "server" = "Server";
 
-/* Generic term for one or more Jellyfin Server */
-"servers" = "Servers";
-
-/* Re-attempt to load a previously failed object */
-"tryAgain" = "Try again";
-
 /* Generic label for unknown objects */
 "unknown" = "Unknown";
-
-/* Generic error for handling uncaught & unexpected interactions */
-"unknownError" = "Unknown Error";
 
 
 /* MARK: Home */
 
-
-/* Represents the Home View section for items that are in-progress files */
-"continueWatching" = "Continue Watching";
 
 /* Represents the Home View section for All media items that are new for each Media Type */
 "latestWithString" = "Latest %@";
@@ -135,9 +90,6 @@
 
 /* Label for recently added items */
 "recentlyAdded" = "Recently Added";
-
-/* Option to remove from resume */
-"removeFromResume" = "Remove From Resume";
 
 
 /* MARK: Item - Generic */
@@ -152,30 +104,14 @@
 /* Label for missing items section */
 "missingItems" = "Missing Items";
 
-/* Represents the the Media Item section for Jellyfin recommendations */
-"moreLikeThis" = "More Like This";
-
-/* Label for not available */
-"notAvailableSlash" = "N/A";
-
-/* Label indicating no codec is available */
-"noCodec" = "No Codec";
-
 /* Label indicating no title is available */
 "noTitle" = "No title";
-
-/* Represents the Media Item button label to start the Media Item playback for a Collection of Items */
-"playNext" = "Play Next";
 
 /* Message indicating media information is being retrieved */
 "retrievingMediaInformation" = "Retrieving media information";
 
-/* Label indicating the released date */
-"released" = "Released";
-
 /* Label for subtitles settings/selection */
 "subtitles" = "Subtitles";
-
 
 /* MARK: Item - Shows */
 
@@ -193,9 +129,6 @@
 
 /* Represents the label that will exist in place of an episode view if there are no episodes */
 "noEpisodesAvailable" = "No episodes available";
-
-/* Label for a show that is active until present */
-"present" = "Present";
 
 /* Represents the Media Item label to denote a Show's Season & Episode */
 "seasonAndEpisode" = "S%1$@:E%2$@";
@@ -219,17 +152,15 @@
 /* Label for cinematic view */
 "cinematic" = "Cinematic";
 
-/* Label for cinematic views */
-"cinematicViews" = "Cinematic Views";
-
 /* Option for compact logo view */
 "compactLogo" = "Compact Logo";
 
 /* Option for compact poster view */
 "compactPoster" = "Compact Poster";
 
-/* Label for overview information */
-"overview" = "Overview";
+
+/* MARK: Valid Above This Line */
+
 
 /* Represents the Media Item button label to start a Media Item playback */
 "play" = "Play";
@@ -974,11 +905,35 @@
 "quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
 
 
-/* MARK: TODO - Unused */
+/* MARK: TODO - Removed Unwanted Unused */
 
 
+//"apply" = "Apply";
+//"back" = "Back";
+//"cinematicViews" = "Cinematic Views";
+//"close" = "Close";
+//"continueWatching" = "Continue Watching";
 //"defaultScheme" = "Default Scheme";
+//"file" = "File";
+//"information" = "Information";
+//"loading" = "Loading";
 //"login" = "Login";
 //"loginToWithString" = "Login to %@";
+//"moreLikeThis" = "More Like This";
 //"networking" = "Networking";
+//"noCodec" = "No Codec";
+//"notAvailableSlash" = "N/A";
+//"ok" = "Ok";
 //"otherUser" = "Other User";
+//"overview" = "Overview";
+//"playNext" = "Play Next";
+//"present" = "Present";
+//"refresh" = "Refresh";
+//"released" = "Released";
+//"reload" = "Reload";
+//"remove" = "Remove";
+//"removeFromResume" = "Remove From Resume";
+//"servers" = "Servers";
+//"tooManyRedirects" = "Too Many Redirects";
+//"tryAgain" = "Try again";
+//"unknown" = "Unknown";
