@@ -1800,7 +1800,6 @@
 				E1FCD08E26C466F3007C8DCF /* Errors */,
 				621338912660106C00A81A2A /* Extensions */,
 				535870AB2669D8D300D05A09 /* Objects */,
-				AE8C3157265D6F5E008AA076 /* Resources */,
 				091B5A852683142E00D78B61 /* ServerDiscovery */,
 				E1549654296CA2EF00C4EF88 /* Services */,
 				6286F09F271C0AA500C40ED5 /* Strings */,
@@ -2200,13 +2199,6 @@
 				E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */,
 			);
 			path = Coordinators;
-			sourceTree = "<group>";
-		};
-		AE8C3157265D6F5E008AA076 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		BD0BA2292AD6501300306A8D /* VideoPlayerManager */ = {
