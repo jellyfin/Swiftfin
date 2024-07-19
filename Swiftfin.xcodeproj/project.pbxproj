@@ -34,7 +34,6 @@
 		534D4FF726A7D7CC000A7A48 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 534D4FEB26A7D7CC000A7A48 /* Localizable.strings */; };
 		535870632669D21600D05A09 /* SwiftfinApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870622669D21600D05A09 /* SwiftfinApp.swift */; };
 		535870672669D21700D05A09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 535870662669D21700D05A09 /* Assets.xcassets */; };
-		5358707E2669D64F00D05A09 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		535870AD2669D8DD00D05A09 /* ItemFilterCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* ItemFilterCollection.swift */; };
 		535BAE9F2649E569005FA86D /* ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535BAE9E2649E569005FA86D /* ItemView.swift */; };
 		5364F455266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5364F454266CA0DC0026ECBA /* BaseItemPerson.swift */; };
@@ -151,7 +150,6 @@
 		62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62ECA01726FA685A00E8EBB7 /* DeepLink.swift */; };
 		6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */; };
 		6334175D287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6334175C287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift */; };
-		AE8C3159265D6F90008AA076 /* bitrates.json in Resources */ = {isa = PBXBuildFile; fileRef = AE8C3158265D6F90008AA076 /* bitrates.json */; };
 		BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
 		BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */; };
 		BD0BA22E2AD6508C00306A8D /* DownloadVideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */; };
@@ -1058,7 +1056,6 @@
 		6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectAuthorizeView.swift; sourceTree = "<group>"; };
 		6334175C287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectAuthorizeViewModel.swift; sourceTree = "<group>"; };
 		637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = UDPBroadcast.xcframework; path = Carthage/Build/UDPBroadcast.xcframework; sourceTree = "<group>"; };
-		AE8C3158265D6F90008AA076 /* bitrates.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = bitrates.json; sourceTree = "<group>"; };
 		BD0BA22A2AD6503B00306A8D /* OnlineVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineVideoPlayerManager.swift; sourceTree = "<group>"; };
 		BD0BA22D2AD6508C00306A8D /* DownloadVideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadVideoPlayerManager.swift; sourceTree = "<group>"; };
 		BD3957742C112A330078CEF8 /* ButtonSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonSection.swift; sourceTree = "<group>"; };
@@ -2208,7 +2205,6 @@
 		AE8C3157265D6F5E008AA076 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AE8C3158265D6F90008AA076 /* bitrates.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -3794,7 +3790,6 @@
 				53913C0826D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C1126D323FE00EB3286 /* Localizable.strings in Resources */,
 				535870672669D21700D05A09 /* Assets.xcassets in Resources */,
-				5358707E2669D64F00D05A09 /* bitrates.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3818,7 +3813,6 @@
 				53913BEF26D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C0726D323FE00EB3286 /* Localizable.strings in Resources */,
 				53913C1026D323FE00EB3286 /* Localizable.strings in Resources */,
-				AE8C3159265D6F90008AA076 /* bitrates.json in Resources */,
 				5377CBF9263B596B003A4E83 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
