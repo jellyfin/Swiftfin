@@ -23,6 +23,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
+    var maximumBitrateSettings = makeMaximumBitrateSettings
+    @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
     var resetUserPassword = makeResetUserPassword
@@ -65,12 +67,19 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var serverDetail = makeServerDetail
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
+    @Route(.modal)
+    var maximumBitrateSettings = makeMaximumBitrateSettings
     #endif
 
     #if os(iOS)
     @ViewBuilder
     func makeNativePlayerSettings() -> some View {
         NativeVideoPlayerSettingsView()
+    }
+
+    @ViewBuilder
+    func makeMaximumBitrateSettings() -> some View {
+        MaximumBitrateSettingsView()
     }
 
     @ViewBuilder
@@ -165,6 +174,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
         NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
+    }
+
+    func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            MaximumBitrateSettingsView()
+        }
     }
     #endif
 

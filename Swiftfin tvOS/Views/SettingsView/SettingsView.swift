@@ -64,6 +64,12 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.videoPlayerSettings)
                         }
+
+                    ChevronButton(L10n.maximumBitrate)
+                        .onSelect {
+                            router.route(to: \.maximumBitrateSettings)
+                        }
+
                 } header: {
                     L10n.videoPlayer.text
                 }
