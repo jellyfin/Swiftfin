@@ -40,6 +40,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var experimentalSettings = makeExperimentalSettings
     @Route(.push)
+    var homeSectionsSelector = makeHomeSectionsSelector
+    @Route(.push)
     var itemFilterDrawerSelector = makeItemFilterDrawerSelector
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
@@ -135,6 +137,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+    }
+
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: [.home, .search, .media])
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {

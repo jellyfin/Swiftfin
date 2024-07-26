@@ -32,7 +32,6 @@ final class ItemLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
                 if let collectionType = item.collectionType {
                     return ["movies", "tvshows", "mixed", "boxsets"].contains(collectionType)
                 }
-
                 return true
             }
             .map { item in
