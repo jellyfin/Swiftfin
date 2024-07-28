@@ -13,8 +13,7 @@ import Stinsen
 import SwiftUI
 
 final class MainTabCoordinator: TabCoordinatable {
-
-    var child = MainTabInitializer().create()
+    var child: TabChild
 
     @Default(.Customization.Home.homeLabels)
     var sectionLabels
@@ -33,6 +32,10 @@ final class MainTabCoordinator: TabCoordinatable {
     var media = makeMedia
     @Route(tabItem: makeSettingsTab)
     var settings = makeSettings
+
+    init() {
+        self.child = MainTabCoordinator.makeChild()
+    }
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
@@ -73,7 +76,6 @@ final class MainTabCoordinator: TabCoordinatable {
         makeTab(image: MainTabTypes.movies.displayIcon, title: MainTabTypes.movies.displayTitle)
     }
 
-    // TODO: does this cause issues?
     func makeSearch() -> VideoPlayerWrapperCoordinator {
         VideoPlayerWrapperCoordinator {
             SearchCoordinator()
@@ -112,5 +114,19 @@ final class MainTabCoordinator: TabCoordinatable {
                 tabLabel.text
             }
         }
+    }
+
+    static func makeChild() -> TabChild {
+        @Default(.Customization.Home.homeSections)
+        var homeSections
+        var activeSections: [AnyKeyPath]
+
+        // Re-Add Settings back to the Main Tabs if removed
+        if homeSections.contains(MainTabTypes.settings) {
+            activeSections = homeSections.compactMap(\.keyPath)
+        } else {
+            activeSections = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
+        }
+        return TabChild(startingItems: activeSections)
     }
 }

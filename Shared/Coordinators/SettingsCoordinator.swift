@@ -62,6 +62,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
+    var homeSectionsSelector = makeHomeSectionsSelector
+    @Route(.modal)
+    var itemFilterDrawerSelector = makeItemFilterDrawerSelector
+    @Route(.modal)
     var indicatorSettings = makeIndicatorSettings
     @Route(.modal)
     var log = makeLog
@@ -128,20 +132,20 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+    }
+
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: MainTabTypes.allCases)
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
         DebugSettingsView()
     }
     #endif
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-    }
-
-    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: [.home, .search, .media])
-    }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
@@ -187,6 +191,29 @@ final class SettingsCoordinator: NavigationCoordinatable {
             MaximumBitrateSettingsView()
         }
     }
+
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            OrderedSectionSelectorView(
+                title: "Active Filters",
+                selection: selection,
+                sources: ItemFilterType.allCases,
+                image: Image(systemName: "line.3.horizontal.decrease.circle")
+            )
+        }
+    }
+
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            OrderedSectionSelectorView(
+                title: "Home Sections",
+                selection: selection,
+                sources: MainTabTypes.allCases,
+                image: Image(systemName: "menubar.arrow.up.rectangle")
+            )
+        }
+    }
+
     #endif
 
     @ViewBuilder

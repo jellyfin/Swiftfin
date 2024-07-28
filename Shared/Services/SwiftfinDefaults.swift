@@ -169,29 +169,9 @@ extension Defaults.Keys {
                 default: [.home, .search, .media]
             )
             #elseif os(tvOS)
-            static let homeSection1: Key<MainTabTypes> = UserKey(
-                "homeSection1",
-                default: MainTabTypes.home
-            )
-            static let homeSection2: Key<MainTabTypes> = UserKey(
-                "homeSection2",
-                default: MainTabTypes.tvShows
-            )
-            static let homeSection3: Key<MainTabTypes> = UserKey(
-                "homeSection3",
-                default: MainTabTypes.movies
-            )
-            static let homeSection4: Key<MainTabTypes> = UserKey(
-                "homeSection4",
-                default: MainTabTypes.search
-            )
-            static let homeSection5: Key<MainTabTypes> = UserKey(
-                "homeSection5",
-                default: MainTabTypes.media
-            )
-            static let homeSection6: Key<MainTabTypes> = UserKey(
-                "homeSection6",
-                default: MainTabTypes.settings
+            static let homeSections: Key<[MainTabTypes]> = UserKey(
+                "homeSections",
+                default: [.home, .tvShows, .movies, .search, .media, .settings]
             )
             #endif
         }

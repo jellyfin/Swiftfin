@@ -12,8 +12,7 @@ import Stinsen
 import SwiftUI
 
 final class MainTabCoordinator: TabCoordinatable {
-
-    var child = MainTabInitializer().create()
+    var child: TabChild
 
     @Default(.Customization.Home.homeLabels)
     var sectionLabels
@@ -24,6 +23,10 @@ final class MainTabCoordinator: TabCoordinatable {
     var search = makeSearch
     @Route(tabItem: makeMediaTab, onTapped: onMediaTapped)
     var media = makeMedia
+
+    init() {
+        self.child = MainTabCoordinator.makeChild()
+    }
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
@@ -89,5 +92,19 @@ final class MainTabCoordinator: TabCoordinatable {
                 tabLabel.text
             }
         }
+    }
+
+    static func makeChild() -> TabChild {
+        @Default(.Customization.Home.homeSections)
+        var homeSections
+        var activeSections: [AnyKeyPath]
+
+        // Re-Add Home back to the Main Tabs if removed
+        if homeSections.contains(MainTabTypes.home) {
+            activeSections = homeSections.compactMap(\.keyPath)
+        } else {
+            activeSections = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.home]
+        }
+        return TabChild(startingItems: activeSections)
     }
 }

@@ -22,7 +22,6 @@ enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
     #endif
     case search
     case media
-    case none
 
     var displayTitle: String {
         switch self {
@@ -42,8 +41,6 @@ enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
             return L10n.search
         case .media:
             return L10n.media
-        case .none:
-            return L10n.none
         }
     }
 
@@ -66,8 +63,6 @@ enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
             return Image(systemName: "magnifyingglass")
         case .media:
             return Image(systemName: "rectangle.stack")
-        case .none:
-            return Image(systemName: "questionmark")
         }
     }
 
@@ -89,8 +84,6 @@ enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
             return \MainTabCoordinator.search
         case .media:
             return \MainTabCoordinator.media
-        case .none:
-            return nil
         }
     }
 }
