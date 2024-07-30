@@ -24,21 +24,19 @@ struct MaximumBitrateSettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
-                    CaseIterablePicker(
-                        L10n.maximumBitrate,
-                        selection: $appMaximumBitrate
-                    )
+
+                SettingsViewFormSection {
+
+                    InlineEnumToggle(title: L10n.maximumBitrate, selection: $appMaximumBitrate)
 
                     if appMaximumBitrate == PlaybackBitrate.auto {
-                        CaseIterablePicker(
-                            L10n.testSize,
-                            selection: $appMaximumBitrateTest
-                        )
+                        InlineEnumToggle(title: L10n.testSize, selection: $appMaximumBitrateTest)
                     }
+                } header: {
+                    Text(L10n.playbackQuality)
                 } footer: {
                     if appMaximumBitrate == PlaybackBitrate.auto {
-                        Text(L10n.bitrateTestDescription)
+                        L10n.bitrateTestDescription.text
                     }
                 }
             }

@@ -42,47 +42,55 @@ struct VideoPlayerSettingsView: View {
             }
             .contentView {
 
-                Section {
+                SettingsViewFormSection {
+
                     ChevronButton(
-                        "Resume Offset",
+                        L10n.offset,
                         subtitle: resumeOffset.secondLabel
                     )
                     .onSelect {
                         isPresentingResumeOffsetStepper = true
                     }
+                } header: {
+                    L10n.resume.text
                 } footer: {
-                    Text("Resume content seconds before the recorded resume time")
+                    L10n.resumeOffsetDescription.text
                 }
 
-                Section {
+                SettingsViewFormSection {
+
                     ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
                         .onSelect {
                             router.route(to: \.fontPicker, $subtitleFontName)
                         }
+                } header: {
+                    L10n.subtitles.text
                 } footer: {
-                    Text("Settings only affect some subtitle types")
+                    L10n.subtitlesDisclaimer.text
                 }
 
-                Section {
+                SettingsViewFormSection {
+                    Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
+                    Toggle(L10n.playOnActive, isOn: $playOnActive)
+                } header: {
+                    L10n.playback.text
+                }
 
-                    Toggle("Pause on background", isOn: $pauseOnBackground)
-                    Toggle("Play on active", isOn: $playOnActive)
-                }
-            }
-            .navigationTitle("Video Player")
-            .blurFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
-                StepperView(
-                    title: "Resume Offset",
-                    description: "Resume content seconds before the recorded resume time",
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1
-                )
-                .valueFormatter {
-                    $0.secondLabel
-                }
-                .onCloseSelected {
-                    isPresentingResumeOffsetStepper = false
+                .navigationTitle(L10n.videoPlayer.text)
+                .blurFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
+                    StepperView(
+                        title: L10n.resumeOffsetTitle,
+                        description: L10n.resumeOffsetDescription,
+                        value: $resumeOffset,
+                        range: 0 ... 30,
+                        step: 1
+                    )
+                    .valueFormatter {
+                        $0.secondLabel
+                    }
+                    .onCloseSelected {
+                        isPresentingResumeOffsetStepper = false
+                    }
                 }
             }
     }

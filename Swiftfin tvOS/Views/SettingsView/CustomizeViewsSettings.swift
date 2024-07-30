@@ -53,7 +53,7 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
-                Section {
+                SettingsViewFormSection {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
@@ -62,9 +62,9 @@ struct CustomizeViewsSettings: View {
                     L10n.missingItems.text
                 }
 
-                Section {
+                SettingsViewFormSection {
 
-                    ChevronButton("Indicators")
+                    ChevronButton(L10n.indicators)
                         .onSelect {
                             router.route(to: \.indicatorSettings)
                         }
@@ -84,18 +84,18 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
 
                 } header: {
-                    Text("Posters")
+                    Text(L10n.posters)
                 }
 
-                Section {
+                SettingsViewFormSection {
 
-                    Toggle("Cinematic Background", isOn: $cinematicBackground)
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
-                    Toggle("Random Image", isOn: $libraryRandomImage)
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
-                    Toggle("Show Favorites", isOn: $showFavorites)
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
 
-                    Toggle("Show Recently Added", isOn: $showRecentlyAdded)
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
 
                 } header: {
                     L10n.library.text

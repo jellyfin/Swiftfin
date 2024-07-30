@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
+                SettingsViewFormSection {
 
                     Button {} label: {
                         TextPairView(
@@ -39,6 +39,7 @@ struct SettingsView: View {
                             trailing: viewModel.userSession.user.username
                         )
                     }
+                    .focusable(false)
 
                     ChevronButton(
                         L10n.server,
@@ -51,14 +52,26 @@ struct SettingsView: View {
                     Button {
                         viewModel.signOut()
                     } label: {
-                        L10n.switchUser.text
-                            .foregroundColor(.jellyfinPurple)
+                        HStack {
+
+                            Text(L10n.switchUser)
+                                .foregroundColor(.purple)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
+                                .foregroundColor(.secondary)
+                        }
                     }
+
+                } header: {
+                    L10n.jellyfin.text
                 }
 
-                Section {
+                SettingsViewFormSection {
 
-                    InlineEnumToggle(title: "Video Player Type", selection: $videoPlayerType)
+                    InlineEnumToggle(title: L10n.videoPlayer, selection: $videoPlayerType)
 
                     ChevronButton(L10n.videoPlayer)
                         .onSelect {
@@ -74,7 +87,7 @@ struct SettingsView: View {
                     L10n.videoPlayer.text
                 }
 
-                Section {
+                SettingsViewFormSection {
 
                     ChevronButton(L10n.customize)
                         .onSelect {
@@ -90,9 +103,9 @@ struct SettingsView: View {
                     L10n.accessibility.text
                 }
 
-                Section {
+                SettingsViewFormSection {
 
-                    ChevronButton("Logs")
+                    ChevronButton(L10n.logs)
                         .onSelect {
                             router.route(to: \.log)
                         }

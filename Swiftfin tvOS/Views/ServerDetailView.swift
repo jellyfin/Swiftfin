@@ -35,36 +35,49 @@ struct EditServerView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section(L10n.server) {
-                    TextPairView(
-                        leading: L10n.name,
-                        trailing: viewModel.server.name
-                    )
+
+                SettingsViewFormSection {
+                    Button {} label: {
+                        TextPairView(
+                            leading: L10n.name,
+                            trailing: viewModel.server.name
+                        )
+                    }
+                    .focusable(false)
+                } header: {
+                    L10n.server.text
                 }
 
-                Section("URL") {
+                SettingsViewFormSection {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
-                        if url == viewModel.server.currentURL {
-                            Button(url.absoluteString, systemImage: "checkmark") {}
-                        } else {
-                            Button(url.absoluteString) {
+                        CheckButton(
+                            url == viewModel.server.currentURL,
+                            url.absoluteString
+                        )
+                        .onSelect {
+                            guard viewModel.server.currentURL == url else {
                                 viewModel.setCurrentURL(to: url)
+                                return
                             }
                         }
                     }
+                } header: {
+                    Text(L10n.url)
                 }
 
                 if isEditing {
-                    ListRowButton("Delete") {
-                        isPresentingConfirmDeletion = true
+                    SettingsViewFormSection {
+                        ListRowButton(L10n.delete) {
+                            isPresentingConfirmDeletion = true
+                        }
+                        .foregroundStyle(.primary, .red.opacity(0.5))
                     }
-                    .foregroundStyle(.primary, .red.opacity(0.5))
                 }
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.server)
-            .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
-                Button("Delete", role: .destructive) {
+            .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
+                Button(L10n.delete, role: .destructive) {
                     viewModel.delete()
                     router.popLast()
                 }

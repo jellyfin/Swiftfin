@@ -24,7 +24,7 @@ struct SplitFormWindowView: View {
                 .eraseToAnyView()
                 .frame(maxWidth: .infinity)
 
-            Form {
+            SettingsViewForm {
                 contentView()
                     .eraseToAnyView()
             }

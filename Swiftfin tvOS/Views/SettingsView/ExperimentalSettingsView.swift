@@ -25,7 +25,8 @@ struct ExperimentalSettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
+
+                SettingsViewFormSection {
 
                     Toggle("Force Direct Play", isOn: $forceDirectPlay)
 
@@ -33,7 +34,7 @@ struct ExperimentalSettingsView: View {
                     Text("Video Player")
                 }
 
-                Section {
+                SettingsViewFormSection {
 
                     Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
 
