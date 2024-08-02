@@ -68,11 +68,11 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Home.homeLabels)
     private var homeLabels
-    @Default(.Customization.Home.homeSections)
-    private var homeSections
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
+    @EnvironmentObject
+    private var mainCoordinator: MainCoordinator
 
     var body: some View {
         List {
@@ -168,16 +168,12 @@ struct CustomizeViewsSettings: View {
             }
 
             Section {
+
                 Toggle("Show recently added", isOn: $showRecentlyAdded)
-                Toggle("Section Labels", isOn: $homeLabels)
-                ChevronButton("Sections")
-                    .onSelect {
-                        router.route(to: \.homeSectionsSelector, $homeSections)
-                    }
+                Toggle("Show Section Labels", isOn: $homeLabels)
+
             } header: {
                 L10n.home.text
-            } footer: {
-                Text("An app restart is required to update sections")
             }
 
             Section {

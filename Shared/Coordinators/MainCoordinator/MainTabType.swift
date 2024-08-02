@@ -13,77 +13,62 @@ import SwiftUI
 
 enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
 
-    case home
-    #if os(tvOS)
     case boxSets
-    case tvShows
-    case movies
-    case settings
-    #endif
-    case search
+    case home
     case media
+    case movies
+    case search
+    case tvShows
 
     var displayTitle: String {
         switch self {
-        case .home:
-            return L10n.home
-        #if os(tvOS)
         case .boxSets:
             return L10n.collections
-        case .tvShows:
-            return L10n.tvShows
-        case .movies:
-            return L10n.movies
-        case .settings:
-            return L10n.settings
-        #endif
-        case .search:
-            return L10n.search
+        case .home:
+            return L10n.home
         case .media:
             return L10n.media
+        case .movies:
+            return L10n.movies
+        case .search:
+            return L10n.search
+        case .tvShows:
+            return L10n.tvShows
         }
     }
 
     var displayIcon: Image {
         switch self {
-        case .home:
-            return Image(systemName: "house")
-        #if os(tvOS)
         case .boxSets:
             return Image(systemName: "folder")
+        case .home:
+            return Image(systemName: "house")
+        case .media:
+            return Image(systemName: "rectangle.stack")
+        case .movies:
+            return Image(systemName: "film")
+        case .search:
+            return Image(systemName: "magnifyingglass")
         case .tvShows:
             return Image(systemName: "tv")
                 .symbolRenderingMode(.monochrome)
-        case .movies:
-            return Image(systemName: "film")
-        case .settings:
-            return Image(systemName: "gearshape.fill")
-        #endif
-        case .search:
-            return Image(systemName: "magnifyingglass")
-        case .media:
-            return Image(systemName: "rectangle.stack")
         }
     }
 
     var keyPath: AnyKeyPath? {
         switch self {
-        case .home:
-            return \MainTabCoordinator.home
-        #if os(tvOS)
         case .boxSets:
             return \MainTabCoordinator.boxSets
-        case .tvShows:
-            return \MainTabCoordinator.tvShows
-        case .movies:
-            return \MainTabCoordinator.movies
-        case .settings:
-            return \MainTabCoordinator.settings
-        #endif
-        case .search:
-            return \MainTabCoordinator.search
+        case .home:
+            return \MainTabCoordinator.home
         case .media:
             return \MainTabCoordinator.media
+        case .movies:
+            return \MainTabCoordinator.movies
+        case .search:
+            return \MainTabCoordinator.search
+        case .tvShows:
+            return \MainTabCoordinator.tvShows
         }
     }
 }

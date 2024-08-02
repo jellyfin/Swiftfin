@@ -163,15 +163,10 @@ extension Defaults.Keys {
         enum Home {
 
             static let homeLabels: Key<Bool> = UserKey("homeLabels", default: true)
-            #if os(iOS)
+            #if os(tvOS)
             static let homeSections: Key<[MainTabTypes]> = UserKey(
                 "homeSections",
-                default: [.home, .search, .media]
-            )
-            #elseif os(tvOS)
-            static let homeSections: Key<[MainTabTypes]> = UserKey(
-                "homeSections",
-                default: [.home, .tvShows, .movies, .search, .media, .settings]
+                default: [.home, .tvShows, .movies, .search, .media]
             )
             #endif
         }

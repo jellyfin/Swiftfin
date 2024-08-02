@@ -40,7 +40,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeHomeTab(isActive: Bool) -> some View {
-        makeTab(image: Image(systemName: "house"), title: L10n.home)
+        makeTab(
+            image: Image(systemName: "house"),
+            title: L10n.home
+        )
     }
 
     func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
@@ -55,7 +58,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSearchTab(isActive: Bool) -> some View {
-        makeTab(image: Image(systemName: "magnifyingglass"), title: L10n.search)
+        makeTab(
+            image: Image(systemName: "magnifyingglass"),
+            title: L10n.search
+        )
     }
 
     func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
@@ -70,7 +76,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMediaTab(isActive: Bool) -> some View {
-        makeTab(image: Image(systemName: "rectangle.stack.fill"), title: L10n.media)
+        makeTab(
+            image: Image(systemName: "rectangle.stack.fill"),
+            title: L10n.media
+        )
     }
 
     @ViewBuilder
@@ -95,16 +104,13 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     static func makeChild() -> TabChild {
-        @Default(.Customization.Home.homeSections)
-        var homeSections
-        var activeSections: [AnyKeyPath]
 
-        // Re-Add Home back to the Main Tabs if removed
-        if homeSections.contains(MainTabTypes.home) {
-            activeSections = homeSections.compactMap(\.keyPath)
-        } else {
-            activeSections = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.home]
-        }
-        return TabChild(startingItems: activeSections)
+        TabChild(
+            startingItems: [
+                \MainTabCoordinator.home,
+                \MainTabCoordinator.search,
+                \MainTabCoordinator.media,
+            ]
+        )
     }
 }

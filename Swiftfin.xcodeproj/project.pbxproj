@@ -13,7 +13,6 @@
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
-		4E541F942C52FB72002CB4F8 /* MainTabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E541F932C52FB72002CB4F8 /* MainTabType.swift */; };
 		4E541F952C52FB72002CB4F8 /* MainTabType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E541F932C52FB72002CB4F8 /* MainTabType.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -4302,7 +4301,6 @@
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
 				E154966E296CA2EF00C4EF88 /* LogManager.swift in Sources */,
-				4E541F942C52FB72002CB4F8 /* MainTabType.swift in Sources */,
 				62C29EA126D102A500C1D2E7 /* iOSMainTabCoordinator.swift in Sources */,
 				E18E01E8288747230022598C /* SeriesItemContentView.swift in Sources */,
 				E16AA60828A364A6009A983C /* PosterButton.swift in Sources */,

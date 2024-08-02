@@ -43,7 +43,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeHomeTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.home.displayIcon, title: MainTabTypes.home.displayTitle)
+        makeTab(
+            image: MainTabTypes.home.displayIcon,
+            title: MainTabTypes.home.displayTitle
+        )
     }
 
     func makeBoxSets() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
@@ -53,7 +56,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeBoxSetsTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.boxSets.displayIcon, title: MainTabTypes.boxSets.displayTitle)
+        makeTab(
+            image: MainTabTypes.boxSets.displayIcon,
+            title: MainTabTypes.boxSets.displayTitle
+        )
     }
 
     func makeTVShows() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
@@ -63,7 +69,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeTvTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.tvShows.displayIcon, title: MainTabTypes.tvShows.displayTitle)
+        makeTab(
+            image: MainTabTypes.tvShows.displayIcon,
+            title: MainTabTypes.tvShows.displayTitle
+        )
     }
 
     func makeMovies() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
@@ -73,7 +82,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMoviesTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.movies.displayIcon, title: MainTabTypes.movies.displayTitle)
+        makeTab(
+            image: MainTabTypes.movies.displayIcon,
+            title: MainTabTypes.movies.displayTitle
+        )
     }
 
     func makeSearch() -> VideoPlayerWrapperCoordinator {
@@ -85,7 +97,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSearchTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.search.displayIcon, title: MainTabTypes.search.displayTitle)
+        makeTab(
+            image: MainTabTypes.search.displayIcon,
+            title: MainTabTypes.search.displayTitle
+        )
     }
 
     func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
@@ -94,7 +109,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMediaTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.media.displayIcon, title: MainTabTypes.media.displayTitle)
+        makeTab(
+            image: MainTabTypes.media.displayIcon,
+            title: MainTabTypes.media.displayTitle
+        )
     }
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
@@ -103,7 +121,11 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSettingsTab(isActive: Bool) -> some View {
-        makeTab(image: MainTabTypes.settings.displayIcon, title: MainTabTypes.settings.displayTitle, useTitle: false)
+        makeTab(
+            image: Image(systemName: "gearshape.fill"),
+            title: L10n.settings,
+            useTitle: false
+        )
     }
 
     func makeTab(image tabIcon: Image, title tabLabel: String, useTitle tabTitle: Bool = true) -> some View {
@@ -119,14 +141,12 @@ final class MainTabCoordinator: TabCoordinatable {
     static func makeChild() -> TabChild {
         @Default(.Customization.Home.homeSections)
         var homeSections
-        var activeSections: [AnyKeyPath]
+        var activeSections: [AnyKeyPath] = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
 
-        // Re-Add Settings back to the Main Tabs if removed
-        if homeSections.contains(MainTabTypes.settings) {
-            activeSections = homeSections.compactMap(\.keyPath)
-        } else {
-            activeSections = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
-        }
         return TabChild(startingItems: activeSections)
+    }
+
+    func refresh() {
+        self.child = MainTabCoordinator.makeChild()
     }
 }

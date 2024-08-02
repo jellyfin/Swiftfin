@@ -16,7 +16,7 @@ import SwiftUI
 //       - move some things to App
 // TODO: server check flow
 
-final class MainCoordinator: NavigationCoordinatable {
+final class MainCoordinator: NavigationCoordinatable, Observable {
 
     @Injected(\.logService)
     private var logger
@@ -30,8 +30,13 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var selectUser = makeSelectUser
 
-    init() {
+    @Published
+    var mainTabCoordinator: MainTabCoordinator
+    @Published
+    var updateMainTab: Bool = false
 
+    init() {
+        self.mainTabCoordinator = MainTabCoordinator()
         stack = NavigationStack(initial: \.loading)
 
         Task {
@@ -90,10 +95,18 @@ final class MainCoordinator: NavigationCoordinatable {
     }
 
     func makeMainTab() -> MainTabCoordinator {
-        MainTabCoordinator()
+        mainTabCoordinator
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
         NavigationViewCoordinator(SelectUserCoordinator())
+    }
+
+    func refreshMainTab() {
+        if updateMainTab {
+            mainTabCoordinator.refresh()
+            self.objectWillChange.send()
+            updateMainTab = false
+        }
     }
 }

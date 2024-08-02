@@ -56,6 +56,8 @@ struct CustomizeViewsSettings: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
+    @EnvironmentObject
+    private var mainCoordinator: MainCoordinator
 
     var body: some View {
         SplitFormWindowView()
@@ -69,17 +71,38 @@ struct CustomizeViewsSettings: View {
 
                 Section {
 
-                    Toggle("Show Section Labels", isOn: $homeLabels)
+                    Toggle("Cinematic Background", isOn: $cinematicBackground)
 
-                    ChevronButton("Sections")
+                    Toggle("Random Image", isOn: $libraryRandomImage)
+
+                    Toggle("Show Favorites", isOn: $showFavorites)
+
+                    Toggle("Show Recently Added", isOn: $showRecentlyAdded)
+
+                } header: {
+                    L10n.library.text
+                }
+
+                Section {
+
+                    Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
+
+                    if letterPickerEnabled {
+                        InlineEnumToggle(title: L10n.orientation, selection: $letterPickerOrientation)
+                    }
+
+                    ChevronButton(L10n.library)
                         .onSelect {
-                            router.route(to: \.homeSectionsSelector, $homeSections)
+                            router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
+                        }
+
+                    ChevronButton(L10n.search)
+                        .onSelect {
+                            router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                         }
 
                 } header: {
-                    L10n.home.text
-                } footer: {
-                    Text("An app restart is required to update sections")
+                    L10n.filters.text
                 }
 
                 Section {
@@ -118,38 +141,21 @@ struct CustomizeViewsSettings: View {
 
                 Section {
 
-                    Toggle("Cinematic Background", isOn: $cinematicBackground)
-
-                    Toggle("Random Image", isOn: $libraryRandomImage)
-
-                    Toggle("Show Favorites", isOn: $showFavorites)
-
-                    Toggle("Show Recently Added", isOn: $showRecentlyAdded)
-
-                } header: {
-                    L10n.library.text
-                }
-
-                Section {
-
-                    Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
-
-                    if letterPickerEnabled {
-                        InlineEnumToggle(title: L10n.orientation, selection: $letterPickerOrientation)
-                    }
-
-                    ChevronButton(L10n.library)
-                        .onSelect {
-                            router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
+                    Toggle("Show Section Labels", isOn: $homeLabels)
+                        .onChange(of: homeLabels) {
+                            mainCoordinator.updateMainTab = true
                         }
 
-                    ChevronButton(L10n.search)
+                    ChevronButton("Sections")
                         .onSelect {
-                            router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
+                            router.route(to: \.homeSectionsSelector, $homeSections)
+                        }
+                        .onChange(of: homeSections) {
+                            mainCoordinator.updateMainTab = true
                         }
 
                 } header: {
-                    L10n.filters.text
+                    L10n.home.text
                 }
             }
             .withDescriptionTopPadding()
