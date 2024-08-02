@@ -45,15 +45,6 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.showRecentlyAdded)
     private var showRecentlyAdded
 
-    @Default(.Customization.Library.letterPickerEnabled)
-    var letterPickerEnabled
-    @Default(.Customization.Library.letterPickerOrientation)
-    var letterPickerOrientation
-    @Default(.Customization.Library.enabledDrawerFilters)
-    private var libraryEnabledDrawerFilters
-    @Default(.Customization.Search.enabledDrawerFilters)
-    private var searchEnabledDrawerFilters
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
     @EnvironmentObject
@@ -81,28 +72,6 @@ struct CustomizeViewsSettings: View {
 
                 } header: {
                     L10n.library.text
-                }
-
-                Section {
-
-                    Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
-
-                    if letterPickerEnabled {
-                        InlineEnumToggle(title: L10n.orientation, selection: $letterPickerOrientation)
-                    }
-
-                    ChevronButton(L10n.library)
-                        .onSelect {
-                            router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
-                        }
-
-                    ChevronButton(L10n.search)
-                        .onSelect {
-                            router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
-                        }
-
-                } header: {
-                    L10n.filters.text
                 }
 
                 Section {

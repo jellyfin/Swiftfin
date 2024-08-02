@@ -71,8 +71,6 @@ struct CustomizeViewsSettings: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-    @EnvironmentObject
-    private var mainCoordinator: MainCoordinator
 
     var body: some View {
         List {
