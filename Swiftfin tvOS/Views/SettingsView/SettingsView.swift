@@ -54,7 +54,7 @@ struct SettingsView: View {
                         HStack {
 
                             Text(L10n.switchUser)
-                                .foregroundColor(.purple)
+                                .foregroundColor(.jellyfinPurple)
 
                             Spacer()
 
