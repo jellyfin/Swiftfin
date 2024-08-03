@@ -25,7 +25,7 @@ struct MaximumBitrateSettingsView: View {
             }
             .contentView {
 
-                SettingsViewFormSection {
+                Section {
 
                     InlineEnumToggle(title: L10n.maximumBitrate, selection: $appMaximumBitrate)
 

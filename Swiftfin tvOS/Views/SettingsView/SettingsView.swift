@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                SettingsViewFormSection {
+                Section {
 
                     Button {} label: {
                         TextPairView(
@@ -39,7 +39,6 @@ struct SettingsView: View {
                             trailing: viewModel.userSession.user.username
                         )
                     }
-                    .focusable(false)
 
                     ChevronButton(
                         L10n.server,
@@ -69,7 +68,7 @@ struct SettingsView: View {
                     L10n.jellyfin.text
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     InlineEnumToggle(title: L10n.videoPlayer, selection: $videoPlayerType)
 
@@ -87,7 +86,7 @@ struct SettingsView: View {
                     L10n.videoPlayer.text
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     ChevronButton(L10n.customize)
                         .onSelect {
@@ -103,7 +102,7 @@ struct SettingsView: View {
                     L10n.accessibility.text
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     ChevronButton(L10n.logs)
                         .onSelect {

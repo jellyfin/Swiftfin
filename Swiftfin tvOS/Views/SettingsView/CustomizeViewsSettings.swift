@@ -53,7 +53,7 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
-                SettingsViewFormSection {
+                Section {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
@@ -62,7 +62,7 @@ struct CustomizeViewsSettings: View {
                     L10n.missingItems.text
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     ChevronButton(L10n.indicators)
                         .onSelect {
@@ -87,7 +87,7 @@ struct CustomizeViewsSettings: View {
                     Text(L10n.posters)
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 

@@ -36,19 +36,19 @@ struct EditServerView: View {
             }
             .contentView {
 
-                SettingsViewFormSection {
+                Section {
                     Button {} label: {
                         TextPairView(
                             leading: L10n.name,
                             trailing: viewModel.server.name
                         )
                     }
-                    .focusable(false)
+
                 } header: {
                     L10n.server.text
                 }
 
-                SettingsViewFormSection {
+                Section {
                     ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
                         CheckButton(
                             url == viewModel.server.currentURL,
@@ -66,7 +66,7 @@ struct EditServerView: View {
                 }
 
                 if isEditing {
-                    SettingsViewFormSection {
+                    Section {
                         ListRowButton(L10n.delete) {
                             isPresentingConfirmDeletion = true
                         }

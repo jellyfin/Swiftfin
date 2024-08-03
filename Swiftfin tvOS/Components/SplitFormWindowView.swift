@@ -24,13 +24,14 @@ struct SplitFormWindowView: View {
                 .eraseToAnyView()
                 .frame(maxWidth: .infinity)
 
-            SettingsViewForm {
+            Form {
                 contentView()
                     .eraseToAnyView()
             }
             .if(descriptionTopPadding) { view in
                 view.padding(.top)
             }
+            .scrollClipDisabled()
         }
     }
 }

@@ -32,7 +32,7 @@ struct IndicatorSettingsView: View {
             }
             .contentView {
 
-                SettingsViewFormSection {
+                Section {
 
                     Toggle(L10n.showFavorited, isOn: $showFavorited)
 

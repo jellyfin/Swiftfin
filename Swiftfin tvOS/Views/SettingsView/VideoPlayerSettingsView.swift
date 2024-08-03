@@ -42,7 +42,7 @@ struct VideoPlayerSettingsView: View {
             }
             .contentView {
 
-                SettingsViewFormSection {
+                Section {
 
                     ChevronButton(
                         L10n.offset,
@@ -57,7 +57,7 @@ struct VideoPlayerSettingsView: View {
                     L10n.resumeOffsetDescription.text
                 }
 
-                SettingsViewFormSection {
+                Section {
 
                     ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
                         .onSelect {
@@ -69,7 +69,7 @@ struct VideoPlayerSettingsView: View {
                     L10n.subtitlesDisclaimer.text
                 }
 
-                SettingsViewFormSection {
+                Section {
                     Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
                     Toggle(L10n.playOnActive, isOn: $playOnActive)
                 } header: {
