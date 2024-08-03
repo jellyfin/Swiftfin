@@ -11,7 +11,6 @@ import Stinsen
 import SwiftUI
 
 final class SettingsCoordinator: NavigationCoordinatable {
-
     let stack = NavigationStack(initial: \SettingsCoordinator.start)
 
     @Root
@@ -59,8 +58,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
-    @Route(.modal)
-    var indicatorSettings = makeIndicatorSettings
     @Route(.modal)
     var log = makeLog
     @Route(.modal)
@@ -144,12 +141,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                CustomizeViewsSettings()
-            }
-        )
+
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<CustomizeSettingsCoordinator> {
+        NavigationViewCoordinator(CustomizeSettingsCoordinator())
     }
 
     func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -158,12 +152,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
                 ExperimentalSettingsView()
             }
         )
-    }
-
-    func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            IndicatorSettingsView()
-        }
     }
 
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

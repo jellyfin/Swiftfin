@@ -13,6 +13,7 @@
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
+		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -935,6 +936,7 @@
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
+		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
@@ -2177,6 +2179,7 @@
 			children = (
 				E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */,
 				E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */,
+				4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */,
 				E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */,
 				E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
@@ -4108,6 +4111,7 @@
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
+				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
 				E1575E8C293E7B1E001665B1 /* UIScreen.swift in Sources */,
 				C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */,
 				E1BCDB502BE1F491009F6744 /* ResetUserPasswordViewModel.swift in Sources */,
