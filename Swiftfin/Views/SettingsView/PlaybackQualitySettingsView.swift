@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 struct PlaybackQualitySettingsView: View {
-
     @Default(.VideoPlayer.Playback.appMaximumBitrate)
     private var appMaximumBitrate
     @Default(.VideoPlayer.Playback.appMaximumBitrateTest)
@@ -75,13 +74,14 @@ struct PlaybackQualitySettingsView: View {
             } header: {
                 Text("Device Profile")
             } footer: {
-                Text(
-                    """
-                    Off (Recommended): Use the default Swiftfin Device Profiles.
-                    Add: Add an additional Device Profile to the Swiftfin Device Profiles.
-                    Replace: Override all Device Profiles with a single Custom Device Profile.
-                    """
-                )
+                switch customDeviceProfile {
+                case .off:
+                    Text("Only the Default Device Profiles will be Used.")
+                case .add:
+                    Text("The Custom Profile will be Added to the Default Profiles.")
+                case .replace:
+                    Text("All Device Profiles will be Replaced by this Custom Profile.")
+                }
             }
         }
         .navigationTitle("Playback Quality")

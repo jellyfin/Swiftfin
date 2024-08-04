@@ -74,7 +74,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
-    var maximumBitrateSettings = makeMaximumBitrateSettings
+    var playbackQualitySettings = makePlaybackQualitySettings
     #endif
 
     #if os(iOS)
@@ -190,13 +190,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
-        NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
+        NavigationViewCoordinator(
+            VideoPlayerSettingsCoordinator()
+        )
     }
 
-    func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            MaximumBitrateSettingsView()
-        }
+    func makePlaybackQualitySettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
+        NavigationViewCoordinator(
+            PlaybackQualitySettingsCoordinator()
+        )
     }
     #endif
 
