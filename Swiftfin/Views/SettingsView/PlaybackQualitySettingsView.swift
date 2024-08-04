@@ -74,6 +74,14 @@ struct PlaybackQualitySettingsView: View {
                 }
             } header: {
                 Text("Device Profile")
+            } footer: {
+                Text(
+                    """
+                    Off (Recommended): Use the default Swiftfin Device Profiles.
+                    Add: Add an additional Device Profile to the Swiftfin Device Profiles.
+                    Replace: Override all Device Profiles with a single Custom Device Profile.
+                    """
+                )
             }
         }
         .navigationTitle("Playback Quality")
