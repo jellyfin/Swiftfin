@@ -30,7 +30,7 @@ struct PlaybackQualitySettingsView: View {
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image(systemName: "network")
+                Image(systemName: "play.rectangle.on.rectangle")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 400)
