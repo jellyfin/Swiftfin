@@ -9,81 +9,154 @@
 import JellyfinAPI
 
 extension DeviceProfile {
-
     static func nativeProfile() -> DeviceProfile {
-
         var profile: DeviceProfile = .init()
 
-        // Build direct play profiles
+        // Build DirectPlay profiles
         profile.directPlayProfiles = [
-            // Apple limitation: no mp3 in mp4; avi only supports mjpeg with pcm
-            // Right now, mp4 restrictions can't be enforced because mp4, m4v, mov, 3gp,3g2 treated the same
+
             DirectPlayProfile(
-                audioCodec: "flac,alac,aac,eac3,ac3,opus",
-                container: "mp4",
+                audioCodec: [
+                    AudioCodec.flac,
+                    AudioCodec.alac,
+                    AudioCodec.aac,
+                    AudioCodec.eac3,
+                    AudioCodec.ac3,
+                    AudioCodec.opus,
+                ].map(\.rawValue).joined(separator: ","),
+                container: MediaContainer.mp4.rawValue,
                 type: .video,
-                videoCodec: "hevc,h264,mpeg4"
+                videoCodec: [
+                    VideoCodec.hevc,
+                    VideoCodec.h264,
+                    VideoCodec.mpeg4,
+                ].map(\.rawValue).joined(separator: ",")
             ),
+
             DirectPlayProfile(
-                audioCodec: "alac,aac,ac3",
-                container: "m4v",
+                audioCodec: [
+                    AudioCodec.alac,
+                    AudioCodec.aac,
+                    AudioCodec.ac3,
+                ].map(\.rawValue).joined(separator: ","),
+                container: MediaContainer.m4v.rawValue,
                 type: .video,
-                videoCodec: "h264,mpeg4"
+                videoCodec: [
+                    VideoCodec.h264,
+                    VideoCodec.mpeg4,
+                ].map(\.rawValue).joined(separator: ",")
             ),
+
             DirectPlayProfile(
-                audioCodec: "alac,aac,eac3,ac3,mp3,pcm_s24be,pcm_s24le,pcm_s16be,pcm_s16le",
-                container: "mov",
+                audioCodec: [
+                    AudioCodec.alac,
+                    AudioCodec.aac,
+                    AudioCodec.eac3,
+                    AudioCodec.ac3,
+                    AudioCodec.mp3,
+                    AudioCodec.pcm_s24be,
+                    AudioCodec.pcm_s24le,
+                    AudioCodec.pcm_s16be,
+                    AudioCodec.pcm_s16le,
+                ].map(\.rawValue).joined(separator: ","),
+                container: MediaContainer.mov.rawValue,
                 type: .video,
-                videoCodec: "hevc,h264,mpeg4,mjpeg"
+                videoCodec: [
+                    VideoCodec.hevc,
+                    VideoCodec.h264,
+                    VideoCodec.mpeg4,
+                    VideoCodec.mjpeg,
+                ].map(\.rawValue).joined(separator: ",")
             ),
+
             DirectPlayProfile(
-                audioCodec: "aac,eac3,ac3,mp3",
-                container: "mpegts",
+                audioCodec: [
+                    AudioCodec.aac,
+                    AudioCodec.eac3,
+                    AudioCodec.ac3,
+                    AudioCodec.mp3,
+                ].map(\.rawValue).joined(separator: ","),
+                container: MediaContainer.mpegts.rawValue,
                 type: .video,
-                videoCodec: "h264"
+                videoCodec: [
+                    VideoCodec.h264,
+                ].map(\.rawValue).joined(separator: ",")
             ),
+
             DirectPlayProfile(
-                audioCodec: "aac,amr_nb",
-                container: "3gp,3g2",
+                audioCodec: [
+                    AudioCodec.aac,
+                    AudioCodec.amr_nb,
+                ].map(\.rawValue).joined(separator: ","),
+                container: [
+                    MediaContainer.threeGP,
+                    MediaContainer.threeG2,
+                ].map(\.rawValue).joined(separator: ","),
                 type: .video,
-                videoCodec: "h264,mpeg4"
+                videoCodec: [
+                    VideoCodec.h264,
+                    VideoCodec.mpeg4,
+                ].map(\.rawValue).joined(separator: ",")
             ),
+
             DirectPlayProfile(
-                audioCodec: "pcm_s16le,pcm_mulaw",
-                container: "avi",
+                audioCodec: [
+                    AudioCodec.pcm_s16le,
+                    AudioCodec.pcm_mulaw,
+                ].map(\.rawValue).joined(separator: ","),
+                container: MediaContainer.avi.rawValue,
                 type: .video,
-                videoCodec: "mjpeg"
+                videoCodec: [
+                    VideoCodec.mjpeg,
+                ].map(\.rawValue).joined(separator: ",")
             ),
         ]
 
-        // Build transcoding profiles
+        // Build Transcoding profiles
         profile.transcodingProfiles = [
             TranscodingProfile(
-                audioCodec: "flac,alac,aac,eac3,ac3,opus",
+                audioCodec: [
+                    AudioCodec.flac,
+                    AudioCodec.alac,
+                    AudioCodec.aac,
+                    AudioCodec.eac3,
+                    AudioCodec.ac3,
+                    AudioCodec.opus,
+                ].map(\.rawValue).joined(separator: ","),
                 isBreakOnNonKeyFrames: true,
-                container: "mp4",
+                container: MediaContainer.mp4.rawValue,
                 context: .streaming,
                 maxAudioChannels: "8",
                 minSegments: 2,
-                protocol: "hls",
+                protocol: StreamType.hls.rawValue,
                 type: .video,
-                videoCodec: "hevc,h264,mpeg4"
+                videoCodec: [
+                    VideoCodec.hevc,
+                    VideoCodec.h264,
+                    VideoCodec.mpeg4,
+                ].map(\.rawValue).joined(separator: ",")
             ),
         ]
 
-        // Create subtitle profiles
+        // Build Subtitle profiles
         profile.subtitleProfiles = [
-            // FFmpeg can only convert bitmap to bitmap and text to text; burn in bitmap subs
-            SubtitleProfile(format: "pgssub", method: .encode),
-            SubtitleProfile(format: "dvdsub", method: .encode),
-            SubtitleProfile(format: "dvbsub", method: .encode),
-            SubtitleProfile(format: "xsub", method: .encode),
-            // According to Apple HLS authoring specs, WebVTT must be in a text file delivered via HLS
-            SubtitleProfile(format: "vtt", method: .hls), // webvtt
-            // Apple HLS authoring spec has closed captions in video segments and TTML in fmp4
-            SubtitleProfile(format: "ttml", method: .embed),
-            SubtitleProfile(format: "cc_dec", method: .embed),
-        ]
+            // Embedded profiles
+            SubtitleFormat.cc_dec,
+            SubtitleFormat.ttml,
+        ].compactMap { $0.profiles[.embed] } +
+
+            [
+                // Encode profiles
+                SubtitleFormat.dvbsub,
+                SubtitleFormat.dvdsub,
+                SubtitleFormat.pgssub,
+                SubtitleFormat.xsub,
+            ].compactMap { $0.profiles[.encode] } +
+
+            [
+                // HLS profiles
+                SubtitleFormat.vtt,
+            ].compactMap { $0.profiles[.hls] }
 
         return profile
     }

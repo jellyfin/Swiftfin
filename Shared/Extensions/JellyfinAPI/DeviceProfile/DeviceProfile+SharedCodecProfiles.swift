@@ -10,7 +10,7 @@ import JellyfinAPI
 
 extension DeviceProfile {
 
-    // For now, assume native and VLCKit support same codec conditions
+    // Assuming AVKit and VLCKit Utilize Codec Conditions
     static func sharedCodecProfiles() -> [CodecProfile] {
 
         var codecProfiles: [CodecProfile] = []
@@ -22,18 +22,21 @@ extension DeviceProfile {
                 property: .isAnamorphic,
                 value: "true"
             ),
+
             ProfileCondition(
                 condition: .equalsAny,
                 isRequired: false,
                 property: .videoProfile,
                 value: "high|main|baseline|constrained baseline"
             ),
+
             ProfileCondition(
                 condition: .lessThanEqual,
                 isRequired: false,
                 property: .videoLevel,
                 value: "80"
             ),
+
             ProfileCondition(
                 condition: .notEquals,
                 isRequired: false,
@@ -42,7 +45,13 @@ extension DeviceProfile {
             ),
         ]
 
-        codecProfiles.append(CodecProfile(applyConditions: h264CodecConditions, codec: "h264", type: .video))
+        codecProfiles.append(
+            CodecProfile(
+                applyConditions: h264CodecConditions,
+                codec: VideoCodec.h264.rawValue,
+                type: .video
+            )
+        )
 
         let hevcCodecConditions: [ProfileCondition] = [
             ProfileCondition(
@@ -51,18 +60,21 @@ extension DeviceProfile {
                 property: .isAnamorphic,
                 value: "true"
             ),
+
             ProfileCondition(
                 condition: .equalsAny,
                 isRequired: false,
                 property: .videoProfile,
                 value: "high|main|main 10"
             ),
+
             ProfileCondition(
                 condition: .lessThanEqual,
                 isRequired: false,
                 property: .videoLevel,
                 value: "175"
             ),
+
             ProfileCondition(
                 condition: .notEquals,
                 isRequired: false,
@@ -71,7 +83,13 @@ extension DeviceProfile {
             ),
         ]
 
-        codecProfiles.append(CodecProfile(applyConditions: hevcCodecConditions, codec: "hevc", type: .video))
+        codecProfiles.append(
+            CodecProfile(
+                applyConditions: hevcCodecConditions,
+                codec: VideoCodec.hevc.rawValue,
+                type: .video
+            )
+        )
 
         return codecProfiles
     }

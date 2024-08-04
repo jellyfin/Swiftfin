@@ -21,7 +21,6 @@ import UIKit
 // MARK: Suites
 
 extension UserDefaults {
-
     // MARK: App
 
     /// Settings that should apply to the app
@@ -42,7 +41,6 @@ extension UserDefaults {
 }
 
 private extension Defaults.Keys {
-
     static func AppKey<Value: Defaults.Serializable>(_ name: String) -> Key<Value?> {
         Key(name, suite: .appSuite)
     }
@@ -59,7 +57,6 @@ private extension Defaults.Keys {
 // MARK: App
 
 extension Defaults.Keys {
-
     /// The _real_ accent color key to be used.
     ///
     /// This is set externally whenever the app or user accent colors change,
@@ -96,7 +93,6 @@ extension Defaults.Keys {
 // MARK: User
 
 extension Defaults.Keys {
-
     /// The accent color default for user contexts.
     /// Only use for `set`, use `accentColor` for `get`.
     static var userAccentColor: Key<Color> { UserKey("userAccentColor", default: .jellyfinPurple) }
@@ -106,7 +102,6 @@ extension Defaults.Keys {
     static var userAppearance: Key<AppAppearance> { UserKey("userAppearance", default: .system) }
 
     enum Customization {
-
         static let itemViewType: Key<ItemViewType> = UserKey("itemViewType", default: .compactLogo)
 
         static let showPosterLabels: Key<Bool> = UserKey("showPosterLabels", default: true)
@@ -122,17 +117,14 @@ extension Defaults.Keys {
         static let searchPosterType: Key<PosterDisplayType> = UserKey("searchPosterType", default: .portrait)
 
         enum CinematicItemViewType {
-
             static let usePrimaryImage: Key<Bool> = UserKey("cinematicItemViewTypeUsePrimaryImage", default: false)
         }
 
         enum Episodes {
-
             static let useSeriesLandscapeBackdrop: Key<Bool> = UserKey("useSeriesBackdrop", default: true)
         }
 
         enum Indicators {
-
             static let showFavorited: Key<Bool> = UserKey("showFavoritedIndicator", default: true)
             static let showProgress: Key<Bool> = UserKey("showProgressIndicator", default: true)
             static let showUnplayed: Key<Bool> = UserKey("showUnplayedIndicator", default: true)
@@ -140,7 +132,6 @@ extension Defaults.Keys {
         }
 
         enum Library {
-
             static let cinematicBackground: Key<Bool> = UserKey("libraryCinematicBackground", default: true)
             static let enabledDrawerFilters: Key<[ItemFilterType]> = UserKey(
                 "libraryEnabledDrawerFilters",
@@ -161,7 +152,6 @@ extension Defaults.Keys {
         }
 
         enum Search {
-
             static let enabledDrawerFilters: Key<[ItemFilterType]> = UserKey(
                 "searchEnabledDrawerFilters",
                 default: ItemFilterType.allCases
@@ -170,9 +160,6 @@ extension Defaults.Keys {
     }
 
     enum VideoPlayer {
-
-        static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
-        static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
         static let autoPlayEnabled: Key<Bool> = UserKey("autoPlayEnabled", default: true)
         static let barActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "barActionButtons",
@@ -189,7 +176,6 @@ extension Defaults.Keys {
         static let videoPlayerType: Key<VideoPlayerType> = UserKey("videoPlayerType", default: .swiftfin)
 
         enum Gesture {
-
             static let horizontalPanGesture: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
             static let horizontalSwipeGesture: Key<SwipeAction> = UserKey("videoPlayerHorizontalSwipeGesture", default: .none)
             static let longPressGesture: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
@@ -201,7 +187,6 @@ extension Defaults.Keys {
         }
 
         enum Overlay {
-
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
             static let playbackButtonType: Key<PlaybackButtonType> = UserKey("videoPlayerPlaybackButtonLocation", default: .large)
             static let sliderColor: Key<Color> = UserKey("sliderColor", default: Color.white)
@@ -213,8 +198,25 @@ extension Defaults.Keys {
             static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
-        enum Subtitle {
+        enum Playback {
+            static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
+            static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
+            static let customDeviceProfile: Key<CustomDeviceProfileSelection> = UserKey("customDeviceProfile", default: .off)
+            static let customDeviceProfileAudio: Key<[AudioCodec]> = UserKey(
+                "customDeviceProfileAudio",
+                default: []
+            )
+            static let customDeviceProfileVideo: Key<[VideoCodec]> = UserKey(
+                "customDeviceProfileVideo",
+                default: []
+            )
+            static let customDeviceProfileContainers: Key<[MediaContainer]> = UserKey(
+                "customDeviceProfileContainers",
+                default: []
+            )
+        }
 
+        enum Subtitle {
             static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)
             static let subtitleFontName: Key<String> = UserKey("subtitleFontName", default: UIFont.systemFont(ofSize: 14).fontName)
             static let subtitleSize: Key<Int> = UserKey("subtitleSize", default: 16)
@@ -228,7 +230,6 @@ extension Defaults.Keys {
 
     // Experimental settings
     enum Experimental {
-
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
         static let forceDirectPlay: Key<Bool> = UserKey("forceDirectPlay", default: false)
         static let liveTVForceDirectPlay: Key<Bool> = UserKey("liveTVForceDirectPlay", default: false)
@@ -244,12 +245,10 @@ extension Defaults.Keys {
 #if DEBUG
 
 extension UserDefaults {
-
     static let debugSuite = UserDefaults(suiteName: "swiftfinstore-debug-defaults")!
 }
 
 extension Defaults.Keys {
-
     static func DebugKey<Value: Defaults.Serializable>(_ name: String, default: Value) -> Key<Value> {
         Key(name, default: `default`, suite: .appSuite)
     }

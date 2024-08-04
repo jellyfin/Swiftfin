@@ -10,7 +10,11 @@ import JellyfinAPI
 
 extension DeviceProfile {
 
-    static func build(for videoPlayer: VideoPlayerType, maxBitrate: Int? = nil) -> DeviceProfile {
+    static func build(
+        for videoPlayer: VideoPlayerType,
+        maxBitrate: Int? = nil,
+        useCustomProfile: CustomDeviceProfileSelection = .off
+    ) -> DeviceProfile {
 
         var deviceProfile: DeviceProfile
 
@@ -21,8 +25,24 @@ extension DeviceProfile {
             deviceProfile = swiftfinProfile()
         }
 
+        switch useCustomProfile {
+        case .add:
+            deviceProfile.directPlayProfiles?.append(contentsOf: customProfile())
+        case .replace:
+            deviceProfile.directPlayProfiles = customProfile()
+        case .off:
+            break
+        }
+
         let codecProfiles: [CodecProfile] = sharedCodecProfiles()
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
+
+        let responseProfiles: [ResponseProfile] = [
+            ResponseProfile(
+                container: MediaContainer.m4v.rawValue,
+                mimeType: "video/mp4",
+                type: .video
+            ),
+        ]
 
         deviceProfile.codecProfiles = codecProfiles
         deviceProfile.responseProfiles = responseProfiles
