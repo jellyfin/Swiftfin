@@ -41,7 +41,7 @@ struct CustomizeViewsSettings: View {
     private var showRecentlyAdded
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: CustomizeSettingsCoordinator.Router
 
     var body: some View {
         SplitFormWindowView()
