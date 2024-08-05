@@ -146,7 +146,7 @@ enum VideoCodec: String, CaseIterable, Displayable, Defaults.Serializable {
             return false
         }
 
-        var formatDescription: CMVideoFormatDescription? = nil
+        var formatDescription: CMVideoFormatDescription?
         let status = CMVideoFormatDescriptionCreate(
             allocator: kCFAllocatorDefault,
             codecType: formatID,
