@@ -185,6 +185,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                     }.map(\.rawValue).joined(separator: ","),
                     type: .video,
                     videoCodec: [
+                        VideoCodec.av1,
                         VideoCodec.h263,
                         VideoCodec.h264,
                         VideoCodec.hevc,
