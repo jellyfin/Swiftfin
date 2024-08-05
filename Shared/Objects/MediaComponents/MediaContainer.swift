@@ -7,33 +7,44 @@
 //
 
 import Defaults
-import JellyfinAPI
 
 enum MediaContainer: String, CaseIterable, Displayable, Defaults.Serializable {
-    case threeG2 = "3g2"
-    case threeGP = "3gp"
     case avi
+    case flv
     case m4v
+    case mkv
     case mov
     case mp4
     case mpegts
+    case ts
+    case threeG2 = "3g2"
+    case threeGP = "3gp"
+    case webm
 
     var displayTitle: String {
         switch self {
-        case .threeG2:
-            return "3G2"
-        case .threeGP:
-            return "3GP"
         case .avi:
             return "AVI"
+        case .flv:
+            return "FLV"
         case .m4v:
             return "M4V"
+        case .mkv:
+            return "MKV"
         case .mov:
             return "MOV"
         case .mp4:
             return "MP4"
         case .mpegts:
             return "MPEG-TS"
+        case .ts:
+            return "TS"
+        case .threeG2:
+            return "3G2"
+        case .threeGP:
+            return "3GP"
+        case .webm:
+            return "WEBM"
         }
     }
 }
