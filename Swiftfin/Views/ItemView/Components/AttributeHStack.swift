@@ -23,7 +23,8 @@ extension ItemView {
                 }
 
                 if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
-                    if mediaStreams.hasHDVideo || viewModel.item.isHD ?? false {
+
+                    if mediaStreams.hasHDVideo {
                         Text("HD")
                             .asAttributeStyle(.fill)
                     }
