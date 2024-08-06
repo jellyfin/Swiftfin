@@ -249,17 +249,17 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                 SubtitleFormat.cc_dec,
                 SubtitleFormat.ttml,
             ].compactMap { $0.profiles[.embed] }
-            +
-            [
-                SubtitleFormat.dvbsub,
-                SubtitleFormat.dvdsub,
-                SubtitleFormat.pgssub,
-                SubtitleFormat.xsub,
-            ].compactMap { $0.profiles[.encode] }
-            +
-            [
-                SubtitleFormat.vtt,
-            ].compactMap { $0.profiles[.hls] }
+                +
+                [
+                    SubtitleFormat.dvbsub,
+                    SubtitleFormat.dvdsub,
+                    SubtitleFormat.pgssub,
+                    SubtitleFormat.xsub,
+                ].compactMap { $0.profiles[.encode] }
+                +
+                [
+                    SubtitleFormat.vtt,
+                ].compactMap { $0.profiles[.hls] }
         case .swiftfin:
             return [
                 SubtitleFormat.ass,
@@ -285,39 +285,39 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                 SubtitleFormat.xsub,
             ].compactMap { $0.profiles[.embed] }
                 +
-            [
-                SubtitleFormat.ass,
-                SubtitleFormat.dvbsub,
-                SubtitleFormat.dvdsub,
-                SubtitleFormat.jacosub,
-                SubtitleFormat.libzvbi_teletextdec,
-                SubtitleFormat.mpl2,
-                SubtitleFormat.pgssub,
-                SubtitleFormat.pjs,
-                SubtitleFormat.realtext,
-                SubtitleFormat.sami,
-                SubtitleFormat.ssa,
-                SubtitleFormat.subrip,
-                SubtitleFormat.subviewer,
-                SubtitleFormat.subviewer1,
-                SubtitleFormat.text,
-                SubtitleFormat.ttml,
-                SubtitleFormat.vplayer,
-                SubtitleFormat.vtt,
-                SubtitleFormat.xsub,
-            ].compactMap { $0.profiles[.external] }
+                [
+                    SubtitleFormat.ass,
+                    SubtitleFormat.dvbsub,
+                    SubtitleFormat.dvdsub,
+                    SubtitleFormat.jacosub,
+                    SubtitleFormat.libzvbi_teletextdec,
+                    SubtitleFormat.mpl2,
+                    SubtitleFormat.pgssub,
+                    SubtitleFormat.pjs,
+                    SubtitleFormat.realtext,
+                    SubtitleFormat.sami,
+                    SubtitleFormat.ssa,
+                    SubtitleFormat.subrip,
+                    SubtitleFormat.subviewer,
+                    SubtitleFormat.subviewer1,
+                    SubtitleFormat.text,
+                    SubtitleFormat.ttml,
+                    SubtitleFormat.vplayer,
+                    SubtitleFormat.vtt,
+                    SubtitleFormat.xsub,
+                ].compactMap { $0.profiles[.external] }
         }
     }
 
     var codecProfiles: [CodecProfile] {
         [
             CodecProfile(
-                applyConditions: self.h264CodecConditions,
+                applyConditions: h264CodecConditions,
                 codec: VideoCodec.h264.rawValue,
                 type: .video
             ),
             CodecProfile(
-                applyConditions: self.h265CodecConditions,
+                applyConditions: h265CodecConditions,
                 codec: VideoCodec.hevc.rawValue,
                 type: .video
             ),
