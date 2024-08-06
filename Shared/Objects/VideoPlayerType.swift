@@ -128,7 +128,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
             ]
         case .swiftfin:
             return [
-                // Just make one profile because if VLCKit can't decode it in a certain container, 
+                // Just make one profile because if VLCKit can't decode it in a certain container,
                 // ffmpeg probably can't decode it for transcode either
                 // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can VLCKit
                 // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
