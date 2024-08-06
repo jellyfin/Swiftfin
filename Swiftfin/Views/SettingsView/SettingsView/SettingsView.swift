@@ -72,7 +72,7 @@ struct SettingsView: View {
                         router.route(to: \.videoPlayerSettings)
                     }
 
-                ChevronButton("Playback Quality")
+                ChevronButton(L10n.playbackQuality)
                     .onSelect {
                         router.route(to: \.playbackQualitySettings)
                     }

@@ -154,6 +154,12 @@ internal enum L10n {
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
+  /// The custom profile will be added to Swiftfin's default profiles
+  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom profile will be added to Swiftfin's default profiles")
+  /// Swiftfin will automatically determine what device profile to use
+  internal static let customDeviceProfileOff = L10n.tr("Localizable", "customDeviceProfileOff", fallback: "Swiftfin will automatically determine what device profile to use")
+  /// Only the custom profile will be used
+  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "Only the custom profile will be used")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
   /// Dark
@@ -162,6 +168,8 @@ internal enum L10n {
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delivery
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
+  /// Device Profile
+  internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
   /// DIRECTOR
   internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
   /// Disabled
@@ -380,6 +388,8 @@ internal enum L10n {
   internal static let playback = L10n.tr("Localizable", "playback", fallback: "Playback")
   /// Playback Buttons
   internal static let playbackButtons = L10n.tr("Localizable", "playbackButtons", fallback: "Playback Buttons")
+  /// Playback Quality
+  internal static let playbackQuality = L10n.tr("Localizable", "playbackQuality", fallback: "Playback Quality")
   /// Playback settings
   internal static let playbackSettings = L10n.tr("Localizable", "playbackSettings", fallback: "Playback settings")
   /// Playback Speed

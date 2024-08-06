@@ -35,18 +35,14 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.eac3,
                         AudioCodec.ac3,
                         AudioCodec.opus,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mp4.rawValue,
                     type: .video,
                     videoCodec: [
                         VideoCodec.hevc,
                         VideoCodec.h264,
                         VideoCodec.mpeg4,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
@@ -54,17 +50,13 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.alac,
                         AudioCodec.aac,
                         AudioCodec.ac3,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.m4v.rawValue,
                     type: .video,
                     videoCodec: [
                         VideoCodec.h264,
                         VideoCodec.mpeg4,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
@@ -78,9 +70,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.pcm_s24le,
                         AudioCodec.pcm_s16be,
                         AudioCodec.pcm_s16le,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mov.rawValue,
                     type: .video,
                     videoCodec: [
@@ -88,9 +78,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.h264,
                         VideoCodec.mpeg4,
                         VideoCodec.mjpeg,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
@@ -99,25 +87,19 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.eac3,
                         AudioCodec.ac3,
                         AudioCodec.mp3,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mpegts.rawValue,
                     type: .video,
                     videoCodec: [
                         VideoCodec.h264,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
                         AudioCodec.amr_nb,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: [
                         MediaContainer.threeGP,
                         MediaContainer.threeG2,
@@ -126,25 +108,19 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                     videoCodec: [
                         VideoCodec.h264,
                         VideoCodec.mpeg4,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.pcm_s16le,
                         AudioCodec.pcm_mulaw,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.avi.rawValue,
                     type: .video,
                     videoCodec: [
                         VideoCodec.mjpeg,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
             ]
         case .swiftfin:
@@ -180,9 +156,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.wmapro,
                         AudioCodec.wmav1,
                         AudioCodec.wmav2,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     type: .video,
                     videoCodec: [
                         VideoCodec.av1,
@@ -195,9 +169,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.mpeg4,
                         VideoCodec.vc1,
                         VideoCodec.vp9,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
             ]
         }
@@ -215,9 +187,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.eac3,
                         AudioCodec.ac3,
                         AudioCodec.opus,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     isBreakOnNonKeyFrames: true,
                     container: MediaContainer.mp4.rawValue,
                     context: .streaming,
@@ -229,9 +199,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.hevc,
                         VideoCodec.h264,
                         VideoCodec.mpeg4,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
             ]
         case .swiftfin:
@@ -249,9 +217,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.mp3,
                         AudioCodec.opus,
                         AudioCodec.vorbis,
-                    ].filter {
-                        AudioCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ","),
+                    ].map(\.rawValue).joined(separator: ","),
                     isBreakOnNonKeyFrames: true,
                     container: MediaContainer.mp4.rawValue,
                     context: .streaming,
@@ -270,9 +236,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.mpeg4,
                         VideoCodec.vc1,
                         VideoCodec.vp9,
-                    ].filter {
-                        VideoCodec.decodableCodecs().contains($0)
-                    }.map(\.rawValue).joined(separator: ",")
+                    ].map(\.rawValue).joined(separator: ",")
                 ),
             ]
         }

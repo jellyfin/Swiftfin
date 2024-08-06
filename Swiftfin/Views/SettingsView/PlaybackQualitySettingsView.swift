@@ -72,18 +72,18 @@ struct PlaybackQualitySettingsView: View {
                         }
                 }
             } header: {
-                Text("Device Profile")
+                L10n.deviceProfile.text
             } footer: {
                 switch customDeviceProfile {
                 case .off:
-                    Text("Only the Default Device Profiles will be Used.")
+                    L10n.customDeviceProfileOff.text
                 case .add:
-                    Text("The Custom Profile will be Added to the Default Profiles.")
+                    L10n.customDeviceProfileAdd.text
                 case .replace:
-                    Text("All Device Profiles will be Replaced by this Custom Profile.")
+                    L10n.customDeviceProfileReplace.text
                 }
             }
         }
-        .navigationTitle("Playback Quality")
+        .navigationTitle(L10n.playbackQuality)
     }
 }
