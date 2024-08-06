@@ -53,16 +53,14 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
-                Section {
+                Section(L10n.missingItems) {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
                     Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-                } header: {
-                    L10n.missingItems.text
                 }
 
-                Section {
+                Section(L10n.posters) {
 
                     ChevronButton(L10n.indicators)
                         .onSelect {
@@ -82,12 +80,9 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
-
-                } header: {
-                    Text(L10n.posters)
                 }
 
-                Section {
+                Section(L10n.library) {
 
                     Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
@@ -96,9 +91,6 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.showFavorites, isOn: $showFavorites)
 
                     Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
-
-                } header: {
-                    L10n.library.text
                 }
             }
             .withDescriptionTopPadding()

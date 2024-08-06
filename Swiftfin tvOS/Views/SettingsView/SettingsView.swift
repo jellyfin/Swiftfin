@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
+                Section(L10n.jellyfin) {
 
                     Button {} label: {
                         TextPairView(
@@ -63,14 +63,11 @@ struct SettingsView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
-
-                } header: {
-                    L10n.jellyfin.text
                 }
 
-                Section {
+                Section(L10n.videoPlayer) {
 
-                    InlineEnumToggle(title: L10n.videoPlayer, selection: $videoPlayerType)
+                    InlineEnumToggle(title: L10n.videoPlayerType, selection: $videoPlayerType)
 
                     ChevronButton(L10n.videoPlayer)
                         .onSelect {
@@ -81,12 +78,9 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.maximumBitrateSettings)
                         }
-
-                } header: {
-                    L10n.videoPlayer.text
                 }
 
-                Section {
+                Section(L10n.accessibility) {
 
                     ChevronButton(L10n.customize)
                         .onSelect {
@@ -97,9 +91,6 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.experimentalSettings)
                         }
-
-                } header: {
-                    L10n.accessibility.text
                 }
 
                 Section {

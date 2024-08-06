@@ -33,7 +33,7 @@ struct MaximumBitrateSettingsView: View {
                         InlineEnumToggle(title: L10n.testSize, selection: $appMaximumBitrateTest)
                     }
                 } header: {
-                    Text(L10n.playbackQuality)
+                    L10n.playbackQuality.text
                 } footer: {
                     if appMaximumBitrate == PlaybackBitrate.auto {
                         L10n.bitrateTestDescription.text

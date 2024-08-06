@@ -36,33 +36,45 @@ struct EditServerView: View {
             }
             .contentView {
 
-                Section {
-                    Button {} label: {
-                        TextPairView(
-                            leading: L10n.name,
-                            trailing: viewModel.server.name
-                        )
-                    }
-
-                } header: {
-                    L10n.server.text
+                Section(L10n.server) {
+                    TextPairView(
+                        leading: L10n.name,
+                        trailing: viewModel.server.name
+                    )
+                    .focusable(false)
                 }
 
-                Section {
-                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
-                        CheckButton(
-                            url == viewModel.server.currentURL,
-                            url.absoluteString
-                        )
-                        .onSelect {
-                            guard viewModel.server.currentURL == url else {
+                Section(L10n.url) {
+                    Menu {
+                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
+                            Button(action: {
+                                guard viewModel.server.currentURL != url else { return }
                                 viewModel.setCurrentURL(to: url)
-                                return
+                            }) {
+                                HStack {
+                                    Text(url.absoluteString)
+                                        .foregroundColor(.primary)
+
+                                    Spacer()
+
+                                    if viewModel.server.currentURL == url {
+                                        Image(systemName: "checkmark")
+                                            .font(.body.weight(.regular))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
                             }
                         }
+                    } label: {
+                        HStack {
+                            Text(viewModel.server.currentURL.absoluteString)
+                                .foregroundColor(.primary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.secondary)
+                        }
                     }
-                } header: {
-                    Text(L10n.url)
                 }
 
                 if isEditing {

@@ -26,20 +26,14 @@ struct ExperimentalSettingsView: View {
             }
             .contentView {
 
-                Section {
+                Section("Video Player") {
 
                     Toggle("Force Direct Play", isOn: $forceDirectPlay)
-
-                } header: {
-                    Text("Video Player")
                 }
 
-                Section {
+                Section("Live TV") {
 
                     Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
-
-                } header: {
-                    Text("Live TV")
                 }
             }
             .navigationTitle(L10n.experimental)

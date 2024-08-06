@@ -69,13 +69,10 @@ struct VideoPlayerSettingsView: View {
                     L10n.subtitlesDisclaimer.text
                 }
 
-                Section {
+                Section(L10n.playback) {
                     Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
                     Toggle(L10n.playOnActive, isOn: $playOnActive)
-                } header: {
-                    L10n.playback.text
                 }
-
                 .navigationTitle(L10n.videoPlayer.text)
                 .blurFullScreenCover(isPresented: $isPresentingResumeOffsetStepper) {
                     StepperView(

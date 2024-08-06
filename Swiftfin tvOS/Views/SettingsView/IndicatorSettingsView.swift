@@ -32,7 +32,7 @@ struct IndicatorSettingsView: View {
             }
             .contentView {
 
-                Section {
+                Section(L10n.posters) {
 
                     Toggle(L10n.showFavorited, isOn: $showFavorited)
 
@@ -41,11 +41,9 @@ struct IndicatorSettingsView: View {
                     Toggle(L10n.showUnwatched, isOn: $showUnwatched)
 
                     Toggle(L10n.showWatched, isOn: $showWatched)
-                } header: {
-                    L10n.posters.text
                 }
             }
             .withDescriptionTopPadding()
-            .navigationTitle("Indicators")
+            .navigationTitle(L10n.indicators)
     }
 }
