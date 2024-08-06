@@ -27,29 +27,31 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
         switch self {
         case .native:
             return [
+                // Apple limitation: no mp3 in mp4; avi only supports mjpeg with pcm
+                // Right now, mp4 restrictions can't be enforced because mp4, m4v, mov, 3gp,3g2 treated the same
                 DirectPlayProfile(
                     audioCodec: [
-                        AudioCodec.flac,
-                        AudioCodec.alac,
                         AudioCodec.aac,
-                        AudioCodec.eac3,
                         AudioCodec.ac3,
+                        AudioCodec.alac,
+                        AudioCodec.eac3,
+                        AudioCodec.flac,
                         AudioCodec.opus,
                     ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mp4.rawValue,
                     type: .video,
                     videoCodec: [
-                        VideoCodec.hevc,
                         VideoCodec.h264,
+                        VideoCodec.hevc,
                         VideoCodec.mpeg4,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
                     audioCodec: [
-                        AudioCodec.alac,
                         AudioCodec.aac,
                         AudioCodec.ac3,
+                        AudioCodec.alac,
                     ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.m4v.rawValue,
                     type: .video,
@@ -61,31 +63,31 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
 
                 DirectPlayProfile(
                     audioCodec: [
-                        AudioCodec.alac,
                         AudioCodec.aac,
-                        AudioCodec.eac3,
                         AudioCodec.ac3,
+                        AudioCodec.alac,
+                        AudioCodec.eac3,
                         AudioCodec.mp3,
-                        AudioCodec.pcm_s24be,
-                        AudioCodec.pcm_s24le,
                         AudioCodec.pcm_s16be,
                         AudioCodec.pcm_s16le,
+                        AudioCodec.pcm_s24be,
+                        AudioCodec.pcm_s24le,
                     ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mov.rawValue,
                     type: .video,
                     videoCodec: [
-                        VideoCodec.hevc,
                         VideoCodec.h264,
-                        VideoCodec.mpeg4,
+                        VideoCodec.hevc,
                         VideoCodec.mjpeg,
+                        VideoCodec.mpeg4,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
 
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
-                        AudioCodec.eac3,
                         AudioCodec.ac3,
+                        AudioCodec.eac3,
                         AudioCodec.mp3,
                     ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.mpegts.rawValue,
@@ -101,8 +103,8 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.amr_nb,
                     ].map(\.rawValue).joined(separator: ","),
                     container: [
-                        MediaContainer.threeGP,
                         MediaContainer.threeG2,
+                        MediaContainer.threeGP,
                     ].map(\.rawValue).joined(separator: ","),
                     type: .video,
                     videoCodec: [
@@ -113,8 +115,8 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
 
                 DirectPlayProfile(
                     audioCodec: [
-                        AudioCodec.pcm_s16le,
                         AudioCodec.pcm_mulaw,
+                        AudioCodec.pcm_s16le,
                     ].map(\.rawValue).joined(separator: ","),
                     container: MediaContainer.avi.rawValue,
                     type: .video,
@@ -125,6 +127,10 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
             ]
         case .swiftfin:
             return [
+                // Just make one profile because if VLCKit can't decode it in a certain container, ffmpeg probably can't decode it for transcode either
+                // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can VLCKit
+                // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
+                // This should result in the following string: "aac,ac3,alac,amr_nb,amr_wb,dts,eac3,flac,mp1,mp2,mp3,nellymoser,opus,pcm_alaw,pcm_bluray,pcm_dvd,pcm_mulaw,pcm_s16be,pcm_s16le,pcm_s24be,pcm_s24le,pcm_u8,speex,vobis,wavpack,wmalossless,wmapro,wmav1,wmav2"
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -157,19 +163,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         AudioCodec.wmav1,
                         AudioCodec.wmav2,
                     ].map(\.rawValue).joined(separator: ","),
-                    type: .video,
-                    videoCodec: [
-                        VideoCodec.av1,
-                        VideoCodec.h263,
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mjpeg,
-                        VideoCodec.mpeg1video,
-                        VideoCodec.mpeg2video,
-                        VideoCodec.mpeg4,
-                        VideoCodec.vc1,
-                        VideoCodec.vp9,
-                    ].map(\.rawValue).joined(separator: ",")
+                    type: .video
                 ),
             ]
         }
@@ -181,11 +175,11 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
             return [
                 TranscodingProfile(
                     audioCodec: [
-                        AudioCodec.flac,
-                        AudioCodec.alac,
                         AudioCodec.aac,
-                        AudioCodec.eac3,
                         AudioCodec.ac3,
+                        AudioCodec.alac,
+                        AudioCodec.eac3,
+                        AudioCodec.flac,
                         AudioCodec.opus,
                     ].map(\.rawValue).joined(separator: ","),
                     isBreakOnNonKeyFrames: true,
@@ -196,14 +190,20 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                     protocol: StreamType.hls.rawValue,
                     type: .video,
                     videoCodec: [
-                        VideoCodec.hevc,
                         VideoCodec.h264,
+                        VideoCodec.hevc,
                         VideoCodec.mpeg4,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
             ]
         case .swiftfin:
             return [
+                // Build transcoding profiles
+                // The only cases where transcoding should occur:
+                // 1) TrueHD/mlp audio
+                // 2) When server forces transcode for bitrate reasons
+                // MP4 Audio Restrictions: pcm,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
+                // MP4 Video Restrictions: vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1
                 TranscodingProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -249,65 +249,63 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                 SubtitleFormat.cc_dec,
                 SubtitleFormat.ttml,
             ].compactMap { $0.profiles[.embed] }
-                +
-                [
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.xsub,
-                ].compactMap { $0.profiles[.encode] }
-                +
-                [
-                    SubtitleFormat.vtt,
-                ].compactMap { $0.profiles[.hls] }
+            +
+            [
+                SubtitleFormat.dvbsub,
+                SubtitleFormat.dvdsub,
+                SubtitleFormat.pgssub,
+                SubtitleFormat.xsub,
+            ].compactMap { $0.profiles[.encode] }
+            +
+            [
+                SubtitleFormat.vtt,
+            ].compactMap { $0.profiles[.hls] }
         case .swiftfin:
             return [
-                SubtitleFormat.pgssub,
-                SubtitleFormat.dvdsub,
-                SubtitleFormat.subrip,
                 SubtitleFormat.ass,
-                SubtitleFormat.ssa,
-                SubtitleFormat.vtt,
-                SubtitleFormat.mov_text,
-                SubtitleFormat.ttml,
-                SubtitleFormat.text,
+                SubtitleFormat.cc_dec,
                 SubtitleFormat.dvbsub,
+                SubtitleFormat.dvdsub,
+                SubtitleFormat.jacosub,
                 SubtitleFormat.libzvbi_teletextdec,
-                SubtitleFormat.xsub,
-                SubtitleFormat.vplayer,
+                SubtitleFormat.mov_text,
+                SubtitleFormat.mpl2,
+                SubtitleFormat.pgssub,
+                SubtitleFormat.pjs,
+                SubtitleFormat.realtext,
+                SubtitleFormat.sami,
+                SubtitleFormat.ssa,
+                SubtitleFormat.subrip,
                 SubtitleFormat.subviewer,
                 SubtitleFormat.subviewer1,
-                SubtitleFormat.sami,
-                SubtitleFormat.realtext,
-                SubtitleFormat.pjs,
-                SubtitleFormat.mpl2,
-                SubtitleFormat.jacosub,
-                SubtitleFormat.cc_dec,
+                SubtitleFormat.text,
+                SubtitleFormat.ttml,
+                SubtitleFormat.vplayer,
+                SubtitleFormat.vtt,
+                SubtitleFormat.xsub,
             ].compactMap { $0.profiles[.embed] }
                 +
-                [
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.subrip,
-                    SubtitleFormat.ass,
-                    SubtitleFormat.ssa,
-                    SubtitleFormat.vtt,
-                    SubtitleFormat.mov_text,
-                    SubtitleFormat.ttml,
-                    SubtitleFormat.text,
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.libzvbi_teletextdec,
-                    SubtitleFormat.xsub,
-                    SubtitleFormat.vplayer,
-                    SubtitleFormat.subviewer,
-                    SubtitleFormat.subviewer1,
-                    SubtitleFormat.sami,
-                    SubtitleFormat.realtext,
-                    SubtitleFormat.pjs,
-                    SubtitleFormat.mpl2,
-                    SubtitleFormat.jacosub,
-                    SubtitleFormat.cc_dec,
-                ].compactMap { $0.profiles[.external] }
+            [
+                SubtitleFormat.ass,
+                SubtitleFormat.dvbsub,
+                SubtitleFormat.dvdsub,
+                SubtitleFormat.jacosub,
+                SubtitleFormat.libzvbi_teletextdec,
+                SubtitleFormat.mpl2,
+                SubtitleFormat.pgssub,
+                SubtitleFormat.pjs,
+                SubtitleFormat.realtext,
+                SubtitleFormat.sami,
+                SubtitleFormat.ssa,
+                SubtitleFormat.subrip,
+                SubtitleFormat.subviewer,
+                SubtitleFormat.subviewer1,
+                SubtitleFormat.text,
+                SubtitleFormat.ttml,
+                SubtitleFormat.vplayer,
+                SubtitleFormat.vtt,
+                SubtitleFormat.xsub,
+            ].compactMap { $0.profiles[.external] }
         }
     }
 

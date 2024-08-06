@@ -154,12 +154,12 @@ internal enum L10n {
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
-  /// The custom profile will be added to Swiftfin's default profiles
-  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom profile will be added to Swiftfin's default profiles")
+  /// The custom profile will be used in addition to Swiftfin's default profiles
+  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom profile will be used in addition to Swiftfin's default profiles")
   /// Swiftfin will automatically determine what device profile to use
   internal static let customDeviceProfileOff = L10n.tr("Localizable", "customDeviceProfileOff", fallback: "Swiftfin will automatically determine what device profile to use")
-  /// Only the custom profile will be used
-  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "Only the custom profile will be used")
+  /// Only the custom profile will be used to determine playback eligibility
+  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "Only the custom profile will be used to determine playback eligibility")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
   /// Dark
