@@ -28,7 +28,8 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
         case .native:
             return [
                 // Apple limitation: no mp3 in mp4; avi only supports mjpeg with pcm
-                // Right now, mp4 restrictions can't be enforced because mp4, m4v, mov, 3gp,3g2 treated the same
+                // Right now, mp4 restrictions can't be enforced because
+                // mp4, m4v, mov, 3gp,3g2 treated the same
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -127,10 +128,14 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
             ]
         case .swiftfin:
             return [
-                // Just make one profile because if VLCKit can't decode it in a certain container, ffmpeg probably can't decode it for transcode either
+                // Just make one profile because if VLCKit can't decode it in a certain container, 
+                // ffmpeg probably can't decode it for transcode either
                 // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can VLCKit
                 // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
-                // This should result in the following string: "aac,ac3,alac,amr_nb,amr_wb,dts,eac3,flac,mp1,mp2,mp3,nellymoser,opus,pcm_alaw,pcm_bluray,pcm_dvd,pcm_mulaw,pcm_s16be,pcm_s16le,pcm_s24be,pcm_s24le,pcm_u8,speex,vobis,wavpack,wmalossless,wmapro,wmav1,wmav2"
+                // This should result in the following string:
+                // "aac,ac3,alac,amr_nb,amr_wb,dts,eac3,flac,mp1,mp2,mp3,nellymoser,opus,
+                // pcm_alaw,pcm_bluray,pcm_dvd,pcm_mulaw,pcm_s16be,pcm_s16le,pcm_s24be,
+                // pcm_s24le,pcm_u8,speex,vobis,wavpack,wmalossless,wmapro,wmav1,wmav2"
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
