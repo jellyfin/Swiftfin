@@ -31,6 +31,7 @@ struct SplitFormWindowView: View {
             .if(descriptionTopPadding) { view in
                 view.padding(.top)
             }
+            .scrollClipDisabled()
         }
     }
 }

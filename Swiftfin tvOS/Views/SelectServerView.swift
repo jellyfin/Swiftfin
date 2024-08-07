@@ -39,7 +39,7 @@ struct SelectServerView: View {
     }
 
     var body: some View {
-        FullScreenMenu("Servers") {
+        FullScreenMenu(L10n.servers) {
             Section {
                 Button {
                     router.popLast {
@@ -47,7 +47,7 @@ struct SelectServerView: View {
                     }
                 } label: {
                     HStack {
-                        Text("Add Server")
+                        L10n.addServer.text
 
                         Spacer()
 
@@ -62,7 +62,7 @@ struct SelectServerView: View {
                         }
                     } label: {
                         HStack {
-                            Text("Edit Server")
+                            L10n.editServer.text
 
                             Spacer()
 
@@ -80,7 +80,7 @@ struct SelectServerView: View {
                         router.popLast()
                     } label: {
                         HStack {
-                            Text("All Servers")
+                            L10n.allServers.text
 
                             Spacer()
 
@@ -116,9 +116,10 @@ struct SelectServerView: View {
                         .padding()
                     }
                     .buttonStyle(.card)
+                    .padding(.horizontal)
                 }
             } header: {
-                Text("Servers")
+                Text(L10n.servers)
             }
             .headerProminence(.increased)
         }

@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
+                Section(L10n.jellyfin) {
 
                     Button {} label: {
                         TextPairView(
@@ -51,14 +51,23 @@ struct SettingsView: View {
                     Button {
                         viewModel.signOut()
                     } label: {
-                        L10n.switchUser.text
-                            .foregroundColor(.jellyfinPurple)
+                        HStack {
+
+                            Text(L10n.switchUser)
+                                .foregroundColor(.jellyfinPurple)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
 
-                Section {
+                Section(L10n.videoPlayer) {
 
-                    InlineEnumToggle(title: "Video Player Type", selection: $videoPlayerType)
+                    InlineEnumToggle(title: L10n.videoPlayerType, selection: $videoPlayerType)
 
                     ChevronButton(L10n.videoPlayer)
                         .onSelect {
@@ -69,12 +78,9 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.maximumBitrateSettings)
                         }
-
-                } header: {
-                    L10n.videoPlayer.text
                 }
 
-                Section {
+                Section(L10n.accessibility) {
 
                     ChevronButton(L10n.customize)
                         .onSelect {
@@ -85,14 +91,11 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.experimentalSettings)
                         }
-
-                } header: {
-                    L10n.accessibility.text
                 }
 
                 Section {
 
-                    ChevronButton("Logs")
+                    ChevronButton(L10n.logs)
                         .onSelect {
                             router.route(to: \.log)
                         }

@@ -32,18 +32,18 @@ struct IndicatorSettingsView: View {
             }
             .contentView {
 
-                Section {
+                Section(L10n.posters) {
 
-                    Toggle("Show Favorited", isOn: $showFavorited)
+                    Toggle(L10n.showFavorited, isOn: $showFavorited)
 
-                    Toggle("Show Progress", isOn: $showProgress)
+                    Toggle(L10n.showProgress, isOn: $showProgress)
 
-                    Toggle("Show Unwatched", isOn: $showUnwatched)
+                    Toggle(L10n.showUnwatched, isOn: $showUnwatched)
 
-                    Toggle("Show Watched", isOn: $showWatched)
+                    Toggle(L10n.showWatched, isOn: $showWatched)
                 }
             }
             .withDescriptionTopPadding()
-            .navigationTitle("Indicators")
+            .navigationTitle(L10n.indicators)
     }
 }
