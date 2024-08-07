@@ -106,7 +106,7 @@ extension Backport where Content: View {
 
 // MARK: ButtonBorderShape
 
-private extension ButtonBorderShape {
+extension ButtonBorderShape {
 
     static let circleBackport: ButtonBorderShape = {
         if #available(iOS 17, tvOS 16.4, *) {
