@@ -42,9 +42,6 @@ struct SeriesEpisodeSelector: View {
                 systemImage: "chevron.down"
             )
             .labelStyle(.episodeSelector)
-            .iOS15 { v in
-                v.frame(maxWidth: .infinity, alignment: .leading)
-            }
         }
     }
 
