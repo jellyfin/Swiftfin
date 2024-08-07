@@ -9,23 +9,26 @@
 import JellyfinAPI
 
 extension DeviceProfile {
+    static func build(
+        for videoPlayer: VideoPlayerType,
+        maxBitrate: Int? = nil,
+        useCustomProfile: CustomDeviceProfileSelection = .off
+    ) -> DeviceProfile {
 
-    static func build(for videoPlayer: VideoPlayerType, maxBitrate: Int? = nil) -> DeviceProfile {
+        var deviceProfile: DeviceProfile = .init()
 
-        var deviceProfile: DeviceProfile
+        deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
+        deviceProfile.codecProfiles = videoPlayer.codecProfiles
+        deviceProfile.responseProfiles = videoPlayer.responseProfiles
 
-        switch videoPlayer {
-        case .native:
-            deviceProfile = nativeProfile()
-        case .swiftfin:
-            deviceProfile = swiftfinProfile()
+        switch useCustomProfile {
+        case .replace:
+            deviceProfile.directPlayProfiles = customProfile()
+        case .off:
+            deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
+        case .add:
+            deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles + customProfile()
         }
-
-        let codecProfiles: [CodecProfile] = sharedCodecProfiles()
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
-
-        deviceProfile.codecProfiles = codecProfiles
-        deviceProfile.responseProfiles = responseProfiles
 
         if let maxBitrate {
             deviceProfile.maxStaticBitrate = maxBitrate

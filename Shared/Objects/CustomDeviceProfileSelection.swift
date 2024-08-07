@@ -6,22 +6,23 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
-enum StreamType: String, Displayable {
+enum CustomDeviceProfileSelection: String, CaseIterable, Displayable, Defaults.Serializable {
 
-    case direct
-    case transcode
-    case hls
+    case off
+    case add
+    case replace
 
     var displayTitle: String {
         switch self {
-        case .direct:
-            return "Direct"
-        case .transcode:
-            return "Transcode"
-        case .hls:
-            return "HLS"
+        case .off:
+            return "Off"
+        case .add:
+            return "Add"
+        case .replace:
+            return "Replace"
         }
     }
 }
