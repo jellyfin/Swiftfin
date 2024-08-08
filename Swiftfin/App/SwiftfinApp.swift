@@ -66,7 +66,7 @@ struct SwiftfinApp: App {
         // Swiftfin
 
         // don't keep last user id
-        if Defaults[.signOutOnClose] || Container.shared.currentUserSession() == nil {
+        if Defaults[.signOutOnClose] {
             Defaults[.lastSignedInUserID] = nil
         }
     }
