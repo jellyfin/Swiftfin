@@ -16,6 +16,15 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    var letterPickerOrientation
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var libraryEnabledDrawerFilters
+    @Default(.Customization.Search.enabledDrawerFilters)
+    private var searchEnabledDrawerFilters
+
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
     @Default(.Customization.nextUpPosterType)
@@ -53,6 +62,40 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
+                Section(L10n.library) {
+
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
+
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                }
+
+                Section {
+
+                    Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
+
+                    if letterPickerEnabled {
+                        InlineEnumToggle(title: L10n.orientation, selection: $letterPickerOrientation)
+                    }
+
+                    // Enable for Filters
+                    /* ChevronButton(L10n.library)
+                         .onSelect {
+                             router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
+                         }
+
+                     ChevronButton(L10n.search)
+                         .onSelect {
+                             router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
+                         } */
+
+                } header: {
+                    L10n.filters.text
+                }
+
                 Section(L10n.missingItems) {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
@@ -80,17 +123,6 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
-                }
-
-                Section(L10n.library) {
-
-                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
-
-                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-
-                    Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
             }
             .withDescriptionTopPadding()

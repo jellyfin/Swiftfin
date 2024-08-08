@@ -18,6 +18,11 @@ import SwiftUI
 
 struct PagingLibraryView<Element: Poster>: View {
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
+
     @Default(.Customization.Library.cinematicBackground)
     private var cinematicBackground
     @Default(.Customization.Library.posterType)
@@ -37,6 +42,8 @@ struct PagingLibraryView<Element: Poster>: View {
     private var presentBackground = false
     @State
     private var layout: CollectionVGridLayout
+    @State
+    private var safeArea: EdgeInsets = .zero
 
     @StateObject
     private var viewModel: PagingLibraryViewModel<Element>
@@ -146,6 +153,44 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private var contentView: some View {
+        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
+            ZStack(alignment: letterPickerOrientation.alignment) {
+                innerContent
+                    .padding(letterPickerOrientation.edge, 35)
+                    .frame(maxWidth: .infinity)
+
+                LetterPickerBar(viewModel: filterViewModel)
+                    .padding(.top, safeArea.top)
+                    .padding(.bottom, safeArea.bottom)
+                    .padding(letterPickerOrientation.edge, 10)
+            }
+        } else {
+            innerContent
+        }
+    }
+
+    @ViewBuilder
+    private var innerContent: some View {
+        WrappedView {
+            Group {
+                switch viewModel.state {
+                case let .error(error):
+                    Text(error.localizedDescription)
+                case .initial, .refreshing:
+                    ProgressView()
+                case .content:
+                    if viewModel.elements.isEmpty {
+                        L10n.noResults.text
+                    } else {
+                        gridView
+                    }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var gridView: some View {
         CollectionVGrid(
             $viewModel.elements,
             layout: layout
@@ -171,23 +216,7 @@ struct PagingLibraryView<Element: Poster>: View {
                     .visible(presentBackground)
                     .blurred()
             }
-
-            WrappedView {
-                Group {
-                    switch viewModel.state {
-                    case let .error(error):
-                        Text(error.localizedDescription)
-                    case .initial, .refreshing:
-                        ProgressView()
-                    case .content:
-                        if viewModel.elements.isEmpty {
-                            L10n.noResults.text
-                        } else {
-                            contentView
-                        }
-                    }
-                }
-            }
+            contentView
         }
         .ignoresSafeArea()
         .navigationTitle(viewModel.parent?.displayTitle ?? "")

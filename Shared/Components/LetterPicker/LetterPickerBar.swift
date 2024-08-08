@@ -11,6 +11,9 @@ import SwiftUI
 
 struct LetterPickerBar: View {
 
+    @Default(.Customization.Library.enabledDrawerFilters)
+    private var itemFilters
+
     @ObservedObject
     var viewModel: FilterViewModel
 
@@ -18,6 +21,10 @@ struct LetterPickerBar: View {
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
+
+            #if os(tvOS)
+            FilterMenu(viewModel: viewModel, filterTypes: itemFilters)
+            #endif
 
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(

@@ -10,7 +10,6 @@
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
-		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
@@ -21,8 +20,12 @@
 		4E73E2B02C4211CA002D2A78 /* MaximumBitrateSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2AF2C4211CA002D2A78 /* MaximumBitrateSettingsView.swift */; };
 		4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
 		4E762AAF2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
+		4E7B41222C6328720008E5AC /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7B41212C6328720008E5AC /* LetterPickerButton.swift */; };
+		4E7B41232C6328950008E5AC /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
+		4E7B41252C6328C10008E5AC /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
+		4ED252612C6408FA009540CC /* FilterMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED252602C6408FA009540CC /* FilterMenu.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
 		5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5321753A2671BCFC005491E6 /* SettingsViewModel.swift */; };
@@ -942,7 +945,9 @@
 		4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
 		4E73E2AF2C4211CA002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
+		4E7B41212C6328720008E5AC /* LetterPickerButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
+		4ED252602C6408FA009540CC /* FilterMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterMenu.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531AC8BE26750DE20091C7EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -1664,23 +1669,6 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
-		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
-			isa = PBXGroup;
-			children = (
-				4E16FD4F2C0183C500110147 /* Components */,
-				4E16FD522C01840C00110147 /* LetterPickerBar.swift */,
-			);
-			path = LetterPickerBar;
-			sourceTree = "<group>";
-		};
-		4E16FD4F2C0183C500110147 /* Components */ = {
-			isa = PBXGroup;
-			children = (
-				4E16FD502C0183DB00110147 /* LetterPickerButton.swift */,
-			);
-			path = Components;
-			sourceTree = "<group>";
-		};
 		4E3A785D2C3B87A400D33C11 /* PlaybackBitrate */ = {
 			isa = PBXGroup;
 			children = (
@@ -1688,6 +1676,15 @@
 				4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */,
 			);
 			path = PlaybackBitrate;
+			sourceTree = "<group>";
+		};
+		4E7B41242C6328A80008E5AC /* LetterPicker */ = {
+			isa = PBXGroup;
+			children = (
+				4E16FD522C01840C00110147 /* LetterPickerBar.swift */,
+				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
+			);
+			path = LetterPicker;
 			sourceTree = "<group>";
 		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
@@ -1863,12 +1860,13 @@
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
+				4ED252602C6408FA009540CC /* FilterMenu.swift */,
 				E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
+				4E7B41212C6328720008E5AC /* LetterPickerButton.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
 				E10E842B29A589860064EA49 /* NonePosterButton.swift */,
-				E111D8F928D0400900400001 /* PagingLibraryView.swift */,
 				E1C92617288756BD002A7A66 /* PosterButton.swift */,
 				E1C92619288756BD002A7A66 /* PosterHStack.swift */,
 				E12CC1C428D12D9B00678D5D /* SeeAllPosterButton.swift */,
@@ -2101,7 +2099,7 @@
 				E1921B7528E63306003A5238 /* GestureView.swift */,
 				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
 				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
-				4E16FD4E2C0183B500110147 /* LetterPickerBar */,
+				4E16FD502C0183DB00110147 /* LetterPickerButton.swift */,
 				E1A8FDEB2C0574A800D0A51C /* ListRow.swift */,
 				E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */,
 				E1FE69AF28C2DA4A0021BC93 /* NavigationBarFilterDrawer */,
@@ -2599,6 +2597,7 @@
 				E193D54E271942C000900D82 /* ItemView */,
 				E158C8D02A31947500C527C5 /* MediaSourceInfoView.swift */,
 				E103DF932BCF31C5000229B2 /* MediaView */,
+				E111D8F928D0400900400001 /* PagingLibraryView.swift */,
 				E10231572BCF8AF8009D71FC /* ProgramsView */,
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
@@ -3232,7 +3231,7 @@
 				E145EB212BDCCA43003BF6F3 /* BulletedList.swift */,
 				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
-				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
+				4E7B41242C6328A80008E5AC /* LetterPicker */,
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				E1DC983F296DEBA500982F06 /* PosterIndicators */,
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
@@ -4024,6 +4023,7 @@
 				5398514526B64DA100101B49 /* SettingsView.swift in Sources */,
 				E193D54B271941D300900D82 /* SelectServerView.swift in Sources */,
 				E1575E91293E7B1E001665B1 /* URL.swift in Sources */,
+				4ED252612C6408FA009540CC /* FilterMenu.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				E10B1EC22BD9AD6100A92EAF /* V1UserModel.swift in Sources */,
 				E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */,
@@ -4109,6 +4109,7 @@
 				091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */,
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
+				4E7B41232C6328950008E5AC /* LetterPickerBar.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
 				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
@@ -4227,6 +4228,7 @@
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
+				4E7B41222C6328720008E5AC /* LetterPickerButton.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
 				E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */,
@@ -4429,7 +4431,6 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
-				4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */,
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4670,6 +4671,7 @@
 				E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */,
 				53EE24E6265060780068F029 /* SearchView.swift in Sources */,
 				E164A8152BE58C2F00A54B18 /* V2AnyData.swift in Sources */,
+				4E7B41252C6328C10008E5AC /* LetterPickerBar.swift in Sources */,
 				E1D37F522B9CEF1E00343D2B /* DeviceProfile+SharedCodecProfiles.swift in Sources */,
 				E1DC9841296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
 			);
