@@ -41,7 +41,7 @@ struct CustomizeViewsSettings: View {
     private var showRecentlyAdded
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: CustomizeSettingsCoordinator.Router
 
     var body: some View {
         SplitFormWindowView()
@@ -53,18 +53,16 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
-                Section {
+                Section(L10n.missingItems) {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
                     Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-                } header: {
-                    L10n.missingItems.text
                 }
 
-                Section {
+                Section(L10n.posters) {
 
-                    ChevronButton("Indicators")
+                    ChevronButton(L10n.indicators)
                         .onSelect {
                             router.route(to: \.indicatorSettings)
                         }
@@ -82,23 +80,17 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
-
-                } header: {
-                    Text("Posters")
                 }
 
-                Section {
+                Section(L10n.library) {
 
-                    Toggle("Cinematic Background", isOn: $cinematicBackground)
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
-                    Toggle("Random Image", isOn: $libraryRandomImage)
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
-                    Toggle("Show Favorites", isOn: $showFavorites)
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
 
-                    Toggle("Show Recently Added", isOn: $showRecentlyAdded)
-
-                } header: {
-                    L10n.library.text
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
             }
             .withDescriptionTopPadding()

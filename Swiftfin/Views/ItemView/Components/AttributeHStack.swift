@@ -22,13 +22,12 @@ extension ItemView {
                         .asAttributeStyle(.outline)
                 }
 
-                // TODO: Have stream indicate this instead?
-                if viewModel.item.isHD ?? false {
-                    Text("HD")
-                        .asAttributeStyle(.fill)
-                }
-
                 if let mediaStreams = viewModel.selectedMediaSource?.mediaStreams {
+
+                    if mediaStreams.hasHDVideo {
+                        Text("HD")
+                            .asAttributeStyle(.fill)
+                    }
 
                     if mediaStreams.has4KVideo {
                         Text("4K")

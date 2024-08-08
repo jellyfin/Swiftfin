@@ -13,6 +13,7 @@
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
+		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -823,6 +824,7 @@
 		E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAF92A270E62008AC34A /* OverviewCard.swift */; };
 		E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */; };
 		E1DABAFE2A27B982008AC34A /* RatingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFD2A27B982008AC34A /* RatingsCard.swift */; };
+		E1DC7ACA2C63337C00AEE368 /* iOS15View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC7AC92C63337C00AEE368 /* iOS15View.swift */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
 		E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
 		E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */; };
@@ -935,6 +937,7 @@
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
+		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
@@ -1483,6 +1486,7 @@
 		E1DABAF92A270E62008AC34A /* OverviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCard.swift; sourceTree = "<group>"; };
 		E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourcesCard.swift; sourceTree = "<group>"; };
 		E1DABAFD2A27B982008AC34A /* RatingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingsCard.swift; sourceTree = "<group>"; };
+		E1DC7AC92C63337C00AEE368 /* iOS15View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS15View.swift; sourceTree = "<group>"; };
 		E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicBackgroundView.swift; sourceTree = "<group>"; };
 		E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwatchedIndicator.swift; sourceTree = "<group>"; };
 		E1DC9840296DEBD800982F06 /* WatchedIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchedIndicator.swift; sourceTree = "<group>"; };
@@ -2098,6 +2102,7 @@
 				E1DE2B492B97ECB900F6715F /* ErrorView.swift */,
 				E1921B7528E63306003A5238 /* GestureView.swift */,
 				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
+				E1DC7AC92C63337C00AEE368 /* iOS15View.swift */,
 				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
 				4E16FD4E2C0183B500110147 /* LetterPickerBar */,
 				E1A8FDEB2C0574A800D0A51C /* ListRow.swift */,
@@ -2177,6 +2182,7 @@
 			children = (
 				E1D4BF892719D3D000A11E64 /* AppSettingsCoordinator.swift */,
 				E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */,
+				4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */,
 				E17AC9702954F636003D2BC2 /* DownloadListCoordinator.swift */,
 				E13332902953B91000EE76AB /* DownloadTaskCoordinator.swift */,
 				6220D0B926D6092100B8E046 /* FilterCoordinator.swift */,
@@ -4108,6 +4114,7 @@
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
+				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
 				E1575E8C293E7B1E001665B1 /* UIScreen.swift in Sources */,
 				C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */,
 				E1BCDB502BE1F491009F6744 /* ResetUserPasswordViewModel.swift in Sources */,
@@ -4567,6 +4574,7 @@
 				E1BDF2F329524C3B00CC0294 /* ChaptersActionButton.swift in Sources */,
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */,
+				E1DC7ACA2C63337C00AEE368 /* iOS15View.swift in Sources */,
 				E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */,
 				E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */,
 				E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */,

@@ -140,16 +140,36 @@ extension PosterButton {
         let item: Item
 
         var body: some View {
-            VStack(alignment: .leading) {
-                if item.showTitle {
-                    TitleContentView(item: item)
+            iOS15View {
+                VStack(alignment: .leading, spacing: 0) {
+                    if item.showTitle {
+                        TitleContentView(item: item)
+                            .backport
+                            .lineLimit(1, reservesSpace: true)
+                            .iOS15 { v in
+                                v.font(.footnote.weight(.regular))
+                            }
+                    }
+
+                    SubtitleContentView(item: item)
+                        .backport
+                        .lineLimit(1, reservesSpace: true)
+                        .iOS15 { v in
+                            v.font(.caption.weight(.medium))
+                        }
+                }
+            } content: {
+                VStack(alignment: .leading) {
+                    if item.showTitle {
+                        TitleContentView(item: item)
+                            .backport
+                            .lineLimit(1, reservesSpace: true)
+                    }
+
+                    SubtitleContentView(item: item)
                         .backport
                         .lineLimit(1, reservesSpace: true)
                 }
-
-                SubtitleContentView(item: item)
-                    .backport
-                    .lineLimit(1, reservesSpace: true)
             }
         }
     }
