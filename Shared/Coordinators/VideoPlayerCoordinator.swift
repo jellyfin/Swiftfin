@@ -28,6 +28,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     // TODO: remove after iOS 15 support removed
 
+    #if os(iOS)
     @ViewBuilder
     private func containerView<Content: View>(_ content: @escaping () -> Content) -> some View {
         iOS15View {
@@ -36,6 +37,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             PreferencesView(content: content)
         }
     }
+    #endif
 
     @ViewBuilder
     func makeStart() -> some View {
