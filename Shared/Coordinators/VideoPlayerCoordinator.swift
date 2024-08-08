@@ -26,6 +26,17 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         self.videoPlayerManager = manager
     }
 
+    // TODO: remove after iOS 15 support removed
+
+    @ViewBuilder
+    private func containerView<Content: View>(_ content: @escaping () -> Content) -> some View {
+        iOS15View {
+            iOS15LandscapeView(content: content)
+        } content: {
+            PreferencesView(content: content)
+        }
+    }
+
     @ViewBuilder
     func makeStart() -> some View {
         #if os(iOS)
@@ -35,7 +46,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         // It is assumed that because Stinsen adds a lot of views that the
         // PreferencesView isn't in the right place in the VC chain so that
         // it can apply the settings, even SwiftUI settings.
-        PreferencesView {
+        containerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     VideoPlayer(manager: self.videoPlayerManager)

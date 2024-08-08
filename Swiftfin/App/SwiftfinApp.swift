@@ -71,9 +71,20 @@ struct SwiftfinApp: App {
         }
     }
 
+    // TODO: remove after iOS 15 support removed
+
+    @ViewBuilder
+    private func containerView<Content: View>(_ content: @escaping () -> Content) -> some View {
+        iOS15View {
+            content()
+        } content: {
+            PreferencesView(content: content)
+        }
+    }
+
     var body: some Scene {
         WindowGroup {
-            PreferencesView {
+            containerView {
                 MainCoordinator()
                     .view()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)

@@ -206,6 +206,7 @@
 		E102315C2BCF8AF8009D71FC /* ProgramsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231562BCF8AF8009D71FC /* ProgramsView.swift */; };
 		E102315F2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */; };
 		E10231602BCF8B7E009D71FC /* VideoPlayerWrapperCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */; };
+		E102EF8D2C654D4700F39A41 /* iOS15Rotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102EF8C2C654D4700F39A41 /* iOS15Rotation.swift */; };
 		E103DF902BCF2F1C000229B2 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103DF8F2BCF2F1C000229B2 /* MediaItem.swift */; };
 		E103DF952BCF31CD000229B2 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E103DF942BCF31CD000229B2 /* MediaItem.swift */; };
 		E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10432F52BE4426F006FF9DD /* FormatStyle.swift */; };
@@ -1102,6 +1103,7 @@
 		E10231542BCF8AF8009D71FC /* ProgramProgressOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramProgressOverlay.swift; sourceTree = "<group>"; };
 		E10231562BCF8AF8009D71FC /* ProgramsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramsView.swift; sourceTree = "<group>"; };
 		E102315E2BCF8B75009D71FC /* VideoPlayerWrapperCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerWrapperCoordinator.swift; sourceTree = "<group>"; };
+		E102EF8C2C654D4700F39A41 /* iOS15Rotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS15Rotation.swift; sourceTree = "<group>"; };
 		E103DF8F2BCF2F1C000229B2 /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 		E103DF942BCF31CD000229B2 /* MediaItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaItem.swift; sourceTree = "<group>"; };
 		E10432F52BE4426F006FF9DD /* FormatStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatStyle.swift; sourceTree = "<group>"; };
@@ -2649,6 +2651,7 @@
 			isa = PBXGroup;
 			children = (
 				E13DD3BE27163DD7009D4DAF /* AppDelegate.swift */,
+				E102EF8C2C654D4700F39A41 /* iOS15Rotation.swift */,
 				5377CBF4263B596A003A4E83 /* SwiftfinApp.swift */,
 				E1BAFE0F2BE921270069C4D7 /* SwiftfinApp+ValueObservation.swift */,
 			);
@@ -4516,6 +4519,7 @@
 				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
 				E1BDF2EF29522A5900CC0294 /* AudioActionButton.swift in Sources */,
 				E174120F29AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
+				E102EF8D2C654D4700F39A41 /* iOS15Rotation.swift in Sources */,
 				E10231392BCF8A3C009D71FC /* ProgramButtonContent.swift in Sources */,
 				E1DC9844296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,

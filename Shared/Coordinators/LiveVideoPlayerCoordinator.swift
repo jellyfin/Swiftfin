@@ -26,11 +26,22 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
         self.videoPlayerManager = manager
     }
 
+    // TODO: remove after iOS 15 support removed
+
+    @ViewBuilder
+    private func containerView<Content: View>(_ content: @escaping () -> Content) -> some View {
+        iOS15View {
+            iOS15LandscapeView(content: content)
+        } content: {
+            PreferencesView(content: content)
+        }
+    }
+
     @ViewBuilder
     func makeStart() -> some View {
         #if os(iOS)
 
-        PreferencesView {
+        containerView {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     LiveVideoPlayer(manager: self.videoPlayerManager)

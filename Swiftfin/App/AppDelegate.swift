@@ -17,6 +17,15 @@ import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
 
+    // TODO: remove after iOS 15 support removed
+
+    private(set) static var instance: AppDelegate! = nil
+    var orientationLock: UIInterfaceOrientationMask
+
+    override init() {
+        orientationLock = UIDevice.isPad ? .allButUpsideDown : .portrait
+    }
+
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -29,6 +38,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             print("setting category AVAudioSessionCategoryPlayback failed")
         }
 
+        AppDelegate.instance = self
+
         return true
+    }
+
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        orientationLock
     }
 }
