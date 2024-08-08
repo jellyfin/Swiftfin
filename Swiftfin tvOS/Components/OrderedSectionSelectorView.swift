@@ -45,54 +45,55 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     var body: some View {
-        SplitFormWindowView()
-            .descriptionView {
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
-            }
-            .contentView {
-                List {
-
-                    EnabledSection(
-                        elements: $updateSelection,
-                        label: label,
-                        isEditing: editMode?.wrappedValue.isEditing ?? false,
-                        select: select,
-                        move: move,
-                        focusedElement: $focusedElement
-                    )
-
-                    DisabledSection(
-                        elements: disabledSelection,
-                        label: label,
-                        isEditing: editMode?.wrappedValue.isEditing ?? false,
-                        select: select,
-                        focusedElement: $focusedElement
-                    )
+        NavigationView {
+            SplitFormWindowView()
+                .descriptionView {
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(maxWidth: 400)
                 }
-                .environment(\.editMode, editMode)
-            }
-            .withDescriptionTopPadding()
-            .navigationTitle(title)
-            .animation(.linear(duration: 0.2), value: updateSelection)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(editMode?.wrappedValue.isEditing ?? false ? "Done" : "Edit") {
-                        withAnimation {
-                            if editMode?.wrappedValue.isEditing ?? false {
-                                editMode?.wrappedValue = .inactive
-                            } else {
-                                editMode?.wrappedValue = .active
+                .contentView {
+                    List {
+                        EnabledSection(
+                            elements: $updateSelection,
+                            label: label,
+                            isEditing: editMode?.wrappedValue.isEditing ?? false,
+                            select: select,
+                            move: move,
+                            focusedElement: $focusedElement
+                        )
+
+                        DisabledSection(
+                            elements: disabledSelection,
+                            label: label,
+                            isEditing: editMode?.wrappedValue.isEditing ?? false,
+                            select: select,
+                            focusedElement: $focusedElement
+                        )
+                    }
+                    .environment(\.editMode, editMode)
+                }
+                .withDescriptionTopPadding()
+                .navigationTitle(title)
+                .animation(.linear(duration: 0.2), value: updateSelection)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(editMode?.wrappedValue.isEditing ?? false ? "Done" : "Edit") {
+                            withAnimation {
+                                if editMode?.wrappedValue.isEditing ?? false {
+                                    editMode?.wrappedValue = .inactive
+                                } else {
+                                    editMode?.wrappedValue = .active
+                                }
                             }
                         }
                     }
                 }
-            }
-            .onChange(of: updateSelection) { _, newValue in
-                selection = newValue
-            }
+                .onChange(of: updateSelection) { _, newValue in
+                    selection = newValue
+                }
+        }
     }
 }
 
