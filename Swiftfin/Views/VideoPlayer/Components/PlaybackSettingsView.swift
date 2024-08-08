@@ -19,8 +19,6 @@ struct PlaybackSettingsView: View {
     @EnvironmentObject
     private var router: PlaybackSettingsCoordinator.Router
     @EnvironmentObject
-    private var splitContentViewProxy: SplitContentViewProxy
-    @EnvironmentObject
     private var viewModel: VideoPlayerViewModel
 
     @Environment(\.audioOffset)
@@ -99,8 +97,8 @@ struct PlaybackSettingsView: View {
         }
         .navigationTitle(L10n.playback)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            splitContentViewProxy.hide()
-        }
+//        .navigationBarCloseButton {
+//            splitContentViewProxy.hide()
+//        }
     }
 }
