@@ -26,11 +26,22 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
         self.videoPlayerManager = manager
     }
 
+    #if os(iOS)
     @ViewBuilder
-    func makeStart() -> some View {
-        #if os(iOS)
-
-        PreferencesView {
+    private var versionedView: some View {
+        if #available(iOS 16, *) {
+            PreferencesView {
+                Group {
+                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                        LiveVideoPlayer(manager: self.videoPlayerManager)
+                    } else {
+                        LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+                    }
+                }
+                .preferredColorScheme(.dark)
+                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+            }
+        } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     LiveVideoPlayer(manager: self.videoPlayerManager)
@@ -40,10 +51,20 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
             }
             .preferredColorScheme(.dark)
             .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+            .preferredColorScheme(.dark)
+            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
-        .ignoresSafeArea()
-        .backport
-        .persistentSystemOverlays(.hidden)
+    }
+    #endif
+
+    @ViewBuilder
+    func makeStart() -> some View {
+        #if os(iOS)
+
+        versionedView
+            .ignoresSafeArea()
+            .backport
+            .persistentSystemOverlays(.hidden)
 
         #else
 
