@@ -122,6 +122,11 @@ struct VideoPlayer: View {
 
                             guard !isScrubbing else { return }
                             currentProgressHandler.scrubbedProgress = newProgress
+
+                            videoPlayerManager.onTicksUpdated(
+                                ticks: ticks,
+                                playbackInformation: information
+                            )
                         }
                         .onStateUpdated { state, _ in
 
