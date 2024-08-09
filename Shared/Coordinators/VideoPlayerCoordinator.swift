@@ -26,16 +26,24 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         self.videoPlayerManager = manager
     }
 
-    @ViewBuilder
-    func makeStart() -> some View {
-        #if os(iOS)
+    // TODO: removed after iOS 15 support removed
 
-        // Some settings have to apply to the root PreferencesView and this
-        // one - separately.
-        // It is assumed that because Stinsen adds a lot of views that the
-        // PreferencesView isn't in the right place in the VC chain so that
-        // it can apply the settings, even SwiftUI settings.
-        PreferencesView {
+    #if os(iOS)
+    @ViewBuilder
+    private var versionedView: some View {
+        if #available(iOS 16, *) {
+            PreferencesView {
+                Group {
+                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                        VideoPlayer(manager: self.videoPlayerManager)
+                    } else {
+                        NativeVideoPlayer(manager: self.videoPlayerManager)
+                    }
+                }
+                .preferredColorScheme(.dark)
+                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+            }
+        } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                     VideoPlayer(manager: self.videoPlayerManager)
@@ -46,9 +54,22 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             .preferredColorScheme(.dark)
             .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
-        .ignoresSafeArea()
-        .backport
-        .persistentSystemOverlays(.hidden)
+    }
+    #endif
+
+    @ViewBuilder
+    func makeStart() -> some View {
+        #if os(iOS)
+
+        // Some settings have to apply to the root PreferencesView and this
+        // one - separately.
+        // It is assumed that because Stinsen adds a lot of views that the
+        // PreferencesView isn't in the right place in the VC chain so that
+        // it can apply the settings, even SwiftUI settings.
+        versionedView
+            .ignoresSafeArea()
+            .backport
+            .persistentSystemOverlays(.hidden)
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
