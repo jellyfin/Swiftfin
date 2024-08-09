@@ -20,10 +20,6 @@ struct CustomizeViewsSettings: View {
     var letterPickerEnabled
     @Default(.Customization.Library.letterPickerOrientation)
     var letterPickerOrientation
-    @Default(.Customization.Library.enabledDrawerFilters)
-    private var libraryEnabledDrawerFilters
-    @Default(.Customization.Search.enabledDrawerFilters)
-    private var searchEnabledDrawerFilters
 
     @Default(.Customization.showPosterLabels)
     private var showPosterLabels
