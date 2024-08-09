@@ -81,17 +81,6 @@ struct CustomizeViewsSettings: View {
                         InlineEnumToggle(title: L10n.orientation, selection: $letterPickerOrientation)
                     }
 
-                    // Enable for Filters
-                    /* ChevronButton(L10n.library)
-                         .onSelect {
-                             router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
-                         }
-
-                     ChevronButton(L10n.search)
-                         .onSelect {
-                             router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
-                         } */
-
                 } header: {
                     L10n.filters.text
                 }

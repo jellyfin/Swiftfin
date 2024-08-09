@@ -42,17 +42,17 @@ extension LetterPickerBar {
                     RoundedRectangle(cornerRadius: 5)
                         .foregroundStyle(isFocused ? .lightGray : (isSelected ? accentColor : .clear))
                         .shadow(color: isFocused || isSelected ? .black : .clear, radius: 2, x: 0, y: 2)
-                        .frame(width: 30, height: 30)
+                        .frame(width: 40, height: 40)
                     Text(letter.value)
-                        .font(.subheadline)
+                        .font(.headline)
                         .foregroundStyle(isFocused ? .black : (isSelected ? .white : .white))
                         .shadow(color: isFocused || isSelected ? .clear : .black, radius: 2, x: 0, y: 2)
                 }
-                .frame(width: 30, height: 10)
+                .frame(width: 40, height: 10)
             }
             .buttonStyle(.borderless)
             .focused($isFocused)
-            .padding(10)
+            .padding(12.5)
         }
     }
 }
