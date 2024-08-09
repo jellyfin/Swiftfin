@@ -113,7 +113,7 @@ struct VideoPlayer: View {
                 ZStack {
                     VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
                         .proxy(videoPlayerManager.proxy)
-                        .onTicksUpdated { ticks, _ in
+                        .onTicksUpdated { ticks, information in
 
                             let newSeconds = ticks / 1000
                             let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
