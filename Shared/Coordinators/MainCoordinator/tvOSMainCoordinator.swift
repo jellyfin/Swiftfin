@@ -16,7 +16,7 @@ import SwiftUI
 //       - move some things to App
 // TODO: server check flow
 
-final class MainCoordinator: NavigationCoordinatable, Observable {
+final class MainCoordinator: NavigationCoordinatable {
 
     @Injected(\.logService)
     private var logger
@@ -31,6 +31,7 @@ final class MainCoordinator: NavigationCoordinatable, Observable {
     var selectUser = makeSelectUser
 
     init() {
+
         stack = NavigationStack(initial: \.loading)
 
         Task {
