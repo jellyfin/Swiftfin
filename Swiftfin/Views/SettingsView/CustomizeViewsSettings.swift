@@ -91,16 +91,14 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
-            Section {
+            Section(L10n.library) {
 
                 Toggle(L10n.favorites, isOn: $showFavorites)
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
-            } header: {
-                L10n.library.text
             }
 
-            Section {
+            Section(L10n.filters) {
 
                 Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
 
@@ -115,25 +113,18 @@ struct CustomizeViewsSettings: View {
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
                     }
-
                 ChevronButton(L10n.search)
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $searchEnabledDrawerFilters)
                     }
-
-            } header: {
-                L10n.filters.text
             }
 
-            Section {
+            Section(L10n.missingItems) {
                 Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
                 Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-            } header: {
-                L10n.missingItems.text
             }
 
             Section(L10n.posters) {
-
                 ChevronButton(L10n.indicators)
                     .onSelect {
                         router.route(to: \.indicatorSettings)
@@ -142,19 +133,14 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.showPosterLabels, isOn: $showPosterLabels)
 
                 CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
-
                 CaseIterablePicker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
-
                 CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
-
                 CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
-
                 CaseIterablePicker(L10n.search, selection: $searchPosterType)
             }
 
             Section("Libraries") {
                 CaseIterablePicker(L10n.library, selection: $libraryDisplayType)
-
                 CaseIterablePicker(L10n.posters, selection: $libraryPosterType)
 
                 if libraryDisplayType == .list, UIDevice.isPad {
@@ -167,35 +153,31 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
-            Section {
-
-                Toggle("Show recently added", isOn: $showRecentlyAdded)
+            Section(L10n.home) {
+                Toggle("Show Recently Added", isOn: $showRecentlyAdded)
                 Toggle("Show Section Labels", isOn: $homeLabels)
+
                 ChevronButton("Sections")
                     .onSelect {
                         router.route(to: \.homeSectionsSelector, $homeSections)
                     }
-            } header: {
-                L10n.home.text
             }
 
             Section {
-                Toggle("Remember layout", isOn: $rememberLibraryLayout)
+                Toggle("Remember Layout", isOn: $rememberLibraryLayout)
             } footer: {
                 Text("Remember layout for individual libraries")
             }
 
             Section {
-                Toggle("Remember sorting", isOn: $rememberLibrarySort)
+                Toggle("Remember Sorting", isOn: $rememberLibrarySort)
             } footer: {
                 Text("Remember sorting for individual libraries")
             }
 
-            Section {
+            // TODO: think of a better name
+            Section(L10n.episodeLandscapePoster) {
                 Toggle(L10n.seriesBackdrop, isOn: $useSeriesLandscapeBackdrop)
-            } header: {
-                // TODO: think of a better name
-                L10n.episodeLandscapePoster.text
             }
         }
         .navigationTitle(L10n.customize)

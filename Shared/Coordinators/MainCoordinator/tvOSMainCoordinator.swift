@@ -30,13 +30,7 @@ final class MainCoordinator: NavigationCoordinatable, Observable {
     @Root
     var selectUser = makeSelectUser
 
-    @Published
-    var mainTabCoordinator: MainTabCoordinator
-    @Published
-    var updateMainTab: Bool = false
-
     init() {
-        self.mainTabCoordinator = MainTabCoordinator()
         stack = NavigationStack(initial: \.loading)
 
         Task {
@@ -95,18 +89,10 @@ final class MainCoordinator: NavigationCoordinatable, Observable {
     }
 
     func makeMainTab() -> MainTabCoordinator {
-        mainTabCoordinator
+        MainTabCoordinator()
     }
 
     func makeSelectUser() -> NavigationViewCoordinator<SelectUserCoordinator> {
         NavigationViewCoordinator(SelectUserCoordinator())
-    }
-
-    func refreshMainTab() {
-        if updateMainTab {
-            mainTabCoordinator.refresh()
-            self.objectWillChange.send()
-            updateMainTab = false
-        }
     }
 }

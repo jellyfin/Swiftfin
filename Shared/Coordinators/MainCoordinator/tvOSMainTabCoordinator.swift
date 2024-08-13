@@ -133,7 +133,7 @@ final class MainTabCoordinator: TabCoordinatable {
             tabIcon
                 .accessibilityLabel(tabLabel.text)
             if sectionLabels && tabTitle {
-                tabLabel.text
+                Text(tabLabel)
             }
         }
     }
@@ -141,7 +141,7 @@ final class MainTabCoordinator: TabCoordinatable {
     static func makeChild() -> TabChild {
         @Default(.Customization.Home.homeSections)
         var homeSections
-        var activeSections: [AnyKeyPath] = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
+        let activeSections: [AnyKeyPath] = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
 
         return TabChild(startingItems: activeSections)
     }

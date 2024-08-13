@@ -18,9 +18,6 @@ import SwiftUI
 @main
 struct SwiftfinApp: App {
 
-    @StateObject
-    var mainCoordinator = MainCoordinator()
-
     init() {
 
         // CoreStore
@@ -59,9 +56,8 @@ struct SwiftfinApp: App {
 
     var body: some Scene {
         WindowGroup {
-            mainCoordinator
+            MainCoordinator()
                 .view()
-                .environmentObject(mainCoordinator)
                 .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
                     Defaults[.backgroundTimeStamp] = Date.now
                 }
@@ -74,9 +70,6 @@ struct SwiftfinApp: App {
                         Container.shared.currentUserSession.reset()
                         Notifications[.didSignOut].post()
                     }
-                }
-                .onAppear {
-                    mainCoordinator.refreshMainTab()
                 }
         }
     }

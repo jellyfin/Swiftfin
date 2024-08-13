@@ -108,6 +108,7 @@ final class MainTabCoordinator: TabCoordinatable {
         var homeSections
         var activeSections: [AnyKeyPath]
 
+        // Re-add the Home Tab if it's missing since that's where the settings live.
         if homeSections.contains(MainTabTypes.home) {
             activeSections = homeSections.compactMap(\.keyPath)
         } else {
