@@ -145,8 +145,4 @@ final class MainTabCoordinator: TabCoordinatable {
 
         return TabChild(startingItems: activeSections)
     }
-
-    func refresh() {
-        self.child = MainTabCoordinator.makeChild()
-    }
 }

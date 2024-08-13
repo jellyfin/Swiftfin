@@ -168,6 +168,11 @@ extension Defaults.Keys {
                 "homeSections",
                 default: [.home, .tvShows, .movies, .search, .media]
             )
+            #else
+            static let homeSections: Key<[MainTabTypes]> = UserKey(
+                "homeSections",
+                default: [.home, .search, .media]
+            )
             #endif
         }
 

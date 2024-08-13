@@ -68,6 +68,8 @@ struct CustomizeViewsSettings: View {
 
     @Default(.Customization.Home.homeLabels)
     private var homeLabels
+    @Default(.Customization.Home.homeSections)
+    private var homeSections
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -169,7 +171,10 @@ struct CustomizeViewsSettings: View {
 
                 Toggle("Show recently added", isOn: $showRecentlyAdded)
                 Toggle("Show Section Labels", isOn: $homeLabels)
-
+                ChevronButton("Sections")
+                    .onSelect {
+                        router.route(to: \.homeSectionsSelector, $homeSections)
+                    }
             } header: {
                 L10n.home.text
             }

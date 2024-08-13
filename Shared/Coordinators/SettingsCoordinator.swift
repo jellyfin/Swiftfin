@@ -33,7 +33,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var photoPicker = makePhotoPicker
     @Route(.push)
     var userProfile = makeUserProfileSettings
-
+    @Route(.push)
+    var homeSectionsSelector = makeHomeSectionsSelector
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
@@ -58,10 +59,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
-    @Route(.modal)
-    var homeSectionsSelector = makeHomeSectionsSelector
-    @Route(.modal)
-    var indicatorSettings = makeIndicatorSettings
     @Route(.modal)
     var log = makeLog
     @Route(.modal)
@@ -131,6 +128,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
     }
 
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: MainTabTypes.allCases)
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
@@ -171,28 +172,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             MaximumBitrateSettingsView()
-        }
-    }
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            OrderedSectionSelectorView(
-                title: "Active Filters",
-                selection: selection,
-                sources: ItemFilterType.allCases,
-                image: Image(systemName: "line.3.horizontal.decrease.circle")
-            )
-        }
-    }
-
-    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            OrderedSectionSelectorView(
-                title: "Home Sections",
-                selection: selection,
-                sources: MainTabTypes.allCases,
-                image: Image(systemName: "menubar.arrow.up.rectangle")
-            )
         }
     }
 

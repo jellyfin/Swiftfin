@@ -104,13 +104,15 @@ final class MainTabCoordinator: TabCoordinatable {
     }
 
     static func makeChild() -> TabChild {
+        @Default(.Customization.Home.homeSections)
+        var homeSections
+        var activeSections: [AnyKeyPath]
 
-        TabChild(
-            startingItems: [
-                \MainTabCoordinator.home,
-                \MainTabCoordinator.search,
-                \MainTabCoordinator.media,
-            ]
-        )
+        if homeSections.contains(MainTabTypes.home) {
+            activeSections = homeSections.compactMap(\.keyPath)
+        } else {
+            activeSections = [\MainTabCoordinator.home] + homeSections.compactMap(\.keyPath)
+        }
+        return TabChild(startingItems: activeSections)
     }
 }

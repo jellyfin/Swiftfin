@@ -13,62 +13,70 @@ import SwiftUI
 
 enum MainTabTypes: String, CaseIterable, Defaults.Serializable, Displayable {
 
+    #if os(tvOS)
     case boxSets
+    case movies
+    case tvShows
+    #endif
     case home
     case media
-    case movies
     case search
-    case tvShows
 
     var displayTitle: String {
         switch self {
+        #if os(tvOS)
         case .boxSets:
             return L10n.collections
+        case .movies:
+            return L10n.movies
+        case .tvShows:
+            return L10n.tvShows
+        #endif
         case .home:
             return L10n.home
         case .media:
             return L10n.media
-        case .movies:
-            return L10n.movies
         case .search:
             return L10n.search
-        case .tvShows:
-            return L10n.tvShows
         }
     }
 
     var displayIcon: Image {
         switch self {
+        #if os(tvOS)
         case .boxSets:
             return Image(systemName: "folder")
+        case .movies:
+            return Image(systemName: "film")
+        case .tvShows:
+            return Image(systemName: "tv")
+                .symbolRenderingMode(.monochrome)
+        #endif
         case .home:
             return Image(systemName: "house")
         case .media:
             return Image(systemName: "rectangle.stack")
-        case .movies:
-            return Image(systemName: "film")
         case .search:
             return Image(systemName: "magnifyingglass")
-        case .tvShows:
-            return Image(systemName: "tv")
-                .symbolRenderingMode(.monochrome)
         }
     }
 
     var keyPath: AnyKeyPath? {
         switch self {
+        #if os(tvOS)
         case .boxSets:
             return \MainTabCoordinator.boxSets
+        case .movies:
+            return \MainTabCoordinator.movies
+        case .tvShows:
+            return \MainTabCoordinator.tvShows
+        #endif
         case .home:
             return \MainTabCoordinator.home
         case .media:
             return \MainTabCoordinator.media
-        case .movies:
-            return \MainTabCoordinator.movies
         case .search:
             return \MainTabCoordinator.search
-        case .tvShows:
-            return \MainTabCoordinator.tvShows
         }
     }
 }

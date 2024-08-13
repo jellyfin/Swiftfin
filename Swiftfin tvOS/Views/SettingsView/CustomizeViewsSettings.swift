@@ -58,7 +58,18 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
-                Section {
+                Section(L10n.library) {
+
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
+
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                }
+
+                Section(L10n.missingItems) {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
@@ -87,33 +98,14 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
                 }
 
-                Section {
+                Section(L10n.home) {
 
                     Toggle("Show Section Labels", isOn: $homeLabels)
-                        .onChange(of: homeLabels) {
-                            mainCoordinator.updateMainTab = true
-                        }
 
                     ChevronButton("Sections")
                         .onSelect {
                             router.route(to: \.homeSectionsSelector, $homeSections)
                         }
-                        .onChange(of: homeSections) {
-                            mainCoordinator.updateMainTab = true
-                        }
-
-                } header: {
-                    L10n.home.text
-
-                Section(L10n.library) {
-
-                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
-
-                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-
-                    Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
             }
             .withDescriptionTopPadding()
