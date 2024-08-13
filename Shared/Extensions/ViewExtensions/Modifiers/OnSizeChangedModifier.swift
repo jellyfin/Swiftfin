@@ -37,7 +37,5 @@ struct EnvironmentModifier<Wrapped: View, Value>: ViewModifier {
 
     func body(content: Content) -> some View {
         wrapped(environmentValue)
-
-//        wrapped(content)
     }
 }

@@ -31,8 +31,16 @@ extension Backport where Content: View {
             content
                 .lineLimit(limit, reservesSpace: reservesSpace)
         } else {
+            // This may still not be enough and will probably have to
+            // use String.height in a frame as caller site
+            //
+            // The `.font` modifier must come after this modifier in
+            // order for the layout and content fonts to match
             ZStack(alignment: .top) {
-                Text(String(repeating: " \n", count: limit))
+                if reservesSpace {
+                    Text("A" + String(repeating: "A\nA", count: limit - 1))
+                        .hidden()
+                }
 
                 content
                     .lineLimit(limit)

@@ -19,6 +19,7 @@ struct TextPairView: View {
     var body: some View {
         HStack {
             Text(leading)
+                .foregroundColor(.primary)
 
             Spacer()
 

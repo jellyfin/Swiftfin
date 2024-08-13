@@ -11,6 +11,17 @@ import SwiftUI
 
 extension View {
 
+    // TODO: remove after removing support for iOS 15
+
+    @ViewBuilder
+    func iOS15<Content: View>(@ViewBuilder _ content: (Self) -> Content) -> some View {
+        if #available(iOS 16, *) {
+            self
+        } else {
+            content(self)
+        }
+    }
+
     func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
         modifier(DetectOrientation(orientation: orientation))
     }

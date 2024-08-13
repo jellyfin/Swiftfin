@@ -42,24 +42,27 @@ final class UserSession {
 extension Container {
     var currentUserSession: Factory<UserSession?> {
         self {
-            if let lastUserID = Defaults[.lastSignedInUserID],
-               let user = try? SwiftfinStore.dataStack.fetchOne(
-                   From<UserModel>().where(\.$id == lastUserID)
-               )
-            {
-                guard let server = user.server,
-                      let _ = SwiftfinStore.dataStack.fetchExisting(server)
-                else {
-                    fatalError("No associated server for last user")
-                }
+            guard let lastUserID = Defaults[.lastSignedInUserID] else { return nil }
 
-                return .init(
-                    server: server.state,
-                    user: user.state
-                )
+            guard let user = try? SwiftfinStore.dataStack.fetchOne(
+                From<UserModel>().where(\.$id == lastUserID)
+            ) else {
+                // had last user ID but no saved user
+                Defaults[.lastSignedInUserID] = nil
+
+                return nil
             }
 
-            return nil
+            guard let server = user.server,
+                  let _ = SwiftfinStore.dataStack.fetchExisting(server)
+            else {
+                fatalError("No associated server for last user")
+            }
+
+            return .init(
+                server: server.state,
+                user: user.state
+            )
         }.cached
     }
 }

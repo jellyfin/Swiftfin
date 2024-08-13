@@ -81,6 +81,8 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
         didSet {
             if #available(iOS 16, *) {
                 setNeedsUpdateOfSupportedInterfaceOrientations()
+            } else {
+                AppRotationUtility.lockOrientation(_orientations)
             }
         }
     }
@@ -111,3 +113,27 @@ public class UIPreferencesHostingController: UIHostingController<AnyView> {
 
     #endif
 }
+
+// TODO: remove after iOS 15 support removed
+
+#if os(iOS)
+enum AppRotationUtility {
+
+    static func lockOrientation(_ orientationLock: UIInterfaceOrientationMask) {
+
+        guard UIDevice.current.userInterfaceIdiom == .phone else { return }
+
+        let rotateOrientation: UIInterfaceOrientation
+
+        switch orientationLock {
+        case .landscape:
+            rotateOrientation = .landscapeRight
+        default:
+            rotateOrientation = .portrait
+        }
+
+        UIDevice.current.setValue(rotateOrientation.rawValue, forKey: "orientation")
+        UINavigationController.attemptRotationToDeviceOrientation()
+    }
+}
+#endif

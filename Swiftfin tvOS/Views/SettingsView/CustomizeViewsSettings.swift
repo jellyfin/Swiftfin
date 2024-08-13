@@ -46,9 +46,7 @@ struct CustomizeViewsSettings: View {
     private var showRecentlyAdded
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
-    @EnvironmentObject
-    private var mainCoordinator: MainCoordinator
+    private var router: CustomizeSettingsCoordinator.Router
 
     var body: some View {
         SplitFormWindowView()
@@ -62,30 +60,14 @@ struct CustomizeViewsSettings: View {
 
                 Section {
 
-                    Toggle("Cinematic Background", isOn: $cinematicBackground)
-
-                    Toggle("Random Image", isOn: $libraryRandomImage)
-
-                    Toggle("Show Favorites", isOn: $showFavorites)
-
-                    Toggle("Show Recently Added", isOn: $showRecentlyAdded)
-
-                } header: {
-                    L10n.library.text
-                }
-
-                Section {
-
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
 
                     Toggle(L10n.showMissingEpisodes, isOn: $shouldShowMissingEpisodes)
-                } header: {
-                    L10n.missingItems.text
                 }
 
-                Section {
+                Section(L10n.posters) {
 
-                    ChevronButton("Indicators")
+                    ChevronButton(L10n.indicators)
                         .onSelect {
                             router.route(to: \.indicatorSettings)
                         }
@@ -103,9 +85,6 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
 
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
-
-                } header: {
-                    Text("Posters")
                 }
 
                 Section {
@@ -125,6 +104,16 @@ struct CustomizeViewsSettings: View {
 
                 } header: {
                     L10n.home.text
+
+                Section(L10n.library) {
+
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
+
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
             }
             .withDescriptionTopPadding()

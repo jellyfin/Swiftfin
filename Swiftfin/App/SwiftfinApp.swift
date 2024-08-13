@@ -71,29 +71,47 @@ struct SwiftfinApp: App {
         }
     }
 
-    var body: some Scene {
-        WindowGroup {
+    // TODO: removed after iOS 15 support removed
+
+    @ViewBuilder
+    private var versionedView: some View {
+        if #available(iOS 16, *) {
             PreferencesView {
                 MainCoordinator()
                     .view()
                     .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
-            .ignoresSafeArea()
-            .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
-                Defaults[.backgroundTimeStamp] = Date.now
-            }
-            .onNotification(UIApplication.willEnterForegroundNotification) { _ in
-
-                // TODO: needs to check if any background playback is happening
-                //       - atow, background video playback isn't officially supported
-                let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
-
-                if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
-                    Defaults[.lastSignedInUserID] = nil
-                    Container.shared.currentUserSession.reset()
-                    Notifications[.didSignOut].post()
+        } else {
+            PreferencesView {
+                PreferencesView {
+                    MainCoordinator()
+                        .view()
+                        .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
                 }
+                .ignoresSafeArea()
             }
+        }
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            versionedView
+                .ignoresSafeArea()
+                .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
+                    Defaults[.backgroundTimeStamp] = Date.now
+                }
+                .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+
+                    // TODO: needs to check if any background playback is happening
+                    //       - atow, background video playback isn't officially supported
+                    let backgroundedInterval = Date.now.timeIntervalSince(Defaults[.backgroundTimeStamp])
+
+                    if backgroundedInterval > Defaults[.backgroundSignOutInterval] {
+                        Defaults[.lastSignedInUserID] = nil
+                        Container.shared.currentUserSession.reset()
+                        Notifications[.didSignOut].post()
+                    }
+                }
         }
     }
 }

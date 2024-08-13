@@ -43,7 +43,6 @@ struct SeriesEpisodeSelector: View {
             )
             .labelStyle(.episodeSelector)
         }
-        .fixedSize()
     }
 
     var body: some View {

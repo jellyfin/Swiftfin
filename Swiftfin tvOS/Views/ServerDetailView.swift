@@ -35,36 +35,61 @@ struct EditServerView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
+
                 Section(L10n.server) {
                     TextPairView(
                         leading: L10n.name,
                         trailing: viewModel.server.name
                     )
+                    .focusable(false)
                 }
 
-                Section("URL") {
-                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
-                        if url == viewModel.server.currentURL {
-                            Button(url.absoluteString, systemImage: "checkmark") {}
-                        } else {
-                            Button(url.absoluteString) {
+                Section(L10n.url) {
+                    Menu {
+                        ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
+                            Button(action: {
+                                guard viewModel.server.currentURL != url else { return }
                                 viewModel.setCurrentURL(to: url)
+                            }) {
+                                HStack {
+                                    Text(url.absoluteString)
+                                        .foregroundColor(.primary)
+
+                                    Spacer()
+
+                                    if viewModel.server.currentURL == url {
+                                        Image(systemName: "checkmark")
+                                            .font(.body.weight(.regular))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
                             }
+                        }
+                    } label: {
+                        HStack {
+                            Text(viewModel.server.currentURL.absoluteString)
+                                .foregroundColor(.primary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Spacer()
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.secondary)
                         }
                     }
                 }
 
                 if isEditing {
-                    ListRowButton("Delete") {
-                        isPresentingConfirmDeletion = true
+                    Section {
+                        ListRowButton(L10n.delete) {
+                            isPresentingConfirmDeletion = true
+                        }
+                        .foregroundStyle(.primary, .red.opacity(0.5))
                     }
-                    .foregroundStyle(.primary, .red.opacity(0.5))
                 }
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.server)
-            .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
-                Button("Delete", role: .destructive) {
+            .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
+                Button(L10n.delete, role: .destructive) {
                     viewModel.delete()
                     router.popLast()
                 }

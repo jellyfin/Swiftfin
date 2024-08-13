@@ -52,6 +52,7 @@ extension ChannelLibraryView {
                         .foregroundColor(.primary)
                         .backport
                         .lineLimit(1, reservesSpace: true)
+                        .font(.footnote.weight(.regular))
                 }
             }
             .buttonStyle(.plain)
