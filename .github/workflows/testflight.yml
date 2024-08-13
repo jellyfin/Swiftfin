@@ -63,8 +63,8 @@ jobs:
         issuerID:${{ secrets.APP_STORE_ISSUER_ID }} \
         keyContents:${{ secrets.APP_STORE_KEY_CONTENTS }} \
         scheme:${{ github.event.client_payload.scheme }} \
-        codeSign64:${{ github.event.client_payload.codeSign64 }} \
-        profileName64:${{ github.event.client_payload.profileName64 }} \
+        codeSign64:${{ secrets.CODE_SIGN_64 }} \
+        profileName64:${{ secrets.PROFILE_NAME_64 }} \
         xcodeVersion:${{ github.event.client_payload.xcodeVersion }} \
         build:${{ github.event.client_payload.build }} \
         version:${{ github.event.client_payload.version }}
