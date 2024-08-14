@@ -9,23 +9,43 @@
 import JellyfinAPI
 
 extension DeviceProfile {
+    static func build(
+        for videoPlayer: VideoPlayerType,
+        maxBitrate: Int? = nil,
+        useCustomDirectPlayProfile: CustomDeviceProfileSelection = .off,
+        useCustomTranscodingProfile: Bool = false
+    ) -> DeviceProfile {
 
-    static func build(for videoPlayer: VideoPlayerType, maxBitrate: Int? = nil) -> DeviceProfile {
+        var deviceProfile: DeviceProfile = .init()
 
-        var deviceProfile: DeviceProfile
+        deviceProfile.codecProfiles = videoPlayer.codecProfiles
+        deviceProfile.responseProfiles = videoPlayer.responseProfiles
 
-        switch videoPlayer {
-        case .native:
-            deviceProfile = nativeProfile()
-        case .swiftfin:
-            deviceProfile = swiftfinProfile()
+        if useCustomTranscodingProfile {
+            deviceProfile.transcodingProfiles = {
+                switch useCustomDirectPlayProfile {
+                case .replace:
+                    return customTranscodingProfile()
+                case .off:
+                    return videoPlayer.transcodingProfiles
+                case .add:
+                    return videoPlayer.transcodingProfiles + customTranscodingProfile()
+                }
+            }()
+        } else {
+            deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
         }
 
-        let codecProfiles: [CodecProfile] = sharedCodecProfiles()
-        let responseProfiles: [ResponseProfile] = [ResponseProfile(container: "m4v", mimeType: "video/mp4", type: .video)]
-
-        deviceProfile.codecProfiles = codecProfiles
-        deviceProfile.responseProfiles = responseProfiles
+        deviceProfile.directPlayProfiles = {
+            switch useCustomDirectPlayProfile {
+            case .replace:
+                return customDirectPlayProfile()
+            case .off:
+                return videoPlayer.directPlayProfiles
+            case .add:
+                return videoPlayer.directPlayProfiles + customDirectPlayProfile()
+            }
+        }()
 
         if let maxBitrate {
             deviceProfile.maxStaticBitrate = maxBitrate

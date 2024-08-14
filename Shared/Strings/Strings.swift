@@ -160,8 +160,16 @@ internal enum L10n {
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
+  /// The custom device profile will be used in addition to the default Swiftfin device profiles
+  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profile will be used in addition to the default Swiftfin device profiles")
+  /// Use the default Swiftfin device profiles
+  internal static let customDeviceProfileOff = L10n.tr("Localizable", "customDeviceProfileOff", fallback: "Use the default Swiftfin device profiles")
+  /// Exclusively use the custom device profile
+  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "Exclusively use the custom device profile")
   /// Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
+  /// Custom Profile
+  internal static let customProfile = L10n.tr("Localizable", "customProfile", fallback: "Custom Profile")
   /// Dark
   internal static let dark = L10n.tr("Localizable", "dark", fallback: "Dark")
   /// Default Scheme
@@ -172,6 +180,8 @@ internal enum L10n {
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
   /// Delivery
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
+  /// Device Profile
+  internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
   /// DIRECTOR
   internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
   /// Disabled
@@ -676,6 +686,8 @@ internal enum L10n {
   internal static let unplayed = L10n.tr("Localizable", "unplayed", fallback: "Unplayed")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
+  /// Use as Transcoding Profile
+  internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
   /// Use Primary Image
   internal static let usePrimaryImage = L10n.tr("Localizable", "usePrimaryImage", fallback: "Use Primary Image")
   /// Uses the primary image and hides the logo.

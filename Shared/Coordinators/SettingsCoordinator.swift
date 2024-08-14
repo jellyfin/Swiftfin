@@ -22,7 +22,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
-    var maximumBitrateSettings = makeMaximumBitrateSettings
+    var playbackQualitySettings = makePlaybackQualitySettings
+    @Route(.push)
+    var customProfileAudioSelector = makeCustomProfileAudioSelector
+    @Route(.push)
+    var customProfileVideoSelector = makeCustomProfileVideoSelector
+    @Route(.push)
+    var customProfileContainerSelector = makeCustomProfileContainerSelector
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
@@ -59,13 +65,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
+    var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
     var log = makeLog
     @Route(.modal)
     var serverDetail = makeServerDetail
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
-    var maximumBitrateSettings = makeMaximumBitrateSettings
+    var playbackQualitySettings = makePlaybackQualitySettings
     #endif
 
     #if os(iOS)
@@ -74,9 +82,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
         NativeVideoPlayerSettingsView()
     }
 
-    @ViewBuilder
-    func makeMaximumBitrateSettings() -> some View {
-        MaximumBitrateSettingsView()
+    func makePlaybackQualitySettings() -> some View {
+        PlaybackQualitySettingsView()
     }
 
     @ViewBuilder
@@ -134,6 +141,18 @@ final class SettingsCoordinator: NavigationCoordinatable {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
     }
 
+    func makeCustomProfileAudioSelector(selection: Binding<[AudioCodec]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
+    }
+
+    func makeCustomProfileVideoSelector(selection: Binding<[VideoCodec]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
+    }
+
+    func makeCustomProfileContainerSelector(selection: Binding<[MediaContainer]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
+    }
+
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
@@ -141,9 +160,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-
-    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<CustomizeSettingsCoordinator> {
-        NavigationViewCoordinator(CustomizeSettingsCoordinator())
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(
+            BasicNavigationViewCoordinator {
+                CustomizeViewsSettings()
+            }
+        )
     }
 
     func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -154,6 +176,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
+    func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            IndicatorSettingsView()
+        }
+    }
+
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditServerView(server: server)
@@ -161,13 +189,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
-        NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
+        NavigationViewCoordinator(
+            VideoPlayerSettingsCoordinator()
+        )
     }
 
-    func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            MaximumBitrateSettingsView()
-        }
+    func makePlaybackQualitySettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
+        NavigationViewCoordinator(
+            PlaybackQualitySettingsCoordinator()
+        )
     }
     #endif
 

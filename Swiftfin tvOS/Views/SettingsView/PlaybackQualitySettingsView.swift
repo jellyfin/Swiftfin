@@ -9,37 +9,92 @@
 import Defaults
 import SwiftUI
 
-struct MaximumBitrateSettingsView: View {
-    @Default(.VideoPlayer.appMaximumBitrate)
+struct PlaybackQualitySettingsView: View {
+    @Default(.VideoPlayer.Playback.appMaximumBitrate)
     private var appMaximumBitrate
-    @Default(.VideoPlayer.appMaximumBitrateTest)
+    @Default(.VideoPlayer.Playback.appMaximumBitrateTest)
     private var appMaximumBitrateTest
+
+    @Default(.VideoPlayer.Playback.customDeviceProfile)
+    private var customDeviceProfile
+    @Default(.VideoPlayer.Playback.customDeviceProfileTranscoding)
+    private var customDeviceProfileTranscoding
+    @Default(.VideoPlayer.Playback.customDeviceProfileAudio)
+    private var customDeviceProfileAudio
+    @Default(.VideoPlayer.Playback.customDeviceProfileVideo)
+    private var customDeviceProfileVideo
+    @Default(.VideoPlayer.Playback.customDeviceProfileContainers)
+    private var customDeviceProfileContainers
+
+    @EnvironmentObject
+    private var router: PlaybackQualitySettingsCoordinator.Router
 
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image(systemName: "network")
+                Image(systemName: "play.rectangle.on.rectangle")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 400)
             }
             .contentView {
-
                 Section {
-
-                    InlineEnumToggle(title: L10n.maximumBitrate, selection: $appMaximumBitrate)
+                    InlineEnumToggle(
+                        title: L10n.maximumBitrate,
+                        selection: $appMaximumBitrate
+                    )
 
                     if appMaximumBitrate == PlaybackBitrate.auto {
-                        InlineEnumToggle(title: L10n.testSize, selection: $appMaximumBitrateTest)
+                        InlineEnumToggle(
+                            title: L10n.testSize,
+                            selection: $appMaximumBitrateTest
+                        )
                     }
                 } header: {
-                    L10n.playbackQuality.text
+                    L10n.maximumBitrate.text
                 } footer: {
                     if appMaximumBitrate == PlaybackBitrate.auto {
-                        L10n.bitrateTestDescription.text
+                        Text(L10n.bitrateTestDescription)
+                    }
+                }
+                Section {
+                    InlineEnumToggle(
+                        title: L10n.customProfile,
+                        selection: $customDeviceProfile
+                    )
+
+                    if customDeviceProfile != CustomDeviceProfileSelection.off {
+
+                        Toggle(L10n.useAsTranscodingProfile, isOn: $customDeviceProfileTranscoding)
+
+                        ChevronButton(L10n.audio)
+                            .onSelect {
+                                router.route(to: \.customProfileAudioSelector, $customDeviceProfileAudio)
+                            }
+
+                        ChevronButton(L10n.video)
+                            .onSelect {
+                                router.route(to: \.customProfileVideoSelector, $customDeviceProfileVideo)
+                            }
+
+                        ChevronButton(L10n.containers)
+                            .onSelect {
+                                router.route(to: \.customProfileContainerSelector, $customDeviceProfileContainers)
+                            }
+                    }
+                } header: {
+                    L10n.deviceProfile.text
+                } footer: {
+                    switch customDeviceProfile {
+                    case .off:
+                        L10n.customDeviceProfileOff.text
+                    case .add:
+                        L10n.customDeviceProfileAdd.text
+                    case .replace:
+                        L10n.customDeviceProfileReplace.text
                     }
                 }
             }
-            .navigationTitle(L10n.maximumBitrate)
+            .navigationTitle(L10n.playbackQuality)
     }
 }

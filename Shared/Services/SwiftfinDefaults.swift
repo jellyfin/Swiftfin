@@ -213,6 +213,25 @@ extension Defaults.Keys {
             static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
+        enum Playback {
+            static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
+            static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
+            static let customDeviceProfile: Key<CustomDeviceProfileSelection> = UserKey("customDeviceProfile", default: .off)
+            static let customDeviceProfileTranscoding: Key<Bool> = UserKey("customDeviceProfileTranscoding", default: false)
+            static let customDeviceProfileAudio: Key<[AudioCodec]> = UserKey(
+                "customDeviceProfileAudio",
+                default: []
+            )
+            static let customDeviceProfileVideo: Key<[VideoCodec]> = UserKey(
+                "customDeviceProfileVideo",
+                default: []
+            )
+            static let customDeviceProfileContainers: Key<[MediaContainer]> = UserKey(
+                "customDeviceProfileContainers",
+                default: []
+            )
+        }
+
         enum Subtitle {
 
             static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)
