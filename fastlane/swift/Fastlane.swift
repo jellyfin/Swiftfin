@@ -190,7 +190,7 @@ public func appStoreBuildNumber(apiKeyPath: OptionalConfigValue<String?> = .fast
 
  - parameters:
    - keyId: The key ID
-   - issuerId: The issuer ID
+   - issuerId: The issuer ID. It can be nil if the key is individual API key
    - keyFilepath: The path to the key p8 file
    - keyContent: The content of the key p8 file
    - isKeyContentBase64: Whether :key_content is Base64 encoded or not
@@ -201,7 +201,7 @@ public func appStoreBuildNumber(apiKeyPath: OptionalConfigValue<String?> = .fast
  Load the App Store Connect API token to use in other fastlane tools and actions
  */
 public func appStoreConnectApiKey(keyId: String,
-                                  issuerId: String,
+                                  issuerId: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                                   keyFilepath: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                                   keyContent: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                                   isKeyContentBase64: OptionalConfigValue<Bool> = .fastlaneDefault(false),
@@ -210,7 +210,7 @@ public func appStoreConnectApiKey(keyId: String,
                                   setSpaceshipToken: OptionalConfigValue<Bool> = .fastlaneDefault(true))
 {
     let keyIdArg = RubyCommand.Argument(name: "key_id", value: keyId, type: nil)
-    let issuerIdArg = RubyCommand.Argument(name: "issuer_id", value: issuerId, type: nil)
+    let issuerIdArg = issuerId.asRubyArgument(name: "issuer_id", type: nil)
     let keyFilepathArg = keyFilepath.asRubyArgument(name: "key_filepath", type: nil)
     let keyContentArg = keyContent.asRubyArgument(name: "key_content", type: nil)
     let isKeyContentBase64Arg = isKeyContentBase64.asRubyArgument(name: "is_key_content_base64", type: nil)
@@ -674,7 +674,7 @@ public func appledoc(input: [String],
    - resetRatings: Reset the summary rating when you release a new version of the application
    - priceTier: The price tier of this application
    - appRatingConfigPath: Path to the app rating's config
-   - submissionInformation: Extra information for the submission (e.g. compliance specifications, IDFA settings)
+   - submissionInformation: Extra information for the submission (e.g. compliance specifications)
    - teamId: The ID of your App Store Connect team if you're in multiple teams
    - teamName: The name of your App Store Connect team if you're in multiple teams
    - devPortalTeamId: The short ID of your Developer Portal team, if you're in multiple teams. Different from your iTC team ID!
@@ -3714,7 +3714,7 @@ public func deleteKeychain(name: OptionalConfigValue<String?> = .fastlaneDefault
    - resetRatings: Reset the summary rating when you release a new version of the application
    - priceTier: The price tier of this application
    - appRatingConfigPath: Path to the app rating's config
-   - submissionInformation: Extra information for the submission (e.g. compliance specifications, IDFA settings)
+   - submissionInformation: Extra information for the submission (e.g. compliance specifications)
    - teamId: The ID of your App Store Connect team if you're in multiple teams
    - teamName: The name of your App Store Connect team if you're in multiple teams
    - devPortalTeamId: The short ID of your Developer Portal team, if you're in multiple teams. Different from your iTC team ID!
@@ -4096,7 +4096,7 @@ public func downloadAppPrivacyDetailsFromAppStore(username: String,
    - appIdentifier: The bundle identifier of your app
    - teamId: The ID of your App Store Connect team if you're in multiple teams
    - teamName: The name of your App Store Connect team if you're in multiple teams
-   - platform: The app platform for dSYMs you wish to download (ios, appletvos)
+   - platform: The app platform for dSYMs you wish to download (ios, xros, appletvos)
    - version: The app version for dSYMs you wish to download, pass in 'latest' to download only the latest build's dSYMs or 'live' to download only the live version dSYMs
    - buildNumber: The app build_number for dSYMs you wish to download
    - minVersion: The minimum app version for dSYMs you wish to download
@@ -9707,7 +9707,7 @@ public func setBuildNumberRepository(useHgRevisionNumber: OptionalConfigValue<Bo
    - changelog: Changelog text that should be uploaded to App Store Connect
    - teamId: The ID of your App Store Connect team if you're in multiple teams
    - teamName: The name of your App Store Connect team if you're in multiple teams
-   - platform: The platform of the app (ios, appletvos, mac)
+   - platform: The platform of the app (ios, appletvos, xros, mac)
 
  This is useful if you have only one changelog for all languages.
  You can store the changelog in `./changelog.txt` and it will automatically get loaded from there. This integration is useful if you support e.g. 10 languages and want to use the same "What's new"-text for all languages.
@@ -10938,6 +10938,7 @@ public func splunkmint(dsym: OptionalConfigValue<String?> = .fastlaneDefault(nil
    - xcprettyOutput: Specifies the output type for xcpretty. eg. 'test', or 'simple'
    - xcprettyArgs: Pass in xcpretty additional command line arguments (e.g. '--test --no-color' or '--tap --no-utf'), requires xcpretty_output to be specified also
    - verbose: Increase verbosity of informational output
+   - veryVerbose: Increase verbosity to include debug output
    - simulator: Specifies the simulator to pass for Swift Compiler (one of: iphonesimulator, macosx)
    - simulatorArch: Specifies the architecture of the simulator to pass for Swift Compiler (one of: x86_64, arm64). Requires the simulator option to be specified also, otherwise, it's ignored
  */
@@ -10953,6 +10954,7 @@ public func spm(command: String = "build",
                 xcprettyOutput: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                 xcprettyArgs: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                 verbose: OptionalConfigValue<Bool> = .fastlaneDefault(false),
+                veryVerbose: OptionalConfigValue<Bool> = .fastlaneDefault(false),
                 simulator: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                 simulatorArch: String = "arm64")
 {
@@ -10968,6 +10970,7 @@ public func spm(command: String = "build",
     let xcprettyOutputArg = xcprettyOutput.asRubyArgument(name: "xcpretty_output", type: nil)
     let xcprettyArgsArg = xcprettyArgs.asRubyArgument(name: "xcpretty_args", type: nil)
     let verboseArg = verbose.asRubyArgument(name: "verbose", type: nil)
+    let veryVerboseArg = veryVerbose.asRubyArgument(name: "very_verbose", type: nil)
     let simulatorArg = simulator.asRubyArgument(name: "simulator", type: nil)
     let simulatorArchArg = RubyCommand.Argument(name: "simulator_arch", value: simulatorArch, type: nil)
     let array: [RubyCommand.Argument?] = [commandArg,
@@ -10982,6 +10985,7 @@ public func spm(command: String = "build",
                                           xcprettyOutputArg,
                                           xcprettyArgsArg,
                                           verboseArg,
+                                          veryVerboseArg,
                                           simulatorArg,
                                           simulatorArchArg]
     let args: [RubyCommand.Argument] = array
@@ -12536,7 +12540,7 @@ public func uploadSymbolsToSentry(apiHost: String = "https://app.getsentry.com/a
    - resetRatings: Reset the summary rating when you release a new version of the application
    - priceTier: The price tier of this application
    - appRatingConfigPath: Path to the app rating's config
-   - submissionInformation: Extra information for the submission (e.g. compliance specifications, IDFA settings)
+   - submissionInformation: Extra information for the submission (e.g. compliance specifications)
    - teamId: The ID of your App Store Connect team if you're in multiple teams
    - teamName: The name of your App Store Connect team if you're in multiple teams
    - devPortalTeamId: The short ID of your Developer Portal team, if you're in multiple teams. Different from your iTC team ID!
@@ -13594,7 +13598,7 @@ public func xcov(workspace: OptionalConfigValue<String?> = .fastlaneDefault(nil)
                  coverallsServiceJobId: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                  coverallsRepoToken: OptionalConfigValue<String?> = .fastlaneDefault(nil),
                  xcconfig: OptionalConfigValue<String?> = .fastlaneDefault(nil),
-                 ideFoundationPath: String = "/Applications/Xcode-15.3.0.app/Contents/Developer/../Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation",
+                 ideFoundationPath: String = "/Applications/Xcode_15.4.app/Contents/Developer/../Frameworks/IDEFoundation.framework/Versions/A/IDEFoundation",
                  legacySupport: OptionalConfigValue<Bool> = .fastlaneDefault(false))
 {
     let workspaceArg = workspace.asRubyArgument(name: "workspace", type: nil)
@@ -13797,4 +13801,4 @@ public let snapshotfile: Snapshotfile = .init()
 
 // Please don't remove the lines below
 // They are used to detect outdated files
-// FastlaneRunnerAPIVersion [0.9.177]
+// FastlaneRunnerAPIVersion [0.9.180]
