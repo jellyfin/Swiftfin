@@ -76,7 +76,8 @@ extension SeriesEpisodeSelector {
                 focusGuide,
                 tag: "episodes",
                 onContentFocus: {
-                    if viewModel.elements.contains(where: { $0.id == lastFocusedEpisodeID }) {
+                    let episodeIDSet = Set(viewModel.elements.map(\.id))
+                    if let lastFocusedEpisodeID, episodeIDSet.contains(lastFocusedEpisodeID) {
                         focusedEpisodeID = lastFocusedEpisodeID
                     } else {
                         focusedEpisodeID = viewModel.elements.first?.id
