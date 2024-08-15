@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import AVFoundation
 import Combine
 import Defaults
 import Foundation
@@ -65,6 +66,12 @@ class VideoPlayerManager: ViewModel {
 
     private var currentProgressWorkItem: DispatchWorkItem?
     private var hasSentStart = false
+
+    override init() {
+        super.init()
+
+        setupHeadphoneNotifications()
+    }
 
     func selectNextViewModel() {
         guard let nextViewModel else { return }
@@ -284,5 +291,49 @@ class VideoPlayerManager: ViewModel {
 
             logger.debug("sent progress task")
         }
+    }
+
+    private func setupHeadphoneNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: nil
+        )
+    }
+
+    @objc
+    private func handleRouteChange(notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
+        else {
+            return
+        }
+
+        switch reason {
+        case .newDeviceAvailable: // New device found.
+            let session = AVAudioSession.sharedInstance()
+            if hasHeadphones(in: session.currentRoute) {
+                Timer
+                    .scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
+                        // this timer gives AirPods enough time to reconnect before playback resumes
+                        self?.proxy.play()
+                    }
+            }
+        case .oldDeviceUnavailable: // Old device removed.
+            if let previousRoute = userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
+                if hasHeadphones(in: previousRoute) {
+                    proxy.pause()
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    private func hasHeadphones(in routeDescription: AVAudioSessionRouteDescription) -> Bool {
+        // Filter the outputs to only those with a port type of headphones or bluetooth A2DP (for AirPods).
+        !routeDescription.outputs.filter { $0.portType == .headphones || $0.portType == .bluetoothA2DP }.isEmpty
     }
 }
