@@ -56,11 +56,15 @@ struct UserProfileSettingsView: View {
                         isPresentingProfileImageOptions = true
                     } label: {
                         ZStack(alignment: .bottomTrailing) {
-                            imageView
-                                .aspectRatio(contentMode: .fill)
-                                .clipShape(.circle)
-                                .frame(width: 150, height: 150)
-                                .shadow(radius: 5)
+                            // `.aspectRatio(contentMode: .fill)` on `imageView` alone
+                            // causes a crash on some iOS versions
+                            ZStack {
+                                imageView
+                            }
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(.circle)
+                            .frame(width: 150, height: 150)
+                            .shadow(radius: 5)
 
                             Image(systemName: "pencil.circle.fill")
                                 .resizable()
