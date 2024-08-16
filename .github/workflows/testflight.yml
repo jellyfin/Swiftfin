@@ -19,11 +19,12 @@ jobs:
       if: ${{ github.event.client_payload.hasCheckoutCommit }}
       run: |
         git checkout ${{ github.event.client_payload.commitSHA }}
-    
-    - run: 'echo "$SSH_KEY" > key'
-      shell: bash
-      env:
-      SSH_KEY: ${{secrets.P12_PASSWORD}}
+
+    - name: Install SwiftGen
+      run: brew install swiftgen
+
+    - name: Update Carthage
+      run: carthage update --use-xcframeworks --cache-builds
     
     - name: Install the Apple certificate and provisioning profile
       env:
