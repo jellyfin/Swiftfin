@@ -11,9 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
-
     struct EpisodeContent: View {
-
         @Default(.accentColor)
         private var accentColor
 
@@ -60,6 +58,8 @@ extension SeriesEpisodeSelector {
                     headerView
 
                     contentView
+                        // Removing the alignment below makes the text center
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                     L10n.seeMore.text
                         .font(.caption.weight(.light))
@@ -73,7 +73,6 @@ extension SeriesEpisodeSelector {
 }
 
 extension SeriesEpisodeSelector.EpisodeContent {
-
     init(
         subHeader: String,
         header: String,
