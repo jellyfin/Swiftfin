@@ -75,14 +75,7 @@ extension SeriesEpisodeSelector {
             .focusGuide(
                 focusGuide,
                 tag: "episodes",
-                onContentFocus: {
-                    let episodeIDSet = Set(viewModel.elements.map(\.id))
-                    if let lastFocusedEpisodeID, episodeIDSet.contains(lastFocusedEpisodeID) {
-                        focusedEpisodeID = lastFocusedEpisodeID
-                    } else {
-                        focusedEpisodeID = viewModel.elements.first?.id
-                    }
-                },
+                onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
                 top: "seasons"
             )
             .onChange(of: viewModel) { _, newValue in
@@ -91,6 +84,11 @@ extension SeriesEpisodeSelector {
             .onChange(of: focusedEpisodeID) { _, newValue in
                 guard let newValue else { return }
                 lastFocusedEpisodeID = newValue
+            }
+            .onChange(of: viewModel.state) { _, newValue in
+                if newValue == .content {
+                    lastFocusedEpisodeID = viewModel.elements.first?.id
+                }
             }
         }
     }
