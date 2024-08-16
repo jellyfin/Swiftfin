@@ -61,7 +61,7 @@ struct UserProfileSettingsView: View {
                             ZStack {
                                 imageView
                             }
-                            .aspectRatio(contentMode: .fill)
+                            .aspectRatio(1, contentMode: .fill)
                             .clipShape(.circle)
                             .frame(width: 150, height: 150)
                             .shadow(radius: 5)
