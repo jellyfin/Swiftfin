@@ -31,14 +31,9 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section {
-                CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
+                InlineEnumToggle(title: L10n.playbackButtons, selection: $playbackButtonType)
 
-                Toggle(isOn: $showJumpButtons) {
-                    HStack {
-                        Image(systemName: "goforward")
-                        Text(L10n.jump)
-                    }
-                }
+                Toggle(L10n.jump, isOn: $showJumpButtons)
 
                 ChevronButton(L10n.barButtons)
                     .onSelect {
@@ -54,10 +49,10 @@ extension VideoPlayerSettingsView {
             } footer: {
                 L10n.buttonsDescription.text
             }
-            .onChange(of: barActionButtons) { newValue in
+            .onChange(of: barActionButtons) { _, newValue in
                 autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)
             }
-            .onChange(of: menuActionButtons) { newValue in
+            .onChange(of: menuActionButtons) { _, newValue in
                 autoPlayEnabled = newValue.contains(.autoPlay) || barActionButtons.contains(.autoPlay)
             }
         }

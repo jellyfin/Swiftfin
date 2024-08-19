@@ -62,11 +62,6 @@ struct SettingsView: View {
                     selection: $videoPlayerType
                 )
 
-                ChevronButton(L10n.nativePlayer)
-                    .onSelect {
-                        router.route(to: \.nativePlayerSettings)
-                    }
-
                 ChevronButton(L10n.videoPlayer)
                     .onSelect {
                         router.route(to: \.videoPlayerSettings)

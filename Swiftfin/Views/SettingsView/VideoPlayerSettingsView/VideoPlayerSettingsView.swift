@@ -10,53 +10,33 @@ import Defaults
 import SwiftUI
 
 struct VideoPlayerSettingsView: View {
-
-    @Default(.VideoPlayer.jumpBackwardLength)
-    private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
-    private var jumpForwardLength
-    @Default(.VideoPlayer.resumeOffset)
-    private var resumeOffset
+    @Default(.VideoPlayer.videoPlayerType)
+    private var videoPlayerType
 
     @EnvironmentObject
     private var router: VideoPlayerSettingsCoordinator.Router
 
     var body: some View {
         Form {
+            switch videoPlayerType {
+            case .native:
+                ResumeOffsetSection()
 
-            ChevronButton(L10n.gestures)
-                .onSelect {
-                    router.route(to: \.gestureSettings)
-                }
+            case .swiftfin:
+                PlayerControlsSection()
 
-            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+                ResumeOffsetSection()
 
-            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+                ButtonSection()
 
-            Section {
+                SliderSection()
 
-                BasicStepper(
-                    title: L10n.resumeOffset,
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1
-                )
-                .valueFormatter {
-                    $0.secondLabel
-                }
-            } footer: {
-                Text(L10n.resumeOffsetDescription)
+                SubtitleSection()
+
+                TimestampSection()
+
+                TransitionSection()
             }
-
-            ButtonSection()
-
-            SliderSection()
-
-            SubtitleSection()
-
-            TimestampSection()
-
-            TransitionSection()
         }
         .navigationTitle(L10n.videoPlayer)
     }

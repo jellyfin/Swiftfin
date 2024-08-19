@@ -23,20 +23,23 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section {
+
                 ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
                         router.route(to: \.fontPicker, $subtitleFontName)
                     }
 
-                BasicStepper(
-                    title: L10n.subtitleSize,
-                    value: $subtitleSize,
-                    range: 8 ... 24,
-                    step: 1
-                )
+                // Leaving this comment since this isn't tvOS compatible. Just in case we want this later.
+                /* ColorPicker(selection: $subtitleColor) {
+                     Text(L10n.subtitleColor)
+                 } */
 
-                ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text(L10n.subtitleColor)
+                ChevronButton(
+                    L10n.subtitleSize,
+                    subtitle: subtitleSize.description
+                )
+                .onSelect {
+                    router.route(to: \.subtitleSize, $subtitleSize)
                 }
             } header: {
                 L10n.subtitle.text

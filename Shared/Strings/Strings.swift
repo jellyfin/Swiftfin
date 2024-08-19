@@ -98,6 +98,8 @@ internal enum L10n {
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and Features")
   /// Buttons
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
+  /// Customize which playback buttons are active and adjust their size
+  internal static let buttonsDescription = L10n.tr("Localizable", "buttonsDescription", fallback: "Customize which playback buttons are active and adjust their size")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
   /// Cannot connect to host
@@ -384,8 +386,8 @@ internal enum L10n {
   }
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
-  /// Pause on background
-  internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
+  /// Pause on Background
+  internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on Background")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
   /// Play
@@ -404,6 +406,10 @@ internal enum L10n {
   internal static let playbackSpeed = L10n.tr("Localizable", "playbackSpeed", fallback: "Playback Speed")
   /// Played
   internal static let played = L10n.tr("Localizable", "played", fallback: "Played")
+  /// Player Controls
+  internal static let playerControls = L10n.tr("Localizable", "playerControls", fallback: "Player Controls")
+  /// Customize playback controls and gestures
+  internal static let playerControlsDescription = L10n.tr("Localizable", "playerControlsDescription", fallback: "Customize playback controls and gestures")
   /// Player Gestures Lock Gesture Enabled
   internal static let playerGesturesLockGestureEnabled = L10n.tr("Localizable", "playerGesturesLockGestureEnabled", fallback: "Player Gestures Lock Gesture Enabled")
   /// Play From Beginning
@@ -412,8 +418,8 @@ internal enum L10n {
   internal static let playNext = L10n.tr("Localizable", "playNext", fallback: "Play Next")
   /// Play Next Item
   internal static let playNextItem = L10n.tr("Localizable", "playNextItem", fallback: "Play Next Item")
-  /// Play on active
-  internal static let playOnActive = L10n.tr("Localizable", "playOnActive", fallback: "Play on active")
+  /// Play on Active
+  internal static let playOnActive = L10n.tr("Localizable", "playOnActive", fallback: "Play on Active")
   /// Play Previous Item
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play Previous Item")
   /// Posters
@@ -498,8 +504,8 @@ internal enum L10n {
   internal static let resume5SecondOffset = L10n.tr("Localizable", "resume5SecondOffset", fallback: "Resume 5 Second Offset")
   /// Resume Offset
   internal static let resumeOffset = L10n.tr("Localizable", "resumeOffset", fallback: "Resume Offset")
-  /// Resume content seconds before the recorded resume time
-  internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Resume content seconds before the recorded resume time")
+  /// Set the media playback to rewind by the offset amount in seconds when resuming
+  internal static let resumeOffsetDescription = L10n.tr("Localizable", "resumeOffsetDescription", fallback: "Set the media playback to rewind by the offset amount in seconds when resuming")
   /// Resume Offset
   internal static let resumeOffsetTitle = L10n.tr("Localizable", "resumeOffsetTitle", fallback: "Resume Offset")
   /// Retrieving media information
@@ -598,6 +604,8 @@ internal enum L10n {
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slider Color
   internal static let sliderColor = L10n.tr("Localizable", "sliderColor", fallback: "Slider Color")
+  /// Customize the timeline slider for media playback
+  internal static let sliderDescription = L10n.tr("Localizable", "sliderDescription", fallback: "Customize the timeline slider for media playback")
   /// Slider Type
   internal static let sliderType = L10n.tr("Localizable", "sliderType", fallback: "Slider Type")
   /// Smaller
@@ -622,6 +630,8 @@ internal enum L10n {
   internal static let subtitle = L10n.tr("Localizable", "subtitle", fallback: "Subtitle")
   /// Subtitle Color
   internal static let subtitleColor = L10n.tr("Localizable", "subtitleColor", fallback: "Subtitle Color")
+  /// Customize text-based subtitles font and color
+  internal static let subtitleDescription = L10n.tr("Localizable", "subtitleDescription", fallback: "Customize text-based subtitles font and color")
   /// Subtitle Font
   internal static let subtitleFont = L10n.tr("Localizable", "subtitleFont", fallback: "Subtitle Font")
   /// Subtitle Offset
@@ -646,6 +656,8 @@ internal enum L10n {
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
   /// Timestamp
   internal static let timestamp = L10n.tr("Localizable", "timestamp", fallback: "Timestamp")
+  /// Adjust how the current timestamp is shown during playback
+  internal static let timestampDescription = L10n.tr("Localizable", "timestampDescription", fallback: "Adjust how the current timestamp is shown during playback")
   /// Timestamp Type
   internal static let timestampType = L10n.tr("Localizable", "timestampType", fallback: "Timestamp Type")
   /// Too Many Redirects
@@ -654,6 +666,8 @@ internal enum L10n {
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing Value")
   /// Transition
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
+  /// Configure how Swiftfin manages transitions between foreground and background while media is playing
+  internal static let transitionDescription = L10n.tr("Localizable", "transitionDescription", fallback: "Configure how Swiftfin manages transitions between foreground and background while media is playing")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain", fallback: "Try again")
   /// TV Shows

@@ -22,9 +22,9 @@ extension VideoPlayerSettingsView {
             Section {
                 Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
-                CaseIterablePicker(L10n.timestampType, selection: $timestampType)
+                InlineEnumToggle(title: L10n.timestampType, selection: $timestampType)
 
-                CaseIterablePicker(L10n.trailingValue, selection: $trailingTimestampType)
+                InlineEnumToggle(title: L10n.trailingValue, selection: $trailingTimestampType)
             } header: {
                 L10n.timestamp.text
             } footer: {

@@ -20,8 +20,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var log = makeLog
     @Route(.push)
-    var nativePlayerSettings = makeNativePlayerSettings
-    @Route(.push)
     var maximumBitrateSettings = makeMaximumBitrateSettings
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
@@ -69,10 +67,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(iOS)
-    @ViewBuilder
-    func makeNativePlayerSettings() -> some View {
-        NativeVideoPlayerSettingsView()
-    }
 
     @ViewBuilder
     func makeMaximumBitrateSettings() -> some View {

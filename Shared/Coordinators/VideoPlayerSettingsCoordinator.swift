@@ -18,27 +18,42 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.push)
     var fontPicker = makeFontPicker
-
-    #if os(iOS)
-    @Route(.push)
-    var gestureSettings = makeGestureSettings
     @Route(.push)
     var actionButtonSelector = makeActionButtonSelector
+
+    #if os(tvOS)
+    @Route(.push)
+    var resumeOffset = makeResumeOffset
+    @Route(.push)
+    var subtitleSize = makeSubtitleSize
+    #elseif os(iOS)
+    @Route(.push)
+    var gestureSettings = makeGestureSettings
     #endif
 
     func makeFontPicker(selection: Binding<String>) -> some View {
         FontPickerView(selection: selection)
     }
 
-    #if os(iOS)
+    func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
+        ActionButtonSelectorView(selection: selectedButtonsBinding)
+    }
+
+    #if os(tvOS)
+
+    func makeResumeOffset(selection: Binding<Int>) -> some View {
+        ResumeOffsetPickerView(selection: selection)
+    }
+
+    func makeSubtitleSize(selection: Binding<Int>) -> some View {
+        SubtitleSizePickerView(selection: selection)
+    }
+
+    #elseif os(iOS)
 
     @ViewBuilder
     func makeGestureSettings() -> some View {
         GestureSettingsView()
-    }
-
-    func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
-        ActionButtonSelectorView(selection: selectedButtonsBinding)
     }
     #endif
 
