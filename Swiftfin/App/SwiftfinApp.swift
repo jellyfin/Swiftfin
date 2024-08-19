@@ -19,8 +19,8 @@ import SwiftUI
 @main
 struct SwiftfinApp: App {
 
-    @UIApplicationDelegateAdaptor(AppDelegate.self)
-    var appDelegate
+//    @UIApplicationDelegateAdaptor(AppDelegate.self)
+//    var appDelegate
 
     @StateObject
     private var valueObservation = ValueObservation()

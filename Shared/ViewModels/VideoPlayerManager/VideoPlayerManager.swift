@@ -73,7 +73,12 @@ class VideoPlayerManager: ViewModel {
     override init() {
         super.init()
 
-        setupControlListeners()
+        try! IOSNowPlayable.shared.handleNowPlayableConfiguration(
+            commands: IOSNowPlayable.shared.defaultRegisteredCommands,
+            disabledCommands: [],
+            commandHandler: handleCommand(command:event:),
+            interruptionHandler: { _ in }
+        )
     }
 
     func selectNextViewModel() {
@@ -99,15 +104,44 @@ class VideoPlayerManager: ViewModel {
         if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
             subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
         }
+
+        IOSNowPlayable.shared.setNowPlayingPlaybackInfo(
+            .init(
+                rate: 1.0,
+                position: Float(currentProgressHandler.seconds),
+                duration: Float(currentViewModel.item.runTimeSeconds),
+                currentLanguageOptions: [],
+                availableLanguageOptionGroups: []
+            )
+        )
     }
 
     func onStateUpdated(newState: VLCVideoPlayer.State) {
         guard state != newState else { return }
         state = newState
 
+        let a = MPMediaItemArtwork(boundsSize: .init(width: 170, height: 300)) { size in
+            UIImage(blurHash: self.currentViewModel.item.blurHash(.primary) ?? "", size: size)!
+        }
+
+        IOSNowPlayable.shared.handleNowPlayableItemChange(
+            metadata: .init(
+                assetURL: nil,
+                mediaType: .video,
+                isLiveStream: false,
+                title: currentViewModel.item.displayTitle,
+                artist: nil,
+                artwork: a,
+                albumArtist: nil,
+                albumTitle: nil
+            )
+        )
+
         if !hasSentStart, newState == .playing {
             hasSentStart = true
             sendStartReport()
+
+            try! IOSNowPlayable.shared.handleNowPlayableSessionStart()
         }
 
         if hasSentStart, newState == .paused {
@@ -117,6 +151,8 @@ class VideoPlayerManager: ViewModel {
 
         if newState == .stopped || newState == .ended {
             sendStopReport()
+
+            IOSNowPlayable.shared.handleNowPlayableSessionEnd()
         }
     }
 
@@ -296,17 +332,25 @@ class VideoPlayerManager: ViewModel {
         }
     }
 
-    func setupControlListeners() {
-        commandCenter.pauseCommand.addTarget { [weak self] _ in
-            self?.proxy.pause()
-
-            return .success
+    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+        switch command {
+        case .togglePausePlay:
+            if state == .playing {
+                proxy.pause()
+            } else {
+                proxy.play()
+            }
+        case .play:
+            proxy.play()
+        case .pause:
+            proxy.pause()
+        case let .skipForward(interval):
+            proxy.jumpForward(Int(truncating: interval))
+        case let .skipBackward(interval):
+            proxy.jumpBackward(Int(truncating: interval))
+        default: ()
         }
 
-        commandCenter.playCommand.addTarget { [weak self] _ in
-            self?.proxy.play()
-
-            return .success
-        }
+        return .success
     }
 }
