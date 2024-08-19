@@ -11,6 +11,7 @@ import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
+import MediaPlayer
 import UIKit
 import VLCUI
 
@@ -67,10 +68,12 @@ class VideoPlayerManager: ViewModel {
     private var currentProgressWorkItem: DispatchWorkItem?
     private var hasSentStart = false
 
+    private let commandCenter = MPRemoteCommandCenter.shared()
+
     override init() {
         super.init()
 
-        setupHeadphoneNotifications()
+        setupControlListeners()
     }
 
     func selectNextViewModel() {
@@ -293,47 +296,17 @@ class VideoPlayerManager: ViewModel {
         }
     }
 
-    private func setupHeadphoneNotifications() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleRouteChange),
-            name: AVAudioSession.routeChangeNotification,
-            object: nil
-        )
-    }
+    func setupControlListeners() {
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            self?.proxy.pause()
 
-    @objc
-    private func handleRouteChange(notification: Notification) {
-        guard let userInfo = notification.userInfo,
-              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
-              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue)
-        else {
-            return
+            return .success
         }
 
-        switch reason {
-        case .newDeviceAvailable: // New device found.
-            let session = AVAudioSession.sharedInstance()
-            if hasHeadphones(in: session.currentRoute) {
-                Timer
-                    .scheduledTimer(withTimeInterval: 3.0, repeats: false) { [weak self] _ in
-                        // this timer gives AirPods enough time to reconnect before playback resumes
-                        self?.proxy.play()
-                    }
-            }
-        case .oldDeviceUnavailable: // Old device removed.
-            if let previousRoute = userInfo[AVAudioSessionRouteChangePreviousRouteKey] as? AVAudioSessionRouteDescription {
-                if hasHeadphones(in: previousRoute) {
-                    proxy.pause()
-                }
-            }
-        default:
-            break
-        }
-    }
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            self?.proxy.play()
 
-    private func hasHeadphones(in routeDescription: AVAudioSessionRouteDescription) -> Bool {
-        // Filter the outputs to only those with a port type of headphones or bluetooth A2DP (for AirPods).
-        !routeDescription.outputs.filter { $0.portType == .headphones || $0.portType == .bluetoothA2DP }.isEmpty
+            return .success
+        }
     }
 }
