@@ -75,9 +75,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
 
-        // enable pip
-        allowsPictureInPicturePlayback = true
-
         rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
             guard let newValue = change.newValue else { return }
 
