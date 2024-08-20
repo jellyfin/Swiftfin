@@ -11,6 +11,7 @@ import Factory
 import Files
 import Foundation
 import JellyfinAPI
+import MediaPlayer
 import UIKit
 import VLCUI
 
@@ -28,6 +29,26 @@ class VideoPlayerViewModel: ViewModel {
     let chapters: [ChapterInfo.FullInfo]
     let streamType: StreamType
 
+    private(set) var nowPlayingImage: UIImage?
+
+    var nowPlayingMetadata: NowPlayableStaticMetadata {
+        let artwork = MPMediaItemArtwork(boundsSize: .init(width: 170, height: 300)) { size in
+            if let nowPlayingImage = self.nowPlayingImage {
+                return nowPlayingImage
+            } else if let blurHash = self.item.blurHash(.primary) {
+                return UIImage(blurHash: blurHash, size: size)!
+            } else {
+                return UIImage(blurHash: "", size: size)!
+            }
+        }
+
+        return .init(
+            mediaType: .audio,
+            title: item.displayTitle,
+            artwork: artwork
+        )
+    }
+
     var hlsPlaybackURL: URL {
 
         let parameters = Paths.GetMasterHlsVideoPlaylistParameters(
@@ -42,11 +63,13 @@ class VideoPlayerViewModel: ViewModel {
                 .compactMap(\.codec)
                 .joined(separator: ","),
             isBreakOnNonKeyFrames: true,
+            subtitleMethod: .hls,
             requireAvc: false,
             transcodingMaxAudioChannels: 8,
             videoCodec: videoStreams
                 .compactMap(\.codec)
                 .joined(separator: ","),
+            subtitleCodec: "srt",
             videoStreamIndex: videoStreams.first?.index,
             enableAdaptiveBitrateStreaming: true
         )
@@ -55,11 +78,12 @@ class VideoPlayerViewModel: ViewModel {
             parameters: parameters
         )
 
-        // TODO: don't force unwrap
-        let hlsStreamComponents = URLComponents(url: userSession.client.fullURL(with: request)!, resolvingAgainstBaseURL: false)!
+        return URLComponents(
+            url: userSession.client.fullURL(with: request)!,
+            resolvingAgainstBaseURL: false
+        )!
             .addingQueryItem(key: "api_key", value: userSession.user.accessToken)
-
-        return hlsStreamComponents.url!
+            .url!
     }
 
     // TODO: should start time be from the media source instead?
@@ -67,9 +91,7 @@ class VideoPlayerViewModel: ViewModel {
         let configuration = VLCVideoPlayer.Configuration(url: playbackURL)
         configuration.autoPlay = true
         configuration.startTime = .seconds(max(0, item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]))
-        if self.audioStreams[0].path != nil {
-            configuration.audioIndex = .absolute(selectedAudioStreamIndex)
-        }
+        configuration.audioIndex = .absolute(selectedAudioStreamIndex)
         configuration.subtitleIndex = .absolute(selectedSubtitleStreamIndex)
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
@@ -116,6 +138,25 @@ class VideoPlayerViewModel: ViewModel {
 
     func chapter(from seconds: Int) -> ChapterInfo.FullInfo? {
         chapters.first(where: { $0.secondsRange.contains(seconds) })
+    }
+
+    func getNowPlayingImage(_ completion: @escaping () -> Void) {
+
+        let imageSource = item.portraitImageSources(maxWidth: 200)
+        guard let url = imageSource.compacted(using: \.url).first?.url else { return }
+
+        // TODO: look at Nuke loading for cache use
+        DispatchQueue.global().async { [weak self] in
+            if let data = try? Data(contentsOf: url) {
+                if let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+                        self.nowPlayingImage = image
+                        completion()
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -73,6 +73,9 @@ struct LiveVideoPlayer: View {
     @State
     private var subtitleOffset: Int = 0
 
+    @StateObject
+    private var vlcUIProxy: VLCVideoPlayer.Proxy = .init()
+
     private let gestureStateHandler: VideoPlayer.GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
 
@@ -83,7 +86,7 @@ struct LiveVideoPlayer: View {
             .content {
                 ZStack {
                     VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
-                        .proxy(videoPlayerManager.proxy)
+                        .proxy(vlcUIProxy)
                         .onTicksUpdated { ticks, _ in
 
                             let newSeconds = ticks / 1000
@@ -134,7 +137,7 @@ struct LiveVideoPlayer: View {
                         .environmentObject(videoPlayerManager)
                         .environmentObject(videoPlayerManager.currentProgressHandler)
                         .environmentObject(videoPlayerManager.currentViewModel!)
-                        .environmentObject(videoPlayerManager.proxy)
+                        .environmentObject(vlcUIProxy)
                         .environment(\.aspectFilled, $isAspectFilled)
                         .environment(\.isPresentingOverlay, $isPresentingOverlay)
                         .environment(\.isScrubbing, $isScrubbing)
@@ -184,7 +187,7 @@ struct LiveVideoPlayer: View {
         .statusBar(hidden: true)
         .ignoresSafeArea()
         .onChange(of: audioOffset) { newValue in
-            videoPlayerManager.proxy.setAudioDelay(.ticks(newValue))
+            vlcUIProxy.setAudioDelay(.ticks(newValue))
         }
         .onChange(of: isGestureLocked) { newValue in
             if newValue {
@@ -195,24 +198,24 @@ struct LiveVideoPlayer: View {
         }
         .onChange(of: isScrubbing) { newValue in
             guard !newValue else { return }
-            videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
         }
         .onChange(of: subtitleColor) { newValue in
-            videoPlayerManager.proxy.setSubtitleColor(.absolute(newValue.uiColor))
+            vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
         }
         .onChange(of: subtitleFontName) { newValue in
-            videoPlayerManager.proxy.setSubtitleFont(newValue)
+            vlcUIProxy.setSubtitleFont(newValue)
         }
         .onChange(of: subtitleOffset) { newValue in
-            videoPlayerManager.proxy.setSubtitleDelay(.ticks(newValue))
+            vlcUIProxy.setSubtitleDelay(.ticks(newValue))
         }
         .onChange(of: subtitleSize) { newValue in
-            videoPlayerManager.proxy.setSubtitleSize(.absolute(24 - newValue))
+            vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
         }
         .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
             guard let newViewModel else { return }
 
-            videoPlayerManager.proxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
+            vlcUIProxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
 
             isAspectFilled = false
             audioOffset = 0
@@ -228,6 +231,11 @@ extension LiveVideoPlayer {
             currentProgressHandler: manager.currentProgressHandler,
             videoPlayerManager: manager
         )
+
+        let swiftfinProxy = VLCVideoPlayerProxy()
+        swiftfinProxy.vlcUIProxy = vlcUIProxy
+
+        manager.proxy = swiftfinProxy
     }
 }
 
@@ -356,12 +364,12 @@ extension LiveVideoPlayer {
         if scale > 1, !isAspectFilled {
             isAspectFilled = true
             UIView.animate(withDuration: 0.2) {
-                videoPlayerManager.proxy.aspectFill(1)
+                vlcUIProxy.aspectFill(1)
             }
         } else if scale < 1, isAspectFilled {
             isAspectFilled = false
             UIView.animate(withDuration: 0.2) {
-                videoPlayerManager.proxy.aspectFill(0)
+                vlcUIProxy.aspectFill(0)
             }
         }
     }
@@ -459,7 +467,7 @@ extension LiveVideoPlayer {
         updateViewProxy.present(systemName: "speedometer", title: clampedPlaybackSpeed.rateLabel)
 
         playbackSpeed = clampedPlaybackSpeed
-        videoPlayerManager.proxy.setRate(.absolute(Float(clampedPlaybackSpeed)))
+        videoPlayerManager.proxy.setRate(Float(clampedPlaybackSpeed))
     }
 
     private func scrubAction(

@@ -163,7 +163,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
                 let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
                 videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
@@ -183,7 +183,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
                 let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
                 videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
@@ -198,7 +198,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 let newPlaybackSpeed = PlaybackSpeed.one
 
                 videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
                 updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }

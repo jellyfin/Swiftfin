@@ -16,6 +16,8 @@ extension VideoPlayer.Overlay {
     struct TopBarView: View {
 
         @EnvironmentObject
+        private var manager: VideoPlayerManager
+        @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
@@ -29,6 +31,7 @@ extension VideoPlayer.Overlay {
                 HStack(alignment: .center) {
                     Button {
                         videoPlayerProxy.stop()
+                        manager.nowPlayable.handleNowPlayableSessionEnd()
                         router.dismissCoordinator()
                     } label: {
                         Image(systemName: "xmark")

@@ -9,7 +9,7 @@
 import Foundation
 import MediaPlayer
 
-enum NowPlayableCommand {
+enum NowPlayableCommand: CaseIterable {
 
     // Play/Pause
     case pause
@@ -27,8 +27,8 @@ enum NowPlayableCommand {
     case changePlaybackRate
     case seekBackward
     case seekForward
-    case skipBackward(NSNumber)
-    case skipForward(NSNumber)
+    case skipBackward
+    case skipForward
     case changePlaybackPosition
 
     // Like/Dislike
@@ -46,8 +46,8 @@ enum NowPlayableCommand {
     // The underlying `MPRemoteCommandCenter` command for this `NowPlayable` command.
 
     var remoteCommand: MPRemoteCommand {
-
         let remoteCommandCenter = MPRemoteCommandCenter.shared()
+
         switch self {
         case .pause:
             return remoteCommandCenter.pauseCommand
@@ -102,13 +102,14 @@ enum NowPlayableCommand {
 
     func addHandler(_ handler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus) {
         switch self {
-        case let .skipBackward(interval):
-            MPRemoteCommandCenter.shared().skipBackwardCommand.preferredIntervals = [interval]
-        case let .skipForward(interval):
-            MPRemoteCommandCenter.shared().skipForwardCommand.preferredIntervals = [interval]
-        default:
-            remoteCommand.addTarget { handler(self, $0) }
+        case .skipBackward:
+            MPRemoteCommandCenter.shared().skipBackwardCommand.preferredIntervals = [15.0]
+        case .skipForward:
+            MPRemoteCommandCenter.shared().skipForwardCommand.preferredIntervals = [15.0]
+        default: ()
         }
+
+        remoteCommand.addTarget { handler(self, $0) }
     }
 
     // Disable this command.

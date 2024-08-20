@@ -9,6 +9,7 @@
 import AVFoundation
 import Combine
 import Defaults
+import Factory
 import Foundation
 import JellyfinAPI
 import MediaPlayer
@@ -37,6 +38,9 @@ class VideoPlayerManager: ViewModel {
         var scrubbedSeconds: Int = 0
     }
 
+    @Injected(\.nowPlayable)
+    var nowPlayable: NowPlayable
+
     @Published
     var audioTrackIndex: Int = -1
     @Published
@@ -56,6 +60,14 @@ class VideoPlayerManager: ViewModel {
             guard let newValue else { return }
             hasSentStart = false
             getAdjacentEpisodes(for: newValue.item)
+
+            newValue.getNowPlayingImage { [weak self] in
+                guard let self else { return }
+
+                self.nowPlayable.handleNowPlayableItemChange(
+                    metadata: self.currentViewModel.nowPlayingMetadata
+                )
+            }
         }
     }
 
@@ -63,29 +75,34 @@ class VideoPlayerManager: ViewModel {
     var nextViewModel: VideoPlayerViewModel?
 
     var currentProgressHandler: CurrentProgressHandler = .init()
-    let proxy: VLCVideoPlayer.Proxy = .init()
+    var proxy: VideoPlayerProxy!
 
     private var currentProgressWorkItem: DispatchWorkItem?
     private var hasSentStart = false
 
-    private let commandCenter = MPRemoteCommandCenter.shared()
+    // MARK: init
 
     override init() {
         super.init()
 
-        try! IOSNowPlayable.shared.handleNowPlayableConfiguration(
-            commands: IOSNowPlayable.shared.defaultRegisteredCommands,
-            disabledCommands: [],
+        try! nowPlayable.handleNowPlayableConfiguration(
+            commands: nowPlayable.defaultRegisteredCommands,
             commandHandler: handleCommand(command:event:),
             interruptionHandler: { _ in }
         )
     }
+
+    // MARK: select
 
     func selectNextViewModel() {
         guard let nextViewModel else { return }
         currentViewModel = nextViewModel
         previousViewModel = nil
         self.nextViewModel = nil
+
+        nowPlayable.handleNowPlayableItemChange(
+            metadata: currentViewModel.nowPlayingMetadata
+        )
     }
 
     func selectPreviousViewModel() {
@@ -93,7 +110,13 @@ class VideoPlayerManager: ViewModel {
         currentViewModel = previousViewModel
         self.previousViewModel = nil
         nextViewModel = nil
+
+        nowPlayable.handleNowPlayableItemChange(
+            metadata: currentViewModel.nowPlayingMetadata
+        )
     }
+
+    // MARK: onTicksUpdated
 
     func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
 
@@ -105,43 +128,31 @@ class VideoPlayerManager: ViewModel {
             subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
         }
 
-        IOSNowPlayable.shared.setNowPlayingPlaybackInfo(
-            .init(
-                rate: 1.0,
+        nowPlayable.handleNowPlayablePlaybackChange(
+            playing: true,
+            metadata: .init(
+                rate: Float(playbackSpeed.rawValue),
                 position: Float(currentProgressHandler.seconds),
-                duration: Float(currentViewModel.item.runTimeSeconds),
-                currentLanguageOptions: [],
-                availableLanguageOptionGroups: []
+                duration: Float(currentViewModel.item.runTimeSeconds)
             )
         )
     }
+
+    // MARK: onStateUpdated
 
     func onStateUpdated(newState: VLCVideoPlayer.State) {
         guard state != newState else { return }
         state = newState
 
-        let a = MPMediaItemArtwork(boundsSize: .init(width: 170, height: 300)) { size in
-            UIImage(blurHash: self.currentViewModel.item.blurHash(.primary) ?? "", size: size)!
-        }
-
-        IOSNowPlayable.shared.handleNowPlayableItemChange(
-            metadata: .init(
-                assetURL: nil,
-                mediaType: .video,
-                isLiveStream: false,
-                title: currentViewModel.item.displayTitle,
-                artist: nil,
-                artwork: a,
-                albumArtist: nil,
-                albumTitle: nil
-            )
+        nowPlayable.handleNowPlayableItemChange(
+            metadata: currentViewModel.nowPlayingMetadata
         )
 
         if !hasSentStart, newState == .playing {
             hasSentStart = true
             sendStartReport()
 
-            try! IOSNowPlayable.shared.handleNowPlayableSessionStart()
+            try! nowPlayable.handleNowPlayableSessionStart()
         }
 
         if hasSentStart, newState == .paused {
@@ -151,8 +162,6 @@ class VideoPlayerManager: ViewModel {
 
         if newState == .stopped || newState == .ended {
             sendStopReport()
-
-            IOSNowPlayable.shared.handleNowPlayableSessionEnd()
         }
     }
 
@@ -212,6 +221,8 @@ class VideoPlayerManager: ViewModel {
             }
         }
     }
+
+    // MARK: reports
 
     func sendStartReport() {
 
@@ -332,6 +343,8 @@ class VideoPlayerManager: ViewModel {
         }
     }
 
+    // MARK: commands
+
     private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
         switch command {
         case .togglePausePlay:
@@ -344,10 +357,17 @@ class VideoPlayerManager: ViewModel {
             proxy.play()
         case .pause:
             proxy.pause()
-        case let .skipForward(interval):
-            proxy.jumpForward(Int(truncating: interval))
-        case let .skipBackward(interval):
-            proxy.jumpBackward(Int(truncating: interval))
+        case .skipForward:
+            proxy.jumpForward(15)
+        case .skipBackward:
+            proxy.jumpBackward(15)
+        case .changePlaybackPosition:
+            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+            proxy.setTime(event.positionTime)
+        case .nextTrack:
+            selectNextViewModel()
+        case .previousTrack:
+            selectPreviousViewModel()
         default: ()
         }
 

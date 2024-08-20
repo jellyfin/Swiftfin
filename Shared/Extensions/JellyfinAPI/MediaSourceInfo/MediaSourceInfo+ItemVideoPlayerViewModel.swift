@@ -61,7 +61,7 @@ extension MediaSourceInfo {
             subtitleStreams: subtitleStreams,
             selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
             selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
-            chapters: item.fullChapterInfo,
+            chapters: [],
             streamType: streamType
         )
     }

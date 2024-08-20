@@ -72,6 +72,8 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         let newPlayer: AVPlayer = .init(url: manager.currentViewModel.playbackURL)
 
+        updatesNowPlayingInfoCenter = false
+
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
         newPlayer.currentItem?.externalMetadata = createMetadata()
@@ -85,6 +87,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
             if newValue == 0 {
                 self.videoPlayerManager.onStateUpdated(newState: .paused)
             } else {
+                self.videoPlayerManager.playbackSpeed = PlaybackSpeed(rawValue: Double(newValue)) ?? .one
                 self.videoPlayerManager.onStateUpdated(newState: .playing)
             }
         }
@@ -103,10 +106,24 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
                 self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
                 self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
                 self.videoPlayerManager.currentProgressHandler.scrubbedSeconds = newSeconds
+
+                videoPlayerManager.nowPlayable.handleNowPlayablePlaybackChange(
+                    playing: videoPlayerManager.state == .playing,
+                    metadata: .init(
+                        rate: 1.0,
+                        position: Float(newSeconds),
+                        duration: Float(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
+                    )
+                )
             }
         }
 
         player = newPlayer
+
+        let videoPlayerProxy = AVPlayerVideoPlayerProxy()
+        videoPlayerProxy.avPlayer = player
+
+        manager.proxy = videoPlayerProxy
     }
 
     @available(*, unavailable)
@@ -114,14 +131,12 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         stop()
+        videoPlayerManager.nowPlayable.handleNowPlayableSessionEnd()
+
         guard let timeObserverToken else { return }
         player?.removeTimeObserver(timeObserverToken)
     }
@@ -143,14 +158,26 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     }
 
     private func createMetadata() -> [AVMetadataItem] {
-        []
 
-//        let allMetadata: [AVMetadataIdentifier: Any?] = [
-//            .commonIdentifierTitle: videoPlayerManager.currentViewModel.item.displayTitle,
-//            .iTunesMetadataTrackSubTitle: videoPlayerManager.currentViewModel.item.subtitle,
-//        ]
-//
-//        return allMetadata.compactMap { createMetadataItem(for: $0, value: $1) }
+        let title: String
+        var subtitle: String? = nil
+        let description = videoPlayerManager.currentViewModel.item.overview
+
+        if videoPlayerManager.currentViewModel.item.type == .episode,
+           let seriesName = videoPlayerManager.currentViewModel.item.seriesName
+        {
+            title = seriesName
+            subtitle = videoPlayerManager.currentViewModel.item.displayTitle
+        } else {
+            title = videoPlayerManager.currentViewModel.item.displayTitle
+        }
+
+        return [
+            AVMetadataIdentifier.commonIdentifierTitle: title,
+            .iTunesMetadataTrackSubTitle: subtitle,
+            .commonIdentifierDescription: description,
+        ]
+            .compactMap(createMetadataItem)
     }
 
     private func createMetadataItem(
@@ -158,11 +185,12 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         value: Any?
     ) -> AVMetadataItem? {
         guard let value else { return nil }
+
         let item = AVMutableMetadataItem()
         item.identifier = identifier
         item.value = value as? NSCopying & NSObjectProtocol
-        // Specify "und" to indicate an undefined language.
         item.extendedLanguageTag = "und"
+
         return item.copy() as? AVMetadataItem
     }
 
