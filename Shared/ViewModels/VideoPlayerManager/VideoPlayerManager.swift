@@ -90,6 +90,8 @@ class VideoPlayerManager: ViewModel {
             commandHandler: handleCommand(command:event:),
             interruptionHandler: { _ in }
         )
+
+        nowPlayable.handleNowPlayableSessionStart()
     }
 
     // MARK: select
@@ -151,8 +153,6 @@ class VideoPlayerManager: ViewModel {
         if !hasSentStart, newState == .playing {
             hasSentStart = true
             sendStartReport()
-
-            try! nowPlayable.handleNowPlayableSessionStart()
         }
 
         if hasSentStart, newState == .paused {

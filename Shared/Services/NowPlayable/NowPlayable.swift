@@ -48,10 +48,15 @@ class NowPlayable {
         )
     }
 
-    func handleNowPlayableSessionStart() throws {
+    func handleNowPlayableSessionStart() {
         let audioSession = AVAudioSession.sharedInstance()
-        try audioSession.setCategory(.playback, mode: .default)
-        try audioSession.setActive(true)
+
+        do {
+            try audioSession.setCategory(.playback, mode: .default)
+            try audioSession.setActive(true)
+        } catch {
+            logger.error("Unable to begin AVAudioSession instance: \(error.localizedDescription)")
+        }
     }
 
     func handleNowPlayableSessionEnd() {
@@ -63,7 +68,7 @@ class NowPlayable {
         do {
             try AVAudioSession.sharedInstance().setActive(false)
         } catch {
-            logger.error("Unable to deactivate AVAudioSession instance")
+            logger.error("Unable to deactivate AVAudioSession instance: \(error.localizedDescription)")
         }
     }
 
