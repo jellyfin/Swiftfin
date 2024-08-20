@@ -32,11 +32,14 @@ struct LiveVideoPlayer: View {
     @State
     private var isScrubbing: Bool = false
 
+    @StateObject
+    private var vlcUIProxy: VLCVideoPlayer.Proxy
+
     @ViewBuilder
     private var playerView: some View {
         ZStack {
             VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
-                .proxy(videoPlayerManager.proxy)
+                .proxy(vlcUIProxy)
                 .onTicksUpdated { ticks, _ in
 
                     let newSeconds = ticks / 1000
@@ -67,7 +70,7 @@ struct LiveVideoPlayer: View {
                 .environmentObject(videoPlayerManager)
                 .environmentObject(videoPlayerManager.currentProgressHandler)
                 .environmentObject(videoPlayerManager.currentViewModel!)
-                .environmentObject(videoPlayerManager.proxy)
+                .environmentObject(vlcUIProxy)
                 .environment(\.isPresentingOverlay, $isPresentingOverlay)
                 .environment(\.isScrubbing, $isScrubbing)
         }
@@ -101,7 +104,7 @@ struct LiveVideoPlayer: View {
         .ignoresSafeArea()
         .onChange(of: isScrubbing) { _, newValue in
             guard !newValue else { return }
-            videoPlayerManager.proxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
         }
     }
 }
@@ -109,9 +112,17 @@ struct LiveVideoPlayer: View {
 extension LiveVideoPlayer {
 
     init(manager: LiveVideoPlayerManager) {
+
+        let videoPlayerProxy = VLCVideoPlayerProxy()
+        let vlcUIProxy = VLCVideoPlayer.Proxy()
+
+        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+        manager.proxy = videoPlayerProxy
+
         self.init(
             currentProgressHandler: manager.currentProgressHandler,
-            videoPlayerManager: manager
+            videoPlayerManager: manager,
+            vlcUIProxy: vlcUIProxy
         )
     }
 }

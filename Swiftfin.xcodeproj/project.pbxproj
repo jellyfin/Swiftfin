@@ -298,6 +298,11 @@
 		E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8C28999B4A003E74C7 /* Font.swift */; };
 		E11CEB9128999D84003E74C7 /* EpisodeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB8F28999D84003E74C7 /* EpisodeItemView.swift */; };
 		E11CEB9428999D9E003E74C7 /* EpisodeItemContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CEB9328999D9E003E74C7 /* EpisodeItemContentView.swift */; };
+		E11D59E62C75488C008A99F4 /* NowPlayable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173927A2C73EC0B00E3A1F3 /* NowPlayable.swift */; };
+		E11D59E72C75488C008A99F4 /* NowPlayableMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173927D2C73EC0B00E3A1F3 /* NowPlayableMetadata.swift */; };
+		E11D59E82C75488C008A99F4 /* NowPlayableInterruption.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EDFB402C75162400C42FD3 /* NowPlayableInterruption.swift */; };
+		E11D59E92C75488C008A99F4 /* NowPlayableError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173927C2C73EC0B00E3A1F3 /* NowPlayableError.swift */; };
+		E11D59EA2C75488C008A99F4 /* NowPlayableCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173927B2C73EC0B00E3A1F3 /* NowPlayableCommand.swift */; };
 		E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11E0E8B2BF7E76F007676DD /* DataCache.swift */; };
 		E11E0E8D2BF7E76F007676DD /* DataCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11E0E8B2BF7E76F007676DD /* DataCache.swift */; };
 		E11E374D293E7EC9009EF240 /* ItemFields.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D842902933F87500D1041A /* ItemFields.swift */; };
@@ -3994,6 +3999,11 @@
 				E1EDFB4A2C75310500C42FD3 /* VideoPlayerProxy+AVPlayer.swift in Sources */,
 				E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */,
 				E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */,
+				E11D59E62C75488C008A99F4 /* NowPlayable.swift in Sources */,
+				E11D59E72C75488C008A99F4 /* NowPlayableMetadata.swift in Sources */,
+				E11D59E82C75488C008A99F4 /* NowPlayableInterruption.swift in Sources */,
+				E11D59E92C75488C008A99F4 /* NowPlayableError.swift in Sources */,
+				E11D59EA2C75488C008A99F4 /* NowPlayableCommand.swift in Sources */,
 				E11CEB9128999D84003E74C7 /* EpisodeItemView.swift in Sources */,
 				E14E9DF22BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E10B1EC82BD9AF6100A92EAF /* V2ServerModel.swift in Sources */,

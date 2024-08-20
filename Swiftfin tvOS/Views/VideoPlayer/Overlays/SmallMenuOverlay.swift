@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import VLCUI
 
 extension VideoPlayer {
 
@@ -32,6 +33,8 @@ extension VideoPlayer {
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
+        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        @EnvironmentObject
         private var viewModel: VideoPlayerViewModel
 
         @FocusState
@@ -49,7 +52,7 @@ extension VideoPlayer {
                 ForEach(viewModel.subtitleStreams, id: \.self) { mediaStream in
                     Button {
                         videoPlayerManager.subtitleTrackIndex = mediaStream.index ?? -1
-                        videoPlayerManager.proxy.setSubtitleTrack(.absolute(mediaStream.index ?? -1))
+                        videoPlayerProxy.setSubtitleTrack(.absolute(mediaStream.index ?? -1))
                     } label: {
                         Label(
                             mediaStream.displayTitle ?? L10n.noTitle,
@@ -67,7 +70,7 @@ extension VideoPlayer {
                 ForEach(viewModel.audioStreams, id: \.self) { mediaStream in
                     Button {
                         videoPlayerManager.audioTrackIndex = mediaStream.index ?? -1
-                        videoPlayerManager.proxy.setAudioTrack(.absolute(mediaStream.index ?? -1))
+                        videoPlayerProxy.setAudioTrack(.absolute(mediaStream.index ?? -1))
                     } label: {
                         Label(
                             mediaStream.displayTitle ?? L10n.noTitle,
@@ -85,7 +88,7 @@ extension VideoPlayer {
                 ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
                     Button {
                         videoPlayerManager.playbackSpeed = speed
-                        videoPlayerManager.proxy.setRate(.absolute(Float(speed.rawValue)))
+                        videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
                     } label: {
                         Label(
                             speed.displayTitle,
