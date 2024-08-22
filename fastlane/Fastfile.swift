@@ -135,7 +135,7 @@ class Fastfile: LaneFile {
         )
         
         uploadToTestflight(
-            ipa: "Swiftfin.ipa"
+            ipa: "Swiftfin iOS.ipa"
         )
     }
     
