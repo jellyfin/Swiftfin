@@ -38,13 +38,14 @@ extension SettingsView {
             } label: {
                 HStack {
 
-                    // TODO: check properly with non-uniform images and look for workaround
-                    // Note: for an unknown reason, using a non uniform aspect ratio will cause a
-                    //       "view origin is invalid" crash within SwiftUI
-                    imageView
-                        .aspectRatio(1, contentMode: .fill)
-                        .clipShape(.circle)
-                        .frame(width: 50, height: 50)
+                    // `.aspectRatio(contentMode: .fill)` on `imageView` alone
+                    // causes a crash on some iOS versions
+                    ZStack {
+                        imageView
+                    }
+                    .aspectRatio(1, contentMode: .fill)
+                    .clipShape(.circle)
+                    .frame(width: 50, height: 50)
 
                     Text(userSession.user.username)
                         .fontWeight(.semibold)

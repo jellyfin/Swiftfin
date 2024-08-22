@@ -85,6 +85,11 @@ extension SeriesEpisodeSelector {
                 guard let newValue else { return }
                 lastFocusedEpisodeID = newValue
             }
+            .onChange(of: viewModel.state) { _, newValue in
+                if newValue == .content {
+                    lastFocusedEpisodeID = viewModel.elements.first?.id
+                }
+            }
         }
     }
 
