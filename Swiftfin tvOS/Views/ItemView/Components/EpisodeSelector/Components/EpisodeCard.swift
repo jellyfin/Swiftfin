@@ -12,26 +12,32 @@ import JellyfinAPI
 import SwiftUI
 
 extension SeriesEpisodeSelector {
-
     struct EpisodeCard: View {
-
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
         let episode: BaseItemDto
+
+        @FocusState
+        private var isFocused: Bool
 
         @ViewBuilder
         private var imageOverlay: some View {
             ZStack {
                 if episode.userData?.isPlayed ?? false {
                     WatchedIndicator(size: 45)
-                } else {
-                    if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
-                        LandscapePosterProgressBar(
-                            title: episode.progressLabel ?? L10n.continue,
-                            progress: (episode.userData?.playedPercentage ?? 0) / 100
-                        )
-                    }
+                } else if (episode.userData?.playbackPositionTicks ?? 0) > 0 {
+                    LandscapePosterProgressBar(
+                        title: episode.progressLabel ?? L10n.continue,
+                        progress: (episode.userData?.playedPercentage ?? 0) / 100
+                    )
+                }
+
+                if isFocused {
+                    Image(systemName: "play.fill")
+                        .resizable()
+                        .frame(width: 50, height: 50)
+                        .foregroundColor(.white)
                 }
             }
         }
@@ -64,6 +70,7 @@ extension SeriesEpisodeSelector {
                 }
                 .buttonStyle(.card)
                 .posterShadow()
+                .focused($isFocused)
 
                 SeriesEpisodeSelector.EpisodeContent(
                     subHeader: episode.episodeLocator ?? .emptyDash,
