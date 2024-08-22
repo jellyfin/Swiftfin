@@ -18,7 +18,6 @@ struct LetterPickerBar: View {
     var body: some View {
         VStack(spacing: 0) {
             Spacer()
-
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(
                     letter: filterLetter,
