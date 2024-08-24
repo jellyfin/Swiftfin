@@ -180,6 +180,16 @@
 		C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */; };
 		C46DD8EF2A8FB56E0046A504 /* LiveBottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */; };
 		C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4E508172703E8190045C9AB /* MediaView.swift */; };
+		DFB7C3C32C78DADA00CE7CDC /* MPVKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7C3C22C78DADA00CE7CDC /* MPVKit */; };
+		DFB7C3C82C78DB5500CE7CDC /* MPVKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7C3C72C78DB5500CE7CDC /* MPVKit */; };
+		DFB7C3D02C78DBB000CE7CDC /* MPVPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3CE2C78DBB000CE7CDC /* MPVPlayerDelegate.swift */; };
+		DFB7C3D12C78DBB000CE7CDC /* MPVProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3CF2C78DBB000CE7CDC /* MPVProperty.swift */; };
+		DFB7C3D22C78DBB000CE7CDC /* MPVMetalPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3CB2C78DBB000CE7CDC /* MPVMetalPlayerView.swift */; };
+		DFB7C3D32C78DBB000CE7CDC /* MetalLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3CA2C78DBB000CE7CDC /* MetalLayer.swift */; };
+		DFB7C3D42C78DBB000CE7CDC /* MPVMetalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3CC2C78DBB000CE7CDC /* MPVMetalViewController.swift */; };
+		DFB7C3D62C78DC4000CE7CDC /* MPVKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7C3D52C78DC4000CE7CDC /* MPVKit */; };
+		DFB7C3DB2C78DCEC00CE7CDC /* MPVKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFB7C3DA2C78DCEC00CE7CDC /* MPVKit */; };
+		DFB7C3DD2C78E08700CE7CDC /* MPVVideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFB7C3DC2C78E08700CE7CDC /* MPVVideoPlayer.swift */; };
 		E1002B642793CEE800E47059 /* ChapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfo.swift */; };
 		E1002B652793CEE800E47059 /* ChapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfo.swift */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
@@ -1084,6 +1094,13 @@
 		C46DD8EB2A8FB49A0046A504 /* LiveMainOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveMainOverlay.swift; sourceTree = "<group>"; };
 		C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveBottomBarView.swift; sourceTree = "<group>"; };
 		C4E508172703E8190045C9AB /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
+		DFB7C3CA2C78DBB000CE7CDC /* MetalLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalLayer.swift; sourceTree = "<group>"; };
+		DFB7C3CB2C78DBB000CE7CDC /* MPVMetalPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPVMetalPlayerView.swift; sourceTree = "<group>"; };
+		DFB7C3CC2C78DBB000CE7CDC /* MPVMetalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPVMetalViewController.swift; sourceTree = "<group>"; };
+		DFB7C3CE2C78DBB000CE7CDC /* MPVPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPVPlayerDelegate.swift; sourceTree = "<group>"; };
+		DFB7C3CF2C78DBB000CE7CDC /* MPVProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPVProperty.swift; sourceTree = "<group>"; };
+		DFB7C3D82C78DCAB00CE7CDC /* MPVKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = MPVKit; path = ../MPVKit; sourceTree = "<group>"; };
+		DFB7C3DC2C78E08700CE7CDC /* MPVVideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPVVideoPlayer.swift; sourceTree = "<group>"; };
 		E1002B632793CEE700E47059 /* ChapterInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterInfo.swift; sourceTree = "<group>"; };
 		E10231292BCF8A08009D71FC /* iOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
 		E102312A2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tvOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
@@ -1551,6 +1568,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1575E56293E7650001665B1 /* VLCUI in Frameworks */,
+				DFB7C3C32C78DADA00CE7CDC /* MPVKit in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
 				62666E3227E5021E00EC0ECD /* UIKit.framework in Frameworks */,
@@ -1558,6 +1576,7 @@
 				E1002B6B2793E36600E47059 /* Algorithms in Frameworks */,
 				62666E1D27E501DB00EC0ECD /* CoreMedia.framework in Frameworks */,
 				62666E3027E5021800EC0ECD /* VideoToolbox.framework in Frameworks */,
+				DFB7C3C82C78DB5500CE7CDC /* MPVKit in Frameworks */,
 				62666E2327E501EB00EC0ECD /* Foundation.framework in Frameworks */,
 				62666E2127E501E400EC0ECD /* CoreVideo.framework in Frameworks */,
 				6220D0C926D63F3700B8E046 /* Stinsen in Frameworks */,
@@ -1569,6 +1588,7 @@
 				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
 				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
 				62666E1B27E501D400EC0ECD /* CoreGraphics.framework in Frameworks */,
+				DFB7C3D62C78DC4000CE7CDC /* MPVKit in Frameworks */,
 				E1388A46293F0ABA009721B1 /* SwizzleSwift in Frameworks */,
 				62666E2C27E5021000EC0ECD /* QuartzCore.framework in Frameworks */,
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
@@ -1588,6 +1608,7 @@
 				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
+				DFB7C3DB2C78DCEC00CE7CDC /* MPVKit in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
 				E192608828D2E5F0002314B4 /* Factory in Frameworks */,
 			);
@@ -1695,6 +1716,7 @@
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				DFB7C3C92C78DB9600CE7CDC /* MPV */,
 				C46DD8E82A8FB4230046A504 /* LiveOverlays */,
 				E10E842829A587090064EA49 /* Components */,
 				E18A17F3298C68BF00C22F62 /* Overlays */,
@@ -2036,6 +2058,7 @@
 		53D5E3DB264B47EE00BADDC8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DFB7C3D82C78DCAB00CE7CDC /* MPVKit */,
 				E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */,
 				637FCAF3287B5B2600C0A353 /* UDPBroadcast.xcframework */,
 				62666E3A27E503E400EC0ECD /* GoogleCastSDK.xcframework */,
@@ -2275,6 +2298,27 @@
 				C46DD8EE2A8FB56E0046A504 /* LiveBottomBarView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		DFB7C3C92C78DB9600CE7CDC /* MPV */ = {
+			isa = PBXGroup;
+			children = (
+				DFB7C3DC2C78E08700CE7CDC /* MPVVideoPlayer.swift */,
+				DFB7C3CD2C78DBB000CE7CDC /* Metal */,
+				DFB7C3CE2C78DBB000CE7CDC /* MPVPlayerDelegate.swift */,
+				DFB7C3CF2C78DBB000CE7CDC /* MPVProperty.swift */,
+			);
+			path = MPV;
+			sourceTree = "<group>";
+		};
+		DFB7C3CD2C78DBB000CE7CDC /* Metal */ = {
+			isa = PBXGroup;
+			children = (
+				DFB7C3CA2C78DBB000CE7CDC /* MetalLayer.swift */,
+				DFB7C3CB2C78DBB000CE7CDC /* MPVMetalPlayerView.swift */,
+				DFB7C3CC2C78DBB000CE7CDC /* MPVMetalViewController.swift */,
+			);
+			path = Metal;
 			sourceTree = "<group>";
 		};
 		E102312B2BCF8A08009D71FC /* LiveTVCoordinator */ = {
@@ -3626,6 +3670,10 @@
 				E132D3CE2BD217AA0058A2DF /* CollectionVGrid */,
 				E19D41B12BF2BFA50082B8B2 /* KeychainSwift */,
 				E150C0C22BFD6DA200944FFA /* JellyfinAPI */,
+				DFB7C3C22C78DADA00CE7CDC /* MPVKit */,
+				DFB7C3C72C78DB5500CE7CDC /* MPVKit */,
+				DFB7C3D52C78DC4000CE7CDC /* MPVKit */,
+				DFB7C3DA2C78DCEC00CE7CDC /* MPVKit */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -3755,6 +3803,7 @@
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				E14EA1632BF70A8E00DE757A /* XCRemoteSwiftPackageReference "Mantis" */,
 				E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
+				DFB7C3D92C78DCEC00CE7CDC /* XCLocalSwiftPackageReference "../MPVKit" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -3992,6 +4041,11 @@
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				C46DD8D32A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */,
 				E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
+				DFB7C3D02C78DBB000CE7CDC /* MPVPlayerDelegate.swift in Sources */,
+				DFB7C3D12C78DBB000CE7CDC /* MPVProperty.swift in Sources */,
+				DFB7C3D22C78DBB000CE7CDC /* MPVMetalPlayerView.swift in Sources */,
+				DFB7C3D32C78DBB000CE7CDC /* MetalLayer.swift in Sources */,
+				DFB7C3D42C78DBB000CE7CDC /* MPVMetalViewController.swift in Sources */,
 				E158C8D12A31947500C527C5 /* MediaSourceInfoView.swift in Sources */,
 				E11BDF782B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E14EA16A2BF7333B00DE757A /* UserProfileImageViewModel.swift in Sources */,
@@ -4124,6 +4178,7 @@
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
+				DFB7C3DD2C78E08700CE7CDC /* MPVVideoPlayer.swift in Sources */,
 				E129428628F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				53ABFDE7267974EF00886593 /* ConnectToServerViewModel.swift in Sources */,
 				62E632E4267D3BA60063E547 /* MovieItemViewModel.swift in Sources */,
@@ -4822,7 +4877,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = U3ZPB6U89W;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -4832,7 +4887,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = byatt.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -4852,7 +4907,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 70;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = U3ZPB6U89W;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -4862,7 +4917,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = byatt.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -5108,6 +5163,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		DFB7C3D92C78DCEC00CE7CDC /* XCLocalSwiftPackageReference "../MPVKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../MPVKit;
+		};
 		E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = PreferencesView;
@@ -5308,6 +5367,22 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 62C29E9A26D0FE4100C1D2E7 /* XCRemoteSwiftPackageReference "stinsen" */;
 			productName = Stinsen;
+		};
+		DFB7C3C22C78DADA00CE7CDC /* MPVKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPVKit;
+		};
+		DFB7C3C72C78DB5500CE7CDC /* MPVKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPVKit;
+		};
+		DFB7C3D52C78DC4000CE7CDC /* MPVKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPVKit;
+		};
+		DFB7C3DA2C78DCEC00CE7CDC /* MPVKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MPVKit;
 		};
 		E1002B672793CFBA00E47059 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
