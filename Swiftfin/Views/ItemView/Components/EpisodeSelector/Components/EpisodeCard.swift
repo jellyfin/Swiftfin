@@ -53,8 +53,8 @@ extension SeriesEpisodeSelector {
         var body: some View {
             VStack(alignment: .leading) {
                 Button {
-                    guard let mediaSource = episode.mediaSources?.first else { return }
-                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
+//                    guard let mediaSource = episode.mediaSources?.first else { return }
+//                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: episode, mediaSource: mediaSource))
                 } label: {
                     ZStack {
                         Color.clear

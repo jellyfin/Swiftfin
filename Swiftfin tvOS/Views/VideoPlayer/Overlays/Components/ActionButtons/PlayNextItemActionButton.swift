@@ -20,8 +20,8 @@ extension VideoPlayer.Overlay.ActionButtons {
         var body: some View {
             SFSymbolButton(systemName: "chevron.right.circle")
                 .onSelect {
-                    videoPlayerManager.selectNextViewModel()
-                    overlayTimer.start(5)
+//                    videoPlayerManager.selectNextViewModel()
+//                    overlayTimer.start(5)
                 }
                 .frame(maxWidth: 30, maxHeight: 30)
         }

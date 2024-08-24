@@ -53,7 +53,7 @@ extension VideoPlayer.Overlay {
             } label: {
                 Group {
                     switch videoPlayerManager.state {
-                    case .stopped, .paused:
+                    case .paused:
                         Image(systemName: "play.fill")
                     case .playing:
                         Image(systemName: "pause.fill")

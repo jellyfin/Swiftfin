@@ -57,15 +57,15 @@ struct VideoPlayer: View {
 
                     videoPlayerManager.onStateUpdated(newState: state)
 
-                    if state == .ended {
-                        if let _ = videoPlayerManager.nextViewModel,
-                           Defaults[.VideoPlayer.autoPlayEnabled]
-                        {
-                            videoPlayerManager.selectNextViewModel()
-                        } else {
-                            router.dismissCoordinator()
-                        }
-                    }
+//                    if state == .ended {
+//                        if let _ = videoPlayerManager.nextViewModel,
+//                           Defaults[.VideoPlayer.autoPlayEnabled]
+//                        {
+//                            videoPlayerManager.selectNextViewModel()
+//                        } else {
+//                            router.dismissCoordinator()
+//                        }
+//                    }
                 }
 
             VideoPlayer.Overlay()

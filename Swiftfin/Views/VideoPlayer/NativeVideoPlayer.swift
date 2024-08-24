@@ -14,27 +14,24 @@ import SwiftUI
 
 struct NativeVideoPlayer: View {
 
-    @Environment(\.scenePhase)
-    var scenePhase
-
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
-    @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+    @StateObject
+    var manager: VideoPlayerManager
 
-    init(manager: VideoPlayerManager) {
-        self.videoPlayerManager = manager
-    }
+//    init(manager: VideoPlayerManager) {
+//        self.init
+//    }
 
     @ViewBuilder
     private var playerView: some View {
-        NativeVideoPlayerView(videoPlayerManager: videoPlayerManager)
+        NativeVideoPlayerView(manager: manager)
     }
 
     var body: some View {
-        Group {
-            if let _ = videoPlayerManager.currentViewModel {
+        ZStack {
+            if let _ = manager.currentItem {
                 playerView
             } else {
                 VideoPlayer.LoadingView()
@@ -48,10 +45,10 @@ struct NativeVideoPlayer: View {
 
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
-    let videoPlayerManager: VideoPlayerManager
+    let manager: VideoPlayerManager
 
     func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-        UINativeVideoPlayerViewController(manager: videoPlayerManager)
+        UINativeVideoPlayerViewController(manager: manager)
     }
 
     func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
@@ -59,18 +56,18 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
-    let videoPlayerManager: VideoPlayerManager
+    let manager: VideoPlayerManager
 
     private var rateObserver: NSKeyValueObservation!
     private var timeObserverToken: Any!
 
     init(manager: VideoPlayerManager) {
 
-        self.videoPlayerManager = manager
+        self.manager = manager
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer = .init(url: manager.currentViewModel.playbackURL)
+        let newPlayer: AVPlayer = .init(url: manager.currentItem!.url)
 
         updatesNowPlayingInfoCenter = false
 
@@ -81,42 +78,42 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         // enable pip
         allowsPictureInPicturePlayback = true
 
-        rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
-            guard let newValue = change.newValue else { return }
-
-            if newValue == 0 {
-                self.videoPlayerManager.onStateUpdated(newState: .paused)
-            } else {
-                self.videoPlayerManager.playbackSpeed = PlaybackSpeed(rawValue: Double(newValue)) ?? .one
-                self.videoPlayerManager.onStateUpdated(newState: .playing)
-            }
-        }
+//        rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
+//            guard let newValue = change.newValue else { return }
+//
+//            if newValue == 0 {
+//                self.videoPlayerManager.onStateUpdated(newState: .paused)
+//            } else {
+//                self.videoPlayerManager.playbackSpeed = PlaybackSpeed(rawValue: Double(newValue)) ?? .one
+//                self.videoPlayerManager.onStateUpdated(newState: .playing)
+//            }
+//        }
 
         let time = CMTime(seconds: 0.1, preferredTimescale: 1000)
 
-        timeObserverToken = newPlayer.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
-
-            guard let self else { return }
-
-            if time.seconds >= 0 {
-                let newSeconds = Int(time.seconds)
-                let progress = CGFloat(newSeconds) / CGFloat(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
-
-                self.videoPlayerManager.currentProgressHandler.progress = progress
-                self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
-                self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
-                self.videoPlayerManager.currentProgressHandler.scrubbedSeconds = newSeconds
-
-                videoPlayerManager.nowPlayable.handleNowPlayablePlaybackChange(
-                    playing: videoPlayerManager.state == .playing,
-                    metadata: .init(
-                        rate: 1.0,
-                        position: Float(newSeconds),
-                        duration: Float(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
-                    )
-                )
-            }
-        }
+//        timeObserverToken = newPlayer.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
+//
+//            guard let self else { return }
+//
+//            if time.seconds >= 0 {
+//                let newSeconds = Int(time.seconds)
+//                let progress = CGFloat(newSeconds) / CGFloat(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
+//
+//                self.videoPlayerManager.currentProgressHandler.progress = progress
+//                self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
+//                self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
+//                self.videoPlayerManager.currentProgressHandler.scrubbedSeconds = newSeconds
+//
+//                videoPlayerManager.nowPlayable.handleNowPlayablePlaybackChange(
+//                    playing: videoPlayerManager.state == .playing,
+//                    metadata: .init(
+//                        rate: 1.0,
+//                        position: Float(newSeconds),
+//                        duration: Float(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
+//                    )
+//                )
+//            }
+//        }
 
         player = newPlayer
 
@@ -135,7 +132,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         super.viewWillDisappear(animated)
 
         stop()
-        videoPlayerManager.nowPlayable.handleNowPlayableSessionEnd()
+//        videoPlayerManager.nowPlayable.handleNowPlayableSessionEnd()
 
         guard let timeObserverToken else { return }
         player?.removeTimeObserver(timeObserverToken)
@@ -144,40 +141,41 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        player?.seek(
-            to: CMTimeMake(
-                value: Int64(videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
-                timescale: 1
-            ),
-            toleranceBefore: .zero,
-            toleranceAfter: .zero,
-            completionHandler: { _ in
-                self.play()
-            }
-        )
+//        player?.seek(
+//            to: CMTimeMake(
+//                value: Int64(videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
+//                timescale: 1
+//            ),
+//            toleranceBefore: .zero,
+//            toleranceAfter: .zero,
+//            completionHandler: { _ in
+//                self.play()
+//            }
+//        )
     }
 
     private func createMetadata() -> [AVMetadataItem] {
+        []
 
-        let title: String
-        var subtitle: String? = nil
-        let description = videoPlayerManager.currentViewModel.item.overview
-
-        if videoPlayerManager.currentViewModel.item.type == .episode,
-           let seriesName = videoPlayerManager.currentViewModel.item.seriesName
-        {
-            title = seriesName
-            subtitle = videoPlayerManager.currentViewModel.item.displayTitle
-        } else {
-            title = videoPlayerManager.currentViewModel.item.displayTitle
-        }
-
-        return [
-            AVMetadataIdentifier.commonIdentifierTitle: title,
-            .iTunesMetadataTrackSubTitle: subtitle,
-            .commonIdentifierDescription: description,
-        ]
-            .compactMap(createMetadataItem)
+//        let title: String
+//        var subtitle: String? = nil
+//        let description = videoPlayerManager.currentViewModel.item.overview
+//
+//        if videoPlayerManager.currentViewModel.item.type == .episode,
+//           let seriesName = videoPlayerManager.currentViewModel.item.seriesName
+//        {
+//            title = seriesName
+//            subtitle = videoPlayerManager.currentViewModel.item.displayTitle
+//        } else {
+//            title = videoPlayerManager.currentViewModel.item.displayTitle
+//        }
+//
+//        return [
+//            AVMetadataIdentifier.commonIdentifierTitle: title,
+//            .iTunesMetadataTrackSubTitle: subtitle,
+//            .commonIdentifierDescription: description,
+//        ]
+//            .compactMap(createMetadataItem)
     }
 
     private func createMetadataItem(
@@ -194,15 +192,26 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         return item.copy() as? AVMetadataItem
     }
 
+    private func seek(to seconds: TimeInterval) {
+        player?.seek(
+            to: CMTime(seconds: seconds, preferredTimescale: 1),
+            toleranceBefore: .zero,
+            toleranceAfter: .zero,
+            completionHandler: { _ in
+                self.play()
+            }
+        )
+    }
+
     private func play() {
         player?.play()
 
-        videoPlayerManager.sendStartReport()
+//        videoPlayerManager.sendStartReport()
     }
 
     private func stop() {
         player?.pause()
 
-        videoPlayerManager.sendStopReport()
+//        videoPlayerManager.sendStopReport()
     }
 }

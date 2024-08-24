@@ -20,19 +20,20 @@ class LiveVideoPlayerManager: VideoPlayerManager {
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: ChannelProgram? = nil) {
         self.program = program
-        super.init()
+//        super.init()
+        super.init(item: item, mediaSource: mediaSource)
 
         Task {
             let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
 
-            await MainActor.run {
-                self.currentViewModel = viewModel
-            }
+//            await MainActor.run {
+//                self.currentViewModel = viewModel
+//            }
         }
     }
 
     init(program: BaseItemDto) {
-        super.init()
+        super.init(item: program, mediaSource: .init())
 
         Task {
             guard let channel = try? await self.getChannel(for: program), let mediaSource = channel.mediaSources?.first else {
@@ -42,9 +43,9 @@ class LiveVideoPlayerManager: VideoPlayerManager {
 
             let viewModel = try await program.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
 
-            await MainActor.run {
-                self.currentViewModel = viewModel
-            }
+//            await MainActor.run {
+//                self.currentViewModel = viewModel
+//            }
         }
     }
 

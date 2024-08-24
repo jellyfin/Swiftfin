@@ -39,6 +39,7 @@ extension EnvironmentValues {
         static let defaultValue: Bool = false
     }
 
+    // TODO: change to use `PlaybackRate` and rename
     struct PlaybackSpeedKey: EnvironmentKey {
         static let defaultValue: Binding<Double> = .constant(1)
     }

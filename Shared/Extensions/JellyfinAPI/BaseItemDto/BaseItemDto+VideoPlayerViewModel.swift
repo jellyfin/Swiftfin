@@ -12,12 +12,16 @@ import Foundation
 import JellyfinAPI
 import Logging
 
+// TODO: remove and use VideoPlayerItem.build instead
+
 extension BaseItemDto {
+
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
+
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
-        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
+        let maxBitrate = try await currentVideoBitrate.getMaxBitrate()
         let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
 
         let userSession = Container.shared.currentUserSession()!
@@ -29,7 +33,7 @@ extension BaseItemDto {
         )
 
         let request = Paths.getPostedPlaybackInfo(
-            itemID: self.id!,
+            itemID: id!,
             parameters: playbackInfoParameters,
             playbackInfo
         )
@@ -49,7 +53,7 @@ extension BaseItemDto {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
 
-        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
+        let maxBitrate = try await currentVideoBitrate.getMaxBitrate()
         var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
         if Defaults[.Experimental.liveTVForceDirectPlay] {
             profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
@@ -98,28 +102,5 @@ extension BaseItemDto {
             with: self,
             playSessionID: response.value.playSessionID!
         )
-    }
-
-    private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
-        let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrateTest]
-
-        guard bitrate != .auto else {
-            return try await testBitrate(with: settingBitrate.rawValue)
-        }
-        return bitrate.rawValue
-    }
-
-    private func testBitrate(with testSize: Int) async throws -> Int {
-        precondition(testSize > 0, "testSize must be greater than zero")
-
-        let userSession = Container.shared.currentUserSession()!
-
-        let testStartTime = Date()
-        try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
-        let testDuration = Date().timeIntervalSince(testStartTime)
-        let testSizeBits = Double(testSize * 8)
-        let testBitrate = testSizeBits / testDuration
-
-        return Int(testBitrate)
     }
 }

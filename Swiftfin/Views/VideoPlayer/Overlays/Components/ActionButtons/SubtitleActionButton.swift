@@ -24,23 +24,24 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var content: (Bool) -> any View
 
         var body: some View {
-            Menu {
-                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
-                    Button {
-                        videoPlayerManager.subtitleTrackIndex = subtitleTrack.index ?? -1
-                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
-                    } label: {
-                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
-                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
-                        } else {
-                            Text(subtitleTrack.displayTitle ?? .emptyDash)
-                        }
-                    }
-                }
-            } label: {
-                content(videoPlayerManager.subtitleTrackIndex != -1)
-                    .eraseToAnyView()
-            }
+            Text("TODO")
+//            Menu {
+//                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
+//                    Button {
+//                        videoPlayerManager.subtitleTrackIndex = subtitleTrack.index ?? -1
+//                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
+//                    } label: {
+//                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
+//                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
+//                        } else {
+//                            Text(subtitleTrack.displayTitle ?? .emptyDash)
+//                        }
+//                    }
+//                }
+//            } label: {
+//                content(videoPlayerManager.subtitleTrackIndex != -1)
+//                    .eraseToAnyView()
+//            }
         }
     }
 }

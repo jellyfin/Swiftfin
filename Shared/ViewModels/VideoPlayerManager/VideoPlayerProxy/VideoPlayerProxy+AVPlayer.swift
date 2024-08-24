@@ -41,4 +41,6 @@ class AVPlayerVideoPlayerProxy: VideoPlayerProxy {
         let time = CMTime(value: CMTimeValue(time), timescale: 1)
         avPlayer?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
+
+    func play(item: VideoPlayerItem) {}
 }

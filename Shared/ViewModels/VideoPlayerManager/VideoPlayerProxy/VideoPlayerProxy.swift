@@ -18,4 +18,6 @@ protocol VideoPlayerProxy {
     func jumpBackward(_ seconds: Int)
     func setRate(_ rate: Float)
     func setTime(_ time: TimeInterval)
+
+    func play(item: VideoPlayerItem)
 }

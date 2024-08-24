@@ -33,9 +33,11 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
             PreferencesView {
                 Group {
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        LiveVideoPlayer(manager: self.videoPlayerManager)
+//                        LiveVideoPlayer(manager: self.videoPlayerManager)
+                        Color.red
                     } else {
-                        LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+//                        LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+                        Color.red
                     }
                 }
                 .preferredColorScheme(.dark)
@@ -44,9 +46,11 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
         } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    LiveVideoPlayer(manager: self.videoPlayerManager)
+//                    LiveVideoPlayer(manager: self.videoPlayerManager)
+                    Color.red
                 } else {
-                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+//                    LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+                    Color.red
                 }
             }
             .preferredColorScheme(.dark)

@@ -21,14 +21,14 @@ extension VideoPlayer.Overlay.ActionButtons {
 
         var body: some View {
             Button {
-                videoPlayerManager.selectNextViewModel()
-                overlayTimer.start(5)
+//                videoPlayerManager.selectNextViewModel()
+//                overlayTimer.start(5)
             } label: {
                 content()
                     .eraseToAnyView()
             }
-            .disabled(videoPlayerManager.nextViewModel == nil)
-            .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
+//            .disabled(videoPlayerManager.nextViewModel == nil)
+//            .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
         }
     }
 }

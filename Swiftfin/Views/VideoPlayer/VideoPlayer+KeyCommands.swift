@@ -210,7 +210,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: UIKeyCommand.inputRightArrow,
                 modifierFlags: .command
             ) {
-                videoPlayerManager.selectNextViewModel()
+//                videoPlayerManager.selectNextViewModel()
             }
 
             // MARK: previous item
@@ -220,7 +220,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: UIKeyCommand.inputLeftArrow,
                 modifierFlags: .command
             ) {
-                videoPlayerManager.selectPreviousViewModel()
+//                videoPlayerManager.selectPreviousViewModel()
             }
         }
     }
