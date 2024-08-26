@@ -19,21 +19,25 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Home.enableRewatching)
         private var enableRewatching
 
-        @EnvironmentObject
-        private var router: CustomizeSettingsCoordinator.Router
-
         var body: some View {
             Section {
                 Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 Toggle(L10n.nextUpRewatch, isOn: $enableRewatching)
-                ChevronButton(
-                    L10n.nextUpDays,
-                    subtitle: maxNextUp == 0 ? L10n.disabled :
-                        maxNextUp == 1 ? "\(maxNextUp) " + L10n.day :
-                        "\(maxNextUp) " + L10n.days
+                BasicStepper(
+                    title: L10n.nextUpDays,
+                    value: $maxNextUp,
+                    range: 0 ... 999,
+                    step: 1
                 )
-                .onSelect {
-                    router.route(to: \.nextUpDaysSettings, $maxNextUp)
+                .valueFormatter { days in
+                    switch days {
+                    case 0:
+                        return L10n.disabled
+                    case 1:
+                        return "1 " + L10n.day
+                    default:
+                        return "\(days) " + L10n.days
+                    }
                 }
             } header: {
                 L10n.home.text

@@ -16,6 +16,7 @@
 		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
 		4E4634822C7C289000CE7FA9 /* DaysPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4634812C7C289000CE7FA9 /* DaysPickerView.swift */; };
 		4E4634842C7C325E00CE7FA9 /* CustomizeHomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4634832C7C325E00CE7FA9 /* CustomizeHomeSection.swift */; };
+		4E46348A2C7C37F300CE7FA9 /* CustomizeHomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4634882C7C37E300CE7FA9 /* CustomizeHomeSection.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -942,6 +943,7 @@
 		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
 		4E4634812C7C289000CE7FA9 /* DaysPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysPickerView.swift; sourceTree = "<group>"; };
 		4E4634832C7C325E00CE7FA9 /* CustomizeHomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeHomeSection.swift; sourceTree = "<group>"; };
+		4E4634882C7C37E300CE7FA9 /* CustomizeHomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeHomeSection.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E73E2AD2C420207002D2A78 /* MaximumBitrateSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaximumBitrateSettingsView.swift; sourceTree = "<group>"; };
@@ -1717,6 +1719,31 @@
 			isa = PBXGroup;
 			children = (
 				4E4634832C7C325E00CE7FA9 /* CustomizeHomeSection.swift */,
+			);
+			path = Sections;
+			sourceTree = "<group>";
+		};
+		4E4634852C7C37B200CE7FA9 /* CustomizeViewsSettings */ = {
+			isa = PBXGroup;
+			children = (
+				4E4634862C7C37B700CE7FA9 /* Components */,
+				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
+			);
+			path = CustomizeViewsSettings;
+			sourceTree = "<group>";
+		};
+		4E4634862C7C37B700CE7FA9 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E4634872C7C37BF00CE7FA9 /* Sections */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E4634872C7C37BF00CE7FA9 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4E4634882C7C37E300CE7FA9 /* CustomizeHomeSection.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -3507,7 +3534,7 @@
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
+				4E4634852C7C37B200CE7FA9 /* CustomizeViewsSettings */,
 				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */,
@@ -4379,6 +4406,7 @@
 				E11895B32893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				E19D41B02BF2B7540082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
+				4E46348A2C7C37F300CE7FA9 /* CustomizeHomeSection.swift in Sources */,
 				4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
