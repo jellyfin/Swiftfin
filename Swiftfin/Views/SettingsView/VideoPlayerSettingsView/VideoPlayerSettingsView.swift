@@ -13,9 +13,6 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.videoPlayerType)
     private var videoPlayerType
 
-    @EnvironmentObject
-    private var router: VideoPlayerSettingsCoordinator.Router
-
     var body: some View {
         Form {
             switch videoPlayerType {

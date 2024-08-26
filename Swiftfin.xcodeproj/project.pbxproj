@@ -1736,8 +1736,8 @@
 		4E23D9732C71547F004B6FE5 /* VideoPlayerSettingsView */ = {
 			isa = PBXGroup;
 			children = (
-				E1549679296CB4B000C4EF88 /* VideoPlayerSettingsView.swift */,
 				4E23D9712C71547F004B6FE5 /* Components */,
+				E1549679296CB4B000C4EF88 /* VideoPlayerSettingsView.swift */,
 			);
 			path = VideoPlayerSettingsView;
 			sourceTree = "<group>";

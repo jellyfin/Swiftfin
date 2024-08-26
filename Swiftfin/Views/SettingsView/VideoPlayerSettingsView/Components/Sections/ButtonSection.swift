@@ -13,16 +13,12 @@ extension VideoPlayerSettingsView {
     struct ButtonSection: View {
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
-
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
-
         @Default(.VideoPlayer.menuActionButtons)
         private var menuActionButtons
-
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 

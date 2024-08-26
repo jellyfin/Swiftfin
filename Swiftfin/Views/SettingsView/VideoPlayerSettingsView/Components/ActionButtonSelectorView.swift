@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 struct ActionButtonSelectorView: View {
-
     @Binding
     var selection: [VideoPlayerActionButton]
 

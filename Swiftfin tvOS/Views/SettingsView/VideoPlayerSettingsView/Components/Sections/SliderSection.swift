@@ -13,10 +13,8 @@ extension VideoPlayerSettingsView {
     struct SliderSection: View {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-
         @Default(.VideoPlayer.Overlay.sliderColor)
         private var sliderColor
-
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
 
