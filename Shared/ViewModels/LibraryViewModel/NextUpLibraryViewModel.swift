@@ -7,10 +7,16 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
+
+    @Default(.Customization.Home.maxNextUp)
+    private var maxNextUp
+    @Default(.Customization.Home.enableRewatching)
+    private var enableRewatching
 
     init() {
         super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp, id: "nextUp"))
@@ -31,9 +37,21 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.limit = pageSize
+        if maxNextUp > 0 {
+            parameters.nextUpDateCutoff = getNextUp(maxNextUp: maxNextUp)
+        }
+        parameters.enableRewatching = enableRewatching
         parameters.startIndex = page
         parameters.userID = userSession.user.id
 
         return parameters
+    }
+
+    private func getNextUp(maxNextUp: Int) -> Date? {
+        Calendar.current.date(
+            byAdding: .day,
+            value: -maxNextUp,
+            to: Date()
+        )
     }
 }

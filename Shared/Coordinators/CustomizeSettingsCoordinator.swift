@@ -17,11 +17,17 @@ final class CustomizeSettingsCoordinator: NavigationCoordinatable {
 
     @Route(.modal)
     var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
+    var nextUpDaysSettings = makeNextUpDaysSettings
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
         }
+    }
+
+    func makeNextUpDaysSettings(selection: Binding<Int>) -> some View {
+        DaysPickerView(selection: selection)
     }
 
     @ViewBuilder

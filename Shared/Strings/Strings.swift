@@ -164,6 +164,10 @@ internal enum L10n {
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
   /// Dark
   internal static let dark = L10n.tr("Localizable", "dark", fallback: "Dark")
+  /// Day
+  internal static let day = L10n.tr("Localizable", "day", fallback: "Day")
+  /// Days
+  internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -326,6 +330,12 @@ internal enum L10n {
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
   /// Next Up
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
+  /// Days in Next Up
+  internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
+  /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
+  internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
+  /// Rewatching in Next Up
+  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No Cast devices found..
   internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
   /// No Codec

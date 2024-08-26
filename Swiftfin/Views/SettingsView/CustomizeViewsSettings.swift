@@ -38,8 +38,6 @@ struct CustomizeViewsSettings: View {
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
-    @Default(.Customization.showRecentlyAdded)
-    private var showRecentlyAdded
     @Default(.Customization.latestInLibraryPosterType)
     private var latestInLibraryPosterType
     @Default(.Customization.similarPosterType)
@@ -65,6 +63,13 @@ struct CustomizeViewsSettings: View {
     private var showFavorites
     @Default(.Customization.Library.randomImage)
     private var libraryRandomImage
+
+    @Default(.Customization.Home.showRecentlyAdded)
+    private var showRecentlyAdded
+    @Default(.Customization.Home.maxNextUp)
+    private var maxNextUp
+    @Default(.Customization.Home.enableRewatching)
+    private var enableRewatching
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -162,8 +167,29 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
-            Section("Home") {
-                Toggle("Show recently added", isOn: $showRecentlyAdded)
+            Section {
+                Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                Toggle(L10n.nextUpRewatch, isOn: $enableRewatching)
+                BasicStepper(
+                    title: L10n.nextUpDays,
+                    value: $maxNextUp,
+                    range: 0 ... 999,
+                    step: 1
+                )
+                .valueFormatter { days in
+                    switch days {
+                    case 0:
+                        return L10n.disabled
+                    case 1:
+                        return "1 " + L10n.day
+                    default:
+                        return "\(days) " + L10n.days
+                    }
+                }
+            } header: {
+                L10n.home.text
+            } footer: {
+                L10n.nextUpDaysDescription.text
             }
 
             Section {
