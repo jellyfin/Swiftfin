@@ -90,8 +90,6 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
                     Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
 
                 CustomizeHomeSection()
