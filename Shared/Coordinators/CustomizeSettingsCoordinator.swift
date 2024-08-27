@@ -17,11 +17,17 @@ final class CustomizeSettingsCoordinator: NavigationCoordinatable {
 
     @Route(.modal)
     var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
+    var listColumnSettings = makeListColumnSettings
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
         }
+    }
+
+    func makeListColumnSettings(selection: Binding<Int>) -> some View {
+        ListColumnsPickerView(selection: selection)
     }
 
     @ViewBuilder
