@@ -42,5 +42,9 @@ class AVPlayerVideoPlayerProxy: VideoPlayerProxy {
         avPlayer?.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
-    func play(item: VideoPlayerItem) {}
+    func stop() {
+        avPlayer?.pause()
+    }
+
+    func play(item: VideoPlayerPlaybackItem) {}
 }

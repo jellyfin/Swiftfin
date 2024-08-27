@@ -18,8 +18,8 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+//        @EnvironmentObject
+//        private var viewModel: VideoPlayerViewModel
 
         private var content: (Bool) -> any View
 

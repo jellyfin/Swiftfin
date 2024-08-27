@@ -20,10 +20,18 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let videoPlayerManager: VideoPlayerManager
+//    let videoPlayerManager: VideoPlayerManager
+//
+//    init(manager: VideoPlayerManager) {
+//        self.videoPlayerManager = manager
+//    }
 
-    init(manager: VideoPlayerManager) {
-        self.videoPlayerManager = manager
+    private let baseItem: BaseItemDto
+    private let mediaSource: MediaSourceInfo
+
+    init(baseItem: BaseItemDto, mediaSource: MediaSourceInfo) {
+        self.baseItem = baseItem
+        self.mediaSource = mediaSource
     }
 
     // TODO: removed after iOS 15 support removed
@@ -35,10 +43,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             PreferencesView {
                 Group {
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-//                        VideoPlayer(manager: self.videoPlayerManager)
-                        Color.red
+                        VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
                     } else {
-                        NativeVideoPlayer(manager: self.videoPlayerManager)
+                        Color.red
+//                        NativeVideoPlayer(manager: self.videoPlayerManager)
                     }
                 }
                 .preferredColorScheme(.dark)
@@ -50,7 +58,8 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 //                    VideoPlayer(manager: self.videoPlayerManager)
                     Color.red
                 } else {
-                    NativeVideoPlayer(manager: self.videoPlayerManager)
+                    Color.red
+//                    NativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
             .preferredColorScheme(.dark)

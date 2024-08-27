@@ -21,6 +21,12 @@ struct ScalingButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? scale : 1)
+            .background {
+                Circle()
+                    .foregroundStyle(Color.white)
+                    .opacity(configuration.isPressed ? 0.5 : 0)
+                    .frame(width: 100)
+            }
             .animation(animation, value: configuration.isPressed)
     }
 }

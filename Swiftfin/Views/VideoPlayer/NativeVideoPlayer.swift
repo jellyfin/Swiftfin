@@ -31,7 +31,7 @@ struct NativeVideoPlayer: View {
 
     var body: some View {
         ZStack {
-            if let _ = manager.currentItem {
+            if let _ = manager.playbackItem {
                 playerView
             } else {
                 VideoPlayer.LoadingView()
@@ -67,7 +67,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer = .init(url: manager.currentItem!.url)
+        let newPlayer: AVPlayer = .init(url: manager.playbackItem!.url)
 
         updatesNowPlayingInfoCenter = false
 

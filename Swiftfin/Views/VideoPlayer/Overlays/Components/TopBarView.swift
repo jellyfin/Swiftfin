@@ -19,20 +19,12 @@ extension VideoPlayer.Overlay {
         private var manager: VideoPlayerManager
         @EnvironmentObject
         private var router: VideoPlayerCoordinator.Router
-        @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
 
         var body: some View {
             VStack(alignment: .VideoPlayerTitleAlignmentGuide, spacing: 0) {
                 HStack(alignment: .center) {
                     Button {
-                        videoPlayerProxy.stop()
-                        manager.nowPlayable.handleNowPlayableSessionEnd()
-                        router.dismissCoordinator()
+                        manager.send(.stop)
                     } label: {
                         Image(systemName: "xmark")
                             .padding()
@@ -40,7 +32,7 @@ extension VideoPlayer.Overlay {
                     .contentShape(Rectangle())
                     .buttonStyle(ScalingButtonStyle(scale: 0.8))
 
-                    Text(viewModel.item.displayTitle)
+                    Text(manager.item.displayTitle)
                         .font(.title3)
                         .fontWeight(.bold)
                         .lineLimit(1)
@@ -57,15 +49,15 @@ extension VideoPlayer.Overlay {
                 .tint(Color.white)
                 .foregroundColor(Color.white)
 
-//                if let subtitle = viewModel.item.subtitle {
-//                    Text(subtitle)
-//                        .font(.subheadline)
-//                        .foregroundColor(.white)
-//                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-//                            dimensions[.leading]
-//                        }
-//                        .offset(y: -10)
-//                }
+                if let subtitle = manager.item.subtitle {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(.white)
+                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
+                            dimensions[.leading]
+                        }
+                        .offset(y: -10)
+                }
             }
         }
     }

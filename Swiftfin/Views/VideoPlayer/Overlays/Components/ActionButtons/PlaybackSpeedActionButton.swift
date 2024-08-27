@@ -26,8 +26,8 @@ extension VideoPlayer.Overlay.ActionButtons {
             Menu {
                 ForEach(PlaybackSpeed.allCases, id: \.self) { speed in
                     Button {
-                        videoPlayerManager.playbackSpeed = speed
-                        videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
+//                        videoPlayerManager.playbackSpeed = speed
+//                        videoPlayerProxy.setRate(.absolute(Float(speed.rawValue)))
                     } label: {
                         if speed == videoPlayerManager.playbackSpeed {
                             Label(speed.displayTitle, systemImage: "checkmark")

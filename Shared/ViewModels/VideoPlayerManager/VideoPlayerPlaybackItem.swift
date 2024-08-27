@@ -15,21 +15,13 @@ import VLCUI
 
 struct ProgressBox {
 
-    var progress: Float
+    var progress: CGFloat
     var seconds: Int
 }
 
 // TODO: register metadata with now playing
 
-class VideoPlayerItem: ViewModel {
-
-    @Published
-    var progress: ProgressBox
-
-    @Published
-    var audioTrackIndex: Int
-    @Published
-    var subtitleTrackIndex: Int
+class VideoPlayerPlaybackItem: ViewModel {
 
     let baseItem: BaseItemDto
     let chapters: [ChapterInfo.FullInfo]
@@ -84,23 +76,19 @@ class VideoPlayerItem: ViewModel {
             .compactMap(\.asPlaybackChild)
 
         vlcConfiguration = configuration
-
-        audioTrackIndex = mediaSource.defaultAudioStreamIndex ?? -1
-        subtitleTrackIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
-
-        progress = .init(
-            progress: Float(startSeconds / baseItem.runTimeSeconds),
-            seconds: startSeconds
-        )
     }
 
+    // MARK: stateDidChange
+
     func stateDidChange(newState: VideoPlayerManager.State) {}
+
+    // MARK: playbackTimeDidChange
 
     func playbackTimeDidChange(newSeconds: Int) {}
 
     // MARK: build
 
-    static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> VideoPlayerItem {
+    static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> VideoPlayerPlaybackItem {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
@@ -162,7 +150,7 @@ class VideoPlayerItem: ViewModel {
             playbackURL = streamURL
         }
 
-        return VideoPlayerItem(
+        return VideoPlayerPlaybackItem(
             baseItem: item,
             mediaSource: matchingMediaSource,
             playSessionID: playSessionID,

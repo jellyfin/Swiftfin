@@ -148,9 +148,13 @@ final class MainCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
-        VideoPlayerCoordinator(manager: manager)
+    func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> VideoPlayerCoordinator {
+        VideoPlayerCoordinator(baseItem: parameters.0, mediaSource: parameters.1)
     }
+
+//    func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
+//        VideoPlayerCoordinator(manager: manager)
+//    }
 
     func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
         LiveVideoPlayerCoordinator(manager: manager)

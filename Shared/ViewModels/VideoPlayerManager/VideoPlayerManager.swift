@@ -22,11 +22,21 @@ import VLCUI
 // TODO: should view models handle progress reports instead, with a protocol
 //       for other types of media handling
 
+protocol VideoPlayerListener {
+    func stateDidChange(newState: VideoPlayerManager.State)
+    func playbackTimeDidChange(newSeconds: Int)
+}
+
 // TODO: transition to `Stateful`
 // TODO: make `Eventful`
 //       - didEndQueue
 // TODO: queue provider
-class VideoPlayerManager: ViewModel, Stateful {
+class VideoPlayerManager: ViewModel, Eventful, Stateful {
+
+    enum Event {
+        case playbackStopped
+        case playItem(VideoPlayerPlaybackItem)
+    }
 
     enum Action: Equatable {
 
@@ -36,11 +46,7 @@ class VideoPlayerManager: ViewModel, Stateful {
         case play
         case buffer
         case ended
-
-//        case jumpForward(seconds: Int)
-//        case jumpBackward(seonds: Int)
-//        case setRate(rate: Float)
-//        case setTime(time: TimeInterval)
+        case stop
 
         case playNextItem
         case playPreviousItem
@@ -54,26 +60,42 @@ class VideoPlayerManager: ViewModel, Stateful {
         case playing
         case paused
         case buffering
-        case ended
+        case stopped
     }
 
     @Injected(\.nowPlayable)
     var nowPlayable: NowPlayable
 
     @Published
-    var progress: ProgressBox = .init(progress: 0, seconds: 0)
+    private(set) var playbackItem: VideoPlayerPlaybackItem! = nil {
+        didSet {
+            guard let playbackItem else { return }
+            eventSubject.send(.playItem(playbackItem))
+        }
+    }
 
+    @Published
+    private(set) var item: BaseItemDto
+
+    @Published
+    var progress: ProgressBox = .init(progress: 0, seconds: 0)
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
-    private(set) var currentItem: VideoPlayerItem? = nil
+    private(set) var playbackSpeed: PlaybackSpeed = .one
+
     @Published
     final var state: State = .initial
     @Published
     final var lastAction: Action? = nil
 
-    @Published
-    var playbackSpeed: PlaybackSpeed = .one
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    private let eventSubject: PassthroughSubject<Event, Never> = .init()
 
     // proxy for the underlying video playing layer
     var proxy: VideoPlayerProxy!
@@ -81,32 +103,69 @@ class VideoPlayerManager: ViewModel, Stateful {
 
     // MARK: init
 
+    // TODO: rename to `baseItem`
     init(
         item: BaseItemDto,
         mediaSource: MediaSourceInfo
     ) {
+        self.item = item
         super.init()
 
         buildCurrentItem(with: item, mediaSource: mediaSource)
         queue.append(item)
     }
 
+    init(playbackItem: VideoPlayerPlaybackItem) {
+        item = playbackItem.baseItem
+        super.init()
+
+        self.playbackItem = playbackItem
+        queue.append(playbackItem.baseItem)
+
+        state = .buffering
+    }
+
+    @MainActor
     func respond(to action: Action) -> State {
-        .initial
+
+        guard state != .stopped else { return .stopped }
+
+        switch action {
+        case let .error(error):
+            return .error(error)
+        case .pause:
+            return .paused
+        case .play:
+            return .playing
+        case .buffer:
+            return .buffering
+        case .ended:
+            // TODO: go next in queue
+            return .loadingItem
+        case .stop:
+            Task { @MainActor in
+                eventSubject.send(.playbackStopped)
+            }
+            return .stopped
+        case .playNextItem:
+            // TODO: go next in queue
+            return .loadingItem
+        case .playPreviousItem:
+            // TODO: go back in queue
+            return .loadingItem
+        }
     }
 
     private func buildCurrentItem(with item: BaseItemDto, mediaSource: MediaSourceInfo) {
         itemBuildTask?.cancel()
 
         itemBuildTask = Task { [weak self] in
-
             do {
-
                 await MainActor.run { [weak self] in
                     self?.state = .loadingItem
                 }
 
-                let videoPlayerItem = try await VideoPlayerItem.build(
+                let playbackItem = try await VideoPlayerPlaybackItem.build(
                     for: item,
                     mediaSource: mediaSource
                 )
@@ -115,7 +174,7 @@ class VideoPlayerManager: ViewModel, Stateful {
 
                 await MainActor.run {
                     self.state = .buffering
-                    self.currentItem = videoPlayerItem
+                    self.playbackItem = playbackItem
                 }
             } catch {
                 guard let self, !Task.isCancelled else { return }
@@ -132,19 +191,19 @@ class VideoPlayerManager: ViewModel, Stateful {
 // MARK: OLD
 
 extension VideoPlayerManager {
-
-    class CurrentProgressHandler: ObservableObject {
-
-        @Published
-        var progress: CGFloat = 0
-        @Published
-        var scrubbedProgress: CGFloat = 0
-
-        @Published
-        var seconds: Int = 0
-        @Published
-        var scrubbedSeconds: Int = 0
-    }
+//
+//    class CurrentProgressHandler: ObservableObject {
+//
+//        @Published
+//        var progress: CGFloat = 0
+//        @Published
+//        var scrubbedProgress: CGFloat = 0
+//
+//        @Published
+//        var seconds: Int = 0
+//        @Published
+//        var scrubbedSeconds: Int = 0
+//    }
 
     // MARK: select
 

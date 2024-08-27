@@ -13,34 +13,36 @@ extension VideoPlayer.Overlay {
 
     struct ChapterTrack: View {
 
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+//        @EnvironmentObject
+//        private var viewModel: VideoPlayerViewModel
 
         @State
         private var width: CGFloat = 0
 
         private func maxWidth(for chapter: ChapterInfo.FullInfo) -> CGFloat {
-            width * CGFloat(chapter.secondsRange.count) / CGFloat(viewModel.item.runTimeSeconds)
+            0
+//            width * CGFloat(chapter.secondsRange.count) / CGFloat(viewModel.item.runTimeSeconds)
         }
 
         var body: some View {
-            HStack(spacing: 0) {
-                ForEach(viewModel.chapters, id: \.self) { chapter in
-                    HStack(spacing: 0) {
-                        if chapter != viewModel.chapters.first {
-                            Color.clear
-                                .frame(width: 1.5)
-                        }
-
-                        Color.white
-                    }
-                    .frame(maxWidth: maxWidth(for: chapter))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .onSizeChanged { newSize in
-                width = newSize.width
-            }
+            Color.white
+//            HStack(spacing: 0) {
+//                ForEach(viewModel.chapters, id: \.self) { chapter in
+//                    HStack(spacing: 0) {
+//                        if chapter != viewModel.chapters.first {
+//                            Color.clear
+//                                .frame(width: 1.5)
+//                        }
+//
+//                        Color.white
+//                    }
+//                    .frame(maxWidth: maxWidth(for: chapter))
+//                }
+//            }
+//            .frame(maxWidth: .infinity)
+//            .onSizeChanged { newSize in
+//                width = newSize.width
+//            }
         }
     }
 }

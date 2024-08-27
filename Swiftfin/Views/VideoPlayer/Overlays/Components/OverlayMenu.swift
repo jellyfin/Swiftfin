@@ -19,8 +19,8 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var splitContentViewProxy: SplitContentViewProxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+//        @EnvironmentObject
+//        private var viewModel: VideoPlayerViewModel
 
         @ViewBuilder
         private var advancedButton: some View {
@@ -67,32 +67,34 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var autoPlayButton: some View {
-            if viewModel.item.type == .episode {
-                ActionButtons.AutoPlay { autoPlayEnabled in
-                    HStack {
-                        if autoPlayEnabled {
-                            Image(systemName: "play.circle.fill")
-                        } else {
-                            Image(systemName: "stop.circle")
-                        }
-
-                        L10n.autoPlay.text
-                    }
-                }
-            }
+            EmptyView()
+//            if viewModel.item.type == .episode {
+//                ActionButtons.AutoPlay { autoPlayEnabled in
+//                    HStack {
+//                        if autoPlayEnabled {
+//                            Image(systemName: "play.circle.fill")
+//                        } else {
+//                            Image(systemName: "stop.circle")
+//                        }
+//
+//                        L10n.autoPlay.text
+//                    }
+//                }
+//            }
         }
 
         @ViewBuilder
         private var chaptersButton: some View {
-            if viewModel.chapters.isNotEmpty {
-                ActionButtons.Chapters {
-                    HStack {
-                        Image(systemName: "list.dash")
-
-                        L10n.chapters.text
-                    }
-                }
-            }
+            EmptyView()
+//            if viewModel.chapters.isNotEmpty {
+//                ActionButtons.Chapters {
+//                    HStack {
+//                        Image(systemName: "list.dash")
+//
+//                        L10n.chapters.text
+//                    }
+//                }
+//            }
         }
 
         @ViewBuilder
@@ -108,28 +110,30 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var playNextItemButton: some View {
-            if viewModel.item.type == .episode {
-                ActionButtons.PlayNextItem {
-                    HStack {
-                        Image(systemName: "chevron.right.circle")
-
-                        Text(L10n.playNextItem)
-                    }
-                }
-            }
+            EmptyView()
+//            if viewModel.item.type == .episode {
+//                ActionButtons.PlayNextItem {
+//                    HStack {
+//                        Image(systemName: "chevron.right.circle")
+//
+//                        Text(L10n.playNextItem)
+//                    }
+//                }
+//            }
         }
 
         @ViewBuilder
         private var playPreviousItemButton: some View {
-            if viewModel.item.type == .episode {
-                ActionButtons.PlayPreviousItem {
-                    HStack {
-                        Image(systemName: "chevron.left.circle")
-
-                        Text(L10n.playPreviousItem)
-                    }
-                }
-            }
+            EmptyView()
+//            if viewModel.item.type == .episode {
+//                ActionButtons.PlayPreviousItem {
+//                    HStack {
+//                        Image(systemName: "chevron.left.circle")
+//
+//                        Text(L10n.playPreviousItem)
+//                    }
+//                }
+//            }
         }
 
         @ViewBuilder

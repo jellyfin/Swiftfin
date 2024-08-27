@@ -59,6 +59,11 @@ extension EnvironmentValues {
         self[SafeAreaInsetsKey.self]
     }
 
+    var scrubbingProgress: Binding<ProgressBox> {
+        get { self[ScrubbingProgressKey.self] }
+        set { self[ScrubbingProgressKey.self] = newValue }
+    }
+
     var subtitleOffset: Binding<Int> {
         get { self[SubtitleOffsetKey.self] }
         set { self[SubtitleOffsetKey.self] = newValue }

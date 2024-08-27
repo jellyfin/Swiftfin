@@ -28,9 +28,6 @@ extension VideoPlayer {
         @Environment(\.safeAreaInsets)
         private var safeAreaInsets
 
-        @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-
         @StateObject
         private var overlayTimer: TimerProxy = .init()
 
@@ -38,38 +35,28 @@ extension VideoPlayer {
             ZStack {
                 VStack {
                     Overlay.TopBarView()
-                        .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
-                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
-                        }
-                        .if(UIDevice.isPad) { view in
-                            view.padding(.top)
-                                .padding2(.horizontal)
-                        }
-                        .background {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .black.opacity(0.9), location: 0),
-                                    .init(color: .clear, location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .visible(playbackButtonType == .compact)
-                        }
-                        .visible(!isScrubbing && isPresentingOverlay)
+//                        .if(UIDevice.isPad) { view in
+//                            view.edgePadding(<#T##edges: Edge.Set##Edge.Set#>)
+//                        }
+                            .background {
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .black.opacity(0.9), location: 0),
+                                        .init(color: .clear, location: 1),
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                                .visible(playbackButtonType == .compact)
+                            }
+                            .visible(!isScrubbing && isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
 
                     Overlay.BottomBarView()
-                        .if(UIDevice.hasNotch) { view in
-                            view.padding(safeAreaInsets.mutating(\.trailing, with: 0))
-                                .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
-                        }
                         .if(UIDevice.isPad) { view in
-                            view.padding2(.bottom)
-                                .padding2(.horizontal)
+                            view.edgePadding([.bottom, .horizontal])
                         }
                         .background {
                             LinearGradient(
@@ -118,9 +105,9 @@ extension VideoPlayer {
             .onChange(of: overlayTimer.isActive) { newValue in
                 guard !newValue, !isScrubbing else { return }
 
-                withAnimation(.linear(duration: 0.3)) {
-                    isPresentingOverlay = false
-                }
+//                withAnimation(.linear(duration: 0.3)) {
+//                    isPresentingOverlay = false
+//                }
             }
         }
     }

@@ -19,5 +19,7 @@ protocol VideoPlayerProxy {
     func setRate(_ rate: Float)
     func setTime(_ time: TimeInterval)
 
-    func play(item: VideoPlayerItem)
+    func stop()
+
+    func play(item: VideoPlayerPlaybackItem)
 }

@@ -24,7 +24,7 @@ class LiveVideoPlayerManager: VideoPlayerManager {
         super.init(item: item, mediaSource: mediaSource)
 
         Task {
-            let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
+//            let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
 
 //            await MainActor.run {
 //                self.currentViewModel = viewModel
@@ -41,7 +41,7 @@ class LiveVideoPlayerManager: VideoPlayerManager {
                 return
             }
 
-            let viewModel = try await program.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
+//            let viewModel = try await program.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
 
 //            await MainActor.run {
 //                self.currentViewModel = viewModel

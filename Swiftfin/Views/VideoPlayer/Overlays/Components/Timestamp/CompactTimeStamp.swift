@@ -18,10 +18,12 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
+//        @EnvironmentObject
+//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
-        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var manager: VideoPlayerManager
+//        @EnvironmentObject
+//        private var viewModel: VideoPlayerViewModel
 
         @Environment(\.isScrubbing)
         @Binding
@@ -39,20 +41,21 @@ extension VideoPlayer.Overlay {
             } label: {
                 HStack(spacing: 2) {
 
-                    Text(currentProgressHandler.scrubbedSeconds.timeLabel)
+//                    Text(currentProgressHandler.scrubbedSeconds.timeLabel)
+                    Text(manager.progress.seconds.timeLabel)
                         .foregroundColor(.white)
 
                     Text("/")
                         .foregroundColor(Color(UIColor.lightText))
 
-                    switch trailingTimestampType {
-                    case .timeLeft:
-                        Text((viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
-                            .foregroundColor(Color(UIColor.lightText))
-                    case .totalTime:
-                        Text(viewModel.item.runTimeSeconds.timeLabel)
-                            .foregroundColor(Color(UIColor.lightText))
-                    }
+//                    switch trailingTimestampType {
+//                    case .timeLeft:
+//                        Text((viewModel.item.runTimeSeconds - currentProgressHandler.scrubbedSeconds).timeLabel.prepending("-"))
+//                            .foregroundColor(Color(UIColor.lightText))
+//                    case .totalTime:
+//                        Text(viewModel.item.runTimeSeconds.timeLabel)
+//                            .foregroundColor(Color(UIColor.lightText))
+//                    }
                 }
             }
         }
@@ -61,11 +64,12 @@ extension VideoPlayer.Overlay {
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(currentProgressHandler.seconds.timeLabel)
+//                Text(currentProgressHandler.seconds.timeLabel)
+                Text(manager.progress.seconds.timeLabel)
 
                 Text("/")
 
-                Text((viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
+//                Text((viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
             }
             .foregroundColor(Color(UIColor.lightText))
         }

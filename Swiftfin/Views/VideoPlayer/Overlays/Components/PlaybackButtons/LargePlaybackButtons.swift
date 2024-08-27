@@ -24,14 +24,14 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var timerProxy: TimerProxy
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var manager: VideoPlayerManager
         @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        private var vlcUIProxy: VLCVideoPlayer.Proxy
 
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+                vlcUIProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
                 timerProxy.start(5)
             } label: {
                 Image(systemName: jumpBackwardLength.backwardImageLabel)
@@ -46,16 +46,16 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var playButton: some View {
             Button {
-                switch videoPlayerManager.state {
+                switch manager.state {
                 case .playing:
-                    videoPlayerProxy.pause()
+                    vlcUIProxy.pause()
                 default:
-                    videoPlayerProxy.play()
+                    vlcUIProxy.play()
                 }
                 timerProxy.start(5)
             } label: {
                 Group {
-                    switch videoPlayerManager.state {
+                    switch manager.state {
                     case .paused:
                         Image(systemName: "play.fill")
                     case .playing:
@@ -67,7 +67,7 @@ extension VideoPlayer.Overlay {
                 }
                 .font(.system(size: 56, weight: .bold, design: .default))
                 .padding()
-                .transition(.opacity)
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
                 .contentShape(Rectangle())
             }
             .contentShape(Rectangle())
@@ -77,7 +77,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+                vlcUIProxy.jumpForward(Int(jumpForwardLength.rawValue))
                 timerProxy.start(5)
             } label: {
                 Image(systemName: jumpForwardLength.forwardImageLabel)

@@ -51,6 +51,10 @@ extension EnvironmentValues {
         }
     }
 
+    struct ScrubbingProgressKey: EnvironmentKey {
+        static var defaultValue: Binding<ProgressBox> = .constant(.init(progress: 0, seconds: 0))
+    }
+
     struct SubtitleOffsetKey: EnvironmentKey {
         static let defaultValue: Binding<Int> = .constant(0)
     }

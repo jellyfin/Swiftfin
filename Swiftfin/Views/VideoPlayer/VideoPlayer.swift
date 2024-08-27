@@ -55,7 +55,7 @@ struct VideoPlayer: View {
 
     @Environment(\.scenePhase)
     private var scenePhase
-    
+
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
@@ -66,11 +66,13 @@ struct VideoPlayer: View {
     @State
     private var isGestureLocked: Bool = false
     @State
-    private var isPresentingOverlay: Bool = false
+    private var isPresentingOverlay: Bool = true
     @State
     private var isScrubbing: Bool = false
     @State
     private var playbackSpeed: Double = 1
+    @State
+    private var scrubbedProgress: ProgressBox = .init(progress: 0, seconds: 0)
     @State
     private var subtitleOffset: Int = 0
 
@@ -82,76 +84,79 @@ struct VideoPlayer: View {
     private let gestureStateHandler: GestureStateHandler = .init()
     private let updateViewProxy: UpdateViewProxy = .init()
 
+    // MARK: playerView
+
     @ViewBuilder
     private var playerView: some View {
         ZStack {
-            VLCVideoPlayer(configuration: manager.currentItem!.vlcConfiguration)
-//                .proxy(vlcUIProxy)
-                    .onTicksUpdated { _, _ in
 
-//                    let newSeconds = ticks / 1000
-//                    let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
-//                    currentProgressHandler.progress = newProgress
-//                    currentProgressHandler.seconds = newSeconds
-//
-//                    guard !isScrubbing else { return }
-//                    currentProgressHandler.scrubbedProgress = newProgress
-//
-//                    videoPlayerManager.onTicksUpdated(
-//                        ticks: ticks,
-//                        playbackInformation: information
-//                    )
+            Color.black
+
+            if let currentItem = manager.playbackItem {
+                VLCVideoPlayer(configuration: currentItem.vlcConfiguration)
+                    .proxy(vlcUIProxy)
+                    .onTicksUpdated { ticks, _ in
+
+                        guard manager.state != .initial || manager.state != .loadingItem else { return }
+
+                        let newSeconds = ticks / 1000
+                        let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
+
+                        // set scrubbed seconds instead, which will be communicated
+                        // to the manager elsewhere if not scrubbing
+                        scrubbedProgress.seconds = newSeconds
+                        scrubbedProgress.progress = newProgress
                     }
                     .onStateUpdated { state, _ in
-                        manager.onStateUpdated(newState: state)
+                        guard manager.state != .loadingItem else { return }
+
+                        switch state {
+                        case .buffering, .esAdded, .opening:
+                            manager.send(.buffer)
+                        case .ended, .stopped:
+                            manager.send(.ended)
+                        case .error:
+                            // TODO: localize
+                            manager.send(.error(.init("Unable to perform playback")))
+                        case .playing:
+                            manager.send(.play)
+                        case .paused:
+                            manager.send(.pause)
+                        }
                     }
+                    .transition(.opacity.animation(.linear(duration: 1)))
+            }
 
             VideoPlayer.Overlay()
-        }
-//        .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { newValue in
-//            guard !newValue.isNaN && !newValue.isInfinite else {
-//                return
-//            }
-//            DispatchQueue.main.async {
-//                videoPlayerManager.currentProgressHandler
-//                    .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
-//            }
-//        }
-        .overlay(alignment: .top) {
-            UpdateView(proxy: updateViewProxy)
-                .padding(.top)
         }
         .videoPlayerKeyCommands(
             gestureStateHandler: gestureStateHandler,
             updateViewProxy: updateViewProxy
         )
         .environmentObject(manager)
+        .environmentObject(vlcUIProxy)
         .environment(\.aspectFilled, $isAspectFilled)
         .environment(\.isPresentingOverlay, $isPresentingOverlay)
         .environment(\.isScrubbing, $isScrubbing)
         .environment(\.playbackSpeed, $playbackSpeed)
+        .environment(\.scrubbingProgress, $scrubbedProgress)
     }
 
+    // MARK: body
+
     var body: some View {
-        ZStack {
-//            if let _ = videoPlayerManager.currentViewModel {
-//                playerView
-//            } else {
-//                LoadingView()
-//                    .transition(.opacity)
-//            }
-        }
-        .navigationBarHidden()
-        .statusBarHidden()
-        .ignoresSafeArea()
-//        .onChange(of: audioOffset) { newValue in
-//            vlcUIProxy.setAudioDelay(.ticks(newValue))
-//        }
-//        .onChange(of: isAspectFilled) { newValue in
-//            UIView.animate(withDuration: 0.2) {
-//                vlcUIProxy.aspectFill(newValue ? 1 : 0)
-//            }
-//        }
+        playerView
+            .navigationBarHidden()
+            .statusBarHidden()
+            .ignoresSafeArea()
+            .onChange(of: audioOffset) { newValue in
+                vlcUIProxy.setAudioDelay(.ticks(newValue))
+            }
+            .onChange(of: isAspectFilled) { newValue in
+                UIView.animate(withDuration: 0.2) {
+                    vlcUIProxy.aspectFill(newValue ? 1 : 0)
+                }
+            }
 //        .onChange(of: isGestureLocked) { newValue in
 //            if newValue {
 //                updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
@@ -159,31 +164,61 @@ struct VideoPlayer: View {
 //                updateViewProxy.present(systemName: "lock.open.fill", title: "Gestures Unlocked")
 //            }
 //        }
-//        .onChange(of: isScrubbing) { newValue in
-//            guard !newValue else { return }
-//            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
-//        }
-//        .onChange(of: subtitleColor) { newValue in
-//            vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
-//        }
-//        .onChange(of: subtitleFontName) { newValue in
-//            vlcUIProxy.setSubtitleFont(newValue)
-//        }
-//        .onChange(of: subtitleOffset) { newValue in
-//            vlcUIProxy.setSubtitleDelay(.ticks(newValue))
-//        }
-//        .onChange(of: subtitleSize) { newValue in
-//            vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
-//        }
-//        .onChange(of: videoPlayerManager.currentViewModel) { newViewModel in
-//            guard let newViewModel else { return }
+            .onChange(of: isScrubbing) { newValue in
+                guard !newValue else { return }
+                vlcUIProxy.setTime(.seconds(scrubbedProgress.seconds))
+            }
+            .onChange(of: scrubbedProgress.progress) { _ in
+                guard !isScrubbing else { return }
+
+//                if isScrubbing {
 //
-//            vlcUIProxy.playNewMedia(newViewModel.vlcVideoPlayerConfiguration)
-//
-//            isAspectFilled = false
-//            audioOffset = 0
-//            subtitleOffset = 0
-//        }
+//                } else {
+//                    manager.progress.seconds = newSeconds
+//                    manager.progress.progress = newValue
+//                }
+            }
+            .onChange(of: subtitleColor) { newValue in
+                vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
+            }
+            .onChange(of: subtitleFontName) { newValue in
+                vlcUIProxy.setSubtitleFont(newValue)
+            }
+            .onChange(of: subtitleOffset) { newValue in
+                vlcUIProxy.setSubtitleDelay(.ticks(newValue))
+            }
+            .onChange(of: subtitleSize) { newValue in
+                vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))
+            }
+            .onReceive(manager.events) { event in
+                switch event {
+                case .playbackStopped:
+                    vlcUIProxy.stop()
+                    router.dismissCoordinator()
+                case let .playItem(item):
+                    isAspectFilled = false
+                    audioOffset = 0
+                    subtitleOffset = 0
+
+                    let seconds: Int
+
+                    switch item.vlcConfiguration.startTime {
+                    case let .ticks(value):
+                        seconds = value / 1000
+                    case let .seconds(value):
+                        seconds = value
+                    }
+
+                    let progress = CGFloat(seconds) / CGFloat(item.baseItem.runTimeSeconds)
+
+                    scrubbedProgress = .init(
+                        progress: progress,
+                        seconds: seconds
+                    )
+
+                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+                }
+            }
 //        .onScenePhase(.active) {
 //            if Defaults[.VideoPlayer.Transition.playOnActive] {
 //                videoPlayerManager.proxy.play()
@@ -196,6 +231,8 @@ struct VideoPlayer: View {
 //        }
     }
 }
+
+// MARK: init
 
 extension VideoPlayer {
 
@@ -213,4 +250,8 @@ extension VideoPlayer {
             vlcUIProxy: vlcUIProxy
         )
     }
+
+//    init(item: VideoPlayerItem) {
+//
+//    }
 }

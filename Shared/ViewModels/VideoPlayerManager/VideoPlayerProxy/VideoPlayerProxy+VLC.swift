@@ -37,5 +37,7 @@ class VLCVideoPlayerProxy: VideoPlayerProxy {
         vlcUIProxy?.setTime(.seconds(Int(time)))
     }
 
-    func play(item: VideoPlayerItem) {}
+    func stop() {}
+
+    func play(item: VideoPlayerPlaybackItem) {}
 }
