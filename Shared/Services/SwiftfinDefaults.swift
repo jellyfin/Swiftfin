@@ -216,7 +216,7 @@ extension Defaults.Keys {
         enum Playback {
             static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
             static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
-            static let customDeviceProfile: Key<CustomDeviceProfileSelection> = UserKey("customDeviceProfile", default: .off)
+            static let customDeviceProfile: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfile", default: .off)
             static let customDeviceProfileTranscoding: Key<Bool> = UserKey("customDeviceProfileTranscoding", default: false)
             static let customDeviceProfileAudio: Key<[AudioCodec]> = UserKey(
                 "customDeviceProfileAudio",

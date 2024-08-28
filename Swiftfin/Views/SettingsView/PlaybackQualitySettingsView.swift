@@ -57,7 +57,7 @@ struct PlaybackQualitySettingsView: View {
                     selection: $customDeviceProfile
                 )
 
-                if customDeviceProfile != CustomDeviceProfileSelection.off {
+                if customDeviceProfile != CustomDeviceProfileAction.off {
                     Toggle(L10n.useAsTranscodingProfile, isOn: $customDeviceProfileTranscoding)
 
                     ChevronButton(L10n.audio)

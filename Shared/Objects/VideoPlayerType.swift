@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-struct VideoPlayerType: Codable, Defaults.Serializable, Equatable {
+struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable, Defaults.Serializable {
     let displayTitle: String
     let directPlayProfiles: [DirectPlayProfile]
     let transcodingProfiles: [TranscodingProfile]
@@ -27,6 +27,12 @@ struct VideoPlayerType: Codable, Defaults.Serializable, Equatable {
 
     static var swiftfin: VideoPlayerType {
         makeSwiftfinVideoPlayerProfile()
+    }
+
+    // MARK: - All Cases
+
+    static var allCases: [VideoPlayerType] {
+        [.native, .swiftfin]
     }
 
     // MARK: - Native Device Profile

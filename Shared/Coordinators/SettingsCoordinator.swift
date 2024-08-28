@@ -139,18 +139,22 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            .navigationTitle(L10n.filters)
     }
 
     func makeCustomProfileAudioSelector(selection: Binding<[AudioCodec]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
+            .navigationTitle(L10n.audio)
     }
 
     func makeCustomProfileVideoSelector(selection: Binding<[VideoCodec]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
+            .navigationTitle(L10n.video)
     }
 
     func makeCustomProfileContainerSelector(selection: Binding<[MediaContainer]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
+            .navigationTitle(L10n.containers)
     }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {

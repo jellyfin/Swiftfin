@@ -6,4 +6,15 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Foundation
+import Defaults
+
+enum PlaybackCompatibility: String, CaseIterable, Defaults.Serializable, Displayable {
+    case auto = "Auto"
+    case compatible = "Most Compatible"
+    case direct = "Direct Play"
+    case custom = "Custom"
+
+    var displayTitle: String {
+        rawValue
+    }
+}
