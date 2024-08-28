@@ -19,12 +19,10 @@
 		4E23D9762C71547F004B6FE5 /* ResumeOffsetSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D96A2C71547F004B6FE5 /* ResumeOffsetSection.swift */; };
 		4E23D9842C71B81F004B6FE5 /* ResumeOffsetPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9832C71B81F004B6FE5 /* ResumeOffsetPickerView.swift */; };
 		4E23D9862C71C006004B6FE5 /* SubtitleSizePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9852C71C006004B6FE5 /* SubtitleSizePickerView.swift */; };
-		4E23D98F2C71C8CC004B6FE5 /* ButtonSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9872C71C8CC004B6FE5 /* ButtonSection.swift */; };
 		4E23D9902C71C8CC004B6FE5 /* PlayerControlsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9882C71C8CC004B6FE5 /* PlayerControlsSection.swift */; };
 		4E23D9912C71C8CC004B6FE5 /* ResumeOffsetSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9892C71C8CC004B6FE5 /* ResumeOffsetSection.swift */; };
 		4E23D9922C71C8CC004B6FE5 /* SliderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98A2C71C8CC004B6FE5 /* SliderSection.swift */; };
 		4E23D9932C71C8CC004B6FE5 /* SubtitleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98B2C71C8CC004B6FE5 /* SubtitleSection.swift */; };
-		4E23D9942C71C8CC004B6FE5 /* TimestampSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98C2C71C8CC004B6FE5 /* TimestampSection.swift */; };
 		4E23D9952C71C8CC004B6FE5 /* TransitionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98D2C71C8CC004B6FE5 /* TransitionSection.swift */; };
 		4E23D9972C72C08C004B6FE5 /* ActionButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9962C72C08C004B6FE5 /* ActionButtonSelectorView.swift */; };
 		4E23D9992C72C108004B6FE5 /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9982C72C108004B6FE5 /* OrderedSectionSelectorView.swift */; };
@@ -956,12 +954,10 @@
 		4E23D96A2C71547F004B6FE5 /* ResumeOffsetSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumeOffsetSection.swift; sourceTree = "<group>"; };
 		4E23D9832C71B81F004B6FE5 /* ResumeOffsetPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeOffsetPickerView.swift; sourceTree = "<group>"; };
 		4E23D9852C71C006004B6FE5 /* SubtitleSizePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleSizePickerView.swift; sourceTree = "<group>"; };
-		4E23D9872C71C8CC004B6FE5 /* ButtonSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonSection.swift; sourceTree = "<group>"; };
 		4E23D9882C71C8CC004B6FE5 /* PlayerControlsSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerControlsSection.swift; sourceTree = "<group>"; };
 		4E23D9892C71C8CC004B6FE5 /* ResumeOffsetSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumeOffsetSection.swift; sourceTree = "<group>"; };
 		4E23D98A2C71C8CC004B6FE5 /* SliderSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderSection.swift; sourceTree = "<group>"; };
 		4E23D98B2C71C8CC004B6FE5 /* SubtitleSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitleSection.swift; sourceTree = "<group>"; };
-		4E23D98C2C71C8CC004B6FE5 /* TimestampSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimestampSection.swift; sourceTree = "<group>"; };
 		4E23D98D2C71C8CC004B6FE5 /* TransitionSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionSection.swift; sourceTree = "<group>"; };
 		4E23D9962C72C08C004B6FE5 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
 		4E23D9982C72C108004B6FE5 /* OrderedSectionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSectionSelectorView.swift; sourceTree = "<group>"; };
@@ -1712,12 +1708,10 @@
 		4E23D96F2C71547F004B6FE5 /* Sections */ = {
 			isa = PBXGroup;
 			children = (
-				4E23D9872C71C8CC004B6FE5 /* ButtonSection.swift */,
 				4E23D9882C71C8CC004B6FE5 /* PlayerControlsSection.swift */,
 				4E23D9892C71C8CC004B6FE5 /* ResumeOffsetSection.swift */,
 				4E23D98A2C71C8CC004B6FE5 /* SliderSection.swift */,
 				4E23D98B2C71C8CC004B6FE5 /* SubtitleSection.swift */,
-				4E23D98C2C71C8CC004B6FE5 /* TimestampSection.swift */,
 				4E23D98D2C71C8CC004B6FE5 /* TransitionSection.swift */,
 				4E23D96A2C71547F004B6FE5 /* ResumeOffsetSection.swift */,
 			);
@@ -4182,7 +4176,6 @@
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
 				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
-				4E23D9942C71C8CC004B6FE5 /* TimestampSection.swift in Sources */,
 				E1575E8C293E7B1E001665B1 /* UIScreen.swift in Sources */,
 				C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */,
 				E1BCDB502BE1F491009F6744 /* ResetUserPasswordViewModel.swift in Sources */,
@@ -4309,7 +4302,6 @@
 				E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */,
 				E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				E154967E296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift in Sources */,
-				4E23D98F2C71C8CC004B6FE5 /* ButtonSection.swift in Sources */,
 				E1B90C8A2BC475E7007027C8 /* ScalingButtonStyle.swift in Sources */,
 				E1DABAFE2A27B982008AC34A /* RatingsCard.swift in Sources */,
 				E1C9261B288756BD002A7A66 /* DotHStack.swift in Sources */,

@@ -30,18 +30,13 @@ struct VideoPlayerSettingsView: View {
                     ResumeOffsetSection()
 
                 case .swiftfin:
-                    // Not currently available for tvOS
                     PlayerControlsSection()
 
                     ResumeOffsetSection()
-                    // Not currently available for tvOS
-                    ButtonSection()
-                    // Not currently available for tvOS
+
                     SliderSection()
 
                     SubtitleSection()
-                    // Not currently available for tvOS
-                    TimestampSection()
 
                     TransitionSection()
                 }

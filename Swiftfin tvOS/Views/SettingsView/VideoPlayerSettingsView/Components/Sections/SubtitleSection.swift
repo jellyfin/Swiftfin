@@ -15,24 +15,16 @@ extension VideoPlayerSettingsView {
         private var subtitleFontName
         @Default(.VideoPlayer.Subtitle.subtitleSize)
         private var subtitleSize
-        @Default(.VideoPlayer.Subtitle.subtitleColor)
-        private var subtitleColor
 
         @EnvironmentObject
         private var router: VideoPlayerSettingsCoordinator.Router
 
         var body: some View {
             Section {
-
                 ChevronButton(L10n.subtitleFont, subtitle: subtitleFontName)
                     .onSelect {
                         router.route(to: \.fontPicker, $subtitleFontName)
                     }
-
-                // Leaving this comment since this isn't tvOS compatible. Just in case we want this later.
-                /* ColorPicker(selection: $subtitleColor) {
-                     Text(L10n.subtitleColor)
-                 } */
 
                 ChevronButton(
                     L10n.subtitleSize,

@@ -21,8 +21,6 @@ extension VideoPlayerSettingsView {
 
         var body: some View {
             Section {
-                // Gestures have been removes as tvOS does not have touch gestures
-
                 InlineEnumToggle(title: L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
                 InlineEnumToggle(title: L10n.jumpForwardLength, selection: $jumpForwardLength)

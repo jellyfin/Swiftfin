@@ -13,21 +13,10 @@ extension VideoPlayerSettingsView {
     struct SliderSection: View {
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-        @Default(.VideoPlayer.Overlay.sliderColor)
-        private var sliderColor
-        @Default(.VideoPlayer.Overlay.sliderType)
-        private var sliderType
 
         var body: some View {
             Section {
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
-
-                // Commenting since ColorPicker is not around on tvOS. May need to be recreated manually?
-                /* ColorPicker(selection: $sliderColor, supportsOpacity: false) {
-                     Text(L10n.sliderColor)
-                 } */
-
-                InlineEnumToggle(title: L10n.sliderType, selection: $sliderType)
             } header: {
                 L10n.slider.text
             } footer: {
