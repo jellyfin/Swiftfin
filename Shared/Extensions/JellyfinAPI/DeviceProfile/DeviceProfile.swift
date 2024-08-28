@@ -12,7 +12,7 @@ extension DeviceProfile {
     static func build(
         for videoPlayer: VideoPlayerType,
         maxBitrate: Int? = nil,
-        useCustomDirectPlayProfile: CustomDeviceProfileSelection = .off,
+        useCustomDirectPlayProfile: CustomDeviceProfileAction = .off,
         useCustomTranscodingProfile: Bool = false
     ) -> DeviceProfile {
 
