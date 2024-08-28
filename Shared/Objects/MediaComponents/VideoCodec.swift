@@ -8,7 +8,7 @@
 
 import Defaults
 
-enum VideoCodec: String, CaseIterable, Displayable, Defaults.Serializable {
+enum VideoCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
     case av1
     case dv
     case dirac

@@ -9,7 +9,7 @@
 import Defaults
 import JellyfinAPI
 
-enum SubtitleFormat: String, CaseIterable, Displayable, Defaults.Serializable {
+enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
     case ass
     case cc_dec
     case dvdsub

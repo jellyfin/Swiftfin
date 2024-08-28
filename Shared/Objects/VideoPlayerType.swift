@@ -39,7 +39,7 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
 
     private static func makeNativeVideoPlayerProfile() -> VideoPlayerType {
         VideoPlayerType(
-            displayTitle: L10n.nativePlayer,
+            displayTitle: "Native",
             directPlayProfiles: [
                 DirectPlayProfile(
                     audioCodec: [

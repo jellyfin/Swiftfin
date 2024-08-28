@@ -7,16 +7,14 @@
 //
 
 import Defaults
+import Foundation
 import JellyfinAPI
 
 extension DeviceProfile {
     static func customDirectPlayProfile() -> [DirectPlayProfile] {
-        @Default(.VideoPlayer.Playback.customDeviceProfileAudio)
-        var customAudioProfile
-        @Default(.VideoPlayer.Playback.customDeviceProfileVideo)
-        var customVideoProfile
-        @Default(.VideoPlayer.Playback.customDeviceProfileContainers)
-        var customContainers
+        var customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
+        var customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
+        var customContainers = StoredValues[.User.customDeviceProfileContainers()]
 
         var customProfile: DirectPlayProfile
 
@@ -31,12 +29,9 @@ extension DeviceProfile {
     }
 
     static func customTranscodingProfile() -> [TranscodingProfile] {
-        @Default(.VideoPlayer.Playback.customDeviceProfileAudio)
-        var customAudioProfile
-        @Default(.VideoPlayer.Playback.customDeviceProfileVideo)
-        var customVideoProfile
-        @Default(.VideoPlayer.Playback.customDeviceProfileContainers)
-        var customContainers
+        var customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
+        var customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
+        var customContainers = StoredValues[.User.customDeviceProfileContainers()]
 
         var customProfile: TranscodingProfile
 

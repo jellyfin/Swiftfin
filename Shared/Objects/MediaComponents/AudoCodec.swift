@@ -8,7 +8,7 @@
 
 import Defaults
 
-enum AudioCodec: String, CaseIterable, Displayable, Defaults.Serializable {
+enum AudioCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
     case aac
     case ac3
     case amr_nb

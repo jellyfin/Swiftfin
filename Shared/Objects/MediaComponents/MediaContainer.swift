@@ -8,7 +8,7 @@
 
 import Defaults
 
-enum MediaContainer: String, CaseIterable, Displayable, Defaults.Serializable {
+enum MediaContainer: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
     case avi
     case flv
     case m4v
