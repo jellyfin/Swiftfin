@@ -24,7 +24,6 @@
 		4E23D9922C71C8CC004B6FE5 /* SliderSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98A2C71C8CC004B6FE5 /* SliderSection.swift */; };
 		4E23D9932C71C8CC004B6FE5 /* SubtitleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98B2C71C8CC004B6FE5 /* SubtitleSection.swift */; };
 		4E23D9952C71C8CC004B6FE5 /* TransitionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D98D2C71C8CC004B6FE5 /* TransitionSection.swift */; };
-		4E23D9972C72C08C004B6FE5 /* ActionButtonSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9962C72C08C004B6FE5 /* ActionButtonSelectorView.swift */; };
 		4E23D9992C72C108004B6FE5 /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23D9982C72C108004B6FE5 /* OrderedSectionSelectorView.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -959,7 +958,6 @@
 		4E23D98A2C71C8CC004B6FE5 /* SliderSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderSection.swift; sourceTree = "<group>"; };
 		4E23D98B2C71C8CC004B6FE5 /* SubtitleSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitleSection.swift; sourceTree = "<group>"; };
 		4E23D98D2C71C8CC004B6FE5 /* TransitionSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransitionSection.swift; sourceTree = "<group>"; };
-		4E23D9962C72C08C004B6FE5 /* ActionButtonSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtonSelectorView.swift; sourceTree = "<group>"; };
 		4E23D9982C72C108004B6FE5 /* OrderedSectionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSectionSelectorView.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
@@ -1721,7 +1719,6 @@
 		4E23D9712C71547F004B6FE5 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E23D9962C72C08C004B6FE5 /* ActionButtonSelectorView.swift */,
 				4E23D96F2C71547F004B6FE5 /* Sections */,
 			);
 			path = Components;
@@ -4133,7 +4130,6 @@
 				E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */,
 				E1575E69293E77B5001665B1 /* ItemSortBy.swift in Sources */,
 				E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */,
-				4E23D9972C72C08C004B6FE5 /* ActionButtonSelectorView.swift in Sources */,
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,

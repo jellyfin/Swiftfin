@@ -18,8 +18,6 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     var start = makeStart
     @Route(.push)
     var fontPicker = makeFontPicker
-    @Route(.push)
-    var actionButtonSelector = makeActionButtonSelector
 
     #if os(tvOS)
     @Route(.push)
@@ -33,10 +31,6 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
 
     func makeFontPicker(selection: Binding<String>) -> some View {
         FontPickerView(selection: selection)
-    }
-
-    func makeActionButtonSelector(selectedButtonsBinding: Binding<[VideoPlayerActionButton]>) -> some View {
-        ActionButtonSelectorView(selection: selectedButtonsBinding)
     }
 
     #if os(tvOS)
