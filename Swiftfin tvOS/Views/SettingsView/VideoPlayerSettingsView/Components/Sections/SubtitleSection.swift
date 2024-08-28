@@ -36,7 +36,7 @@ extension VideoPlayerSettingsView {
             } header: {
                 L10n.subtitle.text
             } footer: {
-                L10n.subtitleDescription.text
+                L10n.subtitleDescriptionTVOS.text
             }
         }
     }

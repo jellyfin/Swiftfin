@@ -631,7 +631,9 @@ internal enum L10n {
   /// Subtitle Color
   internal static let subtitleColor = L10n.tr("Localizable", "subtitleColor", fallback: "Subtitle Color")
   /// Customize text-based subtitles font and color
-  internal static let subtitleDescription = L10n.tr("Localizable", "subtitleDescription", fallback: "Customize text-based subtitles font and color")
+  internal static let subtitleDescriptionIOS = L10n.tr("Localizable", "subtitleDescriptionIOS", fallback: "Customize text-based subtitles font and color")
+  /// Customize text-based subtitles font
+  internal static let subtitleDescriptionTVOS = L10n.tr("Localizable", "subtitleDescriptionTVOS", fallback: "Customize text-based subtitles font")
   /// Subtitle Font
   internal static let subtitleFont = L10n.tr("Localizable", "subtitleFont", fallback: "Subtitle Font")
   /// Subtitle Offset
