@@ -161,19 +161,48 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
             ],
-            subtitleProfiles: [
-                SubtitleFormat.cc_dec,
-                SubtitleFormat.ttml,
-            ].compactMap { $0.profiles[.embed] }
-                + [
+            subtitleProfiles: {
+                var subtitles = [SubtitleProfile]()
+
+                // Append embed profiles
+                let embedProfiles = [
+                    SubtitleFormat.cc_dec,
+                    SubtitleFormat.ttml,
+                ]
+
+                for format in embedProfiles {
+                    if let profile = format.profiles[.embed] {
+                        subtitles.append(profile)
+                    }
+                }
+
+                // Append encode profiles
+                let encodeProfiles = [
                     SubtitleFormat.dvbsub,
                     SubtitleFormat.dvdsub,
                     SubtitleFormat.pgssub,
                     SubtitleFormat.xsub,
-                ].compactMap { $0.profiles[.encode] }
-                + [
+                ]
+
+                for format in encodeProfiles {
+                    if let profile = format.profiles[.encode] {
+                        subtitles.append(profile)
+                    }
+                }
+
+                // Append hls profiles
+                let hlsProfiles = [
                     SubtitleFormat.vtt,
-                ].compactMap { $0.profiles[.hls] },
+                ]
+
+                for format in hlsProfiles {
+                    if let profile = format.profiles[.hls] {
+                        subtitles.append(profile)
+                    }
+                }
+
+                return subtitles
+            }(),
             codecProfiles: self.sharedCodecProfiles(),
             responseProfiles: self.sharedResponseProfiles()
         )
@@ -256,30 +285,42 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
             ],
-            subtitleProfiles: [
-                SubtitleFormat.ass,
-                SubtitleFormat.cc_dec,
-                SubtitleFormat.dvbsub,
-                SubtitleFormat.dvdsub,
-                SubtitleFormat.jacosub,
-                SubtitleFormat.libzvbi_teletextdec,
-                SubtitleFormat.mov_text,
-                SubtitleFormat.mpl2,
-                SubtitleFormat.pgssub,
-                SubtitleFormat.pjs,
-                SubtitleFormat.realtext,
-                SubtitleFormat.sami,
-                SubtitleFormat.ssa,
-                SubtitleFormat.subrip,
-                SubtitleFormat.subviewer,
-                SubtitleFormat.subviewer1,
-                SubtitleFormat.text,
-                SubtitleFormat.ttml,
-                SubtitleFormat.vplayer,
-                SubtitleFormat.vtt,
-                SubtitleFormat.xsub,
-            ].compactMap { $0.profiles[.embed] }
-                + [
+            subtitleProfiles: {
+                var subtitles = [SubtitleProfile]()
+
+                // Append embed profiles
+                let embedProfiles = [
+                    SubtitleFormat.ass,
+                    SubtitleFormat.cc_dec,
+                    SubtitleFormat.dvbsub,
+                    SubtitleFormat.dvdsub,
+                    SubtitleFormat.jacosub,
+                    SubtitleFormat.libzvbi_teletextdec,
+                    SubtitleFormat.mov_text,
+                    SubtitleFormat.mpl2,
+                    SubtitleFormat.pgssub,
+                    SubtitleFormat.pjs,
+                    SubtitleFormat.realtext,
+                    SubtitleFormat.sami,
+                    SubtitleFormat.ssa,
+                    SubtitleFormat.subrip,
+                    SubtitleFormat.subviewer,
+                    SubtitleFormat.subviewer1,
+                    SubtitleFormat.text,
+                    SubtitleFormat.ttml,
+                    SubtitleFormat.vplayer,
+                    SubtitleFormat.vtt,
+                    SubtitleFormat.xsub,
+                ]
+
+                for format in embedProfiles {
+                    if let profile = format.profiles[.embed] {
+                        subtitles.append(profile)
+                    }
+                }
+
+                // Append external profiles
+                let externalProfiles = [
                     SubtitleFormat.ass,
                     SubtitleFormat.dvbsub,
                     SubtitleFormat.dvdsub,
@@ -299,7 +340,16 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
                     SubtitleFormat.vplayer,
                     SubtitleFormat.vtt,
                     SubtitleFormat.xsub,
-                ].compactMap { $0.profiles[.external] },
+                ]
+
+                for format in externalProfiles {
+                    if let profile = format.profiles[.external] {
+                        subtitles.append(profile)
+                    }
+                }
+
+                return subtitles
+            }(),
             codecProfiles: self.sharedCodecProfiles(),
             responseProfiles: self.sharedResponseProfiles()
         )
