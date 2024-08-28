@@ -9,27 +9,32 @@
 import Defaults
 import Foundation
 import JellyfinAPI
+import SwiftUI
 
-enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
-    case native
-    case swiftfin
+struct VideoPlayerType: Codable, Defaults.Serializable, Equatable {
+    let displayTitle: String
+    let directPlayProfiles: [DirectPlayProfile]
+    let transcodingProfiles: [TranscodingProfile]
+    let subtitleProfiles: [SubtitleProfile]
+    let codecProfiles: [CodecProfile]
+    let responseProfiles: [ResponseProfile]
 
-    var displayTitle: String {
-        switch self {
-        case .native:
-            return "Native"
-        case .swiftfin:
-            return "Swiftfin"
-        }
+    // MARK: - Player Types
+
+    static var native: VideoPlayerType {
+        makeNativeVideoPlayerProfile()
     }
 
-    var directPlayProfiles: [DirectPlayProfile] {
-        switch self {
-        case .native:
-            return [
-                // Apple limitation: no mp3 in mp4; avi only supports mjpeg with pcm
-                // Right now, mp4 restrictions can't be enforced because
-                // mp4, m4v, mov, 3gp,3g2 treated the same
+    static var swiftfin: VideoPlayerType {
+        makeSwiftfinVideoPlayerProfile()
+    }
+
+    // MARK: - Native Device Profile
+
+    private static func makeNativeVideoPlayerProfile() -> VideoPlayerType {
+        VideoPlayerType(
+            displayTitle: L10n.nativePlayer,
+            directPlayProfiles: [
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -125,17 +130,55 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.mjpeg,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
-            ]
-        case .swiftfin:
-            return [
-                // Just make one profile because if VLCKit can't decode it in a certain container,
-                // ffmpeg probably can't decode it for transcode either
-                // No need to list containers or videocodecs since if jellyfin server can detect it/ffmpeg can decode it, so can VLCKit
-                // However, list audiocodecs because ffmpeg can decode TrueHD/mlp but VLCKit cannot
-                // This should result in the following string:
-                // "aac,ac3,alac,amr_nb,amr_wb,dts,eac3,flac,mp1,mp2,mp3,nellymoser,opus,
-                // pcm_alaw,pcm_bluray,pcm_dvd,pcm_mulaw,pcm_s16be,pcm_s16le,pcm_s24be,
-                // pcm_s24le,pcm_u8,speex,vobis,wavpack,wmalossless,wmapro,wmav1,wmav2"
+            ],
+            transcodingProfiles: [
+                TranscodingProfile(
+                    audioCodec: [
+                        AudioCodec.aac,
+                        AudioCodec.ac3,
+                        AudioCodec.alac,
+                        AudioCodec.eac3,
+                        AudioCodec.flac,
+                        AudioCodec.opus,
+                    ].map(\.rawValue).joined(separator: ","),
+                    isBreakOnNonKeyFrames: true,
+                    container: MediaContainer.mp4.rawValue,
+                    context: .streaming,
+                    maxAudioChannels: "8",
+                    minSegments: 2,
+                    protocol: StreamType.hls.rawValue,
+                    type: .video,
+                    videoCodec: [
+                        VideoCodec.h264,
+                        VideoCodec.hevc,
+                        VideoCodec.mpeg4,
+                    ].map(\.rawValue).joined(separator: ",")
+                ),
+            ],
+            subtitleProfiles: [
+                SubtitleFormat.cc_dec,
+                SubtitleFormat.ttml,
+            ].compactMap { $0.profiles[.embed] }
+                + [
+                    SubtitleFormat.dvbsub,
+                    SubtitleFormat.dvdsub,
+                    SubtitleFormat.pgssub,
+                    SubtitleFormat.xsub,
+                ].compactMap { $0.profiles[.encode] }
+                + [
+                    SubtitleFormat.vtt,
+                ].compactMap { $0.profiles[.hls] },
+            codecProfiles: self.sharedCodecProfiles(),
+            responseProfiles: self.sharedResponseProfiles()
+        )
+    }
+
+    // MARK: - Swiftfin Device Profile
+
+    private static func makeSwiftfinVideoPlayerProfile() -> VideoPlayerType {
+        VideoPlayerType(
+            displayTitle: "Swiftfin",
+            directPlayProfiles: [
                 DirectPlayProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -170,45 +213,8 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                     ].map(\.rawValue).joined(separator: ","),
                     type: .video
                 ),
-            ]
-        }
-    }
-
-    var transcodingProfiles: [TranscodingProfile] {
-        switch self {
-        case .native:
-            return [
-                TranscodingProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.eac3,
-                        AudioCodec.flac,
-                        AudioCodec.opus,
-                    ].map(\.rawValue).joined(separator: ","),
-                    isBreakOnNonKeyFrames: true,
-                    container: MediaContainer.mp4.rawValue,
-                    context: .streaming,
-                    maxAudioChannels: "8",
-                    minSegments: 2,
-                    protocol: StreamType.hls.rawValue,
-                    type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
-                ),
-            ]
-        case .swiftfin:
-            return [
-                // Build transcoding profiles
-                // The only cases where transcoding should occur:
-                // 1) TrueHD/mlp audio
-                // 2) When server forces transcode for bitrate reasons
-                // MP4 Audio Restrictions: pcm,wavpack,wmav2,wmav1,wmapro,wmalossless,nellymoser,speex,amr_nb,amr_wb in mp4
-                // MP4 Video Restrictions: vp8,msmpeg4v3,msmpeg4v2,msmpeg4v1,theora,ffv1,flv1,wmv3,wmv2,wmv1
+            ],
+            transcodingProfiles: [
                 TranscodingProfile(
                     audioCodec: [
                         AudioCodec.aac,
@@ -243,30 +249,8 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                         VideoCodec.vp9,
                     ].map(\.rawValue).joined(separator: ",")
                 ),
-            ]
-        }
-    }
-
-    var subtitleProfiles: [SubtitleProfile] {
-        switch self {
-        case .native:
-            return [
-                SubtitleFormat.cc_dec,
-                SubtitleFormat.ttml,
-            ].compactMap { $0.profiles[.embed] }
-                +
-                [
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.xsub,
-                ].compactMap { $0.profiles[.encode] }
-                +
-                [
-                    SubtitleFormat.vtt,
-                ].compactMap { $0.profiles[.hls] }
-        case .swiftfin:
-            return [
+            ],
+            subtitleProfiles: [
                 SubtitleFormat.ass,
                 SubtitleFormat.cc_dec,
                 SubtitleFormat.dvbsub,
@@ -289,8 +273,7 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                 SubtitleFormat.vtt,
                 SubtitleFormat.xsub,
             ].compactMap { $0.profiles[.embed] }
-                +
-                [
+                + [
                     SubtitleFormat.ass,
                     SubtitleFormat.dvbsub,
                     SubtitleFormat.dvdsub,
@@ -310,90 +293,88 @@ enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
                     SubtitleFormat.vplayer,
                     SubtitleFormat.vtt,
                     SubtitleFormat.xsub,
-                ].compactMap { $0.profiles[.external] }
-        }
+                ].compactMap { $0.profiles[.external] },
+            codecProfiles: self.sharedCodecProfiles(),
+            responseProfiles: self.sharedResponseProfiles()
+        )
     }
 
-    var codecProfiles: [CodecProfile] {
+    // MARK: - Shared Codec Profiles
+
+    private static func sharedCodecProfiles() -> [CodecProfile] {
         [
             CodecProfile(
-                applyConditions: h264CodecConditions,
+                applyConditions: [
+                    ProfileCondition(
+                        condition: .notEquals,
+                        isRequired: false,
+                        property: .isAnamorphic,
+                        value: "true"
+                    ),
+
+                    ProfileCondition(
+                        condition: .equalsAny,
+                        isRequired: false,
+                        property: .videoProfile,
+                        value: "high|main|baseline|constrained baseline"
+                    ),
+
+                    ProfileCondition(
+                        condition: .lessThanEqual,
+                        isRequired: false,
+                        property: .videoLevel,
+                        value: "80"
+                    ),
+
+                    ProfileCondition(
+                        condition: .notEquals,
+                        isRequired: false,
+                        property: .isInterlaced,
+                        value: "true"
+                    ),
+                ],
                 codec: VideoCodec.h264.rawValue,
                 type: .video
             ),
             CodecProfile(
-                applyConditions: h265CodecConditions,
+                applyConditions: [
+                    ProfileCondition(
+                        condition: .notEquals,
+                        isRequired: false,
+                        property: .isAnamorphic,
+                        value: "true"
+                    ),
+
+                    ProfileCondition(
+                        condition: .equalsAny,
+                        isRequired: false,
+                        property: .videoProfile,
+                        value: "high|main|main 10"
+                    ),
+
+                    ProfileCondition(
+                        condition: .lessThanEqual,
+                        isRequired: false,
+                        property: .videoLevel,
+                        value: "175"
+                    ),
+
+                    ProfileCondition(
+                        condition: .notEquals,
+                        isRequired: false,
+                        property: .isInterlaced,
+                        value: "true"
+                    ),
+                ],
                 codec: VideoCodec.hevc.rawValue,
                 type: .video
             ),
         ]
     }
 
-    var h264CodecConditions: [ProfileCondition] {
-        [
-            ProfileCondition(
-                condition: .notEquals,
-                isRequired: false,
-                property: .isAnamorphic,
-                value: "true"
-            ),
+    // MARK: - Shared Repsonse Profiles
 
-            ProfileCondition(
-                condition: .equalsAny,
-                isRequired: false,
-                property: .videoProfile,
-                value: "high|main|baseline|constrained baseline"
-            ),
-
-            ProfileCondition(
-                condition: .lessThanEqual,
-                isRequired: false,
-                property: .videoLevel,
-                value: "80"
-            ),
-
-            ProfileCondition(
-                condition: .notEquals,
-                isRequired: false,
-                property: .isInterlaced,
-                value: "true"
-            ),
-        ]
-    }
-
-    var h265CodecConditions: [ProfileCondition] {
-        [
-            ProfileCondition(
-                condition: .notEquals,
-                isRequired: false,
-                property: .isAnamorphic,
-                value: "true"
-            ),
-
-            ProfileCondition(
-                condition: .equalsAny,
-                isRequired: false,
-                property: .videoProfile,
-                value: "high|main|main 10"
-            ),
-
-            ProfileCondition(
-                condition: .lessThanEqual,
-                isRequired: false,
-                property: .videoLevel,
-                value: "175"
-            ),
-
-            ProfileCondition(
-                condition: .notEquals,
-                isRequired: false,
-                property: .isInterlaced,
-                value: "true"
-            ),
-        ]
-    }
-
-    var responseProfiles: [ResponseProfile] {
+    private static func sharedResponseProfiles() -> [ResponseProfile] {
         [
             ResponseProfile(
                 container: MediaContainer.m4v.rawValue,

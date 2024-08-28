@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import AudioToolbox
 import Defaults
 
 enum AudioCodec: String, CaseIterable, Displayable, Defaults.Serializable {

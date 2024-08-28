@@ -7,7 +7,6 @@
 //
 
 import Defaults
-import VideoToolbox
 
 enum VideoCodec: String, CaseIterable, Displayable, Defaults.Serializable {
     case av1
@@ -34,7 +33,7 @@ enum VideoCodec: String, CaseIterable, Displayable, Defaults.Serializable {
     case wmv1
     case wmv2
     case wmv3
-
+    
     var displayTitle: String {
         switch self {
         case .av1:
