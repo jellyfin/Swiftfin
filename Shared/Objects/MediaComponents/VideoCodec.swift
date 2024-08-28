@@ -86,4 +86,8 @@ enum VideoCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializab
             return "WMV3"
         }
     }
+
+    static func unwrap(_ videoCodecs: [VideoCodec]) -> String {
+        videoCodecs.map(\.rawValue).joined(separator: ",")
+    }
 }

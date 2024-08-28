@@ -41,112 +41,134 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
         VideoPlayerType(
             displayTitle: "Native",
             directPlayProfiles: [
+
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.eac3,
-                        AudioCodec.flac,
-                        AudioCodec.opus,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                            .eac3,
+                            .flac,
+                            .opus,
+                        ]
+                    ),
                     container: MediaContainer.mp4.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .h264,
+                            .hevc,
+                            .mpeg4,
+                        ]
+                    )
                 ),
 
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                        ]
+                    ),
                     container: MediaContainer.m4v.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .h264,
+                            .mpeg4,
+                        ]
+                    )
                 ),
 
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.eac3,
-                        AudioCodec.mp3,
-                        AudioCodec.pcm_s16be,
-                        AudioCodec.pcm_s16le,
-                        AudioCodec.pcm_s24be,
-                        AudioCodec.pcm_s24le,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                            .eac3,
+                            .mp3,
+                            .pcm_s16be,
+                            .pcm_s16le,
+                            .pcm_s24be,
+                            .pcm_s24le,
+                        ]
+                    ),
                     container: MediaContainer.mov.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mjpeg,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .h264,
+                            .hevc,
+                            .mjpeg,
+                            .mpeg4,
+                        ]
+                    )
                 ),
 
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.eac3,
-                        AudioCodec.mp3,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .eac3,
+                            .mp3,
+                        ]
+                    ),
                     container: MediaContainer.mpegts.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.h264.rawValue
                 ),
 
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.amr_nb,
-                    ].map(\.rawValue).joined(separator: ","),
-                    container: [
-                        MediaContainer.threeG2,
-                        MediaContainer.threeGP,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .amr_nb,
+                        ]
+                    ),
+                    container: MediaContainer.unwrap(
+                        [
+                            .threeG2,
+                            .threeGP,
+                        ]
+                    ),
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .h264,
+                            .mpeg4,
+                        ]
+                    )
                 ),
 
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.pcm_mulaw,
-                        AudioCodec.pcm_s16le,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .pcm_mulaw,
+                            .pcm_s16le,
+                        ]
+                    ),
                     container: MediaContainer.avi.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.mjpeg,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.mjpeg.rawValue
                 ),
             ],
             transcodingProfiles: [
+
                 TranscodingProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.eac3,
-                        AudioCodec.flac,
-                        AudioCodec.opus,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                            .eac3,
+                            .flac,
+                            .opus,
+                        ]
+                    ),
                     isBreakOnNonKeyFrames: true,
                     container: MediaContainer.mp4.rawValue,
                     context: .streaming,
@@ -154,52 +176,48 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
                     minSegments: 2,
                     protocol: StreamType.hls.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mpeg4,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .h264,
+                            .hevc,
+                            .mpeg4,
+                        ]
+                    )
                 ),
             ],
             subtitleProfiles: {
                 var subtitles = [SubtitleProfile]()
 
-                // Append embed profiles
-                let embedProfiles = [
-                    SubtitleFormat.cc_dec,
-                    SubtitleFormat.ttml,
-                ]
+                subtitles.append(
+                    contentsOf:
+                    SubtitleFormat.unwrap(
+                        subtitleDeliveryMethod: .embed,
+                        [
+                            .cc_dec,
+                            .ttml,
+                        ]
+                    )
+                )
 
-                for format in embedProfiles {
-                    if let profile = format.profiles[.embed] {
-                        subtitles.append(profile)
-                    }
-                }
+                subtitles.append(
+                    contentsOf:
+                    SubtitleFormat.unwrap(
+                        subtitleDeliveryMethod: .encode,
+                        [
+                            .dvbsub,
+                            .dvdsub,
+                            .pgssub,
+                            .xsub,
+                        ]
+                    )
+                )
 
-                // Append encode profiles
-                let encodeProfiles = [
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.xsub,
-                ]
-
-                for format in encodeProfiles {
-                    if let profile = format.profiles[.encode] {
-                        subtitles.append(profile)
-                    }
-                }
-
-                // Append hls profiles
-                let hlsProfiles = [
-                    SubtitleFormat.vtt,
-                ]
-
-                for format in hlsProfiles {
-                    if let profile = format.profiles[.hls] {
-                        subtitles.append(profile)
-                    }
-                }
+                subtitles.append(
+                    SubtitleProfile(
+                        format: SubtitleFormat.vtt.rawValue,
+                        method: .hls
+                    )
+                )
 
                 return subtitles
             }(),
@@ -215,55 +233,59 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
             displayTitle: "Swiftfin",
             directPlayProfiles: [
                 DirectPlayProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.amr_nb,
-                        AudioCodec.amr_wb,
-                        AudioCodec.dts,
-                        AudioCodec.eac3,
-                        AudioCodec.flac,
-                        AudioCodec.mp1,
-                        AudioCodec.mp2,
-                        AudioCodec.mp3,
-                        AudioCodec.nellymoser,
-                        AudioCodec.opus,
-                        AudioCodec.pcm_alaw,
-                        AudioCodec.pcm_bluray,
-                        AudioCodec.pcm_dvd,
-                        AudioCodec.pcm_mulaw,
-                        AudioCodec.pcm_s16be,
-                        AudioCodec.pcm_s16le,
-                        AudioCodec.pcm_s24be,
-                        AudioCodec.pcm_s24le,
-                        AudioCodec.pcm_u8,
-                        AudioCodec.speex,
-                        AudioCodec.vorbis,
-                        AudioCodec.wavpack,
-                        AudioCodec.wmalossless,
-                        AudioCodec.wmapro,
-                        AudioCodec.wmav1,
-                        AudioCodec.wmav2,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                            .amr_nb,
+                            .amr_wb,
+                            .dts,
+                            .eac3,
+                            .flac,
+                            .mp1,
+                            .mp2,
+                            .mp3,
+                            .nellymoser,
+                            .opus,
+                            .pcm_alaw,
+                            .pcm_bluray,
+                            .pcm_dvd,
+                            .pcm_mulaw,
+                            .pcm_s16be,
+                            .pcm_s16le,
+                            .pcm_s24be,
+                            .pcm_s24le,
+                            .pcm_u8,
+                            .speex,
+                            .vorbis,
+                            .wavpack,
+                            .wmalossless,
+                            .wmapro,
+                            .wmav1,
+                            .wmav2,
+                        ]
+                    ),
                     type: .video
                 ),
             ],
             transcodingProfiles: [
                 TranscodingProfile(
-                    audioCodec: [
-                        AudioCodec.aac,
-                        AudioCodec.ac3,
-                        AudioCodec.alac,
-                        AudioCodec.dts,
-                        AudioCodec.eac3,
-                        AudioCodec.flac,
-                        AudioCodec.mp1,
-                        AudioCodec.mp2,
-                        AudioCodec.mp3,
-                        AudioCodec.opus,
-                        AudioCodec.vorbis,
-                    ].map(\.rawValue).joined(separator: ","),
+                    audioCodec: AudioCodec.unwrap(
+                        [
+                            .aac,
+                            .ac3,
+                            .alac,
+                            .dts,
+                            .eac3,
+                            .flac,
+                            .mp1,
+                            .mp2,
+                            .mp3,
+                            .opus,
+                            .vorbis,
+                        ]
+                    ),
                     isBreakOnNonKeyFrames: true,
                     container: MediaContainer.mp4.rawValue,
                     context: .streaming,
@@ -271,82 +293,82 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
                     minSegments: 2,
                     protocol: StreamType.hls.rawValue,
                     type: .video,
-                    videoCodec: [
-                        VideoCodec.av1,
-                        VideoCodec.h263,
-                        VideoCodec.h264,
-                        VideoCodec.hevc,
-                        VideoCodec.mjpeg,
-                        VideoCodec.mpeg1video,
-                        VideoCodec.mpeg2video,
-                        VideoCodec.mpeg4,
-                        VideoCodec.vc1,
-                        VideoCodec.vp9,
-                    ].map(\.rawValue).joined(separator: ",")
+                    videoCodec: VideoCodec.unwrap(
+                        [
+                            .av1,
+                            .h263,
+                            .h264,
+                            .hevc,
+                            .mjpeg,
+                            .mpeg1video,
+                            .mpeg2video,
+                            .mpeg4,
+                            .vc1,
+                            .vp9,
+                        ]
+                    )
                 ),
             ],
             subtitleProfiles: {
                 var subtitles = [SubtitleProfile]()
 
-                // Append embed profiles
-                let embedProfiles = [
-                    SubtitleFormat.ass,
-                    SubtitleFormat.cc_dec,
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.jacosub,
-                    SubtitleFormat.libzvbi_teletextdec,
-                    SubtitleFormat.mov_text,
-                    SubtitleFormat.mpl2,
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.pjs,
-                    SubtitleFormat.realtext,
-                    SubtitleFormat.sami,
-                    SubtitleFormat.ssa,
-                    SubtitleFormat.subrip,
-                    SubtitleFormat.subviewer,
-                    SubtitleFormat.subviewer1,
-                    SubtitleFormat.text,
-                    SubtitleFormat.ttml,
-                    SubtitleFormat.vplayer,
-                    SubtitleFormat.vtt,
-                    SubtitleFormat.xsub,
-                ]
+                subtitles.append(
+                    contentsOf:
+                    SubtitleFormat.unwrap(
+                        subtitleDeliveryMethod: .embed,
+                        [
+                            .ass,
+                            .cc_dec,
+                            .dvbsub,
+                            .dvdsub,
+                            .jacosub,
+                            .libzvbi_teletextdec,
+                            .mov_text,
+                            .mpl2,
+                            .pgssub,
+                            .pjs,
+                            .realtext,
+                            .sami,
+                            .ssa,
+                            .subrip,
+                            .subviewer,
+                            .subviewer1,
+                            .text,
+                            .ttml,
+                            .vplayer,
+                            .vtt,
+                            .xsub,
+                        ]
+                    )
+                )
 
-                for format in embedProfiles {
-                    if let profile = format.profiles[.embed] {
-                        subtitles.append(profile)
-                    }
-                }
-
-                // Append external profiles
-                let externalProfiles = [
-                    SubtitleFormat.ass,
-                    SubtitleFormat.dvbsub,
-                    SubtitleFormat.dvdsub,
-                    SubtitleFormat.jacosub,
-                    SubtitleFormat.libzvbi_teletextdec,
-                    SubtitleFormat.mpl2,
-                    SubtitleFormat.pgssub,
-                    SubtitleFormat.pjs,
-                    SubtitleFormat.realtext,
-                    SubtitleFormat.sami,
-                    SubtitleFormat.ssa,
-                    SubtitleFormat.subrip,
-                    SubtitleFormat.subviewer,
-                    SubtitleFormat.subviewer1,
-                    SubtitleFormat.text,
-                    SubtitleFormat.ttml,
-                    SubtitleFormat.vplayer,
-                    SubtitleFormat.vtt,
-                    SubtitleFormat.xsub,
-                ]
-
-                for format in externalProfiles {
-                    if let profile = format.profiles[.external] {
-                        subtitles.append(profile)
-                    }
-                }
+                subtitles.append(
+                    contentsOf:
+                    SubtitleFormat.unwrap(
+                        subtitleDeliveryMethod: .external,
+                        [
+                            .ass,
+                            .dvbsub,
+                            .dvdsub,
+                            .jacosub,
+                            .libzvbi_teletextdec,
+                            .mpl2,
+                            .pgssub,
+                            .pjs,
+                            .realtext,
+                            .sami,
+                            .ssa,
+                            .subrip,
+                            .subviewer,
+                            .subviewer1,
+                            .text,
+                            .ttml,
+                            .vplayer,
+                            .vtt,
+                            .xsub,
+                        ]
+                    )
+                )
 
                 return subtitles
             }(),
@@ -357,7 +379,7 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
 
     // MARK: - Shared Codec Profiles
 
-    private static func sharedCodecProfiles() -> [CodecProfile] {
+    static func sharedCodecProfiles() -> [CodecProfile] {
         [
             CodecProfile(
                 applyConditions: [
@@ -430,7 +452,7 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
 
     // MARK: - Shared Repsonse Profiles
 
-    private static func sharedResponseProfiles() -> [ResponseProfile] {
+    static func sharedResponseProfiles() -> [ResponseProfile] {
         [
             ResponseProfile(
                 container: MediaContainer.m4v.rawValue,

@@ -110,4 +110,8 @@ enum AudioCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializab
             return "WMA V2"
         }
     }
+
+    static func unwrap(_ audioCodecs: [AudioCodec]) -> String {
+        audioCodecs.map(\.rawValue).joined(separator: ",")
+    }
 }

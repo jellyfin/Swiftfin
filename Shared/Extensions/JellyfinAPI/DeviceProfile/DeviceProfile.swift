@@ -20,6 +20,7 @@ extension DeviceProfile {
 
         deviceProfile.codecProfiles = videoPlayer.codecProfiles
         deviceProfile.responseProfiles = videoPlayer.responseProfiles
+        deviceProfile.subtitleProfiles = videoPlayer.subtitleProfiles
 
         if useCustomTranscodingProfile {
             deviceProfile.transcodingProfiles = {

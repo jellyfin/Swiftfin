@@ -9,12 +9,21 @@
 import Defaults
 
 enum PlaybackCompatibility: String, CaseIterable, Defaults.Serializable, Displayable {
-    case auto = "Auto"
-    case compatible = "Most Compatible"
-    case direct = "Direct Play"
-    case custom = "Custom"
+    case auto
+    case compatible
+    case direct
+    case custom
 
     var displayTitle: String {
-        rawValue
+        switch self {
+        case .auto:
+            return L10n.auto
+        case .compatible:
+            return L10n.compatible
+        case .direct:
+            return L10n.direct
+        case .custom:
+            return L10n.custom
+        }
     }
 }

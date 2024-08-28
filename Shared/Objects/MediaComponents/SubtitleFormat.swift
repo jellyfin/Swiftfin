@@ -79,11 +79,16 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
         }
     }
 
-    var profiles: [SubtitleDeliveryMethod: SubtitleProfile] {
-        var result: [SubtitleDeliveryMethod: SubtitleProfile] = [:]
-        for method in SubtitleDeliveryMethod.allCases {
-            result[method] = SubtitleProfile(format: self.rawValue, method: method)
+    static func unwrap(subtitleDeliveryMethod: SubtitleDeliveryMethod, _ subtitleFormats: [SubtitleFormat]) -> [SubtitleProfile] {
+        var results = [SubtitleProfile]()
+        for format in subtitleFormats {
+            results.append(
+                SubtitleProfile(
+                    format: format.rawValue,
+                    method: subtitleDeliveryMethod
+                )
+            )
         }
-        return result
+        return results
     }
 }

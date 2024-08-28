@@ -47,4 +47,8 @@ enum MediaContainer: String, CaseIterable, Codable, Displayable, Defaults.Serial
             return "WEBM"
         }
     }
+
+    static func unwrap(_ mediaContainers: [MediaContainer]) -> String {
+        mediaContainers.map(\.rawValue).joined(separator: ",")
+    }
 }

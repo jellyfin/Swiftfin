@@ -12,39 +12,39 @@ import JellyfinAPI
 
 extension DeviceProfile {
     static func customDirectPlayProfile() -> [DirectPlayProfile] {
-        var customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
-        var customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
-        var customContainers = StoredValues[.User.customDeviceProfileContainers()]
+        let customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
+        let customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
+        let customContainers = StoredValues[.User.customDeviceProfileContainers()]
 
         var customProfile: DirectPlayProfile
 
         customProfile = DirectPlayProfile(
-            audioCodec: customAudioProfile.map(\.rawValue).joined(separator: ","),
-            container: customContainers.map(\.rawValue).joined(separator: ","),
+            audioCodec: AudioCodec.unwrap(customAudioProfile),
+            container: MediaContainer.unwrap(customContainers),
             type: .video,
-            videoCodec: customVideoProfile.map(\.rawValue).joined(separator: ",")
+            videoCodec: VideoCodec.unwrap(customVideoProfile)
         )
 
         return [customProfile]
     }
 
     static func customTranscodingProfile() -> [TranscodingProfile] {
-        var customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
-        var customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
-        var customContainers = StoredValues[.User.customDeviceProfileContainers()]
+        let customAudioProfile = StoredValues[.User.customDeviceProfileAudio()]
+        let customVideoProfile = StoredValues[.User.customDeviceProfileVideo()]
+        let customContainers = StoredValues[.User.customDeviceProfileContainers()]
 
         var customProfile: TranscodingProfile
 
         customProfile = TranscodingProfile(
-            audioCodec: customAudioProfile.map(\.rawValue).joined(separator: ","),
+            audioCodec: AudioCodec.unwrap(customAudioProfile),
             isBreakOnNonKeyFrames: true,
-            container: customContainers.map(\.rawValue).joined(separator: ","),
+            container: MediaContainer.unwrap(customContainers),
             context: .streaming,
             maxAudioChannels: "8",
             minSegments: 2,
             protocol: StreamType.hls.rawValue,
             type: .video,
-            videoCodec: customVideoProfile.map(\.rawValue).joined(separator: ",")
+            videoCodec: VideoCodec.unwrap(customVideoProfile)
         )
 
         return [customProfile]

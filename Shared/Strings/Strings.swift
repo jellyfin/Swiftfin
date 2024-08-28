@@ -52,6 +52,8 @@ internal enum L10n {
   internal static let audioTrack = L10n.tr("Localizable", "audioTrack", fallback: "Audio Track")
   /// Authorize
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
+  /// Auto
+  internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
   /// Auto Play
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto Play")
   /// Back
@@ -136,6 +138,8 @@ internal enum L10n {
   internal static let compactLogo = L10n.tr("Localizable", "compactLogo", fallback: "Compact Logo")
   /// Compact Poster
   internal static let compactPoster = L10n.tr("Localizable", "compactPoster", fallback: "Compact Poster")
+  /// Most Compatible
+  internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most Compatible")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
   /// Connect
@@ -160,6 +164,8 @@ internal enum L10n {
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
+  /// Custom
+  internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// The custom device profile will be used in addition to the default Swiftfin device profiles
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profile will be used in addition to the default Swiftfin device profiles")
   /// Use the default Swiftfin device profiles
@@ -182,6 +188,8 @@ internal enum L10n {
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Device Profile
   internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
+  /// Direct Play
+  internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct Play")
   /// DIRECTOR
   internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
   /// Disabled
