@@ -452,13 +452,50 @@ struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable,
 
     // MARK: - Shared Repsonse Profiles
 
-    static func sharedResponseProfiles() -> [ResponseProfile] {
+    private static func sharedResponseProfiles() -> [ResponseProfile] {
         [
             ResponseProfile(
                 container: MediaContainer.m4v.rawValue,
                 mimeType: "video/mp4",
                 type: .video
             ),
+        ]
+    }
+
+    // MARK: - Compatibility Profiles
+
+    static func compatibilityDirectPlayProfile() -> [DirectPlayProfile] {
+        [
+            DirectPlayProfile(
+                audioCodec: AudioCodec.aac.rawValue,
+                container: MediaContainer.mp4.rawValue,
+                type: .video,
+                videoCodec: VideoCodec.h264.rawValue
+            ),
+        ]
+    }
+
+    static func compatibilityTranscodingProfile() -> [TranscodingProfile] {
+        [
+            TranscodingProfile(
+                audioCodec: AudioCodec.aac.rawValue,
+                isBreakOnNonKeyFrames: true,
+                container: MediaContainer.mp4.rawValue,
+                context: .streaming,
+                maxAudioChannels: "8",
+                minSegments: 2,
+                protocol: StreamType.hls.rawValue,
+                type: .video,
+                videoCodec: VideoCodec.h264.rawValue
+            ),
+        ]
+    }
+
+    // MARK: - Direct Profile
+
+    static func forcedDirectPlayProfile() -> [DirectPlayProfile] {
+        [
+            DirectPlayProfile(type: .video),
         ]
     }
 }

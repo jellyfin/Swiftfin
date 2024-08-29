@@ -10,15 +10,11 @@ import Defaults
 import Foundation
 
 enum CustomDeviceProfileAction: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
-
-    case off
     case add
     case replace
 
     var displayTitle: String {
         switch self {
-        case .off:
-            return "Off"
         case .add:
             return "Add"
         case .replace:

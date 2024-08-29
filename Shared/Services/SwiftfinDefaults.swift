@@ -216,20 +216,8 @@ extension Defaults.Keys {
         enum Playback {
             static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
             static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
-            static let customDeviceProfile: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfile", default: .off)
-            static let customDeviceProfileTranscoding: Key<Bool> = UserKey("customDeviceProfileTranscoding", default: false)
-            static let customDeviceProfileAudio: Key<[AudioCodec]> = UserKey(
-                "customDeviceProfileAudio",
-                default: []
-            )
-            static let customDeviceProfileVideo: Key<[VideoCodec]> = UserKey(
-                "customDeviceProfileVideo",
-                default: []
-            )
-            static let customDeviceProfileContainers: Key<[MediaContainer]> = UserKey(
-                "customDeviceProfileContainers",
-                default: []
-            )
+            static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
+            static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
         }
 
         enum Subtitle {

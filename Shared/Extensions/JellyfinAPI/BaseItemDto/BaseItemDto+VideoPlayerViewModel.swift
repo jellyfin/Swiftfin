@@ -16,15 +16,17 @@ extension BaseItemDto {
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-        let useCustomDirectPlayProfile = Defaults[.VideoPlayer.Playback.customDeviceProfile]
-        let useCustomTranscodingProfile = Defaults[.VideoPlayer.Playback.customDeviceProfileTranscoding]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
+        let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
+        let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles(id: Container.shared.currentUserSession()!.user.id)]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
-            maxBitrate: maxBitrate,
-            useCustomDirectPlayProfile: useCustomDirectPlayProfile,
-            useCustomTranscodingProfile: useCustomTranscodingProfile
+            compatibilityMode: compatibilityMode,
+            customProfileMode: customProfileMode,
+            playbackDeviceProfile: playbackDeviceProfile,
+            maxBitrate: maxBitrate
         )
 
         let userSession = Container.shared.currentUserSession()!
@@ -55,20 +57,18 @@ extension BaseItemDto {
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
-        let useCustomDirectPlayProfile = Defaults[.VideoPlayer.Playback.customDeviceProfile]
-        let useCustomTranscodingProfile = Defaults[.VideoPlayer.Playback.customDeviceProfileTranscoding]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
+        let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
+        let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles(id: Container.shared.currentUserSession()!.user.id)]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
-        var profile = DeviceProfile.build(
+        let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
-            maxBitrate: maxBitrate,
-            useCustomDirectPlayProfile: useCustomDirectPlayProfile,
-            useCustomTranscodingProfile: useCustomTranscodingProfile
+            compatibilityMode: compatibilityMode,
+            customProfileMode: customProfileMode,
+            playbackDeviceProfile: playbackDeviceProfile,
+            maxBitrate: maxBitrate
         )
-
-        if Defaults[.Experimental.liveTVForceDirectPlay] {
-            profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
-        }
 
         let userSession = Container.shared.currentUserSession()!
 

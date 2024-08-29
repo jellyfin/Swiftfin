@@ -61,9 +61,30 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                             isEditing: editMode?.wrappedValue.isEditing ?? false,
                             select: select,
                             move: move,
-                            focusedElement: $focusedElement
+                            focusedElement: $focusedElement,
+                            header: {
+                                Group {
+                                    HStack {
+                                        Text(L10n.enabled)
+                                        Spacer()
+                                        if editMode?.wrappedValue.isEditing ?? false {
+                                            Button("Done") {
+                                                withAnimation {
+                                                    editMode?.wrappedValue = .inactive
+                                                }
+                                            }
+                                        } else {
+                                            Button("Edit") {
+                                                withAnimation {
+                                                    editMode?.wrappedValue = .active
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                .eraseToAnyView()
+                            }
                         )
-
                         DisabledSection(
                             elements: disabledSelection,
                             label: label,
@@ -77,19 +98,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                 .withDescriptionTopPadding()
                 .navigationTitle(title)
                 .animation(.linear(duration: 0.2), value: updateSelection)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(editMode?.wrappedValue.isEditing ?? false ? "Done" : "Edit") {
-                            withAnimation {
-                                if editMode?.wrappedValue.isEditing ?? false {
-                                    editMode?.wrappedValue = .inactive
-                                } else {
-                                    editMode?.wrappedValue = .active
-                                }
-                            }
-                        }
-                    }
-                }
                 .onChange(of: updateSelection) { _, newValue in
                     selection = newValue
                 }
@@ -98,7 +106,6 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 }
 
 private struct EnabledSection<Element: Displayable & Hashable>: View {
-
     @Binding
     var elements: [Element]
 
@@ -110,8 +117,10 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
     @Binding
     var focusedElement: Element?
 
+    let header: () -> AnyView
+
     var body: some View {
-        Section(L10n.enabled) {
+        Section(header: header()) {
             if elements.isEmpty {
                 Text(L10n.none)
                     .foregroundStyle(.secondary)
@@ -142,7 +151,6 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
 }
 
 private struct DisabledSection<Element: Displayable & Hashable>: View {
-
     let elements: [Element]
 
     let label: (Element) -> AnyView

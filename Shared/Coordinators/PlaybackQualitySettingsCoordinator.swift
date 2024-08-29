@@ -16,37 +16,12 @@ final class PlaybackQualitySettingsCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    @Route(.modal)
-    var customProfileAudioSelector = makeCustomProfileAudioSelector
-    @Route(.modal)
-    var customProfileVideoSelector = makeCustomProfileVideoSelector
-    @Route(.modal)
-    var customProfileContainerSelector = makeCustomProfileContainerSelector
+    @Route(.push)
+    var customDeviceProfileSettings = makeCustomDeviceProfileSettings
 
-    func makeCustomProfileAudioSelector(selection: Binding<[AudioCodec]>) -> some View {
-        OrderedSectionSelectorView(
-            title: L10n.audio,
-            selection: selection,
-            sources: AudioCodec.allCases,
-            image: Image(systemName: "waveform")
-        )
-    }
-
-    func makeCustomProfileVideoSelector(selection: Binding<[VideoCodec]>) -> some View {
-        OrderedSectionSelectorView(
-            title: L10n.video,
-            selection: selection,
-            sources: VideoCodec.allCases,
-            image: Image(systemName: "photo.tv")
-        )
-    }
-
-    func makeCustomProfileContainerSelector(selection: Binding<[MediaContainer]>) -> some View {
-        OrderedSectionSelectorView(
-            title: L10n.containers,
-            selection: selection,
-            sources: MediaContainer.allCases,
-            image: Image(systemName: "shippingbox")
+    func makeCustomDeviceProfileSettings() -> NavigationViewCoordinator<CustomDeviceProfileSettingsCoordinator> {
+        NavigationViewCoordinator(
+            CustomDeviceProfileSettingsCoordinator()
         )
     }
 

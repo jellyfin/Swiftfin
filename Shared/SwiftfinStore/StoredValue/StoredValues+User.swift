@@ -133,48 +133,12 @@ extension StoredValues.Keys {
             )
         }
 
-        // Key for custom device profile action
-        static func customDeviceProfile() -> Key<CustomDeviceProfileAction> {
-            CurrentUserKey(
-                "customDeviceProfile",
-                domain: "customDeviceProfile",
-                default: Defaults[.VideoPlayer.Playback.customDeviceProfile]
-            )
-        }
-
-        // Key for enabling/disabling transcoding in the custom device profile
-        static func customDeviceProfileTranscoding() -> Key<Bool> {
-            CurrentUserKey(
-                "customDeviceProfileTranscoding",
-                domain: "customDeviceProfileTranscoding",
-                default: Defaults[.VideoPlayer.Playback.customDeviceProfileTranscoding]
-            )
-        }
-
-        // Key for audio codecs in the custom device profile
-        static func customDeviceProfileAudio() -> Key<[AudioCodec]> {
-            CurrentUserKey(
-                "customDeviceProfileAudio",
-                domain: "customDeviceProfileAudio",
-                default: Defaults[.VideoPlayer.Playback.customDeviceProfileAudio]
-            )
-        }
-
-        // Key for video codecs in the custom device profile
-        static func customDeviceProfileVideo() -> Key<[VideoCodec]> {
-            CurrentUserKey(
-                "customDeviceProfileVideo",
-                domain: "customDeviceProfileVideo",
-                default: Defaults[.VideoPlayer.Playback.customDeviceProfileVideo]
-            )
-        }
-
-        // Key for media containers in the custom device profile
-        static func customDeviceProfileContainers() -> Key<[MediaContainer]> {
-            CurrentUserKey(
-                "customDeviceProfileContainers",
-                domain: "customDeviceProfileContainers",
-                default: Defaults[.VideoPlayer.Playback.customDeviceProfileContainers]
+        static func customDeviceProfiles(id: String) -> Key<[PlaybackDeviceProfile]> {
+            UserKey(
+                "customDeviceProfiles",
+                ownerID: id,
+                domain: "customDeviceProfiles",
+                default: []
             )
         }
     }
