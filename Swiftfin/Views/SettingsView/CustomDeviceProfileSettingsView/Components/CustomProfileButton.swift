@@ -11,12 +11,10 @@ import SwiftUI
 
 struct CustomProfileButton: View {
     let profile: PlaybackDeviceProfile
-    let isEditing: Bool
     var onSelect: () -> Void
-    var onDelete: () -> Void
 
     var body: some View {
-        Button(action: isEditing ? onDelete : onSelect) {
+        Button(action: onSelect) {
             HStack {
                 VStack(alignment: .leading, spacing: 8) {
                     profileDetailsView(
@@ -37,15 +35,9 @@ struct CustomProfileButton: View {
                     )
                 }
                 Spacer()
-                if isEditing {
-                    Image(systemName: "trash.circle.fill")
-                        .font(.body.weight(.regular))
-                        .foregroundColor(.red)
-                } else {
-                    Image(systemName: "chevron.right")
-                        .font(.body.weight(.regular))
-                        .foregroundColor(.secondary)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
             }
             .padding(.vertical, 8)
         }

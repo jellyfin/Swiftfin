@@ -25,7 +25,7 @@ struct CustomDeviceProfileSettingsView: View {
     private var customDeviceProfiles: [PlaybackDeviceProfile] = []
 
     var body: some View {
-        Form {
+        List {
             Section {
                 CaseIterablePicker(
                     L10n.behavior,
@@ -38,35 +38,31 @@ struct CustomDeviceProfileSettingsView: View {
                     ? L10n.customDeviceProfileAdd.text
                     : L10n.customDeviceProfileReplace.text
             }
-            Section {
+
+            Section(header: headerView) {
                 ForEach($customDeviceProfiles, id: \.id) { $profile in
                     CustomProfileButton(
                         profile: profile,
-                        isEditing: isEditing,
-                        onSelect: { router.route(to: \.customDeviceProfileEditor, $profile) },
-                        onDelete: { removeProfile(profile) }
+                        onSelect: { router.route(to: \.customDeviceProfileEditor, $profile) }
                     )
                 }
-            } header: {
-                HStack {
-                    Text(L10n.customProfile)
-                    Spacer()
-                    HStack(spacing: 16) {
-                        if !isEditing {
-                            Button("Add") {
-                                addProfile()
-                            }
-                        }
-                        Button(isEditing ? "Done" : "Edit") {
-                            isEditing.toggle()
-                        }
-                    }
-                }
+                .onDelete(perform: removeProfile)
             }
-            .navigationTitle(L10n.profiles)
-            .onAppear(perform: loadProfiles)
-            .onChange(of: customDeviceProfiles) { _ in
-                updateProfiles()
+        }
+        .listStyle(InsetGroupedListStyle())
+        .navigationTitle(L10n.profiles)
+        .onAppear(perform: loadProfiles)
+        .onChange(of: customDeviceProfiles) { _ in
+            updateProfiles()
+        }
+    }
+
+    private var headerView: some View {
+        HStack {
+            Text(L10n.customProfile)
+            Spacer()
+            Button("Add") {
+                addProfile()
             }
         }
     }
@@ -83,8 +79,8 @@ struct CustomDeviceProfileSettingsView: View {
         }
     }
 
-    private func removeProfile(_ profile: PlaybackDeviceProfile) {
-        customDeviceProfiles.removeAll { $0.id == profile.id }
+    private func removeProfile(at offsets: IndexSet) {
+        customDeviceProfiles.remove(atOffsets: offsets)
         updateProfiles()
     }
 
