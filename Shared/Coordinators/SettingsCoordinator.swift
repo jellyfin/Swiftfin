@@ -55,7 +55,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
     @Route(.push)
-    var customDeviceProfileEditor = makeCustomDeviceProfileEditor
+    var customDeviceProfileEditor = makeEditCustomDeviceProfile
+
+    @Route(.push)
+    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
     #if DEBUG
     @Route(.push)
@@ -97,9 +100,22 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeCustomDeviceProfileEditor(profile: Binding<PlaybackDeviceProfile>) -> some View {
-        CustomDeviceProfileEditorView(profile: profile)
+    func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>) -> some View {
+        CustomDeviceProfileSettingsView.EditCustomDeviceProfileView(profile: profile)
     }
+
+    @ViewBuilder
+    func makeCreateCustomDeviceProfile() -> some View {
+//        NavigationViewCoordinator {
+        CustomDeviceProfileSettingsView.CreateCustomDeviceProfileView()
+//        }
+    }
+
+//    func makeCreateCustomDeviceProfile() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+//        NavigationViewCoordinator {
+//            CustomDeviceProfileSettingsView.CreateCustomDeviceProfileView()
+//        }
+//    }
 
     @ViewBuilder
     func makeQuickConnectAuthorize() -> some View {
@@ -145,13 +161,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
-    #if DEBUG
-    @ViewBuilder
-    func makeDebugSettings() -> some View {
-        DebugSettingsView()
-    }
-    #endif
-
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
             .navigationTitle(L10n.filters)
@@ -175,6 +184,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
     }
+
+    #if DEBUG
+    @ViewBuilder
+    func makeDebugSettings() -> some View {
+        DebugSettingsView()
+    }
+    #endif
 
     #endif
 

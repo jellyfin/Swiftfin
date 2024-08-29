@@ -133,10 +133,9 @@ extension StoredValues.Keys {
             )
         }
 
-        static func customDeviceProfiles(id: String) -> Key<[PlaybackDeviceProfile]> {
-            UserKey(
+        static var customDeviceProfiles: Key<[CustomDeviceProfile]> {
+            CurrentUserKey(
                 "customDeviceProfiles",
-                ownerID: id,
                 domain: "customDeviceProfiles",
                 default: []
             )

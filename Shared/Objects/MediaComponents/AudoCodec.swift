@@ -9,6 +9,7 @@
 import Defaults
 
 enum AudioCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+
     case aac
     case ac3
     case amr_nb
@@ -109,9 +110,5 @@ enum AudioCodec: String, CaseIterable, Codable, Displayable, Defaults.Serializab
         case .wmav2:
             return "WMA V2"
         }
-    }
-
-    static func unwrap(_ audioCodecs: [AudioCodec]) -> String {
-        audioCodecs.map(\.rawValue).joined(separator: ",")
     }
 }

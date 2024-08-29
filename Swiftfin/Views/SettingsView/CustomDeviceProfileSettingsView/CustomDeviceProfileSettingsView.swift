@@ -11,18 +11,24 @@ import Factory
 import SwiftUI
 
 struct CustomDeviceProfileSettingsView: View {
-    @Default(.VideoPlayer.Playback.compatibilityMode)
-    private var compatibilityMode
+
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
+
+    @StoredValue(.User.customDeviceProfiles)
+    private var customProfiles: [CustomDeviceProfile]
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @State
-    private var isEditing = false
-    @State
-    private var customDeviceProfiles: [PlaybackDeviceProfile] = []
+    private var isValid: Bool {
+        customDeviceProfileAction == .add ||
+            customProfiles.isNotEmpty
+    }
+
+    private func removeProfile(at offsets: IndexSet) {
+        customProfiles.remove(atOffsets: offsets)
+    }
 
     var body: some View {
         List {
@@ -31,16 +37,31 @@ struct CustomDeviceProfileSettingsView: View {
                     L10n.behavior,
                     selection: $customDeviceProfileAction
                 )
-            } header: {
-                L10n.behavior.text
             } footer: {
-                customDeviceProfileAction == .add
-                    ? L10n.customDeviceProfileAdd.text
-                    : L10n.customDeviceProfileReplace.text
+                VStack(spacing: 8) {
+                    switch customDeviceProfileAction {
+                    case .add:
+                        L10n.customDeviceProfileAdd.text
+                    case .replace:
+                        L10n.customDeviceProfileReplace.text
+                    }
+
+                    if !isValid {
+                        Label("No profiles defined. Playback issues may occur.", systemImage: "exclamationmark.circle.fill")
+                            .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    }
+                }
             }
 
-            Section(header: headerView) {
-                ForEach($customDeviceProfiles, id: \.id) { $profile in
+            Section(L10n.profiles) {
+
+                if customProfiles.isEmpty {
+                    Button("Add profile") {
+                        router.route(to: \.createCustomDeviceProfile)
+                    }
+                }
+
+                ForEach($customProfiles, id: \.self) { $profile in
                     CustomProfileButton(
                         profile: profile,
                         onSelect: { router.route(to: \.customDeviceProfileEditor, $profile) }
@@ -49,48 +70,13 @@ struct CustomDeviceProfileSettingsView: View {
                 .onDelete(perform: removeProfile)
             }
         }
-        .listStyle(InsetGroupedListStyle())
         .navigationTitle(L10n.profiles)
-        .onAppear(perform: loadProfiles)
-        .onChange(of: customDeviceProfiles) { _ in
-            updateProfiles()
-        }
-    }
-
-    private var headerView: some View {
-        HStack {
-            Text(L10n.customProfile)
-            Spacer()
-            Button("Add") {
-                addProfile()
+        .toolbar {
+            if customProfiles.isNotEmpty {
+                Button("Add") {
+                    router.route(to: \.createCustomDeviceProfile)
+                }
             }
-        }
-    }
-
-    private func loadProfiles() {
-        if let userID = Container.shared.currentUserSession()?.user.id {
-            customDeviceProfiles = StoredValues[.User.customDeviceProfiles(id: userID)]
-        }
-    }
-
-    private func updateProfiles() {
-        if let userID = Container.shared.currentUserSession()?.user.id {
-            StoredValues[.User.customDeviceProfiles(id: userID)] = customDeviceProfiles
-        }
-    }
-
-    private func removeProfile(at offsets: IndexSet) {
-        customDeviceProfiles.remove(atOffsets: offsets)
-        updateProfiles()
-    }
-
-    private func addProfile() {
-        let newProfile = PlaybackDeviceProfile(type: .video)
-        customDeviceProfiles.append(newProfile)
-        updateProfiles()
-
-        if let index = customDeviceProfiles.firstIndex(where: { $0.id == newProfile.id }) {
-            router.route(to: \.customDeviceProfileEditor, $customDeviceProfiles[index])
         }
     }
 }
