@@ -24,11 +24,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.push)
-    var customProfileAudioSelector = makeCustomProfileAudioSelector
+    var customDeviceAudioEditor = makeCustomDeviceAudioEditor
     @Route(.push)
-    var customProfileVideoSelector = makeCustomProfileVideoSelector
+    var customDeviceVideoEditor = makeCustomDeviceVideoEditor
     @Route(.push)
-    var customProfileContainerSelector = makeCustomProfileContainerSelector
+    var customDeviceContainerEditor = makeCustomDeviceContainerEditor
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
@@ -52,6 +52,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
+    @Route(.push)
+    var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+    @Route(.push)
+    var customDeviceProfileEditor = makeCustomDeviceProfileEditor
 
     #if DEBUG
     @Route(.push)
@@ -82,8 +86,19 @@ final class SettingsCoordinator: NavigationCoordinatable {
         NativeVideoPlayerSettingsView()
     }
 
+    @ViewBuilder
     func makePlaybackQualitySettings() -> some View {
         PlaybackQualitySettingsView()
+    }
+
+    @ViewBuilder
+    func makeCustomDeviceProfileSettings() -> some View {
+        CustomDeviceProfileSettingsView()
+    }
+
+    @ViewBuilder
+    func makeCustomDeviceProfileEditor(profile: Binding<PlaybackDeviceProfile>) -> some View {
+        CustomDeviceProfileEditorView(profile: profile)
     }
 
     @ViewBuilder
@@ -142,17 +157,17 @@ final class SettingsCoordinator: NavigationCoordinatable {
             .navigationTitle(L10n.filters)
     }
 
-    func makeCustomProfileAudioSelector(selection: Binding<[AudioCodec]>) -> some View {
+    func makeCustomDeviceAudioEditor(selection: Binding<[AudioCodec]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
             .navigationTitle(L10n.audio)
     }
 
-    func makeCustomProfileVideoSelector(selection: Binding<[VideoCodec]>) -> some View {
+    func makeCustomDeviceVideoEditor(selection: Binding<[VideoCodec]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
             .navigationTitle(L10n.video)
     }
 
-    func makeCustomProfileContainerSelector(selection: Binding<[MediaContainer]>) -> some View {
+    func makeCustomDeviceContainerEditor(selection: Binding<[MediaContainer]>) -> some View {
         OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
             .navigationTitle(L10n.containers)
     }

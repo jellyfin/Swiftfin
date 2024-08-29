@@ -14,17 +14,8 @@ struct PlaybackQualitySettingsView: View {
     private var appMaximumBitrate
     @Default(.VideoPlayer.Playback.appMaximumBitrateTest)
     private var appMaximumBitrateTest
-
-    @Default(.VideoPlayer.Playback.customDeviceProfile)
-    private var customDeviceProfile
-    @Default(.VideoPlayer.Playback.customDeviceProfileTranscoding)
-    private var customDeviceProfileTranscoding
-    @Default(.VideoPlayer.Playback.customDeviceProfileAudio)
-    private var customDeviceProfileAudio
-    @Default(.VideoPlayer.Playback.customDeviceProfileVideo)
-    private var customDeviceProfileVideo
-    @Default(.VideoPlayer.Playback.customDeviceProfileContainers)
-    private var customDeviceProfileContainers
+    @Default(.VideoPlayer.Playback.compatibilityMode)
+    private var compatibilityMode
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -36,55 +27,47 @@ struct PlaybackQualitySettingsView: View {
                     L10n.maximumBitrate,
                     selection: $appMaximumBitrate
                 )
-
-                if appMaximumBitrate == PlaybackBitrate.auto {
-                    CaseIterablePicker(
-                        L10n.testSize,
-                        selection: $appMaximumBitrateTest
-                    )
-                }
             } header: {
-                L10n.maximumBitrate.text
+                L10n.bitrateDefault.text
             } footer: {
-                if appMaximumBitrate == PlaybackBitrate.auto {
-                    Text(L10n.bitrateTestDescription)
+                VStack(alignment: .leading) {
+                    L10n.bitrateDefaultDescription.text
                 }
             }
 
             Section {
                 CaseIterablePicker(
-                    L10n.customProfile,
-                    selection: $customDeviceProfile
+                    L10n.testSize,
+                    selection: $appMaximumBitrateTest
                 )
-
-                if customDeviceProfile != CustomDeviceProfileAction.off {
-                    Toggle(L10n.useAsTranscodingProfile, isOn: $customDeviceProfileTranscoding)
-
-                    ChevronButton(L10n.audio)
-                        .onSelect {
-                            router.route(to: \.customProfileAudioSelector, $customDeviceProfileAudio)
-                        }
-
-                    ChevronButton(L10n.video)
-                        .onSelect {
-                            router.route(to: \.customProfileVideoSelector, $customDeviceProfileVideo)
-                        }
-
-                    ChevronButton(L10n.containers)
-                        .onSelect {
-                            router.route(to: \.customProfileContainerSelector, $customDeviceProfileContainers)
-                        }
+            } header: {
+                L10n.bitrateTest.text
+            } footer: {
+                VStack(alignment: .leading, spacing: 8) {
+                    L10n.bitrateTestDescription.text
+                    L10n.bitrateTestDisclaimer.text
                 }
+            }
+            Section {
+                CaseIterablePicker(
+                    L10n.compatibility,
+                    selection: $compatibilityMode
+                )
+                ChevronButton(L10n.profiles)
+                    .onSelect {
+                        router.route(to: \.customDeviceProfileSettings)
+                    }
             } header: {
                 L10n.deviceProfile.text
             } footer: {
-                switch customDeviceProfile {
-                case .off:
-                    L10n.customDeviceProfileOff.text
-                case .add:
-                    L10n.customDeviceProfileAdd.text
-                case .replace:
-                    L10n.customDeviceProfileReplace.text
+                VStack(alignment: .leading, spacing: 8) {
+                    L10n.customDeviceProfileDescription.text
+                    switch compatibilityMode {
+                    case .direct, .custom:
+                        L10n.mayResultInPlaybackFailure.text
+                    case .auto, .compatible:
+                        EmptyView()
+                    }
                 }
             }
         }

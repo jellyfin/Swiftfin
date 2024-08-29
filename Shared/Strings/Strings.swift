@@ -180,8 +180,8 @@ internal enum L10n {
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// The custom device profiles will be added to the default Swiftfin device profiles
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles")
-  /// Dictates back to the Jellyfin Server what this device hardward is capable of playing
-  internal static let customDeviceProfileDescription = L10n.tr("Localizable", "customDeviceProfileDescription", fallback: "Dictates back to the Jellyfin Server what this device hardward is capable of playing")
+  /// Dictates back to the Jellyfin Server what this device hardware is capable of playing
+  internal static let customDeviceProfileDescription = L10n.tr("Localizable", "customDeviceProfileDescription", fallback: "Dictates back to the Jellyfin Server what this device hardware is capable of playing")
   /// The custom device profiles will replace the default Swiftfin device profiles
   internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles")
   /// Customize
