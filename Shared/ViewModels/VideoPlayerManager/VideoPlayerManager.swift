@@ -35,7 +35,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
 
     enum Event {
         case playbackStopped
-        case playItem(VideoPlayerPlaybackItem)
+        case playNew(playbackItem: VideoPlayerPlaybackItem)
     }
 
     enum Action: Equatable {
@@ -48,8 +48,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         case ended
         case stop
 
-        case playNextItem
-        case playPreviousItem
+        case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
     }
 
     enum State: Hashable {
@@ -70,7 +69,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
     private(set) var playbackItem: VideoPlayerPlaybackItem! = nil {
         didSet {
             guard let playbackItem else { return }
-            eventSubject.send(.playItem(playbackItem))
+            eventSubject.send(.playNew(playbackItem: playbackItem))
         }
     }
 
@@ -147,12 +146,15 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
                 eventSubject.send(.playbackStopped)
             }
             return .stopped
-        case .playNextItem:
-            // TODO: go next in queue
+        case let .playNew(item: item, mediaSource: mediaSource):
+
             return .loadingItem
-        case .playPreviousItem:
-            // TODO: go back in queue
-            return .loadingItem
+//        case .playNextItem:
+//            // TODO: go next in queue
+//            return .loadingItem
+//        case .playPreviousItem:
+//            // TODO: go back in queue
+//            return .loadingItem
         }
     }
 

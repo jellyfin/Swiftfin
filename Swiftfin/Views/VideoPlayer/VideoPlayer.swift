@@ -195,7 +195,7 @@ struct VideoPlayer: View {
                 case .playbackStopped:
                     vlcUIProxy.stop()
                     router.dismissCoordinator()
-                case let .playItem(item):
+                case let .playNew(playbackItem: item):
                     isAspectFilled = false
                     audioOffset = 0
                     subtitleOffset = 0
