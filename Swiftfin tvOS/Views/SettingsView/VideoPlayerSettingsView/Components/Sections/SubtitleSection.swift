@@ -15,8 +15,6 @@ extension VideoPlayerSettingsView {
         private var subtitleFontName
         @Default(.VideoPlayer.Subtitle.subtitleSize)
         private var subtitleSize
-        @Default(.VideoPlayer.Subtitle.subtitleColor)
-        private var subtitleColor
 
         @EnvironmentObject
         private var router: VideoPlayerSettingsCoordinator.Router
@@ -28,20 +26,17 @@ extension VideoPlayerSettingsView {
                         router.route(to: \.fontPicker, $subtitleFontName)
                     }
 
-                BasicStepper(
-                    title: L10n.subtitleSize,
-                    value: $subtitleSize,
-                    range: 8 ... 24,
-                    step: 1
+                ChevronButton(
+                    L10n.subtitleSize,
+                    subtitle: subtitleSize.description
                 )
-
-                ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
-                    Text(L10n.subtitleColor)
+                .onSelect {
+                    router.route(to: \.subtitleSize, $subtitleSize)
                 }
             } header: {
                 L10n.subtitle.text
             } footer: {
-                L10n.subtitleDescriptionIOS.text
+                L10n.subtitleDescriptionTVOS.text
             }
         }
     }

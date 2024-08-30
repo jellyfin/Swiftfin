@@ -10,21 +10,17 @@ import Defaults
 import SwiftUI
 
 extension VideoPlayerSettingsView {
-    struct TransitionSection: View {
-        @Default(.VideoPlayer.Transition.pauseOnBackground)
-        private var pauseOnBackground
-        @Default(.VideoPlayer.Transition.playOnActive)
-        private var playOnActive
+    struct SliderSection: View {
+        @Default(.VideoPlayer.Overlay.chapterSlider)
+        private var chapterSlider
 
         var body: some View {
             Section {
-                Toggle(L10n.pauseOnBackground, isOn: $pauseOnBackground)
-
-                Toggle(L10n.playOnActive, isOn: $playOnActive)
+                Toggle(L10n.chapterSlider, isOn: $chapterSlider)
             } header: {
-                L10n.transition.text
+                L10n.slider.text
             } footer: {
-                L10n.transitionDescription.text
+                L10n.sliderDescription.text
             }
         }
     }

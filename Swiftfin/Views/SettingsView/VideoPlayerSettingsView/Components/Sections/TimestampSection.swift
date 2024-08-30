@@ -11,7 +11,6 @@ import SwiftUI
 
 extension VideoPlayerSettingsView {
     struct TimestampSection: View {
-
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
         @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
@@ -20,13 +19,16 @@ extension VideoPlayerSettingsView {
         private var timestampType
 
         var body: some View {
-            Section(L10n.timestamp) {
-
+            Section {
                 Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
 
                 CaseIterablePicker(L10n.timestampType, selection: $timestampType)
 
                 CaseIterablePicker(L10n.trailingValue, selection: $trailingTimestampType)
+            } header: {
+                L10n.timestamp.text
+            } footer: {
+                L10n.timestampDescription.text
             }
         }
     }

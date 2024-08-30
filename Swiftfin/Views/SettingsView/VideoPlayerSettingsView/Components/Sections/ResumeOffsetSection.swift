@@ -9,18 +9,15 @@
 import Defaults
 import SwiftUI
 
-struct NativeVideoPlayerSettingsView: View {
+extension VideoPlayerSettingsView {
+    struct ResumeOffsetSection: View {
+        @Default(.VideoPlayer.resumeOffset)
+        private var resumeOffset
 
-    @Default(.VideoPlayer.resumeOffset)
-    private var resumeOffset
-
-    var body: some View {
-        Form {
-
+        var body: some View {
             Section {
-
                 BasicStepper(
-                    title: "Resume Offset",
+                    title: L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
                     step: 1
@@ -28,10 +25,12 @@ struct NativeVideoPlayerSettingsView: View {
                 .valueFormatter {
                     $0.secondLabel
                 }
-            } footer: {
-                Text("Resume content seconds before the recorded resume time")
+            } header: {
+                L10n.resume.text
+            }
+            footer: {
+                L10n.resumeOffsetDescription.text
             }
         }
-        .navigationTitle("Native Player")
     }
 }

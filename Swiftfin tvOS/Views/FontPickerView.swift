@@ -50,5 +50,6 @@ struct FontPickerView: View {
                 }
             }
             .withDescriptionTopPadding()
+            .navigationTitle(L10n.subtitleFont)
     }
 }

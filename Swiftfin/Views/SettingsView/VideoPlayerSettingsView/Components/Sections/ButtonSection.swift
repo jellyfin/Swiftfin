@@ -11,19 +11,14 @@ import SwiftUI
 
 extension VideoPlayerSettingsView {
     struct ButtonSection: View {
-
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
-
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
-
         @Default(.VideoPlayer.barActionButtons)
         private var barActionButtons
-
         @Default(.VideoPlayer.menuActionButtons)
         private var menuActionButtons
-
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 
@@ -31,8 +26,7 @@ extension VideoPlayerSettingsView {
         private var router: VideoPlayerSettingsCoordinator.Router
 
         var body: some View {
-            Section(L10n.buttons) {
-
+            Section {
                 CaseIterablePicker(L10n.playbackButtons, selection: $playbackButtonType)
 
                 Toggle(isOn: $showJumpButtons) {
@@ -51,6 +45,10 @@ extension VideoPlayerSettingsView {
                     .onSelect {
                         router.route(to: \.actionButtonSelector, $menuActionButtons)
                     }
+            } header: {
+                L10n.buttons.text
+            } footer: {
+                L10n.buttonsDescription.text
             }
             .onChange(of: barActionButtons) { newValue in
                 autoPlayEnabled = newValue.contains(.autoPlay) || menuActionButtons.contains(.autoPlay)

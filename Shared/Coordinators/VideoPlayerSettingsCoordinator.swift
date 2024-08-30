@@ -19,7 +19,12 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var fontPicker = makeFontPicker
 
-    #if os(iOS)
+    #if os(tvOS)
+    @Route(.push)
+    var resumeOffset = makeResumeOffset
+    @Route(.push)
+    var subtitleSize = makeSubtitleSize
+    #elseif os(iOS)
     @Route(.push)
     var gestureSettings = makeGestureSettings
     @Route(.push)
@@ -30,7 +35,17 @@ final class VideoPlayerSettingsCoordinator: NavigationCoordinatable {
         FontPickerView(selection: selection)
     }
 
-    #if os(iOS)
+    #if os(tvOS)
+
+    func makeResumeOffset(selection: Binding<Int>) -> some View {
+        ResumeOffsetPickerView(selection: selection)
+    }
+
+    func makeSubtitleSize(selection: Binding<Int>) -> some View {
+        SubtitleSizePickerView(selection: selection)
+    }
+
+    #elseif os(iOS)
 
     @ViewBuilder
     func makeGestureSettings() -> some View {

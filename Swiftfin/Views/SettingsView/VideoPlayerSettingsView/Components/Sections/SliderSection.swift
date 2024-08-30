@@ -11,19 +11,15 @@ import SwiftUI
 
 extension VideoPlayerSettingsView {
     struct SliderSection: View {
-
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-
         @Default(.VideoPlayer.Overlay.sliderColor)
         private var sliderColor
-
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
 
         var body: some View {
-            Section(L10n.slider) {
-
+            Section {
                 Toggle(L10n.chapterSlider, isOn: $chapterSlider)
 
                 ColorPicker(selection: $sliderColor, supportsOpacity: false) {
@@ -31,6 +27,10 @@ extension VideoPlayerSettingsView {
                 }
 
                 CaseIterablePicker(L10n.sliderType, selection: $sliderType)
+            } header: {
+                L10n.slider.text
+            } footer: {
+                L10n.sliderDescription.text
             }
         }
     }
