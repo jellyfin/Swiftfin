@@ -6,35 +6,23 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 import UIKit
 
 struct FontPickerView: View {
 
     @Binding
-    private var selection: String
-
-    @State
-    private var updateSelection: String
-
-    init(selection: Binding<String>) {
-        self._selection = selection
-        self.updateSelection = selection.wrappedValue
-    }
+    var selection: String
 
     var body: some View {
         SelectorView(
-            selection: $updateSelection,
+            selection: $selection,
             sources: UIFont.familyNames
         )
         .label { fontFamily in
             Text(fontFamily)
                 .foregroundColor(.primary)
                 .font(.custom(fontFamily, size: 18))
-        }
-        .onChange(of: updateSelection) { newValue in
-            selection = newValue
         }
         .navigationTitle("Font")
     }

@@ -22,8 +22,20 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
     @Default(.accentColor)
     private var accentColor
 
-    @Binding
-    private var selection: Set<Element>
+    @StateObject
+    private var selection: BindingBox<Set<Element>>
+
+    private init(
+        selection: Binding<Set<Element>>,
+        sources: [Element],
+        label: @escaping (Element) -> Label,
+        type: SelectorType
+    ) {
+        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
+        self.sources = sources
+        self.label = label
+        self.type = type
+    }
 
     private let sources: [Element]
     private var label: (Element) -> Label
@@ -44,7 +56,7 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
 
                     Spacer()
 
-                    if selection.contains(element) {
+                    if selection.value.contains(element) {
                         Image(systemName: "checkmark.circle.fill")
                             .resizable()
                             .backport
@@ -60,14 +72,14 @@ struct SelectorView<Element: Displayable & Hashable, Label: View>: View {
     }
 
     private func handleSingleSelect(with element: Element) {
-        selection = [element]
+        selection.value = [element]
     }
 
     private func handleMultiSelect(with element: Element) {
-        if selection.contains(element) {
-            selection.remove(element)
+        if selection.value.contains(element) {
+            selection.value.remove(element)
         } else {
-            selection.insert(element)
+            selection.value.insert(element)
         }
     }
 }
