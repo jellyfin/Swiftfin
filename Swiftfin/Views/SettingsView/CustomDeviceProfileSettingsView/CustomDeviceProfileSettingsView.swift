@@ -62,10 +62,9 @@ struct CustomDeviceProfileSettingsView: View {
                 }
 
                 ForEach($customProfiles, id: \.self) { $profile in
-                    CustomProfileButton(
-                        profile: profile,
-                        onSelect: { router.route(to: \.customDeviceProfileEditor, $profile) }
-                    )
+                    CustomProfileButton(profile: profile) {
+                        router.route(to: \.editCustomDeviceProfile, $profile)
+                    }
                 }
                 .onDelete(perform: removeProfile)
             }

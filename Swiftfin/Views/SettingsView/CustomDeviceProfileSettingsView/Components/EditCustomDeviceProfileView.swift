@@ -12,23 +12,42 @@ extension CustomDeviceProfileSettingsView {
 
     struct EditCustomDeviceProfileView: View {
 
-        @Binding
-        private var profile: CustomDeviceProfile
-        @State
-        private var updateProfile: CustomDeviceProfile
+        @StoredValue(.User.customDeviceProfiles)
+        private var customDeviceProfiles
 
         @EnvironmentObject
-        private var router: SettingsCoordinator.Router
+        private var router: EditCustomDeviceProfileCoordinator.Router
+
+        @State
+        private var isPresentingNotSaved = false
+
+        @StateObject
+        private var profile: BindingBox<CustomDeviceProfile>
+
+        private let createProfile: Bool
 
         private var isValid: Bool {
-            updateProfile.audio.isNotEmpty &&
-                updateProfile.video.isNotEmpty &&
-                updateProfile.container.isNotEmpty
+            profile.value.audio.isNotEmpty &&
+                profile.value.video.isNotEmpty &&
+                profile.value.container.isNotEmpty
         }
 
-        init(profile: Binding<CustomDeviceProfile>) {
-            self._profile = profile
-            self.updateProfile = profile.wrappedValue
+        init(profile: Binding<CustomDeviceProfile>?) {
+
+            createProfile = profile == nil
+
+            if let profile {
+                self._profile = StateObject(wrappedValue: BindingBox(source: profile))
+            } else {
+                let empty = Binding<CustomDeviceProfile>(
+                    get: { .init(type: .video) },
+                    set: { _ in }
+                )
+
+                self._profile = StateObject(
+                    wrappedValue: BindingBox(source: empty)
+                )
+            }
         }
 
         @ViewBuilder
@@ -67,28 +86,28 @@ extension CustomDeviceProfileSettingsView {
 
         var body: some View {
             Form {
-                Toggle(L10n.useAsTranscodingProfile, isOn: $profile.useAsTranscodingProfile)
+                Toggle(L10n.useAsTranscodingProfile, isOn: $profile.value.useAsTranscodingProfile)
 
                 Section {
                     codecSection(
                         title: L10n.audio,
-                        content: updateProfile.audio.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.value.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceAudioEditor, $updateProfile.audio)
+                        router.route(to: \.customDeviceAudioEditor, $profile.value.audio)
                     }
 
                     codecSection(
                         title: L10n.video,
-                        content: updateProfile.video.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.value.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceVideoEditor, $updateProfile.video)
+                        router.route(to: \.customDeviceVideoEditor, $profile.value.video)
                     }
 
                     codecSection(
                         title: L10n.containers,
-                        content: updateProfile.container.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.value.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceContainerEditor, $updateProfile.container)
+                        router.route(to: \.customDeviceContainerEditor, $profile.value.container)
                     }
                 } footer: {
                     if !isValid {
@@ -97,9 +116,29 @@ extension CustomDeviceProfileSettingsView {
                     }
                 }
             }
+            .interactiveDismissDisabled(true)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden()
+            .navigationBarCloseButton {
+                isPresentingNotSaved = true
+            }
             .navigationTitle(L10n.customProfile)
-            .onChange(of: updateProfile) { newValue in
-                profile = newValue
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Save") {
+                        if createProfile {
+                            customDeviceProfiles.append(profile.value)
+                        }
+
+                        router.dismissCoordinator()
+                    }
+                    .disabled(!isValid)
+                }
+            }
+            .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
+                Button("Close", role: .destructive) {
+                    router.dismissCoordinator()
+                }
             }
         }
     }

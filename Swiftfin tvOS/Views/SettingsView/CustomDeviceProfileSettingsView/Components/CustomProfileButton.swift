@@ -10,10 +10,22 @@ import Foundation
 import SwiftUI
 
 struct CustomProfileButton: View {
-    let profile: PlaybackDeviceProfile
+
+    let profile: CustomDeviceProfile
     let isEditing: Bool
     var onSelect: () -> Void
     var onDelete: () -> Void
+    
+    @ViewBuilder
+    private func profileDetailsView(title: String, detail: String) -> some View {
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.subheadline)
+                .bold()
+            Text(detail)
+                .foregroundColor(.secondary)
+        }
+    }
 
     var body: some View {
         Button(action: isEditing ? onDelete : onSelect) {
@@ -49,17 +61,6 @@ struct CustomProfileButton: View {
                 }
             }
             .padding(.vertical, 8)
-        }
-    }
-
-    @ViewBuilder
-    private func profileDetailsView(title: String, detail: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.subheadline)
-                .bold()
-            Text(detail)
-                .foregroundColor(.secondary)
         }
     }
 }

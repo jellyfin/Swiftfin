@@ -19,6 +19,20 @@ struct CustomDeviceProfile: Hashable, Storable {
     var video: [VideoCodec]
     var container: [MediaContainer]
 
+    init(
+        type: DlnaProfileType,
+        useAsTranscodingProfile: Bool = false,
+        audio: [AudioCodec] = [],
+        video: [VideoCodec] = [],
+        container: [MediaContainer] = []
+    ) {
+        self.type = type
+        self.useAsTranscodingProfile = useAsTranscodingProfile
+        self.audio = audio
+        self.video = video
+        self.container = container
+    }
+
     var directPlayProfile: DirectPlayProfile {
         switch type {
         case .video:
