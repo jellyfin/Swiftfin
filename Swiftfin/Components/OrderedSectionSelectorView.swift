@@ -13,43 +13,44 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     @Environment(\.editMode)
     private var editMode
 
-    @Binding
-    private var selection: [Element]
-
-    @State
-    private var updateSelection: [Element]
+    @StateObject
+    private var selection: BindingBox<[Element]>
 
     private var disabledSelection: [Element] {
-        sources.subtracting(updateSelection)
+        sources.subtracting(selection.value)
     }
 
     private var label: (Element) -> any View
     private let sources: [Element]
 
     private func move(from source: IndexSet, to destination: Int) {
-        updateSelection.move(fromOffsets: source, toOffset: destination)
+        selection.value.move(fromOffsets: source, toOffset: destination)
     }
 
     private func select(element: Element) {
-        if updateSelection.contains(element) {
-            updateSelection.removeAll(where: { $0 == element })
+        if selection.value.contains(element) {
+            selection.value.removeAll(where: { $0 == element })
         } else {
-            updateSelection.append(element)
+            selection.value.append(element)
         }
+    }
+
+    private var isReordering: Bool {
+        editMode?.wrappedValue.isEditing ?? false
     }
 
     var body: some View {
         List {
             Section(L10n.enabled) {
 
-                if updateSelection.isEmpty {
+                if selection.value.isEmpty {
                     L10n.none.text
                         .foregroundStyle(.secondary)
                 }
 
-                ForEach(updateSelection, id: \.self) { element in
+                ForEach(selection.value, id: \.self) { element in
                     Button {
-                        if !(editMode?.wrappedValue.isEditing ?? true) {
+                        if !isReordering {
                             select(element: element)
                         }
                     } label: {
@@ -59,7 +60,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
                             Spacer()
 
-                            if !(editMode?.wrappedValue.isEditing ?? false) {
+                            if !isReordering {
                                 Image(systemName: "minus.circle.fill")
                                     .foregroundColor(.red)
                             }
@@ -79,7 +80,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
                 ForEach(disabledSelection, id: \.self) { element in
                     Button {
-                        if !(editMode?.wrappedValue.isEditing ?? true) {
+                        if !isReordering {
                             select(element: element)
                         }
                     } label: {
@@ -89,7 +90,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
                             Spacer()
 
-                            if !(editMode?.wrappedValue.isEditing ?? false) {
+                            if !isReordering {
                                 Image(systemName: "plus.circle.fill")
                                     .foregroundColor(.green)
                             }
@@ -99,12 +100,9 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                 }
             }
         }
-        .animation(.linear(duration: 0.2), value: updateSelection)
+        .animation(.linear(duration: 0.2), value: selection.value)
         .toolbar {
             EditButton()
-        }
-        .onChange(of: updateSelection) { newValue in
-            selection = newValue
         }
     }
 }
@@ -112,8 +110,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 extension OrderedSectionSelectorView {
 
     init(selection: Binding<[Element]>, sources: [Element]) {
-        self._selection = selection
-        self._updateSelection = State(initialValue: selection.wrappedValue)
+        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
         self.sources = sources
         self.label = { Text($0.displayTitle).foregroundColor(.primary) }
     }
