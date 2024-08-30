@@ -29,8 +29,4 @@ class BindingBox<Wrapped>: ObservableObject {
             self?.source.wrappedValue = $0
         }
     }
-
-    deinit {
-        print("here")
-    }
 }
