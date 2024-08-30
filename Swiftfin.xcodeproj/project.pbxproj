@@ -273,6 +273,8 @@
 		E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DCB2BBB633B00424D36 /* FastSVGView.swift */; };
 		E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DCF2BBB634F00424D36 /* SVGKit */; };
 		E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DD12BBB649C00424D36 /* SVGKit */; };
+		E11562952C818CB2001D5DE4 /* BindingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11562942C818CB2001D5DE4 /* BindingBox.swift */; };
+		E11562962C818CB2001D5DE4 /* BindingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11562942C818CB2001D5DE4 /* BindingBox.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E118959E289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
 		E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */; };
@@ -1143,6 +1145,7 @@
 		E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingCard.swift; sourceTree = "<group>"; };
 		E1153DB22BBA80B400424D36 /* EmptyCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCard.swift; sourceTree = "<group>"; };
 		E1153DCB2BBB633B00424D36 /* FastSVGView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FastSVGView.swift; sourceTree = "<group>"; };
+		E11562942C818CB2001D5DE4 /* BindingBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindingBox.swift; sourceTree = "<group>"; };
 		E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickConnectView.swift; sourceTree = "<group>"; };
 		E118959C289312020042947B /* BaseItemPerson+Poster.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemPerson+Poster.swift"; sourceTree = "<group>"; };
 		E11895A8289383BC0042947B /* ScrollViewOffsetModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewOffsetModifier.swift; sourceTree = "<group>"; };
@@ -1817,6 +1820,7 @@
 			isa = PBXGroup;
 			children = (
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
+				E11562942C818CB2001D5DE4 /* BindingBox.swift */,
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
 				E10231432BCF8A51009D71FC /* ChannelProgram.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
@@ -4216,6 +4220,7 @@
 				E1575EA3293E7B1E001665B1 /* UIDevice.swift in Sources */,
 				E193D547271941C500900D82 /* SelectUserView.swift in Sources */,
 				E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
+				E11562962C818CB2001D5DE4 /* BindingBox.swift in Sources */,
 				E10231592BCF8AF8009D71FC /* ChannelLibraryView.swift in Sources */,
 				E1E6C44929AECEE70064123F /* AutoPlayActionButton.swift in Sources */,
 				E1C926152887565C002A7A66 /* EpisodeCard.swift in Sources */,
@@ -4432,6 +4437,7 @@
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
+				E11562952C818CB2001D5DE4 /* BindingBox.swift in Sources */,
 				4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */,
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
