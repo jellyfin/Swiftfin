@@ -15,7 +15,7 @@ struct CustomProfileButton: View {
     let isEditing: Bool
     var onSelect: () -> Void
     var onDelete: () -> Void
-    
+
     @ViewBuilder
     private func profileDetailsView(title: String, detail: String) -> some View {
         VStack(alignment: .leading) {

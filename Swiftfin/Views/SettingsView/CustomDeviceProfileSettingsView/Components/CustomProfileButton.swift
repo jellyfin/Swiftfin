@@ -10,9 +10,7 @@ import Foundation
 import SwiftUI
 
 extension CustomDeviceProfileSettingsView {
-
     struct CustomProfileButton: View {
-
         let profile: CustomDeviceProfile
         var onSelect: () -> Void
 
