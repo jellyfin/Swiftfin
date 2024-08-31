@@ -11,11 +11,12 @@ import Factory
 import SwiftUI
 
 struct CustomDeviceProfileEditorView: View {
+
     @Binding
-    var profile: PlaybackDeviceProfile
+    var profile: CustomDeviceProfile
 
     @EnvironmentObject
-    private var router: CustomDeviceProfileSettingsCoordinator.Router
+    private var router: EditCustomDeviceProfileCoordinator.Router
 
     var body: some View {
         NavigationView {

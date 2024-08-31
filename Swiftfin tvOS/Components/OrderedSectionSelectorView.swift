@@ -10,37 +10,34 @@ import Factory
 import SwiftUI
 
 struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
+
     @Environment(\.editMode)
     private var editMode
-
-    @Binding
-    private var selection: [Element]
-
-    @State
-    private var updateSelection: [Element]
 
     @State
     private var focusedElement: Element?
 
+    @StateObject
+    private var selection: BindingBox<[Element]>
+
     private var disabledSelection: [Element] {
-        sources.filter { !updateSelection.contains($0) }
+        sources.filter { !selection.value.contains($0) }
     }
 
-    private var label: (Element) -> AnyView
+    private var label: (Element) -> any View
     private let sources: [Element]
-    private let image: Image
-    private let title: String
+    private var systemImage: String
 
     private func move(from source: IndexSet, to destination: Int) {
-        updateSelection.move(fromOffsets: source, toOffset: destination)
+        selection.value.move(fromOffsets: source, toOffset: destination)
         editMode?.wrappedValue = .inactive
     }
 
     private func select(element: Element) {
-        if updateSelection.contains(element) {
-            updateSelection.removeAll(where: { $0 == element })
+        if selection.value.contains(element) {
+            selection.value.removeAll(where: { $0 == element })
         } else {
-            updateSelection.append(element)
+            selection.value.append(element)
         }
     }
 
@@ -48,7 +45,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
         NavigationView {
             SplitFormWindowView()
                 .descriptionView {
-                    image
+                    Image(systemName: systemImage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(maxWidth: 400)
@@ -56,12 +53,11 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                 .contentView {
                     List {
                         EnabledSection(
-                            elements: $updateSelection,
+                            elements: $selection.value,
                             label: label,
                             isEditing: editMode?.wrappedValue.isEditing ?? false,
                             select: select,
                             move: move,
-                            focusedElement: $focusedElement,
                             header: {
                                 Group {
                                     HStack {
@@ -82,45 +78,37 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                                         }
                                     }
                                 }
-                                .eraseToAnyView()
                             }
                         )
+
                         DisabledSection(
                             elements: disabledSelection,
                             label: label,
                             isEditing: editMode?.wrappedValue.isEditing ?? false,
-                            select: select,
-                            focusedElement: $focusedElement
+                            select: select
                         )
                     }
                     .environment(\.editMode, editMode)
                 }
                 .withDescriptionTopPadding()
-                .navigationTitle(title)
-                .animation(.linear(duration: 0.2), value: updateSelection)
-                .onChange(of: updateSelection) { _, newValue in
-                    selection = newValue
-                }
+                .animation(.linear(duration: 0.2), value: selection.value)
         }
     }
 }
 
 private struct EnabledSection<Element: Displayable & Hashable>: View {
+
     @Binding
     var elements: [Element]
 
-    let label: (Element) -> AnyView
+    let label: (Element) -> any View
     let isEditing: Bool
     let select: (Element) -> Void
     let move: (IndexSet, Int) -> Void
-
-    @Binding
-    var focusedElement: Element?
-
-    let header: () -> AnyView
+    let header: () -> any View
 
     var body: some View {
-        Section(header: header()) {
+        Section {
             if elements.isEmpty {
                 Text(L10n.none)
                     .foregroundStyle(.secondary)
@@ -134,6 +122,7 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
                 } label: {
                     HStack {
                         label(element)
+                            .eraseToAnyView()
 
                         Spacer()
 
@@ -146,19 +135,19 @@ private struct EnabledSection<Element: Displayable & Hashable>: View {
                 }
             }
             .onMove(perform: move)
+        } header: {
+            header()
+                .eraseToAnyView()
         }
     }
 }
 
 private struct DisabledSection<Element: Displayable & Hashable>: View {
-    let elements: [Element]
 
-    let label: (Element) -> AnyView
+    let elements: [Element]
+    let label: (Element) -> any View
     let isEditing: Bool
     let select: (Element) -> Void
-
-    @Binding
-    var focusedElement: Element?
 
     var body: some View {
         Section(L10n.disabled) {
@@ -175,6 +164,7 @@ private struct DisabledSection<Element: Displayable & Hashable>: View {
                 } label: {
                     HStack {
                         label(element)
+                            .eraseToAnyView()
 
                         Spacer()
 
@@ -192,18 +182,18 @@ private struct DisabledSection<Element: Displayable & Hashable>: View {
 
 extension OrderedSectionSelectorView {
 
-    init(title: String, selection: Binding<[Element]>, sources: [Element], image: Image = Image(systemName: "filemenu.and.selection")) {
-        self.title = title
-        self._selection = selection
-        self._updateSelection = State(initialValue: selection.wrappedValue)
+    init(selection: Binding<[Element]>, sources: [Element]) {
+        self._selection = StateObject(wrappedValue: BindingBox(source: selection))
         self.sources = sources
         self.label = { Text($0.displayTitle).foregroundColor(.primary).eraseToAnyView() }
-        self.image = image
+        self.systemImage = "filemenu.and.selection"
     }
 
-    func label(@ViewBuilder _ content: @escaping (Element) -> AnyView) -> Self {
-        var copy = self
-        copy.label = content
-        return copy
+    func label(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
+        copy(modifying: \.label, with: content)
+    }
+
+    func systemImage(_ systemName: String) -> Self {
+        copy(modifying: \.systemImage, with: systemName)
     }
 }

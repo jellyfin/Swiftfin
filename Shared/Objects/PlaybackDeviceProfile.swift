@@ -10,10 +10,11 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-struct PlaybackDeviceProfile: Codable, Hashable, Identifiable {
-    var id: UUID = UUID()
-    var type: DlnaProfileType
+struct CustomDeviceProfile: Hashable, Storable {
+
+    let type: DlnaProfileType
     var useAsTranscodingProfile: Bool
+
     var audio: [AudioCodec]
     var video: [VideoCodec]
     var container: [MediaContainer]
@@ -36,10 +37,10 @@ struct PlaybackDeviceProfile: Codable, Hashable, Identifiable {
         switch type {
         case .video:
             return DirectPlayProfile(
-                audioCodec: AudioCodec.unwrap(audio),
-                container: MediaContainer.unwrap(container),
                 type: type,
-                videoCodec: VideoCodec.unwrap(video)
+                audioCodecs: audio,
+                videoCodecs: video,
+                containers: container
             )
         default:
             assertionFailure("Only Video is currently supported.")
@@ -51,19 +52,22 @@ struct PlaybackDeviceProfile: Codable, Hashable, Identifiable {
         switch type {
         case .video:
             return TranscodingProfile(
-                audioCodec: AudioCodec.unwrap(audio),
                 isBreakOnNonKeyFrames: true,
-                container: MediaContainer.unwrap(container),
                 context: .streaming,
                 maxAudioChannels: "8",
                 minSegments: 2,
                 protocol: StreamType.hls.rawValue,
-                type: .video,
-                videoCodec: VideoCodec.unwrap(video)
-            )
+                type: .video
+            ) {
+                audio
+            } videoCodecs: {
+                video
+            } containers: {
+                container
+            }
         default:
             assertionFailure("Only Video is currently supported.")
-            return TranscodingProfile()
+            return TranscodingProfile(audioCodec: nil)
         }
     }
 }

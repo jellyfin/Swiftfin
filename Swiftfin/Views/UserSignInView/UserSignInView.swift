@@ -208,23 +208,11 @@ struct UserSignInView: View {
         } footer: {
             switch accessPolicy {
             case .requireDeviceAuthentication:
-                HStack {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                        .backport
-                        .fontWeight(.bold)
-
-                    Text("This user will require device authentication.")
-                }
+                Label("This user will require device authentication.", systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             case .requirePin:
-                HStack {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .foregroundStyle(.orange)
-                        .backport
-                        .fontWeight(.bold)
-
-                    Text("This user will require a pin.")
-                }
+                Label("This user will require a pin.", systemImage: "exclamationmark.circle.fill")
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             case .none:
                 EmptyView()
             }

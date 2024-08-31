@@ -9,6 +9,7 @@
 import Defaults
 
 enum MediaContainer: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+
     case avi
     case flv
     case m4v
@@ -46,9 +47,5 @@ enum MediaContainer: String, CaseIterable, Codable, Displayable, Defaults.Serial
         case .webm:
             return "WEBM"
         }
-    }
-
-    static func unwrap(_ mediaContainers: [MediaContainer]) -> String {
-        mediaContainers.map(\.rawValue).joined(separator: ",")
     }
 }

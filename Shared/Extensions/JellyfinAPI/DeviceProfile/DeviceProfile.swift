@@ -9,11 +9,12 @@
 import JellyfinAPI
 
 extension DeviceProfile {
+
     static func build(
         for videoPlayer: VideoPlayerType,
         compatibilityMode: PlaybackCompatibility,
         customProfileMode: CustomDeviceProfileAction,
-        playbackDeviceProfile: [PlaybackDeviceProfile],
+        playbackDeviceProfile: [CustomDeviceProfile],
         maxBitrate: Int? = nil
     ) -> DeviceProfile {
 
@@ -32,9 +33,12 @@ extension DeviceProfile {
             deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
             deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
 
-        case .compatible:
+        case .mostCompatible:
             deviceProfile.directPlayProfiles = VideoPlayerType.compatibilityDirectPlayProfile()
-            deviceProfile.transcodingProfiles = VideoPlayerType.compatibilityTranscodingProfile()
+            deviceProfile.transcodingProfiles = VideoPlayerType.compatibilityTranscodingProfile
+
+        case .directPlay:
+            deviceProfile.directPlayProfiles = VideoPlayerType.forcedDirectPlayProfile()
 
         case .custom:
             if customProfileMode == .add {
@@ -58,9 +62,6 @@ extension DeviceProfile {
                     deviceProfile.transcodingProfiles?.append(profile.transcodingProfile)
                 }
             }
-
-        case .direct:
-            deviceProfile.directPlayProfiles = VideoPlayerType.forcedDirectPlayProfile()
         }
 
         // MARK: - Assign the Bitrate if provided

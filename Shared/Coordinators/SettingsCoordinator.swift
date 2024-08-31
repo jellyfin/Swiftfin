@@ -24,12 +24,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.push)
-    var customDeviceAudioEditor = makeCustomDeviceAudioEditor
-    @Route(.push)
-    var customDeviceVideoEditor = makeCustomDeviceVideoEditor
-    @Route(.push)
-    var customDeviceContainerEditor = makeCustomDeviceContainerEditor
-    @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
     var resetUserPassword = makeResetUserPassword
@@ -54,8 +48,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
-    @Route(.push)
-    var customDeviceProfileEditor = makeCustomDeviceProfileEditor
+
+    @Route(.modal)
+    var editCustomDeviceProfile = makeEditCustomDeviceProfile
+    @Route(.modal)
+    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
     #if DEBUG
     @Route(.push)
@@ -96,9 +93,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
         CustomDeviceProfileSettingsView()
     }
 
-    @ViewBuilder
-    func makeCustomDeviceProfileEditor(profile: Binding<PlaybackDeviceProfile>) -> some View {
-        CustomDeviceProfileEditorView(profile: profile)
+    func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
+    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
+    }
+
+    func makeCreateCustomDeviceProfile() -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator())
     }
 
     @ViewBuilder
@@ -145,36 +146,21 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            .navigationTitle(L10n.filters)
+    }
+
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
         DebugSettingsView()
     }
     #endif
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-            .navigationTitle(L10n.filters)
-    }
-
-    func makeCustomDeviceAudioEditor(selection: Binding<[AudioCodec]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: AudioCodec.allCases)
-            .navigationTitle(L10n.audio)
-    }
-
-    func makeCustomDeviceVideoEditor(selection: Binding<[VideoCodec]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: VideoCodec.allCases)
-            .navigationTitle(L10n.video)
-    }
-
-    func makeCustomDeviceContainerEditor(selection: Binding<[MediaContainer]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: MediaContainer.allCases)
-            .navigationTitle(L10n.containers)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
-    }
 
     #endif
 

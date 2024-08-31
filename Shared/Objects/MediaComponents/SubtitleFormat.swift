@@ -10,6 +10,7 @@ import Defaults
 import JellyfinAPI
 
 enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+
     case ass
     case cc_dec
     case dvdsub
@@ -77,18 +78,5 @@ enum SubtitleFormat: String, CaseIterable, Codable, Displayable, Defaults.Serial
         case .xsub:
             return "XSUB"
         }
-    }
-
-    static func unwrap(subtitleDeliveryMethod: SubtitleDeliveryMethod, _ subtitleFormats: [SubtitleFormat]) -> [SubtitleProfile] {
-        var results = [SubtitleProfile]()
-        for format in subtitleFormats {
-            results.append(
-                SubtitleProfile(
-                    format: format.rawValue,
-                    method: subtitleDeliveryMethod
-                )
-            )
-        }
-        return results
     }
 }

@@ -10,6 +10,7 @@ import Defaults
 import SwiftUI
 
 struct PlaybackQualitySettingsView: View {
+
     @Default(.VideoPlayer.Playback.appMaximumBitrate)
     private var appMaximumBitrate
     @Default(.VideoPlayer.Playback.appMaximumBitrateTest)
@@ -30,47 +31,56 @@ struct PlaybackQualitySettingsView: View {
             } header: {
                 L10n.bitrateDefault.text
             } footer: {
-                VStack(alignment: .leading) {
-                    L10n.bitrateDefaultDescription.text
+                L10n.bitrateDefaultDescription.text
+            }
+            .animation(.none, value: appMaximumBitrate)
+
+            if appMaximumBitrate == .auto {
+                Section {
+                    CaseIterablePicker(
+                        L10n.testSize,
+                        selection: $appMaximumBitrateTest
+                    )
+                } header: {
+                    L10n.bitrateTest.text
+                } footer: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        L10n.bitrateTestDescription.text
+                        L10n.bitrateTestDisclaimer.text
+                    }
                 }
             }
 
             Section {
                 CaseIterablePicker(
-                    L10n.testSize,
-                    selection: $appMaximumBitrateTest
-                )
-            } header: {
-                L10n.bitrateTest.text
-            } footer: {
-                VStack(alignment: .leading, spacing: 8) {
-                    L10n.bitrateTestDescription.text
-                    L10n.bitrateTestDisclaimer.text
-                }
-            }
-            Section {
-                CaseIterablePicker(
                     L10n.compatibility,
                     selection: $compatibilityMode
                 )
-                ChevronButton(L10n.profiles)
-                    .onSelect {
-                        router.route(to: \.customDeviceProfileSettings)
-                    }
+                .animation(.none, value: compatibilityMode)
+
+                if compatibilityMode == .custom {
+                    ChevronButton(L10n.profiles)
+                        .onSelect {
+                            router.route(to: \.customDeviceProfileSettings)
+                        }
+                }
             } header: {
                 L10n.deviceProfile.text
             } footer: {
-                VStack(alignment: .leading, spacing: 8) {
-                    L10n.customDeviceProfileDescription.text
-                    switch compatibilityMode {
-                    case .direct, .custom:
-                        L10n.mayResultInPlaybackFailure.text
-                    case .auto, .compatible:
-                        EmptyView()
-                    }
-                }
+//                VStack(alignment: .leading, spacing: 8) {
+//                    L10n.customDeviceProfileDescription.text
+//
+//                    switch compatibilityMode {
+//                    case .directPlay, .custom:
+//                        L10n.mayResultInPlaybackFailure.text
+//                    case .auto, .mostCompatible:
+//                        EmptyView()
+//                    }
+//                }
             }
         }
+        .animation(.linear, value: appMaximumBitrate)
+        .animation(.linear, value: compatibilityMode)
         .navigationTitle(L10n.playbackQuality)
     }
 }
