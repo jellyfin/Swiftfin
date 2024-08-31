@@ -9,58 +9,57 @@
 import Foundation
 import SwiftUI
 
-struct CustomProfileButton: View {
+extension CustomDeviceProfileSettingsView {
+    struct CustomProfileButton: View {
+        let profile: CustomDeviceProfile
+        var onSelect: () -> Void
 
-    let profile: CustomDeviceProfile
-    let isEditing: Bool
-    var onSelect: () -> Void
-    var onDelete: () -> Void
+        @ViewBuilder
+        private func profileDetailsView(title: String, detail: String) -> some View {
+            VStack(alignment: .leading) {
+                Text(title)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
 
-    @ViewBuilder
-    private func profileDetailsView(title: String, detail: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(title)
-                .font(.subheadline)
-                .bold()
-            Text(detail)
-                .foregroundColor(.secondary)
+                Text(detail)
+                    .foregroundColor(.secondary)
+            }
+            .font(.subheadline)
         }
-    }
 
-    var body: some View {
-        Button(action: isEditing ? onDelete : onSelect) {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    profileDetailsView(
-                        title: L10n.audio,
-                        detail: profile.audio.map(\.displayTitle).joined(separator: ", ")
-                    )
-                    profileDetailsView(
-                        title: L10n.video,
-                        detail: profile.video.map(\.displayTitle).joined(separator: ", ")
-                    )
-                    profileDetailsView(
-                        title: L10n.containers,
-                        detail: profile.container.map(\.displayTitle).joined(separator: ", ")
-                    )
-                    profileDetailsView(
-                        title: L10n.useAsTranscodingProfile,
-                        detail: profile.useAsTranscodingProfile ? "Yes" : "No"
-                    )
-                }
-                Spacer()
-                if isEditing {
-                    Image(systemName: "trash.circle.fill")
-                        .resizable()
-                        .font(.body.weight(.regular))
-                        .foregroundColor(.red)
-                        .frame(width: 100, height: 100)
-                } else {
+        var body: some View {
+            Button(action: onSelect) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        profileDetailsView(
+                            title: L10n.audio,
+                            detail: profile.audio.map(\.displayTitle).joined(separator: ", ")
+                        )
+
+                        profileDetailsView(
+                            title: L10n.video,
+                            detail: profile.video.map(\.displayTitle).joined(separator: ", ")
+                        )
+
+                        profileDetailsView(
+                            title: L10n.containers,
+                            detail: profile.container.map(\.displayTitle).joined(separator: ", ")
+                        )
+
+                        profileDetailsView(
+                            title: L10n.useAsTranscodingProfile,
+                            detail: profile.useAsTranscodingProfile ? "Yes" : "No"
+                        )
+                    }
+
+                    Spacer()
+
                     Image(systemName: "chevron.right")
                         .font(.body.weight(.regular))
+                        .foregroundColor(.secondary)
                 }
+                .padding()
             }
-            .padding(.vertical, 8)
         }
     }
 }

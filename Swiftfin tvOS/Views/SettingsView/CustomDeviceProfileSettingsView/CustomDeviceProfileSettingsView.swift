@@ -11,23 +11,34 @@ import Factory
 import SwiftUI
 
 struct CustomDeviceProfileSettingsView: View {
-    @Default(.VideoPlayer.Playback.compatibilityMode)
-    private var compatibilityMode
+
     @Default(.VideoPlayer.Playback.customDeviceProfileAction)
     private var customDeviceProfileAction
 
-    @EnvironmentObject
-    private var router: CustomDeviceProfileSettingsCoordinator.Router
+    @StoredValue(.User.customDeviceProfiles)
+    private var customProfiles: [CustomDeviceProfile]
 
-    @State
-    private var isEditing = false
-    @State
-    private var customDeviceProfiles: [PlaybackDeviceProfile] = []
+    @EnvironmentObject
+    private var router: CustomDeviceProfileCoordinator.Router
+
+    private var isValid: Bool {
+        customDeviceProfileAction == .add || customProfiles.isNotEmpty
+    }
+
+    private func removeProfile(at offsets: IndexSet) {
+        customProfiles.remove(atOffsets: offsets)
+    }
+
+    private func deleteProfile(_ profile: CustomDeviceProfile) {
+        if let index = customProfiles.firstIndex(of: profile) {
+            customProfiles.remove(at: index)
+        }
+    }
 
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image(systemName: "doc.badge.gearshape")
+                Image(systemName: "doc.on.doc")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 400)
@@ -41,67 +52,54 @@ struct CustomDeviceProfileSettingsView: View {
                 } header: {
                     L10n.behavior.text
                 } footer: {
-                    customDeviceProfileAction == .add
-                        ? L10n.customDeviceProfileAdd.text
-                        : L10n.customDeviceProfileReplace.text
+                    VStack(spacing: 8) {
+                        switch customDeviceProfileAction {
+                        case .add:
+                            L10n.customDeviceProfileAdd.text
+                        case .replace:
+                            L10n.customDeviceProfileReplace.text
+                        }
+
+                        if !isValid {
+                            Label("No profiles defined. Playback issues may occur.", systemImage: "exclamationmark.circle.fill")
+                        }
+                    }
                 }
+
                 Section {
-                    ForEach($customDeviceProfiles, id: \.id) { $profile in
-                        CustomProfileButton(
-                            profile: profile,
-                            isEditing: isEditing,
-                            onSelect: { router.route(to: \.customDeviceProfileEditor, $profile) },
-                            onDelete: { removeProfile(profile) }
-                        )
+                    if customProfiles.isEmpty {
+                        Button("Add profile") {
+                            router.route(to: \.createCustomDeviceProfile)
+                        }
+                    }
+
+                    List {
+                        ForEach($customProfiles, id: \.self) { $profile in
+                            CustomProfileButton(profile: profile) {
+                                router.route(to: \.editCustomDeviceProfile, $profile)
+                            }
+                            .contextMenu {
+                                Button(role: .destructive) {
+                                    deleteProfile(profile)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
+                        }
+                        .onDelete(perform: removeProfile)
                     }
                 } header: {
                     HStack {
-                        Text(L10n.customProfile)
+                        Text(L10n.profiles)
                         Spacer()
-                        HStack(spacing: 4) {
-                            if !isEditing {
-                                Button("Add") {
-                                    addProfile()
-                                }
-                            }
-                            Button(isEditing ? "Done" : "Edit") {
-                                isEditing.toggle()
+                        if customProfiles.isNotEmpty {
+                            Button("Add") {
+                                router.route(to: \.createCustomDeviceProfile)
                             }
                         }
                     }
                 }
             }
             .navigationTitle(L10n.profiles)
-            .onAppear(perform: loadProfiles)
-            .onChange(of: customDeviceProfiles) {
-                updateProfiles()
-            }
-    }
-
-    private func loadProfiles() {
-        if let userID = Container.shared.currentUserSession()?.user.id {
-            customDeviceProfiles = StoredValues[.User.customDeviceProfiles(id: userID)]
-        }
-    }
-
-    private func updateProfiles() {
-        if let userID = Container.shared.currentUserSession()?.user.id {
-            StoredValues[.User.customDeviceProfiles(id: userID)] = customDeviceProfiles
-        }
-    }
-
-    private func removeProfile(_ profile: PlaybackDeviceProfile) {
-        customDeviceProfiles.removeAll { $0.id == profile.id }
-        updateProfiles()
-    }
-
-    private func addProfile() {
-        let newProfile = PlaybackDeviceProfile(type: .video)
-        customDeviceProfiles.append(newProfile)
-        updateProfiles()
-
-        if let index = customDeviceProfiles.firstIndex(where: { $0.id == newProfile.id }) {
-            router.route(to: \.customDeviceProfileEditor, $customDeviceProfiles[index])
-        }
     }
 }

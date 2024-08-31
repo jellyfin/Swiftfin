@@ -41,41 +41,39 @@ struct PlaybackQualitySettingsView: View {
                         L10n.bitrateDefaultDescription.text
                     }
                 }
+                .animation(.none, value: appMaximumBitrate)
 
-                Section {
-                    InlineEnumToggle(
-                        title: L10n.testSize,
-                        selection: $appMaximumBitrateTest
-                    )
-                } header: {
-                    L10n.bitrateTest.text
-                } footer: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        L10n.bitrateTestDescription.text
-                        L10n.bitrateTestDisclaimer.text
+                if appMaximumBitrate == .auto {
+                    Section {
+                        InlineEnumToggle(
+                            title: L10n.testSize,
+                            selection: $appMaximumBitrateTest
+                        )
+                    } header: {
+                        L10n.bitrateTest.text
+                    } footer: {
+                        VStack(alignment: .leading, spacing: 8) {
+                            L10n.bitrateTestDescription.text
+                            L10n.bitrateTestDisclaimer.text
+                        }
                     }
                 }
+
                 Section {
                     InlineEnumToggle(
                         title: L10n.compatibility,
                         selection: $compatibilityMode
                     )
-                    ChevronButton(L10n.profiles)
-                        .onSelect {
-                            router.route(to: \.customDeviceProfileSettings)
-                        }
+                    .animation(.none, value: compatibilityMode)
+
+                    if compatibilityMode == .custom {
+                        ChevronButton(L10n.profiles)
+                            .onSelect {
+                                router.route(to: \.customDeviceProfileSettings)
+                            }
+                    }
                 } header: {
                     L10n.deviceProfile.text
-                } footer: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        L10n.customDeviceProfileDescription.text
-                        switch compatibilityMode {
-                        case .direct, .custom:
-                            L10n.mayResultInPlaybackFailure.text
-                        case .auto, .compatible:
-                            EmptyView()
-                        }
-                    }
                 }
             }
             .navigationTitle(L10n.playbackQuality)

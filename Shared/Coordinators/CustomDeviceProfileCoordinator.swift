@@ -9,19 +9,23 @@
 import Stinsen
 import SwiftUI
 
-final class PlaybackQualitySettingsCoordinator: NavigationCoordinatable {
+final class CustomDeviceProfileCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \PlaybackQualitySettingsCoordinator.start)
+    let stack = NavigationStack(initial: \CustomDeviceProfileCoordinator.start)
 
     @Root
     var start = makeStart
 
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+    @Route(.push)
+    var editCustomDeviceProfile = makeEditCustomDeviceProfile
+    @Route(.push)
+    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
-    func makeCustomDeviceProfileSettings() -> NavigationViewCoordinator<CustomDeviceProfileCoordinator> {
+    func makeCustomDeviceProfileSettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
         NavigationViewCoordinator(
-            CustomDeviceProfileCoordinator()
+            PlaybackQualitySettingsCoordinator()
         )
     }
 
@@ -36,6 +40,6 @@ final class PlaybackQualitySettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeStart() -> some View {
-        PlaybackQualitySettingsView()
+        CustomDeviceProfileSettingsView()
     }
 }

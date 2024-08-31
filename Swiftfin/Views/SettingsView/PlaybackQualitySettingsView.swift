@@ -66,17 +66,6 @@ struct PlaybackQualitySettingsView: View {
                 }
             } header: {
                 L10n.deviceProfile.text
-            } footer: {
-//                VStack(alignment: .leading, spacing: 8) {
-//                    L10n.customDeviceProfileDescription.text
-//
-//                    switch compatibilityMode {
-//                    case .directPlay, .custom:
-//                        L10n.mayResultInPlaybackFailure.text
-//                    case .auto, .mostCompatible:
-//                        EmptyView()
-//                    }
-//                }
             }
         }
         .animation(.linear, value: appMaximumBitrate)
