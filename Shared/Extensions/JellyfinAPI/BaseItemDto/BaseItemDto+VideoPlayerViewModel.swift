@@ -19,15 +19,11 @@ extension BaseItemDto {
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
-        let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
-        let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
             compatibilityMode: compatibilityMode,
-            customProfileMode: customProfileMode,
-            playbackDeviceProfile: playbackDeviceProfile,
             maxBitrate: maxBitrate
         )
 
@@ -57,18 +53,15 @@ extension BaseItemDto {
     }
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
+
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
         let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
-        let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
-        let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
             compatibilityMode: compatibilityMode,
-            customProfileMode: customProfileMode,
-            playbackDeviceProfile: playbackDeviceProfile,
             maxBitrate: maxBitrate
         )
 

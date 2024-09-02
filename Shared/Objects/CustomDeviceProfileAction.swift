@@ -10,6 +10,7 @@ import Defaults
 import Foundation
 
 enum CustomDeviceProfileAction: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+
     case add
     case replace
 

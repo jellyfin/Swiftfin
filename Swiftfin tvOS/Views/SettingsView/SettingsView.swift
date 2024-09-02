@@ -86,11 +86,11 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.customizeViewsSettings)
                         }
-
-                    ChevronButton(L10n.experimental)
-                        .onSelect {
-                            router.route(to: \.experimentalSettings)
-                        }
+//
+//                    ChevronButton(L10n.experimental)
+//                        .onSelect {
+//                            router.route(to: \.experimentalSettings)
+//                        }
                 }
 
                 Section {

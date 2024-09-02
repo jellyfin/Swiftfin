@@ -11,21 +11,10 @@ import JellyfinAPI
 
 extension VideoPlayerType {
 
-    static func makeSwiftfinVideoPlayerProfile() -> VideoPlayerType {
-        .init(
-            displayTitle: "Swiftfin",
-            directPlayProfiles: swiftfinDirectPlayProfiles,
-            transcodingProfiles: swiftfinTranscodingProfiles,
-            subtitleProfiles: swiftfinSubtitleProfiles,
-            codecProfiles: sharedCodecProfiles,
-            responseProfiles: sharedResponseProfiles
-        )
-    }
-
     // MARK: direct play
 
     @ArrayBuilder<DirectPlayProfile>
-    private static var swiftfinDirectPlayProfiles: [DirectPlayProfile] {
+    static var _swiftfinDirectPlayProfiles: [DirectPlayProfile] {
         DirectPlayProfile(type: .video) {
             AudioCodec.aac
             AudioCodec.ac3
@@ -62,7 +51,7 @@ extension VideoPlayerType {
     // MARK: transcoding
 
     @ArrayBuilder<TranscodingProfile>
-    private static var swiftfinTranscodingProfiles: [TranscodingProfile] {
+    static var _swiftfinTranscodingProfiles: [TranscodingProfile] {
         TranscodingProfile(
             isBreakOnNonKeyFrames: true,
             context: .streaming,
@@ -101,7 +90,7 @@ extension VideoPlayerType {
     // MARK: subtitle
 
     @ArrayBuilder<SubtitleProfile>
-    private static var swiftfinSubtitleProfiles: [SubtitleProfile] {
+    static var _swiftfinSubtitleProfiles: [SubtitleProfile] {
         SubtitleProfile.build(method: .embed) {
             SubtitleFormat.ass
             SubtitleFormat.cc_dec

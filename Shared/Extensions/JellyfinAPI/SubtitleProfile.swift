@@ -33,11 +33,8 @@ extension SubtitleProfile {
         method: SubtitleDeliveryMethod,
         @ArrayBuilder<SubtitleFormat> containers: () -> [SubtitleFormat]
     ) -> [SubtitleProfile] {
-        containers().reduce([]) { partialResult, format in
-            partialResult.appending(.init(
-                container: format.rawValue,
-                method: method
-            ))
+        containers().map {
+            SubtitleProfile(container: $0.rawValue, method: method)
         }
     }
 }

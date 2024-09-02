@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import JellyfinAPI
 
 enum PlaybackCompatibility: String, CaseIterable, Defaults.Serializable, Displayable {
 

@@ -6,23 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 
 extension DeviceProfile {
 
-//    static func build(
-//        for videoPlayer: VideoPlayerType
-//        compatibility: PlaybackCompatibility,
-//        maxBitrate: Int? = nil
-//    ) -> DeviceProfile {
-//
-//    }
-
     static func build(
         for videoPlayer: VideoPlayerType,
         compatibilityMode: PlaybackCompatibility,
-        customProfileMode: CustomDeviceProfileAction,
-        playbackDeviceProfile: [CustomDeviceProfile],
         maxBitrate: Int? = nil
     ) -> DeviceProfile {
 
@@ -42,13 +33,16 @@ extension DeviceProfile {
             deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
 
         case .mostCompatible:
-            deviceProfile.directPlayProfiles = VideoPlayerType.compatibilityDirectPlayProfile()
-            deviceProfile.transcodingProfiles = VideoPlayerType.compatibilityTranscodingProfile
+            deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.compatibilityDirectPlayProfile
+            deviceProfile.transcodingProfiles = PlaybackCompatibility.Video.compatibilityTranscodingProfile
 
         case .directPlay:
-            deviceProfile.directPlayProfiles = VideoPlayerType.forcedDirectPlayProfile()
+            deviceProfile.directPlayProfiles = PlaybackCompatibility.Video.forcedDirectPlayProfile
 
         case .custom:
+            let customProfileMode = Defaults[.VideoPlayer.Playback.customDeviceProfileAction]
+            let playbackDeviceProfile = StoredValues[.User.customDeviceProfiles]
+
             if customProfileMode == .add {
                 deviceProfile.directPlayProfiles = videoPlayer.directPlayProfiles
                 deviceProfile.transcodingProfiles = videoPlayer.transcodingProfiles
@@ -63,7 +57,7 @@ extension DeviceProfile {
                 }
             }
 
-            for profile in playbackDeviceProfile.filter({ $0.type == .video }) {
+            for profile in playbackDeviceProfile where profile.type == .video {
                 deviceProfile.directPlayProfiles?.append(profile.directPlayProfile)
 
                 if profile.useAsTranscodingProfile {
