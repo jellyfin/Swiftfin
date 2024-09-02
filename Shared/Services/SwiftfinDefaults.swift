@@ -33,7 +33,12 @@ extension UserDefaults {
     //       the Defaults value should always be in sync with the latest user and what
     //       views properly expect. However, this feels like a hack and should be changed?
     static var currentUserSuite: UserDefaults {
-        userSuite(id: Defaults[.lastSignedInUserID] ?? "default")
+        switch Defaults[.lastSignedInUserID] {
+        case .signedOut:
+            return userSuite(id: "default")
+        case let .signedIn(userID):
+            return userSuite(id: userID)
+        }
     }
 
     static func userSuite(id: String) -> UserDefaults {
@@ -82,7 +87,7 @@ extension Defaults.Keys {
 
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
     static let backgroundTimeStamp: Key<Date> = AppKey("backgroundTimeStamp", default: Date.now)
-    static let lastSignedInUserID: Key<String?> = AppKey("lastSignedInUserID")
+    static let lastSignedInUserID: Key<UserSignInState> = AppKey("lastSignedInUserID", default: .signedOut)
 
     static let selectUserDisplayType: Key<LibraryDisplayType> = AppKey("selectUserDisplayType", default: .grid)
     static let selectUserServerSelection: Key<SelectUserServerSelection> = AppKey("selectUserServerSelection", default: .all)
