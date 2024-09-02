@@ -6,11 +6,15 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
 extension CustomDeviceProfileSettingsView {
 
     struct EditCustomDeviceProfileView: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         @StoredValue(.User.customDeviceProfiles)
         private var customDeviceProfiles
@@ -20,16 +24,16 @@ extension CustomDeviceProfileSettingsView {
 
         @State
         private var isPresentingNotSaved = false
-
-        @StateObject
-        private var profile: BindingBox<CustomDeviceProfile>
+        @State
+        private var profile: CustomDeviceProfile
 
         private let createProfile: Bool
+        private let source: Binding<CustomDeviceProfile>?
 
         private var isValid: Bool {
-            profile.value.audio.isNotEmpty &&
-                profile.value.video.isNotEmpty &&
-                profile.value.container.isNotEmpty
+            profile.audio.isNotEmpty &&
+                profile.video.isNotEmpty &&
+                profile.container.isNotEmpty
         }
 
         init(profile: Binding<CustomDeviceProfile>?) {
@@ -37,16 +41,11 @@ extension CustomDeviceProfileSettingsView {
             createProfile = profile == nil
 
             if let profile {
-                self._profile = StateObject(wrappedValue: BindingBox(source: profile))
+                self._profile = State(initialValue: profile.wrappedValue)
+                self.source = profile
             } else {
-                let empty = Binding<CustomDeviceProfile>(
-                    get: { .init(type: .video) },
-                    set: { _ in }
-                )
-
-                self._profile = StateObject(
-                    wrappedValue: BindingBox(source: empty)
-                )
+                self._profile = State(initialValue: .init(type: .video))
+                self.source = nil
             }
         }
 
@@ -86,32 +85,32 @@ extension CustomDeviceProfileSettingsView {
 
         var body: some View {
             Form {
-                Toggle(L10n.useAsTranscodingProfile, isOn: $profile.value.useAsTranscodingProfile)
+                Toggle(L10n.useAsTranscodingProfile, isOn: $profile.useAsTranscodingProfile)
 
                 Section {
                     codecSection(
                         title: L10n.audio,
-                        content: profile.value.audio.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.audio.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceAudioEditor, $profile.value.audio)
+                        router.route(to: \.customDeviceAudioEditor, $profile.audio)
                     }
 
                     codecSection(
                         title: L10n.video,
-                        content: profile.value.video.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.video.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceVideoEditor, $profile.value.video)
+                        router.route(to: \.customDeviceVideoEditor, $profile.video)
                     }
 
                     codecSection(
                         title: L10n.containers,
-                        content: profile.value.container.map(\.displayTitle).joined(separator: ", ")
+                        content: profile.container.map(\.displayTitle).joined(separator: ", ")
                     ) {
-                        router.route(to: \.customDeviceContainerEditor, $profile.value.container)
+                        router.route(to: \.customDeviceContainerEditor, $profile.container)
                     }
                 } footer: {
                     if !isValid {
-                        Label("Current profile values may cause playback issues", systemImage: "exclamationmark.circle.fill")
+                        Label("Missing codec values", systemImage: "exclamationmark.circle.fill")
                             .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                     }
                 }
@@ -123,17 +122,19 @@ extension CustomDeviceProfileSettingsView {
                 isPresentingNotSaved = true
             }
             .navigationTitle(L10n.customProfile)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Save") {
-                        if createProfile {
-                            customDeviceProfiles.append(profile.value)
-                        }
-
-                        router.dismissCoordinator()
+            .topBarTrailing {
+                Button("Save") {
+                    if createProfile {
+                        customDeviceProfiles.append(profile)
+                    } else {
+                        source?.wrappedValue = profile
                     }
-                    .disabled(!isValid)
+
+                    UIDevice.impact(.light)
+                    router.dismissCoordinator()
                 }
+                .buttonStyle(.toolbarPill)
+                .disabled(!isValid)
             }
             .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
                 Button("Close", role: .destructive) {

@@ -237,8 +237,6 @@ extension Defaults.Keys {
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
-        static let forceDirectPlay: Key<Bool> = UserKey("forceDirectPlay", default: false)
-        static let liveTVForceDirectPlay: Key<Bool> = UserKey("liveTVForceDirectPlay", default: false)
     }
 
     // tvos specific

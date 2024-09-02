@@ -11,6 +11,21 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
+
+    case native
+    case swiftfin
+
+    var displayTitle: String {
+        switch self {
+        case .native:
+            "Native"
+        case .swiftfin:
+            "Swiftfin"
+        }
+    }
+}
+
 struct VideoPlayerType: Codable, Equatable, Hashable, CaseIterable, Displayable, Defaults.Serializable {
 
     let displayTitle: String

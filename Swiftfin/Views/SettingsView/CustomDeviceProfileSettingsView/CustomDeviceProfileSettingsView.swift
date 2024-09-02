@@ -70,11 +70,13 @@ struct CustomDeviceProfileSettingsView: View {
             }
         }
         .navigationTitle(L10n.profiles)
-        .toolbar {
+        .topBarTrailing {
             if customProfiles.isNotEmpty {
                 Button("Add") {
+                    UIDevice.impact(.light)
                     router.route(to: \.createCustomDeviceProfile)
                 }
+                .buttonStyle(.toolbarPill)
             }
         }
     }

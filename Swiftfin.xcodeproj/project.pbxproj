@@ -678,6 +678,7 @@
 		E18E021E2887492B0022598C /* RowDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18E01FF288749200022598C /* RowDivider.swift */; };
 		E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1047E2227E5880000CB0D4A /* SystemImageContentView.swift */; };
 		E18E02232887492B0022598C /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
+		E19070492C84F2BB0004600E /* ButtonStyle-iOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19070482C84F2BB0004600E /* ButtonStyle-iOS.swift */; };
 		E1921B7428E61914003A5238 /* SpecialFeatureHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */; };
 		E1921B7628E63306003A5238 /* GestureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1921B7528E63306003A5238 /* GestureView.swift */; };
 		E192608328D2D0DB002314B4 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = E192608228D2D0DB002314B4 /* Factory */; };
@@ -832,8 +833,6 @@
 		E1CB75892C80F96400217C76 /* VideoPlayerType+MostCompatible.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB75872C80F96400217C76 /* VideoPlayerType+MostCompatible.swift */; };
 		E1CB758B2C80F9EC00217C76 /* CodecProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */; };
 		E1CB758C2C80F9EC00217C76 /* CodecProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */; };
-		E1CB758E2C80FCE500217C76 /* MediaCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB758D2C80FCE500217C76 /* MediaCompatibility.swift */; };
-		E1CB758F2C80FCE500217C76 /* MediaCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CB758D2C80FCE500217C76 /* MediaCompatibility.swift */; };
 		E1CCF12E28ABF989006CAC9E /* PosterDisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterDisplayType.swift */; };
 		E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */; };
 		E1CD13EF28EF364100CB46CA /* DetectOrientationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */; };
@@ -1425,6 +1424,7 @@
 		E18E01FF288749200022598C /* RowDivider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RowDivider.swift; sourceTree = "<group>"; };
 		E18E0202288749200022598C /* AttributeStyleModifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttributeStyleModifier.swift; sourceTree = "<group>"; };
 		E18E0203288749200022598C /* BlurView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlurView.swift; sourceTree = "<group>"; };
+		E19070482C84F2BB0004600E /* ButtonStyle-iOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ButtonStyle-iOS.swift"; sourceTree = "<group>"; };
 		E1921B7328E61914003A5238 /* SpecialFeatureHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialFeatureHStack.swift; sourceTree = "<group>"; };
 		E1921B7528E63306003A5238 /* GestureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureView.swift; sourceTree = "<group>"; };
 		E1937A3A288E54AD00CB80AA /* BaseItemDto+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BaseItemDto+Images.swift"; sourceTree = "<group>"; };
@@ -1525,7 +1525,6 @@
 		E1CB75842C80F95A00217C76 /* VideoPlayerType+Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayerType+Shared.swift"; sourceTree = "<group>"; };
 		E1CB75872C80F96400217C76 /* VideoPlayerType+MostCompatible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayerType+MostCompatible.swift"; sourceTree = "<group>"; };
 		E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodecProfile.swift; sourceTree = "<group>"; };
-		E1CB758D2C80FCE500217C76 /* MediaCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaCompatibility.swift; sourceTree = "<group>"; };
 		E1CCF12D28ABF989006CAC9E /* PosterDisplayType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterDisplayType.swift; sourceTree = "<group>"; };
 		E1CCF13028AC07EC006CAC9E /* PosterHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterHStack.swift; sourceTree = "<group>"; };
 		E1CD13EE28EF364100CB46CA /* DetectOrientationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectOrientationModifier.swift; sourceTree = "<group>"; };
@@ -2683,6 +2682,7 @@
 		E11CEB85289984F5003E74C7 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				E19070482C84F2BB0004600E /* ButtonStyle-iOS.swift */,
 				E1A3E4CC2BB7D8C8005C59F8 /* Label-iOS.swift */,
 				E11CEB8828998522003E74C7 /* View */,
 			);
@@ -3500,7 +3500,6 @@
 		E1CB757A2C80EF9D00217C76 /* VideoPlayerType */ = {
 			isa = PBXGroup;
 			children = (
-				E1CB758D2C80FCE500217C76 /* MediaCompatibility.swift */,
 				4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */,
 				E1CB75772C80ECF100217C76 /* VideoPlayerType+Native.swift */,
 				E1CB75872C80F96400217C76 /* VideoPlayerType+MostCompatible.swift */,
@@ -4271,7 +4270,6 @@
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
-				E1CB758F2C80FCE500217C76 /* MediaCompatibility.swift in Sources */,
 				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
 				E1575E8C293E7B1E001665B1 /* UIScreen.swift in Sources */,
 				C46DD8EC2A8FB49A0046A504 /* LiveMainOverlay.swift in Sources */,
@@ -4591,7 +4589,6 @@
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
-				E1CB758E2C80FCE500217C76 /* MediaCompatibility.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
 				E129428828F0831F00796AC6 /* SplitTimestamp.swift in Sources */,
 				C46DD8E72A8FA77F0046A504 /* LiveBottomBarView.swift in Sources */,
@@ -4614,6 +4611,7 @@
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
 				E18E01AB288746AF0022598C /* PillHStack.swift in Sources */,
+				E19070492C84F2BB0004600E /* ButtonStyle-iOS.swift in Sources */,
 				E1401CAB2938140A00E8B599 /* LightAppIcon.swift in Sources */,
 				E19D41A72BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift in Sources */,
 				E18E01E4288747230022598C /* CompactLogoScrollView.swift in Sources */,
