@@ -23,9 +23,9 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
 
-    struct CurrentOverlayTypeKey: EnvironmentKey {
-        static let defaultValue: Binding<VideoPlayer.OverlayType> = .constant(.main)
-    }
+//    struct CurrentOverlayTypeKey: EnvironmentKey {
+//        static let defaultValue: Binding<VideoPlayer.OverlayType> = .constant(.main)
+//    }
 
     struct IsEditingKey: EnvironmentKey {
         static let defaultValue: Bool = false
@@ -44,15 +44,8 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Double> = .constant(1)
     }
 
-    // TODO: See if we can use a root `GeometryReader` that sets the environment value
-    struct SafeAreaInsetsKey: EnvironmentKey {
-        static var defaultValue: EdgeInsets {
-            UIApplication.shared.keyWindow?.safeAreaInsets.asEdgeInsets ?? .zero
-        }
-    }
-
     struct ScrubbingProgressKey: EnvironmentKey {
-        static var defaultValue: Binding<ProgressBox> = .constant(.init(progress: 0, seconds: 0))
+        static var defaultValue: Binding<ProgressBox> = .constant(.init())
     }
 
     struct SubtitleOffsetKey: EnvironmentKey {

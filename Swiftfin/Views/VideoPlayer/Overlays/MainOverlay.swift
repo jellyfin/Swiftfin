@@ -16,40 +16,35 @@ extension VideoPlayer {
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
+
+        @State
+        private var safeAreaInsets: EdgeInsets = .zero
 
         @StateObject
         private var overlayTimer: TimerProxy = .init()
 
         var body: some View {
             ZStack {
+                Color.clear
+                    .allowsHitTesting(false)
+
                 VStack {
                     Overlay.TopBarView()
-//                        .if(UIDevice.isPad) { view in
-//                            view.edgePadding(<#T##edges: Edge.Set##Edge.Set#>)
-//                        }
-                            .background {
-                                LinearGradient(
-                                    stops: [
-                                        .init(color: .black.opacity(0.9), location: 0),
-                                        .init(color: .clear, location: 1),
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .visible(playbackButtonType == .compact)
+                        .background {
+                            OpacityLinearGradient {
+                                (0, 0.9)
+                                (1, 0)
                             }
-                            .visible(!isScrubbing && isPresentingOverlay)
+                            .foregroundStyle(.black)
+                            .visible(playbackButtonType == .compact)
+                        }
+                        .visible(!isScrubbing && isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -59,22 +54,13 @@ extension VideoPlayer {
                             view.edgePadding([.bottom, .horizontal])
                         }
                         .background {
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .clear, location: 0),
-                                    .init(color: .black.opacity(0.5), location: 0.5),
-                                    .init(color: .black.opacity(0.5), location: 1),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
+                            OpacityLinearGradient {
+                                (0, 0)
+                                (0.5, 0.5)
+                                (0.5, 0.9)
+                            }
+                            .foregroundStyle(.black)
                             .visible(isScrubbing || playbackButtonType == .compact)
-                        }
-                        .background {
-                            Color.clear
-                                .allowsHitTesting(true)
-                                .contentShape(Rectangle())
-                                .allowsHitTesting(true)
                         }
                         .visible(isScrubbing || isPresentingOverlay)
                 }
@@ -84,13 +70,13 @@ extension VideoPlayer {
                         .visible(!isScrubbing && isPresentingOverlay)
                 }
             }
+            .animation(.linear(duration: 0.1), value: isScrubbing)
             .environmentObject(overlayTimer)
             .background {
                 Color.black
                     .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
             }
-            .animation(.linear(duration: 0.1), value: isScrubbing)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.start(5)
@@ -108,6 +94,25 @@ extension VideoPlayer {
 //                withAnimation(.linear(duration: 0.3)) {
 //                    isPresentingOverlay = false
 //                }
+            }
+            .onSizeChanged { size, safeAreaInsets in
+                print(size, safeAreaInsets)
+
+                if size.isLandscape {
+                    self.safeAreaInsets = .init(
+                        top: 0,
+                        leading: safeAreaInsets.leading,
+                        bottom: 0,
+                        trailing: safeAreaInsets.trailing
+                    )
+                } else {
+                    self.safeAreaInsets = .init(
+                        top: safeAreaInsets.top,
+                        leading: 0,
+                        bottom: safeAreaInsets.bottom,
+                        trailing: 0
+                    )
+                }
             }
         }
     }

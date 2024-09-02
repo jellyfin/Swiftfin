@@ -28,23 +28,23 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.timestampType)
         private var timestampType
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        @Environment(\.scrubbingProgress)
-        @Binding
-        private var scrubbedProgress: ProgressBox
+//        @Environment(\.scrubbingProgress)
+//        @Binding
+//        private var scrubbedProgress: ProgressBox
 
         @EnvironmentObject
         private var overlayTimer: TimerProxy
         @EnvironmentObject
         private var manager: VideoPlayerManager
+
+        @EnvironmentObject
+        private var scrubbedProgress: ProgressBox
 
         @State
         private var currentChapter: ChapterInfo.FullInfo?
@@ -53,7 +53,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var capsuleSlider: some View {
-            CapsuleSlider(progress: _scrubbedProgress.wrappedValue.progress)
+            CapsuleSlider(progress: $scrubbedProgress.progress)
                 .isEditing(_isScrubbing.wrappedValue)
 //                .trackMask {
 //                    if chapterSlider && viewModel.chapters.isNotEmpty {
@@ -86,7 +86,7 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var thumbSlider: some View {
-            ThumbSlider(progress: _scrubbedProgress.wrappedValue.progress)
+            ThumbSlider(progress: $scrubbedProgress.progress)
                 .isEditing(_isScrubbing.wrappedValue)
                 .trackMask {
 //                    if chapterSlider && viewModel.chapters.isNotEmpty {
@@ -118,28 +118,28 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             VStack(spacing: 0) {
-                HStack {
-                    if chapterSlider, let currentChapter {
-                        Button {
-                            currentOverlayType = .chapters
-                            overlayTimer.stop()
-                        } label: {
-                            HStack {
-                                Text(currentChapter.displayTitle)
-                                    .monospacedDigit()
-
-                                Image(systemName: "chevron.right")
-                            }
-                            .foregroundColor(.white)
-                            .font(.subheadline.weight(.medium))
-                        }
-                        .disabled(isScrubbing)
-                    }
-
-                    Spacer()
-                }
-                .padding(.leading, 5)
-                .padding(.bottom, 15)
+//                HStack {
+//                    if chapterSlider, let currentChapter {
+//                        Button {
+                ////                            currentOverlayType = .chapters
+//                            overlayTimer.stop()
+//                        } label: {
+//                            HStack {
+//                                Text(currentChapter.displayTitle)
+//                                    .monospacedDigit()
+//
+//                                Image(systemName: "chevron.right")
+//                            }
+//                            .foregroundColor(.white)
+//                            .font(.subheadline.weight(.medium))
+//                        }
+//                        .disabled(isScrubbing)
+//                    }
+//
+//                    Spacer()
+//                }
+//                .padding(.leading, 5)
+//                .padding(.bottom, 15)
 
                 Group {
                     switch sliderType {
@@ -153,17 +153,6 @@ extension VideoPlayer.Overlay {
             .onChange(of: manager.state) { newValue in
                 pulse = newValue == .loadingItem
             }
-//            .onChange(of: currentProgressHandler.scrubbedSeconds) { newValue in
-//                guard chapterSlider else { return }
-//                let newChapter = viewModel.chapter(from: newValue)
-//                if newChapter != currentChapter {
-//                    if isScrubbing {
-//                        UIDevice.impact(.light)
-//                    }
-//
-//                    self.currentChapter = newChapter
-//                }
-//            }
         }
     }
 }

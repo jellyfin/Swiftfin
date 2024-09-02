@@ -39,7 +39,9 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
-        value = nextValue()
+        value = value.union(nextValue())
+
+        print("Supported orientations:", value, nextValue())
     }
 }
 #endif

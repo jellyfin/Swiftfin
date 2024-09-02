@@ -84,20 +84,6 @@ extension VideoPlayer.Overlay {
         }
 
         @ViewBuilder
-        private var chaptersButton: some View {
-            EmptyView()
-//            if viewModel.chapters.isNotEmpty {
-//                ActionButtons.Chapters {
-//                    HStack {
-//                        Image(systemName: "list.dash")
-//
-//                        L10n.chapters.text
-//                    }
-//                }
-//            }
-        }
-
-        @ViewBuilder
         private var playbackSpeedMenu: some View {
             ActionButtons.PlaybackSpeedMenu {
                 HStack {
@@ -155,16 +141,12 @@ extension VideoPlayer.Overlay {
             Menu {
                 ForEach(menuActionButtons) { actionButton in
                     switch actionButton {
-//                    case .advanced:
-//                        advancedButton
                     case .aspectFill:
                         aspectFillButton
                     case .audio:
                         audioTrackMenu
                     case .autoPlay:
                         autoPlayButton
-                    case .chapters:
-                        chaptersButton
                     case .playbackSpeed:
                         playbackSpeedMenu
                     case .playNextItem:

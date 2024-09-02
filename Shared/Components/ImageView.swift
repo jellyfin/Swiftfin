@@ -11,7 +11,7 @@ import Nuke
 import NukeUI
 import SwiftUI
 
-// TODO: currently SVGs are only supported for logos, which are only used in a few places.
+// TODO: currently SVGs are only "officially" supported for logos, which are only used in a few places.
 //       make it so when displaying an SVG there is a unified `image` caller modifier
 // TODO: `LazyImage` uses a transaction for view swapping, which will fade out old views
 //       and fade in new views, causing a black "flash" between the placeholder and final image.

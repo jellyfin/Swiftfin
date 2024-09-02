@@ -223,6 +223,13 @@ extension View {
         }
     }
 
+    func trackingSize(_ sizeBinding: Binding<CGSize>, _ safeAreaInsetBinding: Binding<EdgeInsets>) -> some View {
+        onSizeChanged {
+            sizeBinding.wrappedValue = $0
+            safeAreaInsetBinding.wrappedValue = $1
+        }
+    }
+
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue
@@ -339,6 +346,13 @@ extension View {
     #if DEBUG
     func debugBackground<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
         background {
+            Rectangle()
+                .fill(fill)
+        }
+    }
+
+    func debugOverlay<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
+        overlay {
             Rectangle()
                 .fill(fill)
         }

@@ -20,12 +20,6 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-//    let videoPlayerManager: VideoPlayerManager
-//
-//    init(manager: VideoPlayerManager) {
-//        self.videoPlayerManager = manager
-//    }
-
     private let baseItem: BaseItemDto
     private let mediaSource: MediaSourceInfo
 
@@ -50,8 +44,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                     }
                 }
                 .preferredColorScheme(.dark)
-                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+                .supportedOrientations(.allButUpsideDown)
+//                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
             }
+            .supportedOrientations(.allButUpsideDown)
         } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
@@ -63,7 +59,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
                 }
             }
             .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+//            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
     }
     #endif
@@ -81,6 +77,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             .ignoresSafeArea()
             .backport
             .persistentSystemOverlays(.hidden)
+            .supportedOrientations(.allButUpsideDown)
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {

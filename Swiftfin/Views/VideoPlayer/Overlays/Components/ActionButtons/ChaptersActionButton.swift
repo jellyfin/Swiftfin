@@ -16,9 +16,9 @@ extension VideoPlayer.Overlay.ActionButtons {
         @Default(.VideoPlayer.autoPlayEnabled)
         private var autoPlayEnabled
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
+//        @Environment(\.currentOverlayType)
+//        @Binding
+//        private var currentOverlayType
 
         @EnvironmentObject
         private var overlayTimer: TimerProxy
@@ -27,7 +27,7 @@ extension VideoPlayer.Overlay.ActionButtons {
 
         var body: some View {
             Button {
-                currentOverlayType = .chapters
+//                currentOverlayType = .chapters
                 overlayTimer.stop()
             } label: {
                 content()

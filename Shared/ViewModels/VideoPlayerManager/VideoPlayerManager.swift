@@ -122,6 +122,8 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         queue.append(playbackItem.baseItem)
 
         state = .buffering
+
+//        eventSubject.send(.playNew(playbackItem: playbackItem))
     }
 
     @MainActor
@@ -148,13 +150,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
             return .stopped
         case let .playNew(item: item, mediaSource: mediaSource):
 
-            return .loadingItem
-//        case .playNextItem:
-//            // TODO: go next in queue
-//            return .loadingItem
-//        case .playPreviousItem:
-//            // TODO: go back in queue
-//            return .loadingItem
+            return .buffering
         }
     }
 

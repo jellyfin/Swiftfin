@@ -12,11 +12,9 @@ import Foundation
 // TODO: atow, advanced was removed to be redesigned before being released
 enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
-//    case advanced
     case aspectFill
     case audio
     case autoPlay
-    case chapters
     case playbackSpeed
     case playNextItem
     case playPreviousItem
@@ -24,16 +22,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var displayTitle: String {
         switch self {
-//        case .advanced:
-//            return "Advanced"
         case .aspectFill:
             return "Aspect Fill"
         case .audio:
             return "Audio"
         case .autoPlay:
             return "Auto Play"
-        case .chapters:
-            return "Chapters"
         case .playbackSpeed:
             return "Playback Speed"
         case .playNextItem:
@@ -51,16 +45,12 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
 
     var settingsSystemImage: String {
         switch self {
-//        case .advanced:
-//            return "gearshape.fill"
         case .aspectFill:
             return "arrow.up.left.and.arrow.down.right"
         case .audio:
             return "speaker.wave.2"
         case .autoPlay:
             return "play.circle.fill"
-        case .chapters:
-            return "list.bullet.circle"
         case .playbackSpeed:
             return "speedometer"
         case .playNextItem:
@@ -83,7 +73,5 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         .audio,
         .subtitles,
         .playbackSpeed,
-        .chapters,
-//        .advanced,
     ]
 }

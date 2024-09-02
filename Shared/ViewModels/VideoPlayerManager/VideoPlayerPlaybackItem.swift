@@ -13,10 +13,23 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-struct ProgressBox {
+// struct ProgressBox {
+//
+//    var progress: CGFloat
+//    var seconds: Int
+// }
 
+class ProgressBox: ObservableObject {
+
+    @Published
     var progress: CGFloat
+    @Published
     var seconds: Int
+
+    init(progress: CGFloat = 0, seconds: Int = 0) {
+        self.progress = progress
+        self.seconds = seconds
+    }
 }
 
 // TODO: register metadata with now playing
@@ -91,11 +104,14 @@ class VideoPlayerPlaybackItem: ViewModel {
     static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> VideoPlayerPlaybackItem {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
+        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
         let maxBitrate = try await currentVideoBitrate.getMaxBitrate()
+
         let profile = DeviceProfile.build(
             for: currentVideoPlayerType,
+            compatibilityMode: compatibilityMode,
             maxBitrate: maxBitrate
         )
 
@@ -127,7 +143,7 @@ class VideoPlayerPlaybackItem: ViewModel {
 
         let playbackURL: URL
 
-        if let transcodingURL = matchingMediaSource.transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
+        if let transcodingURL = matchingMediaSource.transcodingURL {
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
             else { throw JellyfinAPIError("Unable to make transcode URL") }
             playbackURL = fullTranscodeURL

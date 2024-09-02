@@ -25,10 +25,10 @@ extension EnvironmentValues {
         set { self[AspectFilledKey.self] = newValue }
     }
 
-    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
-        get { self[CurrentOverlayTypeKey.self] }
-        set { self[CurrentOverlayTypeKey.self] = newValue }
-    }
+//    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
+//        get { self[CurrentOverlayTypeKey.self] }
+//        set { self[CurrentOverlayTypeKey.self] = newValue }
+//    }
 
     var isEditing: Bool {
         get { self[IsEditingKey.self] }
@@ -53,10 +53,6 @@ extension EnvironmentValues {
     var playbackSpeed: Binding<Double> {
         get { self[PlaybackSpeedKey.self] }
         set { self[PlaybackSpeedKey.self] = newValue }
-    }
-
-    var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
     }
 
     var scrubbingProgress: Binding<ProgressBox> {
