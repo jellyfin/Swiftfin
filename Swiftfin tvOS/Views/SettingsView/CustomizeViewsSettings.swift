@@ -39,6 +39,12 @@ struct CustomizeViewsSettings: View {
     private var showFavorites
     @Default(.Customization.showRecentlyAdded)
     private var showRecentlyAdded
+    @Default(.Customization.Library.displayType)
+    private var libraryDisplayType
+    @Default(.Customization.Library.posterType)
+    private var libraryPosterType
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
 
     @EnvironmentObject
     private var router: CustomizeSettingsCoordinator.Router
@@ -78,12 +84,9 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.recommended, selection: $similarPosterType)
 
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
-
-                    InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
                 }
 
                 Section(L10n.library) {
-
                     Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
 
                     Toggle(L10n.randomImage, isOn: $libraryRandomImage)
@@ -91,6 +94,20 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.showFavorites, isOn: $showFavorites)
 
                     Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+
+                    InlineEnumToggle(title: L10n.posters, selection: $libraryPosterType)
+
+                    InlineEnumToggle(title: L10n.library, selection: $libraryDisplayType)
+
+                    if libraryDisplayType == .list {
+                        ChevronButton(
+                            "Columns",
+                            subtitle: listColumnCount.description
+                        )
+                        .onSelect {
+                            router.route(to: \.listColumnSettings, $listColumnCount)
+                        }
+                    }
                 }
             }
             .withDescriptionTopPadding()

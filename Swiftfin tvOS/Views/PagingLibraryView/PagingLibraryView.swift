@@ -49,11 +49,13 @@ struct PagingLibraryView<Element: Poster>: View {
 
         let initialPosterType = Defaults[.Customization.Library.posterType]
         let initialViewType = Defaults[.Customization.Library.displayType]
+        let listColumnCount = Defaults[.Customization.Library.listColumnCount]
 
         self._layout = State(
             initialValue: Self.makeLayout(
                 posterType: initialPosterType,
-                viewType: initialViewType
+                displayType: initialViewType,
+                listColumnCount: listColumnCount
             )
         )
     }
@@ -90,15 +92,16 @@ struct PagingLibraryView<Element: Poster>: View {
 
     private static func makeLayout(
         posterType: PosterDisplayType,
-        viewType: LibraryDisplayType
+        displayType: LibraryDisplayType,
+        listColumnCount: Int
     ) -> CollectionVGridLayout {
-        switch (posterType, viewType) {
+        switch (posterType, displayType) {
         case (.landscape, .grid):
-            .columns(5)
+            return .columns(5, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (.portrait, .grid):
-            .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
+            return .columns(7, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         case (_, .list):
-            .columns(1)
+            return .columns(listColumnCount, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         }
     }
 
@@ -140,8 +143,17 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    private func listItemView(item: Element) -> some View {
-        Button(item.displayTitle)
+    @ViewBuilder
+    private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
+        LibraryRow(item: item, posterType: posterType)
+            .onFocusChanged { newValue in
+                if newValue {
+                    focusedItem = item
+                }
+            }
+            .onSelect {
+                onSelect(item)
+            }
     }
 
     @ViewBuilder
@@ -156,7 +168,7 @@ struct PagingLibraryView<Element: Poster>: View {
             case (.portrait, .grid):
                 portraitGridItemView(item: item)
             case (_, .list):
-                listItemView(item: item)
+                listItemView(item: item, posterType: posterType)
             }
         }
         .onReachedBottomEdge(offset: .rows(3)) {
