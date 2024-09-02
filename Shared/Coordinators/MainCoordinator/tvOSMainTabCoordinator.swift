@@ -6,24 +6,22 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 import Stinsen
 import SwiftUI
 
 final class MainTabCoordinator: TabCoordinatable {
+    var child: TabChild
 
-    var child = TabChild(startingItems: [
-        \MainTabCoordinator.home,
-        \MainTabCoordinator.tvShows,
-        \MainTabCoordinator.movies,
-        \MainTabCoordinator.search,
-        \MainTabCoordinator.media,
-        \MainTabCoordinator.settings,
-    ])
+    @Default(.Customization.Home.homeLabels)
+    var sectionLabels
 
     @Route(tabItem: makeHomeTab)
     var home = makeHome
+    @Route(tabItem: makeBoxSetsTab)
+    var boxSets = makeBoxSets
     @Route(tabItem: makeTvTab)
     var tvShows = makeTVShows
     @Route(tabItem: makeMoviesTab)
@@ -35,16 +33,33 @@ final class MainTabCoordinator: TabCoordinatable {
     @Route(tabItem: makeSettingsTab)
     var settings = makeSettings
 
+    init() {
+        self.child = MainTabCoordinator.makeChild()
+    }
+
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
     }
 
     @ViewBuilder
     func makeHomeTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "house")
-            L10n.home.text
-        }
+        makeTab(
+            image: MainTabTypes.home.displayIcon,
+            title: MainTabTypes.home.displayTitle
+        )
+    }
+
+    func makeBoxSets() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
+        let viewModel = ItemTypeLibraryViewModel(itemTypes: [.boxSet])
+        return NavigationViewCoordinator(LibraryCoordinator(viewModel: viewModel))
+    }
+
+    @ViewBuilder
+    func makeBoxSetsTab(isActive: Bool) -> some View {
+        makeTab(
+            image: MainTabTypes.boxSets.displayIcon,
+            title: MainTabTypes.boxSets.displayTitle
+        )
     }
 
     func makeTVShows() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
@@ -54,11 +69,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeTvTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "tv")
-                .symbolRenderingMode(.monochrome)
-            L10n.tvShows.text
-        }
+        makeTab(
+            image: MainTabTypes.tvShows.displayIcon,
+            title: MainTabTypes.tvShows.displayTitle
+        )
     }
 
     func makeMovies() -> NavigationViewCoordinator<LibraryCoordinator<BaseItemDto>> {
@@ -68,13 +82,12 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMoviesTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "film")
-            L10n.movies.text
-        }
+        makeTab(
+            image: MainTabTypes.movies.displayIcon,
+            title: MainTabTypes.movies.displayTitle
+        )
     }
 
-    // TODO: does this cause issues?
     func makeSearch() -> VideoPlayerWrapperCoordinator {
         VideoPlayerWrapperCoordinator {
             SearchCoordinator()
@@ -84,10 +97,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSearchTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "magnifyingglass")
-            L10n.search.text
-        }
+        makeTab(
+            image: MainTabTypes.search.displayIcon,
+            title: MainTabTypes.search.displayTitle
+        )
     }
 
     func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
@@ -96,10 +109,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMediaTab(isActive: Bool) -> some View {
-        HStack {
-            Image(systemName: "rectangle.stack")
-            L10n.media.text
-        }
+        makeTab(
+            image: MainTabTypes.media.displayIcon,
+            title: MainTabTypes.media.displayTitle
+        )
     }
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
@@ -108,7 +121,28 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSettingsTab(isActive: Bool) -> some View {
-        Image(systemName: "gearshape.fill")
-            .accessibilityLabel(L10n.settings)
+        makeTab(
+            image: Image(systemName: "gearshape.fill"),
+            title: L10n.settings,
+            useTitle: false
+        )
+    }
+
+    func makeTab(image tabIcon: Image, title tabLabel: String, useTitle tabTitle: Bool = true) -> some View {
+        HStack {
+            tabIcon
+                .accessibilityLabel(tabLabel.text)
+            if sectionLabels && tabTitle {
+                Text(tabLabel)
+            }
+        }
+    }
+
+    static func makeChild() -> TabChild {
+        @Default(.Customization.Home.homeSections)
+        var homeSections
+        let activeSections: [AnyKeyPath] = homeSections.compactMap(\.keyPath) + [\MainTabCoordinator.settings]
+
+        return TabChild(startingItems: activeSections)
     }
 }

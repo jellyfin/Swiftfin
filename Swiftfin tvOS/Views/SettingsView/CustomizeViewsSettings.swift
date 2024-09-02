@@ -11,6 +11,11 @@ import SwiftUI
 
 struct CustomizeViewsSettings: View {
 
+    @Default(.Customization.Home.homeLabels)
+    private var homeLabels
+    @Default(.Customization.Home.homeSections)
+    private var homeSections
+
     @Default(.Customization.shouldShowMissingSeasons)
     private var shouldShowMissingSeasons
     @Default(.Customization.shouldShowMissingEpisodes)
@@ -53,6 +58,17 @@ struct CustomizeViewsSettings: View {
             }
             .contentView {
 
+                Section(L10n.library) {
+
+                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+
+                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
+
+                    Toggle(L10n.showFavorites, isOn: $showFavorites)
+
+                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                }
+
                 Section(L10n.missingItems) {
 
                     Toggle(L10n.showMissingSeasons, isOn: $shouldShowMissingSeasons)
@@ -82,15 +98,14 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
                 }
 
-                Section(L10n.library) {
+                Section(L10n.home) {
 
-                    Toggle(L10n.cinematicBackground, isOn: $cinematicBackground)
+                    Toggle("Show Section Labels", isOn: $homeLabels)
 
-                    Toggle(L10n.randomImage, isOn: $libraryRandomImage)
-
-                    Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                    ChevronButton("Sections")
+                        .onSelect {
+                            router.route(to: \.homeSectionsSelector, $homeSections)
+                        }
                 }
             }
             .withDescriptionTopPadding()

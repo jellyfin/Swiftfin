@@ -33,7 +33,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var photoPicker = makePhotoPicker
     @Route(.push)
     var userProfile = makeUserProfileSettings
-
+    @Route(.push)
+    var homeSectionsSelector = makeHomeSectionsSelector
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
@@ -123,16 +124,20 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+    }
+
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: MainTabTypes.allCases)
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
         DebugSettingsView()
     }
     #endif
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-    }
 
     func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
         VideoPlayerSettingsCoordinator()
@@ -169,6 +174,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
             MaximumBitrateSettingsView()
         }
     }
+
     #endif
 
     @ViewBuilder

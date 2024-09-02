@@ -17,10 +17,23 @@ final class CustomizeSettingsCoordinator: NavigationCoordinatable {
 
     @Route(.modal)
     var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
+    var homeSectionsSelector = makeHomeSectionsSelector
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
+        }
+    }
+
+    func makeHomeSectionsSelector(selection: Binding<[MainTabTypes]>) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            OrderedSectionSelectorView(
+                title: L10n.home,
+                selection: selection,
+                sources: MainTabTypes.allCases,
+                image: Image(systemName: "menubar.arrow.up.rectangle")
+            )
         }
     }
 

@@ -165,6 +165,22 @@ extension Defaults.Keys {
             static let rememberSort: Key<Bool> = UserKey("libraryRememberSort", default: false)
         }
 
+        enum Home {
+
+            static let homeLabels: Key<Bool> = UserKey("homeLabels", default: true)
+            #if os(tvOS)
+            static let homeSections: Key<[MainTabTypes]> = UserKey(
+                "homeSections",
+                default: [.home, .tvShows, .movies, .search, .media]
+            )
+            #else
+            static let homeSections: Key<[MainTabTypes]> = UserKey(
+                "homeSections",
+                default: [.home, .search, .media]
+            )
+            #endif
+        }
+
         enum Search {
 
             static let enabledDrawerFilters: Key<[ItemFilterType]> = UserKey(

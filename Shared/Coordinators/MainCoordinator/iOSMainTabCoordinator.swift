@@ -6,17 +6,16 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import Stinsen
 import SwiftUI
 
 final class MainTabCoordinator: TabCoordinatable {
+    var child: TabChild
 
-    var child = TabChild(startingItems: [
-        \MainTabCoordinator.home,
-        \MainTabCoordinator.search,
-        \MainTabCoordinator.media,
-    ])
+    @Default(.Customization.Home.homeLabels)
+    var sectionLabels
 
     @Route(tabItem: makeHomeTab, onTapped: onHomeTapped)
     var home = makeHome
@@ -24,6 +23,10 @@ final class MainTabCoordinator: TabCoordinatable {
     var search = makeSearch
     @Route(tabItem: makeMediaTab, onTapped: onMediaTapped)
     var media = makeMedia
+
+    init() {
+        self.child = MainTabCoordinator.makeChild()
+    }
 
     func makeHome() -> NavigationViewCoordinator<HomeCoordinator> {
         NavigationViewCoordinator(HomeCoordinator())
@@ -37,8 +40,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeHomeTab(isActive: Bool) -> some View {
-        Image(systemName: "house")
-        L10n.home.text
+        makeTab(
+            image: Image(systemName: "house"),
+            title: L10n.home
+        )
     }
 
     func makeSearch() -> NavigationViewCoordinator<SearchCoordinator> {
@@ -53,8 +58,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeSearchTab(isActive: Bool) -> some View {
-        Image(systemName: "magnifyingglass")
-        L10n.search.text
+        makeTab(
+            image: Image(systemName: "magnifyingglass"),
+            title: L10n.search
+        )
     }
 
     func makeMedia() -> NavigationViewCoordinator<MediaCoordinator> {
@@ -69,8 +76,10 @@ final class MainTabCoordinator: TabCoordinatable {
 
     @ViewBuilder
     func makeMediaTab(isActive: Bool) -> some View {
-        Image(systemName: "rectangle.stack.fill")
-        L10n.media.text
+        makeTab(
+            image: Image(systemName: "rectangle.stack.fill"),
+            title: L10n.media
+        )
     }
 
     @ViewBuilder
@@ -82,5 +91,29 @@ final class MainTabCoordinator: TabCoordinatable {
                 AppURLHandler.shared.processLaunchedURLIfNeeded()
             }
         }
+    }
+
+    func makeTab(image tabIcon: Image, title tabLabel: String, useTitle tabTitle: Bool = true) -> some View {
+        HStack {
+            tabIcon
+                .accessibilityLabel(tabLabel.text)
+            if sectionLabels && tabTitle {
+                tabLabel.text
+            }
+        }
+    }
+
+    static func makeChild() -> TabChild {
+        @Default(.Customization.Home.homeSections)
+        var homeSections
+        var activeSections: [AnyKeyPath]
+
+        // Re-add the Home Tab if it's missing since that's where the settings live.
+        if homeSections.contains(MainTabTypes.home) {
+            activeSections = homeSections.compactMap(\.keyPath)
+        } else {
+            activeSections = [\MainTabCoordinator.home] + homeSections.compactMap(\.keyPath)
+        }
+        return TabChild(startingItems: activeSections)
     }
 }
