@@ -33,7 +33,12 @@ extension UserDefaults {
     //       the Defaults value should always be in sync with the latest user and what
     //       views properly expect. However, this feels like a hack and should be changed?
     static var currentUserSuite: UserDefaults {
-        userSuite(id: Defaults[.lastSignedInUserID] ?? "default")
+        switch Defaults[.lastSignedInUserID] {
+        case .signedOut:
+            return userSuite(id: "default")
+        case let .signedIn(userID):
+            return userSuite(id: userID)
+        }
     }
 
     static func userSuite(id: String) -> UserDefaults {
@@ -82,7 +87,7 @@ extension Defaults.Keys {
 
     static let backgroundSignOutInterval: Key<TimeInterval> = AppKey("backgroundSignOutInterval", default: 3600)
     static let backgroundTimeStamp: Key<Date> = AppKey("backgroundTimeStamp", default: Date.now)
-    static let lastSignedInUserID: Key<String?> = AppKey("lastSignedInUserID")
+    static let lastSignedInUserID: Key<UserSignInState> = AppKey("lastSignedInUserID", default: .signedOut)
 
     static let selectUserDisplayType: Key<LibraryDisplayType> = AppKey("selectUserDisplayType", default: .grid)
     static let selectUserServerSelection: Key<SelectUserServerSelection> = AppKey("selectUserServerSelection", default: .all)
@@ -213,6 +218,13 @@ extension Defaults.Keys {
             static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
+        enum Playback {
+            static let appMaximumBitrate: Key<PlaybackBitrate> = UserKey("appMaximumBitrate", default: .auto)
+            static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
+            static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
+            static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
+        }
+
         enum Subtitle {
 
             static let subtitleColor: Key<Color> = UserKey("subtitleColor", default: .white)
@@ -230,8 +242,6 @@ extension Defaults.Keys {
     enum Experimental {
 
         static let downloads: Key<Bool> = UserKey("experimentalDownloads", default: false)
-        static let forceDirectPlay: Key<Bool> = UserKey("forceDirectPlay", default: false)
-        static let liveTVForceDirectPlay: Key<Bool> = UserKey("liveTVForceDirectPlay", default: false)
     }
 
     // tvos specific

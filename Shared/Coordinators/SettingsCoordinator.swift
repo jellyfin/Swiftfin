@@ -22,7 +22,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
-    var maximumBitrateSettings = makeMaximumBitrateSettings
+    var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
@@ -46,6 +46,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
+    @Route(.push)
+    var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+
+    @Route(.modal)
+    var editCustomDeviceProfile = makeEditCustomDeviceProfile
+    @Route(.modal)
+    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
     #if DEBUG
     @Route(.push)
@@ -59,13 +66,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
+    var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
     var log = makeLog
     @Route(.modal)
     var serverDetail = makeServerDetail
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
-    var maximumBitrateSettings = makeMaximumBitrateSettings
+    var playbackQualitySettings = makePlaybackQualitySettings
     #endif
 
     #if os(iOS)
@@ -75,8 +84,22 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeMaximumBitrateSettings() -> some View {
-        MaximumBitrateSettingsView()
+    func makePlaybackQualitySettings() -> some View {
+        PlaybackQualitySettingsView()
+    }
+
+    @ViewBuilder
+    func makeCustomDeviceProfileSettings() -> some View {
+        CustomDeviceProfileSettingsView()
+    }
+
+    func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
+    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
+    }
+
+    func makeCreateCustomDeviceProfile() -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator())
     }
 
     @ViewBuilder
@@ -123,6 +146,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            .navigationTitle(L10n.filters)
+    }
+
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
@@ -130,20 +162,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
-    }
-
     #endif
 
     #if os(tvOS)
-
-    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<CustomizeSettingsCoordinator> {
-        NavigationViewCoordinator(CustomizeSettingsCoordinator())
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator(
+            BasicNavigationViewCoordinator {
+                CustomizeViewsSettings()
+            }
+        )
     }
 
     func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -154,6 +181,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
+    func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            IndicatorSettingsView()
+        }
+    }
+
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditServerView(server: server)
@@ -161,13 +194,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
-        NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
+        NavigationViewCoordinator(
+            VideoPlayerSettingsCoordinator()
+        )
     }
 
-    func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            MaximumBitrateSettingsView()
-        }
+    func makePlaybackQualitySettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
+        NavigationViewCoordinator(
+            PlaybackQualitySettingsCoordinator()
+        )
     }
     #endif
 
