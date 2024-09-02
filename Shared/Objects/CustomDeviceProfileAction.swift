@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum CustomDeviceProfileAction: String, CaseIterable, Codable, Displayable, Defaults.Serializable {
+enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
 
     case add
     case replace

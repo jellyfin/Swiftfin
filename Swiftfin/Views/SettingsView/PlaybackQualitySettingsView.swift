@@ -51,6 +51,11 @@ struct PlaybackQualitySettingsView: View {
                 }
             }
 
+            // TODO: Have a small description and a "Learn More..."
+            //       button that will open a page for longer descriptions
+            //       of each option. See: iOS Settings/Accessibility/VoiceOver
+            //       for reference
+
             Section {
                 CaseIterablePicker(
                     L10n.compatibility,
