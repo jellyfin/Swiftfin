@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum StreamType: Displayable {
+enum StreamType: String, Displayable {
 
     case direct
     case transcode

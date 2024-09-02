@@ -132,5 +132,13 @@ extension StoredValues.Keys {
                 default: ""
             )
         }
+
+        static var customDeviceProfiles: Key<[CustomDeviceProfile]> {
+            CurrentUserKey(
+                "customDeviceProfiles",
+                domain: "customDeviceProfiles",
+                default: []
+            )
+        }
     }
 }

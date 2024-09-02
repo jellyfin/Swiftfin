@@ -50,3 +50,8 @@ extension Array {
         return removeFirst()
     }
 }
+
+// extension Array where Element: RawRepresentable<String> {
+//
+//    var asCommaString: String {}
+// }

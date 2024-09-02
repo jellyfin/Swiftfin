@@ -28,6 +28,9 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
     }
 
     private func select(element: Element) {
+
+        UIDevice.impact(.light)
+
         if selection.value.contains(element) {
             selection.value.removeAll(where: { $0 == element })
         } else {

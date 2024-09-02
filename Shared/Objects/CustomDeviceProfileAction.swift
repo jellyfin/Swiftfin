@@ -9,17 +9,17 @@
 import Defaults
 import Foundation
 
-enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
+enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
 
-    case native
-    case swiftfin
+    case add
+    case replace
 
     var displayTitle: String {
         switch self {
-        case .native:
-            return "Native"
-        case .swiftfin:
-            return "Swiftfin"
+        case .add:
+            return "Add"
+        case .replace:
+            return "Replace"
         }
     }
 }
