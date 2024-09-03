@@ -118,28 +118,6 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             VStack(spacing: 0) {
-//                HStack {
-//                    if chapterSlider, let currentChapter {
-//                        Button {
-                ////                            currentOverlayType = .chapters
-//                            overlayTimer.stop()
-//                        } label: {
-//                            HStack {
-//                                Text(currentChapter.displayTitle)
-//                                    .monospacedDigit()
-//
-//                                Image(systemName: "chevron.right")
-//                            }
-//                            .foregroundColor(.white)
-//                            .font(.subheadline.weight(.medium))
-//                        }
-//                        .disabled(isScrubbing)
-//                    }
-//
-//                    Spacer()
-//                }
-//                .padding(.leading, 5)
-//                .padding(.bottom, 15)
 
                 Group {
                     switch sliderType {

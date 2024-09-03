@@ -73,9 +73,8 @@ class VideoPlayerPlaybackItem: ViewModel {
             .adjustExternalSubtitleIndexes(audioStreamCount: audioStreams.count)
 
         let configuration = VLCVideoPlayer.Configuration(url: url)
-//        configuration.autoPlay = true
-
-        configuration.autoPlay = false
+        configuration.autoPlay = true
+//        configuration.autoPlay = false
         configuration.startTime = .seconds(startSeconds)
         configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
         configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)

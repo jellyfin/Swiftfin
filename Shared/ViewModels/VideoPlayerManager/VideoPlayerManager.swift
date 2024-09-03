@@ -49,6 +49,8 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         case stop
 
         case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
+
+        case seek(seconds: Int)
     }
 
     enum State: Hashable {
@@ -78,7 +80,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
     private(set) var item: BaseItemDto
 
     @Published
-    var progress: ProgressBox = .init(progress: 0, seconds: 0)
+    private(set) var progress: ProgressBox = .init(progress: 0, seconds: 0)
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
@@ -150,6 +152,12 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         case let .playNew(item: item, mediaSource: mediaSource):
 
             return .buffering
+        case let .seek(seconds: seconds):
+
+            progress.seconds = seconds
+            progress.progress = CGFloat(seconds) / CGFloat(item.runTimeSeconds)
+
+            return state
         }
     }
 

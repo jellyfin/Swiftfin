@@ -20,7 +20,7 @@ extension ChapterInfo {
 
     var timestampLabel: String {
         let seconds = (startPositionTicks ?? 0) / 10_000_000
-        return seconds.timeLabel
+        return RunTimeFormatStyle(negate: false).format(seconds)
     }
 
     var startTimeSeconds: Int {

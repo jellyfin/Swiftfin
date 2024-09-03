@@ -18,8 +18,6 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
-//        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var manager: VideoPlayerManager
 
@@ -40,7 +38,7 @@ extension VideoPlayer.Overlay {
                 HStack(spacing: 2) {
 
 //                    Text(currentProgressHandler.scrubbedSeconds.timeLabel)
-                    Text(manager.progress.seconds.timeLabel)
+                    Text(manager.progress.seconds, format: .runtime)
                         .foregroundStyle(.white)
 
                     Text("/")
@@ -64,7 +62,7 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
 
 //                Text(currentProgressHandler.seconds.timeLabel)
-                Text(manager.progress.seconds.timeLabel)
+                Text(manager.progress.seconds, format: .runtime)
 
                 Text("/")
 

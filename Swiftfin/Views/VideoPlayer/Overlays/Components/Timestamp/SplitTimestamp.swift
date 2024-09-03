@@ -18,9 +18,6 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
-//        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -28,20 +25,20 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: VideoPlayerManager
         @EnvironmentObject
-        private var progress: ProgressBox
+        private var scrubbedProgress: ProgressBox
 
         @ViewBuilder
         private var leadingTimestamp: some View {
             HStack(spacing: 2) {
 
-                Text(progress.seconds.timeLabel)
-                    .foregroundColor(.white)
+                Text(scrubbedProgress.seconds, format: .runtime)
+                    .foregroundStyle(.primary)
 
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Group {
                         Text("/")
-                        
-                        Text(progress.seconds.timeLabel)
+
+                        Text(manager.progress.seconds, format: .runtime)
                     }
                     .foregroundStyle(.secondary)
                 }
@@ -53,8 +50,8 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
                 if isScrubbing && showCurrentTimeWhileScrubbing {
                     Group {
-                        Text((manager.item.runTimeSeconds - progress.seconds).timeLabel.prepending("-"))
-                        
+                        Text(manager.item.runTimeSeconds - manager.progress.seconds, format: .runtime(negate: true))
+
                         Text("/")
                     }
                     .foregroundStyle(.secondary)
@@ -62,11 +59,12 @@ extension VideoPlayer.Overlay {
 
                 switch trailingTimestampType {
                 case .timeLeft:
-                    Text((manager.item.runTimeSeconds - progress.seconds).timeLabel.prepending("-"))
-                        .foregroundStyle(.white)
+                    Text(manager.item.runTimeSeconds - scrubbedProgress.seconds, format: .runtime(negate: true))
+                        .foregroundStyle(.primary)
+
                 case .totalTime:
-                    Text(manager.item.runTimeSeconds.timeLabel)
-                        .foregroundStyle(.white)
+                    Text(manager.item.runTimeSeconds, format: .runtime)
+                        .foregroundStyle(.primary)
                 }
             }
         }
@@ -91,6 +89,20 @@ extension VideoPlayer.Overlay {
                 .font(.caption)
                 .lineLimit(1)
             }
+            .foregroundStyle(.primary, .secondary)
         }
     }
+}
+
+#Preview {
+    VideoPlayer.Overlay.SplitTimeStamp()
+        .environmentObject(VideoPlayerManager(playbackItem: .init(
+            baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
+            mediaSource: .init(),
+            playSessionID: "",
+            url: URL(string: "/")!
+        )))
+        .environmentObject(ProgressBox(progress: 0, seconds: 100))
+        .environment(\.isScrubbing, .constant(true))
+        .preferredColorScheme(.dark)
 }
