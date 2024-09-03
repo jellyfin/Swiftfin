@@ -91,6 +91,10 @@ struct CustomizeViewsSettings: View {
                 Toggle(L10n.favorites, isOn: $showFavorites)
                 Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
+                ChevronButton("Excluded Libraries")
+                    .onSelect {
+                        router.route(to: \.customizeExcludedLibrariesSettings)
+                    }
             } header: {
                 L10n.library.text
             }

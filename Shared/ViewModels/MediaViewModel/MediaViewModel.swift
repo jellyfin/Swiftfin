@@ -13,6 +13,11 @@ import OrderedCollections
 
 final class MediaViewModel: ViewModel, Stateful {
 
+    @Default(.Customization.Library.excludeLibraries)
+    private var excludedLibraries
+    @Default(.Customization.Library.showFavorites)
+    private var showFavorites
+
     // TODO: remove once collection types become an enum
     static let supportedCollectionTypes: [String] = ["boxsets", "folders", "movies", "tvshows", "livetv"]
 
@@ -114,8 +119,24 @@ final class MediaViewModel: ViewModel, Stateful {
     private func getExcludedLibraries() async throws -> [String] {
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)
+        var allExcludedLibraries: [String] = excludedLibraries.map(\.id)
 
-        return response.value.configuration?.myMediaExcludes ?? []
+        if let myMediaExcludes = response.value.configuration?.myMediaExcludes {
+            allExcludedLibraries.append(contentsOf: myMediaExcludes)
+        }
+
+        return allExcludedLibraries
+    }
+
+    func excludeLibrary(for mediaType: MediaType) {
+        switch mediaType {
+        case let .collectionFolder(item):
+            excludedLibraries.append(ExcludedLibrary(id: item.id!, name: item.name!))
+        case .favorites:
+            showFavorites = false
+        default:
+            break
+        }
     }
 
     func randomItemImageSources(for mediaType: MediaType) async throws -> [ImageSource] {

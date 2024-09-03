@@ -48,6 +48,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+    @Route(.push)
+    var customizeExcludedLibrariesSettings = makeCustomizeExcludedLibrariesSettings
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -86,6 +88,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makePlaybackQualitySettings() -> some View {
         PlaybackQualitySettingsView()
+    }
+
+    @ViewBuilder
+    func makeCustomizeExcludedLibrariesSettings() -> some View {
+        CustomizeExcludedLibrariesView()
     }
 
     @ViewBuilder

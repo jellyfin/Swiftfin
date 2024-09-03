@@ -18,6 +18,7 @@ extension HomeView {
 
         @Default(.Customization.latestInLibraryPosterType)
         private var latestInLibraryPosterType
+        private let excludedLibraries = Defaults[.Customization.Library.excludeLibraries]
 
         @EnvironmentObject
         private var router: HomeCoordinator.Router
@@ -26,7 +27,9 @@ extension HomeView {
         var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            if viewModel.elements.isNotEmpty {
+            if viewModel.elements.isNotEmpty
+                && !excludedLibraries.map(\.id).contains(viewModel.parent?.id ?? "")
+            {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: latestInLibraryPosterType,

@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
+		4E04AADB2C875E24000FF970 /* ExcludedLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */; };
+		4E04AADC2C875E24000FF970 /* ExcludedLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */; };
+		4E04AADE2C87770D000FF970 /* CustomizeExcludedLibrariesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E04AADD2C87770D000FF970 /* CustomizeExcludedLibrariesView.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
@@ -979,6 +982,8 @@
 
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
+		4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExcludedLibrary.swift; sourceTree = "<group>"; };
+		4E04AADD2C87770D000FF970 /* CustomizeExcludedLibrariesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomizeExcludedLibrariesView.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
@@ -1738,6 +1743,23 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E04AADF2C87771C000FF970 /* CustomizeViewsSettings */ = {
+			isa = PBXGroup;
+			children = (
+				4E04AAE02C877739000FF970 /* Components */,
+				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
+			);
+			path = CustomizeViewsSettings;
+			sourceTree = "<group>";
+		};
+		4E04AAE02C877739000FF970 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E04AADD2C87770D000FF970 /* CustomizeExcludedLibrariesView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1936,6 +1958,7 @@
 			isa = PBXGroup;
 			children = (
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
+				4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */,
 				E1CB75742C80EAFA00217C76 /* ArrayBuilder.swift */,
 				E11562942C818CB2001D5DE4 /* BindingBox.swift */,
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
@@ -3623,7 +3646,7 @@
 			isa = PBXGroup;
 			children = (
 				4EC1C86A2C80900B00E2879E /* CustomDeviceProfileSettingsView */,
-				4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */,
+				4E04AADF2C87771C000FF970 /* CustomizeViewsSettings */,
 				E175AFF2299AC117004DCF52 /* DebugSettingsView.swift */,
 				E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */,
 				E104C86F296E087200C1C3F9 /* IndicatorSettingsView.swift */,
@@ -4398,6 +4421,7 @@
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
+				4E04AADC2C875E24000FF970 /* ExcludedLibrary.swift in Sources */,
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
@@ -4694,8 +4718,10 @@
 				E18E01DC288747230022598C /* iPadOSCinematicScrollView.swift in Sources */,
 				E18E01E2288747230022598C /* EpisodeItemView.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
+				4E04AADB2C875E24000FF970 /* ExcludedLibrary.swift in Sources */,
 				E14EA1602BF6FF8900DE757A /* UserProfileImagePicker.swift in Sources */,
 				E1D4BF812719D22800A11E64 /* AppAppearance.swift in Sources */,
+				4E04AADE2C87770D000FF970 /* CustomizeExcludedLibrariesView.swift in Sources */,
 				E1BDF2EF29522A5900CC0294 /* AudioActionButton.swift in Sources */,
 				E174120F29AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
 				E10231392BCF8A3C009D71FC /* ProgramButtonContent.swift in Sources */,

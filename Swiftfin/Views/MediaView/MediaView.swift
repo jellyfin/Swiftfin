@@ -62,6 +62,16 @@ struct MediaView: View {
                         router.route(to: \.liveTV)
                     }
                 }
+                .contextMenu(
+                    ContextMenu(
+                        menuItems: {
+                            Button("Exclude", role: .destructive) {
+                                viewModel.excludeLibrary(for: mediaType)
+                                viewModel.send(.refresh)
+                            }
+                        }
+                    )
+                )
         }
     }
 

@@ -151,6 +151,10 @@ extension Defaults.Keys {
                 "libraryEnabledDrawerFilters",
                 default: ItemFilterType.allCases
             )
+            static let excludeLibraries: Key<[ExcludedLibrary]> = UserKey(
+                "libraryExcludeLibraries",
+                default: []
+            )
             static let letterPickerEnabled: Key<Bool> = UserKey("letterPickerEnabled", default: false)
             static let letterPickerOrientation: Key<LetterPickerOrientation> = .init(
                 "letterPickerOrientation", default: .trailing
