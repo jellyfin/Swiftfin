@@ -94,16 +94,10 @@ final class MediaViewModel: ViewModel, Stateful {
 
     private func getUserViews() async throws -> [BaseItemDto] {
 
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        async let userViews = userSession.client.send(userViewsPath)
+        async let excludedLibraries = getExcludedLibraries()
 
-        async let excludedLibraryIDs = getExcludedLibraries()
-
-        // folders has `type = UserView`, but we manually
-        // force it to `folders` for better view handling
-        let supportedUserViews = try await (userViews.value.items ?? [])
-            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
-            .subtracting(excludedLibraryIDs, using: \.id)
+        let supportedUserViews = try await getLibraries()
+            .subtracting(excludedLibraries, using: \.id)
             .map { item in
 
                 if item.type == .userView, item.collectionType == "folders" {
@@ -114,6 +108,26 @@ final class MediaViewModel: ViewModel, Stateful {
             }
 
         return supportedUserViews
+    }
+
+    private func getLibraries() async throws -> [BaseItemDto] {
+        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        async let userViews = userSession.client.send(userViewsPath)
+
+        // folders has `type = UserView`, but we manually
+        // force it to `folders` for better view handling
+        let supportedLibraries = try await (userViews.value.items ?? [])
+            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
+            .map { item in
+
+                if item.type == .userView, item.collectionType == "folders" {
+                    return item.mutating(\.type, with: .folder)
+                }
+
+                return item
+            }
+
+        return supportedLibraries
     }
 
     private func getExcludedLibraries() async throws -> [String] {
@@ -136,6 +150,27 @@ final class MediaViewModel: ViewModel, Stateful {
             showFavorites = false
         default:
             break
+        }
+    }
+
+    // MARK: ExcludedLibrary Source Array
+
+    func sourceLibraries() async -> [ExcludedLibrary] {
+        do {
+            var libraries: [ExcludedLibrary] = []
+
+            let fetchedLibraries = try await getLibraries()
+
+            for library in fetchedLibraries {
+                if let id = library.id, let name = library.name {
+                    libraries.append(ExcludedLibrary(id: id, name: name))
+                }
+            }
+
+            return libraries
+        } catch {
+            print("Failed to fetch libraries: \(error.localizedDescription)")
+            return []
         }
     }
 

@@ -6,10 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 import JellyfinAPI
 
 final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
+
+    @Default(.Customization.Library.excludeLibraries)
+    private var excludedLibraries
 
     override func get(page: Int) async throws -> [BaseItemDto] {
 
@@ -17,7 +21,12 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
         let request = Paths.getLatestMedia(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        return response.value
+        let excludedLibraries = try await getExcludedLibraries()
+
+        let includedItems = response.value
+            .subtracting(excludedLibraries, using: \.parentID)
+
+        return includedItems
     }
 
     private func parameters() -> Paths.GetLatestMediaParameters {
@@ -29,5 +38,17 @@ final class LatestInLibraryViewModel: PagingLibraryViewModel<BaseItemDto>, Ident
         parameters.limit = pageSize
 
         return parameters
+    }
+
+    private func getExcludedLibraries() async throws -> [String] {
+        let currentUserPath = Paths.getCurrentUser
+        let response = try await userSession.client.send(currentUserPath)
+        var allExcludedLibraries: [String] = excludedLibraries.map(\.id)
+
+        if let myMediaExcludes = response.value.configuration?.myMediaExcludes {
+            allExcludedLibraries.append(contentsOf: myMediaExcludes)
+        }
+
+        return allExcludedLibraries
     }
 }

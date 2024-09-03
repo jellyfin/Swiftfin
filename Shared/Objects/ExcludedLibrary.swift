@@ -10,7 +10,7 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-struct ExcludedLibrary: Hashable, Identifiable, Storable {
+struct ExcludedLibrary: Hashable, Identifiable, Displayable, Storable {
 
     let id: String
     let name: String
@@ -21,5 +21,9 @@ struct ExcludedLibrary: Hashable, Identifiable, Storable {
     ) {
         self.id = id
         self.name = name
+    }
+
+    var displayTitle: String {
+        name
     }
 }

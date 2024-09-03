@@ -1958,7 +1958,6 @@
 			isa = PBXGroup;
 			children = (
 				E1D4BF802719D22800A11E64 /* AppAppearance.swift */,
-				4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */,
 				E1CB75742C80EAFA00217C76 /* ArrayBuilder.swift */,
 				E11562942C818CB2001D5DE4 /* BindingBox.swift */,
 				E129429728F4785200796AC6 /* CaseIterablePicker.swift */,
@@ -1967,6 +1966,7 @@
 				4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
+				4E04AADA2C875E24000FF970 /* ExcludedLibrary.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
 				E1D37F4A2B9CEA5C00343D2B /* ImageSource.swift */,
 				E14EDECA2B8FB66F000F00A4 /* ItemFilter */,

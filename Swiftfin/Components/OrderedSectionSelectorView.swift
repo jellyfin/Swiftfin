@@ -22,6 +22,8 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
     private var label: (Element) -> any View
     private let sources: [Element]
+    private let enabledTitle: String
+    private let disabledTitle: String
 
     private func move(from source: IndexSet, to destination: Int) {
         selection.value.move(fromOffsets: source, toOffset: destination)
@@ -44,7 +46,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
     var body: some View {
         List {
-            Section(L10n.enabled) {
+            Section(enabledTitle) {
 
                 if selection.value.isEmpty {
                     L10n.none.text
@@ -74,7 +76,7 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                 .onMove(perform: move)
             }
 
-            Section(L10n.disabled) {
+            Section(disabledTitle) {
 
                 if disabledSelection.isEmpty {
                     L10n.none.text
@@ -112,10 +114,12 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
 
 extension OrderedSectionSelectorView {
 
-    init(selection: Binding<[Element]>, sources: [Element]) {
+    init(selection: Binding<[Element]>, sources: [Element], enabledTitle: String = L10n.enabled, disabledTitle: String = L10n.disabled) {
         self._selection = StateObject(wrappedValue: BindingBox(source: selection))
         self.sources = sources
         self.label = { Text($0.displayTitle).foregroundColor(.primary) }
+        self.enabledTitle = enabledTitle
+        self.disabledTitle = disabledTitle
     }
 
     func label(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {

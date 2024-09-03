@@ -8,12 +8,16 @@
 
 import Combine
 import CoreStore
+import Defaults
 import Factory
 import Get
 import JellyfinAPI
 import OrderedCollections
 
 final class HomeViewModel: ViewModel, Stateful {
+
+    @Default(.Customization.Library.excludeLibraries)
+    private var excludedLibraries
 
     // MARK: Action
 
@@ -157,14 +161,14 @@ final class HomeViewModel: ViewModel, Stateful {
 
     private func refresh() async throws {
 
-        await nextUpViewModel.send(.refresh)
-        await recentlyAddedViewModel.send(.refresh)
+        nextUpViewModel.send(.refresh)
+        recentlyAddedViewModel.send(.refresh)
 
         let resumeItems = try await getResumeItems()
         let libraries = try await getLibraries()
 
         for library in libraries {
-            await library.send(.refresh)
+            library.send(.refresh)
         }
 
         await MainActor.run {
@@ -174,16 +178,28 @@ final class HomeViewModel: ViewModel, Stateful {
     }
 
     private func getResumeItems() async throws -> [BaseItemDto] {
+
+        let parameters = parameters()
+        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
+        let response = try await userSession.client.send(request)
+
+        let excludedLibraries = try await getExcludedLibraries()
+
+        let includedItems = response.value.items?
+            .subtracting(excludedLibraries, using: \.parentID)
+
+        return includedItems ?? []
+    }
+
+    private func parameters() -> Paths.GetResumeItemsParameters {
+
         var parameters = Paths.GetResumeItemsParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.includeItemTypes = [.movie, .episode]
         parameters.limit = 20
 
-        let request = Paths.getResumeItems(userID: userSession.user.id, parameters: parameters)
-        let response = try await userSession.client.send(request)
-
-        return response.value.items ?? []
+        return parameters
     }
 
     private func getLibraries() async throws -> [LatestInLibraryViewModel] {
@@ -191,11 +207,11 @@ final class HomeViewModel: ViewModel, Stateful {
         let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
         async let userViews = userSession.client.send(userViewsPath)
 
-        async let excludedLibraryIDs = getExcludedLibraries()
+        async let excludedLibraries = getExcludedLibraries()
 
         return try await (userViews.value.items ?? [])
             .intersection(["movies", "tvshows"], using: \.collectionType)
-            .subtracting(excludedLibraryIDs, using: \.id)
+            .subtracting(excludedLibraries, using: \.id)
             .map { LatestInLibraryViewModel(parent: $0) }
     }
 
@@ -204,7 +220,13 @@ final class HomeViewModel: ViewModel, Stateful {
         let currentUserPath = Paths.getCurrentUser
         let response = try await userSession.client.send(currentUserPath)
 
-        return response.value.configuration?.latestItemsExcludes ?? []
+        var allExcludedLibraries: [String] = excludedLibraries.map(\.id)
+
+        if let myMediaExcludes = response.value.configuration?.myMediaExcludes {
+            allExcludedLibraries.append(contentsOf: myMediaExcludes)
+        }
+
+        return allExcludedLibraries
     }
 
     private func setIsPlayed(_ isPlayed: Bool, for item: BaseItemDto) async throws {

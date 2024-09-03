@@ -27,9 +27,7 @@ extension HomeView {
         var viewModel: LatestInLibraryViewModel
 
         var body: some View {
-            if viewModel.elements.isNotEmpty
-                && !excludedLibraries.map(\.id).contains(viewModel.parent?.id ?? "")
-            {
+            if viewModel.elements.isNotEmpty {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: latestInLibraryPosterType,
