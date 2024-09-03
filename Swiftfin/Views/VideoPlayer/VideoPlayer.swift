@@ -101,47 +101,44 @@ struct VideoPlayer: View {
 
             Color.black
 
-//            VLCVideoPlayer(configuration: NothingConfiguration.vlcConfiguration)
-//                .proxy(vlcUIProxy)
-//                .onTicksUpdated { ticks, _ in
+//            if let playbackitem = manager.playbackItem {
+//                VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
+//                    .proxy(vlcUIProxy)
+//                    .onTicksUpdated { ticks, _ in
 //
-//                    guard manager.state != .initial || manager.state != .loadingItem else { return }
+//                        guard manager.state != .initial || manager.state != .loadingItem else { return }
 //
-//                    let newSeconds = ticks / 1000
-//                    let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
+//                        let newSeconds = ticks / 1000
+//                        let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
 //
-//                    // set scrubbed seconds instead, which will be communicated
-//                    // to the manager elsewhere if not scrubbing
+//                        // set scrubbed seconds instead, which will be communicated
+//                        // to the manager elsewhere if not scrubbing
 //
-//                    if !isScrubbing {
-//                        scrubbedProgress.seconds = newSeconds
-//                        scrubbedProgress.progress = newProgress
+//                        if !isScrubbing {
+//                            scrubbedProgress.seconds = newSeconds
+//                            scrubbedProgress.progress = newProgress
+//                        }
 //                    }
-//                }
-//                .onStateUpdated { state, _ in
-            ////                    guard manager.state != .loadingItem else { return }
-//
-//                    switch state {
-//                    case .buffering, .esAdded, .opening:
-//                        manager.send(.buffer)
-//                    case .ended, .stopped:
-//                        manager.send(.ended)
-//                    case .error:
-//                        // TODO: localize
-//                        manager.send(.error(.init("Unable to perform playback")))
-//                    case .playing:
-//                        manager.send(.play)
-//                    case .paused:
-//                        manager.send(.pause)
+//                    .onStateUpdated { state, _ in
+//                        switch state {
+//                        case .buffering, .esAdded, .opening:
+//                            manager.send(.buffer)
+//                        case .ended, .stopped:
+//                            manager.send(.ended)
+//                        case .error:
+//                            // TODO: localize
+//                            manager.send(.error(.init("Unable to perform playback")))
+//                        case .playing:
+//                            manager.send(.play)
+//                        case .paused:
+//                            manager.send(.pause)
+//                        }
 //                    }
-//                }
+//            }
 //                .debugOverlay()
 
             VideoPlayer.Overlay()
-                .safeAreaInset(edge: .top, spacing: 0) {
-                    EmptyView()
-                        .frame(height: safeAreaInsets.top)
-                }
+                .environment(\.safeAreaInsets, $safeAreaInsets)
         }
         .videoPlayerKeyCommands(
             gestureStateHandler: gestureStateHandler,
@@ -231,6 +228,9 @@ struct VideoPlayer: View {
                 }
             }
             .trackingSize($contentSize, $safeAreaInsets)
+            .onChange(of: safeAreaInsets) { _ in
+                print("top -", safeAreaInsets)
+            }
     }
 }
 
@@ -266,4 +266,15 @@ extension VideoPlayer {
             vlcUIProxy: vlcUIProxy
         )
     }
+}
+
+#Preview {
+    VideoPlayer(
+        item: .init(
+            baseItem: .init(name: "Top Gun Maverick"),
+            mediaSource: .init(),
+            playSessionID: "",
+            url: URL(string: "/")!
+        )
+    )
 }

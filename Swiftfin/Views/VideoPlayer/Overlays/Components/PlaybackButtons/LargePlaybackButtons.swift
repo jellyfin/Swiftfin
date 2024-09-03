@@ -92,20 +92,20 @@ extension VideoPlayer.Overlay {
         var body: some View {
             HStack(spacing: 0) {
 
-                Spacer(minLength: 100)
-
-                if showJumpButtons {
-                    jumpBackwardButton
-                }
+//                Spacer(minLength: 100)
+//
+//                if showJumpButtons {
+//                    jumpBackwardButton
+//                }
 
                 playButton
-                    .frame(minWidth: 100, maxWidth: 300)
+//                    .frame(minWidth: 100, maxWidth: 300)
 
-                if showJumpButtons {
-                    jumpForwardButton
-                }
+//                if showJumpButtons {
+//                    jumpForwardButton
+//                }
 
-                Spacer(minLength: 100)
+//                Spacer(minLength: 100)
             }
             .tint(Color.white)
             .foregroundColor(Color.white)

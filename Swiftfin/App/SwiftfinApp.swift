@@ -76,7 +76,7 @@ struct SwiftfinApp: App {
             PreferencesView {
                 MainCoordinator()
                     .view()
-                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
+//                    .supportedOrientations(UIDevice.isPad ? .allButUpsideDown : .portrait)
             }
         } else {
             PreferencesView {

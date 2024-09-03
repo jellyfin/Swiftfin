@@ -148,11 +148,12 @@ extension VideoPlayer.Overlay {
                     }
                 }
                 .disabled(manager.state == .loadingItem)
-                .pulse($pulse)
+//                .debugBackground(.blue)
+//                .pulse($pulse)
             }
-            .onChange(of: manager.state) { newValue in
-                pulse = newValue == .loadingItem
-            }
+//            .onChange(of: manager.state) { newValue in
+//                pulse = newValue == .loadingItem
+//            }
         }
     }
 }

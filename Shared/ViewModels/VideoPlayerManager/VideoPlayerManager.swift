@@ -66,12 +66,13 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
     var nowPlayable: NowPlayable
 
     @Published
-    private(set) var playbackItem: VideoPlayerPlaybackItem! = nil {
-        didSet {
-            guard let playbackItem else { return }
-            eventSubject.send(.playNew(playbackItem: playbackItem))
-        }
-    }
+    private(set) var playbackItem: VideoPlayerPlaybackItem! = nil
+//    {
+//        didSet {
+//            guard let playbackItem else { return }
+//            eventSubject.send(.playNew(playbackItem: playbackItem))
+//        }
+//    }
 
     @Published
     private(set) var item: BaseItemDto
@@ -122,8 +123,6 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         queue.append(playbackItem.baseItem)
 
         state = .buffering
-
-//        eventSubject.send(.playNew(playbackItem: playbackItem))
     }
 
     @MainActor
@@ -173,6 +172,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
                 await MainActor.run {
                     self.state = .buffering
                     self.playbackItem = playbackItem
+                    self.eventSubject.send(.playNew(playbackItem: playbackItem))
                 }
             } catch {
                 guard let self, !Task.isCancelled else { return }

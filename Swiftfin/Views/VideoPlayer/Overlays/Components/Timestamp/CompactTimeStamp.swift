@@ -22,8 +22,6 @@ extension VideoPlayer.Overlay {
 //        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var manager: VideoPlayerManager
-//        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
 
         @Environment(\.isScrubbing)
         @Binding
@@ -43,10 +41,11 @@ extension VideoPlayer.Overlay {
 
 //                    Text(currentProgressHandler.scrubbedSeconds.timeLabel)
                     Text(manager.progress.seconds.timeLabel)
-                        .foregroundColor(.white)
+                        .foregroundStyle(.white)
 
                     Text("/")
-                        .foregroundColor(Color(UIColor.lightText))
+                        .foregroundStyle(.secondary)
+//                        .foregroundColor(Color(UIColor.lightText))
 
 //                    switch trailingTimestampType {
 //                    case .timeLeft:
@@ -71,7 +70,8 @@ extension VideoPlayer.Overlay {
 
 //                Text((viewModel.item.runTimeSeconds - currentProgressHandler.seconds).timeLabel)
             }
-            .foregroundColor(Color(UIColor.lightText))
+            .foregroundStyle(.secondary)
+//            .foregroundColor(Color(UIColor.lightText))
         }
 
         var body: some View {

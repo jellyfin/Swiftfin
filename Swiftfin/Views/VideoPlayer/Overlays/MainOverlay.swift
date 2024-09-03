@@ -22,9 +22,12 @@ extension VideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
+        @Environment(\.safeAreaInsets)
+        @Binding
+        private var safeAreaInsets
 
         @State
-        private var safeAreaInsets: EdgeInsets = .zero
+        private var actualSafeArea: EdgeInsets = .zero
 
         @StateObject
         private var overlayTimer: TimerProxy = .init()
@@ -64,12 +67,15 @@ extension VideoPlayer {
                         }
                         .visible(isScrubbing || isPresentingOverlay)
                 }
+                .edgePadding()
 
                 if playbackButtonType == .large {
                     Overlay.LargePlaybackButtons()
                         .visible(!isScrubbing && isPresentingOverlay)
                 }
             }
+//            .debugOverlay()
+            .padding(actualSafeArea)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .environmentObject(overlayTimer)
             .background {
@@ -95,22 +101,16 @@ extension VideoPlayer {
 //                    isPresentingOverlay = false
 //                }
             }
-            .onSizeChanged { size, safeAreaInsets in
-                print(size, safeAreaInsets)
-
-                if size.isLandscape {
-                    self.safeAreaInsets = .init(
-                        top: 0,
-                        leading: safeAreaInsets.leading,
-                        bottom: 0,
-                        trailing: safeAreaInsets.trailing
+            .onSizeChanged { newSize in
+                if newSize.isPortrait {
+                    actualSafeArea = .init(
+                        vertical: min(safeAreaInsets.top, safeAreaInsets.bottom),
+                        horizontal: 0
                     )
                 } else {
-                    self.safeAreaInsets = .init(
-                        top: safeAreaInsets.top,
-                        leading: 0,
-                        bottom: safeAreaInsets.bottom,
-                        trailing: 0
+                    actualSafeArea = .init(
+                        vertical: 0,
+                        horizontal: min(safeAreaInsets.leading, safeAreaInsets.trailing)
                     )
                 }
             }

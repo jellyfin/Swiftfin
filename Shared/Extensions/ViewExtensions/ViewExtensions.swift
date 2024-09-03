@@ -355,6 +355,7 @@ extension View {
         overlay {
             Rectangle()
                 .fill(fill)
+                .allowsHitTesting(false)
         }
     }
 

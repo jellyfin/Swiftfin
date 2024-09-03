@@ -44,6 +44,10 @@ extension EnvironmentValues {
         static let defaultValue: Binding<Double> = .constant(1)
     }
 
+    struct SafeAreaInsetsKey: EnvironmentKey {
+        static var defaultValue: Binding<EdgeInsets> = .constant(.zero)
+    }
+
     struct ScrubbingProgressKey: EnvironmentKey {
         static var defaultValue: Binding<ProgressBox> = .constant(.init())
     }

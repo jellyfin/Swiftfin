@@ -55,6 +55,11 @@ extension EnvironmentValues {
         set { self[PlaybackSpeedKey.self] = newValue }
     }
 
+    var safeAreaInsets: Binding<EdgeInsets> {
+        get { self[SafeAreaInsetsKey.self] }
+        set { self[SafeAreaInsetsKey.self] = newValue }
+    }
+
     var scrubbingProgress: Binding<ProgressBox> {
         get { self[ScrubbingProgressKey.self] }
         set { self[ScrubbingProgressKey.self] = newValue }
