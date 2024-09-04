@@ -45,6 +45,8 @@ final class MediaViewModel: ViewModel, Stateful {
     @Published
     final var lastAction: Action? = nil
 
+    // MARK: Public Methods
+
     func respond(to action: Action) -> State {
         switch action {
         case let .error(error):
@@ -71,76 +73,7 @@ final class MediaViewModel: ViewModel, Stateful {
         }
     }
 
-    private func refresh() async throws {
-
-        await MainActor.run {
-            mediaItems.removeAll()
-        }
-
-        let media: [MediaType] = try await getUserViews()
-            .compactMap { userView in
-                if userView.collectionType == "livetv" {
-                    return .liveTV(userView)
-                }
-
-                return .collectionFolder(userView)
-            }
-            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
-
-        await MainActor.run {
-            mediaItems.elements = media
-        }
-    }
-
-    private func getUserViews() async throws -> [BaseItemDto] {
-
-        async let excludedLibraries = getExcludedLibraries()
-
-        let supportedUserViews = try await getLibraries()
-            .subtracting(excludedLibraries, using: \.id)
-            .map { item in
-
-                if item.type == .userView, item.collectionType == "folders" {
-                    return item.mutating(\.type, with: .folder)
-                }
-
-                return item
-            }
-
-        return supportedUserViews
-    }
-
-    private func getLibraries() async throws -> [BaseItemDto] {
-        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
-        async let userViews = userSession.client.send(userViewsPath)
-
-        // folders has `type = UserView`, but we manually
-        // force it to `folders` for better view handling
-        let supportedLibraries = try await (userViews.value.items ?? [])
-            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
-            .map { item in
-
-                if item.type == .userView, item.collectionType == "folders" {
-                    return item.mutating(\.type, with: .folder)
-                }
-
-                return item
-            }
-
-        return supportedLibraries
-    }
-
-    private func getExcludedLibraries() async throws -> [String] {
-        let currentUserPath = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserPath)
-        var allExcludedLibraries: [String] = excludedLibraries.map(\.id)
-
-        if let myMediaExcludes = response.value.configuration?.myMediaExcludes {
-            allExcludedLibraries.append(contentsOf: myMediaExcludes)
-        }
-
-        return allExcludedLibraries
-    }
+    // MARK: Remove a Library from ExcludedLibraries
 
     func excludeLibrary(for mediaType: MediaType) {
         switch mediaType {
@@ -153,7 +86,7 @@ final class MediaViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: ExcludedLibrary Source Array
+    // MARK: Get all of the Valid Libraries
 
     func sourceLibraries() async -> [ExcludedLibrary] {
         do {
@@ -174,8 +107,9 @@ final class MediaViewModel: ViewModel, Stateful {
         }
     }
 
-    func randomItemImageSources(for mediaType: MediaType) async throws -> [ImageSource] {
+    // MARK: Get a Random Image for a Library
 
+    func randomItemImageSources(for mediaType: MediaType) async throws -> [ImageSource] {
         // live tv doesn't have random
         if case MediaType.liveTV = mediaType {
             return []
@@ -211,5 +145,78 @@ final class MediaViewModel: ViewModel, Stateful {
 
         return (response.value.items ?? [])
             .map { $0.imageSource(.backdrop, maxWidth: 500) }
+    }
+
+    // MARK: Refresh the MediaViewModel
+
+    private func refresh() async throws {
+        await MainActor.run {
+            mediaItems.removeAll()
+        }
+
+        let media: [MediaType] = try await getUserViews()
+            .compactMap { userView in
+                if userView.collectionType == "livetv" {
+                    return .liveTV(userView)
+                }
+
+                return .collectionFolder(userView)
+            }
+            .prepending(.favorites, if: Defaults[.Customization.Library.showFavorites])
+
+        await MainActor.run {
+            mediaItems.elements = media
+        }
+    }
+
+    // MARK: Get Valid User Media Libraries
+
+    private func getUserViews() async throws -> [BaseItemDto] {
+        async let excludedLibraries = getExcludedLibraries()
+
+        let supportedUserViews = try await getLibraries()
+            .subtracting(excludedLibraries, using: \.id)
+            .map { item in
+                if item.type == .userView, item.collectionType == "folders" {
+                    return item.mutating(\.type, with: .folder)
+                }
+                return item
+            }
+
+        return supportedUserViews
+    }
+
+    // MARK: Get All Libraries
+
+    private func getLibraries() async throws -> [BaseItemDto] {
+        let userViewsPath = Paths.getUserViews(userID: userSession.user.id)
+        async let userViews = userSession.client.send(userViewsPath)
+
+        // folders has `type = UserView`, but we manually
+        // force it to `folders` for better view handling
+        let supportedLibraries = try await (userViews.value.items ?? [])
+            .intersection(Self.supportedCollectionTypes, using: \.collectionType)
+            .map { item in
+                if item.type == .userView, item.collectionType == "folders" {
+                    return item.mutating(\.type, with: .folder)
+                }
+                return item
+            }
+
+        return supportedLibraries
+    }
+
+    // MARK: Get Valid User Media Libraries
+
+    private func getExcludedLibraries() async throws -> [String] {
+        let currentUserPath = Paths.getCurrentUser
+        let response = try await userSession.client.send(currentUserPath)
+        var allExcludedLibraries: [String] = excludedLibraries.map(\.id)
+
+        if let myMediaExcludes = response.value.configuration?.myMediaExcludes {
+            allExcludedLibraries.append(contentsOf: myMediaExcludes)
+        }
+
+        return allExcludedLibraries
     }
 }

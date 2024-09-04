@@ -8,7 +8,6 @@
 
 import Defaults
 import Foundation
-import JellyfinAPI
 
 struct ExcludedLibrary: Hashable, Identifiable, Displayable, Storable {
 
