@@ -12,47 +12,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct NativeVideoPlayer: View {
-
-    @EnvironmentObject
-    private var router: VideoPlayerCoordinator.Router
-
-    @StateObject
-    private var manager: VideoPlayerManager
-
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-        self._manager = StateObject(wrappedValue: VideoPlayerManager(item: item, mediaSource: mediaSource))
-    }
-
-    init(item: VideoPlayerPlaybackItem) {
-        self._manager = StateObject(wrappedValue: VideoPlayerManager(playbackItem: item))
-    }
-
-    var body: some View {
-        ZStack {
-            if let _ = manager.playbackItem {
-                NativeVideoPlayerView(manager: manager)
-            } else {
-                VideoPlayer.LoadingView()
-            }
-        }
-        .navigationBarHidden()
-        .statusBarHidden()
-        .ignoresSafeArea()
-    }
-}
-
-struct NativeVideoPlayerView: UIViewControllerRepresentable {
-
-    let manager: VideoPlayerManager
-
-    func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
-        UINativeVideoPlayerViewController(manager: manager)
-    }
-
-    func updateUIViewController(_ uiViewController: UINativeVideoPlayerViewController, context: Context) {}
-}
-
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
     private let manager: VideoPlayerManager

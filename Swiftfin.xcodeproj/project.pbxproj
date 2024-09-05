@@ -448,6 +448,7 @@
 		E14EDEC92B8FB65F000F00A4 /* ItemFilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */; };
 		E14EDECC2B8FB709000F00A4 /* ItemYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDECB2B8FB709000F00A4 /* ItemYear.swift */; };
 		E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14EDECB2B8FB709000F00A4 /* ItemYear.swift */; };
+		E14F7B9C2C8A33E100EB1E46 /* UINativeVideoPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E14F7B9B2C8A33E100EB1E46 /* UINativeVideoPlayerViewController.swift */; };
 		E150C0BA2BFD44F500944FFA /* ImagePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0B92BFD44F500944FFA /* ImagePipeline.swift */; };
 		E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E150C0B92BFD44F500944FFA /* ImagePipeline.swift */; };
 		E150C0C12BFD62FD00944FFA /* JellyfinAPI in Frameworks */ = {isa = PBXBuildFile; productRef = E150C0C02BFD62FD00944FFA /* JellyfinAPI */; };
@@ -1300,6 +1301,7 @@
 		E14EDEC42B8FB64E000F00A4 /* AnyItemFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyItemFilter.swift; sourceTree = "<group>"; };
 		E14EDEC72B8FB65F000F00A4 /* ItemFilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemFilterType.swift; sourceTree = "<group>"; };
 		E14EDECB2B8FB709000F00A4 /* ItemYear.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemYear.swift; sourceTree = "<group>"; };
+		E14F7B9B2C8A33E100EB1E46 /* UINativeVideoPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UINativeVideoPlayerViewController.swift; sourceTree = "<group>"; };
 		E150C0B92BFD44F500944FFA /* ImagePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePipeline.swift; sourceTree = "<group>"; };
 		E152107B2947ACA000375CC2 /* InvertedLightAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedLightAppIcon.swift; sourceTree = "<group>"; };
 		E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetUserPasswordView.swift; sourceTree = "<group>"; };
@@ -2783,6 +2785,7 @@
 				E170D104294D21FA0017224C /* MediaSourceInfoView.swift */,
 				E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */,
 				E103DF922BCF2F23000229B2 /* MediaView */,
+				E14F7B9A2C8A33D600EB1E46 /* NativeVideoPlayer */,
 				E1EDA8D62B92C9D700F9A57E /* PagingLibraryView */,
 				E10231342BCF8A3C009D71FC /* ProgramsView */,
 				E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */,
@@ -2853,6 +2856,15 @@
 				E14EDECB2B8FB709000F00A4 /* ItemYear.swift */,
 			);
 			path = ItemFilter;
+			sourceTree = "<group>";
+		};
+		E14F7B9A2C8A33D600EB1E46 /* NativeVideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				E1D842162932AB8F00D1041A /* NativeVideoPlayer.swift */,
+				E14F7B9B2C8A33E100EB1E46 /* UINativeVideoPlayerViewController.swift */,
+			);
+			path = NativeVideoPlayer;
 			sourceTree = "<group>";
 		};
 		E14F7D0A26DB3714007C3AE6 /* ItemView */ = {
@@ -3292,7 +3304,6 @@
 			children = (
 				E1559A74294D910A00C1FFBC /* Components */,
 				E11245B228D97D4A00D8A977 /* Overlays */,
-				E1D842162932AB8F00D1041A /* NativeVideoPlayer.swift */,
 				E18A8E8228D60BC400333B9A /* VideoPlayer.swift */,
 				E170D0E1294CC8000017224C /* VideoPlayer+Actions.swift */,
 				E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */,
@@ -4778,6 +4789,7 @@
 				E104DC962B9E7E29008F506D /* AssertionFailureView.swift in Sources */,
 				E102312C2BCF8A08009D71FC /* iOSLiveTVCoordinator.swift in Sources */,
 				E149CCAD2BE6ECC8008B9331 /* Storable.swift in Sources */,
+				E14F7B9C2C8A33E100EB1E46 /* UINativeVideoPlayerViewController.swift in Sources */,
 				E1CB75792C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
 				E18ACA8F2A15A2CF00BB4F35 /* (null) in Sources */,
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
