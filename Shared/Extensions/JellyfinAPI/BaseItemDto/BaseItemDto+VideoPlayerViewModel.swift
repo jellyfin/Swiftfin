@@ -17,16 +17,22 @@ extension BaseItemDto {
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        // TODO: fix bitrate settings
-        let tempOverkillBitrate = 360_000_000
-        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
+        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
-        let userSession = UserSession.current()!
+        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
+        let profile = DeviceProfile.build(
+            for: currentVideoPlayerType,
+            compatibilityMode: compatibilityMode,
+            maxBitrate: maxBitrate
+        )
+
+        let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: tempOverkillBitrate
+            maxStreamingBitrate: maxBitrate
         )
 
         let request = Paths.getPostedPlaybackInfo(
@@ -49,19 +55,22 @@ extension BaseItemDto {
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        // TODO: fix bitrate settings
-        let tempOverkillBitrate = 360_000_000
-        var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: tempOverkillBitrate)
-        if Defaults[.Experimental.liveTVForceDirectPlay] {
-            profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
-        }
+        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
-        let userSession = UserSession.current()!
+        let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
+        let profile = DeviceProfile.build(
+            for: currentVideoPlayerType,
+            compatibilityMode: compatibilityMode,
+            maxBitrate: maxBitrate
+        )
+
+        let userSession = Container.shared.currentUserSession()!
 
         let playbackInfo = PlaybackInfoDto(deviceProfile: profile)
         let playbackInfoParameters = Paths.GetPostedPlaybackInfoParameters(
             userID: userSession.user.id,
-            maxStreamingBitrate: tempOverkillBitrate
+            maxStreamingBitrate: maxBitrate
         )
 
         let request = Paths.getPostedPlaybackInfo(
@@ -99,5 +108,28 @@ extension BaseItemDto {
             with: self,
             playSessionID: response.value.playSessionID!
         )
+    }
+
+    private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
+        let settingBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
+
+        guard bitrate != .auto else {
+            return try await testBitrate(with: settingBitrate.rawValue)
+        }
+        return bitrate.rawValue
+    }
+
+    private func testBitrate(with testSize: Int) async throws -> Int {
+        precondition(testSize > 0, "testSize must be greater than zero")
+
+        let userSession = Container.shared.currentUserSession()!
+
+        let testStartTime = Date()
+        try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+        let testDuration = Date().timeIntervalSince(testStartTime)
+        let testSizeBits = Double(testSize * 8)
+        let testBitrate = testSizeBits / testDuration
+
+        return Int(testBitrate)
     }
 }

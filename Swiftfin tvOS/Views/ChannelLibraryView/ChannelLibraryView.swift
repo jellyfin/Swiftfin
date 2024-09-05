@@ -19,6 +19,7 @@ struct ChannelLibraryView: View {
     @StateObject
     private var viewModel = ChannelLibraryViewModel()
 
+    @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
             $viewModel.elements,

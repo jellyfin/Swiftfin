@@ -23,6 +23,10 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.shouldShowMissingEpisodes)
     private var shouldShowMissingEpisodes
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    var letterPickerOrientation
     @Default(.Customization.Library.enabledDrawerFilters)
     private var libraryEnabledDrawerFilters
     @Default(.Customization.Search.enabledDrawerFilters)
@@ -34,6 +38,8 @@ struct CustomizeViewsSettings: View {
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
     private var recentlyAddedPosterType
+    @Default(.Customization.showRecentlyAdded)
+    private var showRecentlyAdded
     @Default(.Customization.latestInLibraryPosterType)
     private var latestInLibraryPosterType
     @Default(.Customization.similarPosterType)
@@ -91,6 +97,15 @@ struct CustomizeViewsSettings: View {
 
             Section {
 
+                Toggle(L10n.letterPicker, isOn: $letterPickerEnabled)
+
+                if letterPickerEnabled {
+                    CaseIterablePicker(
+                        L10n.orientation,
+                        selection: $letterPickerOrientation
+                    )
+                }
+
                 ChevronButton(L10n.library)
                     .onSelect {
                         router.route(to: \.itemFilterDrawerSelector, $libraryEnabledDrawerFilters)
@@ -145,6 +160,10 @@ struct CustomizeViewsSettings: View {
                         step: 1
                     )
                 }
+            }
+
+            Section("Home") {
+                Toggle("Show recently added", isOn: $showRecentlyAdded)
             }
 
             Section {

@@ -8,6 +8,7 @@
 
 import Combine
 import CoreStore
+import Factory
 import Foundation
 import SwiftUI
 
@@ -125,7 +126,7 @@ extension StoredValue {
                         domain: key.domain
                     )
                 } catch {
-                    LogManager.service().error("Unable to store and create publisher for: \(key)")
+                    Container.shared.logService().error("Unable to store and create publisher for: \(key)")
 
                     return nil
                 }

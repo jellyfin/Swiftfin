@@ -53,6 +53,7 @@ extension MediaView {
             }
         }
 
+        @ViewBuilder
         private var titleLabel: some View {
             Text(mediaType.displayTitle)
                 .font(.title2)
@@ -106,7 +107,7 @@ extension MediaView {
             }
             .buttonStyle(.card)
             .onFirstAppear(perform: setImageSources)
-            .onChange(of: useRandomImage) { _ in
+            .onChange(of: useRandomImage) { _, _ in
                 setImageSources()
             }
         }

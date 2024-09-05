@@ -31,7 +31,7 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
     // Will throw and send event if needing to prompt for old auth.
     func checkForOldPolicy() throws {
 
-        let oldPolicy = userSession.user.signInPolicy
+        let oldPolicy = userSession.user.accessPolicy
 
         switch oldPolicy {
         case .requireDeviceAuthentication:
@@ -75,7 +75,7 @@ class UserLocalSecurityViewModel: ViewModel, Eventful {
             keychain.delete(StoredValues[.Temp.userLocalPin])
         }
 
-        userSession.user.signInPolicy = newPolicy
+        userSession.user.accessPolicy = newPolicy
         userSession.user.pinHint = newPinHint
     }
 }

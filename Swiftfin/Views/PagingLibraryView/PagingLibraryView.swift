@@ -50,11 +50,18 @@ struct PagingLibraryView<Element: Poster>: View {
     @Default
     private var defaultPosterType: PosterDisplayType
 
+    @Default(.Customization.Library.letterPickerEnabled)
+    private var letterPickerEnabled
+    @Default(.Customization.Library.letterPickerOrientation)
+    private var letterPickerOrientation
+
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
 
     @State
     private var layout: CollectionVGridLayout
+    @State
+    private var safeArea: EdgeInsets = .zero
 
     @StoredValue
     private var displayType: LibraryDisplayType
@@ -173,6 +180,7 @@ struct PagingLibraryView<Element: Poster>: View {
     // Note: if parent is a folders then other items will have labels,
     //       so an empty content view is necessary
 
+    @ViewBuilder
     private func landscapeGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .landscape)
             .content {
@@ -192,6 +200,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private func portraitGridItemView(item: Element) -> some View {
         PosterButton(item: item, type: .portrait)
             .content {
@@ -211,6 +220,7 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
+    @ViewBuilder
     private func listItemView(item: Element, posterType: PosterDisplayType) -> some View {
         LibraryRow(item: item, posterType: posterType)
             .onSelect {
@@ -226,7 +236,8 @@ struct PagingLibraryView<Element: Poster>: View {
             }
     }
 
-    private var contentView: some View {
+    @ViewBuilder
+    private var gridView: some View {
         CollectionVGrid(
             $viewModel.elements,
             layout: $layout
@@ -249,6 +260,41 @@ struct PagingLibraryView<Element: Poster>: View {
             viewModel.send(.getNextPage)
         }
         .proxy(collectionVGridProxy)
+        .scrollIndicatorsVisible(false)
+    }
+
+    @ViewBuilder
+    private var innerContent: some View {
+        switch viewModel.state {
+        case .content:
+            if viewModel.elements.isEmpty {
+                L10n.noResults.text
+            } else {
+                gridView
+            }
+        case .initial, .refreshing:
+            DelayedProgressView()
+        default:
+            AssertionFailureView("Expected view for unexpected state")
+        }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        if letterPickerEnabled, let filterViewModel = viewModel.filterViewModel {
+            ZStack(alignment: letterPickerOrientation.alignment) {
+                innerContent
+                    .padding(letterPickerOrientation.edge, 35)
+                    .frame(maxWidth: .infinity)
+
+                LetterPickerBar(viewModel: filterViewModel)
+                    .padding(.top, safeArea.top)
+                    .padding(.bottom, safeArea.bottom)
+                    .padding(letterPickerOrientation.edge, 10)
+            }
+        } else {
+            innerContent
+        }
     }
 
     // MARK: body
@@ -257,21 +303,20 @@ struct PagingLibraryView<Element: Poster>: View {
 
     var body: some View {
         ZStack {
+            Color.clear
+
             switch viewModel.state {
-            case .content:
-                if viewModel.elements.isEmpty {
-                    L10n.noResults.text
-                } else {
-                    contentView
-                }
+            case .content, .initial, .refreshing:
+                contentView
             case let .error(error):
                 errorView(with: error)
-            case .initial, .refreshing:
-                DelayedProgressView()
             }
         }
         .animation(.linear(duration: 0.1), value: viewModel.state)
         .ignoresSafeArea()
+        .onSizeChanged { _, safeArea in
+            self.safeArea = safeArea
+        }
         .navigationTitle(viewModel.parent?.displayTitle ?? "")
         .navigationBarTitleDisplayMode(.inline)
         .ifLet(viewModel.filterViewModel) { view, filterViewModel in

@@ -9,12 +9,10 @@
 import Defaults
 import SwiftUI
 
-struct ExperimentalSettingsView: View {
+// Note: Used for experimental settings that may be removed or implemented
+//       officially. Keep for future settings.
 
-    @Default(.Experimental.forceDirectPlay)
-    private var forceDirectPlay
-    @Default(.Experimental.liveTVForceDirectPlay)
-    private var liveTVForceDirectPlay
+struct ExperimentalSettingsView: View {
 
     var body: some View {
         SplitFormWindowView()
@@ -24,23 +22,7 @@ struct ExperimentalSettingsView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: 400)
             }
-            .contentView {
-                Section {
-
-                    Toggle("Force Direct Play", isOn: $forceDirectPlay)
-
-                } header: {
-                    Text("Video Player")
-                }
-
-                Section {
-
-                    Toggle("Live TV Force Direct Play", isOn: $liveTVForceDirectPlay)
-
-                } header: {
-                    Text("Live TV")
-                }
-            }
+            .contentView {}
             .navigationTitle(L10n.experimental)
     }
 }

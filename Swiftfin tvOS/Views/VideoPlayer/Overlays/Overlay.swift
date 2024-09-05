@@ -58,14 +58,14 @@ extension VideoPlayer {
                         currentOverlayType = .main
                     }
                 }
-                .onChange(of: currentOverlayType) { newValue in
+                .onChange(of: currentOverlayType) { _, newValue in
                     if [.smallMenu, .chapters].contains(newValue) {
                         overlayTimer.pause()
                     } else if isPresentingOverlay {
                         overlayTimer.start(5)
                     }
                 }
-                .onChange(of: overlayTimer.isActive) { isActive in
+                .onChange(of: overlayTimer.isActive) { _, isActive in
                     guard !isActive else { return }
 
                     withAnimation(.linear(duration: 0.3)) {

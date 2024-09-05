@@ -23,7 +23,7 @@ extension BaseItemPerson: Poster {
 
     func portraitImageSources(maxWidth: CGFloat? = nil) -> [ImageSource] {
 
-        guard let client = UserSession.current()?.client else { return [] }
+        guard let client = Container.shared.currentUserSession()?.client else { return [] }
 
         // TODO: figure out what to do about screen scaling with .main being deprecated
         //       - maxWidth assume already scaled?

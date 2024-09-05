@@ -20,6 +20,10 @@ typealias UserState = SwiftfinStore.State.User
 
 // MARK: Namespaces
 
+extension Container {
+    var dataStore: Factory<DataStack> { self { SwiftfinStore.dataStack }.singleton }
+}
+
 enum SwiftfinStore {
 
     /// Namespace for V1 objects
@@ -64,14 +68,10 @@ extension SwiftfinStore {
                 case .success:
                     continuation.resume()
                 case let .failure(error):
-                    LogManager.service().error("Failed creating datastack with: \(error.localizedDescription)")
+                    Container.shared.logService().error("Failed creating datastack with: \(error.localizedDescription)")
                     continuation.resume(throwing: JellyfinAPIError("Failed creating datastack with: \(error.localizedDescription)"))
                 }
             }
         }
-    }
-
-    static let service = Factory<DataStack>(scope: .singleton) {
-        SwiftfinStore.dataStack
     }
 }

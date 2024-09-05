@@ -31,6 +31,7 @@ struct ProgramsView: View {
             }
     }
 
+    @ViewBuilder
     private var liveTVSectionScrollView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
@@ -47,6 +48,7 @@ struct ProgramsView: View {
 
     // TODO: probably make own pill view
     //       - see if could merge with item view pills
+    @ViewBuilder
     private func liveTVSectionPill(title: String, systemImage: String, onSelect: @escaping () -> Void) -> some View {
         Button {
             onSelect()
@@ -62,6 +64,7 @@ struct ProgramsView: View {
         }
     }
 
+    @ViewBuilder
     private var contentView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {

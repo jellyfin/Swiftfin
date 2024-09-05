@@ -26,7 +26,7 @@ extension StoredValues.Keys {
         domain: String,
         default defaultValue: Value
     ) -> Key<Value> {
-        guard let name, let currentUser = UserSession.current()?.user else {
+        guard let name, let currentUser = Container.shared.currentUserSession()?.user else {
             return Key(always: defaultValue)
         }
 
@@ -130,6 +130,14 @@ extension StoredValues.Keys {
                 ownerID: id,
                 domain: "pinHint",
                 default: ""
+            )
+        }
+
+        static var customDeviceProfiles: Key<[CustomDeviceProfile]> {
+            CurrentUserKey(
+                "customDeviceProfiles",
+                domain: "customDeviceProfiles",
+                default: []
             )
         }
     }

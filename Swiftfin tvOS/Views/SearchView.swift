@@ -26,6 +26,7 @@ struct SearchView: View {
     @State
     private var searchQuery = ""
 
+    @ViewBuilder
     private var suggestionsView: some View {
         VStack(spacing: 20) {
             ForEach(viewModel.suggestions) { item in
@@ -38,6 +39,7 @@ struct SearchView: View {
         }
     }
 
+    @ViewBuilder
     private var resultsView: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 20) {
@@ -131,7 +133,7 @@ struct SearchView: View {
         .onFirstAppear {
             viewModel.send(.getSuggestions)
         }
-        .onChange(of: searchQuery) { newValue in
+        .onChange(of: searchQuery) { _, newValue in
             viewModel.send(.search(query: newValue))
         }
         .searchable(text: $searchQuery, prompt: L10n.search)

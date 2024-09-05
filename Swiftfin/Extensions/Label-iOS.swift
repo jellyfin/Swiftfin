@@ -8,6 +8,10 @@
 
 import SwiftUI
 
+// TODO: see if could be moved to `Shared`
+
+// MARK: EpisodeSelectorLabelStyle
+
 extension LabelStyle where Self == EpisodeSelectorLabelStyle {
 
     static var episodeSelector: EpisodeSelectorLabelStyle {
@@ -33,5 +37,30 @@ struct EpisodeSelectorLabelStyle: LabelStyle {
         .compositingGroup()
         .shadow(radius: 1)
         .font(.caption)
+    }
+}
+
+// MARK: SectionFooterWithImageLabelStyle
+
+extension LabelStyle where Self == SectionFooterWithImageLabelStyle<AnyShapeStyle> {
+
+    static func sectionFooterWithImage<ImageStyle: ShapeStyle>(imageStyle: ImageStyle) -> SectionFooterWithImageLabelStyle<ImageStyle> {
+        SectionFooterWithImageLabelStyle(imageStyle: imageStyle)
+    }
+}
+
+struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
+
+    let imageStyle: ImageStyle
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.icon
+                .foregroundStyle(imageStyle)
+                .backport
+                .fontWeight(.bold)
+
+            configuration.title
+        }
     }
 }

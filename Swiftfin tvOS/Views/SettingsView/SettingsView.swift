@@ -31,7 +31,7 @@ struct SettingsView: View {
                     .frame(maxWidth: 400)
             }
             .contentView {
-                Section {
+                Section(L10n.jellyfin) {
 
                     Button {} label: {
                         TextPairView(
@@ -51,42 +51,51 @@ struct SettingsView: View {
                     Button {
                         viewModel.signOut()
                     } label: {
-                        L10n.switchUser.text
-                            .foregroundColor(.jellyfinPurple)
+                        HStack {
+
+                            Text(L10n.switchUser)
+                                .foregroundColor(.jellyfinPurple)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .font(.body.weight(.regular))
+                                .foregroundColor(.secondary)
+                        }
                     }
                 }
 
-                Section {
+                Section(L10n.videoPlayer) {
 
-                    InlineEnumToggle(title: "Video Player Type", selection: $videoPlayerType)
+                    InlineEnumToggle(title: L10n.videoPlayerType, selection: $videoPlayerType)
 
                     ChevronButton(L10n.videoPlayer)
                         .onSelect {
                             router.route(to: \.videoPlayerSettings)
                         }
-                } header: {
-                    L10n.videoPlayer.text
+
+                    ChevronButton(L10n.playbackQuality)
+                        .onSelect {
+                            router.route(to: \.playbackQualitySettings)
+                        }
                 }
 
-                Section {
+                Section(L10n.accessibility) {
 
                     ChevronButton(L10n.customize)
                         .onSelect {
                             router.route(to: \.customizeViewsSettings)
                         }
-
-                    ChevronButton(L10n.experimental)
-                        .onSelect {
-                            router.route(to: \.experimentalSettings)
-                        }
-
-                } header: {
-                    L10n.accessibility.text
+//
+//                    ChevronButton(L10n.experimental)
+//                        .onSelect {
+//                            router.route(to: \.experimentalSettings)
+//                        }
                 }
 
                 Section {
 
-                    ChevronButton("Logs")
+                    ChevronButton(L10n.logs)
                         .onSelect {
                             router.route(to: \.log)
                         }

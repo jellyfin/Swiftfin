@@ -18,11 +18,11 @@ extension MediaSourceInfo {
 
     func videoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
-        let userSession: UserSession! = UserSession.current()
+        let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
         let streamType: StreamType
 
-        if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
+        if let transcodingURL {
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
             else { throw JellyfinAPIError("Unable to make transcode URL") }
             playbackURL = fullTranscodeURL
@@ -61,18 +61,19 @@ extension MediaSourceInfo {
             subtitleStreams: subtitleStreams,
             selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
             selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
-            chapters: item.fullChapterInfo,
+//            chapters: item.fullChapterInfo,
+            chapters: [],
             streamType: streamType
         )
     }
 
     func liveVideoPlayerViewModel(with item: BaseItemDto, playSessionID: String) throws -> VideoPlayerViewModel {
 
-        let userSession: UserSession! = UserSession.current()
+        let userSession: UserSession! = Container.shared.currentUserSession()
         let playbackURL: URL
         let streamType: StreamType
 
-        if let transcodingURL, !Defaults[.Experimental.liveTVForceDirectPlay] {
+        if let transcodingURL {
             guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL

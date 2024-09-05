@@ -21,7 +21,7 @@ import SwiftUI
 
 final class MainCoordinator: NavigationCoordinatable {
 
-    @Injected(LogManager.service)
+    @Injected(\.logService)
     private var logger
 
     var stack: Stinsen.NavigationStack<MainCoordinator>
@@ -50,7 +50,7 @@ final class MainCoordinator: NavigationCoordinatable {
             do {
                 try await SwiftfinStore.setupDataStack()
 
-                if UserSession.current() != nil, !Defaults[.signOutOnClose] {
+                if Container.shared.currentUserSession() != nil, !Defaults[.signOutOnClose] {
                     await MainActor.run {
                         withAnimation(.linear(duration: 0.1)) {
                             let _ = root(\.serverCheck)
@@ -118,9 +118,9 @@ final class MainCoordinator: NavigationCoordinatable {
     @objc
     func didChangeCurrentServerURL(_ notification: Notification) {
 
-        guard UserSession.current() != nil else { return }
+        guard Container.shared.currentUserSession() != nil else { return }
 
-        UserSession.current.reset()
+        Container.shared.currentUserSession.reset()
         Notifications[.didSignIn].post()
     }
 

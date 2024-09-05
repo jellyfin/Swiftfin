@@ -7,6 +7,7 @@
 //
 
 import CoreStore
+import Factory
 import Foundation
 import JellyfinAPI
 import Pulse
@@ -41,7 +42,7 @@ extension SwiftfinStore.State {
             JellyfinClient(
                 configuration: .swiftfinConfiguration(url: currentURL),
                 sessionConfiguration: .swiftfin,
-                sessionDelegate: URLSessionProxyDelegate(logger: LogManager.pulseNetworkLogger())
+                sessionDelegate: URLSessionProxyDelegate(logger: Container.shared.pulseNetworkLogger())
             )
         }
     }

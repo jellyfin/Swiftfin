@@ -77,7 +77,7 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
             }
         case let .signIn(user, pin):
 
-            if user.signInPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
+            if user.accessPolicy == .requirePin, let storedPin = keychain.get("\(user.id)-pin") {
                 if pin != storedPin {
                     eventSubject.send(.error(.init("Incorrect pin for \(user.username)")))
 

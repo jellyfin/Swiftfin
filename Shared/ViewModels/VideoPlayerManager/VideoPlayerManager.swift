@@ -6,10 +6,12 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import AVFoundation
 import Combine
 import Defaults
 import Foundation
 import JellyfinAPI
+import MediaPlayer
 import UIKit
 import VLCUI
 
@@ -65,6 +67,14 @@ class VideoPlayerManager: ViewModel {
 
     private var currentProgressWorkItem: DispatchWorkItem?
     private var hasSentStart = false
+
+    private let commandCenter = MPRemoteCommandCenter.shared()
+
+    override init() {
+        super.init()
+
+        setupControlListeners()
+    }
 
     func selectNextViewModel() {
         guard let nextViewModel else { return }
@@ -283,6 +293,20 @@ class VideoPlayerManager: ViewModel {
             let _ = try await userSession.client.send(request)
 
             logger.debug("sent progress task")
+        }
+    }
+
+    func setupControlListeners() {
+        commandCenter.pauseCommand.addTarget { [weak self] _ in
+            self?.proxy.pause()
+
+            return .success
+        }
+
+        commandCenter.playCommand.addTarget { [weak self] _ in
+            self?.proxy.play()
+
+            return .success
         }
     }
 }
