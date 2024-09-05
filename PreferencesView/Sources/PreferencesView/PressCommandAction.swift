@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 public struct PressCommandAction {
+
     let title: String
     let press: UIPress.PressType
     let action: () -> Void
@@ -29,14 +30,5 @@ extension PressCommandAction: Equatable {
 
     public static func == (lhs: PressCommandAction, rhs: PressCommandAction) -> Bool {
         lhs.press == rhs.press
-    }
-}
-
-struct PressCommandsPreferenceKey: PreferenceKey {
-
-    static var defaultValue: [PressCommandAction] = []
-
-    static func reduce(value: inout [PressCommandAction], nextValue: () -> [PressCommandAction]) {
-        value.append(contentsOf: nextValue())
     }
 }

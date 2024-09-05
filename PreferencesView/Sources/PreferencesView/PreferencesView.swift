@@ -19,25 +19,8 @@ public struct PreferencesView<Content: View>: UIViewControllerRepresentable {
     }
 
     public func makeUIViewController(context: Context) -> UIPreferencesHostingController {
-        let controller = UIPreferencesHostingController(content: content)
-        self.addGesture(press: .menu, view: controller.view, coordinator: context.coordinator)
-        return controller
-    }
-
-    func addGesture(press: UIPress.PressType, view: UIView, coordinator: Coordinator) {
-        let gesture = UITapGestureRecognizer(target: coordinator, action: #selector(coordinator.ignorePress))
-        gesture.allowedPressTypes = [NSNumber(value: press.rawValue)]
-        view.addGestureRecognizer(gesture)
+        UIPreferencesHostingController(content: content)
     }
 
     public func updateUIViewController(_ uiViewController: UIPreferencesHostingController, context: Context) {}
-
-    public func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
-
-    public class Coordinator: NSObject {
-        @objc
-        func ignorePress() {}
-    }
 }
