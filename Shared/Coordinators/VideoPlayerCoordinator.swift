@@ -35,19 +35,16 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     private var versionedView: some View {
         if #available(iOS 16, *) {
             PreferencesView {
-                Group {
+                ZStack {
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
                         VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
                     } else {
-                        Color.red
-//                        NativeVideoPlayer(manager: self.videoPlayerManager)
+                        NativeVideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
                     }
                 }
                 .preferredColorScheme(.dark)
-                .supportedOrientations(.allButUpsideDown)
-//                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
             }
-            .supportedOrientations(.allButUpsideDown)
         } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
@@ -74,10 +71,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         // PreferencesView isn't in the right place in the VC chain so that
         // it can apply the settings, even SwiftUI settings.
         versionedView
+            .preferredColorScheme(.dark)
             .ignoresSafeArea()
             .backport
             .persistentSystemOverlays(.hidden)
-            .supportedOrientations(.allButUpsideDown)
 
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {

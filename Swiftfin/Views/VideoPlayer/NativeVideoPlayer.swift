@@ -18,21 +18,20 @@ struct NativeVideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @StateObject
-    var manager: VideoPlayerManager
+    private var manager: VideoPlayerManager
 
-//    init(manager: VideoPlayerManager) {
-//        self.init
-//    }
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+        self._manager = StateObject(wrappedValue: VideoPlayerManager(item: item, mediaSource: mediaSource))
+    }
 
-    @ViewBuilder
-    private var playerView: some View {
-        NativeVideoPlayerView(manager: manager)
+    init(item: VideoPlayerPlaybackItem) {
+        self._manager = StateObject(wrappedValue: VideoPlayerManager(playbackItem: item))
     }
 
     var body: some View {
         ZStack {
             if let _ = manager.playbackItem {
-                playerView
+                NativeVideoPlayerView(manager: manager)
             } else {
                 VideoPlayer.LoadingView()
             }
@@ -56,71 +55,52 @@ struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
-    let manager: VideoPlayerManager
+    private let manager: VideoPlayerManager
+    private let proxy: AVPlayerVideoPlayerProxy
 
+    private var managerEventObserver: AnyCancellable!
     private var rateObserver: NSKeyValueObservation!
-    private var timeObserverToken: Any!
+    private var timeObserver: Any!
 
     init(manager: VideoPlayerManager) {
 
+        let videoPlayerProxy = AVPlayerVideoPlayerProxy()
+        manager.proxy = videoPlayerProxy
+
+        self.proxy = videoPlayerProxy
         self.manager = manager
 
         super.init(nibName: nil, bundle: nil)
 
-        let newPlayer: AVPlayer = .init(url: manager.playbackItem!.url)
-
-        updatesNowPlayingInfoCenter = false
+        let newPlayer: AVPlayer = .init()
 
         newPlayer.allowsExternalPlayback = true
         newPlayer.appliesMediaSelectionCriteriaAutomatically = false
-        newPlayer.currentItem?.externalMetadata = createMetadata()
 
-        // enable pip
         allowsPictureInPicturePlayback = true
+        updatesNowPlayingInfoCenter = false
 
-//        rateObserver = newPlayer.observe(\.rate, options: .new) { _, change in
-//            guard let newValue = change.newValue else { return }
-//
-//            if newValue == 0 {
-//                self.videoPlayerManager.onStateUpdated(newState: .paused)
-//            } else {
-//                self.videoPlayerManager.playbackSpeed = PlaybackSpeed(rawValue: Double(newValue)) ?? .one
-//                self.videoPlayerManager.onStateUpdated(newState: .playing)
+        // TODO: time and state observation and reporting
+//            timeObserver = newPlayer.addPeriodicTimeObserver(
+//                forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
+//                queue: .main
+//            ) { [weak self] newTime in
 //            }
-//        }
-
-        let time = CMTime(seconds: 0.1, preferredTimescale: 1000)
-
-//        timeObserverToken = newPlayer.addPeriodicTimeObserver(forInterval: time, queue: .main) { [weak self] time in
-//
-//            guard let self else { return }
-//
-//            if time.seconds >= 0 {
-//                let newSeconds = Int(time.seconds)
-//                let progress = CGFloat(newSeconds) / CGFloat(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
-//
-//                self.videoPlayerManager.currentProgressHandler.progress = progress
-//                self.videoPlayerManager.currentProgressHandler.scrubbedProgress = progress
-//                self.videoPlayerManager.currentProgressHandler.seconds = newSeconds
-//                self.videoPlayerManager.currentProgressHandler.scrubbedSeconds = newSeconds
-//
-//                videoPlayerManager.nowPlayable.handleNowPlayablePlaybackChange(
-//                    playing: videoPlayerManager.state == .playing,
-//                    metadata: .init(
-//                        rate: 1.0,
-//                        position: Float(newSeconds),
-//                        duration: Float(self.videoPlayerManager.currentViewModel.item.runTimeSeconds)
-//                    )
-//                )
-//            }
-//        }
 
         player = newPlayer
-
-        let videoPlayerProxy = AVPlayerVideoPlayerProxy()
         videoPlayerProxy.avPlayer = player
 
-        manager.proxy = videoPlayerProxy
+        playNew(playbackItem: manager.playbackItem)
+
+        managerEventObserver = manager.events
+            .sink { event in
+                switch event {
+                case .playbackStopped:
+                    self.dismiss(animated: true)
+                case let .playNew(playbackItem):
+                    self.playNew(playbackItem: playbackItem)
+                }
+            }
     }
 
     @available(*, unavailable)
@@ -131,51 +111,45 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        stop()
-//        videoPlayerManager.nowPlayable.handleNowPlayableSessionEnd()
+        proxy.stop()
 
-        guard let timeObserverToken else { return }
-        player?.removeTimeObserver(timeObserverToken)
+        guard let timeObserver else { return }
+        player?.removeTimeObserver(timeObserver)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    private func playNew(playbackItem: VideoPlayerPlaybackItem) {
 
-//        player?.seek(
-//            to: CMTimeMake(
-//                value: Int64(videoPlayerManager.currentViewModel.item.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset]),
-//                timescale: 1
-//            ),
-//            toleranceBefore: .zero,
-//            toleranceAfter: .zero,
-//            completionHandler: { _ in
-//                self.play()
-//            }
-//        )
+        let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
+
+        player?.replaceCurrentItem(with: newAVPlayerItem)
+        player?.currentItem?.externalMetadata = createAVMetadata(for: playbackItem.baseItem)
+
+        seek(to: playbackItem.baseItem.startTimeSeconds)
+
+        allowsPictureInPicturePlayback = true
+        canStartPictureInPictureAutomaticallyFromInline = true
     }
 
-    private func createMetadata() -> [AVMetadataItem] {
-        []
+    private func createAVMetadata(for item: BaseItemDto) -> [AVMetadataItem] {
+        let title: String
+        var subtitle: String? = nil
+        let description = item.overview
 
-//        let title: String
-//        var subtitle: String? = nil
-//        let description = videoPlayerManager.currentViewModel.item.overview
-//
-//        if videoPlayerManager.currentViewModel.item.type == .episode,
-//           let seriesName = videoPlayerManager.currentViewModel.item.seriesName
-//        {
-//            title = seriesName
-//            subtitle = videoPlayerManager.currentViewModel.item.displayTitle
-//        } else {
-//            title = videoPlayerManager.currentViewModel.item.displayTitle
-//        }
-//
-//        return [
-//            AVMetadataIdentifier.commonIdentifierTitle: title,
-//            .iTunesMetadataTrackSubTitle: subtitle,
-//            .commonIdentifierDescription: description,
-//        ]
-//            .compactMap(createMetadataItem)
+        if item.type == .episode,
+           let seriesName = item.seriesName
+        {
+            title = seriesName
+            subtitle = item.displayTitle
+        } else {
+            title = item.displayTitle
+        }
+
+        return [
+            AVMetadataIdentifier.commonIdentifierTitle: title,
+            .iTunesMetadataTrackSubTitle: subtitle,
+            .commonIdentifierDescription: description,
+        ]
+            .compactMap(createMetadataItem)
     }
 
     private func createMetadataItem(
@@ -192,26 +166,14 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         return item.copy() as? AVMetadataItem
     }
 
-    private func seek(to seconds: TimeInterval) {
+    private func seek(to seconds: Int) {
         player?.seek(
-            to: CMTime(seconds: seconds, preferredTimescale: 1),
+            to: CMTime(seconds: Double(seconds), preferredTimescale: 1),
             toleranceBefore: .zero,
             toleranceAfter: .zero,
             completionHandler: { _ in
-                self.play()
+                self.proxy.play()
             }
         )
-    }
-
-    private func play() {
-        player?.play()
-
-//        videoPlayerManager.sendStartReport()
-    }
-
-    private func stop() {
-        player?.pause()
-
-//        videoPlayerManager.sendStopReport()
     }
 }

@@ -17,15 +17,6 @@ import VLCUI
 // TODO: localization necessary for toast text?
 // TODO: entire gesture layer should be separate
 
-enum NothingConfiguration {
-
-    static var vlcConfiguration: VLCVideoPlayer.Configuration {
-        let configuration = VLCVideoPlayer.Configuration(url: URL(string: "http://localhost/nothing.mp4")!)
-        configuration.autoPlay = false
-        return configuration
-    }
-}
-
 struct VideoPlayer: View {
 
     // TODO: remove settings from here and only have in gesture handler
@@ -93,7 +84,7 @@ struct VideoPlayer: View {
                         let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
 
                         if !isScrubbing {
-                            scrubbedProgress.seconds = newSeconds
+//                            scrubbedProgress.seconds = newSeconds
                             scrubbedProgress.progress = newProgress
                         }
 
@@ -121,13 +112,13 @@ struct VideoPlayer: View {
             VideoPlayer.Overlay()
                 .environment(\.safeAreaInsets, $safeAreaInsets)
         }
-        .environmentObject(manager)
-        .environmentObject(scrubbedProgress)
-        .environmentObject(vlcUIProxy)
         .environment(\.aspectFilled, $isAspectFilled)
         .environment(\.isPresentingOverlay, $isPresentingOverlay)
         .environment(\.isScrubbing, $isScrubbing)
         .environment(\.playbackSpeed, $playbackSpeed)
+        .environmentObject(manager)
+        .environmentObject(scrubbedProgress)
+        .environmentObject(vlcUIProxy)
     }
 
     // MARK: body
@@ -202,6 +193,8 @@ struct VideoPlayer: View {
 // MARK: init
 
 extension VideoPlayer {
+
+    // TODO: take in manager instead
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
 

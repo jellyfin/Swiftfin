@@ -43,6 +43,7 @@ extension VideoPlayer.Overlay {
                 }
                 .frame(width: 45, height: 45)
                 .contentShape(Rectangle())
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
             }
         }
 

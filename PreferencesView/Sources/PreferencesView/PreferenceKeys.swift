@@ -22,7 +22,9 @@ struct PreferredScreenEdgesDeferringSystemGesturesPreferenceKey: PreferenceKey {
 
     static var defaultValue: UIRectEdge = [.left, .right]
 
-    static func reduce(value: inout UIRectEdge, nextValue: () -> UIRectEdge) {}
+    static func reduce(value: inout UIRectEdge, nextValue: () -> UIRectEdge) {
+        value = nextValue()
+    }
 }
 
 struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
@@ -30,7 +32,7 @@ struct PrefersHomeIndicatorAutoHiddenPreferenceKey: PreferenceKey {
     static var defaultValue: Bool = false
 
     static func reduce(value: inout Bool, nextValue: () -> Bool) {
-        value = nextValue() || value
+        value = nextValue()
     }
 }
 
@@ -39,9 +41,7 @@ struct SupportedOrientationsPreferenceKey: PreferenceKey {
     static var defaultValue: UIInterfaceOrientationMask = .allButUpsideDown
 
     static func reduce(value: inout UIInterfaceOrientationMask, nextValue: () -> UIInterfaceOrientationMask) {
-        value = value.union(nextValue())
-
-        print("Supported orientations:", value, nextValue())
+        value = nextValue()
     }
 }
 #endif
