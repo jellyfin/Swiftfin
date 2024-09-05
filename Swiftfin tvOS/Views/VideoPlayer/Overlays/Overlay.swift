@@ -53,7 +53,7 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.1), value: currentOverlayType)
                 .environment(\.currentOverlayType, $currentOverlayType)
                 .environmentObject(overlayTimer)
-                .onChange(of: isPresentingOverlay) { _ in
+                .onChange(of: isPresentingOverlay) {
                     if !isPresentingOverlay {
                         currentOverlayType = .main
                     }
