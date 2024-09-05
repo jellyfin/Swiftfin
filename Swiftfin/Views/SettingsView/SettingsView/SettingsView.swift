@@ -43,7 +43,7 @@ struct SettingsView: View {
                     subtitle: viewModel.userSession.server.name
                 )
                 .onSelect {
-                    router.route(to: \.serverDetail, viewModel.userSession.server)
+                    router.route(to: \.userDashboard, viewModel.userSession.server)
                 }
             }
 

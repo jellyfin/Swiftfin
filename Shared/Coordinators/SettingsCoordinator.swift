@@ -49,6 +49,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
 
+    @Route(.push)
+    var userDashboard = makeUserDashboard
+    @Route(.push)
+    var activeSessions = makeActiveSessions
+
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
     @Route(.modal)
@@ -144,6 +149,16 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeServerDetail(server: ServerState) -> some View {
         EditServerView(server: server)
+    }
+
+    @ViewBuilder
+    func makeUserDashboard(server: ServerState) -> some View {
+        UserDashboardView(server: server)
+    }
+
+    @ViewBuilder
+    func makeActiveSessions() -> some View {
+        ActiveSessionsView()
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
