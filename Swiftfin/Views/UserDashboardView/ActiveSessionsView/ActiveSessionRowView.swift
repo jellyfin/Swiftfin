@@ -6,27 +6,33 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import BlurHashKit
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionRowView: View {
-    @State
-    private var isExpanded: Bool = false
+    @Default(.Customization.Library.posterType)
+    private var posterType
 
     let session: SessionInfo
+
+    @Binding
+    var isAllExpanded: Bool
+    @State
+    private var isExpanded: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
             userSection
-            VStack(alignment: .leading, spacing: 8) {
-                if isExpanded {
-                    expandedPlaybackSection
-                        .transition(.move(edge: .top))
-                } else {
-                    collapsedPlaybackSection
-                        .transition(.move(edge: .bottom))
-                }
-            }
+            contentView
+                .transition(isExpanded ? .move(edge: .top) : .move(edge: .bottom))
+        }
+        .onAppear {
+            isExpanded = isAllExpanded
+        }
+        .onChange(of: isAllExpanded) { newValue in
+            isExpanded = newValue
         }
     }
 
@@ -46,11 +52,17 @@ struct ActiveSessionRowView: View {
     }
 
     @ViewBuilder
-    private var collapsedPlaybackSection: some View {
-        if let nowPlayingItem = session.nowPlayingItem {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(nowPlayingItem.name ?? "Unknown")
-                    .font(.subheadline)
+    private var contentView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if session.nowPlayingItem != nil {
+                playbackContent
+            }
+
+            if isExpanded {
+                deviceDetails
+                playbackDetails
+                playbackTimeline
+            } else if session.nowPlayingItem != nil {
                 HStack {
                     playbackTimeline
                     Spacer()
@@ -63,72 +75,57 @@ struct ActiveSessionRowView: View {
     }
 
     @ViewBuilder
-    private var expandedPlaybackSection: some View {
-        Divider()
-            .padding(.vertical, 8)
-        if session.nowPlayingItem != nil {
-            playbackSection
-            deviceDetails
-            Divider()
-                .padding(.vertical, 8)
-            playbackDetails
-            playbackTimeline
-        } else {
-            deviceDetails
-        }
-    }
-
-    @ViewBuilder
-    private var playbackSection: some View {
-        HStack {
-            if let imageSource = session.nowPlayingItem?.portraitImageSources().first,
-               let url = imageSource.url
-            {
-                AsyncImage(url: url) { image in
-                    image.resizable()
-                        .scaledToFit()
-                        .frame(width: 50, height: 75)
-                        .clipShape(Rectangle())
-                } placeholder: {
-                    ProgressView()
-                        .frame(width: 50, height: 75)
-                }
+    private var playbackContent: some View {
+        HStack(alignment: .top) {
+            if let nowPlayingItem = session.nowPlayingItem {
+                contentPoster(
+                    item: nowPlayingItem,
+                    type: posterType
+                )
+                .scaledToFit()
+                .clipShape(RoundedRectangle(cornerRadius: 2))
             }
             VStack(alignment: .leading) {
-                SessionDisplayNameView(item: session.nowPlayingItem!)
+                if let nowPlayingItem = session.nowPlayingItem {
+                    SessionDisplayNameView(item: nowPlayingItem)
+                }
             }
-            Spacer()
-            playbackState
-                .padding(.leading, 4)
         }
-        Divider()
-            .padding(.vertical, 8)
     }
 
     @ViewBuilder
     private var deviceDetails: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if let deviceName = session.deviceName {
-                Text("Device: \(deviceName)")
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                if let deviceName = session.deviceName {
+                    L10n.deviceWithString(String(deviceName)).text
+                }
+                if let clientName = session.client {
+                    L10n.clientWithString(String(clientName)).text
+                }
+                if let version = session.applicationVersion {
+                    L10n.versionWithString(String(version)).text
+                }
             }
-            if let clientName = session.client {
-                Text("Client: \(clientName)")
-            }
-            if let version = session.applicationVersion {
-                Text("Version: \(version)")
-            }
+            .font(.subheadline)
+            .foregroundColor(.secondary)
+            Spacer()
+            playbackState
+                .padding(.leading, 4)
         }
-        .font(.subheadline)
-        .foregroundColor(.secondary)
     }
 
     @ViewBuilder
     private var playbackState: some View {
         let playState = session.playState
         if playState?.isPaused == true {
-            Text("Paused").foregroundColor(.orange)
+            L10n.paused.text
+                .foregroundColor(.orange)
+                .font(.headline)
         } else if playState?.mediaSourceID != nil {
-            Text("Playing").foregroundColor(.green)
+            L10n.playing.text
+                .foregroundColor(.green)
+                .font(.headline)
         }
     }
 
@@ -163,11 +160,15 @@ struct ActiveSessionRowView: View {
             ZStack(alignment: .leading) {
                 if let completionPercentage = session.transcodingInfo?.completionPercentage {
                     ProgressView(value: completionPercentage / 100.0)
-                        .progressViewStyle(LinearProgressViewStyle(tint: .gray))
+                        .progressViewStyle(
+                            LinearProgressViewStyle(tint: .gray)
+                        )
                         .scaleEffect(x: 1, y: 2)
                 }
                 ProgressView(value: progress)
-                    .progressViewStyle(LinearProgressViewStyle(tint: session.playState?.isPaused ?? false ? .orange : .green))
+                    .progressViewStyle(
+                        LinearProgressViewStyle(tint: session.playState?.isPaused ?? false ? .orange : .green)
+                    )
                     .scaleEffect(x: 1, y: 2)
             }
             .frame(height: 6)
@@ -187,5 +188,34 @@ struct ActiveSessionRowView: View {
             return nil
         }
         return Double(positionTicks) / Double(totalTicks)
+    }
+
+    private func contentPoster(item: BaseItemDto, type: PosterDisplayType) -> AsyncImage<some View> {
+        var contentWidth: CGFloat
+        var imageSource: ImageSource?
+
+        switch type {
+        case .portrait:
+            contentWidth = 50
+            imageSource = item.portraitImageSources().first
+        case .landscape:
+            contentWidth = 133
+            imageSource = item.landscapeImageSources().first
+        }
+
+        return AsyncImage(url: imageSource?.url) { image in
+            image
+                .resizable()
+                .frame(width: contentWidth, height: 75)
+        } placeholder: {
+            if let blurHash = item.blurHash(ImageType.primary) {
+                BlurHashView(blurHash: blurHash, size: CGSize(width: contentWidth, height: 75))
+                    .frame(width: contentWidth, height: 75)
+            } else {
+                Color.secondarySystemFill
+                    .opacity(0.75)
+                    .frame(width: contentWidth, height: 75)
+            }
+        }
     }
 }

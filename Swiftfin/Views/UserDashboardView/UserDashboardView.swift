@@ -46,16 +46,14 @@ struct UserDashboardView: View {
                     }
                 }
 
-                Section("Sessions") {
-                    ChevronButton(
-                        "Active Devices"
-                    )
-                    .onSelect {
-                        router.route(to: \.activeSessions)
-                    }
+                Section(L10n.sessions) {
+                    ChevronButton(L10n.activeDevices)
+                        .onSelect {
+                            router.route(to: \.activeSessions)
+                        }
                 }
             }
         }
-        .navigationTitle("Dashboard")
+        .navigationTitle(L10n.dashboard)
     }
 }

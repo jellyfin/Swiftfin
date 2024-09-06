@@ -13,10 +13,13 @@ struct ActiveSessionsView: View {
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
+    @State
+    private var isAllExpanded: Bool = false
+
     var body: some View {
         NavigationView {
             List {
-                Section(header: Text("Streams")) {
+                Section(L10n.streams) {
                     if activeSessions.isEmpty {
                         L10n.none.text
                             .foregroundColor(.secondary)
@@ -28,13 +31,13 @@ struct ActiveSessionsView: View {
                                 return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
                             }
                         }, id: \.id) { session in
-                            ActiveSessionRowView(session: session)
+                            ActiveSessionRowView(session: session, isAllExpanded: $isAllExpanded)
                         }
                     }
                 }
-                Section(header: Text("Online")) {
+                Section(L10n.online) {
                     if inactiveSessions.isEmpty {
-                        Text("None")
+                        L10n.none.text
                             .foregroundColor(.secondary)
                     } else {
                         ForEach(inactiveSessions.sorted {
@@ -44,7 +47,7 @@ struct ActiveSessionsView: View {
                                 return $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast
                             }
                         }, id: \.id) { session in
-                            ActiveSessionRowView(session: session)
+                            ActiveSessionRowView(session: session, isAllExpanded: $isAllExpanded)
                         }
                     }
                 }
@@ -56,7 +59,12 @@ struct ActiveSessionsView: View {
         .refreshable {
             viewModel.loadSessions()
         }
-        .navigationTitle("Connected Devices")
+        .navigationTitle(L10n.activeDevices)
+        .navigationBarItems(trailing: Button(action: {
+            isAllExpanded.toggle()
+        }) {
+            Text(isAllExpanded ? L10n.collapseAll : L10n.expandAll)
+        })
     }
 
     private var activeSessions: [SessionInfo] {

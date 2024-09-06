@@ -18,13 +18,13 @@ enum SessionPlaybackMethod: String, Displayable {
     var displayTitle: String {
         switch self {
         case .directPlay:
-            "Direct Play"
+            L10n.directPlay
         case .remux:
-            "Remux"
+            L10n.remux
         case .directStream:
-            "Direct Stream"
+            L10n.directStream
         case .transcode:
-            "Transcode"
+            L10n.transcode
         case .unknown:
             ""
         }

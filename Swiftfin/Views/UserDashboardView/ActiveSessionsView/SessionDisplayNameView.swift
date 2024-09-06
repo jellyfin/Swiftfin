@@ -16,18 +16,15 @@ struct SessionDisplayNameView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(.headline)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let parentObject = parentInfo {
                 Text(parentObject)
-                    .font(.subheadline)
                     .foregroundColor(.secondary)
             }
 
             if let episodeObject = episodeInfo {
                 Text(episodeObject)
-                    .font(.subheadline)
                     .foregroundColor(.secondary)
             }
         }
@@ -75,7 +72,10 @@ struct SessionDisplayNameView: View {
     private var episodeInfo: String? {
         guard let item = item, item.indexNumber != nil, item.parentIndexNumber != nil else { return nil }
 
-        var number = "S\(item.parentIndexNumber!):E\(item.indexNumber!)"
+        var number = L10n.seasonAndEpisode(
+            String(item.parentIndexNumber!),
+            String(item.indexNumber!)
+        )
 
         if let indexNumberEnd = item.indexNumberEnd {
             number += "-\(indexNumberEnd)"
