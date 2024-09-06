@@ -32,57 +32,61 @@ extension VideoPlayer {
         @StateObject
         private var overlayTimer: TimerProxy = .init()
 
+        @ViewBuilder
+        private var topBar: some View {
+            Overlay.TopBarView()
+                .edgePadding(.vertical)
+                .padding(actualSafeArea)
+                .background {
+                    OpacityLinearGradient {
+                        (0, 0.9)
+                        (1, 0)
+                    }
+                    .foregroundStyle(.black)
+                    .visible(playbackButtonType == .compact)
+                }
+                .visible(!isScrubbing && isPresentingOverlay)
+        }
+
+        @ViewBuilder
+        private var bottomBar: some View {
+            Overlay.BottomBarView()
+                .edgePadding(.vertical)
+                .padding(actualSafeArea)
+                .background {
+                    OpacityLinearGradient {
+                        (0, 0)
+                        (1, 0.9)
+                    }
+                    .foregroundStyle(.black)
+                    .visible(isScrubbing || playbackButtonType == .compact)
+                }
+                .visible(isScrubbing || isPresentingOverlay)
+        }
+
         var body: some View {
             ZStack {
-                Color.clear
+
+                Color.black
+                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
 
                 VStack {
-                    Overlay.TopBarView()
-                        .background {
-                            OpacityLinearGradient {
-                                (0, 0.9)
-                                (1, 0)
-                            }
-                            .foregroundStyle(.black)
-                            .visible(playbackButtonType == .compact)
-                        }
-                        .visible(!isScrubbing && isPresentingOverlay)
+                    topBar
 
                     Spacer()
                         .allowsHitTesting(false)
 
-                    Overlay.BottomBarView()
-                        .if(UIDevice.isPad) { view in
-                            view.edgePadding([.bottom, .horizontal])
-                        }
-                        .background {
-                            OpacityLinearGradient {
-                                (0, 0)
-                                (0.5, 0.5)
-                                (0.5, 0.9)
-                            }
-                            .foregroundStyle(.black)
-                            .visible(isScrubbing || playbackButtonType == .compact)
-                        }
-                        .visible(isScrubbing || isPresentingOverlay)
+                    bottomBar
                 }
-                .edgePadding()
 
                 if playbackButtonType == .large {
                     Overlay.LargePlaybackButtons()
                         .visible(!isScrubbing && isPresentingOverlay)
                 }
             }
-//            .debugOverlay()
-            .padding(actualSafeArea)
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .environmentObject(overlayTimer)
-            .background {
-                Color.black
-                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
-                    .allowsHitTesting(false)
-            }
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.start(5)
@@ -97,9 +101,9 @@ extension VideoPlayer {
             .onChange(of: overlayTimer.isActive) { newValue in
                 guard !newValue, !isScrubbing else { return }
 
-//                withAnimation(.linear(duration: 0.3)) {
-//                    isPresentingOverlay = false
-//                }
+                withAnimation(.linear(duration: 0.3)) {
+                    isPresentingOverlay = false
+                }
             }
             .onSizeChanged { newSize in
                 if newSize.isPortrait {

@@ -25,8 +25,8 @@ extension VideoPlayer.Overlay {
         private var playbackButtonType
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
-        @Default(.VideoPlayer.Overlay.timestampType)
-        private var timestampType
+//        @Default(.VideoPlayer.Overlay.timestampType)
+//        private var timestampType
 
         @Environment(\.isPresentingOverlay)
         @Binding
@@ -64,15 +64,8 @@ extension VideoPlayer.Overlay {
 //                    }
 //                }
                 .bottomContent {
-                    Group {
-                        switch timestampType {
-                        case .split:
-                            SplitTimeStamp()
-                        case .compact:
-                            CompactTimeStamp()
-                        }
-                    }
-                    .padding(5)
+                    SplitTimeStamp()
+                        .padding(5)
                 }
                 .leadingContent {
                     if playbackButtonType == .compact {
@@ -97,15 +90,8 @@ extension VideoPlayer.Overlay {
 //                    }
                 }
                 .bottomContent {
-                    Group {
-                        switch timestampType {
-                        case .split:
-                            SplitTimeStamp()
-                        case .compact:
-                            CompactTimeStamp()
-                        }
-                    }
-                    .padding(5)
+                    SplitTimeStamp()
+                        .padding(5)
                 }
                 .leadingContent {
                     if playbackButtonType == .compact {

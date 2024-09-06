@@ -49,7 +49,9 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player = newPlayer
         videoPlayerProxy.avPlayer = player
 
-        playNew(playbackItem: manager.playbackItem)
+        if let playbackItem = manager.playbackItem {
+            playNew(playbackItem: manager.playbackItem)
+        }
 
         managerEventObserver = manager.events
             .sink { event in
@@ -84,9 +86,6 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player?.currentItem?.externalMetadata = createAVMetadata(for: playbackItem.baseItem)
 
         seek(to: playbackItem.baseItem.startTimeSeconds)
-
-        allowsPictureInPicturePlayback = true
-        canStartPictureInPictureAutomaticallyFromInline = true
     }
 
     private func createAVMetadata(for item: BaseItemDto) -> [AVMetadataItem] {

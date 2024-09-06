@@ -19,7 +19,6 @@ import VLCUI
 
 struct VideoPlayer: View {
 
-    // TODO: remove settings from here and only have in gesture handler
     @Default(.VideoPlayer.jumpBackwardLength)
     private var jumpBackwardLength
     @Default(.VideoPlayer.jumpForwardLength)
@@ -84,7 +83,6 @@ struct VideoPlayer: View {
                         let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
 
                         if !isScrubbing {
-//                            scrubbedProgress.seconds = newSeconds
                             scrubbedProgress.progress = newProgress
                         }
 
@@ -109,7 +107,17 @@ struct VideoPlayer: View {
                     }
             }
 
-            VideoPlayer.Overlay()
+            GestureView()
+                .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
+                    withAnimation(.spring(duration: 0.3)) {
+                        isPresentingOverlay.toggle()
+                    }
+                }
+
+//            Color.red
+//                .opacity(0.5)
+
+            VideoPlayer.MainOverlay()
                 .environment(\.safeAreaInsets, $safeAreaInsets)
         }
         .environment(\.aspectFilled, $isAspectFilled)
@@ -128,9 +136,10 @@ struct VideoPlayer: View {
         let _ = Self._printChanges()
 
         playerView
+            .ignoresSafeArea()
             .navigationBarHidden()
             .statusBarHidden()
-            .ignoresSafeArea()
+            .trackingSize($contentSize, $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
                 vlcUIProxy.setAudioDelay(.ticks(newValue))
             }
@@ -186,7 +195,6 @@ struct VideoPlayer: View {
                     vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }
-            .trackingSize($contentSize, $safeAreaInsets)
     }
 }
 
@@ -227,16 +235,17 @@ extension VideoPlayer {
     }
 }
 
-// struct VideoPlayer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VideoPlayer(
-//            item: .init(
-//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
-//                mediaSource: .init(),
-//                playSessionID: "",
-//                url: URL(string: "/")!
-//            )
-//        )
-//        .previewInterfaceOrientation(.landscapeLeft)
-//    }
-// }
+struct VideoPlayer_Previews: PreviewProvider {
+    static var previews: some View {
+        VideoPlayer(
+            item: .init(
+                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
+                mediaSource: .init(),
+                playSessionID: "",
+                url: URL(string: "/")!
+            )
+        )
+        .previewInterfaceOrientation(.landscapeLeft)
+        .preferredColorScheme(.dark)
+    }
+}

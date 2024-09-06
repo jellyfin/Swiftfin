@@ -98,9 +98,9 @@ extension GestureView {
         samePointTimeout: TimeInterval,
         _ action: @escaping TapGestureHandler
     ) -> Self {
-        copy(modifying: \.samePointPadding, with: samePointPadding)
-            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
-            .copy(modifying: \.onTap, with: action)
+//        copy(modifying: \.samePointPadding, with: samePointPadding)
+//            .copy(modifying: \.samePointTimeout, with: samePointTimeout)
+        copy(modifying: \.onTap, with: action)
     }
 
     func onDoubleTouch(_ action: @escaping TapGestureHandler) -> Self {
@@ -178,6 +178,7 @@ class UIGestureView: UIView {
         doubleTouchGesture.numberOfTouchesRequired = 2
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
+
         let verticalPanGesture = PanDirectionGestureRecognizer(
             direction: .vertical,
             target: self,
@@ -189,12 +190,12 @@ class UIGestureView: UIView {
             action: #selector(didPerformHorizontalPan)
         )
 
-        addGestureRecognizer(pinchGesture)
+//        addGestureRecognizer(pinchGesture)
         addGestureRecognizer(tapGesture)
-        addGestureRecognizer(doubleTouchGesture)
-        addGestureRecognizer(longPressGesture)
-        addGestureRecognizer(verticalPanGesture)
-        addGestureRecognizer(horizontalPanGesture)
+//        addGestureRecognizer(doubleTouchGesture)
+//        addGestureRecognizer(longPressGesture)
+//        addGestureRecognizer(verticalPanGesture)
+//        addGestureRecognizer(horizontalPanGesture)
     }
 
     @available(*, unavailable)

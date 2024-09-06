@@ -214,8 +214,8 @@ extension Defaults.Keys {
 
             // Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
-            static let showCurrentTimeWhileScrubbing: Key<Bool> = UserKey("showCurrentTimeWhileScrubbing", default: true)
-            static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
+//            static let showCurrentTimeWhileScrubbing: Key<Bool> = UserKey("showCurrentTimeWhileScrubbing", default: true)
+//            static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
         enum Playback {

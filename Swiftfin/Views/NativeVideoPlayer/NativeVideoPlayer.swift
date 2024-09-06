@@ -26,16 +26,10 @@ struct NativeVideoPlayer: View {
     }
 
     var body: some View {
-        ZStack {
-            if let _ = manager.playbackItem {
-                NativeVideoPlayerView(manager: manager)
-            } else {
-                VideoPlayer.LoadingView()
-            }
-        }
-        .navigationBarHidden()
-        .statusBarHidden()
-        .ignoresSafeArea()
+        NativeVideoPlayerView(manager: manager)
+            .navigationBarHidden()
+            .statusBarHidden()
+            .ignoresSafeArea()
     }
 }
 

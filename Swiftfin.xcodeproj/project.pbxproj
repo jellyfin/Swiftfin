@@ -566,7 +566,6 @@
 		E170D103294CE8BF0017224C /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D102294CE8BF0017224C /* LoadingView.swift */; };
 		E170D105294D21FA0017224C /* MediaSourceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D104294D21FA0017224C /* MediaSourceInfoView.swift */; };
 		E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */; };
-		E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1721FA928FB7CAC00762992 /* CompactTimeStamp.swift */; };
 		E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */; };
 		E1722DB129491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
 		E1722DB229491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
@@ -1345,7 +1344,6 @@
 		E170D102294CE8BF0017224C /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		E170D104294D21FA0017224C /* MediaSourceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoView.swift; sourceTree = "<group>"; };
 		E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoCoordinator.swift; sourceTree = "<group>"; };
-		E1721FA928FB7CAC00762992 /* CompactTimeStamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactTimeStamp.swift; sourceTree = "<group>"; };
 		E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPlaybackButtons.swift; sourceTree = "<group>"; };
 		E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBlurHashes.swift; sourceTree = "<group>"; };
 		E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemViewModel.swift; sourceTree = "<group>"; };
@@ -2598,8 +2596,8 @@
 				E11245B328D97D5D00D8A977 /* BottomBarView.swift */,
 				E1CFE27F28FA606800B7D34C /* ChapterTrack.swift */,
 				E1B33ECE28EB6EA90073B0FD /* OverlayMenu.swift */,
+				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 				E1721FAC28FB801000762992 /* PlaybackButtons */,
-				E1721FAB28FB7CCA00762992 /* Timestamp */,
 				E11245B628D97ED200D8A977 /* TopBarView.swift */,
 			);
 			path = Components;
@@ -3004,15 +3002,6 @@
 				E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */,
 			);
 			path = Modifiers;
-			sourceTree = "<group>";
-		};
-		E1721FAB28FB7CCA00762992 /* Timestamp */ = {
-			isa = PBXGroup;
-			children = (
-				E1721FA928FB7CAC00762992 /* CompactTimeStamp.swift */,
-				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
-			);
-			path = Timestamp;
 			sourceTree = "<group>";
 		};
 		E1721FAC28FB801000762992 /* PlaybackButtons */ = {
@@ -4473,7 +4462,6 @@
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
 				E1AEFA372BE317E200CFAFD8 /* ListRowButton.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
-				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				E1EDFB482C7530B900C42FD3 /* VideoPlayerProxy+VLC.swift in Sources */,
 				E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,

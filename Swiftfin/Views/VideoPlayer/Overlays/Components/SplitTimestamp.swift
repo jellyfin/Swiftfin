@@ -13,8 +13,8 @@ extension VideoPlayer.Overlay {
 
     struct SplitTimeStamp: View {
 
-        @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
-        private var showCurrentTimeWhileScrubbing
+//        @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
+//        private var showCurrentTimeWhileScrubbing
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
@@ -34,7 +34,7 @@ extension VideoPlayer.Overlay {
                 Text(scrubbedProgress.seconds, format: .runtime)
                     .foregroundStyle(.primary)
 
-                if isScrubbing && showCurrentTimeWhileScrubbing {
+                if isScrubbing {
                     Group {
                         Text("/")
 
@@ -48,7 +48,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
-                if isScrubbing && showCurrentTimeWhileScrubbing {
+                if isScrubbing {
                     Group {
                         Text(manager.item.runTimeSeconds - manager.progress.seconds, format: .runtime(negate: true))
 

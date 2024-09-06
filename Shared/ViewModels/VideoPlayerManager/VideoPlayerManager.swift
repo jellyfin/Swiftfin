@@ -175,6 +175,8 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
                     mediaSource: mediaSource
                 )
 
+                try await Task.sleep(nanoseconds: 3_000_000_000)
+
                 guard let self else { return }
 
                 await MainActor.run {

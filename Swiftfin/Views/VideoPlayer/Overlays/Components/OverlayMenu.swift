@@ -22,6 +22,9 @@ extension VideoPlayer.Overlay {
 //        @EnvironmentObject
 //        private var viewModel: VideoPlayerViewModel
 
+        @EnvironmentObject
+        private var timer: TimerProxy
+
         @ViewBuilder
         private var advancedButton: some View {
             Button {
@@ -161,6 +164,13 @@ extension VideoPlayer.Overlay {
                 Image(systemName: "ellipsis.circle")
             }
             .frame(width: 50, height: 50)
+            .buttonStyle(OnPressMenuStyle(onPress: { isPressed in
+                if isPressed {
+                    timer.pause()
+                } else {
+                    timer.start(5)
+                }
+            }))
         }
     }
 }

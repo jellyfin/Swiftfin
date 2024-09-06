@@ -10,6 +10,18 @@ import Defaults
 import SwiftUI
 import VLCUI
 
+struct OnPressMenuStyle: ButtonStyle {
+
+    var onPress: (Bool) -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed) { newValue in
+                onPress(newValue)
+            }
+    }
+}
+
 extension VideoPlayer.Overlay {
 
     struct BarActionButtons: View {

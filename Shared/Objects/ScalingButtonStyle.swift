@@ -13,7 +13,7 @@ struct ScalingButtonStyle: ButtonStyle {
     private let animation: Animation
     private let scale: CGFloat
 
-    init(scale: CGFloat = 0.8, animation: Animation = .linear(duration: 0.1)) {
+    init(scale: CGFloat = 0.8, animation: Animation = .spring(duration: 0.1)) {
         self.animation = animation
         self.scale = scale
     }
@@ -22,12 +22,12 @@ struct ScalingButtonStyle: ButtonStyle {
         configuration.label
             .animation(.linear(duration: 0.4), value: configuration.isPressed)
             .scaleEffect(configuration.isPressed ? scale : 1)
-            .background {
-                Circle()
-                    .foregroundStyle(Color.white)
-                    .opacity(configuration.isPressed ? 0.5 : 0)
-                    .frame(width: 100)
-            }
+//            .background {
+//                Circle()
+//                    .foregroundStyle(Color.white)
+//                    .opacity(configuration.isPressed ? 0.5 : 0)
+//                    .frame(width: 100)
+//            }
             .animation(animation, value: configuration.isPressed)
     }
 }

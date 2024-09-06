@@ -9,17 +9,17 @@
 import Defaults
 import Foundation
 
-enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
-
-    case split
-    case compact
-
-    var displayTitle: String {
-        switch self {
-        case .split:
-            return "Split"
-        case .compact:
-            return "Compact"
-        }
-    }
-}
+// enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
+//
+//    case split
+//    case compact
+//
+//    var displayTitle: String {
+//        switch self {
+//        case .split:
+//            return "Split"
+//        case .compact:
+//            return "Compact"
+//        }
+//    }
+// }

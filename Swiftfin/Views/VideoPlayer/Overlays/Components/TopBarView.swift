@@ -7,9 +7,40 @@
 //
 
 import Defaults
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 import VLCUI
+
+struct TopBarTitleView: View {
+
+    @State
+    private var contentSize: CGSize = .zero
+
+    let item: BaseItemDto
+
+    @ViewBuilder
+    private var subtitle: some View {
+        if let subtitle = item.subtitle {
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundColor(.white)
+                .trackingSize($contentSize)
+        }
+    }
+
+    var body: some View {
+        Text(item.displayTitle)
+            .font(.title3)
+            .fontWeight(.bold)
+            .lineLimit(1)
+            .trackingSize($contentSize)
+            .overlay(alignment: .bottomLeading) {
+                subtitle
+                    .offset(y: contentSize.height + 10)
+            }
+    }
+}
 
 extension VideoPlayer.Overlay {
 
@@ -17,48 +48,25 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var manager: VideoPlayerManager
-        @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
 
         var body: some View {
-            VStack(alignment: .VideoPlayerTitleAlignmentGuide, spacing: 0) {
-                HStack(alignment: .center) {
-                    Button {
-                        manager.send(.stop)
-                    } label: {
-                        Image(systemName: "xmark")
-                            .padding()
-                    }
-                    .contentShape(Rectangle())
+            HStack(alignment: .center) {
+                Button("Close", systemImage: "xmark") {
+                    manager.send(.stop)
+                }
+                .frame(width: 30, alignment: .leading)
+                .contentShape(Rectangle())
+                .labelStyle(.iconOnly)
+                .buttonStyle(ScalingButtonStyle(scale: 0.8))
+
+                TopBarTitleView(item: manager.item)
+
+                Spacer()
+
+                VideoPlayer.Overlay.BarActionButtons()
                     .buttonStyle(ScalingButtonStyle(scale: 0.8))
-
-                    Text(manager.item.displayTitle)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .lineLimit(1)
-                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-                            dimensions[.leading]
-                        }
-
-                    Spacer()
-
-                    VideoPlayer.Overlay.BarActionButtons()
-                        .buttonStyle(ScalingButtonStyle(scale: 0.8))
-                }
-                .font(.system(size: 24))
-                .tint(Color.white)
-                .foregroundColor(Color.white)
-
-                if let subtitle = manager.item.subtitle {
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-                            dimensions[.leading]
-                        }
-                        .offset(y: -10)
-                }
             }
+            .font(.system(size: 24))
         }
     }
 }
