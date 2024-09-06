@@ -18,15 +18,14 @@ class ActiveSessionsViewModel: ViewModel {
     @Published
     var error: Error?
 
-    private var timerCancellable: AnyCancellable? // To hold the timer subscription
+    private var timerCancellable: AnyCancellable?
 
     override init() {
         super.init()
-        startTimer() // Start the timer on initialization
+        startTimer()
     }
 
     func startTimer() {
-        // Create a timer that fires every 2 seconds on the main run loop
         timerCancellable = Timer.publish(every: 2.0, on: .main, in: .default)
             .autoconnect()
             .sink { [weak self] _ in
