@@ -21,6 +21,8 @@ struct ActiveSessionRowView: View {
     var isAllExpanded: Bool
     @State
     private var isExpanded: Bool = false
+    @State
+    private var posterCache: [String: AnyView] = [:]
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -190,32 +192,55 @@ struct ActiveSessionRowView: View {
         return Double(positionTicks) / Double(totalTicks)
     }
 
-    private func contentPoster(item: BaseItemDto, type: PosterDisplayType) -> AsyncImage<some View> {
+    private func contentPoster(item: BaseItemDto, type: PosterDisplayType) -> AnyView {
         var contentWidth: CGFloat
         var imageSource: ImageSource?
+        var output: AnyView
 
         switch type {
         case .portrait:
             contentWidth = 50
-            imageSource = item.portraitImageSources().first
+            imageSource = item.portraitImageSources().randomElement()
         case .landscape:
             contentWidth = 133
-            imageSource = item.landscapeImageSources().first
+            imageSource = item.landscapeImageSources().randomElement()
         }
 
-        return AsyncImage(url: imageSource?.url) { image in
-            image
-                .resizable()
-                .frame(width: contentWidth, height: 75)
-        } placeholder: {
-            if let blurHash = item.blurHash(ImageType.primary) {
-                BlurHashView(blurHash: blurHash, size: CGSize(width: contentWidth, height: 75))
-                    .frame(width: contentWidth, height: 75)
-            } else {
-                Color.secondarySystemFill
-                    .opacity(0.75)
-                    .frame(width: contentWidth, height: 75)
+        if let cachedPoster = posterCache[item.id] {
+            output = cachedPoster
+        } else {
+            output = AnyView(
+                AsyncImage(url: imageSource?.url) { phase in
+                    switch phase {
+                    case .empty:
+                        if let blurHash = item.blurHash(ImageType.primary) {
+                            BlurHashView(blurHash: blurHash, size: CGSize(width: contentWidth, height: 75))
+                                .frame(width: contentWidth, height: 75)
+                        } else {
+                            Color.secondarySystemFill
+                                .opacity(0.75)
+                                .frame(width: contentWidth, height: 75)
+                        }
+                    case let .success(image):
+                        image
+                            .resizable()
+                            .frame(width: contentWidth, height: 75)
+                    case .failure:
+                        Color.secondarySystemFill
+                            .opacity(0.75)
+                            .frame(width: contentWidth, height: 75)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
+            )
+
+            Task {
+                await MainActor.run {
+                    self.posterCache[item.id!] = output
+                }
             }
         }
+        return output
     }
 }
