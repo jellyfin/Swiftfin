@@ -17,22 +17,18 @@ struct ActiveSessionsView: View {
         NavigationView {
             List {
                 Section(header: Text("Streams")) {
-                    if viewModel.isLoading {
-                        ProgressView("Loading...")
-                    } else if let error = viewModel.error {
-                        Text("Failed to load sessions: \(error.localizedDescription)")
-                            .foregroundColor(.red)
-                    } else if viewModel.sessions.isEmpty {
+                    if activeSessions.isEmpty {
                         L10n.none.text
                             .foregroundColor(.secondary)
                     } else {
-                        if activeSessions.isEmpty {
-                            L10n.none.text
-                                .foregroundColor(.secondary)
-                        } else {
-                            ForEach(activeSessions, id: \.id) { session in
-                                ActiveSessionRowView(session: session)
+                        ForEach(activeSessions.sorted {
+                            if $0.userName != $1.userName {
+                                return $0.userName ?? "" < $1.userName ?? ""
+                            } else {
+                                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
                             }
+                        }, id: \.id) { session in
+                            ActiveSessionRowView(session: session)
                         }
                     }
                 }
@@ -41,7 +37,13 @@ struct ActiveSessionsView: View {
                         Text("None")
                             .foregroundColor(.secondary)
                     } else {
-                        ForEach(inactiveSessions, id: \.id) { session in
+                        ForEach(inactiveSessions.sorted {
+                            if $0.userName != $1.userName {
+                                return $0.userName ?? "" < $1.userName ?? ""
+                            } else {
+                                return $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast
+                            }
+                        }, id: \.id) { session in
                             ActiveSessionRowView(session: session)
                         }
                     }
@@ -55,22 +57,17 @@ struct ActiveSessionsView: View {
             viewModel.loadSessions()
         }
         .navigationTitle("Connected Devices")
-        .toolbar {
-            Button("Refresh") {
-                viewModel.loadSessions()
-            }
-        }
     }
 
     private var activeSessions: [SessionInfo] {
         viewModel.sessions.filter { session in
-            session.playState?.isPaused == true || session.playState?.mediaSourceID != nil
+            session.playState?.mediaSourceID != nil
         }
     }
 
     private var inactiveSessions: [SessionInfo] {
         viewModel.sessions.filter { session in
-            session.playState?.isPaused != true && session.playState?.mediaSourceID == nil
+            session.playState?.mediaSourceID == nil
         }
     }
 }
