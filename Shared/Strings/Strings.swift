@@ -218,10 +218,6 @@ internal enum L10n {
   internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct Play")
   /// DIRECTOR
   internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
-  /// Direct Play
-  internal static let directPlay = L10n.tr("Localizable", "directPlay", fallback: "Direct Play")
-  /// Direct Stream
-  internal static let directStream = L10n.tr("Localizable", "directStream", fallback: "Direct Stream")
   /// Disabled
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
   /// Discovered Servers
@@ -288,6 +284,10 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted Light")
+  /// %1$@ / %2$@
+  internal static func itemOverItem(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "itemOverItem", String(describing: p1), String(describing: p2), fallback: "%1$@ / %2$@")
+  }
   /// Items
   internal static let items = L10n.tr("Localizable", "items", fallback: "Items")
   /// Jellyfin
@@ -540,8 +540,6 @@ internal enum L10n {
   internal static let removeAllUsers = L10n.tr("Localizable", "removeAllUsers", fallback: "Remove All Users")
   /// Remove From Resume
   internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume", fallback: "Remove From Resume")
-  /// Remux
-  internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Report an Issue
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature
@@ -718,8 +716,6 @@ internal enum L10n {
   internal static let tooManyRedirects = L10n.tr("Localizable", "tooManyRedirects", fallback: "Too Many Redirects")
   /// Trailing Value
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing Value")
-  /// Transcode
-  internal static let transcode = L10n.tr("Localizable", "transcode", fallback: "Transcode")
   /// Transition
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
   /// Try again

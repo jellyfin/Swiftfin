@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import PulseUI
 import Stinsen
 import SwiftUI
@@ -53,6 +54,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var userDashboard = makeUserDashboard
     @Route(.push)
     var activeSessions = makeActiveSessions
+    @Route(.push)
+    var activeSessionDetails = makeActiveSessionDetails
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -159,6 +162,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeActiveSessions() -> some View {
         ActiveSessionsView()
+    }
+
+    @ViewBuilder
+    func makeActiveSessionDetails(session: SessionInfo) -> some View {
+        ActiveSessionDetailView(session: session)
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

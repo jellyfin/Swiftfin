@@ -14,7 +14,7 @@ class ActiveSessionsViewModel: ViewModel {
     @Published
     var sessions: [SessionInfo] = []
     @Published
-    var isLoading = false
+    var isLoading: Bool = false
     @Published
     var error: Error?
 
@@ -25,6 +25,7 @@ class ActiveSessionsViewModel: ViewModel {
         startTimer()
     }
 
+    /// Starts a timer that triggers `loadSessions` every 2 seconds.
     func startTimer() {
         timerCancellable = Timer.publish(every: 2.0, on: .main, in: .default)
             .autoconnect()
@@ -33,37 +34,54 @@ class ActiveSessionsViewModel: ViewModel {
             }
     }
 
-    func loadSessions() {
+    /// Stops the timer to prevent further calls to `loadSessions`.
+    func stopTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
+    }
+
+    /// Loads active sessions asynchronously.
+    func loadSessions(deviceID: String? = nil) {
         isLoading = true
         error = nil
 
         Task {
             do {
-                let fetchedSessions = try await get()
+                let fetchedSessions = try await getSessions(deviceID: deviceID)
                 DispatchQueue.main.async {
                     self.sessions = fetchedSessions
+                    self.isLoading = false
                 }
             } catch {
                 DispatchQueue.main.async {
                     self.error = error
+                    self.isLoading = false
                 }
-            }
-            DispatchQueue.main.async {
-                self.isLoading = false
             }
         }
     }
 
-    private func get() async throws -> [SessionInfo] {
-        let parameters = parameters()
-        let request = Paths.getSessions(parameters: parameters)
+    /// Fetches active sessions asynchronously.
+    /// - Returns: An array of `SessionInfo` if the request is successful.
+    /// - Throws: An error if the request fails.
+    private func getSessions(deviceID: String? = nil) async throws -> [SessionInfo] {
+        let request = Paths.getSessions(parameters: createParameters(deviceID: deviceID))
         let response = try await userSession.client.send(request)
         return response.value
     }
 
-    private func parameters() -> Paths.GetSessionsParameters {
+    /// Creates the request parameters for fetching sessions.
+    /// - Returns: A `Paths.GetSessionsParameters` object with the appropriate settings.
+    private func createParameters(deviceID: String? = nil) -> Paths.GetSessionsParameters {
         var parameters = Paths.GetSessionsParameters()
+        if let deviceID = deviceID {
+            parameters.deviceID = deviceID
+        }
         parameters.activeWithinSeconds = 960
         return parameters
+    }
+
+    deinit {
+        stopTimer()
     }
 }

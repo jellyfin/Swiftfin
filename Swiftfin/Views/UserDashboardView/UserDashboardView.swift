@@ -29,29 +29,27 @@ struct UserDashboardView: View {
     }
 
     var body: some View {
-        NavigationView {
-            List {
-                Section(L10n.server) {
-                    TextPairView(
-                        leading: L10n.name,
-                        trailing: serverViewModel.server.name
-                    )
+        List {
+            Section(L10n.server) {
+                TextPairView(
+                    leading: L10n.name,
+                    trailing: serverViewModel.server.name
+                )
 
-                    Picker(L10n.url, selection: $currentServerURL) {
-                        ForEach(serverViewModel.server.urls.sorted(using: \.absoluteString)) { url in
-                            Text(url.absoluteString)
-                                .tag(url)
-                                .foregroundColor(.secondary)
-                        }
+                Picker(L10n.url, selection: $currentServerURL) {
+                    ForEach(serverViewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        Text(url.absoluteString)
+                            .tag(url)
+                            .foregroundColor(.secondary)
                     }
                 }
+            }
 
-                Section(L10n.sessions) {
-                    ChevronButton(L10n.activeDevices)
-                        .onSelect {
-                            router.route(to: \.activeSessions)
-                        }
-                }
+            Section(L10n.sessions) {
+                ChevronButton(L10n.activeDevices)
+                    .onSelect {
+                        router.route(to: \.activeSessions)
+                    }
             }
         }
         .navigationTitle(L10n.dashboard)

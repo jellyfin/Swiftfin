@@ -10,44 +10,45 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionsView: View {
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
-    @State
-    private var isAllExpanded: Bool = false
-
     var body: some View {
-        NavigationView {
-            List {
-                Section(L10n.streams) {
-                    if activeSessions.isEmpty {
-                        L10n.none.text
-                            .foregroundColor(.secondary)
-                    } else {
-                        ForEach(activeSessions.sorted {
-                            if $0.userName != $1.userName {
-                                return $0.userName ?? "" < $1.userName ?? ""
-                            } else {
-                                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
-                            }
-                        }, id: \.id) { session in
-                            ActiveSessionRowView(session: session, isAllExpanded: $isAllExpanded)
+        List {
+            Section(L10n.streams) {
+                if activeSessions.isEmpty {
+                    L10n.none.text
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(activeSessions.sorted {
+                        if $0.userName != $1.userName {
+                            return $0.userName ?? "" < $1.userName ?? ""
+                        } else {
+                            return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
+                        }
+                    }, id: \.id) { session in
+                        ActiveSessionRowView(session: session) {
+                            router.route(to: \.activeSessionDetails, session)
                         }
                     }
                 }
-                Section(L10n.online) {
-                    if inactiveSessions.isEmpty {
-                        L10n.none.text
-                            .foregroundColor(.secondary)
-                    } else {
-                        ForEach(inactiveSessions.sorted {
-                            if $0.userName != $1.userName {
-                                return $0.userName ?? "" < $1.userName ?? ""
-                            } else {
-                                return $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast
-                            }
-                        }, id: \.id) { session in
-                            ActiveSessionRowView(session: session, isAllExpanded: $isAllExpanded)
+            }
+            Section(L10n.online) {
+                if inactiveSessions.isEmpty {
+                    L10n.none.text
+                        .foregroundColor(.secondary)
+                } else {
+                    ForEach(inactiveSessions.sorted {
+                        if $0.userName != $1.userName {
+                            return $0.userName ?? "" < $1.userName ?? ""
+                        } else {
+                            return $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast
+                        }
+                    }, id: \.id) { session in
+                        ActiveSessionRowView(session: session) {
+                            router.route(to: \.activeSessionDetails, session)
                         }
                     }
                 }
@@ -60,11 +61,6 @@ struct ActiveSessionsView: View {
             viewModel.loadSessions()
         }
         .navigationTitle(L10n.activeDevices)
-        .navigationBarItems(trailing: Button(action: {
-            isAllExpanded.toggle()
-        }) {
-            Text(isAllExpanded ? L10n.collapseAll : L10n.expandAll)
-        })
     }
 
     private var activeSessions: [SessionInfo] {
