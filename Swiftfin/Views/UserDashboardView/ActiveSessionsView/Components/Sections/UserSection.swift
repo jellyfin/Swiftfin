@@ -23,15 +23,13 @@ extension ActiveSessionRowView {
             HStack {
                 // TODO: Maybe add the user's icon / profile picture
                 Text(userName)
-                    .font(.headline)
-                    .foregroundColor(.primary)
 
                 Spacer()
 
                 Text(device)
-                    .font(.headline)
                     .foregroundColor(.secondary)
             }
+            .font(.headline)
         }
     }
 }

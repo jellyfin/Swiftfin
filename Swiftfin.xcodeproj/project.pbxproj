@@ -36,7 +36,6 @@
 		4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */; };
 		4E6C27082C8BD0AD00FD2185 /* ActiveSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */; };
 		4E6C270A2C8BF63800FD2185 /* TimelineSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C27092C8BF63800FD2185 /* TimelineSection.swift */; };
-		4E6C27102C8C32B500FD2185 /* ContentDetailsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C270F2C8C32B500FD2185 /* ContentDetailsSection.swift */; };
 		4E71D6892C80910900A0174D /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
@@ -1010,7 +1009,6 @@
 		4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActiveSessionsViewModel.swift; sourceTree = "<group>"; };
 		4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionDetailView.swift; sourceTree = "<group>"; };
 		4E6C27092C8BF63800FD2185 /* TimelineSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineSection.swift; sourceTree = "<group>"; };
-		4E6C270F2C8C32B500FD2185 /* ContentDetailsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentDetailsSection.swift; sourceTree = "<group>"; };
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
@@ -1870,7 +1868,6 @@
 		4EE141632C8B8DCE0045B661 /* Sections */ = {
 			isa = PBXGroup;
 			children = (
-				4E6C270F2C8C32B500FD2185 /* ContentDetailsSection.swift */,
 				4E63B9F12C8A5BEF00C25378 /* ContentSection.swift */,
 				4EE141682C8BABDF0045B661 /* ProgressSection.swift */,
 				4E6C27092C8BF63800FD2185 /* TimelineSection.swift */,
@@ -4603,7 +4600,6 @@
 				E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,
 				E113132B28BDB4B500930F75 /* NavigationBarDrawerView.swift in Sources */,
-				4E6C27102C8C32B500FD2185 /* ContentDetailsSection.swift in Sources */,
 				E164A7F62BE4814700A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E173DA5426D050F500CC4EB7 /* ServerDetailViewModel.swift in Sources */,
 				E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */,

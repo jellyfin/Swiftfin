@@ -9,79 +9,130 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
+import SwiftUI
 
-class ActiveSessionsViewModel: ViewModel {
+final class ActiveSessionsViewModel: ViewModel, Stateful {
+
+    // MARK: Action
+
+    enum Action: Equatable {
+        case error(JellyfinAPIError)
+        case loadSessions
+        case refreshSessions
+    }
+
+    // MARK: State
+
+    enum State: Hashable {
+        case initial
+        case loading
+        case loaded
+        case refreshing
+        case error(JellyfinAPIError)
+    }
+
     @Published
     var sessions: [SessionInfo] = []
-    @Published
-    var isLoading: Bool = false
-    @Published
-    var error: Error?
 
-    private var timerCancellable: AnyCancellable?
+    @Published
+    final var state: State = .initial
+
+    @Published
+    final var lastAction: Action? = nil
+
+    private var timer: Timer?
+
+    // MARK: Initialization
 
     override init() {
         super.init()
-        startTimer()
+        Task { @MainActor in
+            await self.send(.loadSessions)
+        }
+        Task { @MainActor in
+            startRefreshing()
+        }
     }
 
-    /// Starts a timer that triggers `loadSessions` every 2 seconds.
-    func startTimer() {
-        timerCancellable = Timer.publish(every: 2.0, on: .main, in: .default)
-            .autoconnect()
-            .sink { [weak self] _ in
-                self?.loadSessions()
-            }
+    deinit {
+        timer?.invalidate()
     }
 
-    /// Stops the timer to prevent further calls to `loadSessions`.
-    func stopTimer() {
-        timerCancellable?.cancel()
-        timerCancellable = nil
+    // MARK: Stateful Conformance
+
+    func respond(to action: Action) -> State {
+        switch action {
+        case .loadSessions:
+            loadSessions()
+            return .loading
+
+        case .refreshSessions:
+            refreshSessions()
+            return .refreshing
+
+        case let .error(error):
+            return .error(error)
+        }
     }
 
-    /// Loads active sessions asynchronously.
-    func loadSessions(deviceID: String? = nil) {
-        isLoading = true
-        error = nil
+    func send(_ action: Action) async {
+        state = await respond(to: action)
+        lastAction = action
+    }
 
-        Task {
+    // MARK: Session Management
+
+    private func loadSessions() {
+        Task { @MainActor in
             do {
-                let fetchedSessions = try await getSessions(deviceID: deviceID)
-                DispatchQueue.main.async {
-                    self.sessions = fetchedSessions
-                    self.isLoading = false
-                }
+                let fetchedSessions = try await fetchSessions()
+                self.sessions = fetchedSessions
+                self.state = .loaded
             } catch {
-                DispatchQueue.main.async {
-                    self.error = error
-                    self.isLoading = false
-                }
+                self.state = .error(JellyfinAPIError(error.localizedDescription))
             }
         }
     }
 
-    /// Fetches active sessions asynchronously.
-    /// - Returns: An array of `SessionInfo` if the request is successful.
-    /// - Throws: An error if the request fails.
-    private func getSessions(deviceID: String? = nil) async throws -> [SessionInfo] {
-        let request = Paths.getSessions(parameters: createParameters(deviceID: deviceID))
+    private func refreshSessions() {
+        Task { @MainActor in
+            do {
+                let fetchedSessions = try await fetchSessions()
+                self.sessions = fetchedSessions
+                self.state = .loaded
+            } catch {
+                self.state = .error(JellyfinAPIError(error.localizedDescription))
+            }
+        }
+    }
+
+    private func fetchSessions() async throws -> [SessionInfo] {
+        let request = Paths.getSessions(parameters: createParameters())
         let response = try await userSession.client.send(request)
         return response.value
     }
 
-    /// Creates the request parameters for fetching sessions.
-    /// - Returns: A `Paths.GetSessionsParameters` object with the appropriate settings.
-    private func createParameters(deviceID: String? = nil) -> Paths.GetSessionsParameters {
+    private func createParameters() -> Paths.GetSessionsParameters {
         var parameters = Paths.GetSessionsParameters()
-        if let deviceID = deviceID {
-            parameters.deviceID = deviceID
-        }
         parameters.activeWithinSeconds = 960
         return parameters
     }
 
-    deinit {
-        stopTimer()
+    private func startRefreshing() {
+        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.handleRefreshSessions()
+            }
+        }
+    }
+
+    // MARK: Helper Methods
+
+    @MainActor
+    private func handleRefreshSessions() {
+        Task {
+            await self.send(.refreshSessions)
+        }
     }
 }

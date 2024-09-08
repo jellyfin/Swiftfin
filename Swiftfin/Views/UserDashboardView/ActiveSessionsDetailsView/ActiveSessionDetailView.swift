@@ -19,8 +19,19 @@ struct ActiveSessionDetailView: View {
         List {
             if session.nowPlayingItem != nil {
                 Section(L10n.media) {
+                    if let nowPlayingItem = session.nowPlayingItem {
+                        ImageView(nowPlayingItem.cinematicImageSources().first!)
+                            .clipShape(
+                                RoundedRectangle(
+                                    cornerRadius: 4
+                                )
+                            )
+                            .scaledToFill()
+                    }
                     ActiveSessionRowView.ContentSection(session: session)
-                    ActiveSessionRowView.ContentDetailsSection(session: session)
+                    if let overview = session.nowPlayingItem?.overview {
+                        Text(overview)
+                    }
                 }
                 Section(L10n.progress) {
                     ActiveSessionRowView.ProgressSection(session: session)

@@ -24,7 +24,9 @@ extension ActiveSessionRowView {
         var body: some View {
             VStack {
                 playbackInformation
+                    .foregroundColor(.secondary)
                 playbackTimeline
+                    .foregroundColor(.primary)
             }
         }
 
@@ -54,7 +56,6 @@ extension ActiveSessionRowView {
         private var playbackTimeline: some View {
             HStack {
                 getProgressIcon(isPaused: playState?.isPaused)
-                    .foregroundColor(.primary)
 
                 TimelineSection(
                     playbackPercentage: Double(playState?.positionTicks ?? 0) / Double(item?.runTimeTicks ?? 0),

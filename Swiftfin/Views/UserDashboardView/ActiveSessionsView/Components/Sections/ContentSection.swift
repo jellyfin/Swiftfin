@@ -6,15 +6,11 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ActiveSessionRowView {
     struct ContentSection: View {
-        @Default(.Customization.Library.posterType)
-        private var posterType
-
         let item: BaseItemDto?
 
         init(session: SessionInfo) {
@@ -22,37 +18,22 @@ extension ActiveSessionRowView {
         }
 
         var body: some View {
-            HStack(alignment: .top) {
-                if let contentItem = item {
-                    // TODO: Fix this weird switch case
-                    switch posterType {
-                    case .portrait:
-                        ImageView(contentItem.portraitImageSources().first!)
-                            .frame(width: 60, height: 90)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                    case .landscape:
-                        ImageView(contentItem.landscapeImageSources().first!)
-                            .frame(width: 160, height: 90)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
-                    }
-                    contentView
-                }
-            }
-        }
-
-        private var contentView: some View {
             VStack(alignment: .leading) {
                 if let contentItem = item {
                     Text(self.getTitle(item: contentItem))
                         .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineLimit(2)
-                    Text(self.getParent(item: contentItem) ?? "")
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                    Text(self.getEpisode(item: contentItem) ?? "")
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
+                    if let parent = self.getParent(item: contentItem) {
+                        Text(parent)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
+                    if let episode = self.getEpisode(item: contentItem) {
+                        Text(episode)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                    }
                 }
             }
         }

@@ -54,13 +54,13 @@ struct ActiveSessionsView: View {
                 }
             }
         }
-        .onAppear {
-            viewModel.loadSessions()
-        }
         .refreshable {
-            viewModel.loadSessions()
+            viewModel.send(.refreshSessions)
         }
         .navigationTitle(L10n.activeDevices)
+        .onAppear {
+            viewModel.send(.loadSessions)
+        }
     }
 
     private var activeSessions: [SessionInfo] {

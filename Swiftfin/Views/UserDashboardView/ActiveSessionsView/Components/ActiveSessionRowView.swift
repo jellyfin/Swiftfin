@@ -11,6 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionRowView: View {
+    @Default(.appAppearance)
+    private var appAppearance
+
     let session: SessionInfo
     let onSelect: () -> Void?
 
@@ -18,23 +21,47 @@ struct ActiveSessionRowView: View {
         Button {
             onSelect()
         } label: {
-            HStack {
-                VStack(alignment: .leading, spacing: 8) {
-                    UserSection(session: session)
-
-                    if session.nowPlayingItem != nil {
-                        ContentSection(session: session)
-                        ProgressSection(session: session)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
+            ZStack(alignment: .topLeading) {
+                if let nowPlayingItem = session.nowPlayingItem {
+                    ImageView(nowPlayingItem.cinematicImageSources(maxWidth: 500).first!)
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius: 4
+                            )
+                        )
+                        .scaledToFill()
+                        .overlay(
+                            Color.black.opacity(0.7)
+                                .clipShape(
+                                    RoundedRectangle(
+                                        cornerRadius: 4
+                                    )
+                                )
+                        )
+                        .clipped()
                 }
 
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading) {
+                    HStack {
+                        UserSection(session: session)
+                            .foregroundColor(.primary)
+                        if session.nowPlayingItem == nil {
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    if session.nowPlayingItem != nil {
+                        Spacer()
+                        ContentSection(session: session)
+                        Spacer()
+                        ProgressSection(session: session)
+                            .font(.caption)
+                    }
+                }
+                .shadow(radius: 10)
+                .padding(session.nowPlayingItem != nil ? 16 : 0)
             }
+            .buttonStyle(PlainButtonStyle())
         }
     }
 }
