@@ -39,7 +39,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     final var state: State = .initial
 
     @Published
-    final var lastAction: Action? = nil
+    final var lastAction: Action?
 
     private var timer: Timer?
 
