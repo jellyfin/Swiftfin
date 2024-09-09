@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionRowView {
+extension ActiveSessionsView {
     struct ContentSection: View {
         let item: BaseItemDto?
 
@@ -21,17 +21,14 @@ extension ActiveSessionRowView {
             VStack(alignment: .leading) {
                 if let contentItem = item {
                     Text(self.getTitle(item: contentItem))
-                        .foregroundColor(.primary)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineLimit(2)
                     if let parent = self.getParent(item: contentItem) {
                         Text(parent)
-                            .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
                     if let episode = self.getEpisode(item: contentItem) {
                         Text(episode)
-                            .foregroundColor(.secondary)
                             .lineLimit(1)
                     }
                 }

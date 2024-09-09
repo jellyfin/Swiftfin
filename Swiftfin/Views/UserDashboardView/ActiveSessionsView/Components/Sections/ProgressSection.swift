@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionRowView {
+extension ActiveSessionsView {
     struct ProgressSection: View {
         let item: BaseItemDto?
         let playState: PlayerStateInfo?
@@ -24,9 +24,7 @@ extension ActiveSessionRowView {
         var body: some View {
             VStack {
                 playbackInformation
-                    .foregroundColor(.secondary)
                 playbackTimeline
-                    .foregroundColor(.primary)
             }
         }
 
@@ -56,6 +54,7 @@ extension ActiveSessionRowView {
         private var playbackTimeline: some View {
             HStack {
                 getProgressIcon(isPaused: playState?.isPaused)
+                    .font(.subheadline)
 
                 TimelineSection(
                     playbackPercentage: Double(playState?.positionTicks ?? 0) / Double(item?.runTimeTicks ?? 0),

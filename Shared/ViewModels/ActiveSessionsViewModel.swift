@@ -17,58 +17,39 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
+        case backgroundRefresh
         case error(JellyfinAPIError)
-        case loadSessions
-        case refreshSessions
+        case refresh
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundStates: Hashable {
+        case refresh
     }
 
     // MARK: State
 
     enum State: Hashable {
-        case initial
-        case loading
-        case loaded
-        case refreshing
+        case sessions
         case error(JellyfinAPIError)
+        case initial
+        case refreshing
     }
 
     @Published
-    var sessions: [SessionInfo] = []
-
+    var sessions: OrderedSet<SessionInfo> = []
     @Published
     final var state: State = .initial
 
-    @Published
-    final var lastAction: Action?
-
-    private var timer: Timer?
-
-    // MARK: Initialization
-
-    override init() {
-        super.init()
-        Task { @MainActor in
-            await self.send(.loadSessions)
-        }
-        Task { @MainActor in
-            startRefreshing()
-        }
-    }
-
-    deinit {
-        timer?.invalidate()
-    }
+    private var sessionTask: Task<Void, Never>?
 
     // MARK: Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
-        case .loadSessions:
+        case .refresh, .backgroundRefresh:
             loadSessions()
-            return .loading
-
-        case .refreshSessions:
-            refreshSessions()
             return .refreshing
 
         case let .error(error):
@@ -76,63 +57,39 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    func send(_ action: Action) async {
-        state = await respond(to: action)
-        lastAction = action
-    }
-
     // MARK: Session Management
 
-    private func loadSessions() {
-        Task { @MainActor in
+    func loadSessions() {
+        sessionTask?.cancel()
+
+        sessionTask = Task {
             do {
-                let fetchedSessions = try await fetchSessions()
-                self.sessions = fetchedSessions
-                self.state = .loaded
+                try await self.performSessionLoading()
+            } catch is CancellationError {
+                print("Active Sessions refresh was cancelled")
             } catch {
-                self.state = .error(JellyfinAPIError(error.localizedDescription))
+                await MainActor.run {
+                    self.state = .error(JellyfinAPIError(error.localizedDescription))
+                }
             }
         }
     }
 
-    private func refreshSessions() {
-        Task { @MainActor in
-            do {
-                let fetchedSessions = try await fetchSessions()
-                self.sessions = fetchedSessions
-                self.state = .loaded
-            } catch {
-                self.state = .error(JellyfinAPIError(error.localizedDescription))
-            }
+    private func performSessionLoading() async throws {
+        let fetchedSessions = try await fetchSessions()
+
+        await MainActor.run {
+            self.sessions = fetchedSessions
+            self.state = .sessions
         }
     }
 
-    private func fetchSessions() async throws -> [SessionInfo] {
-        let request = Paths.getSessions(parameters: createParameters())
-        let response = try await userSession.client.send(request)
-        return response.value
-    }
-
-    private func createParameters() -> Paths.GetSessionsParameters {
+    private func fetchSessions() async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()
-        parameters.activeWithinSeconds = 960
-        return parameters
-    }
+        parameters.activeWithinSeconds = 960 // 960 Seconds to mirror Jellyfin-Web
+        let request = Paths.getSessions(parameters: parameters)
+        let response = try await userSession.client.send(request)
 
-    private func startRefreshing() {
-        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.handleRefreshSessions()
-            }
-        }
-    }
-
-    // MARK: Helper Methods
-
-    @MainActor
-    private func handleRefreshSessions() {
-        Task {
-            await self.send(.refreshSessions)
-        }
+        return OrderedSet(response.value)
     }
 }

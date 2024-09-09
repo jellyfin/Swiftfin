@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionRowView {
+extension ActiveSessionsView {
     struct UserSection: View {
         let userName: String
         let device: String
@@ -23,11 +23,8 @@ extension ActiveSessionRowView {
             HStack {
                 // TODO: Maybe add the user's icon / profile picture
                 Text(userName)
-
                 Spacer()
-
                 Text(device)
-                    .foregroundColor(.secondary)
             }
             .font(.headline)
         }

@@ -6,6 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -14,64 +16,70 @@ struct ActiveSessionsView: View {
     private var router: SettingsCoordinator.Router
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
+    @State
+    private var currentDate = Date.now
+
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    private var padLayout: CollectionVGridLayout {
+        .columns(2)
+    }
+
+    private var phoneLayout: CollectionVGridLayout {
+        .columns(1)
+    }
 
     var body: some View {
-        List {
-            Section(L10n.streams) {
-                if activeSessions.isEmpty {
-                    L10n.none.text
-                        .foregroundColor(.secondary)
-                } else {
-                    ForEach(activeSessions.sorted {
-                        if $0.userName != $1.userName {
-                            return $0.userName ?? "" < $1.userName ?? ""
-                        } else {
-                            return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
-                        }
-                    }, id: \.id) { session in
-                        ActiveSessionRowView(session: session) {
-                            router.route(to: \.activeSessionDetails, session)
-                        }
-                    }
-                }
+        contentView
+            .navigationTitle(L10n.activeDevices)
+            .onReceive(timer) { _ in
+                viewModel.send(.refresh)
             }
-            Section(L10n.online) {
-                if inactiveSessions.isEmpty {
-                    L10n.none.text
-                        .foregroundColor(.secondary)
-                } else {
-                    ForEach(inactiveSessions.sorted {
-                        if $0.userName != $1.userName {
-                            return $0.userName ?? "" < $1.userName ?? ""
-                        } else {
-                            return $0.lastActivityDate ?? Date.distantPast < $1.lastActivityDate ?? Date.distantPast
-                        }
-                    }, id: \.id) { session in
-                        ActiveSessionRowView(session: session) {
-                            router.route(to: \.activeSessionDetails, session)
-                        }
+    }
+
+    private var contentView: some View {
+        CollectionVGrid(
+            allSessions,
+            layout: UIDevice.isPhone ? phoneLayout : padLayout
+        ) { session in
+            if allSessions.isEmpty {
+                L10n.none.text
+                    .foregroundColor(.secondary)
+            } else {
+                ActiveSessionButton(session: session)
+                    .onSelect {
+                        router.route(to: \.activeSessionDetails, session)
                     }
-                }
             }
-        }
-        .refreshable {
-            viewModel.send(.refreshSessions)
-        }
-        .navigationTitle(L10n.activeDevices)
-        .onAppear {
-            viewModel.send(.loadSessions)
         }
     }
 
-    private var activeSessions: [SessionInfo] {
-        viewModel.sessions.filter { session in
-            session.playState?.mediaSourceID != nil
-        }
-    }
+    private var allSessions: [SessionInfo] {
+        viewModel.sessions.sorted {
+            // Group by sessions with nowPlayingItem first
+            let isPlaying0 = $0.nowPlayingItem != nil
+            let isPlaying1 = $1.nowPlayingItem != nil
 
-    private var inactiveSessions: [SessionInfo] {
-        viewModel.sessions.filter { session in
-            session.playState?.mediaSourceID == nil
+            // Place streaming sessions before non-streaming
+            if isPlaying0 && !isPlaying1 {
+                return true
+            } else if !isPlaying0 && isPlaying1 {
+                return false
+            }
+
+            // Sort streaming vs non-streaming sessions by username
+            if $0.userName != $1.userName {
+                return ($0.userName ?? "") < ($1.userName ?? "")
+            }
+
+            // Both sessions are either playing or not, with the same userName
+            if isPlaying0 && isPlaying1 {
+                // If both are playing, sort by nowPlayingItem.name
+                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
+            } else {
+                // If neither is playing, sort by lastActivityDate
+                return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
+            }
         }
     }
 }

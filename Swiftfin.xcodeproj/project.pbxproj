@@ -29,7 +29,6 @@
 		4E2AC4D62C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D52C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift */; };
 		4E2AC4D92C6C4D9400DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D72C6C4D8D00DD600D /* PlaybackQualitySettingsView.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
-		4E63B9F62C8A5BEF00C25378 /* ActiveSessionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9EF2C8A5BEF00C25378 /* ActiveSessionRowView.swift */; };
 		4E63B9F72C8A5BEF00C25378 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9F02C8A5BEF00C25378 /* ActiveSessionsView.swift */; };
 		4E63B9F82C8A5BEF00C25378 /* ContentSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9F12C8A5BEF00C25378 /* ContentSection.swift */; };
 		4E63B9FA2C8A5BEF00C25378 /* UserDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */; };
@@ -48,6 +47,10 @@
 		4E9A24E92C82B79D0023DA83 /* EditCustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8572C80332500E2879E /* EditCustomDeviceProfileCoordinator.swift */; };
 		4E9A24EB2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */; };
 		4E9A24ED2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */; };
+		4EB140462C8E157F008691F3 /* ActiveSessionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140452C8E157F008691F3 /* ActiveSessionButton.swift */; };
+		4EB140482C8E323A008691F3 /* ClientSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140472C8E323A008691F3 /* ClientSection.swift */; };
+		4EB1404A2C8E33B2008691F3 /* ConnectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140492C8E33B2008691F3 /* ConnectionSection.swift */; };
+		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -1002,7 +1005,6 @@
 		4E2AC4D52C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackQualitySettingsView.swift; sourceTree = "<group>"; };
 		4E2AC4D72C6C4D8D00DD600D /* PlaybackQualitySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackQualitySettingsView.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
-		4E63B9EF2C8A5BEF00C25378 /* ActiveSessionRowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActiveSessionRowView.swift; sourceTree = "<group>"; };
 		4E63B9F02C8A5BEF00C25378 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4E63B9F12C8A5BEF00C25378 /* ContentSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentSection.swift; sourceTree = "<group>"; };
 		4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDashboardView.swift; sourceTree = "<group>"; };
@@ -1017,6 +1019,10 @@
 		4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
 		4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileCoordinator.swift; sourceTree = "<group>"; };
 		4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
+		4EB140452C8E157F008691F3 /* ActiveSessionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionButton.swift; sourceTree = "<group>"; };
+		4EB140472C8E323A008691F3 /* ClientSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSection.swift; sourceTree = "<group>"; };
+		4EB140492C8E33B2008691F3 /* ConnectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSection.swift; sourceTree = "<group>"; };
+		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -1815,7 +1821,7 @@
 		4E6C27052C8BD05400FD2185 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E63B9EF2C8A5BEF00C25378 /* ActiveSessionRowView.swift */,
+				4EB140452C8E157F008691F3 /* ActiveSessionButton.swift */,
 				4EE141632C8B8DCE0045B661 /* Sections */,
 			);
 			path = Components;
@@ -1868,8 +1874,11 @@
 		4EE141632C8B8DCE0045B661 /* Sections */ = {
 			isa = PBXGroup;
 			children = (
+				4EB140472C8E323A008691F3 /* ClientSection.swift */,
+				4EB140492C8E33B2008691F3 /* ConnectionSection.swift */,
 				4E63B9F12C8A5BEF00C25378 /* ContentSection.swift */,
 				4EE141682C8BABDF0045B661 /* ProgressSection.swift */,
+				4EB1404B2C8E45B1008691F3 /* StreamSection.swift */,
 				4E6C27092C8BF63800FD2185 /* TimelineSection.swift */,
 				4EE141662C8B9D510045B661 /* UserSection.swift */,
 			);
@@ -4525,6 +4534,7 @@
 				E1BDF2E92951490400CC0294 /* ActionButtonSelectorView.swift in Sources */,
 				E170D0E2294CC8000017224C /* VideoPlayer+Actions.swift in Sources */,
 				E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
+				4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */,
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
 				E1AEFA372BE317E200CFAFD8 /* ListRowButton.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
@@ -4669,6 +4679,7 @@
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
 				E129428828F0831F00796AC6 /* SplitTimestamp.swift in Sources */,
 				C46DD8E72A8FA77F0046A504 /* LiveBottomBarView.swift in Sources */,
+				4EB1404A2C8E33B2008691F3 /* ConnectionSection.swift in Sources */,
 				E11CEB8D28999B4A003E74C7 /* Font.swift in Sources */,
 				E139CC1F28EC83E400688DE2 /* Int.swift in Sources */,
 				E11895A9289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
@@ -4716,6 +4727,7 @@
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
 				E1CB75822C80F66900217C76 /* VideoPlayerType+Swiftfin.swift in Sources */,
+				4EB140482C8E323A008691F3 /* ClientSection.swift in Sources */,
 				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
 				E10231412BCF8A3C009D71FC /* ChannelLibraryView.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
@@ -4724,6 +4736,7 @@
 				E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */,
 				E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
 				E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
+				4EB140462C8E157F008691F3 /* ActiveSessionButton.swift in Sources */,
 				4EE141692C8BABDF0045B661 /* ProgressSection.swift in Sources */,
 				E1A1528528FD191A00600579 /* TextPair.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift in Sources */,
@@ -4833,7 +4846,6 @@
 				E173DA5026D048D600CC4EB7 /* ServerDetailView.swift in Sources */,
 				E1BE1CF02BDB6C97008176A9 /* UserProfileSettingsView.swift in Sources */,
 				E1DC7ACA2C63337C00AEE368 /* iOS15View.swift in Sources */,
-				4E63B9F62C8A5BEF00C25378 /* ActiveSessionRowView.swift in Sources */,
 				E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */,
 				E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */,
 				E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */,

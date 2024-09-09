@@ -28,22 +28,25 @@ struct ActiveSessionDetailView: View {
                             )
                             .scaledToFill()
                     }
-                    ActiveSessionRowView.ContentSection(session: session)
+                    ActiveSessionsView.ContentSection(session: session)
                     if let overview = session.nowPlayingItem?.overview {
                         Text(overview)
                     }
                 }
                 Section(L10n.progress) {
-                    ActiveSessionRowView.ProgressSection(session: session)
-                        .foregroundColor(.secondary)
+                    ActiveSessionsView.ProgressSection(session: session)
                 }
             }
             Section("Device") {
-                clientSection
+                ActiveSessionsView.ClientSection(session: session)
             }
             if session.nowPlayingItem != nil {
                 Section(L10n.streams) {
                     streamSection
+                }
+            } else {
+                Section("Last Seen") {
+                    ActiveSessionsView.ConnectionSection(session: session)
                 }
             }
             if session.transcodingInfo != nil {
@@ -55,37 +58,12 @@ struct ActiveSessionDetailView: View {
         .navigationTitle((session.userName ?? session.deviceName)!)
     }
 
-    // MARK: Client Section
-
-    private var clientSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text("Client:")
-                Spacer()
-                Text(session.client ?? L10n.unknown)
-                    .foregroundColor(.secondary)
-            }
-            HStack {
-                Text("Device:")
-                Spacer()
-                Text(session.deviceName ?? L10n.unknown)
-                    .foregroundColor(.secondary)
-            }
-            HStack {
-                Text("Version:")
-                Spacer()
-                Text(session.applicationVersion ?? L10n.unknown)
-                    .foregroundColor(.secondary)
-            }
-        }
-    }
-
     // MARK: Progress Section
 
     private var progressSection: some View {
         let playbackPercentage = Double(session.playState?.positionTicks ?? 0) / Double(session.nowPlayingItem?.runTimeTicks ?? 0)
 
-        return ActiveSessionRowView.TimelineSection(
+        return ActiveSessionsView.TimelineSection(
             playbackPercentage: playbackPercentage,
             transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
         )
