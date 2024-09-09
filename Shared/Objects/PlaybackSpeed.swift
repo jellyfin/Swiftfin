@@ -8,8 +8,6 @@
 
 import Foundation
 
-// TODO: rename to `PlaybackRate`
-
 enum PlaybackSpeed: Double, CaseIterable, Displayable {
 
     case quarter = 0.25

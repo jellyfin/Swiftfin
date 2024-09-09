@@ -23,7 +23,7 @@ extension Button where Label == Text {
     /// Creates a Button with an empty action and a plain text label.
     init(_ title: String, role: ButtonRole? = nil) {
         self.init(role: role) {
-            Text(title)
+            Text(verbatim: title)
         }
     }
 }

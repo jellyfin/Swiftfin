@@ -27,7 +27,7 @@ struct ListRowButton: View {
         }
         .font(.body.weight(.bold))
         .buttonStyle(ListRowButtonStyle())
-        .listRowInsets(.init(.zero))
+        .listRowInsets(.zero)
     }
 }
 

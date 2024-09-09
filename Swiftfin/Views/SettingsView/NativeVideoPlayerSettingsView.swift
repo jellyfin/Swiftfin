@@ -20,14 +20,13 @@ struct NativeVideoPlayerSettingsView: View {
             Section {
 
                 BasicStepper(
-                    title: "Resume Offset",
+                    "Resume Offset",
                     value: $resumeOffset,
-                    range: 0 ... 30,
-                    step: 1
+                    range: 0 ... 30
                 )
-                .valueFormatter {
-                    $0.secondLabel
-                }
+//                .valueFormatter {
+//                    $0.secondLabel
+//                }
             } footer: {
                 Text("Resume content seconds before the recorded resume time")
             }

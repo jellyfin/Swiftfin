@@ -114,13 +114,10 @@ struct VideoPlayer: View {
                     }
                 }
 
-//            Color.red
-//                .opacity(0.5)
-
             VideoPlayer.MainOverlay()
                 .environment(\.safeAreaInsets, $safeAreaInsets)
         }
-        .environment(\.aspectFilled, $isAspectFilled)
+        .environment(\.isAspectFilled, $isAspectFilled)
         .environment(\.isPresentingOverlay, $isPresentingOverlay)
         .environment(\.isScrubbing, $isScrubbing)
         .environment(\.playbackSpeed, $playbackSpeed)
@@ -178,14 +175,9 @@ struct VideoPlayer: View {
                     audioOffset = 0
                     subtitleOffset = 0
 
-                    let seconds: Int
-
-                    switch item.vlcConfiguration.startTime {
-                    case let .ticks(value):
-                        seconds = value / 1000
-                    case let .seconds(value):
-                        seconds = value
-                    }
+                    let seconds = item.vlcConfiguration
+                        .startTime
+                        .asSeconds
 
                     let progress = CGFloat(seconds) / CGFloat(item.baseItem.runTimeSeconds)
 

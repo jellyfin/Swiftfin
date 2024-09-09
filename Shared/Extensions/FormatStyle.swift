@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: break into separate files
+
 struct HourMinuteFormatStyle: FormatStyle {
 
     func format(_ value: TimeInterval) -> String {
@@ -50,5 +52,12 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
 
     static func runtime(negate: Bool) -> RunTimeFormatStyle {
         RunTimeFormatStyle(negate: negate)
+    }
+}
+
+struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.description
     }
 }

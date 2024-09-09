@@ -13,29 +13,17 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct PlayPreviousItem: View {
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
-        @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
 
-        private var content: () -> any View
-
         var body: some View {
-            Button {
-//                videoPlayerManager.selectPreviousViewModel()
-//                overlayTimer.start(5)
-            } label: {
-                content()
-                    .eraseToAnyView()
+            Button(
+                L10n.playNextItem,
+                systemImage: "backward.end.circle.fill"
+            ) {
+                // TODO: work
             }
-//            .disabled(videoPlayerManager.previousViewModel == nil)
-//            .foregroundColor(videoPlayerManager.previousViewModel == nil ? .gray : .white)
+//            .disabled(videoPlayerManager.nextViewModel == nil)
+//            .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
         }
-    }
-}
-
-extension VideoPlayer.Overlay.ActionButtons.PlayPreviousItem {
-
-    init(@ViewBuilder _ content: @escaping () -> any View) {
-        self.content = content
     }
 }

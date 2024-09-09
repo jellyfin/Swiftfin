@@ -21,11 +21,24 @@ extension VideoPlayer.Overlay.ActionButtons {
 //        @EnvironmentObject
 //        private var viewModel: VideoPlayerViewModel
 
-        private var content: (Bool) -> any View
+        private var systemImage: String {
+//            if isAudioTrackSelected {
+//                "speaker.wave.2.fill"
+//            } else {
+            "speaker.wave.2"
+//            }
+        }
 
         var body: some View {
-            Text("TODO")
-//            Menu {
+            Menu(
+                "Audio",
+                systemImage: systemImage
+            ) {
+
+                Button("Test") {}
+                Button("Test") {}
+                Button("Test") {}
+
 //                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
 //                    Button {
 //                        videoPlayerManager.audioTrackIndex = audioTrack.index ?? -1
@@ -38,17 +51,9 @@ extension VideoPlayer.Overlay.ActionButtons {
 //                        }
 //                    }
 //                }
-//            } label: {
-//                content(videoPlayerManager.audioTrackIndex != -1)
-//                    .eraseToAnyView()
-//            }
+            }
+            .transition(.scale.animation(.bouncy))
+//            .id(isAspectFilled)
         }
-    }
-}
-
-extension VideoPlayer.Overlay.ActionButtons.Audio {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
     }
 }

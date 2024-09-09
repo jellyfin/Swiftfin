@@ -9,7 +9,6 @@
 import Defaults
 import Foundation
 
-// TODO: atow, advanced was removed to be redesigned before being released
 enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
 
     case aspectFill

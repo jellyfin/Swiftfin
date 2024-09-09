@@ -28,7 +28,7 @@ extension VideoPlayer {
         private var currentOverlayType: VideoPlayer.OverlayType = .main
 
         @StateObject
-        private var overlayTimer: TimerProxy = .init()
+        private var overlayTimer: PollingTimer = .init()
 
         @ViewBuilder
         private var currentOverlay: some View {
@@ -54,7 +54,7 @@ extension VideoPlayer {
                     if [.smallMenu, .chapters].contains(newValue) {
                         overlayTimer.pause()
                     } else if isPresentingOverlay {
-                        overlayTimer.start(5)
+                        overlayTimer.poll()
                     }
                 }
                 .onChange(of: overlayTimer.isActive) { _, isActive in
@@ -67,11 +67,11 @@ extension VideoPlayer {
 //                .onSelectPressed {
 //                    currentOverlayType = .main
 //                    isPresentingOverlay = true
-//                    overlayTimer.start(5)
+//                    overlayTimer.poll()
 //                }
 //                .onMenuPressed {
 //
-//                    overlayTimer.start(5)
+//                    overlayTimer.poll()
 //                    confirmCloseWorkItem?.cancel()
 //
 //                    if isPresentingOverlay && currentOverlayType == .confirmClose {

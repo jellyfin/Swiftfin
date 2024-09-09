@@ -21,10 +21,23 @@ extension VideoPlayer.Overlay.ActionButtons {
 //        @EnvironmentObject
 //        private var viewModel: VideoPlayerViewModel
 
-        private var content: (Bool) -> any View
+        private var systemImage: String {
+//            if isAudioTrackSelected {
+//                "captions.bubble.fill"
+//            } else {
+            "captions.bubble"
+//            }
+        }
 
         var body: some View {
-            Text("TODO")
+            Menu(
+                L10n.subtitles,
+                systemImage: systemImage
+            ) {
+                Button("Test") {}
+                Button("Test") {}
+                Button("Test") {}
+            }
 //            Menu {
 //                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
 //                    Button {
@@ -43,12 +56,5 @@ extension VideoPlayer.Overlay.ActionButtons {
 //                    .eraseToAnyView()
 //            }
         }
-    }
-}
-
-extension VideoPlayer.Overlay.ActionButtons.Subtitles {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
     }
 }

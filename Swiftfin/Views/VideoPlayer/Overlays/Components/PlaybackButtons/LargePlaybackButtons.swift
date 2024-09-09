@@ -22,7 +22,7 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var timerProxy: TimerProxy
+        private var timerProxy: PollingTimer
         @EnvironmentObject
         private var manager: VideoPlayerManager
         @EnvironmentObject
@@ -32,7 +32,7 @@ extension VideoPlayer.Overlay {
         private var jumpBackwardButton: some View {
             Button {
                 vlcUIProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.start(5)
+                timerProxy.poll(interval: 5)
             } label: {
                 Image(systemName: jumpBackwardLength.backwardImageLabel)
                     .font(.system(size: 36, weight: .regular, design: .default))
@@ -52,7 +52,7 @@ extension VideoPlayer.Overlay {
                 default:
                     vlcUIProxy.play()
                 }
-                timerProxy.start(5)
+                timerProxy.poll(interval: 5)
             } label: {
                 Group {
                     switch manager.state {
@@ -78,7 +78,7 @@ extension VideoPlayer.Overlay {
         private var jumpForwardButton: some View {
             Button {
                 vlcUIProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.start(5)
+                timerProxy.poll(interval: 5)
             } label: {
                 Image(systemName: jumpForwardLength.forwardImageLabel)
                     .font(.system(size: 36, weight: .regular, design: .default))

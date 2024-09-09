@@ -10,12 +10,35 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-struct OnPressMenuStyle: ButtonStyle {
+struct OnPressButtonStyle: ButtonStyle {
 
     var onPress: (Bool) -> Void
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .onChange(of: configuration.isPressed) { newValue in
+                onPress(newValue)
+            }
+    }
+}
+
+struct BarButtonStyle: ButtonStyle {
+
+    var onPress: (Bool) -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .labelStyle(.iconOnly)
+            .frame(width: 45, height: 45)
+            .contentShape(Rectangle())
+            .background {
+                if configuration.isPressed {
+                    Circle()
+                        .fill(Color.white)
+                        .opacity(0.5)
+                        .transition(.opacity.animation(.linear(duration: 0.2)))
+                }
+            }
             .onChange(of: configuration.isPressed) { newValue in
                 onPress(newValue)
             }
@@ -31,140 +54,58 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.menuActionButtons)
         private var menuActionButtons
 
-//        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
+        @EnvironmentObject
+        private var overlayTimer: PollingTimer
 
         @ViewBuilder
-        private var advancedButton: some View {
-            ActionButtons.Advanced {
-                Image(systemName: "gearshape.fill")
-                    .frame(width: 45, height: 45)
-                    .contentShape(Rectangle())
+        private func view(for button: VideoPlayerActionButton) -> some View {
+            switch button {
+            case .aspectFill:
+                ActionButtons.AspectFill()
+            case .audio:
+                ActionButtons.Audio()
+            case .autoPlay:
+                ActionButtons.AutoPlay()
+            case .playbackSpeed:
+                ActionButtons.PlaybackSpeedMenu()
+            case .playNextItem:
+                ActionButtons.PlayNextItem()
+            case .playPreviousItem:
+                ActionButtons.PlayPreviousItem()
+            case .subtitles:
+                ActionButtons.Subtitles()
             }
         }
 
         @ViewBuilder
-        private var aspectFillButton: some View {
-            ActionButtons.AspectFill { isAspectFilled in
-                Group {
-                    if isAspectFilled {
-                        Image(systemName: "arrow.down.right.and.arrow.up.left")
-                    } else {
-                        Image(systemName: "arrow.up.left.and.arrow.down.right")
-                    }
+        private var menuButtons: some View {
+            Menu(
+                "Button Menu",
+                systemImage: "ellipsis.circle"
+            ) {
+                ForEach(menuActionButtons) { actionButton in
+                    view(for: actionButton)
                 }
-                .frame(width: 45, height: 45)
-                .contentShape(Rectangle())
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
-            }
-        }
-
-        @ViewBuilder
-        private var audioTrackMenu: some View {
-            ActionButtons.Audio { audioTrackSelected in
-                Group {
-                    if audioTrackSelected {
-                        Image(systemName: "speaker.wave.2.fill")
-                    } else {
-                        Image(systemName: "speaker.wave.2")
-                    }
-                }
-                .frame(width: 45, height: 45)
-                .contentShape(Rectangle())
-            }
-        }
-
-        @ViewBuilder
-        private var autoPlayButton: some View {
-            EmptyView()
-//            if viewModel.item.type == .episode {
-//                ActionButtons.AutoPlay { autoPlayEnabled in
-//                    Group {
-//                        if autoPlayEnabled {
-//                            Image(systemName: "play.circle.fill")
-//                        } else {
-//                            Image(systemName: "stop.circle")
-//                        }
-//                    }
-//                    .frame(width: 45, height: 45)
-//                    .contentShape(Rectangle())
-//                }
-//            }
-        }
-
-        @ViewBuilder
-        private var playbackSpeedMenu: some View {
-            ActionButtons.PlaybackSpeedMenu {
-                Image(systemName: "speedometer")
-                    .frame(width: 45, height: 45)
-                    .contentShape(Rectangle())
-            }
-        }
-
-        @ViewBuilder
-        private var playNextItemButton: some View {
-            EmptyView()
-//            if viewModel.item.type == .episode {
-//                ActionButtons.PlayNextItem {
-//                    Image(systemName: "chevron.right.circle")
-//                        .frame(width: 45, height: 45)
-//                        .contentShape(Rectangle())
-//                }
-//            }
-        }
-
-        @ViewBuilder
-        private var playPreviousItemButton: some View {
-            EmptyView()
-//            if viewModel.item.type == .episode {
-//                ActionButtons.PlayPreviousItem {
-//                    Image(systemName: "chevron.left.circle")
-//                        .frame(width: 45, height: 45)
-//                        .contentShape(Rectangle())
-//                }
-//            }
-        }
-
-        @ViewBuilder
-        private var subtitleTrackMenu: some View {
-            ActionButtons.Subtitles { subtitleTrackSelected in
-                Group {
-                    if subtitleTrackSelected {
-                        Image(systemName: "captions.bubble.fill")
-                    } else {
-                        Image(systemName: "captions.bubble")
-                    }
-                }
-                .frame(width: 45, height: 45)
-                .contentShape(Rectangle())
             }
         }
 
         var body: some View {
             HStack(spacing: 0) {
                 ForEach(barActionButtons) { actionButton in
-                    switch actionButton {
-                    case .aspectFill:
-                        aspectFillButton
-                    case .audio:
-                        audioTrackMenu
-                    case .autoPlay:
-                        autoPlayButton
-                    case .playbackSpeed:
-                        playbackSpeedMenu
-                    case .playNextItem:
-                        playNextItemButton
-                    case .playPreviousItem:
-                        playPreviousItemButton
-                    case .subtitles:
-                        subtitleTrackMenu
-                    }
+                    view(for: actionButton)
                 }
 
                 if menuActionButtons.isNotEmpty {
-                    OverlayMenu()
+                    menuButtons
                 }
             }
+            .buttonStyle(BarButtonStyle(onPress: { isPressed in
+                if isPressed {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.poll()
+                }
+            }))
         }
     }
 }

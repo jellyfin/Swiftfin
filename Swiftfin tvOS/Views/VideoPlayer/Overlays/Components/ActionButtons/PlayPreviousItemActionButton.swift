@@ -13,7 +13,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct PlayPreviousItem: View {
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var overlayTimer: PollingTimer
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
 
@@ -21,7 +21,7 @@ extension VideoPlayer.Overlay.ActionButtons {
             SFSymbolButton(systemName: "chevron.left.circle")
                 .onSelect {
 //                    videoPlayerManager.selectPreviousViewModel()
-//                    overlayTimer.start(5)
+//                    overlayTimer.poll()
                 }
                 .frame(maxWidth: 30, maxHeight: 30)
         }

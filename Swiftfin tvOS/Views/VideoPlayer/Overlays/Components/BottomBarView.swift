@@ -26,7 +26,7 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var overlayTimer: PollingTimer
         @EnvironmentObject
         private var videoPlayerManager: VideoPlayerManager
         @EnvironmentObject
@@ -79,7 +79,7 @@ extension VideoPlayer.Overlay {
                         if isEditing {
                             overlayTimer.pause()
                         } else {
-                            overlayTimer.start(5)
+                            overlayTimer.poll()
                         }
                     }
                     .focused($isBarFocused)

@@ -29,10 +29,9 @@ extension VideoPlayerSettingsView {
                     }
 
                 BasicStepper(
-                    title: L10n.subtitleSize,
+                    L10n.subtitleSize,
                     value: $subtitleSize,
-                    range: 8 ... 24,
-                    step: 1
+                    range: 8 ... 24
                 )
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {

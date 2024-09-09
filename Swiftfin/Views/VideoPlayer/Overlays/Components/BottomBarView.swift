@@ -25,8 +25,6 @@ extension VideoPlayer.Overlay {
         private var playbackButtonType
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
-//        @Default(.VideoPlayer.Overlay.timestampType)
-//        private var timestampType
 
         @Environment(\.isPresentingOverlay)
         @Binding
@@ -39,7 +37,7 @@ extension VideoPlayer.Overlay {
 //        private var scrubbedProgress: ProgressBox
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var overlayTimer: PollingTimer
         @EnvironmentObject
         private var manager: VideoPlayerManager
 

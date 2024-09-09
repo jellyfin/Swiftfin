@@ -72,7 +72,7 @@ extension String {
     }
 
     var text: Text {
-        Text(self)
+        Text(verbatim: self)
     }
 
     var initials: String {

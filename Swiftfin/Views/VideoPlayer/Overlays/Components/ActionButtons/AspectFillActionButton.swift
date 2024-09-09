@@ -14,31 +14,31 @@ extension VideoPlayer.Overlay.ActionButtons {
 
     struct AspectFill: View {
 
-        @Environment(\.aspectFilled)
+        @Environment(\.isAspectFilled)
         @Binding
-        private var aspectFilled: Bool
+        private var isAspectFilled: Bool
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        private var overlayTimer: PollingTimer
 
-        private var content: (Bool) -> any View
-
-        var body: some View {
-            Button {
-                overlayTimer.start(5)
-                aspectFilled.toggle()
-            } label: {
-                content(aspectFilled).eraseToAnyView()
+        private var systemImage: String {
+            if isAspectFilled {
+                "arrow.down.right.and.arrow.up.left"
+            } else {
+                "arrow.up.left.and.arrow.down.right"
             }
         }
-    }
-}
 
-extension VideoPlayer.Overlay.ActionButtons.AspectFill {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
+        var body: some View {
+            Button(
+                "Aspect Fill",
+                systemImage: systemImage
+            ) {
+                isAspectFilled.toggle()
+                overlayTimer.poll()
+            }
+            .transition(.scale.animation(.bouncy))
+            .id(isAspectFilled)
+        }
     }
 }

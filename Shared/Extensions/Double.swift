@@ -10,6 +10,7 @@ import Foundation
 
 extension Double {
 
+    // TODO: conver to `FormatStyle`
     var rateLabel: String {
         String(format: "%.2f", self).appending("x")
     }

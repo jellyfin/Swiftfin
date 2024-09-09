@@ -20,7 +20,7 @@ extension EnvironmentValues {
         set { self[AudioOffsetKey.self] = newValue }
     }
 
-    var aspectFilled: Binding<Bool> {
+    var isAspectFilled: Binding<Bool> {
         get { self[AspectFilledKey.self] }
         set { self[AspectFilledKey.self] = newValue }
     }

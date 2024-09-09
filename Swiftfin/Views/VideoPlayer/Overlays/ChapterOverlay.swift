@@ -30,7 +30,7 @@ import VLCUI
 ////        @EnvironmentObject
 ////        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
 //        @EnvironmentObject
-//        private var overlayTimer: TimerProxy
+//        private var overlayTimer: PollingTimer
 //        @EnvironmentObject
 //        private var videoPlayerManager: VideoPlayerManager
 //        @EnvironmentObject
@@ -116,7 +116,7 @@ import VLCUI
 //        @EnvironmentObject
 //        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
 //        @EnvironmentObject
-//        private var overlayTimer: TimerProxy
+//        private var overlayTimer: PollingTimer
 //        @EnvironmentObject
 //        private var videoPlayerManager: VideoPlayerManager
 //        @EnvironmentObject

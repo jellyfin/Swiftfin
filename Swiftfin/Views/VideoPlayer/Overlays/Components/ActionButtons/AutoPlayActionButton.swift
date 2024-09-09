@@ -14,28 +14,25 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct AutoPlay: View {
 
         @Default(.VideoPlayer.autoPlayEnabled)
-        private var autoPlayEnabled
+        private var isAutoPlayEnabled
 
-        @EnvironmentObject
-        private var overlayTimer: TimerProxy
-
-        private var content: (Bool) -> any View
-
-        var body: some View {
-            Button {
-                autoPlayEnabled.toggle()
-                overlayTimer.start(5)
-            } label: {
-                content(autoPlayEnabled)
-                    .eraseToAnyView()
+        private var systemImage: String {
+            if isAutoPlayEnabled {
+                "play.circle.fill"
+            } else {
+                "stop.circle"
             }
         }
-    }
-}
 
-extension VideoPlayer.Overlay.ActionButtons.AutoPlay {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
+        var body: some View {
+            Button(
+                "Autoplay",
+                systemImage: systemImage
+            ) {
+                isAutoPlayEnabled.toggle()
+            }
+            .transition(.scale.animation(.bouncy))
+            .id(isAutoPlayEnabled)
+        }
     }
 }

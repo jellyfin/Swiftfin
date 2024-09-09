@@ -33,7 +33,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
 
-    @Environment(\.aspectFilled)
+    @Environment(\.isAspectFilled)
     private var isAspectFilled
 
     @EnvironmentObject

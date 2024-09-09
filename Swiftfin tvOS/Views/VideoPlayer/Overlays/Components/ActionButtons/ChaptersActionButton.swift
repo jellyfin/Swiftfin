@@ -17,7 +17,7 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var currentOverlayType
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var overlayTimer: PollingTimer
 
         var body: some View {
             SFSymbolButton(

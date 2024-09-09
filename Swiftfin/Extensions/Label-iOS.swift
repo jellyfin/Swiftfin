@@ -64,3 +64,21 @@ struct SectionFooterWithImageLabelStyle<ImageStyle: ShapeStyle>: LabelStyle {
         }
     }
 }
+
+extension LabelStyle where Self == TrailingIconButtonStyle {
+
+    static var trailingIcon: TrailingIconButtonStyle {
+        TrailingIconButtonStyle()
+    }
+}
+
+struct TrailingIconButtonStyle: LabelStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.title
+
+            configuration.icon
+        }
+    }
+}

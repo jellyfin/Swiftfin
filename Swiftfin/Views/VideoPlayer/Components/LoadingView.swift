@@ -9,6 +9,8 @@
 import Stinsen
 import SwiftUI
 
+// TODO: remove or have NativePlayer use something similar
+
 extension VideoPlayer {
 
     struct LoadingView: View {

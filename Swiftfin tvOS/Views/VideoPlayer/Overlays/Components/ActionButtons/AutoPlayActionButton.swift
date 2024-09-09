@@ -17,7 +17,7 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var autoPlayEnabled
 
         @EnvironmentObject
-        private var overlayTimer: TimerProxy
+        private var overlayTimer: PollingTimer
 
         var body: some View {
             SFSymbolButton(
@@ -25,7 +25,7 @@ extension VideoPlayer.Overlay.ActionButtons {
             )
             .onSelect {
                 autoPlayEnabled.toggle()
-                overlayTimer.start(5)
+                overlayTimer.poll()
             }
             .frame(maxWidth: 30, maxHeight: 30)
         }

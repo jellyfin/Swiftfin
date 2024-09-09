@@ -10,18 +10,17 @@ import SwiftUI
 
 struct SeeAllButton: View {
 
-    private var onSelect: () -> Void
+    private var action: () -> Void
 
     var body: some View {
-        Button {
-            onSelect()
-        } label: {
-            HStack {
-                L10n.seeAll.text
-                Image(systemName: "chevron.right")
-            }
-            .font(.subheadline.bold())
+        Button(
+            L10n.seeAll,
+            systemImage: "chevron.right"
+        ) {
+            action()
         }
+        .font(.subheadline.weight(.bold))
+        .labelStyle(.trailingIcon)
     }
 }
 
@@ -29,11 +28,11 @@ extension SeeAllButton {
 
     init() {
         self.init(
-            onSelect: {}
+            action: {}
         )
     }
 
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
+    func onSelect(perform action: @escaping () -> Void) -> Self {
+        copy(modifying: \.action, with: action)
     }
 }

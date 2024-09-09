@@ -30,7 +30,7 @@ extension VideoPlayer {
         private var actualSafeArea: EdgeInsets = .zero
 
         @StateObject
-        private var overlayTimer: TimerProxy = .init()
+        private var overlayTimer: PollingTimer = .init(defaultInterval: 5)
 
         @ViewBuilder
         private var topBar: some View {
@@ -89,17 +89,17 @@ extension VideoPlayer {
             .environmentObject(overlayTimer)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
-                overlayTimer.start(5)
+                overlayTimer.poll()
             }
             .onChange(of: isScrubbing) { newValue in
                 if newValue {
                     overlayTimer.stop()
                 } else {
-                    overlayTimer.start(5)
+                    overlayTimer.poll()
                 }
             }
-            .onChange(of: overlayTimer.isActive) { newValue in
-                guard !newValue, !isScrubbing else { return }
+            .onReceive(overlayTimer.polls) {
+                guard !isScrubbing else { return }
 
                 withAnimation(.linear(duration: 0.3)) {
                     isPresentingOverlay = false
