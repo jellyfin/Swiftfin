@@ -9,23 +9,23 @@
 import Combine
 import SwiftUI
 
-class PollingTimer: ObservableObject {
+class DelayIntervalTimer: ObservableObject {
 
     private let defaultInterval: TimeInterval
-    private var pollSubject: PassthroughSubject<Void, Never> = .init()
-    private var pollingWorkItem: DispatchWorkItem?
+    private var delaySubject: PassthroughSubject<Void, Never> = .init()
+    private var delayedWorkItem: DispatchWorkItem?
 
     init(defaultInterval: TimeInterval = -1) {
         self.defaultInterval = defaultInterval
     }
 
-    var polls: AnyPublisher<Void, Never> {
-        pollSubject
+    var hasFired: AnyPublisher<Void, Never> {
+        delaySubject
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 
-    func poll(interval: TimeInterval = -1) {
+    func delay(interval: TimeInterval = -1) {
         var interval = interval
 
         if interval < 0 {
@@ -36,18 +36,18 @@ class PollingTimer: ObservableObject {
             }
         }
 
-        pollingWorkItem?.cancel()
+        delayedWorkItem?.cancel()
 
         let newPollItem = DispatchWorkItem {
-            self.pollSubject.send(())
+            self.delaySubject.send(())
         }
 
-        pollingWorkItem = newPollItem
+        delayedWorkItem = newPollItem
 
         DispatchQueue.main.asyncAfter(deadline: .now() + interval, execute: newPollItem)
     }
 
     func stop() {
-        pollingWorkItem?.cancel()
+        delayedWorkItem?.cancel()
     }
 }

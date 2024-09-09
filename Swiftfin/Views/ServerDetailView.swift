@@ -46,7 +46,7 @@ struct EditServerView: View {
                 )
 
                 Picker(L10n.url, selection: $currentServerURL) {
-                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                    ForEach(viewModel.server.urls.sorted(using: \.absoluteString), id: \.self) { url in
                         Text(url.absoluteString)
                             .tag(url)
                             .foregroundColor(.secondary)

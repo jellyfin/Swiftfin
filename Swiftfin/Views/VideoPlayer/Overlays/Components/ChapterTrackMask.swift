@@ -12,7 +12,7 @@ import SwiftUI
 extension VideoPlayer.Overlay {
 
     // TODO: rename `ChapterTrackMask`
-    struct ChapterTrack: View {
+    struct ChapterTrackMask: View {
 
 //        @EnvironmentObject
 //        private var viewModel: VideoPlayerViewModel

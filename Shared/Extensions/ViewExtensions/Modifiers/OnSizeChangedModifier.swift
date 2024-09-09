@@ -21,21 +21,3 @@ struct OnSizeChangedModifier<Wrapped: View>: ViewModifier {
             .trackingSize($size)
     }
 }
-
-struct EnvironmentModifier<Wrapped: View, Value>: ViewModifier {
-
-    @Environment
-    var environmentValue: Value
-
-    @ViewBuilder
-    var wrapped: (Value) -> Wrapped
-
-    init(_ keyPath: KeyPath<EnvironmentValues, Value>, @ViewBuilder wrapped: @escaping (Value) -> Wrapped) {
-        self._environmentValue = Environment(keyPath)
-        self.wrapped = wrapped
-    }
-
-    func body(content: Content) -> some View {
-        wrapped(environmentValue)
-    }
-}

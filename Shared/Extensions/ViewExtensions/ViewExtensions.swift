@@ -148,7 +148,7 @@ extension View {
         shadow(radius: 4, y: 2)
     }
 
-    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner = .allCorners) -> some View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
         clipShape(RoundedCorner(radius: radius, corners: corners))
     }
 

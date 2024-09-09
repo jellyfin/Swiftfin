@@ -26,7 +26,7 @@ extension LiveVideoPlayer.Overlay {
         @EnvironmentObject
         private var currentProgressHandler: LiveVideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
-        private var overlayTimer: PollingTimer
+        private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
         private var videoPlayerManager: LiveVideoPlayerManager
         @EnvironmentObject
@@ -83,7 +83,7 @@ extension LiveVideoPlayer.Overlay {
                         if isEditing {
                             overlayTimer.pause()
                         } else {
-                            overlayTimer.poll()
+                            overlayTimer.delay()
                         }
                     }
                     .focused($isBarFocused)

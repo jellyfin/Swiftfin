@@ -165,7 +165,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
                 videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: increase playback speed
@@ -185,7 +185,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
                 videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: reset playback speed
@@ -200,7 +200,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
                 videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: next item

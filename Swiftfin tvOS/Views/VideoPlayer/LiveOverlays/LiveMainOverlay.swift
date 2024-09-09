@@ -26,7 +26,7 @@ extension LiveVideoPlayer {
         @EnvironmentObject
         private var currentProgressHandler: LiveVideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
-        private var overlayTimer: PollingTimer
+        private var overlayTimer: DelayIntervalTimer
 
         var body: some View {
             VStack {

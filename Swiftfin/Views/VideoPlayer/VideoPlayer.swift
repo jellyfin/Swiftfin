@@ -114,7 +114,7 @@ struct VideoPlayer: View {
                     }
                 }
 
-            VideoPlayer.MainOverlay()
+            MainOverlay()
                 .environment(\.safeAreaInsets, $safeAreaInsets)
         }
         .environment(\.isAspectFilled, $isAspectFilled)
@@ -227,17 +227,17 @@ extension VideoPlayer {
     }
 }
 
-struct VideoPlayer_Previews: PreviewProvider {
-    static var previews: some View {
-        VideoPlayer(
-            item: .init(
-                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
-                mediaSource: .init(),
-                playSessionID: "",
-                url: URL(string: "/")!
-            )
-        )
-        .previewInterfaceOrientation(.landscapeLeft)
-        .preferredColorScheme(.dark)
-    }
-}
+// struct VideoPlayer_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoPlayer(
+//            item: .init(
+//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
+//                mediaSource: .init(),
+//                playSessionID: "",
+//                url: URL(string: "/")!
+//            )
+//        )
+//        .previewInterfaceOrientation(.landscapeLeft)
+//        .preferredColorScheme(.dark)
+//    }
+// }

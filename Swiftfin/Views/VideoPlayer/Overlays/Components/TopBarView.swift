@@ -6,41 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
-import Stinsen
 import SwiftUI
-import VLCUI
-
-struct TopBarTitleView: View {
-
-    @State
-    private var contentSize: CGSize = .zero
-
-    let item: BaseItemDto
-
-    @ViewBuilder
-    private var subtitle: some View {
-        if let subtitle = item.subtitle {
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundColor(.white)
-                .trackingSize($contentSize)
-        }
-    }
-
-    var body: some View {
-        Text(item.displayTitle)
-            .font(.title3)
-            .fontWeight(.bold)
-            .lineLimit(1)
-            .trackingSize($contentSize)
-            .overlay(alignment: .bottomLeading) {
-                subtitle
-                    .offset(y: contentSize.height + 10)
-            }
-    }
-}
 
 extension VideoPlayer.Overlay {
 
@@ -48,25 +15,62 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var manager: VideoPlayerManager
+        @EnvironmentObject
+        private var overlayTimer: DelayIntervalTimer
 
         var body: some View {
             HStack(alignment: .center) {
                 Button("Close", systemImage: "xmark") {
                     manager.send(.stop)
                 }
-                .frame(width: 30, alignment: .leading)
-                .contentShape(Rectangle())
-                .labelStyle(.iconOnly)
-                .buttonStyle(ScalingButtonStyle(scale: 0.8))
 
-                TopBarTitleView(item: manager.item)
+                TitleView(item: manager.item)
 
                 Spacer()
 
-                VideoPlayer.Overlay.BarActionButtons()
-                    .buttonStyle(ScalingButtonStyle(scale: 0.8))
+                BarActionButtons()
             }
-            .font(.system(size: 24))
+            .buttonStyle(.videoPlayerBarButton { isPressed in
+                if isPressed {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.delay()
+                }
+            })
+            .font(.system(size: 20))
+        }
+    }
+}
+
+extension VideoPlayer.Overlay.TopBarView {
+
+    struct TitleView: View {
+
+        @State
+        private var subtitleContentSize: CGSize = .zero
+
+        let item: BaseItemDto
+
+        @ViewBuilder
+        private var subtitle: some View {
+            if let subtitle = item.subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .trackingSize($subtitleContentSize)
+            }
+        }
+
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.system(size: 24))
+                .fontWeight(.bold)
+                .lineLimit(1)
+                .overlay(alignment: .bottomLeading) {
+                    subtitle
+                        .lineLimit(1)
+                        .offset(y: subtitleContentSize.height)
+                }
         }
     }
 }

@@ -10,41 +10,6 @@ import Defaults
 import SwiftUI
 import VLCUI
 
-struct OnPressButtonStyle: ButtonStyle {
-
-    var onPress: (Bool) -> Void
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .onChange(of: configuration.isPressed) { newValue in
-                onPress(newValue)
-            }
-    }
-}
-
-struct BarButtonStyle: ButtonStyle {
-
-    var onPress: (Bool) -> Void
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .labelStyle(.iconOnly)
-            .frame(width: 45, height: 45)
-            .contentShape(Rectangle())
-            .background {
-                if configuration.isPressed {
-                    Circle()
-                        .fill(Color.white)
-                        .opacity(0.5)
-                        .transition(.opacity.animation(.linear(duration: 0.2)))
-                }
-            }
-            .onChange(of: configuration.isPressed) { newValue in
-                onPress(newValue)
-            }
-    }
-}
-
 extension VideoPlayer.Overlay {
 
     struct BarActionButtons: View {
@@ -55,7 +20,7 @@ extension VideoPlayer.Overlay {
         private var menuActionButtons
 
         @EnvironmentObject
-        private var overlayTimer: PollingTimer
+        private var overlayTimer: DelayIntervalTimer
 
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
@@ -99,13 +64,6 @@ extension VideoPlayer.Overlay {
                     menuButtons
                 }
             }
-            .buttonStyle(BarButtonStyle(onPress: { isPressed in
-                if isPressed {
-                    overlayTimer.stop()
-                } else {
-                    overlayTimer.poll()
-                }
-            }))
         }
     }
 }

@@ -33,3 +33,42 @@ extension VideoPlayer {
         }
     }
 }
+
+import VLCUI
+
+struct VideoPlayer_Overlay_Previews: PreviewProvider {
+
+    static var previews: some View {
+        VideoPlayer.Overlay()
+//            .environmentObject(VideoPlayerManager(playbackItem: .init(
+//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
+//                mediaSource: .init(),
+//                playSessionID: "",
+//                url: URL(string: "/")!
+//            )))
+                .environmentObject(VideoPlayerManager(playbackItem: .init(
+                    baseItem: .init(indexNumber: 1, name: "The Bear", parentIndexNumber: 1, runTimeTicks: 10_000_000_000, type: .episode),
+                    mediaSource: .init(),
+                    playSessionID: "",
+                    url: URL(string: "/")!
+                )))
+                .environmentObject(ProgressBox(progress: 0, seconds: 100))
+                .environmentObject(VLCVideoPlayer.Proxy())
+                .environment(\.isScrubbing, .mock(false))
+                .environment(\.isAspectFilled, .mock(false))
+                .environment(\.isPresentingOverlay, .constant(true))
+                .environment(\.playbackSpeed, .constant(1.0))
+                .previewInterfaceOrientation(.landscapeLeft)
+                .preferredColorScheme(.dark)
+    }
+}
+
+extension Binding {
+    static func mock(_ value: Value) -> Self {
+        var value = value
+        return Binding(
+            get: { value },
+            set: { value = $0 }
+        )
+    }
+}

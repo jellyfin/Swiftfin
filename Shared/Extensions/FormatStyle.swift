@@ -61,3 +61,18 @@ struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
         value.description
     }
 }
+
+extension FormatStyle where Self == RateStyle {
+
+    static var rate: RateStyle {
+        RateStyle()
+    }
+}
+
+struct RateStyle: FormatStyle {
+
+    func format(_ value: TimeInterval) -> String {
+        String(format: "%.2f", value)
+            .appending("x")
+    }
+}

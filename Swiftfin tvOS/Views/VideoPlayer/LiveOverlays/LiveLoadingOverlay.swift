@@ -28,7 +28,7 @@ extension LiveVideoPlayer {
 //        private var currentOverlayType: VideoPlayer.OverlayType = .main
 //
 //        @StateObject
-//        private var overlayTimer: PollingTimer = .init()
+//        private var overlayTimer: DelayIntervalTimer = .init()
 //
 //        var body: some View {
 //            ZStack {
@@ -44,7 +44,7 @@ extension LiveVideoPlayer {
 //                if [.smallMenu, .chapters].contains(newValue) {
 //                    overlayTimer.pause()
 //                } else if isPresentingOverlay {
-//                    overlayTimer.poll()
+//                    overlayTimer.delay()
 //                }
 //            }
 //            .onChange(of: overlayTimer.isActive) { _, isActive in
@@ -57,11 +57,11 @@ extension LiveVideoPlayer {
 //            .onSelectPressed {
 //                currentOverlayType = .main
 //                isPresentingOverlay = true
-//                overlayTimer.poll()
+//                overlayTimer.delay()
 //            }
 //            .onMenuPressed {
 //
-//                overlayTimer.poll()
+//                overlayTimer.delay()
 //                confirmCloseWorkItem?.cancel()
 //
 //                if isPresentingOverlay && currentOverlayType == .confirmClose {

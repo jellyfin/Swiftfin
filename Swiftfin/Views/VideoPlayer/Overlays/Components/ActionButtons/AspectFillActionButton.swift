@@ -18,9 +18,6 @@ extension VideoPlayer.Overlay.ActionButtons {
         @Binding
         private var isAspectFilled: Bool
 
-        @EnvironmentObject
-        private var overlayTimer: PollingTimer
-
         private var systemImage: String {
             if isAspectFilled {
                 "arrow.down.right.and.arrow.up.left"
@@ -35,7 +32,6 @@ extension VideoPlayer.Overlay.ActionButtons {
                 systemImage: systemImage
             ) {
                 isAspectFilled.toggle()
-                overlayTimer.poll()
             }
             .transition(.scale.animation(.bouncy))
             .id(isAspectFilled)

@@ -32,12 +32,9 @@ extension VideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-//        @Environment(\.scrubbingProgress)
-//        @Binding
-//        private var scrubbedProgress: ProgressBox
 
         @EnvironmentObject
-        private var overlayTimer: PollingTimer
+        private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
         private var manager: VideoPlayerManager
 

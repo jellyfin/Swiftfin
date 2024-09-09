@@ -50,7 +50,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         videoPlayerProxy.avPlayer = player
 
         if let playbackItem = manager.playbackItem {
-            playNew(playbackItem: manager.playbackItem)
+            playNew(playbackItem: playbackItem)
         }
 
         managerEventObserver = manager.events

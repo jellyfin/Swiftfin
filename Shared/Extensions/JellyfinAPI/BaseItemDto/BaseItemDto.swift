@@ -39,6 +39,7 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
+    // TODO: convert to TimeInterval
     var runTimeSeconds: Int {
         let playbackPositionTicks = runTimeTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)
@@ -49,6 +50,7 @@ extension BaseItemDto {
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
+    // TODO: convert to TimeInterval
     var startTimeSeconds: Int {
         let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)

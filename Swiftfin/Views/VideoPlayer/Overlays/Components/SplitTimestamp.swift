@@ -13,8 +13,6 @@ extension VideoPlayer.Overlay {
 
     struct SplitTimeStamp: View {
 
-//        @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
-//        private var showCurrentTimeWhileScrubbing
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
 
@@ -57,15 +55,15 @@ extension VideoPlayer.Overlay {
                     .foregroundStyle(.secondary)
                 }
 
-                switch trailingTimestampType {
-                case .timeLeft:
-                    Text(manager.item.runTimeSeconds - scrubbedProgress.seconds, format: .runtime(negate: true))
-                        .foregroundStyle(.primary)
-
-                case .totalTime:
-                    Text(manager.item.runTimeSeconds, format: .runtime)
-                        .foregroundStyle(.primary)
+                Group {
+                    switch trailingTimestampType {
+                    case .timeLeft:
+                        Text(manager.item.runTimeSeconds - scrubbedProgress.seconds, format: .runtime(negate: true))
+                    case .totalTime:
+                        Text(manager.item.runTimeSeconds, format: .runtime)
+                    }
                 }
+                .foregroundStyle(.primary)
             }
         }
 
@@ -92,17 +90,4 @@ extension VideoPlayer.Overlay {
             .foregroundStyle(.primary, .secondary)
         }
     }
-}
-
-#Preview {
-    VideoPlayer.Overlay.SplitTimeStamp()
-        .environmentObject(VideoPlayerManager(playbackItem: .init(
-            baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
-            mediaSource: .init(),
-            playSessionID: "",
-            url: URL(string: "/")!
-        )))
-        .environmentObject(ProgressBox(progress: 0, seconds: 100))
-        .environment(\.isScrubbing, .constant(true))
-        .preferredColorScheme(.dark)
 }
