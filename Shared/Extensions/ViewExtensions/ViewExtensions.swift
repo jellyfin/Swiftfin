@@ -339,6 +339,10 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
+    func pulse(_ isPulsing: Binding<Bool> = .constant(true)) -> some View {
+        modifier(PulseViewModifier(isPulsing: isPulsing))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim

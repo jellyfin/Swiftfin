@@ -18,22 +18,6 @@ struct OpacityLinearGradient: View {
         self.stops = stops()
     }
 
-//    private var convertedStops: [Gradient.Stop] {
-//        stops.map { stop in
-//            if stop.opacity == 0.0 {
-//                return Gradient.Stop(
-//                    color: Color.clear,
-//                    location: stop.location
-//                )
-//            } else {
-//                return Gradient.Stop(
-//                    color: Color.black.opacity(stop.opacity),
-//                    location: stop.location
-//                )
-//            }
-//        }
-//    }
-
     var body: some View {
         Rectangle()
             .mask {

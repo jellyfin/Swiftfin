@@ -21,7 +21,7 @@ struct GeometryPrefenceKey: PreferenceKey {
         let safeAreaInsets: EdgeInsets
     }
 
-    static var defaultValue: Value = Value(size: .zero, safeAreaInsets: .init(top: 0, leading: 0, bottom: 0, trailing: 0))
+    static var defaultValue: Value = Value(size: .zero, safeAreaInsets: .zero)
     static func reduce(value: inout Value, nextValue: () -> Value) {}
 }
 

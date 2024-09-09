@@ -404,14 +404,10 @@ struct SelectUserView: View {
                 VStack(spacing: 0) {
                     Color.white
 
-                    LinearGradient(
-                        stops: [
-                            .init(color: .white, location: 0),
-                            .init(color: .clear, location: 1),
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
+                    OpacityLinearGradient {
+                        (location: 0, opacity: 1)
+                        (location: 1, opacity: 0)
+                    }
                     .frame(height: 30)
                 }
             }
