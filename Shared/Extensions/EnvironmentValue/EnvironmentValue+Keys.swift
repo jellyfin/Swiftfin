@@ -59,4 +59,8 @@ extension EnvironmentValues {
     struct IsPresentingOverlayKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
+
+    struct IsPresentingDrawerKey: EnvironmentKey {
+        static let defaultValue: Binding<Bool> = .constant(false)
+    }
 }

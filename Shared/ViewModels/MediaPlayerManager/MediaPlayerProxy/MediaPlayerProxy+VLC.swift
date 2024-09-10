@@ -9,7 +9,7 @@
 import Foundation
 import VLCUI
 
-class VLCVideoPlayerProxy: VideoPlayerProxy {
+class VLCVideoPlayerProxy: MediaPlayerProxy {
 
     weak var vlcUIProxy: VLCVideoPlayer.Proxy?
 
@@ -39,5 +39,5 @@ class VLCVideoPlayerProxy: VideoPlayerProxy {
 
     func stop() {}
 
-    func play(item: VideoPlayerPlaybackItem) {}
+    func play(item: MediaPlayerItem) {}
 }

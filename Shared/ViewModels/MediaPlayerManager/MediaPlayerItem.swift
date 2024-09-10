@@ -13,12 +13,6 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-// struct ProgressBox {
-//
-//    var progress: CGFloat
-//    var seconds: Int
-// }
-
 class ProgressBox: ObservableObject {
 
     @Published
@@ -32,9 +26,7 @@ class ProgressBox: ObservableObject {
     }
 }
 
-// TODO: register metadata with now playing
-
-class VideoPlayerPlaybackItem: ViewModel {
+class MediaPlayerItem: ViewModel {
 
     let baseItem: BaseItemDto
     let chapters: [ChapterInfo.FullInfo]
@@ -45,6 +37,7 @@ class VideoPlayerPlaybackItem: ViewModel {
     let audioStreams: [MediaStream]
     let subtitleStreams: [MediaStream]
     let videoStreams: [MediaStream]
+
     let vlcConfiguration: VLCVideoPlayer.Configuration
 
     // MARK: init
@@ -92,17 +85,9 @@ class VideoPlayerPlaybackItem: ViewModel {
         vlcConfiguration = configuration
     }
 
-    // MARK: stateDidChange
-
-    func stateDidChange(newState: VideoPlayerManager.State) {}
-
-    // MARK: playbackTimeDidChange
-
-    func playbackTimeDidChange(newSeconds: Int) {}
-
     // MARK: build
 
-    static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> VideoPlayerPlaybackItem {
+    static func build(for item: BaseItemDto, mediaSource: MediaSourceInfo) async throws -> MediaPlayerItem {
 
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
         let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
@@ -167,7 +152,7 @@ class VideoPlayerPlaybackItem: ViewModel {
             playbackURL = streamURL
         }
 
-        return VideoPlayerPlaybackItem(
+        return .init(
             baseItem: item,
             mediaSource: matchingMediaSource,
             playSessionID: playSessionID,

@@ -9,7 +9,7 @@
 import AVFoundation
 import Foundation
 
-class AVPlayerVideoPlayerProxy: VideoPlayerProxy {
+class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
 
     weak var avPlayer: AVPlayer?
 
@@ -46,5 +46,5 @@ class AVPlayerVideoPlayerProxy: VideoPlayerProxy {
         avPlayer?.pause()
     }
 
-    func play(item: VideoPlayerPlaybackItem) {}
+    func play(item: MediaPlayerItem) {}
 }

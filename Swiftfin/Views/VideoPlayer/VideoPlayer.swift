@@ -13,16 +13,10 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
-// TODO: organize
 // TODO: localization necessary for toast text?
 // TODO: entire gesture layer should be separate
 
 struct VideoPlayer: View {
-
-    @Default(.VideoPlayer.jumpBackwardLength)
-    private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
-    private var jumpForwardLength
 
     @Default(.VideoPlayer.Subtitle.subtitleColor)
     private var subtitleColor
@@ -41,6 +35,8 @@ struct VideoPlayer: View {
     @State
     private var isGestureLocked: Bool = false
     @State
+    private var isPresentingDrawer = false
+    @State
     private var isPresentingOverlay: Bool = true
     @State
     private var isScrubbing: Bool = false
@@ -57,12 +53,9 @@ struct VideoPlayer: View {
     private var scrubbedProgress: ProgressBox = .init()
 
     @StateObject
-    private var manager: VideoPlayerManager
+    private var manager: MediaPlayerManager
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
-
-    // TODO: create general toast manager and inject into environment
-    private let updateViewProxy: UpdateViewProxy = .init()
 
     // MARK: playerView
 
@@ -198,7 +191,7 @@ extension VideoPlayer {
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
 
-        let manager = VideoPlayerManager(item: item, mediaSource: mediaSource)
+        let manager = MediaPlayerManager(item: item, mediaSource: mediaSource)
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
 
@@ -211,9 +204,9 @@ extension VideoPlayer {
         )
     }
 
-    init(item: VideoPlayerPlaybackItem) {
+    init(item: MediaPlayerItem) {
 
-        let manager = VideoPlayerManager(playbackItem: item)
+        let manager = MediaPlayerManager(playbackItem: item)
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
 

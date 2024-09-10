@@ -11,7 +11,8 @@ import JellyfinAPI
 
 extension MediaViewModel {
 
-    enum MediaType: Displayable, Hashable {
+    indirect enum MediaType: Displayable, Hashable {
+
         case collectionFolder(BaseItemDto)
         case downloads
         case favorites

@@ -15,14 +15,14 @@ struct NativeVideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @StateObject
-    private var manager: VideoPlayerManager
+    private var manager: MediaPlayerManager
 
     init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-        self._manager = StateObject(wrappedValue: VideoPlayerManager(item: item, mediaSource: mediaSource))
+        self._manager = StateObject(wrappedValue: MediaPlayerManager(item: item, mediaSource: mediaSource))
     }
 
-    init(item: VideoPlayerPlaybackItem) {
-        self._manager = StateObject(wrappedValue: VideoPlayerManager(playbackItem: item))
+    init(item: MediaPlayerItem) {
+        self._manager = StateObject(wrappedValue: MediaPlayerManager(playbackItem: item))
     }
 
     var body: some View {
@@ -35,7 +35,7 @@ struct NativeVideoPlayer: View {
 
 struct NativeVideoPlayerView: UIViewControllerRepresentable {
 
-    let manager: VideoPlayerManager
+    let manager: MediaPlayerManager
 
     func makeUIViewController(context: Context) -> UINativeVideoPlayerViewController {
         UINativeVideoPlayerViewController(manager: manager)

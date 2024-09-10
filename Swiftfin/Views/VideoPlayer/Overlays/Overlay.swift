@@ -24,6 +24,7 @@ extension VideoPlayer {
 //                ChapterOverlay()
 //                    .visible(currentOverlayType == .chapters)
             }
+
 //            .animation(.linear(duration: 0.1), value: currentOverlayType)
 //            .environment(\.currentOverlayType, $currentOverlayType)
 //            .onChange(of: isPresentingOverlay) { newValue in
@@ -46,7 +47,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
 //                playSessionID: "",
 //                url: URL(string: "/")!
 //            )))
-                .environmentObject(VideoPlayerManager(playbackItem: .init(
+                .environmentObject(MediaPlayerManager(playbackItem: .init(
                     baseItem: .init(indexNumber: 1, name: "The Bear", parentIndexNumber: 1, runTimeTicks: 10_000_000_000, type: .episode),
                     mediaSource: .init(),
                     playSessionID: "",
@@ -58,6 +59,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
                 .environment(\.isAspectFilled, .mock(false))
                 .environment(\.isPresentingOverlay, .constant(true))
                 .environment(\.playbackSpeed, .constant(1.0))
+                .environment(\.isPresentingDrawer, .mock(false))
                 .previewInterfaceOrientation(.landscapeLeft)
                 .preferredColorScheme(.dark)
     }

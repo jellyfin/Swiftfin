@@ -10,6 +10,11 @@ import SwiftUI
 
 extension EnvironmentValues {
 
+    var isPresentingDrawer: Binding<Bool> {
+        get { self[IsPresentingDrawerKey.self] }
+        set { self[IsPresentingDrawerKey.self] = newValue }
+    }
+
     var accentColor: Binding<Color> {
         get { self[AccentColor.self] }
         set { self[AccentColor.self] = newValue }

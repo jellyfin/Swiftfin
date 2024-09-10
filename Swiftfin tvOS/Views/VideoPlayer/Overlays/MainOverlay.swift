@@ -24,7 +24,7 @@ extension VideoPlayer {
 //        private var isScrubbing: Bool
 
 //        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+//        private var currentProgressHandler: MediaPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
 

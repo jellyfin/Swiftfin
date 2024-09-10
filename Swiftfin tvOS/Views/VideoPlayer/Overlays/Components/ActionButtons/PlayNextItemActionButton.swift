@@ -15,7 +15,7 @@ extension VideoPlayer.Overlay.ActionButtons {
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var videoPlayerManager: MediaPlayerManager
 
         var body: some View {
             SFSymbolButton(systemName: "chevron.right.circle")

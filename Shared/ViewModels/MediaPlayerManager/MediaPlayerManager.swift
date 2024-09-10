@@ -22,20 +22,17 @@ import VLCUI
 // TODO: should view models handle progress reports instead, with a protocol
 //       for other types of media handling
 
-protocol VideoPlayerListener {
-    func stateDidChange(newState: VideoPlayerManager.State)
+protocol MediaPlayerListener {
+    func stateDidChange(newState: MediaPlayerManager.State)
     func playbackTimeDidChange(newSeconds: Int)
 }
 
-// TODO: transition to `Stateful`
-// TODO: make `Eventful`
-//       - didEndQueue
 // TODO: queue provider
-class VideoPlayerManager: ViewModel, Eventful, Stateful {
+class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     enum Event {
         case playbackStopped
-        case playNew(playbackItem: VideoPlayerPlaybackItem)
+        case playNew(playbackItem: MediaPlayerItem)
     }
 
     enum Action: Equatable {
@@ -68,7 +65,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
     var nowPlayable: NowPlayable
 
     @Published
-    private(set) var playbackItem: VideoPlayerPlaybackItem! = nil
+    private(set) var playbackItem: MediaPlayerItem! = nil
 //    {
 //        didSet {
 //            guard let playbackItem else { return }
@@ -78,7 +75,6 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     private(set) var item: BaseItemDto
-
     @Published
     private(set) var progress: ProgressBox = .init(progress: 0, seconds: 0)
     @Published
@@ -100,12 +96,14 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
 
     // proxy for the underlying video playing layer
-    var proxy: VideoPlayerProxy!
+    var proxy: MediaPlayerProxy!
     var itemBuildTask: AnyCancellable?
+
+    var listeners: [any MediaPlayerListener] = []
 
     // MARK: init
 
-    // TODO: rename to `baseItem`
+    // TODO: remove?
     init(
         item: BaseItemDto,
         mediaSource: MediaSourceInfo
@@ -117,7 +115,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
         queue.append(item)
     }
 
-    init(playbackItem: VideoPlayerPlaybackItem) {
+    init(playbackItem: MediaPlayerItem) {
         item = playbackItem.baseItem
         super.init()
 
@@ -170,12 +168,12 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
                     self?.state = .loadingItem
                 }
 
-                let playbackItem = try await VideoPlayerPlaybackItem.build(
+                let playbackItem = try await MediaPlayerItem.build(
                     for: item,
                     mediaSource: mediaSource
                 )
 
-                try await Task.sleep(nanoseconds: 3_000_000_000)
+//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 guard let self else { return }
 
@@ -198,7 +196,7 @@ class VideoPlayerManager: ViewModel, Eventful, Stateful {
 
 // MARK: OLD
 
-extension VideoPlayerManager {
+extension MediaPlayerManager {
 //
 //    class CurrentProgressHandler: ObservableObject {
 //
@@ -239,8 +237,7 @@ extension VideoPlayerManager {
 
     // MARK: onTicksUpdated
 
-    func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-
+//    func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
 //        if audioTrackIndex != playbackInformation.currentAudioTrack.index {
 //            audioTrackIndex = playbackInformation.currentAudioTrack.index
 //        }
@@ -257,11 +254,11 @@ extension VideoPlayerManager {
 //                duration: Float(currentViewModel.item.runTimeSeconds)
 //            )
 //        )
-    }
+//    }
 
     // MARK: onStateUpdated
 
-    func onStateUpdated(newState: VLCVideoPlayer.State) {
+//    func onStateUpdated(newState: VLCVideoPlayer.State) {
 //        guard state != newState else { return }
 //        state = newState
 
@@ -282,7 +279,7 @@ extension VideoPlayerManager {
 //        if newState == .stopped || newState == .ended {
 //            sendStopReport()
 //        }
-    }
+//    }
 
 //    func getAdjacentEpisodes(for item: BaseItemDto) {
 //        Task { @MainActor in

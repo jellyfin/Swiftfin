@@ -8,9 +8,9 @@
 
 import Foundation
 
-// Currently, only reflects commands that happen
-// through implements NowPlayableCommands
-protocol VideoPlayerProxy {
+/// The proxy for top-down communication to an
+/// underlying media player
+protocol MediaPlayerProxy {
 
     func play()
     func pause()
@@ -21,5 +21,5 @@ protocol VideoPlayerProxy {
 
     func stop()
 
-    func play(item: VideoPlayerPlaybackItem)
+    func play(item: MediaPlayerItem)
 }

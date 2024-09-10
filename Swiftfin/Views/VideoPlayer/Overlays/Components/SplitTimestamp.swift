@@ -21,7 +21,7 @@ extension VideoPlayer.Overlay {
         private var isScrubbing: Bool
 
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
         @EnvironmentObject
         private var scrubbedProgress: ProgressBox
 

@@ -19,7 +19,7 @@ extension VideoPlayer.Overlay {
 //        private var currentOverlayType
 
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
 
         @ViewBuilder
         private var autoPlayButton: some View {

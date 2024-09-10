@@ -17,10 +17,6 @@ extension VideoPlayer.Overlay {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-        @Default(.VideoPlayer.jumpBackwardLength)
-        private var jumpBackwardLength
-        @Default(.VideoPlayer.jumpForwardLength)
-        private var jumpForwardLength
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
         @Default(.VideoPlayer.Overlay.sliderType)
@@ -28,15 +24,20 @@ extension VideoPlayer.Overlay {
 
         @Environment(\.isPresentingOverlay)
         @Binding
-        private var isPresentingOverlay
+        private var isPresentingOverlay: Bool
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
 
+//        @Environment(\.isPresentingDrawer)
+//        @Binding
+        @State
+        private var isPresentingDrawer: Bool = false
+
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
 
         @EnvironmentObject
         private var scrubbedProgress: ProgressBox
@@ -50,14 +51,6 @@ extension VideoPlayer.Overlay {
         private var capsuleSlider: some View {
             CapsuleSlider(progress: $scrubbedProgress.progress)
                 .isEditing(_isScrubbing.wrappedValue)
-//                .trackMask {
-//                    if chapterSlider && viewModel.chapters.isNotEmpty {
-//                        ChapterTrack()
-//                            .clipShape(Capsule())
-//                    } else {
-//                        Color.white
-//                    }
-//                }
                 .bottomContent {
                     SplitTimeStamp()
                         .padding(5)
@@ -76,14 +69,6 @@ extension VideoPlayer.Overlay {
         private var thumbSlider: some View {
             ThumbSlider(progress: $scrubbedProgress.progress)
                 .isEditing(_isScrubbing.wrappedValue)
-                .trackMask {
-//                    if chapterSlider && viewModel.chapters.isNotEmpty {
-//                        ChapterTrack()
-//                            .clipShape(Capsule())
-//                    } else {
-//                        Color.white
-//                    }
-                }
                 .bottomContent {
                     SplitTimeStamp()
                         .padding(5)
@@ -98,17 +83,30 @@ extension VideoPlayer.Overlay {
         }
 
         var body: some View {
-            VStack(spacing: 0) {
-
-                Group {
-                    switch sliderType {
-                    case .capsule: capsuleSlider
-                    case .thumb: thumbSlider
+            VStack(alignment: .leading, spacing: 0) {
+                if !isPresentingDrawer {
+                    Group {
+                        switch sliderType {
+                        case .capsule: capsuleSlider
+                        case .thumb: thumbSlider
+                        }
                     }
+                    .transition(.move(edge: .top).combined(with: .opacity))
                 }
-                .disabled(manager.state == .loadingItem)
-//                .debugBackground(.blue)
-//                .pulse($pulse)
+
+                DrawerSectionView(selectedDrawerSection: .mock(-1))
+                    .environment(\.isPresentingDrawer, $isPresentingDrawer)
+
+                if isPresentingDrawer {
+                    Color.red
+                        .frame(height: 100)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
+            .disabled(manager.state == .loadingItem)
+            .onChange(of: isPresentingDrawer) { newValue in
+                print("drawer:", newValue)
             }
 //            .onChange(of: manager.state) { newValue in
 //                pulse = newValue == .loadingItem

@@ -14,7 +14,7 @@ extension VideoPlayer.Overlay {
     struct TopBarView: View {
 
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
 

@@ -33,7 +33,7 @@ import VLCUI
 //        }
 //
 //        @EnvironmentObject
-//        private var videoPlayerManager: VideoPlayerManager
+//        private var videoPlayerManager: MediaPlayerManager
 //        @EnvironmentObject
 //        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 //        @EnvironmentObject
@@ -58,7 +58,7 @@ import VLCUI
 //                    } label: {
 //                        Label(
 //                            mediaStream.displayTitle ?? L10n.noTitle,
-//                            systemImage: videoPlayerManager.subtitleTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
+//                            systemImage: MediaPlayerManager.subtitleTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
 //                        )
 //                    }
 //                }
@@ -76,7 +76,7 @@ import VLCUI
 //                    } label: {
 //                        Label(
 //                            mediaStream.displayTitle ?? L10n.noTitle,
-//                            systemImage: videoPlayerManager.audioTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
+//                            systemImage: MediaPlayerManager.audioTrackIndex == mediaStream.index ? "checkmark.circle.fill" : "circle"
 //                        )
 //                    }
 //                }

@@ -37,7 +37,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
     private var isAspectFilled
 
     @EnvironmentObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: MediaPlayerManager
     @EnvironmentObject
     private var videoPlayerProxy: VLCVideoPlayer.Proxy
 

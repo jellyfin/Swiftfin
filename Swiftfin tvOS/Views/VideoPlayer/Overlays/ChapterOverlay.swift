@@ -18,11 +18,11 @@ import VLCUI
 //        private var currentOverlayType
 //
 //        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+//        private var currentProgressHandler: MediaPlayerManager.CurrentProgressHandler
 //        @EnvironmentObject
 //        private var overlayTimer: DelayIntervalTimer
 //        @EnvironmentObject
-//        private var videoPlayerManager: VideoPlayerManager
+//        private var videoPlayerManager: MediaPlayerManager
 //        @EnvironmentObject
 //        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 //        @EnvironmentObject

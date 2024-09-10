@@ -14,7 +14,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct PlaybackSpeedMenu: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var videoPlayerManager: MediaPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
@@ -23,9 +23,11 @@ extension VideoPlayer.Overlay.ActionButtons {
                 L10n.playbackSpeed,
                 systemImage: "speedometer"
             ) {
-                Button("Test") {}
-                Button("Test") {}
-                Button("Test") {}
+                Section(L10n.playbackSpeed) {
+                    Button("Test") {}
+                    Button("Test") {}
+                    Button("Test") {}
+                }
             }
 
 //            Menu {

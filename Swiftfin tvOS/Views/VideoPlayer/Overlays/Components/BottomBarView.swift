@@ -24,11 +24,11 @@ extension VideoPlayer.Overlay {
         private var isScrubbing: Bool
 
 //        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+//        private var currentProgressHandler: MediaPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
 //        @EnvironmentObject
 //        private var viewModel: VideoPlayerViewModel
 

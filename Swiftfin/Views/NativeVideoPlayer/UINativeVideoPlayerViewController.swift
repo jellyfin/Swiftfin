@@ -14,14 +14,14 @@ import SwiftUI
 
 class UINativeVideoPlayerViewController: AVPlayerViewController {
 
-    private let manager: VideoPlayerManager
+    private let manager: MediaPlayerManager
     private let proxy: AVPlayerVideoPlayerProxy
 
     private var managerEventObserver: AnyCancellable!
     private var rateObserver: NSKeyValueObservation!
     private var timeObserver: Any!
 
-    init(manager: VideoPlayerManager) {
+    init(manager: MediaPlayerManager) {
 
         let videoPlayerProxy = AVPlayerVideoPlayerProxy()
         manager.proxy = videoPlayerProxy
@@ -78,7 +78,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         player?.removeTimeObserver(timeObserver)
     }
 
-    private func playNew(playbackItem: VideoPlayerPlaybackItem) {
+    private func playNew(playbackItem: MediaPlayerItem) {
 
         let newAVPlayerItem = AVPlayerItem(url: playbackItem.url)
 

@@ -15,7 +15,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct Audio: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var videoPlayerManager: MediaPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
 //        @EnvironmentObject
@@ -31,13 +31,14 @@ extension VideoPlayer.Overlay.ActionButtons {
 
         var body: some View {
             Menu(
-                "Audio",
+                L10n.audio,
                 systemImage: systemImage
             ) {
-
-                Button("Test") {}
-                Button("Test") {}
-                Button("Test") {}
+                Section(L10n.audio) {
+                    Button("Test") {}
+                    Button("Test") {}
+                    Button("Test") {}
+                }
 
 //                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
 //                    Button {

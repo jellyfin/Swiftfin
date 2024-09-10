@@ -24,7 +24,7 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var timerProxy: DelayIntervalTimer
         @EnvironmentObject
-        private var manager: VideoPlayerManager
+        private var manager: MediaPlayerManager
         @EnvironmentObject
         private var vlcUIProxy: VLCVideoPlayer.Proxy
 

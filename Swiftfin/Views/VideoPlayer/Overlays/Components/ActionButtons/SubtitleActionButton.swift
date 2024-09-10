@@ -15,7 +15,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct Subtitles: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var videoPlayerManager: MediaPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
 //        @EnvironmentObject
@@ -34,9 +34,11 @@ extension VideoPlayer.Overlay.ActionButtons {
                 L10n.subtitles,
                 systemImage: systemImage
             ) {
-                Button("Test") {}
-                Button("Test") {}
-                Button("Test") {}
+                Section(L10n.subtitles) {
+                    Button("Test") {}
+                    Button("Test") {}
+                    Button("Test") {}
+                }
             }
 //            Menu {
 //                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in

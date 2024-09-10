@@ -84,7 +84,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-//    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+//    func makeVideoPlayer(manager: MediaPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
 //        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
 //    }
     #endif

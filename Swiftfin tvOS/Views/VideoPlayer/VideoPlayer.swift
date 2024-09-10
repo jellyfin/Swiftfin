@@ -29,9 +29,9 @@ struct VideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
 //    @ObservedObject
-//    private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+//    private var currentProgressHandler: MediaPlayerManager.CurrentProgressHandler
     @StateObject
-    private var manager: VideoPlayerManager
+    private var manager: MediaPlayerManager
     @StateObject
     private var scrubbedProgress: ProgressBox = .init()
 
@@ -137,7 +137,7 @@ extension VideoPlayer {
         )
     }
 
-    init(item: VideoPlayerPlaybackItem) {
+    init(item: MediaPlayerItem) {
 
         let manager = VideoPlayerManager(playbackItem: item)
         let videoPlayerProxy = VLCVideoPlayerProxy()
