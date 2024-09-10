@@ -7,16 +7,19 @@
 //
 
 import Defaults
+import JellyfinAPI
+import MediaPlayer
+import Stinsen
 import SwiftUI
 import VLCUI
 
 struct VideoPlayer: View {
 
     enum OverlayType {
-        case chapters
+//        case chapters
         case confirmClose
         case main
-        case smallMenu
+//        case smallMenu
     }
 
     @Environment(\.scenePhase)
@@ -25,10 +28,12 @@ struct VideoPlayer: View {
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
-    @ObservedObject
-    private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-    @ObservedObject
-    private var videoPlayerManager: VideoPlayerManager
+//    @ObservedObject
+//    private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+    @StateObject
+    private var manager: VideoPlayerManager
+    @StateObject
+    private var scrubbedProgress: ProgressBox = .init()
 
     @State
     private var isPresentingOverlay: Bool = false
@@ -41,50 +46,52 @@ struct VideoPlayer: View {
     @ViewBuilder
     private var playerView: some View {
         ZStack {
-            VLCVideoPlayer(configuration: videoPlayerManager.currentViewModel.vlcVideoPlayerConfiguration)
-                .proxy(vlcUIProxy)
-                .onTicksUpdated { ticks, _ in
 
-                    let newSeconds = ticks / 1000
-                    let newProgress = CGFloat(newSeconds) / CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds)
-                    currentProgressHandler.progress = newProgress
-                    currentProgressHandler.seconds = newSeconds
+            Color.black
 
-                    guard !isScrubbing else { return }
-                    currentProgressHandler.scrubbedProgress = newProgress
-                }
-                .onStateUpdated { state, _ in
+            if let playbackitem = manager.playbackItem {
+                VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
+                    .proxy(vlcUIProxy)
+                    .onTicksUpdated { ticks, _ in
 
-                    videoPlayerManager.onStateUpdated(newState: state)
+                        guard manager.state != .initial || manager.state != .loadingItem else { return }
 
-//                    if state == .ended {
-//                        if let _ = videoPlayerManager.nextViewModel,
-//                           Defaults[.VideoPlayer.autoPlayEnabled]
-//                        {
-//                            videoPlayerManager.selectNextViewModel()
-//                        } else {
-//                            router.dismissCoordinator()
-//                        }
-//                    }
-                }
+                        let newSeconds = ticks / 1000
+                        let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
 
-            VideoPlayer.Overlay()
-                .eraseToAnyView()
-                .environmentObject(videoPlayerManager)
-                .environmentObject(videoPlayerManager.currentProgressHandler)
-                .environmentObject(videoPlayerManager.currentViewModel!)
-                .environmentObject(vlcUIProxy)
-                .environment(\.isPresentingOverlay, $isPresentingOverlay)
-                .environment(\.isScrubbing, $isScrubbing)
-        }
-        .onChange(of: videoPlayerManager.currentProgressHandler.scrubbedProgress) { _, newValue in
-            guard !newValue.isNaN && !newValue.isInfinite else {
-                return
+                        if !isScrubbing {
+                            scrubbedProgress.progress = newProgress
+                        }
+
+                        manager.send(.seek(seconds: newSeconds))
+                    }
+                    .onStateUpdated { state, _ in
+                        switch state {
+                        case .buffering, .esAdded, .opening:
+                            manager.send(.buffer)
+                        case .ended, .stopped:
+                            isScrubbing = false
+                            manager.send(.ended)
+                        case .error:
+                            // TODO: localize
+                            isScrubbing = false
+                            manager.send(.error(.init("Unable to perform playback")))
+                        case .playing:
+                            manager.send(.play)
+                        case .paused:
+                            manager.send(.pause)
+                        }
+                    }
             }
-            DispatchQueue.main.async {
-                videoPlayerManager.currentProgressHandler
-                    .scrubbedSeconds = Int(CGFloat(videoPlayerManager.currentViewModel.item.runTimeSeconds) * newValue)
-            }
+
+            Overlay()
+//                .environment(\.isAspectFilled, $isAspectFilled)
+                    .environment(\.isPresentingOverlay, $isPresentingOverlay)
+                    .environment(\.isScrubbing, $isScrubbing)
+//                .environment(\.playbackSpeed, $playbackSpeed)
+                    .environmentObject(manager)
+                    .environmentObject(scrubbedProgress)
+                    .environmentObject(vlcUIProxy)
         }
     }
 
@@ -94,38 +101,30 @@ struct VideoPlayer: View {
     }
 
     var body: some View {
-        ZStack {
-
-            Color.black
-
-            if let _ = videoPlayerManager.currentViewModel {
-                playerView
-            } else {
-                loadingView
-            }
-        }
-        .ignoresSafeArea()
-        .onChange(of: isScrubbing) { _, newValue in
-            guard !newValue else { return }
-            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
-        }
-        .onScenePhase(.active) {
-            if Defaults[.VideoPlayer.Transition.playOnActive] {
-                videoPlayerManager.proxy.play()
-            }
-        }
-        .onScenePhase(.background) {
-            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-                videoPlayerManager.proxy.pause()
-            }
-        }
+        playerView
+            .ignoresSafeArea()
+//        .onChange(of: isScrubbing) { _, newValue in
+//            guard !newValue else { return }
+//            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
+//        }
+//        .onScenePhase(.active) {
+//            if Defaults[.VideoPlayer.Transition.playOnActive] {
+//                videoPlayerManager.proxy.play()
+//            }
+//        }
+//        .onScenePhase(.background) {
+//            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
+//                videoPlayerManager.proxy.pause()
+//            }
+//        }
     }
 }
 
 extension VideoPlayer {
 
-    init(manager: VideoPlayerManager) {
+    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
 
+        let manager = VideoPlayerManager(item: item, mediaSource: mediaSource)
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
 
@@ -133,8 +132,22 @@ extension VideoPlayer {
         manager.proxy = videoPlayerProxy
 
         self.init(
-            currentProgressHandler: manager.currentProgressHandler,
-            videoPlayerManager: manager,
+            manager: manager,
+            vlcUIProxy: vlcUIProxy
+        )
+    }
+
+    init(item: VideoPlayerPlaybackItem) {
+
+        let manager = VideoPlayerManager(playbackItem: item)
+        let videoPlayerProxy = VLCVideoPlayerProxy()
+        let vlcUIProxy = VLCVideoPlayer.Proxy()
+
+        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+        manager.proxy = videoPlayerProxy
+
+        self.init(
+            manager: manager,
             vlcUIProxy: vlcUIProxy
         )
     }

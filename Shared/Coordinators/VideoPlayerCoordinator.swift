@@ -79,10 +79,11 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
             PreferencesView {
-                VideoPlayer(manager: self.videoPlayerManager)
+                VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
             }
         } else {
-            NativeVideoPlayer(manager: self.videoPlayerManager)
+            Color.red
+//            NativeVideoPlayer(manager: self.videoPlayerManager)
         }
         #endif
     }

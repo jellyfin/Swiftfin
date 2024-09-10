@@ -56,7 +56,7 @@ struct QuickConnectView: View {
                 Color.clear
             case .retrievingCode:
                 ProgressView()
-            case let .delaying(code):
+            case let .polling(code):
                 pollingView(code: code)
             case let .error(error):
                 Text(error.localizedDescription)

@@ -16,9 +16,9 @@ extension Section where Parent == Text, Footer == Text, Content: View {
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(content: content) {
-            Text(verbatim: header)
+            Text(header)
         } footer: {
-            Text(verbatim: footer)
+            Text(footer)
         }
     }
 }

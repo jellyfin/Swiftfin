@@ -38,8 +38,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     var itemOverview = makeItemOverview
     @Route(.fullScreen)
     var mediaSourceInfo = makeMediaSourceInfo
-    @Route(.fullScreen)
-    var videoPlayer = makeVideoPlayer
+//    @Route(.fullScreen)
+//    var videoPlayer = makeVideoPlayer
     #endif
 
     private let itemDto: BaseItemDto
@@ -84,9 +84,9 @@ final class ItemCoordinator: NavigationCoordinatable {
     #endif
 
     #if os(tvOS)
-    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
-        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
-    }
+//    func makeVideoPlayer(manager: VideoPlayerManager) -> NavigationViewCoordinator<VideoPlayerCoordinator> {
+//        NavigationViewCoordinator(VideoPlayerCoordinator(manager: manager))
+//    }
     #endif
 
     @ViewBuilder

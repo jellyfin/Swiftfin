@@ -72,14 +72,15 @@ final class LiveVideoPlayerCoordinator: NavigationCoordinatable {
 
         #else
 
-        PreferencesView {
-            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                LiveVideoPlayer(manager: self.videoPlayerManager)
-            } else {
-                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
-            }
-        }
-        .ignoresSafeArea()
+        Color.red
+//        PreferencesView {
+//            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+//                LiveVideoPlayer(manager: self.videoPlayerManager)
+//            } else {
+//                LiveNativeVideoPlayer(manager: self.videoPlayerManager)
+//            }
+//        }
+//        .ignoresSafeArea()
 
         #endif
     }

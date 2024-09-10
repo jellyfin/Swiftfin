@@ -25,7 +25,7 @@ extension VideoPlayer {
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?
         @State
-        private var currentOverlayType: VideoPlayer.OverlayType = .main
+        private var currentOverlayType: OverlayType = .main
 
         @StateObject
         private var overlayTimer: DelayIntervalTimer = .init()
@@ -33,14 +33,14 @@ extension VideoPlayer {
         @ViewBuilder
         private var currentOverlay: some View {
             switch currentOverlayType {
-            case .chapters:
-                ChapterOverlay()
+//            case .chapters:
+//                ChapterOverlay()
             case .confirmClose:
                 ConfirmCloseOverlay()
             case .main:
                 MainOverlay()
-            case .smallMenu:
-                SmallMenuOverlay()
+//            case .smallMenu:
+//                SmallMenuOverlay()
             }
         }
 
@@ -48,22 +48,22 @@ extension VideoPlayer {
             currentOverlay
                 .visible(isPresentingOverlay)
                 .animation(.linear(duration: 0.1), value: currentOverlayType)
-                .environment(\.currentOverlayType, $currentOverlayType)
+//                .environment(\.currentOverlayType, $currentOverlayType)
                 .environmentObject(overlayTimer)
-                .onChange(of: currentOverlayType) { _, newValue in
-                    if [.smallMenu, .chapters].contains(newValue) {
-                        overlayTimer.pause()
-                    } else if isPresentingOverlay {
-                        overlayTimer.delay()
-                    }
-                }
-                .onChange(of: overlayTimer.isActive) { _, isActive in
-                    guard !isActive else { return }
-
-                    withAnimation(.linear(duration: 0.3)) {
-                        isPresentingOverlay = false
-                    }
-                }
+//                .onChange(of: currentOverlayType) { _, newValue in
+//                    if [.smallMenu, .chapters].contains(newValue) {
+//                        overlayTimer.pause()
+//                    } else if isPresentingOverlay {
+//                        overlayTimer.delay()
+//                    }
+//                }
+//                .onChange(of: overlayTimer.isActive) { _, isActive in
+//                    guard !isActive else { return }
+//
+//                    withAnimation(.linear(duration: 0.3)) {
+//                        isPresentingOverlay = false
+//                    }
+//                }
 //                .onSelectPressed {
 //                    currentOverlayType = .main
 //                    isPresentingOverlay = true

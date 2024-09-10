@@ -13,18 +13,18 @@ extension VideoPlayer {
 
     struct MainOverlay: View {
 
-        @Environment(\.currentOverlayType)
-        @Binding
-        private var currentOverlayType
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay
-        @Environment(\.isScrubbing)
-        @Binding
-        private var isScrubbing: Bool
+//        @Environment(\.currentOverlayType)
+//        @Binding
+//        private var currentOverlayType
+//        @Environment(\.isPresentingOverlay)
+//        @Binding
+//        private var isPresentingOverlay
+//        @Environment(\.isScrubbing)
+//        @Binding
+//        private var isScrubbing: Bool
 
-        @EnvironmentObject
-        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
+//        @EnvironmentObject
+//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
 
@@ -47,7 +47,6 @@ extension VideoPlayer {
                         )
                     }
             }
-            .environmentObject(overlayTimer)
         }
     }
 }

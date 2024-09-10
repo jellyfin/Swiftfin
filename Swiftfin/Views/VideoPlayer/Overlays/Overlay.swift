@@ -64,6 +64,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
 }
 
 extension Binding {
+
     static func mock(_ value: Value) -> Self {
         var value = value
         return Binding(
