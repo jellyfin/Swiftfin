@@ -160,13 +160,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeActiveSessions() -> some View {
-        ActiveSessionsView()
+    func makeActiveSessions(viewModel: ActiveSessionsViewModel) -> some View {
+        ActiveSessionsView(viewModel: viewModel)
     }
 
     @ViewBuilder
-    func makeActiveSessionDetails(session: SessionInfo) -> some View {
-        ActiveSessionDetailView(session: session)
+    func makeActiveSessionDetails(viewModel: ActiveSessionsViewModel) -> some View {
+        ActiveSessionDetailView(viewModel: viewModel)
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

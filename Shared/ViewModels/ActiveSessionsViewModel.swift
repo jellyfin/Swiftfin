@@ -44,6 +44,14 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
 
     private var sessionTask: Task<Void, Never>?
 
+    var deviceID: String?
+
+    // MARK: Initializer
+
+    init(deviceID: String? = nil) {
+        self.deviceID = deviceID
+    }
+
     // MARK: Stateful Conformance
 
     func respond(to action: Action) -> State {
@@ -76,7 +84,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     }
 
     private func performSessionLoading() async throws {
-        let fetchedSessions = try await fetchSessions()
+        let fetchedSessions = try await fetchSessions(deviceID)
 
         await MainActor.run {
             self.sessions = fetchedSessions
@@ -84,9 +92,12 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    private func fetchSessions() async throws -> OrderedSet<SessionInfo> {
+    private func fetchSessions(_ deviceID: String?) async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = 960 // 960 Seconds to mirror Jellyfin-Web
+        if let deviceID = deviceID {
+            parameters.deviceID = deviceID
+        }
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 

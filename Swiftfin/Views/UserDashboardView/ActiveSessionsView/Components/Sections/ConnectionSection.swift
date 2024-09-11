@@ -12,26 +12,24 @@ import SwiftUI
 extension ActiveSessionsView {
     struct ConnectionSection: View {
         let lastActivityDate: Date?
+        let currentDate: Date
 
-        init(session: SessionInfo) {
+        init(session: SessionInfo, currentDate: Date) {
             self.lastActivityDate = session.lastActivityDate
+            self.currentDate = currentDate
         }
 
         private var lastSeenText: String {
             guard let lastActivityDate = lastActivityDate else {
-                return ""
+                return "Offline"
             }
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .full
-            return formatter.localizedString(for: lastActivityDate, relativeTo: Date())
+            return formatter.localizedString(for: lastActivityDate, relativeTo: currentDate)
         }
 
         var body: some View {
-            if lastActivityDate != nil {
-                Text(lastSeenText)
-            } else {
-                EmptyView()
-            }
+            Text(lastSeenText)
         }
     }
 }

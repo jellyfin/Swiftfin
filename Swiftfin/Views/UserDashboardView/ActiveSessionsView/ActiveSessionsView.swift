@@ -12,14 +12,12 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionsView: View {
+    @ObservedObject
+    var viewModel: ActiveSessionsViewModel
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-    @StateObject
-    private var viewModel = ActiveSessionsViewModel()
-    @State
-    private var currentDate = Date.now
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     private var padLayout: CollectionVGridLayout {
         .columns(2)
@@ -32,8 +30,11 @@ struct ActiveSessionsView: View {
     var body: some View {
         contentView
             .navigationTitle(L10n.activeDevices)
-            .onReceive(timer) { _ in
+            .onAppear {
                 viewModel.send(.refresh)
+            }
+            .onReceive(timer) { _ in
+                viewModel.send(.backgroundRefresh)
             }
     }
 
@@ -42,15 +43,13 @@ struct ActiveSessionsView: View {
             allSessions,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
         ) { session in
-            if allSessions.isEmpty {
-                L10n.none.text
-                    .foregroundColor(.secondary)
-            } else {
-                ActiveSessionButton(session: session)
-                    .onSelect {
-                        router.route(to: \.activeSessionDetails, session)
-                    }
-            }
+            ActiveSessionButton(session: session)
+                .onSelect {
+                    router.route(
+                        to: \.activeSessionDetails,
+                        ActiveSessionsViewModel(deviceID: session.deviceID)
+                    )
+                }
         }
     }
 

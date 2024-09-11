@@ -18,9 +18,8 @@ struct UserDashboardView: View {
 
     @StateObject
     private var serverViewModel: EditServerViewModel
-
     @StateObject
-    private var sessionViewModel: ActiveSessionsViewModel
+    private var sessionViewModel = ActiveSessionsViewModel()
 
     init(server: ServerState) {
         self._currentServerURL = State(initialValue: server.currentURL)
@@ -46,12 +45,18 @@ struct UserDashboardView: View {
             }
 
             Section(L10n.sessions) {
-                ChevronButton(L10n.activeDevices)
-                    .onSelect {
-                        router.route(to: \.activeSessions)
-                    }
+                ChevronButton(
+                    L10n.activeDevices,
+                    subtitle: String(sessionViewModel.sessions.count)
+                )
+                .onSelect {
+                    router.route(to: \.activeSessions, sessionViewModel)
+                }
             }
         }
         .navigationTitle(L10n.dashboard)
+        .onAppear {
+            sessionViewModel.send(.refresh)
+        }
     }
 }

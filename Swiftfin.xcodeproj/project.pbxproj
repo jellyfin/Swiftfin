@@ -62,6 +62,8 @@
 		4EC1C8532C7FDFA300E2879E /* PlaybackDeviceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8512C7FDFA300E2879E /* PlaybackDeviceProfile.swift */; };
 		4EC1C8692C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */; };
 		4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */; };
+		4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
+		4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
 		4EE141672C8B9D510045B661 /* UserSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE141662C8B9D510045B661 /* UserSection.swift */; };
 		4EE141692C8BABDF0045B661 /* ProgressSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE141682C8BABDF0045B661 /* ProgressSection.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
@@ -1030,6 +1032,7 @@
 		4EC1C8572C80332500E2879E /* EditCustomDeviceProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileCoordinator.swift; sourceTree = "<group>"; };
 		4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileSettingsView.swift; sourceTree = "<group>"; };
 		4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
+		4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeReason.swift; sourceTree = "<group>"; };
 		4EE141662C8B9D510045B661 /* UserSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSection.swift; sourceTree = "<group>"; };
 		4EE141682C8BABDF0045B661 /* ProgressSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSection.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -3441,6 +3444,7 @@
 				E148128428C15472003B8787 /* SortOrder+ItemSortOrder.swift */,
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
 				E1CB757E2C80F28F00217C76 /* SubtitleProfile.swift */,
+				4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */,
 				E1CB757B2C80F00D00217C76 /* TranscodingProfile.swift */,
 				E18CE0B128A229E70092E7F1 /* UserDto.swift */,
 			);
@@ -4291,6 +4295,7 @@
 				E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */,
 				E1575E5C293E77B5001665B1 /* PlaybackSpeed.swift in Sources */,
 				E1DC9842296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
+				4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
 				E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */,
 				E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
 				E17DC74B2BE740D900B42379 /* StoredValues+Server.swift in Sources */,
@@ -4648,6 +4653,7 @@
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
+				4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */,
 				E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */,

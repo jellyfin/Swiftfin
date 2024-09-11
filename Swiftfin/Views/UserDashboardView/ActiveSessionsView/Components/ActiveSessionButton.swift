@@ -11,14 +11,10 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveSessionsView {
-
     struct ActiveSessionButton: View {
-
-        var session: SessionInfo
-
         @State
         private var imageSources: [ImageSource] = []
-
+        private var session: SessionInfo
         private var onSelect: () -> Void
 
         init(session: SessionInfo) {
@@ -54,7 +50,12 @@ extension ActiveSessionsView {
                 } else {
                     ActiveSessionsView.ClientSection(session: session)
                     Spacer()
-                    ActiveSessionsView.ConnectionSection(session: session)
+                    HStack {
+                        Text("Last Seen:")
+                        Spacer()
+                        Text(session.lastActivityDate?.formatted(.dateTime.year().month().day().hour().minute()) ?? "N/A")
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             .padding(16)

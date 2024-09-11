@@ -11,25 +11,65 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveSessionDetailView: View {
-    var session: SessionInfo
+    @ObservedObject
+    var viewModel: ActiveSessionsViewModel
+    @State
+    private var imageSources: [ImageSource] = []
+    @State
+    private var currentDate = Date()
+
+    let iconOrder: [String] = [
+        "speaker.wave.2", // Audio related
+        "photo.tv", // Video related
+        "captions.bubble", // Subtitle related
+        "shippingbox", // Container related
+        "questionmark.app", // Unknown or other
+    ]
+
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    // MARK: Get Active Session
+
+    private var session: SessionInfo {
+        viewModel.sessions.first ?? SessionInfo()
+    }
+
+    // MARK: setImageSources
+
+    private func setImageSources(_ nowPlayingItem: BaseItemDto?) {
+        if let imageSource = nowPlayingItem?.cinematicImageSources().first {
+            self.imageSources = [imageSource]
+        } else {
+            self.imageSources = []
+        }
+    }
 
     // MARK: Body
 
     var body: some View {
         List {
-            if session.nowPlayingItem != nil {
+            if let nowPlayingItem = session.nowPlayingItem {
                 Section(L10n.media) {
-                    if let nowPlayingItem = session.nowPlayingItem {
-                        ImageView(nowPlayingItem.cinematicImageSources().first!)
-                            .clipShape(
-                                RoundedRectangle(
-                                    cornerRadius: 4
-                                )
+                    ImageView(nowPlayingItem.cinematicImageSources().first!)
+                        .image { image in
+                            image
+                        }
+                        .placeholder { imageSource in
+                            ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
+                        }
+                        .failure {
+                            Color.secondarySystemFill
+                                .opacity(0.75)
+                        }
+                        .id(imageSources.hashValue)
+                        .scaledToFill()
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius: 4
                             )
-                            .scaledToFill()
-                    }
+                        )
                     ActiveSessionsView.ContentSection(session: session)
-                    if let overview = session.nowPlayingItem?.overview {
+                    if let overview = nowPlayingItem.overview {
                         Text(overview)
                     }
                 }
@@ -46,7 +86,7 @@ struct ActiveSessionDetailView: View {
                 }
             } else {
                 Section("Last Seen") {
-                    ActiveSessionsView.ConnectionSection(session: session)
+                    ActiveSessionsView.ConnectionSection(session: session, currentDate: currentDate)
                 }
             }
             if session.transcodingInfo != nil {
@@ -55,15 +95,27 @@ struct ActiveSessionDetailView: View {
                 }
             }
         }
-        .navigationTitle((session.userName ?? session.deviceName)!)
+        .navigationTitle(session.userName ?? L10n.unknown)
+        .onAppear {
+            viewModel.send(.refresh)
+            setImageSources(session.nowPlayingItem)
+        }
+        .onChange(of: session.nowPlayingItem) { _ in
+            setImageSources(session.nowPlayingItem)
+        }
+        .onReceive(timer) { _ in
+            viewModel.send(.backgroundRefresh)
+            currentDate = Date()
+        }
     }
 
     // MARK: Progress Section
 
+    @ViewBuilder
     private var progressSection: some View {
         let playbackPercentage = Double(session.playState?.positionTicks ?? 0) / Double(session.nowPlayingItem?.runTimeTicks ?? 0)
 
-        return ActiveSessionsView.TimelineSection(
+        ActiveSessionsView.TimelineSection(
             playbackPercentage: playbackPercentage,
             transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
         )
@@ -119,27 +171,44 @@ struct ActiveSessionDetailView: View {
            !reasons.isEmpty
         {
             VStack(alignment: .leading, spacing: 8) {
+                let uniqueIcons = Set(reasons.map(\.icon))
 
-                ForEach(reasons, id: \.self) { reason in
-                    HStack {
-                        Image(systemName: "arrowtriangle.right.fill")
+                let transcodeIcons = iconOrder.filter { uniqueIcons.contains($0) }
+
+                HStack {
+                    Spacer()
+                    ForEach(Array(transcodeIcons), id: \.self) { icon in
+                        Image(systemName: icon)
                             .foregroundColor(.primary)
-                            .padding(.trailing, 4)
-                        Text(reason.rawValue)
-                            .foregroundColor(.primary)
+                    }
+                    Spacer()
+                }
+
+                Divider()
+
+                VStack(alignment: .center, spacing: 8) {
+                    ForEach(reasons, id: \.self) { reason in
+                        Text(reason.description)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(2)
                     }
                 }
             }
         }
     }
 
+    // MARK: Transcoding Details
+
     private func getMediaComparison(sourceComponent: String, destinationComponent: String?) -> some View {
         HStack {
             Text(sourceComponent.uppercased())
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .trailing)
             Image(systemName: (destinationComponent != sourceComponent) ? "shuffle" : "arrow.right")
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .center)
             Text((destinationComponent ?? "").uppercased())
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity)
     }
 }
