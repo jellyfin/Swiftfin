@@ -12,15 +12,20 @@ import SwiftUI
 
 extension ActiveSessionsView {
     struct ActiveSessionButton: View {
-        @State
-        private var imageSources: [ImageSource] = []
         private var session: SessionInfo
         private var onSelect: () -> Void
+
+        @State
+        private var imageSources: [ImageSource] = []
+
+        // MARK: - Init
 
         init(session: SessionInfo) {
             self.session = session
             self.onSelect = {}
         }
+
+        // MARK: Set Image Sources
 
         private func setImageSources() {
             Task { @MainActor in
@@ -37,29 +42,54 @@ extension ActiveSessionsView {
             }
         }
 
+        // MARK: Session Details
+
         @ViewBuilder
         private var sessionDetails: some View {
             VStack(alignment: .leading) {
-                ActiveSessionsView.UserSection(session: session)
+                // Create the Header with the User & Client
+                ActiveSessionsView.UserSection(
+                    userName: session.userName,
+                    client: session.client
+                )
+
                 Spacer()
-                if session.nowPlayingItem != nil {
-                    ActiveSessionsView.ContentSection(session: session)
+    
+                // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen date.
+                if let nowPlayingItem = session.nowPlayingItem {
+                    ActiveSessionsView.ContentSection(item: session.nowPlayingItem)
+
                     Spacer()
-                    ActiveSessionsView.ProgressSection(session: session)
-                        .font(.caption)
+
+                    ActiveSessionsView.ProgressSection(
+                        item: nowPlayingItem,
+                        playState: session.playState,
+                        transcodingInfo: session.transcodingInfo
+                    )
+                    .font(.caption)
+
                 } else {
-                    ActiveSessionsView.ClientSection(session: session)
+                    ActiveSessionsView.ClientSection(
+                        client: session.client,
+                        deviceName: session.deviceName,
+                        applicationVersion: session.applicationVersion
+                    )
+
                     Spacer()
-                    HStack {
-                        Text("Last Seen:")
-                        Spacer()
-                        Text(session.lastActivityDate?.formatted(.dateTime.year().month().day().hour().minute()) ?? "N/A")
-                            .foregroundColor(.secondary)
+
+                    if let lastActivityDate = session.lastActivityDate {
+                        ActiveSessionsView.ConnectionSection(
+                            lastActivityDate: lastActivityDate,
+                            currentDate: Date(),
+                            prefixText: true
+                        )
                     }
                 }
             }
             .padding(16)
         }
+
+        // MARK: Create Title Label Overlay
 
         private func titleLabelOverlay<Content: View>(with content: Content) -> some View {
             ZStack {
@@ -69,6 +99,8 @@ extension ActiveSessionsView {
                     .foregroundStyle(.white)
             }
         }
+
+        // MARK: Body
 
         var body: some View {
             Button {

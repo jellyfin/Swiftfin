@@ -11,35 +11,30 @@ import SwiftUI
 
 extension ActiveSessionsView {
     struct ClientSection: View {
+        let client: String?
+        let deviceName: String?
+        let applicationVersion: String?
 
-        let client: String
-        let deviceName: String
-        let applicationVersion: String
-
-        init(session: SessionInfo) {
-            self.client = session.client ?? L10n.unknown
-            self.deviceName = session.deviceName ?? L10n.unknown
-            self.applicationVersion = session.applicationVersion ?? L10n.unknown
-        }
+        // MARK: Body
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("Client:")
                     Spacer()
-                    Text(client)
+                    Text(client ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
                 HStack {
                     Text("Device:")
                     Spacer()
-                    Text(deviceName)
+                    Text(deviceName ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
                 HStack {
                     Text("Version:")
                     Spacer()
-                    Text(applicationVersion)
+                    Text(applicationVersion ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
             }

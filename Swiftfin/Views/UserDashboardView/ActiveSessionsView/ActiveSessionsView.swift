@@ -17,7 +17,7 @@ struct ActiveSessionsView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
 
     private var padLayout: CollectionVGridLayout {
         .columns(2)
@@ -28,17 +28,6 @@ struct ActiveSessionsView: View {
     }
 
     var body: some View {
-        contentView
-            .navigationTitle(L10n.activeDevices)
-            .onAppear {
-                viewModel.send(.refresh)
-            }
-            .onReceive(timer) { _ in
-                viewModel.send(.backgroundRefresh)
-            }
-    }
-
-    private var contentView: some View {
         CollectionVGrid(
             allSessions,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
@@ -50,6 +39,13 @@ struct ActiveSessionsView: View {
                         ActiveSessionsViewModel(deviceID: session.deviceID)
                     )
                 }
+        }
+        .navigationTitle(L10n.activeDevices)
+        .onAppear {
+            viewModel.send(.refresh)
+        }
+        .onReceive(timer) { _ in
+            viewModel.send(.backgroundRefresh)
         }
     }
 

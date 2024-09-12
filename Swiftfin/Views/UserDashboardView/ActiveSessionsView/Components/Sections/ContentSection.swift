@@ -13,9 +13,7 @@ extension ActiveSessionsView {
     struct ContentSection: View {
         let item: BaseItemDto?
 
-        init(session: SessionInfo) {
-            self.item = session.nowPlayingItem
-        }
+        // MARK: Body
 
         var body: some View {
             VStack(alignment: .leading) {
@@ -34,6 +32,8 @@ extension ActiveSessionsView {
                 }
             }
         }
+
+        // MARK: Get Content Title
 
         private func getTitle(item: BaseItemDto) -> String {
             let baseName: String
@@ -60,6 +60,8 @@ extension ActiveSessionsView {
             return baseName
         }
 
+        // MARK: Get Content Parent
+
         private func getParent(item: BaseItemDto) -> String? {
             if let artists = item.artists, !artists.isEmpty {
                 return artists.first ?? ""
@@ -70,6 +72,8 @@ extension ActiveSessionsView {
             }
             return nil
         }
+
+        // MARK: Get Content Episode
 
         private func getEpisode(item: BaseItemDto) -> String? {
             guard item.indexNumber != nil, item.parentIndexNumber != nil else { return nil }

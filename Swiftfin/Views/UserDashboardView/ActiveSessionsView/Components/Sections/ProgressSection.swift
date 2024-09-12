@@ -11,15 +11,11 @@ import SwiftUI
 
 extension ActiveSessionsView {
     struct ProgressSection: View {
-        let item: BaseItemDto?
+        let item: BaseItemDto
         let playState: PlayerStateInfo?
         let transcodingInfo: TranscodingInfo?
 
-        init(session: SessionInfo) {
-            self.item = session.nowPlayingItem
-            self.playState = session.playState
-            self.transcodingInfo = session.transcodingInfo
-        }
+        // MARK: Body
 
         var body: some View {
             VStack {
@@ -27,6 +23,8 @@ extension ActiveSessionsView {
                 playbackTimeline
             }
         }
+
+        // MARK: Playback Information
 
         @ViewBuilder
         private var playbackInformation: some View {
@@ -50,6 +48,8 @@ extension ActiveSessionsView {
             }
         }
 
+        // MARK: Playback Timeline
+
         @ViewBuilder
         private var playbackTimeline: some View {
             HStack {
@@ -57,16 +57,20 @@ extension ActiveSessionsView {
                     .font(.subheadline)
 
                 TimelineSection(
-                    playbackPercentage: Double(playState?.positionTicks ?? 0) / Double(item?.runTimeTicks ?? 0),
+                    playbackPercentage: Double(playState?.positionTicks ?? 0) / Double(item.runTimeTicks ?? 0),
                     transcodingPercentage: (transcodingInfo?.completionPercentage ?? 0) / 100.0
                 )
             }
         }
 
+        // MARK: Get Formatted Time
+
         private func formattedTime(_ ticks: Int64) -> String {
             let seconds = ticks / 10_000_000
             return seconds.timeLabel
         }
+
+        // MARK: Get Playback Progress Percentage
 
         private func getProgressPercentage(item: BaseItemDto?, playState: PlayerStateInfo?) -> Double? {
             let positionTicks = playState?.positionTicks ?? 0
@@ -79,6 +83,8 @@ extension ActiveSessionsView {
             }
         }
 
+        // MARK: Get Playback Progress Icon
+
         private func getProgressIcon(isPaused: Bool?) -> Image? {
             if isPaused ?? false {
                 Image(systemName: "pause.fill")
@@ -86,6 +92,8 @@ extension ActiveSessionsView {
                 Image(systemName: "play.fill")
             }
         }
+
+        // MARK: Get Playback Progress Timestamp
 
         private func getProgressTimestamp(item: BaseItemDto?, playState: PlayerStateInfo?) -> String {
             let positionTicks = playState?.positionTicks ?? 0
@@ -96,6 +104,8 @@ extension ActiveSessionsView {
                 formattedTime(Int64(totalTicks))
             )
         }
+
+        // MARK: Get Playback Progress Frames Per Second
 
         private func getTranscodeFPS(transcodingInfo: TranscodingInfo) -> String {
             if let framerate = transcodingInfo.framerate {

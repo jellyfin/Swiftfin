@@ -11,20 +11,17 @@ import SwiftUI
 
 extension ActiveSessionsView {
     struct UserSection: View {
-        let userName: String
-        let device: String
+        let userName: String?
+        let client: String?
 
-        init(session: SessionInfo) {
-            self.userName = session.userName ?? ""
-            self.device = session.client ?? L10n.unknown
-        }
+        // MARK: Body
 
         var body: some View {
             HStack {
                 // TODO: Maybe add the user's icon / profile picture
-                Text(userName)
+                Text(userName ?? "")
                 Spacer()
-                Text(device)
+                Text(client ?? L10n.unknown)
             }
             .font(.headline)
         }

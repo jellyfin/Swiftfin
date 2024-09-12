@@ -11,25 +11,54 @@ import SwiftUI
 
 extension ActiveSessionsView {
     struct ConnectionSection: View {
-        let lastActivityDate: Date?
+        let lastActivityDate: Date
         let currentDate: Date
+        let prefixText: Bool
 
-        init(session: SessionInfo, currentDate: Date) {
-            self.lastActivityDate = session.lastActivityDate
-            self.currentDate = currentDate
-        }
-
-        private var lastSeenText: String {
-            guard let lastActivityDate = lastActivityDate else {
-                return "Offline"
-            }
-            let formatter = RelativeDateTimeFormatter()
-            formatter.unitsStyle = .full
-            return formatter.localizedString(for: lastActivityDate, relativeTo: currentDate)
-        }
+        // MARK: Body
 
         var body: some View {
-            Text(lastSeenText)
+            contentView
+        }
+
+        // MARK: Content View
+
+        @ViewBuilder
+        private var contentView: some View {
+            if prefixText {
+                lastSeenDateView
+            } else {
+                lastSeenTextView
+            }
+        }
+
+        // MARK: Last Seen Description
+
+        private var lastSeenTextView: some View {
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .full
+            return Text(
+                formatter.localizedString(
+                    for: lastActivityDate,
+                    relativeTo: currentDate
+                )
+            )
+        }
+
+        // MARK: Last Seen Date
+
+        private var lastSeenDateView: some View {
+            HStack {
+                Text("Last Seen:")
+                Spacer()
+                Text(
+                    lastActivityDate
+                        .formatted(
+                            .dateTime.year().month().day().hour().minute()
+                        )
+                )
+                .foregroundColor(.secondary)
+            }
         }
     }
 }

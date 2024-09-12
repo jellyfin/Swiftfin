@@ -28,6 +28,8 @@ extension ActiveSessionsView {
             self.transcodingColor = transcodingColor
         }
 
+        // MARK: Body
+
         @ViewBuilder
         var body: some View {
             ZStack(alignment: .leading) {
