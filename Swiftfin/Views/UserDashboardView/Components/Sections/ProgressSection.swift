@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionsView {
+extension UserDashboardView {
     struct ProgressSection: View {
         let item: BaseItemDto
         let playState: PlayerStateInfo?

@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionsView {
+extension UserDashboardView {
     struct ConnectionSection: View {
         let lastActivityDate: Date
         let currentDate: Date

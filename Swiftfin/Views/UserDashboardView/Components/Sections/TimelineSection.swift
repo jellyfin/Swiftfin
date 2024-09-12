@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-extension ActiveSessionsView {
+extension UserDashboardView {
     struct TimelineSection: View {
         let playbackPercentage: Double
         let transcodingPercentage: Double

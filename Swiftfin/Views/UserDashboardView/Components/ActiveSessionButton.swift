@@ -10,34 +10,28 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionsView {
+extension UserDashboardView {
     struct ActiveSessionButton: View {
-        private var session: SessionInfo
-        private var onSelect: () -> Void
+        var session: SessionInfo
+        var onSelect: () -> Void
 
         @State
         private var imageSources: [ImageSource] = []
 
-        // MARK: - Init
-
-        init(session: SessionInfo) {
-            self.session = session
-            self.onSelect = {}
-        }
-
         // MARK: Set Image Sources
 
-        private func setImageSources() {
+        private func setImageSources(for nowPlayingItem: BaseItemDto?) {
             Task { @MainActor in
-                if let nowPlayingItem = session.nowPlayingItem {
-                    switch nowPlayingItem.type {
-                    case .episode:
-                        self.imageSources = [nowPlayingItem.imageSource(.primary, maxWidth: 500)]
-                    default:
-                        self.imageSources = [nowPlayingItem.imageSource(.backdrop, maxWidth: 500)]
-                    }
-                } else {
+                guard let nowPlayingItem = nowPlayingItem else {
                     self.imageSources = []
+                    return
+                }
+
+                switch nowPlayingItem.type {
+                case .episode:
+                    self.imageSources = [nowPlayingItem.imageSource(.primary)]
+                default:
+                    self.imageSources = [nowPlayingItem.imageSource(.backdrop)]
                 }
             }
         }
@@ -47,21 +41,19 @@ extension ActiveSessionsView {
         @ViewBuilder
         private var sessionDetails: some View {
             VStack(alignment: .leading) {
-                // Create the Header with the User & Client
-                ActiveSessionsView.UserSection(
+                UserDashboardView.UserSection(
                     userName: session.userName,
                     client: session.client
                 )
 
                 Spacer()
 
-                // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen date.
                 if let nowPlayingItem = session.nowPlayingItem {
-                    ActiveSessionsView.ContentSection(item: nowPlayingItem)
+                    UserDashboardView.ContentSection(item: nowPlayingItem)
 
                     Spacer()
 
-                    ActiveSessionsView.ProgressSection(
+                    UserDashboardView.ProgressSection(
                         item: nowPlayingItem,
                         playState: session.playState,
                         transcodingInfo: session.transcodingInfo
@@ -69,7 +61,7 @@ extension ActiveSessionsView {
                     .font(.caption)
 
                 } else {
-                    ActiveSessionsView.ClientSection(
+                    UserDashboardView.ClientSection(
                         client: session.client,
                         deviceName: session.deviceName,
                         applicationVersion: session.applicationVersion
@@ -78,7 +70,7 @@ extension ActiveSessionsView {
                     Spacer()
 
                     if let lastActivityDate = session.lastActivityDate {
-                        ActiveSessionsView.ConnectionSection(
+                        UserDashboardView.ConnectionSection(
                             lastActivityDate: lastActivityDate,
                             currentDate: Date(),
                             prefixText: true
@@ -103,9 +95,7 @@ extension ActiveSessionsView {
         // MARK: Body
 
         var body: some View {
-            Button {
-                onSelect()
-            } label: {
+            Button(action: onSelect) {
                 ZStack {
                     Color.clear
 
@@ -129,22 +119,12 @@ extension ActiveSessionsView {
                 .posterStyle(.landscape)
                 .posterShadow()
             }
-            .onAppear(perform: setImageSources)
-            .onChange(of: session.nowPlayingItem) { _ in
-                setImageSources()
+            .onAppear {
+                setImageSources(for: session.nowPlayingItem)
+            }
+            .onChange(of: session.nowPlayingItem) { newValue in
+                setImageSources(for: newValue)
             }
         }
-    }
-}
-
-extension ActiveSessionsView.ActiveSessionButton {
-    func onSelect(_ action: @escaping () -> Void) -> Self {
-        copy(modifying: \.onSelect, with: action)
-    }
-
-    private func copy<Value>(modifying keyPath: WritableKeyPath<ActiveSessionsView.ActiveSessionButton, Value>, with value: Value) -> Self {
-        var copy = self
-        copy[keyPath: keyPath] = value
-        return copy
     }
 }

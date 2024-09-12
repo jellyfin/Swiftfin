@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionsView {
+extension UserDashboardView {
     struct ContentSection: View {
         let item: BaseItemDto?
 

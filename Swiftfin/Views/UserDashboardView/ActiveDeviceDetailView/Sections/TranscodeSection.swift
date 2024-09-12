@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionDetailView {
+extension ActiveDeviceDetailView {
     struct TranscodeSection: View {
 
         let transcodeReasons: [TranscodeReason]
@@ -36,7 +36,7 @@ extension ActiveSessionDetailView {
             ]
 
             // Map the Transcoding Reason Icons
-            let uniqueIcons = Set(reasons.map(\.icon))
+            let uniqueIcons = Set(reasons.map { getActiveTranscodeReasons(reason: $0) })
             let transcodeIcons = iconOrder.filter { uniqueIcons.contains($0) }
 
             // Center the Transcoding Reason Icons for the Header
@@ -47,6 +47,41 @@ extension ActiveSessionDetailView {
                         .foregroundColor(.primary)
                 }
                 Spacer()
+            }
+        }
+
+        private func getActiveTranscodeReasons(reason: TranscodeReason) -> String {
+            switch reason {
+            case .containerNotSupported,
+                 .containerBitrateExceedsLimit:
+                return "shippingbox"
+            case .audioCodecNotSupported,
+                 .audioIsExternal,
+                 .secondaryAudioNotSupported,
+                 .audioChannelsNotSupported,
+                 .audioProfileNotSupported,
+                 .audioSampleRateNotSupported,
+                 .audioBitDepthNotSupported,
+                 .audioBitrateNotSupported,
+                 .unknownAudioStreamInfo:
+                return "speaker.wave.2"
+            case .videoCodecNotSupported,
+                 .videoProfileNotSupported,
+                 .videoLevelNotSupported,
+                 .videoResolutionNotSupported,
+                 .videoBitDepthNotSupported,
+                 .videoFramerateNotSupported,
+                 .refFramesNotSupported,
+                 .anamorphicVideoNotSupported,
+                 .interlacedVideoNotSupported,
+                 .videoBitrateNotSupported,
+                 .unknownVideoStreamInfo,
+                 .videoRangeTypeNotSupported:
+                return "photo.tv"
+            case .subtitleCodecNotSupported:
+                return "captions.bubble"
+            default:
+                return "questionmark.app"
             }
         }
 

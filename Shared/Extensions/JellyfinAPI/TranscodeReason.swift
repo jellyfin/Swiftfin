@@ -65,39 +65,4 @@ extension TranscodeReason {
             return "The video range type is not supported"
         }
     }
-
-    var icon: String {
-        switch self {
-        case .containerNotSupported,
-             .containerBitrateExceedsLimit:
-            return "shippingbox"
-        case .audioCodecNotSupported,
-             .audioIsExternal,
-             .secondaryAudioNotSupported,
-             .audioChannelsNotSupported,
-             .audioProfileNotSupported,
-             .audioSampleRateNotSupported,
-             .audioBitDepthNotSupported,
-             .audioBitrateNotSupported,
-             .unknownAudioStreamInfo:
-            return "speaker.wave.2"
-        case .videoCodecNotSupported,
-             .videoProfileNotSupported,
-             .videoLevelNotSupported,
-             .videoResolutionNotSupported,
-             .videoBitDepthNotSupported,
-             .videoFramerateNotSupported,
-             .refFramesNotSupported,
-             .anamorphicVideoNotSupported,
-             .interlacedVideoNotSupported,
-             .videoBitrateNotSupported,
-             .unknownVideoStreamInfo,
-             .videoRangeTypeNotSupported:
-            return "photo.tv"
-        case .subtitleCodecNotSupported:
-            return "captions.bubble"
-        default:
-            return "questionmark.app"
-        }
-    }
 }

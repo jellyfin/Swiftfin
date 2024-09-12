@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveSessionDetailView {
+extension ActiveDeviceDetailView {
     struct StreamSection: View {
 
         let nowPlayingItem: BaseItemDto

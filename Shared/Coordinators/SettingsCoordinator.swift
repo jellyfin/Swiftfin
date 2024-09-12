@@ -53,9 +53,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDashboard = makeUserDashboard
     @Route(.push)
-    var activeSessions = makeActiveSessions
-    @Route(.push)
-    var activeSessionDetails = makeActiveSessionDetails
+    var activeDeviceDetails = makeActiveDeviceDetails
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -160,13 +158,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeActiveSessions(viewModel: ActiveSessionsViewModel) -> some View {
-        ActiveSessionsView(viewModel: viewModel)
-    }
-
-    @ViewBuilder
-    func makeActiveSessionDetails(viewModel: ActiveSessionsViewModel) -> some View {
-        ActiveSessionDetailView(viewModel: viewModel)
+    func makeActiveDeviceDetails(viewModel: ActiveSessionsViewModel) -> some View {
+        ActiveDeviceDetailView(viewModel: viewModel)
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
