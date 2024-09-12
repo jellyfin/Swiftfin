@@ -54,7 +54,7 @@ extension ActiveSessionsView {
                 )
 
                 Spacer()
-    
+
                 // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen date.
                 if let nowPlayingItem = session.nowPlayingItem {
                     ActiveSessionsView.ContentSection(item: session.nowPlayingItem)
@@ -138,7 +138,6 @@ extension ActiveSessionsView {
 }
 
 extension ActiveSessionsView.ActiveSessionButton {
-
     func onSelect(_ action: @escaping () -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
