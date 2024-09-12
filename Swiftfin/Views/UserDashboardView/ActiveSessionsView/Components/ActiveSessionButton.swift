@@ -57,7 +57,7 @@ extension ActiveSessionsView {
 
                 // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen date.
                 if let nowPlayingItem = session.nowPlayingItem {
-                    ActiveSessionsView.ContentSection(item: session.nowPlayingItem)
+                    ActiveSessionsView.ContentSection(item: nowPlayingItem)
 
                     Spacer()
 

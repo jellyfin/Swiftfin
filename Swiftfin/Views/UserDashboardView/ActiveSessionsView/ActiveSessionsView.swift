@@ -17,7 +17,7 @@ struct ActiveSessionsView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    let timer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     private var padLayout: CollectionVGridLayout {
         .columns(2)
