@@ -31,7 +31,7 @@ extension VideoPlayer.Overlay.ActionButtons {
             ) {
                 isAutoPlayEnabled.toggle()
             }
-            .transition(.scale.animation(.bouncy))
+            .transition(.scale.combined(with: .opacity).animation(.snappy))
             .id(isAutoPlayEnabled)
         }
     }

@@ -63,6 +63,7 @@ struct CustomDrawerButton: View {
             )
             .animation(.bouncy(duration: 0.4), value: isActive)
             .animation(.bouncy(duration: 0.4), value: isPressed)
+            .opacity(isPressed ? 0.6 : 1)
     }
 }
 

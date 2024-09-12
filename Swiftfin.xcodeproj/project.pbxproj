@@ -390,6 +390,8 @@
 		E13DD3FA2717E961009D4DAF /* SelectUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */; };
 		E13DD3FC2717EAE8009D4DAF /* SelectUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD3FB2717EAE8009D4DAF /* SelectUserView.swift */; };
 		E13DD4022717EE79009D4DAF /* SelectUserCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13DD4012717EE79009D4DAF /* SelectUserCoordinator.swift */; };
+		E13ECC702C922EDF0094601F /* VideoPlayerDrawerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13ECC6F2C922EDF0094601F /* VideoPlayerDrawerProvider.swift */; };
+		E13ECC712C922EDF0094601F /* VideoPlayerDrawerProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13ECC6F2C922EDF0094601F /* VideoPlayerDrawerProvider.swift */; };
 		E13F05EC28BC9000003499D2 /* LibraryDisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EB28BC9000003499D2 /* LibraryDisplayType.swift */; };
 		E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EF28BC9016003499D2 /* LibraryRow.swift */; };
 		E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */; };
@@ -492,7 +494,7 @@
 		E1575E74293E77B5001665B1 /* PanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */; };
 		E1575E75293E77B5001665B1 /* LibraryDisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13F05EB28BC9000003499D2 /* LibraryDisplayType.swift */; };
 		E1575E78293E77B5001665B1 /* TrailingTimestampType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C8CE7B28FF015000DF5D7B /* TrailingTimestampType.swift */; };
-		E1575E7C293E77B5001665B1 /* PollingTImer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* PollingTImer.swift */; };
+		E1575E7C293E77B5001665B1 /* DelayIntervalTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* DelayIntervalTimer.swift */; };
 		E1575E7D293E77B5001665B1 /* PosterDisplayType.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CCF12D28ABF989006CAC9E /* PosterDisplayType.swift */; };
 		E1575E7E293E77B5001665B1 /* ItemFilterCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535870AC2669D8DD00D05A09 /* ItemFilterCollection.swift */; };
 		E1575E7F293E77B5001665B1 /* AppAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D4BF802719D22800A11E64 /* AppAppearance.swift */; };
@@ -848,6 +850,7 @@
 		E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAF92A270E62008AC34A /* OverviewCard.swift */; };
 		E1DABAFC2A270EE7008AC34A /* MediaSourcesCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */; };
 		E1DABAFE2A27B982008AC34A /* RatingsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DABAFD2A27B982008AC34A /* RatingsCard.swift */; };
+		E1DC76142C937E55007C7709 /* EmptyHitTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC76132C937E55007C7709 /* EmptyHitTestView.swift */; };
 		E1DC7ACA2C63337C00AEE368 /* iOS15View.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC7AC92C63337C00AEE368 /* iOS15View.swift */; };
 		E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */ = {isa = PBXBuildFile; productRef = E1DC9813296DC06200982F06 /* PulseLogHandler */; };
 		E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */; };
@@ -878,7 +881,7 @@
 		E1E2F8432B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */; };
 		E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */; };
 		E1E2F8462B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */; };
-		E1E306CD28EF6E8000537998 /* PollingTImer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* PollingTImer.swift */; };
+		E1E306CD28EF6E8000537998 /* DelayIntervalTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E306CC28EF6E8000537998 /* DelayIntervalTimer.swift */; };
 		E1E5D5492783CDD700692DFE /* VideoPlayerSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */; };
 		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
@@ -1239,6 +1242,7 @@
 		E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserViewModel.swift; sourceTree = "<group>"; };
 		E13DD3FB2717EAE8009D4DAF /* SelectUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserView.swift; sourceTree = "<group>"; };
 		E13DD4012717EE79009D4DAF /* SelectUserCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserCoordinator.swift; sourceTree = "<group>"; };
+		E13ECC6F2C922EDF0094601F /* VideoPlayerDrawerProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerDrawerProvider.swift; sourceTree = "<group>"; };
 		E13F05EB28BC9000003499D2 /* LibraryDisplayType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryDisplayType.swift; sourceTree = "<group>"; };
 		E13F05EF28BC9016003499D2 /* LibraryRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LibraryRow.swift; sourceTree = "<group>"; };
 		E1401C9F2937DFF500E8B599 /* AppIconSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppIconSelectorView.swift; sourceTree = "<group>"; };
@@ -1523,6 +1527,7 @@
 		E1DABAF92A270E62008AC34A /* OverviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewCard.swift; sourceTree = "<group>"; };
 		E1DABAFB2A270EE7008AC34A /* MediaSourcesCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourcesCard.swift; sourceTree = "<group>"; };
 		E1DABAFD2A27B982008AC34A /* RatingsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingsCard.swift; sourceTree = "<group>"; };
+		E1DC76132C937E55007C7709 /* EmptyHitTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = EmptyHitTestView.swift; path = Swiftfin/Components/EmptyHitTestView.swift; sourceTree = SOURCE_ROOT; };
 		E1DC7AC92C63337C00AEE368 /* iOS15View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS15View.swift; sourceTree = "<group>"; };
 		E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicBackgroundView.swift; sourceTree = "<group>"; };
 		E1DC983C296DEB9B00982F06 /* UnwatchedIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwatchedIndicator.swift; sourceTree = "<group>"; };
@@ -1541,7 +1546,7 @@
 		E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFinalDisappearModifier.swift; sourceTree = "<group>"; };
 		E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
 		E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinceLastDisappearModifier.swift; sourceTree = "<group>"; };
-		E1E306CC28EF6E8000537998 /* PollingTImer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingTImer.swift; sourceTree = "<group>"; };
+		E1E306CC28EF6E8000537998 /* DelayIntervalTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DelayIntervalTimer.swift; sourceTree = "<group>"; };
 		E1E5D5472783CCF900692DFE /* VideoPlayerSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
@@ -1907,6 +1912,7 @@
 				E10231432BCF8A51009D71FC /* ChannelProgram.swift */,
 				E1CB756E2C80E66700217C76 /* CommaStringBuilder.swift */,
 				4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */,
+				E1E306CC28EF6E8000537998 /* DelayIntervalTimer.swift */,
 				E17FB55128C119D400311DFE /* Displayable.swift */,
 				E1579EA62B97DC1500A31CA1 /* Eventful.swift */,
 				E1092F4B29106F9F00163F57 /* GestureAction.swift */,
@@ -1923,7 +1929,6 @@
 				E190704A2C858B7B0004600E /* PlaybackCompatibility */,
 				4EC1C8512C7FDFA300E2879E /* PlaybackDeviceProfile.swift */,
 				E1C812B4277A8E5D00918266 /* PlaybackSpeed.swift */,
-				E1E306CC28EF6E8000537998 /* PollingTImer.swift */,
 				E1937A60288F32DB00CB80AA /* Poster.swift */,
 				E1CCF12D28ABF989006CAC9E /* PosterDisplayType.swift */,
 				E1E9017A28DAAE4D001B1594 /* RoundedCorner.swift */,
@@ -1941,6 +1946,7 @@
 				DFB7C3DE2C7AA42700CE7CDC /* UserSignInState.swift */,
 				E1D8429229340B8300D1041A /* Utilities.swift */,
 				E1BDF2E42951475300CC0294 /* VideoPlayerActionButton.swift */,
+				E13ECC6F2C922EDF0094601F /* VideoPlayerDrawerProvider.swift */,
 				E1F0204D26CCCA74001C1C3B /* VideoPlayerJumpLength.swift */,
 				E1CB757A2C80EF9D00217C76 /* VideoPlayerType */,
 			);
@@ -2190,6 +2196,7 @@
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
 				E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
+				E1DC76132C937E55007C7709 /* EmptyHitTestView.swift */,
 				E1DE2B492B97ECB900F6715F /* ErrorView.swift */,
 				E1921B7528E63306003A5238 /* GestureView.swift */,
 				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
@@ -4310,13 +4317,14 @@
 				E1CB75702C80E66700217C76 /* CommaStringBuilder.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
-				E1575E7C293E77B5001665B1 /* PollingTImer.swift in Sources */,
+				E1575E7C293E77B5001665B1 /* DelayIntervalTimer.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
+				E13ECC702C922EDF0094601F /* VideoPlayerDrawerProvider.swift in Sources */,
 				E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */,
 				E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */,
 				E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
@@ -4473,6 +4481,7 @@
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1CB75752C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */,
+				E1DC76142C937E55007C7709 /* EmptyHitTestView.swift in Sources */,
 				E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */,
 				E18ACA922A15A32F00BB4F35 /* (null) in Sources */,
 				E1A3E4C92BB74EA3005C59F8 /* LoadingCard.swift in Sources */,
@@ -4516,7 +4525,7 @@
 				E14A08CB28E6831D004FC984 /* VideoPlayerViewModel.swift in Sources */,
 				E146A9DB2BE6E9BF0034DA1E /* StoredValues+User.swift in Sources */,
 				E1DC9847296DEFF500982F06 /* FavoriteIndicator.swift in Sources */,
-				E1E306CD28EF6E8000537998 /* PollingTImer.swift in Sources */,
+				E1E306CD28EF6E8000537998 /* DelayIntervalTimer.swift in Sources */,
 				E18CE0B228A229E70092E7F1 /* UserDto.swift in Sources */,
 				E18E01F0288747230022598C /* AttributeHStack.swift in Sources */,
 				6334175B287DDFB9000603CE /* QuickConnectAuthorizeView.swift in Sources */,
@@ -4661,6 +4670,7 @@
 				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
 				E1CB758C2C80F9EC00217C76 /* CodecProfile.swift in Sources */,
 				E18E01E9288747230022598C /* SeriesItemView.swift in Sources */,
+				E13ECC712C922EDF0094601F /* VideoPlayerDrawerProvider.swift in Sources */,
 				E15756342936851D00976E1F /* NativeVideoPlayerSettingsView.swift in Sources */,
 				E1D4BF7C2719D05000A11E64 /* AppSettingsView.swift in Sources */,
 				4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */,

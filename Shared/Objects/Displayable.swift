@@ -13,3 +13,10 @@ protocol Displayable {
 
     var displayTitle: String { get }
 }
+
+extension Displayable where Self: CustomStringConvertible {
+
+    var description: String {
+        displayTitle
+    }
+}

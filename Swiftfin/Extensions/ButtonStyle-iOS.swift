@@ -85,14 +85,16 @@ struct VideoPlayerBarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .labelStyle(.iconOnly)
-            .frame(width: 40, height: 40)
             .contentShape(Rectangle())
+            .padding(8)
+            .scaleEffect(configuration.isPressed ? 0.85 : 1)
+            .animation(.bouncy(duration: 0.2, extraBounce: 0.2), value: configuration.isPressed)
             .background {
                 if configuration.isPressed {
                     Circle()
                         .fill(Color.white)
                         .opacity(0.5)
-                        .transition(.opacity.animation(.linear(duration: 0.2)))
+                        .transition(.opacity.animation(.linear(duration: 0.2).delay(0.2)))
                 }
             }
             .onChange(of: configuration.isPressed) { newValue in

@@ -48,7 +48,7 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
                 if isScrubbing {
                     Group {
-                        Text(manager.item.runTimeSeconds - manager.progress.seconds, format: .runtime(negate: true))
+                        Text(manager.item.runTimeSeconds - manager.progress.seconds, format: .runtime.negated)
 
                         Text("/")
                     }
@@ -58,7 +58,7 @@ extension VideoPlayer.Overlay {
                 Group {
                     switch trailingTimestampType {
                     case .timeLeft:
-                        Text(manager.item.runTimeSeconds - scrubbedProgress.seconds, format: .runtime(negate: true))
+                        Text(manager.item.runTimeSeconds - scrubbedProgress.seconds, format: .runtime.negated)
                     case .totalTime:
                         Text(manager.item.runTimeSeconds, format: .runtime)
                     }

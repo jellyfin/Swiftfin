@@ -102,7 +102,7 @@ struct VideoPlayer: View {
 
             GestureView()
                 .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
-                    withAnimation(.spring(duration: 0.3)) {
+                    withAnimation(.spring(duration: 0.2)) {
                         isPresentingOverlay.toggle()
                     }
                 }

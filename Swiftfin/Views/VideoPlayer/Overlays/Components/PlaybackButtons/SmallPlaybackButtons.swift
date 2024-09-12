@@ -34,7 +34,7 @@ extension VideoPlayer.Overlay {
                 videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
                 timerProxy.delay(interval: 5)
             } label: {
-                Image(systemName: jumpBackwardLength.backwardImageLabel)
+                Image(systemName: jumpBackwardLength.backwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
             }
             .contentShape(Rectangle())
@@ -73,7 +73,7 @@ extension VideoPlayer.Overlay {
                 videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
                 timerProxy.delay(interval: 5)
             } label: {
-                Image(systemName: jumpForwardLength.forwardImageLabel)
+                Image(systemName: jumpForwardLength.forwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
             }
             .contentShape(Rectangle())

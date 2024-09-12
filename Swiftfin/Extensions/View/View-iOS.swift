@@ -22,6 +22,15 @@ extension View {
         }
     }
 
+    @ViewBuilder
+    func iOS16<Content: View>(@ViewBuilder _ content: (Self) -> Content) -> some View {
+        if #available(iOS 17, *) {
+            self
+        } else {
+            content(self)
+        }
+    }
+
     func detectOrientation(_ orientation: Binding<UIDeviceOrientation>) -> some View {
         modifier(DetectOrientation(orientation: orientation))
     }

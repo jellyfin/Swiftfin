@@ -9,19 +9,19 @@
 import Defaults
 import UIKit
 
-enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayable {
+// TODO: have just `TimeInterval`s instead
+enum VideoPlayerJumpLength: Int, CaseIterable, Displayable, Storable {
 
     case five = 5
     case ten = 10
     case fifteen = 15
     case thirty = 30
 
-    // TODO: formatter for locale?
     var displayTitle: String {
         "\(rawValue)s"
     }
 
-    var forwardImageLabel: String {
+    var forwardSystemImage: String {
         switch self {
         case .thirty:
             return "goforward.30"
@@ -34,7 +34,7 @@ enum VideoPlayerJumpLength: Int, CaseIterable, Defaults.Serializable, Displayabl
         }
     }
 
-    var backwardImageLabel: String {
+    var backwardSystemImage: String {
         switch self {
         case .thirty:
             return "gobackward.30"

@@ -19,7 +19,7 @@ extension VideoPlayer {
         var body: some View {
             ZStack {
 
-                MainOverlay()
+                VideoPlayer.MainOverlay()
 
 //                ChapterOverlay()
 //                    .visible(currentOverlayType == .chapters)

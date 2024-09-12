@@ -27,7 +27,11 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
 
 struct RunTimeFormatStyle: FormatStyle {
 
-    let negate: Bool
+    private var negate: Bool = false
+
+    var negated: RunTimeFormatStyle {
+        mutating(\.negate, with: true)
+    }
 
     func format(_ value: Int) -> String {
         let hours = value / 3600
@@ -46,19 +50,22 @@ struct RunTimeFormatStyle: FormatStyle {
     }
 }
 
-extension FormatStyle where Self == HourMinuteFormatStyle {
+extension FormatStyle where Self == RunTimeFormatStyle {
 
-    static var runtime: RunTimeFormatStyle { RunTimeFormatStyle(negate: false) }
-
-    static func runtime(negate: Bool) -> RunTimeFormatStyle {
-        RunTimeFormatStyle(negate: negate)
-    }
+    static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
 }
 
 struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
 
     func format(_ value: Value) -> String {
         value.description
+    }
+}
+
+struct DisplayableFormatStyle<Value: Displayable>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.displayTitle
     }
 }
 

@@ -22,93 +22,91 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var timerProxy: DelayIntervalTimer
+        private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var vlcUIProxy: VLCVideoPlayer.Proxy
-
-        @ViewBuilder
-        private var jumpBackwardButton: some View {
-            Button {
-                vlcUIProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.delay(interval: 5)
-            } label: {
-                Image(systemName: jumpBackwardLength.backwardImageLabel)
-                    .font(.system(size: 36, weight: .regular, design: .default))
-                    .padding()
-                    .contentShape(Rectangle())
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
-        }
 
         @ViewBuilder
         private var playButton: some View {
-            Button {
-                switch manager.state {
-                case .playing:
-                    vlcUIProxy.pause()
-                default:
-                    vlcUIProxy.play()
+            Button(
+                manager.playbackRequestState.displayTitle,
+                systemImage: manager.playbackRequestState.systemImage
+            ) {
+                switch manager.playbackRequestState {
+                case .play:
+                    manager.send(.pause)
+                case .pause:
+                    manager.send(.play)
                 }
-                timerProxy.delay(interval: 5)
-            } label: {
-                Group {
-                    switch manager.state {
-                    case .paused:
-                        Image(systemName: "play.fill")
-                    case .playing:
-                        Image(systemName: "pause.fill")
-                    default:
-                        ProgressView()
-                            .scaleEffect(2)
-                    }
-                }
-                .font(.system(size: 56, weight: .bold, design: .default))
-                .padding()
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                .contentShape(Rectangle())
             }
+            .transition(.opacity.combined(with: .scale).animation(.bouncy))
+            .font(.system(size: 56, weight: .bold, design: .default))
             .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
+            .labelStyle(.iconOnly)
+            .id(manager.playbackRequestState)
         }
 
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                vlcUIProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.delay(interval: 5)
+//                manager.proxy.jumpForward(jumpForwardLength.rawValue)
             } label: {
-                Image(systemName: jumpForwardLength.forwardImageLabel)
-                    .font(.system(size: 36, weight: .regular, design: .default))
-                    .padding()
-                    .contentShape(Rectangle())
+                Label(
+                    jumpForwardLength.displayTitle,
+                    systemImage: jumpForwardLength.forwardSystemImage
+                )
+                .labelStyle(.iconOnly)
+                .font(.system(size: 36, weight: .regular, design: .default))
+                .padding(10)
             }
-            .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
+            .foregroundStyle(.primary)
+        }
+
+        @ViewBuilder
+        private var jumpBackwardButton: some View {
+            Button {
+//                manager.proxy.jumpBackward(jumpBackwardLength.rawValue)
+            } label: {
+                Label(
+                    jumpBackwardLength.displayTitle,
+                    systemImage: jumpBackwardLength.backwardSystemImage
+                )
+                .labelStyle(.iconOnly)
+                .font(.system(size: 36, weight: .regular, design: .default))
+                .padding(10)
+            }
+            .foregroundStyle(.primary)
         }
 
         var body: some View {
             HStack(spacing: 0) {
-
-//                Spacer(minLength: 100)
-//
-//                if showJumpButtons {
-//                    jumpBackwardButton
-//                }
+                if showJumpButtons {
+                    jumpBackwardButton
+                }
 
                 playButton
-//                    .frame(minWidth: 100, maxWidth: 300)
+                    .frame(minWidth: 100, maxWidth: 300)
 
-//                if showJumpButtons {
-//                    jumpForwardButton
-//                }
-
-//                Spacer(minLength: 100)
+                if showJumpButtons {
+                    jumpForwardButton
+                }
             }
-            .tint(Color.white)
-            .foregroundColor(Color.white)
+            .buttonStyle(.videoPlayerBarButton { isPressed in
+                if isPressed {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.delay()
+                }
+            })
         }
+    }
+}
+
+struct BounceButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .animation(.bouncy, value: configuration.isPressed)
     }
 }

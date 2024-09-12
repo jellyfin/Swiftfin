@@ -29,9 +29,9 @@ struct VideoPlayerSettingsView: View {
                     router.route(to: \.gestureSettings)
                 }
 
-            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+//            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+//            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 

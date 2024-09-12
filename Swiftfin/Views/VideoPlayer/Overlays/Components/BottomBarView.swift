@@ -92,10 +92,14 @@ extension VideoPlayer.Overlay {
                         }
                     }
                     .transition(.move(edge: .top).combined(with: .opacity))
+                    .offset(y: isPresentingOverlay ? 0 : 20)
+                    .animation(.bouncy, value: isPresentingOverlay)
                 }
 
                 DrawerSectionView(selectedDrawerSection: .mock(-1))
                     .environment(\.isPresentingDrawer, $isPresentingDrawer)
+                    .offset(y: isPresentingOverlay ? 0 : 10)
+                    .animation(.bouncy, value: isPresentingOverlay)
 
                 if isPresentingDrawer {
                     Color.red

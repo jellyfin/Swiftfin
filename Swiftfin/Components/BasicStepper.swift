@@ -17,7 +17,7 @@ Formatter.FormatOutput == String {
     private let title: String
     private let range: ClosedRange<Value>
     private let step: Value.Stride
-    private var formatter: Formatter
+    private let formatter: Formatter
 
     var body: some View {
         Stepper(value: $value, in: range, step: step) {
