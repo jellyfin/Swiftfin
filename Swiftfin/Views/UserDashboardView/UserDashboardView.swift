@@ -17,6 +17,10 @@ struct UserDashboardView: View {
 
     @State
     private var currentServerURL: URL
+    @State
+    private var showRestartConfirmation = false
+    @State
+    private var showShutdownConfirmation = false
 
     @StateObject
     private var serverViewModel: EditServerViewModel
@@ -24,11 +28,8 @@ struct UserDashboardView: View {
     private var sessionViewModel = ActiveSessionsViewModel()
     @StateObject
     private var functionsViewModel = ServerFunctionsViewModel()
-
-    @State
-    private var showRestartConfirmation = false
-    @State
-    private var showShutdownConfirmation = false
+    @StateObject
+    private var currentUserViewModel = CurrentUserViewModel()
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -47,6 +48,12 @@ struct UserDashboardView: View {
         return Array(repeating: GridItem(.flexible(), spacing: 10), count: columns)
     }
 
+    // MARK: Grid Layout
+
+    private var currentUser: UserDto? {
+        currentUserViewModel.user ?? nil
+    }
+
     // MARK: Body
 
     var body: some View {
@@ -54,26 +61,24 @@ struct UserDashboardView: View {
             Section(header: Text(L10n.server)) {
                 serverFunctions
             }
-            .padding(.horizontal)
 
             // TODO: Hide this Section if the User is not an Administrator
-            if true {
-                Section(header: Text("Administration")) {
+            if currentUser?.policy?.isAdministrator ?? false {
+                Section("Administration") {
                     adminFunctions
                 }
-                .padding(.horizontal)
             }
 
-            Section(L10n.activeDevices.uppercased()) {
+            Section(L10n.activeDevices) {
                 activeDevices
+                    .padding(.top, 10)
             }
-            .font(.headline)
-            .foregroundColor(.secondary)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .navigationTitle(L10n.dashboard)
         .onAppear {
             sessionViewModel.send(.refresh)
+            currentUserViewModel.send(.load)
         }
         .onReceive(timer) { _ in
             sessionViewModel.send(.backgroundRefresh)
@@ -140,18 +145,20 @@ struct UserDashboardView: View {
 
     @ViewBuilder
     private var activeDevices: some View {
-        LazyVGrid(columns: gridLayout) {
-            ForEach(orderedSessions) { session in
-                ActiveSessionButton(session: session) {
-                    router.route(
-                        to: \.activeDeviceDetails,
-                        ActiveSessionsViewModel(deviceID: session.deviceID)
-                    )
+        ScrollView {
+            LazyVGrid(columns: gridLayout) {
+                ForEach(orderedSessions) { session in
+                    ActiveSessionButton(session: session) {
+                        router.route(
+                            to: \.activeDeviceDetails,
+                            ActiveSessionsViewModel(deviceID: session.deviceID)
+                        )
+                    }
+                    .padding(0)
                 }
-                .padding(4)
             }
+            .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
     }
 
     // MARK: Ordered Sessions
