@@ -50,30 +50,33 @@ struct UserDashboardView: View {
     // MARK: Body
 
     var body: some View {
-        VStack {
-            List {
-                Section(L10n.server) {
-                    serverFunctions
-                }
+        List {
+            Section(header: Text(L10n.server)) {
+                serverFunctions
+            }
+            .padding(.horizontal)
 
-                // TODO: Hide this Section if the User is not an Administrator
-                if true {
-                    Section("Administration") {
-                        adminFunctions
-                    }
+            // TODO: Hide this Section if the User is not an Administrator
+            if true {
+                Section(header: Text("Administration")) {
+                    adminFunctions
                 }
+                .padding(.horizontal)
+            }
 
-                Section(L10n.activeDevices) {
-                    activeDevices
-                }
+            Section(L10n.activeDevices.uppercased()) {
+                activeDevices
             }
-            .navigationTitle(L10n.dashboard)
-            .onAppear {
-                sessionViewModel.send(.refresh)
-            }
-            .onReceive(timer) { _ in
-                sessionViewModel.send(.backgroundRefresh)
-            }
+            .font(.headline)
+            .foregroundColor(.secondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .navigationTitle(L10n.dashboard)
+        .onAppear {
+            sessionViewModel.send(.refresh)
+        }
+        .onReceive(timer) { _ in
+            sessionViewModel.send(.backgroundRefresh)
         }
     }
 
@@ -137,17 +140,15 @@ struct UserDashboardView: View {
 
     @ViewBuilder
     private var activeDevices: some View {
-        ScrollView {
-            LazyVGrid(columns: gridLayout) {
-                ForEach(orderedSessions) { session in
-                    ActiveSessionButton(session: session) {
-                        router.route(
-                            to: \.activeDeviceDetails,
-                            ActiveSessionsViewModel(deviceID: session.deviceID)
-                        )
-                    }
-                    .padding(4)
+        LazyVGrid(columns: gridLayout) {
+            ForEach(orderedSessions) { session in
+                ActiveSessionButton(session: session) {
+                    router.route(
+                        to: \.activeDeviceDetails,
+                        ActiveSessionsViewModel(deviceID: session.deviceID)
+                    )
                 }
+                .padding(4)
             }
         }
         .frame(maxWidth: .infinity)
@@ -157,28 +158,22 @@ struct UserDashboardView: View {
 
     private var orderedSessions: [SessionInfo] {
         sessionViewModel.sessions.sorted {
-            // Group by sessions with nowPlayingItem first
             let isPlaying0 = $0.nowPlayingItem != nil
             let isPlaying1 = $1.nowPlayingItem != nil
 
-            // Place streaming sessions before non-streaming
             if isPlaying0 && !isPlaying1 {
                 return true
             } else if !isPlaying0 && isPlaying1 {
                 return false
             }
 
-            // Sort streaming vs non-streaming sessions by username
             if $0.userName != $1.userName {
                 return ($0.userName ?? "") < ($1.userName ?? "")
             }
 
-            // Both sessions are either playing or not, with the same userName
             if isPlaying0 && isPlaying1 {
-                // If both are playing, sort by nowPlayingItem.name
                 return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
             } else {
-                // If neither is playing, sort by lastActivityDate
                 return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
             }
         }
