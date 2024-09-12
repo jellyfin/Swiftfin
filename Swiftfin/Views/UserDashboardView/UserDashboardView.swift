@@ -51,7 +51,7 @@ struct UserDashboardView: View {
     // MARK: Grid Layout
 
     private var currentUser: UserDto? {
-        currentUserViewModel.user ?? nil
+        currentUserViewModel.user
     }
 
     // MARK: Body
