@@ -60,32 +60,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case stopped
     }
 
-    enum PlaybackRequestState: Displayable, SystemImageable {
-        case play
-        case pause
-
-        var displayTitle: String {
-            switch self {
-            case .play:
-                L10n.play
-            case .pause:
-                "Pause"
-            }
-        }
-
-        var systemImage: String {
-            switch self {
-            case .play:
-                "pause.fill"
-            case .pause:
-                "play.fill"
-            }
-        }
-    }
-
-    @Injected(\.nowPlayable)
-    var nowPlayable: NowPlayable
-
     @Published
     private(set) var playbackItem: MediaPlayerItem! = nil
 //    {
@@ -97,15 +71,13 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     private(set) var item: BaseItemDto
-    @Published
+//    @Published
     private(set) var progress: ProgressBox = .init(progress: 0, seconds: 0)
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
     private(set) var playbackSpeed: PlaybackSpeed = .one
 
-    @Published
-    final var playbackRequestState: PlaybackRequestState = .play
     @Published
     final var state: State = .initial
     @Published
@@ -158,10 +130,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case let .error(error):
             return .error(error)
         case .pause:
-            playbackRequestState = .pause
+
             return .paused
         case .play:
-            playbackRequestState = .play
+
             return .playing
         case .buffer:
             return .buffering
@@ -173,7 +145,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 eventSubject.send(.playbackStopped)
             }
             return .stopped
-        case let .playNew(item: item, mediaSource: mediaSource):
+//        case let .playNew(item: item, mediaSource: mediaSource):
+        case .playNew:
 
             return .buffering
         case let .seek(seconds: seconds):

@@ -14,6 +14,12 @@ extension VideoPlayer.Overlay {
 
     struct LargePlaybackButtons: View {
 
+        enum PlayButtonState {
+            case playing
+            case paused
+            case buffering
+        }
+
         @Default(.VideoPlayer.jumpBackwardLength)
         private var jumpBackwardLength
         @Default(.VideoPlayer.jumpForwardLength)
@@ -26,24 +32,36 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
+        @State
+        private var playButtonState: PlayButtonState = .buffering
+
         @ViewBuilder
         private var playButton: some View {
-            Button(
-                manager.playbackRequestState.displayTitle,
-                systemImage: manager.playbackRequestState.systemImage
-            ) {
-                switch manager.playbackRequestState {
-                case .play:
-                    manager.send(.pause)
-                case .pause:
-                    manager.send(.play)
+            Button {
+                switch manager.state {
+                case .playing:
+                    manager.proxy.pause()
+                case .paused:
+                    manager.proxy.play()
+                default: ()
                 }
+            } label: {
+                Group {
+                    switch playButtonState {
+                    case .playing:
+                        Label(L10n.play, systemImage: "pause.fill")
+                    case .paused:
+                        Label(L10n.play, systemImage: "play.fill")
+                    case .buffering:
+                        ProgressView()
+                    }
+                }
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .font(.system(size: 56, weight: .bold, design: .default))
+                .contentShape(Rectangle())
+                .labelStyle(.iconOnly)
             }
-            .transition(.opacity.combined(with: .scale).animation(.bouncy))
-            .font(.system(size: 56, weight: .bold, design: .default))
-            .contentShape(Rectangle())
-            .labelStyle(.iconOnly)
-            .id(manager.playbackRequestState)
+            .fixedSize()
         }
 
         @ViewBuilder
@@ -98,6 +116,17 @@ extension VideoPlayer.Overlay {
                     overlayTimer.delay()
                 }
             })
+            .onChange(of: manager.state) { state in
+                switch state {
+                case .playing:
+                    playButtonState = .playing
+                case .paused:
+                    playButtonState = .paused
+//                case .loadingItem, .buffering:
+                default: ()
+                    playButtonState = .buffering
+                }
+            }
         }
     }
 }

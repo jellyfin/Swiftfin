@@ -8,13 +8,9 @@
 
 import Defaults
 import JellyfinAPI
-import MediaPlayer
 import Stinsen
 import SwiftUI
 import VLCUI
-
-// TODO: localization necessary for toast text?
-// TODO: entire gesture layer should be separate
 
 struct VideoPlayer: View {
 
@@ -34,8 +30,6 @@ struct VideoPlayer: View {
     private var isAspectFilled: Bool = false
     @State
     private var isGestureLocked: Bool = false
-    @State
-    private var isPresentingDrawer = false
     @State
     private var isPresentingOverlay: Bool = true
     @State
@@ -100,23 +94,16 @@ struct VideoPlayer: View {
                     }
             }
 
-            GestureView()
-                .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
-                    withAnimation(.spring(duration: 0.2)) {
-                        isPresentingOverlay.toggle()
-                    }
-                }
-
             MainOverlay()
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isPresentingOverlay, $isPresentingOverlay)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.playbackSpeed, $playbackSpeed)
                 .environment(\.safeAreaInsets, $safeAreaInsets)
+                .environmentObject(manager)
+                .environmentObject(scrubbedProgress)
+                .environmentObject(vlcUIProxy)
         }
-        .environment(\.isAspectFilled, $isAspectFilled)
-        .environment(\.isPresentingOverlay, $isPresentingOverlay)
-        .environment(\.isScrubbing, $isScrubbing)
-        .environment(\.playbackSpeed, $playbackSpeed)
-        .environmentObject(manager)
-        .environmentObject(scrubbedProgress)
-        .environmentObject(vlcUIProxy)
     }
 
     // MARK: body
