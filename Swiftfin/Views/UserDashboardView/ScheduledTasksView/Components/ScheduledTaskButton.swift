@@ -46,11 +46,9 @@ extension ScheduledTasksView {
                    progress > 0 && progress < 100
                 {
                     if isCancelling {
-                        Text(L10n.cancel)
+                        Text(L10n.canceled)
                             .foregroundColor(.red)
 
-                        Image(systemName: "xmark")
-                            .foregroundColor(.red)
                     } else {
                         Text(
                             NumberFormatter.localizedString(
