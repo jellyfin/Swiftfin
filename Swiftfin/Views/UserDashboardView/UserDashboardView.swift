@@ -110,9 +110,23 @@ struct UserDashboardView: View {
         Button(action: {
             functionsViewModel.send(.scanLibrary)
         }) {
-            Text("Scan All Libraries")
+            HStack {
+                Text("Scan All Libraries")
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                if functionsViewModel.progress > 0 && functionsViewModel.progress < 100 {
+                    HStack {
+                        Text("\(functionsViewModel.progress, specifier: "%.1f")%")
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    }
+                }
+            }
         }
-        .foregroundColor(.primary)
 
         Button("Restart Server", role: .destructive) {
             showRestartConfirmation = true

@@ -19,15 +19,13 @@ extension UserDashboardView {
             VStack(alignment: .leading) {
                 if let contentItem = item {
                     Text(self.getTitle(item: contentItem))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .lineLimit(2)
+
                     if let parent = self.getParent(item: contentItem) {
                         Text(parent)
-                            .lineLimit(1)
                     }
+
                     if let episode = self.getEpisode(item: contentItem) {
                         Text(episode)
-                            .lineLimit(1)
                     }
                 }
             }

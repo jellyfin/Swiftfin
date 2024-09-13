@@ -99,9 +99,8 @@ final class ServerFunctionsViewModel: ViewModel, Stateful {
     private func sendLibraryScanRequest() async throws {
         let request = Paths.refreshLibrary
         let response = try await userSession.client.send(request)
-        await MainActor.run {
-            self.state = .idle
-        }
+
+        try await pollTaskProgress(for: "RefreshLibrary")
     }
 
     // MARK: API - Restart Jellyfin
@@ -109,6 +108,7 @@ final class ServerFunctionsViewModel: ViewModel, Stateful {
     private func sendRestartRequest() async throws {
         let request = Paths.restartApplication
         let response = try await userSession.client.send(request)
+        self.progress = 100
         await MainActor.run {
             self.state = .idle
         }
@@ -119,8 +119,45 @@ final class ServerFunctionsViewModel: ViewModel, Stateful {
     private func sendShutdownRequest() async throws {
         let request = Paths.shutdownApplication
         let response = try await userSession.client.send(request)
+        self.progress = 100
         await MainActor.run {
             self.state = .idle
+        }
+    }
+
+    // MARK: API - Poll Task Progress
+
+    private func pollTaskProgress(for taskId: String) async throws {
+        let request = Paths.getTasks()
+        let response = try await userSession.client.send(request)
+
+        let filteredTasks = response.value.filter { task in
+            task.key == taskId
+        }
+
+        if let taskID = filteredTasks.first?.id {
+            while true {
+                let request = Paths.getTask(taskID: taskID)
+                let response = try await userSession.client.send(request)
+
+                let currentProgress = response.value.currentProgressPercentage
+
+                await MainActor.run {
+                    self.progress = currentProgress ?? 0
+                }
+
+                if currentProgress ?? 0 >= 100 {
+                    break
+                }
+
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+            }
+
+            await MainActor.run {
+                self.state = .idle
+            }
+        } else {
+            self.progress = 100
         }
     }
 }
