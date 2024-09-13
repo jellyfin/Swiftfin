@@ -49,7 +49,7 @@ extension UserDashboardView {
 
         private var lastSeenDateView: some View {
             HStack {
-                Text("Last Seen:")
+                Text(L10n.lastSeenWithString(""))
                 Spacer()
                 Text(
                     lastActivityDate

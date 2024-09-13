@@ -89,7 +89,7 @@ extension ActiveDeviceDetailView {
         private func getActiveTranscodeReasons(reasons: [TranscodeReason]) -> some View {
             VStack(alignment: .center, spacing: 8) {
                 ForEach(reasons, id: \.self) { reason in
-                    Text(reason.description)
+                    Text(reason.rawValue)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)

@@ -18,7 +18,7 @@ final class CurrentUserViewModel: ViewModel, Stateful {
 
     enum Action: Equatable {
         case error(JellyfinAPIError)
-        case load
+        case fetchUser
     }
 
     // MARK: State
@@ -41,8 +41,8 @@ final class CurrentUserViewModel: ViewModel, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case .load:
-            loadUser()
+        case .fetchUser:
+            fetchUser()
             return .loading
 
         case let .error(error):
@@ -52,7 +52,7 @@ final class CurrentUserViewModel: ViewModel, Stateful {
 
     // MARK: Session Management
 
-    func loadUser() {
+    func fetchUser() {
         sessionTask?.cancel()
 
         sessionTask = Task {
@@ -66,6 +66,8 @@ final class CurrentUserViewModel: ViewModel, Stateful {
         }
     }
 
+    // MARK: Fetch the Current User
+
     private func performUserLoading() async throws {
         let currentUser = try await fetchCurrentUser()
 
@@ -74,6 +76,8 @@ final class CurrentUserViewModel: ViewModel, Stateful {
             self.state = .user
         }
     }
+
+    // MARK: API Call the Current User
 
     private func fetchCurrentUser() async throws -> UserDto {
         let request = Paths.getCurrentUser

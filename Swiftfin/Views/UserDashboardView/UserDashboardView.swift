@@ -17,17 +17,13 @@ struct UserDashboardView: View {
 
     @State
     private var currentServerURL: URL
-    @State
-    private var showRestartConfirmation = false
-    @State
-    private var showShutdownConfirmation = false
 
     @StateObject
     private var serverViewModel: EditServerViewModel
     @StateObject
     private var sessionViewModel = ActiveSessionsViewModel()
     @StateObject
-    private var functionsViewModel = ServerFunctionsViewModel()
+    private var tasksViewModel = ScheduledTasksViewModel()
     @StateObject
     private var currentUserViewModel = CurrentUserViewModel()
 
@@ -48,10 +44,17 @@ struct UserDashboardView: View {
         return Array(repeating: GridItem(.flexible(), spacing: 10), count: columns)
     }
 
-    // MARK: Grid Layout
+    // MARK: Current User
 
     private var currentUser: UserDto? {
         currentUserViewModel.user
+    }
+
+    // MARK: Current User
+
+    private var scheduledTasks: [TaskInfo] {
+        let tasks = tasksViewModel.tasks
+        return tasks
     }
 
     // MARK: Body
@@ -62,9 +65,9 @@ struct UserDashboardView: View {
                 serverFunctions
             }
 
-            // TODO: Hide this Section if the User is not an Administrator
+            // Only Show Admin Functions if the user has the isAdministrator Policy
             if currentUser?.policy?.isAdministrator ?? false {
-                Section("Administration") {
+                Section(L10n.administration) {
                     adminFunctions
                 }
             }
@@ -78,10 +81,12 @@ struct UserDashboardView: View {
         .navigationTitle(L10n.dashboard)
         .onAppear {
             sessionViewModel.send(.refresh)
-            currentUserViewModel.send(.load)
+            tasksViewModel.send(.fetchTasks)
+            currentUserViewModel.send(.fetchUser)
         }
         .onReceive(timer) { _ in
             sessionViewModel.send(.backgroundRefresh)
+            tasksViewModel.send(.backgroundRefresh)
         }
     }
 
@@ -107,52 +112,24 @@ struct UserDashboardView: View {
 
     @ViewBuilder
     private var adminFunctions: some View {
-        Button(action: {
-            functionsViewModel.send(.scanLibrary)
-        }) {
-            HStack {
-                Text("Scan All Libraries")
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                if functionsViewModel.progress > 0 && functionsViewModel.progress < 100 {
-                    HStack {
-                        Text("\(functionsViewModel.progress, specifier: "%.1f")%")
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                    }
+        if let refreshID = scheduledTasks.first(where: { $0.key == "RefreshLibrary" })?.id {
+            ScheduledTasksView.ScheduledTaskButton(
+                taskID: refreshID,
+                taskName: L10n.scanAllLibraries,
+                progress: tasksViewModel.progress[refreshID],
+                onSelect: {
+                    tasksViewModel.send(.startTask(refreshID))
+                },
+                onCancel: {
+                    tasksViewModel.send(.stopTask(refreshID))
                 }
-            }
+            )
         }
 
-        Button("Restart Server", role: .destructive) {
-            showRestartConfirmation = true
-        }
-        .confirmationDialog(
-            "Are you sure you want to restart the server?",
-            isPresented: $showRestartConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Restart", role: .destructive) {
-                functionsViewModel.send(.restartApplication)
+        ChevronButton(L10n.scheduledTasks)
+            .onSelect {
+                router.route(to: \.scheduledTasks)
             }
-        }
-
-        Button("Shutdown Server", role: .destructive) {
-            showShutdownConfirmation = true
-        }
-        .confirmationDialog(
-            "Are you sure you want to shutdown the server?",
-            isPresented: $showShutdownConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Shutdown", role: .destructive) {
-                functionsViewModel.send(.shutdownApplication)
-            }
-        }
     }
 
     // MARK: Active Devices
@@ -168,7 +145,6 @@ struct UserDashboardView: View {
                             ActiveSessionsViewModel(deviceID: session.deviceID)
                         )
                     }
-                    .padding(0)
                 }
             }
             .frame(maxWidth: .infinity)

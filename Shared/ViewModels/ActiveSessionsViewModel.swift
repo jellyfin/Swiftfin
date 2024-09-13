@@ -65,7 +65,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: Session Management
+    // MARK: Load the Active Sessions
 
     func loadSessions() {
         sessionTask?.cancel()
@@ -73,8 +73,6 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         sessionTask = Task {
             do {
                 try await self.performSessionLoading()
-            } catch is CancellationError {
-                print("Active Sessions refresh was cancelled")
             } catch {
                 await MainActor.run {
                     self.state = .error(JellyfinAPIError(error.localizedDescription))
@@ -82,6 +80,8 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             }
         }
     }
+
+    // MARK: Fetch the Active Sessions
 
     private func performSessionLoading() async throws {
         let fetchedSessions = try await fetchSessions(deviceID)
@@ -91,6 +91,8 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             self.state = .sessions
         }
     }
+
+    // MARK: Fetch the Active Sessions via API
 
     private func fetchSessions(_ deviceID: String?) async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()

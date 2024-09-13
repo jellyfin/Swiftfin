@@ -20,19 +20,19 @@ extension UserDashboardView {
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
-                    Text("Client:")
+                    Text(L10n.clientWithString(""))
                     Spacer()
                     Text(client ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
                 HStack {
-                    Text("Device:")
+                    Text(L10n.clientWithString(""))
                     Spacer()
                     Text(deviceName ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
                 HStack {
-                    Text("Version:")
+                    Text(L10n.versionWithString(""))
                     Spacer()
                     Text(applicationVersion ?? L10n.unknown)
                         .foregroundColor(.secondary)

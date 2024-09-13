@@ -109,7 +109,9 @@ extension UserDashboardView {
 
         private func getTranscodeFPS(transcodingInfo: TranscodingInfo) -> String {
             if let framerate = transcodingInfo.framerate {
-                return Int(framerate).description + "fps"
+                return L10n.fpsWithString(
+                    Int(framerate).description
+                )
             } else {
                 return ""
             }

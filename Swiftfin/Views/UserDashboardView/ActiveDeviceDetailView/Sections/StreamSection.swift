@@ -56,13 +56,13 @@ extension ActiveDeviceDetailView {
 
         // MARK: Transcoding Details
 
-        private func getMediaComparison(sourceComponent: String, destinationComponent: String?) -> some View {
+        private func getMediaComparison(sourceComponent: String, destinationComponent: String) -> some View {
             HStack {
                 Text(sourceComponent.uppercased())
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 Image(systemName: (destinationComponent != sourceComponent) ? "shuffle" : "arrow.right")
                     .frame(maxWidth: .infinity, alignment: .center)
-                Text((destinationComponent ?? "").uppercased())
+                Text(destinationComponent.uppercased())
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxWidth: .infinity)

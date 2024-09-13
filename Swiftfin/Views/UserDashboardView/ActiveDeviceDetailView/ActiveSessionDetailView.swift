@@ -69,7 +69,7 @@ struct ActiveDeviceDetailView: View {
     private func idleContent(client: String?, deviceName: String?, applicationVersion: String?, lastActivityDate: Date?) -> some View {
         List {
             // Always show the Client Details
-            Section("Device") {
+            Section(L10n.device) {
                 UserDashboardView.ClientSection(
                     client: client,
                     deviceName: deviceName,
@@ -79,7 +79,7 @@ struct ActiveDeviceDetailView: View {
 
             // Show the the Last Seen Ticker (if possible) on Idle
             if let lastActivityDate = lastActivityDate {
-                Section("Last Seen") {
+                Section(L10n.lastSeen) {
                     UserDashboardView.ConnectionSection(
                         lastActivityDate: lastActivityDate,
                         currentDate: currentDate,
@@ -117,7 +117,7 @@ struct ActiveDeviceDetailView: View {
             }
 
             // Always show the Client Details
-            Section("Device") {
+            Section(L10n.device) {
                 UserDashboardView.ClientSection(
                     client: client,
                     deviceName: deviceName,
@@ -136,7 +136,7 @@ struct ActiveDeviceDetailView: View {
 
             // Always show the Transcode Reasons if present
             if let transcodeReasons = transcodingInfo?.transcodeReasons {
-                Section("Reason(s)") {
+                Section(L10n.transcodeReasons) {
                     TranscodeSection(transcodeReasons: transcodeReasons)
                 }
             }
