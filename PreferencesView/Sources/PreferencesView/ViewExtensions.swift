@@ -27,4 +27,10 @@ public extension View {
         preference(key: SupportedOrientationsPreferenceKey.self, value: supportedOrientations)
     }
     #endif
+
+    #if os(tvOS)
+    func pressCommands(@PressCommandsBuilder _ commands: @escaping () -> [PressCommandAction]) -> some View {
+        preference(key: PressCommandsPreferenceKey.self, value: commands())
+    }
+    #endif
 }
