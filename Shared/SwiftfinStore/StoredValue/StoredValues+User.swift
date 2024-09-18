@@ -89,6 +89,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static func activeDevicesDisplayType() -> Key<LibraryDisplayType> {
+            CurrentUserKey(
+                "activeDevicesDisplayType",
+                domain: "setting-activeDevicesDisplayType",
+                default: Defaults[.Customization.activeDevicesDisplayType]
+            )
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,

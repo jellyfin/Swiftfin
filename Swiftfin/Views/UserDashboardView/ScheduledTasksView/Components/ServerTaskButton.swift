@@ -18,6 +18,8 @@ extension ScheduledTasksView {
         var isPresented: Binding<Bool>
         var action: () -> Void
 
+        // MARK: - Body
+
         @ViewBuilder
         var body: some View {
             Button(role: .destructive) {

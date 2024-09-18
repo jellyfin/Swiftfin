@@ -14,7 +14,7 @@ import SwiftUI
 
 final class ActiveSessionsViewModel: ViewModel, Stateful {
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case backgroundRefresh
@@ -22,13 +22,13 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         case refresh
     }
 
-    // MARK: BackgroundState
+    // MARK: - BackgroundState
 
     enum BackgroundStates: Hashable {
         case refresh
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case sessions
@@ -37,27 +37,32 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         case refreshing
     }
 
+    // MARK: - Published Variables
+
     @Published
     var sessions: OrderedSet<SessionInfo> = []
     @Published
     final var state: State = .initial
 
-    private var sessionTask: Task<Void, Never>?
+    // MARK: - Variables
 
     var deviceID: String?
+    var activeWithinSeconds: Int
+    private var sessionTask: Task<Void, Never>?
 
-    // MARK: Initializer
+    // MARK: - Init
 
-    init(deviceID: String? = nil) {
+    init(deviceID: String? = nil, activeWithinSeconds: Int = 960) {
         self.deviceID = deviceID
+        self.activeWithinSeconds = activeWithinSeconds // Defaults to 960 seconds to mirror Jellyfin-Web
     }
 
-    // MARK: Stateful Conformance
+    // MARK: - Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
         case .refresh, .backgroundRefresh:
-            loadSessions()
+            getSessions()
             return .refreshing
 
         case let .error(error):
@@ -65,41 +70,42 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: Load the Active Sessions
+    // MARK: - Load Active Sessions
 
-    func loadSessions() {
+    func getSessions() {
         sessionTask?.cancel()
 
         sessionTask = Task {
             do {
-                try await self.performSessionLoading()
+                try await loadSessions()
             } catch {
                 await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
+                    state = .error(JellyfinAPIError(error.localizedDescription))
                 }
             }
         }
     }
 
-    // MARK: Fetch the Active Sessions
+    // MARK: - Fetch Active Sessions & Handle State
 
-    private func performSessionLoading() async throws {
-        let fetchedSessions = try await fetchSessions(deviceID)
+    private func loadSessions() async throws {
+        let fetchedSessions = try await requestSessions(deviceID)
 
         await MainActor.run {
-            self.sessions = fetchedSessions
-            self.state = .sessions
+            sessions = fetchedSessions
+            state = .sessions
         }
     }
 
-    // MARK: Fetch the Active Sessions via API
+    // MARK: - Fetch Sessions via API
 
-    private func fetchSessions(_ deviceID: String?) async throws -> OrderedSet<SessionInfo> {
+    private func requestSessions(_ deviceID: String?) async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()
-        parameters.activeWithinSeconds = 960 // 960 Seconds to mirror Jellyfin-Web
+        parameters.activeWithinSeconds = activeWithinSeconds
         if let deviceID = deviceID {
             parameters.deviceID = deviceID
         }
+
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 

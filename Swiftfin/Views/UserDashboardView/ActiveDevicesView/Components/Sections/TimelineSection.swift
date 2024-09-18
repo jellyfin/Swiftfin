@@ -9,12 +9,14 @@
 import Foundation
 import SwiftUI
 
-extension UserDashboardView {
+extension ActiveDevicesView {
     struct TimelineSection: View {
         let playbackPercentage: Double
         let transcodingPercentage: Double
         let playbackColor: Color
         let transcodingColor: Color?
+
+        // MARK: - Init
 
         init(
             playbackPercentage: Double,
@@ -28,7 +30,7 @@ extension UserDashboardView {
             self.transcodingColor = transcodingColor
         }
 
-        // MARK: Body
+        // MARK: - Body
 
         @ViewBuilder
         var body: some View {

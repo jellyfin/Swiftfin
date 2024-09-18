@@ -14,14 +14,14 @@ import SwiftUI
 
 final class CurrentUserViewModel: ViewModel, Stateful {
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case error(JellyfinAPIError)
-        case fetchUser
+        case getUser
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case user
@@ -30,19 +30,23 @@ final class CurrentUserViewModel: ViewModel, Stateful {
         case initial
     }
 
+    // MARK: - Published Variables
+
     @Published
     var user: UserDto?
     @Published
     final var state: State = .initial
 
+    // MARK: - Private Variables
+
     private var sessionTask: Task<Void, Never>?
 
-    // MARK: Stateful Conformance
+    // MARK: - Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
-        case .fetchUser:
-            fetchUser()
+        case .getUser:
+            getUser()
             return .loading
 
         case let .error(error):
@@ -50,39 +54,38 @@ final class CurrentUserViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: Session Management
+    // MARK: - Load Active User
 
-    func fetchUser() {
+    func getUser() {
         sessionTask?.cancel()
 
         sessionTask = Task {
             do {
-                try await self.performUserLoading()
+                try await loadUser()
             } catch {
                 await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
+                    state = .error(JellyfinAPIError(error.localizedDescription))
                 }
             }
         }
     }
 
-    // MARK: Fetch the Current User
+    // MARK: - Fetch Active User & Handle State
 
-    private func performUserLoading() async throws {
-        let currentUser = try await fetchCurrentUser()
+    private func loadUser() async throws {
+        let currentUser = try await requestUser()
 
         await MainActor.run {
-            self.user = currentUser
-            self.state = .user
+            user = currentUser
+            state = .user
         }
     }
 
-    // MARK: API Call the Current User
+    // MARK: - Fetch Current User via API
 
-    private func fetchCurrentUser() async throws -> UserDto {
+    private func requestUser() async throws -> UserDto {
         let request = Paths.getCurrentUser
         let response = try await userSession.client.send(request)
-
         return response.value
     }
 }

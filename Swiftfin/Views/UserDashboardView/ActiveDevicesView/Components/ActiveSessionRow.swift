@@ -15,7 +15,42 @@ extension ActiveDevicesView {
         var session: SessionInfo
         var onSelect: () -> Void
 
-        // MARK: Session Details
+        // MARK: - Body
+
+        var body: some View {
+            Button(action: onSelect) {
+                VStack {
+                    HStack(alignment: .center, spacing: 12) {
+                        if let nowPlayingItem = session.nowPlayingItem {
+                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 75))
+                                .image { image in
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 75)
+                                        .cornerRadius(4)
+                                }
+                                .placeholder { imageSource in
+                                    ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
+                                        .frame(width: 75)
+                                        .cornerRadius(4)
+                                }
+                                .failure {
+                                    EmptyView()
+                                }
+                                .id(nowPlayingItem.portraitImageSources(maxWidth: 75).hashValue)
+                        }
+
+                        sessionDetails
+                    }
+                    .padding(.horizontal, 16)
+                    Divider()
+                        .padding(.vertical, 8)
+                }
+            }
+        }
+
+        // MARK: - Session Details
 
         @ViewBuilder
         private var sessionDetails: some View {
@@ -28,7 +63,7 @@ extension ActiveDevicesView {
                     Text(nowPlayingItem.name ?? L10n.unknown)
                         .foregroundColor(.primary)
 
-                    UserDashboardView.ProgressSection(
+                    ProgressSection(
                         item: nowPlayingItem,
                         playState: session.playState,
                         transcodingInfo: session.transcodingInfo
@@ -65,7 +100,7 @@ extension ActiveDevicesView {
                     Spacer()
 
                     if let lastActivityDate = session.lastActivityDate {
-                        UserDashboardView.ConnectionSection(
+                        ConnectionSection(
                             lastActivityDate: lastActivityDate,
                             currentDate: Date(),
                             prefixText: true
@@ -77,41 +112,6 @@ extension ActiveDevicesView {
                             .font(.headline)
                         Spacer()
                     }
-                }
-            }
-        }
-
-        // MARK: Body
-
-        var body: some View {
-            Button(action: onSelect) {
-                VStack {
-                    HStack(alignment: .center, spacing: 12) {
-                        if let nowPlayingItem = session.nowPlayingItem {
-                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 75))
-                                .image { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 75)
-                                        .cornerRadius(4)
-                                }
-                                .placeholder { imageSource in
-                                    ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
-                                        .frame(width: 75)
-                                        .cornerRadius(4)
-                                }
-                                .failure {
-                                    EmptyView()
-                                }
-                                .id(nowPlayingItem.portraitImageSources(maxWidth: 75).hashValue)
-                        }
-
-                        sessionDetails
-                    }
-                    .padding(.horizontal, 16)
-                    Divider()
-                        .padding(.vertical, 8)
                 }
             }
         }

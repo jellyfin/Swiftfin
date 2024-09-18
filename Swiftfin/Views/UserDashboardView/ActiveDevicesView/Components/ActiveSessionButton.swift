@@ -15,51 +15,7 @@ extension ActiveDevicesView {
         var session: SessionInfo
         var onSelect: () -> Void
 
-        // MARK: Session Details
-
-        @ViewBuilder
-        private var sessionDetails: some View {
-            VStack(alignment: .leading) {
-                if let nowPlayingItem = session.nowPlayingItem {
-                    UserDashboardView.ContentSection(item: nowPlayingItem)
-                } else {
-                    UserDashboardView.ClientSection(
-                        client: session.client,
-                        deviceName: session.deviceName,
-                        applicationVersion: session.applicationVersion
-                    )
-                }
-            }
-        }
-
-        // MARK: Header and Footer
-
-        private var headerSection: some View {
-            UserDashboardView.UserSection(
-                userName: session.userName,
-                client: session.client
-            )
-        }
-
-        @ViewBuilder
-        private var footerSection: some View {
-            if let nowPlayingItem = session.nowPlayingItem {
-                UserDashboardView.ProgressSection(
-                    item: nowPlayingItem,
-                    playState: session.playState,
-                    transcodingInfo: session.transcodingInfo
-                )
-                .font(.caption)
-            } else if let lastActivityDate = session.lastActivityDate {
-                UserDashboardView.ConnectionSection(
-                    lastActivityDate: lastActivityDate,
-                    currentDate: Date(),
-                    prefixText: true
-                )
-            }
-        }
-
-        // MARK: Body
+        // MARK: - Body
 
         var body: some View {
             Button(action: onSelect) {
@@ -98,6 +54,52 @@ extension ActiveDevicesView {
                 .background(Color.accentColor.opacity(0.3))
                 .posterStyle(.landscape)
                 .posterShadow()
+            }
+        }
+
+        // MARK: - Session Details
+
+        @ViewBuilder
+        private var sessionDetails: some View {
+            VStack(alignment: .leading) {
+                if let nowPlayingItem = session.nowPlayingItem {
+                    ContentSection(item: nowPlayingItem)
+                } else {
+                    ClientSection(
+                        client: session.client,
+                        deviceName: session.deviceName,
+                        applicationVersion: session.applicationVersion
+                    )
+                }
+            }
+        }
+
+        // MARK: - Header
+
+        private var headerSection: some View {
+            UserSection(
+                userName: session.userName,
+                client: session.client
+            )
+        }
+
+        // MARK: - Footer
+
+        @ViewBuilder
+        private var footerSection: some View {
+            if let nowPlayingItem = session.nowPlayingItem {
+                ProgressSection(
+                    item: nowPlayingItem,
+                    playState: session.playState,
+                    transcodingInfo: session.transcodingInfo
+                )
+                .font(.caption)
+            } else if let lastActivityDate = session.lastActivityDate {
+                ConnectionSection(
+                    lastActivityDate: lastActivityDate,
+                    currentDate: Date(),
+                    prefixText: true
+                )
             }
         }
     }

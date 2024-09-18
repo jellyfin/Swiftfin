@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension ActiveDevicesView {
     struct ClientSection: View {
         let client: String?
         let deviceName: String?

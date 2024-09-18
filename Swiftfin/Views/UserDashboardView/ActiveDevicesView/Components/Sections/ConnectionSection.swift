@@ -9,19 +9,19 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension ActiveDevicesView {
     struct ConnectionSection: View {
         let lastActivityDate: Date
         let currentDate: Date
         let prefixText: Bool
 
-        // MARK: Body
+        // MARK: - Body
 
         var body: some View {
             contentView
         }
 
-        // MARK: Content View
+        // MARK: - Content View
 
         @ViewBuilder
         private var contentView: some View {
@@ -32,7 +32,7 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Last Seen Description
+        // MARK: - Last Seen Description
 
         private var lastSeenTextView: some View {
             let formatter = RelativeDateTimeFormatter()
@@ -45,7 +45,7 @@ extension UserDashboardView {
             )
         }
 
-        // MARK: Last Seen Date
+        // MARK: - Last Seen Date
 
         private var lastSeenDateView: some View {
             HStack {

@@ -11,12 +11,16 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveDeviceDetailView: View {
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
     @ObservedObject
     var viewModel: ActiveSessionsViewModel
-    @State
-    private var imageSources: [ImageSource] = []
+
     @State
     private var currentDate = Date()
+
+    // MARK: - Timer
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
@@ -48,13 +52,9 @@ struct ActiveDeviceDetailView: View {
                 )
             }
         }
-        .navigationTitle(session.userName ?? L10n.unknown)
+        .navigationTitle(session.userName ?? "")
         .onAppear {
             viewModel.send(.refresh)
-            setImageSources(session.nowPlayingItem)
-        }
-        .onChange(of: session.nowPlayingItem) { _ in
-            setImageSources(session.nowPlayingItem)
         }
         .onReceive(timer) { _ in
             viewModel.send(.backgroundRefresh)
@@ -70,7 +70,7 @@ struct ActiveDeviceDetailView: View {
         List {
             // Always show the Client Details
             Section(L10n.device) {
-                UserDashboardView.ClientSection(
+                ActiveDevicesView.ClientSection(
                     client: client,
                     deviceName: deviceName,
                     applicationVersion: applicationVersion
@@ -80,7 +80,7 @@ struct ActiveDeviceDetailView: View {
             // Show the the Last Seen Ticker (if possible) on Idle
             if let lastActivityDate = lastActivityDate {
                 Section(L10n.lastSeen) {
-                    UserDashboardView.ConnectionSection(
+                    ActiveDevicesView.ConnectionSection(
                         lastActivityDate: lastActivityDate,
                         currentDate: currentDate,
                         prefixText: false
@@ -109,7 +109,7 @@ struct ActiveDeviceDetailView: View {
 
             // Show the Now Playing Progress if something is being streamed
             Section(L10n.progress) {
-                UserDashboardView.ProgressSection(
+                ActiveDevicesView.ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
                     transcodingInfo: transcodingInfo
@@ -118,7 +118,7 @@ struct ActiveDeviceDetailView: View {
 
             // Always show the Client Details
             Section(L10n.device) {
-                UserDashboardView.ClientSection(
+                ActiveDevicesView.ClientSection(
                     client: client,
                     deviceName: deviceName,
                     applicationVersion: applicationVersion
@@ -149,20 +149,10 @@ struct ActiveDeviceDetailView: View {
     private var progressSection: some View {
         let playbackPercentage = Double(session.playState?.positionTicks ?? 0) / Double(session.nowPlayingItem?.runTimeTicks ?? 0)
 
-        UserDashboardView.TimelineSection(
+        ActiveDevicesView.TimelineSection(
             playbackPercentage: playbackPercentage,
             transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
         )
-    }
-
-    // MARK: setImageSources
-
-    private func setImageSources(_ nowPlayingItem: BaseItemDto?) {
-        if let imageSource = nowPlayingItem?.cinematicImageSources().first {
-            imageSources = [imageSource]
-        } else {
-            imageSources = []
-        }
     }
 
     // MARK: Now Playing Section
@@ -170,7 +160,7 @@ struct ActiveDeviceDetailView: View {
     @ViewBuilder
     private func nowPlayingSection(_ item: BaseItemDto) -> some View {
         // Create a Cinematic poster for the Now Playing Item
-        ImageView(item.cinematicImageSources().first!)
+        ImageView(item.cinematicImageSources())
             .image { image in
                 image
             }
@@ -186,7 +176,7 @@ struct ActiveDeviceDetailView: View {
                             .foregroundColor(.primary)
                     }
             }
-            .id(imageSources.hashValue)
+            .id(item.cinematicImageSources().hashValue)
             .scaledToFill()
             .clipShape(
                 RoundedRectangle(
@@ -195,22 +185,28 @@ struct ActiveDeviceDetailView: View {
             )
 
         // Get the Name/Parent/Episode details for the Now Playing Item
-        UserDashboardView.ContentSection(item: session.nowPlayingItem)
+        ActiveDevicesView.ContentSection(item: session.nowPlayingItem)
 
         // If available, get the Overview for the Now Playing Item
-        if let firstTagline = item.taglines?.first {
-            Text(firstTagline)
-                .font(.body)
-                .fontWeight(.semibold)
-                .multilineTextAlignment(.leading)
-                .lineLimit(2)
-        }
+        VStack(alignment: .leading, spacing: 10) {
 
-        if let itemOverview = item.overview {
-            TruncatedText(itemOverview)
-                .lineLimit(3)
-        } else {
-            L10n.noOverviewAvailable.text
+            if let firstTagline = item.taglines?.first {
+                Text(firstTagline)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.leading)
+                    .lineLimit(2)
+            }
+
+            if let itemOverview = item.overview {
+                TruncatedText(itemOverview)
+                    .onSeeMore {
+                        router.route(to: \.itemOverviewView, item)
+                    }
+                    .seeMoreType(.view)
+                    .font(.footnote)
+                    .lineLimit(3)
+            }
         }
     }
 }

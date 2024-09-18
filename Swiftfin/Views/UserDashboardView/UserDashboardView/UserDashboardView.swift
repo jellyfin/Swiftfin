@@ -6,8 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -25,9 +23,7 @@ struct UserDashboardView: View {
     @StateObject
     private var sessionsViewModel = ActiveSessionsViewModel()
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-
-    // MARK: Init
+    // MARK: - Init
 
     init(server: ServerState) {
         self._currentServerURL = State(initialValue: server.currentURL)
@@ -35,7 +31,7 @@ struct UserDashboardView: View {
         self._sessionsViewModel = StateObject(wrappedValue: ActiveSessionsViewModel())
     }
 
-    // MARK: Body
+    // MARK: - Body
 
     var body: some View {
         List {

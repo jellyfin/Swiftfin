@@ -9,13 +9,13 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension ActiveDevicesView {
     struct ProgressSection: View {
         let item: BaseItemDto
         let playState: PlayerStateInfo?
         let transcodingInfo: TranscodingInfo?
 
-        // MARK: Body
+        // MARK: - Body
 
         var body: some View {
             VStack {
@@ -24,7 +24,7 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Playback Information
+        // MARK: - Playback Information
 
         @ViewBuilder
         private var playbackInformation: some View {
@@ -48,7 +48,7 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Playback Timeline
+        // MARK: - Playback Timeline
 
         @ViewBuilder
         private var playbackTimeline: some View {
@@ -63,14 +63,14 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Get Formatted Time
+        // MARK: - Get Formatted Time
 
         private func formattedTime(_ ticks: Int64) -> String {
             let seconds = ticks / 10_000_000
             return seconds.timeLabel
         }
 
-        // MARK: Get Playback Progress Percentage
+        // MARK: - Get Playback Progress Percentage
 
         private func getProgressPercentage(item: BaseItemDto?, playState: PlayerStateInfo?) -> Double? {
             let positionTicks = playState?.positionTicks ?? 0
@@ -83,7 +83,7 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Get Playback Progress Icon
+        // MARK: - Get Playback Progress Icon
 
         private func getProgressIcon(isPaused: Bool?) -> Image? {
             if isPaused ?? false {
@@ -93,7 +93,7 @@ extension UserDashboardView {
             }
         }
 
-        // MARK: Get Playback Progress Timestamp
+        // MARK: - Get Playback Progress Timestamp
 
         private func getProgressTimestamp(item: BaseItemDto?, playState: PlayerStateInfo?) -> String {
             let positionTicks = playState?.positionTicks ?? 0
@@ -105,7 +105,7 @@ extension UserDashboardView {
             )
         }
 
-        // MARK: Get Playback Progress Frames Per Second
+        // MARK: - Get Playback Progress Frames Per Second
 
         private func getTranscodeFPS(transcodingInfo: TranscodingInfo) -> String {
             if let framerate = transcodingInfo.framerate {

@@ -116,8 +116,8 @@ internal enum L10n {
   internal static let buttons = L10n.tr("Localizable", "buttons", fallback: "Buttons")
   /// Cancel
   internal static let cancel = L10n.tr("Localizable", "cancel", fallback: "Cancel")
-  /// Canceled
-  internal static let canceled = L10n.tr("Localizable", "canceled", fallback: "Canceled")
+  /// Cancelled
+  internal static let canceled = L10n.tr("Localizable", "canceled", fallback: "Cancelled")
   /// Cannot connect to host
   internal static let cannotConnectToHost = L10n.tr("Localizable", "cannotConnectToHost", fallback: "Cannot connect to host")
   /// CAST

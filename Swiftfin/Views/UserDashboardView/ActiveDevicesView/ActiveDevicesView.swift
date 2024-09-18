@@ -19,20 +19,21 @@ struct ActiveDevicesView: View {
     private var viewModel = ActiveSessionsViewModel()
 
     @State
+    private var displayType: LibraryDisplayType
+    @State
     private var layout: CollectionVGridLayout
 
     @StoredValue
     private var storedDisplayType: LibraryDisplayType
 
-    @State
-    private var displayType: LibraryDisplayType
+    // MARK: - Timer
 
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
-    // MARK: Init
+    // MARK: - Init
 
     init() {
-        self._storedDisplayType = StoredValue(.User.libraryDisplayType(parentID: "Active Devices"))
+        self._storedDisplayType = StoredValue(.User.activeDevicesDisplayType())
 
         let initialDisplayType = _storedDisplayType.wrappedValue
         self._displayType = State(initialValue: initialDisplayType)
@@ -44,7 +45,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Tablet Layout
+    // MARK: - Tablet Layout
 
     private static func padLayout(viewType: LibraryDisplayType) -> CollectionVGridLayout {
         switch viewType {
@@ -55,7 +56,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Phone Layout
+    // MARK: - Phone Layout
 
     private static func phoneLayout(viewType: LibraryDisplayType) -> CollectionVGridLayout {
         switch viewType {
@@ -66,7 +67,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Content View
+    // MARK: - Content View
 
     @ViewBuilder
     private var contentView: some View {
@@ -83,7 +84,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Grid View
+    // MARK: - Grid View
 
     @ViewBuilder
     private func gridItem(session: SessionInfo) -> some View {
@@ -95,7 +96,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Grid View
+    // MARK: - List View
 
     @ViewBuilder
     private func listItem(session: SessionInfo) -> some View {
@@ -107,7 +108,7 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: Body
+    // MARK: - Body
 
     @ViewBuilder
     var body: some View {
@@ -146,7 +147,7 @@ struct ActiveDevicesView: View {
             }
     }
 
-    // MARK: Ordered Sessions
+    // MARK: - Ordered Sessions
 
     private var orderedSessions: [SessionInfo] {
         viewModel.sessions.sorted {

@@ -14,7 +14,7 @@ import SwiftUI
 
 final class ScheduledTasksViewModel: ViewModel, Stateful {
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case restartApplication
@@ -26,13 +26,13 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case error(JellyfinAPIError)
     }
 
-    // MARK: BackgroundState
+    // MARK: - BackgroundState
 
     enum BackgroundStates: Hashable {
         case refresh
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case idle
@@ -42,7 +42,11 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case fetchedTasks([TaskInfo])
     }
 
-    private let progressPollingInterval: UInt64 = 5_000_000_000
+    // MARK: - Constants
+
+    private let progressPollingInterval: UInt64 = 5_000_000_000 // Check for Task Updates every 5 seconds
+
+    // MARK: - Published Variables
 
     @Published
     final var state: State = .idle
@@ -51,189 +55,103 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     @Published
     var tasks: [TaskInfo] = []
 
+    // MARK: - Private Variables
+
     private var sessionTasks: [String: Task<Void, Never>] = [:]
 
-    // MARK: Stateful Conformance
+    // MARK: - Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
+        case let .startTask(taskID):
+            handleTaskAction(action, taskID: taskID, shouldTrackProgress: true)
+        case let .stopTask(taskID):
+            handleTaskAction(action, taskID: taskID, shouldTrackProgress: true)
         case let .error(error):
             return .error(error)
-
-        case let .startTask(taskID):
-            startTaskWithProgress(taskID)
-
-        case let .stopTask(taskID):
-            stopTaskWithProgress(taskID)
-
         default:
-            handleActionWithoutProgress(for: action)
+            handleTaskAction(action)
         }
         return .running
     }
 
-    // MARK: Handle a Non-Task Process
+    // MARK: - Handle Task Actions
 
-    private func handleActionWithoutProgress(for action: Action) {
+    private func handleTaskAction(_ action: Action, taskID: String? = nil, shouldTrackProgress: Bool = false) {
+        sessionTasks[taskID ?? "general"]?.cancel()
+
         let task = Task {
             do {
                 try await sendRequest(for: action)
+
+                if let taskID = taskID, shouldTrackProgress {
+                    try await pollTaskProgress(for: taskID)
+                }
             } catch {
                 await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
+                    state = .error(JellyfinAPIError(error.localizedDescription))
                 }
             }
         }
-        sessionTasks["general"] = task
-    }
 
-    // MARK: Start a Task & Record Progress
-
-    private func startTaskWithProgress(_ taskID: String) {
-        sessionTasks[taskID]?.cancel()
-
-        let task = Task {
-            do {
-                try await sendRequest(for: .startTask(taskID))
-            } catch {
-                await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
-                }
-            }
+        if let taskID = taskID {
+            sessionTasks[taskID] = task
+        } else {
+            sessionTasks["general"] = task
         }
-        sessionTasks[taskID] = task
     }
 
-    // MARK: Stop a Task & Record Progress
-
-    private func stopTaskWithProgress(_ taskID: String) {
-        sessionTasks[taskID]?.cancel()
-        sessionTasks[taskID] = nil
-        let task = Task {
-            do {
-                try await sendRequest(for: .stopTask(taskID))
-            } catch {
-                await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
-                }
-            }
-        }
-        sessionTasks[taskID] = task
-    }
-
-    // MARK: Perform Action Request
+    // MARK: - Send Request via Desired API
 
     private func sendRequest(for action: Action) async throws {
         switch action {
         case .restartApplication:
             try await sendRestartRequest()
-
         case .shutdownApplication:
             try await sendShutdownRequest()
-
-        case let .startTask(taskKey):
-            try await startTask(taskKey)
-
-        case let .stopTask(taskKey):
-            try await stopTask(taskKey)
-
+        case let .startTask(taskID):
+            try await startTask(taskID)
+        case let .stopTask(taskID):
+            try await stopTask(taskID)
         case .fetchTasks, .backgroundRefresh:
             try await fetchTasks()
-
         case let .error(error):
             await MainActor.run {
-                self.state = .error(error)
+                state = .error(error)
             }
         }
     }
 
-    // MARK: API - Fetch Available Tasks
+    // MARK: - Fetch All Tasks
 
     private func fetchTasks() async throws {
         let request = Paths.getTasks()
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.tasks = response.value
-            self.state = .fetchedTasks(self.tasks)
+            tasks = response.value
+            state = .fetchedTasks(tasks)
         }
 
-        for task in response.value {
-            if let taskID = task.id, let progressValue = task.currentProgressPercentage {
-                if progressValue > 0 && progressValue < 100 {
-                    trackProgress(for: taskID)
-                }
-            }
+        for task in response.value where task.currentProgressPercentage ?? 0 > 0 && task.currentProgressPercentage ?? 0 < 100 {
+            handleTaskAction(.startTask(task.id ?? ""), taskID: task.id, shouldTrackProgress: true)
         }
     }
 
-    // MARK: Track Task Progress
-
-    private func trackProgress(for taskID: String) {
-        sessionTasks[taskID]?.cancel()
-
-        let task = Task {
-            do {
-                try await pollTaskProgress(for: taskID)
-            } catch {
-                await MainActor.run {
-                    self.state = .error(JellyfinAPIError(error.localizedDescription))
-                }
-            }
-        }
-        sessionTasks[taskID] = task
-    }
-
-    // MARK: Start a New Task
-
-    private func startTask(_ taskID: String) async throws {
-        let request = Paths.startTask(taskID: taskID)
-        try await userSession.client.send(request)
-        try await pollTaskProgress(for: taskID)
-    }
-
-    // MARK: Stop a Task
-
-    private func stopTask(_ taskID: String) async throws {
-        let request = Paths.stopTask(taskID: taskID)
-        try await userSession.client.send(request)
-        try await pollTaskProgress(for: taskID)
-    }
-
-    // MARK: Restart Jellyfin
-
-    private func sendRestartRequest() async throws {
-        let request = Paths.restartApplication
-        try await userSession.client.send(request)
-        await MainActor.run {
-            self.state = .idle
-        }
-    }
-
-    // MARK: Shutdown Jellyfin
-
-    private func sendShutdownRequest() async throws {
-        let request = Paths.shutdownApplication
-        try await userSession.client.send(request)
-        await MainActor.run {
-            self.state = .idle
-        }
-    }
-
-    // MARK: Track Task Progress
+    // MARK: - Track Task Progress
 
     private func pollTaskProgress(for taskID: String) async throws {
         while true {
             let request = Paths.getTask(taskID: taskID)
             let response = try await userSession.client.send(request)
 
-            let currentProgress = response.value.currentProgressPercentage
+            let currentProgress = response.value.currentProgressPercentage ?? 0
 
             await MainActor.run {
-                self.progress[taskID] = currentProgress ?? 0
+                progress[taskID] = currentProgress
             }
 
-            if currentProgress ?? 0 >= 100 {
+            if currentProgress >= 100 {
                 break
             }
 
@@ -241,7 +159,43 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         }
 
         await MainActor.run {
-            self.state = .idle
+            state = .idle
+        }
+    }
+
+    // MARK: - Start Task From ID
+
+    private func startTask(_ taskID: String) async throws {
+        let request = Paths.startTask(taskID: taskID)
+        try await userSession.client.send(request)
+    }
+
+    // MARK: - Stop Task From ID
+
+    private func stopTask(_ taskID: String) async throws {
+        let request = Paths.stopTask(taskID: taskID)
+        try await userSession.client.send(request)
+    }
+
+    // MARK: - Restart Application
+
+    private func sendRestartRequest() async throws {
+        let request = Paths.restartApplication
+        try await userSession.client.send(request)
+
+        await MainActor.run {
+            state = .idle
+        }
+    }
+
+    // MARK: - Shutdown Application
+
+    private func sendShutdownRequest() async throws {
+        let request = Paths.shutdownApplication
+        try await userSession.client.send(request)
+
+        await MainActor.run {
+            state = .idle
         }
     }
 }

@@ -9,12 +9,12 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension ActiveDevicesView {
     struct UserSection: View {
         let userName: String?
         let client: String?
 
-        // MARK: Body
+        // MARK: - Body
 
         var body: some View {
             HStack {

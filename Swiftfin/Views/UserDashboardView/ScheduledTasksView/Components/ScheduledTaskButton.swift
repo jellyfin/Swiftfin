@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
@@ -17,6 +16,8 @@ extension ScheduledTasksView {
         var onSelect: () -> Void
         var onCancel: () -> Void
 
+        // MARK: - Tracked States
+
         @State
         private var isCancelling = false
         @State
@@ -24,7 +25,7 @@ extension ScheduledTasksView {
         @State
         private var showConfirmation = false
 
-        // MARK: Body
+        // MARK: - Body
 
         @ViewBuilder
         var body: some View {
@@ -39,10 +40,7 @@ extension ScheduledTasksView {
                 }
             }
             .confirmationDialog(
-                """
-                \(task.name?.localizedCapitalized ?? L10n.unknown)
-                \(task.lastExecutionResult?.longErrorMessage ?? "")
-                """,
+                confirmationDialogText,
                 isPresented: $showConfirmation,
                 titleVisibility: .visible
             ) {
@@ -56,82 +54,119 @@ extension ScheduledTasksView {
             }
         }
 
-        // MARK: Task Details Section
+        // MARK: - Task Details Section
 
         @ViewBuilder
         private var taskView: some View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(task.name?.localizedCapitalized ?? L10n.unknown)
                     .foregroundColor(.primary)
-                if (progress == nil || progress == 100 || progress == 0) && !isStarting {
+                if !isActive {
                     lastRanView
-                        .foregroundColor(.secondary)
-                    if let taskStatus = task.lastExecutionResult?.status {
-                        if taskStatus == .completed {
-                            Text(taskStatus.rawValue)
-                                .foregroundColor(.green)
-                        } else {
-                            Label(
-                                taskStatus.rawValue,
-                                systemImage: "exclamationmark.circle.fill"
-                            )
-                            .foregroundColor(.yellow)
-                        }
-                    }
+                    taskStatusView
                 } else {
                     Text("Running...")
                 }
             }
         }
 
-        // MARK: Task Status Section
+        // MARK: - Task Status Section
 
         @ViewBuilder
         private var statusView: some View {
-            if let progress = progress,
-               (progress > 0 && progress < 100) || isStarting
-            {
+            if isActive {
                 if isCancelling {
                     Text(L10n.canceled)
                         .foregroundColor(.red)
-
                 } else {
-                    Text(
-                        NumberFormatter.localizedString(
-                            from: NSNumber(
-                                value: progress / 100
-                            ),
-                            number: .percent
-                        )
-                    )
-                    .foregroundColor(.secondary)
-
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .padding(.horizontal, 8)
-
-                    Image(systemName: "x.circle")
-                        .foregroundColor(.red)
-                        .onTapGesture {
-                            isCancelling = true
-                            onCancel()
-                        }
+                    progressView(progress: progress)
+                    cancelButton
                 }
             } else {
-                Image(systemName: "play.fill")
-                    .foregroundColor(.secondary)
+                playButton
             }
         }
 
-        // MARK: Last Ran X Minutes Ago View
+        // MARK: - Last Ran View
 
         private var lastRanView: some View {
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .full
             if let taskEndTime = task.lastExecutionResult?.endTimeUtc {
                 return Text("Last ran \(formatter.localizedString(for: taskEndTime, relativeTo: Date()))")
+                    .foregroundColor(.secondary)
             }
             return Text("Last ran never.")
+                .foregroundColor(.secondary)
+        }
+
+        // MARK: - Task Status View
+
+        @ViewBuilder
+        private var taskStatusView: some View {
+            if let taskStatus = task.lastExecutionResult?.status {
+                if taskStatus == .completed {
+                    Text(taskStatus.rawValue)
+                        .foregroundColor(.green)
+                } else {
+                    Label(
+                        taskStatus.rawValue,
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .foregroundColor(.yellow)
+                }
+            }
+        }
+
+        // MARK: - Task is Active
+
+        private var isActive: Bool {
+            ((progress ?? 0) > 0 && (progress ?? 0) < 100) || isStarting
+        }
+
+        // MARK: - Task Confirmation
+
+        private var confirmationDialogText: String {
+            """
+            \(task.name?.localizedCapitalized ?? L10n.unknown)
+            \(task.lastExecutionResult?.longErrorMessage ?? "")
+            """
+        }
+
+        // MARK: - Cancel Button
+
+        private var cancelButton: some View {
+            Image(systemName: "x.circle")
+                .foregroundColor(.red)
+                .onTapGesture {
+                    isCancelling = true
+                    onCancel()
+                }
+        }
+
+        // MARK: - Play Button
+
+        private var playButton: some View {
+            Image(systemName: "play.fill")
+                .foregroundColor(.secondary)
+        }
+
+        // MARK: - Progress View
+
+        private func progressView(progress: Double?) -> some View {
+            HStack {
+                Text(
+                    NumberFormatter.localizedString(
+                        from: NSNumber(value: (progress ?? 0) / 100),
+                        number: .percent
+                    )
+                )
+                .foregroundColor(.secondary)
+
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .padding(.horizontal, 8)
+            }
         }
     }
 }

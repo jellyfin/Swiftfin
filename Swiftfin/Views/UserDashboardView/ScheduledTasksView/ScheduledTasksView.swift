@@ -22,26 +22,22 @@ struct ScheduledTasksView: View {
     @StateObject
     private var viewModel = ScheduledTasksViewModel()
 
+    // MARK: - Timer
+
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
-    // MARK: Current User
-
-    private var scheduledTasks: [TaskInfo] {
-        viewModel.tasks
-    }
-
-    // MARK: Body
+    // MARK: - Body
 
     var body: some View {
         List {
             Section(L10n.server) {
-                primaryFunctions
+                serverFunctions
             }
 
-            if scheduledTasks.isEmpty {
+            if viewModel.tasks.isEmpty {
                 Text(L10n.none)
             } else {
-                secondaryFunctions
+                taskFunctions
             }
         }
         .navigationTitle(L10n.scheduledTasks)
@@ -56,10 +52,10 @@ struct ScheduledTasksView: View {
         }
     }
 
-    // MARK: Admin Function buttons
+    // MARK: - Server Function Buttons
 
     @ViewBuilder
-    private var primaryFunctions: some View {
+    private var serverFunctions: some View {
         ServerTaskButton(
             label: L10n.restartServer,
             icon: "arrow.clockwise.circle",
@@ -79,28 +75,31 @@ struct ScheduledTasksView: View {
         }
     }
 
+    // MARK: - Task Functions
+
     @ViewBuilder
-    private var secondaryFunctions: some View {
-        let groupedTasks = Dictionary(grouping: scheduledTasks, by: { $0.category ?? "" })
+    private var taskFunctions: some View {
+        let groupedTasks = Dictionary(grouping: viewModel.tasks, by: { $0.category ?? "" })
 
         ForEach(groupedTasks.keys.sorted(), id: \.self) { category in
-            sectionForCategory(category, tasks: groupedTasks[category] ?? [])
+            taskSections(category, tasks: groupedTasks[category] ?? [])
         }
     }
 
+    // MARK: - Section for Category
+
     @ViewBuilder
-    private func sectionForCategory(_ category: String, tasks: [TaskInfo]) -> some View {
+    private func taskSections(_ category: String, tasks: [TaskInfo]) -> some View {
         Section(header: Text(category)) {
             ForEach(tasks, id: \.id) { task in
-                if let taskName = task.name,
-                   let taskID = task.id
-                {
+                if let taskID = task.id {
                     ScheduledTaskButton(
                         task: task,
                         progress: viewModel.progress[taskID],
                         onSelect: {
                             viewModel.send(.startTask(taskID))
-                        }, onCancel: {
+                        },
+                        onCancel: {
                             viewModel.send(.stopTask(taskID))
                         }
                     )

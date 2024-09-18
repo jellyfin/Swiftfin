@@ -6,3 +6,41 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
+import SwiftUI
+
+struct ActiveSessionDescriptionView: View {
+
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
+    let title: String
+    let description: String?
+
+    // MARK: - Body
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 10) {
+
+                Text(title)
+                    .font(.title3)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.leading)
+
+                if let description = description {
+                    Text(description)
+                        .font(.body)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .edgePadding()
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+    }
+}
