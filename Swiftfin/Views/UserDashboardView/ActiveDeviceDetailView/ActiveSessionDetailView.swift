@@ -18,7 +18,7 @@ struct ActiveDeviceDetailView: View {
     @State
     private var currentDate = Date()
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     // MARK: Get Active Session
 
@@ -198,8 +198,19 @@ struct ActiveDeviceDetailView: View {
         UserDashboardView.ContentSection(item: session.nowPlayingItem)
 
         // If available, get the Overview for the Now Playing Item
-        if let overview = item.overview {
-            Text(overview)
+        if let firstTagline = item.taglines?.first {
+            Text(firstTagline)
+                .font(.body)
+                .fontWeight(.semibold)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+        }
+
+        if let itemOverview = item.overview {
+            TruncatedText(itemOverview)
+                .lineLimit(4)
+        } else {
+            L10n.noOverviewAvailable.text
         }
     }
 }

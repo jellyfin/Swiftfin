@@ -22,7 +22,7 @@ struct ScheduledTasksView: View {
     @StateObject
     private var viewModel = ScheduledTasksViewModel()
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     // MARK: Current User
 
@@ -118,6 +118,9 @@ struct ScheduledTasksView: View {
                     ScheduledTaskButton(
                         taskID: taskID,
                         taskName: taskName,
+                        taskLastStartTime: task.lastExecutionResult?.startTimeUtc,
+                        taskLastEndTime: task.lastExecutionResult?.endTimeUtc,
+                        taskLastStatus: task.lastExecutionResult?.status,
                         progress: viewModel.progress[taskID],
                         onSelect: {
                             viewModel.send(.startTask(taskID))

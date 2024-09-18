@@ -42,6 +42,8 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case fetchedTasks([TaskInfo])
     }
 
+    private let progressPollingInterval: UInt64 = 5_000_000_000
+
     @Published
     final var state: State = .idle
     @Published
@@ -57,16 +59,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         switch action {
         case let .error(error):
             return .error(error)
-        default:
-            performFunction(for: action)
-            return .running
-        }
-    }
 
-    // MARK: Session Management
-
-    private func performFunction(for action: Action) {
-        switch action {
         case let .startTask(taskID):
             startTaskWithProgress(taskID)
 
@@ -76,6 +69,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         default:
             handleActionWithoutProgress(for: action)
         }
+        return .running
     }
 
     // MARK: Handle a Non-Task Process
@@ -243,7 +237,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
                 break
             }
 
-            try await Task.sleep(nanoseconds: 1_000_000_000)
+            try await Task.sleep(nanoseconds: progressPollingInterval)
         }
 
         await MainActor.run {

@@ -21,20 +21,18 @@ struct UserDashboardView: View {
     @StateObject
     private var serverViewModel: EditServerViewModel
     @StateObject
-    private var sessionViewModel = ActiveSessionsViewModel()
-    @StateObject
-    private var tasksViewModel = ScheduledTasksViewModel()
-    @StateObject
     private var currentUserViewModel = CurrentUserViewModel()
+    @StateObject
+    private var sessionsViewModel = ActiveSessionsViewModel()
 
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     // MARK: Init
 
     init(server: ServerState) {
         self._currentServerURL = State(initialValue: server.currentURL)
         self._serverViewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
-        self._sessionViewModel = StateObject(wrappedValue: ActiveSessionsViewModel())
+        self._sessionsViewModel = StateObject(wrappedValue: ActiveSessionsViewModel())
     }
 
     // MARK: Grid Layout
@@ -50,13 +48,6 @@ struct UserDashboardView: View {
         currentUserViewModel.user
     }
 
-    // MARK: Current User
-
-    private var scheduledTasks: [TaskInfo] {
-        let tasks = tasksViewModel.tasks
-        return tasks
-    }
-
     // MARK: Body
 
     var body: some View {
@@ -67,26 +58,24 @@ struct UserDashboardView: View {
 
             // Only Show Admin Functions if the user has the isAdministrator Policy
             if currentUser?.policy?.isAdministrator ?? false {
-                Section(L10n.administration) {
-                    adminFunctions
-                }
+                ChevronButton(L10n.scheduledTasks)
+                    .onSelect {
+                        router.route(to: \.scheduledTasks)
+                    }
             }
 
-            Section(L10n.activeDevices) {
-                activeDevices
-                    .padding(.top, 10)
+            ChevronButton(
+                L10n.activeDevices,
+                subtitle: sessionsViewModel.sessions.count.description
+            )
+            .onSelect {
+                router.route(to: \.activeDevices)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .navigationTitle(L10n.dashboard)
         .onAppear {
-            sessionViewModel.send(.refresh)
-            tasksViewModel.send(.fetchTasks)
             currentUserViewModel.send(.fetchUser)
-        }
-        .onReceive(timer) { _ in
-            sessionViewModel.send(.backgroundRefresh)
-            tasksViewModel.send(.backgroundRefresh)
+            sessionsViewModel.send(.refresh)
         }
     }
 
@@ -104,74 +93,6 @@ struct UserDashboardView: View {
                 Text(url.absoluteString)
                     .tag(url)
                     .foregroundColor(.secondary)
-            }
-        }
-    }
-
-    // MARK: Admin Function buttons
-
-    @ViewBuilder
-    private var adminFunctions: some View {
-        if let refreshID = scheduledTasks.first(where: { $0.key == "RefreshLibrary" })?.id {
-            ScheduledTasksView.ScheduledTaskButton(
-                taskID: refreshID,
-                taskName: L10n.scanAllLibraries,
-                progress: tasksViewModel.progress[refreshID],
-                onSelect: {
-                    tasksViewModel.send(.startTask(refreshID))
-                },
-                onCancel: {
-                    tasksViewModel.send(.stopTask(refreshID))
-                }
-            )
-        }
-
-        ChevronButton(L10n.scheduledTasks)
-            .onSelect {
-                router.route(to: \.scheduledTasks)
-            }
-    }
-
-    // MARK: Active Devices
-
-    @ViewBuilder
-    private var activeDevices: some View {
-        ScrollView {
-            LazyVGrid(columns: gridLayout) {
-                ForEach(orderedSessions) { session in
-                    ActiveSessionButton(session: session) {
-                        router.route(
-                            to: \.activeDeviceDetails,
-                            ActiveSessionsViewModel(deviceID: session.deviceID)
-                        )
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity)
-        }
-    }
-
-    // MARK: Ordered Sessions
-
-    private var orderedSessions: [SessionInfo] {
-        sessionViewModel.sessions.sorted {
-            let isPlaying0 = $0.nowPlayingItem != nil
-            let isPlaying1 = $1.nowPlayingItem != nil
-
-            if isPlaying0 && !isPlaying1 {
-                return true
-            } else if !isPlaying0 && isPlaying1 {
-                return false
-            }
-
-            if $0.userName != $1.userName {
-                return ($0.userName ?? "") < ($1.userName ?? "")
-            }
-
-            if isPlaying0 && isPlaying1 {
-                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
-            } else {
-                return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
             }
         }
     }

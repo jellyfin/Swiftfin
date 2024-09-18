@@ -26,7 +26,7 @@ extension UserDashboardView {
                         .foregroundColor(.secondary)
                 }
                 HStack {
-                    Text(L10n.clientWithString(""))
+                    Text(L10n.deviceWithString(""))
                     Spacer()
                     Text(deviceName ?? L10n.unknown)
                         .foregroundColor(.secondary)

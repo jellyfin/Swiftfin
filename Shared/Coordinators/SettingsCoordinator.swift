@@ -53,6 +53,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDashboard = makeUserDashboard
     @Route(.push)
+    var activeDevices = makeActiveDevices
+    @Route(.push)
     var activeDeviceDetails = makeActiveDeviceDetails
     @Route(.push)
     var scheduledTasks = makeScheduledTasks
@@ -157,6 +159,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserDashboard(server: ServerState) -> some View {
         UserDashboardView(server: server)
+    }
+
+    @ViewBuilder
+    func makeActiveDevices() -> some View {
+        ActiveDevicesView()
     }
 
     @ViewBuilder

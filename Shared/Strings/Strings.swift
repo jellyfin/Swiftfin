@@ -162,6 +162,8 @@ internal enum L10n {
   internal static let compatibility = L10n.tr("Localizable", "compatibility", fallback: "Compatibility")
   /// Most Compatible
   internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most Compatible")
+  /// Confirm
+  internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
   /// Connect

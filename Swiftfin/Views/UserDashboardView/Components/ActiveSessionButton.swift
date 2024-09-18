@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension UserDashboardView /* ActiveDeviceView */ {
     struct ActiveSessionButton: View {
         var session: SessionInfo
         var onSelect: () -> Void
@@ -29,9 +29,9 @@ extension UserDashboardView {
 
                 switch nowPlayingItem.type {
                 case .episode:
-                    self.imageSources = [nowPlayingItem.imageSource(.primary)]
+                    self.imageSources = [nowPlayingItem.imageSource(.primary, maxHeight: 50)]
                 default:
-                    self.imageSources = [nowPlayingItem.imageSource(.backdrop)]
+                    self.imageSources = [nowPlayingItem.imageSource(.backdrop, maxHeight: 50)]
                 }
             }
         }
@@ -41,54 +41,42 @@ extension UserDashboardView {
         @ViewBuilder
         private var sessionDetails: some View {
             VStack(alignment: .leading) {
-                UserDashboardView.UserSection(
-                    userName: session.userName,
-                    client: session.client
-                )
-
-                Spacer()
-
                 if let nowPlayingItem = session.nowPlayingItem {
                     UserDashboardView.ContentSection(item: nowPlayingItem)
-
-                    Spacer()
-
-                    UserDashboardView.ProgressSection(
-                        item: nowPlayingItem,
-                        playState: session.playState,
-                        transcodingInfo: session.transcodingInfo
-                    )
-                    .font(.caption)
-
                 } else {
                     UserDashboardView.ClientSection(
                         client: session.client,
                         deviceName: session.deviceName,
                         applicationVersion: session.applicationVersion
                     )
-
-                    Spacer()
-
-                    if let lastActivityDate = session.lastActivityDate {
-                        UserDashboardView.ConnectionSection(
-                            lastActivityDate: lastActivityDate,
-                            currentDate: Date(),
-                            prefixText: true
-                        )
-                    }
                 }
             }
-            .padding(16)
         }
 
-        // MARK: Create Title Label Overlay
+        // MARK: Header and Footer
 
-        private func titleLabelOverlay<Content: View>(with content: Content) -> some View {
-            ZStack {
-                content
-                Color.black.opacity(0.5)
-                sessionDetails
-                    .foregroundStyle(.white)
+        private var headerSection: some View {
+            UserDashboardView.UserSection(
+                userName: session.userName,
+                client: session.client
+            )
+        }
+
+        @ViewBuilder
+        private var footerSection: some View {
+            if let nowPlayingItem = session.nowPlayingItem {
+                UserDashboardView.ProgressSection(
+                    item: nowPlayingItem,
+                    playState: session.playState,
+                    transcodingInfo: session.transcodingInfo
+                )
+                .font(.caption)
+            } else if let lastActivityDate = session.lastActivityDate {
+                UserDashboardView.ConnectionSection(
+                    lastActivityDate: lastActivityDate,
+                    currentDate: Date(),
+                    prefixText: true
+                )
             }
         }
 
@@ -96,26 +84,38 @@ extension UserDashboardView {
 
         var body: some View {
             Button(action: onSelect) {
-                ZStack {
-                    Color.clear
+                VStack(alignment: .leading) {
+                    headerSection
+                        .foregroundColor(.primary)
 
-                    ImageView(imageSources)
-                        .image { image in
-                            titleLabelOverlay(with: image)
-                        }
-                        .placeholder { imageSource in
-                            titleLabelOverlay(with: ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash))
-                        }
-                        .failure {
-                            Color.secondarySystemFill
-                                .opacity(0.75)
-                                .overlay {
-                                    sessionDetails
-                                        .foregroundColor(.primary)
-                                }
-                        }
-                        .id(imageSources.hashValue)
+                    Spacer()
+
+                    HStack(alignment: .top, spacing: 16) {
+                        ImageView(imageSources)
+                            .image { image in
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 100)
+                            }
+                            .placeholder { imageSource in
+                                ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
+                                    .frame(width: 100)
+                            }
+                            .failure {
+                                EmptyView()
+                            }
+                            .id(imageSources.hashValue)
+
+                        sessionDetails
+                            .foregroundColor(.primary)
+                    }
+
+                    Spacer()
+                    footerSection
+                        .foregroundColor(.primary)
                 }
+                .padding(16)
                 .posterStyle(.landscape)
                 .posterShadow()
             }

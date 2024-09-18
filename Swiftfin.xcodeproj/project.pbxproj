@@ -52,6 +52,7 @@
 		4EB140482C8E323A008691F3 /* ClientSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140472C8E323A008691F3 /* ClientSection.swift */; };
 		4EB1404A2C8E33B2008691F3 /* ConnectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140492C8E33B2008691F3 /* ConnectionSection.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
+		4EB1A8CA2C9A766200F43898 /* ActiveDevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -1034,6 +1035,7 @@
 		4EB140472C8E323A008691F3 /* ClientSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientSection.swift; sourceTree = "<group>"; };
 		4EB140492C8E33B2008691F3 /* ConnectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSection.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
+		4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveDevicesView.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -1835,6 +1837,7 @@
 		4E63B9F52C8A5BEF00C25378 /* UserDashboardView */ = {
 			isa = PBXGroup;
 			children = (
+				4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
 				4E6C27062C8BD09200FD2185 /* ActiveDeviceDetailView */,
 				4E6C27052C8BD05400FD2185 /* Components */,
@@ -4937,6 +4940,7 @@
 				C46DD8DD2A8DC3420046A504 /* LiveNativeVideoPlayer.swift in Sources */,
 				E1AD104D26D96CE3003E4A08 /* BaseItemDto.swift in Sources */,
 				E13DD3BF27163DD7009D4DAF /* AppDelegate.swift in Sources */,
+				4EB1A8CA2C9A766200F43898 /* ActiveDevicesView.swift in Sources */,
 				535870AD2669D8DD00D05A09 /* ItemFilterCollection.swift in Sources */,
 				E1D27EE72BBC955F00152D16 /* UnmaskSecureField.swift in Sources */,
 				E1CAF65D2BA345830087D991 /* MediaType.swift in Sources */,
