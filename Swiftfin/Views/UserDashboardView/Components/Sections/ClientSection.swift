@@ -18,7 +18,7 @@ extension UserDashboardView {
         // MARK: Body
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading) {
                 HStack {
                     Text(L10n.clientWithString(""))
                     Spacer()

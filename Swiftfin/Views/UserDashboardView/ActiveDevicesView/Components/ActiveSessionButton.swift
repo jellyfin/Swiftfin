@@ -10,31 +10,10 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView /* ActiveDeviceView */ {
+extension ActiveDevicesView {
     struct ActiveSessionButton: View {
         var session: SessionInfo
         var onSelect: () -> Void
-
-        @State
-        private var imageSources: [ImageSource] = []
-
-        // MARK: Set Image Sources
-
-        private func setImageSources(for nowPlayingItem: BaseItemDto?) {
-            Task { @MainActor in
-                guard let nowPlayingItem = nowPlayingItem else {
-                    self.imageSources = []
-                    return
-                }
-
-                switch nowPlayingItem.type {
-                case .episode:
-                    self.imageSources = [nowPlayingItem.imageSource(.primary, maxHeight: 50)]
-                default:
-                    self.imageSources = [nowPlayingItem.imageSource(.backdrop, maxHeight: 50)]
-                }
-            }
-        }
 
         // MARK: Session Details
 
@@ -91,22 +70,22 @@ extension UserDashboardView /* ActiveDeviceView */ {
                     Spacer()
 
                     HStack(alignment: .top, spacing: 16) {
-                        ImageView(imageSources)
-                            .image { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 100)
-                            }
-                            .placeholder { imageSource in
-                                ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
-                                    .frame(width: 100)
-                            }
-                            .failure {
-                                EmptyView()
-                            }
-                            .id(imageSources.hashValue)
-
+                        if let nowPlayingItem = session.nowPlayingItem {
+                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 150))
+                                .image { image in
+                                    image
+                                        .aspectRatio(contentMode: .fit)
+                                        .cornerRadius(4)
+                                }
+                                .placeholder { imageSource in
+                                    ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
+                                        .cornerRadius(4)
+                                }
+                                .failure {
+                                    EmptyView()
+                                }
+                                .id(nowPlayingItem.portraitImageSources(maxWidth: 150).hashValue)
+                        }
                         sessionDetails
                             .foregroundColor(.primary)
                     }
@@ -116,14 +95,9 @@ extension UserDashboardView /* ActiveDeviceView */ {
                         .foregroundColor(.primary)
                 }
                 .padding(16)
+                .background(Color.accentColor.opacity(0.3))
                 .posterStyle(.landscape)
                 .posterShadow()
-            }
-            .onAppear {
-                setImageSources(for: session.nowPlayingItem)
-            }
-            .onChange(of: session.nowPlayingItem) { newValue in
-                setImageSources(for: newValue)
             }
         }
     }

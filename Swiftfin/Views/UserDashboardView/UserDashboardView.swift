@@ -35,29 +35,27 @@ struct UserDashboardView: View {
         self._sessionsViewModel = StateObject(wrappedValue: ActiveSessionsViewModel())
     }
 
-    // MARK: Grid Layout
-
-    private var gridLayout: [GridItem] {
-        let columns = UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1
-        return Array(repeating: GridItem(.flexible(), spacing: 10), count: columns)
-    }
-
-    // MARK: Current User
-
-    private var currentUser: UserDto? {
-        currentUserViewModel.user
-    }
-
     // MARK: Body
 
     var body: some View {
         List {
             Section(header: Text(L10n.server)) {
-                serverFunctions
+                TextPairView(
+                    leading: L10n.name,
+                    trailing: serverViewModel.server.name
+                )
+
+                Picker(L10n.url, selection: $currentServerURL) {
+                    ForEach(serverViewModel.server.urls.sorted(using: \.absoluteString)) { url in
+                        Text(url.absoluteString)
+                            .tag(url)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
 
             // Only Show Admin Functions if the user has the isAdministrator Policy
-            if currentUser?.policy?.isAdministrator ?? false {
+            if currentUserViewModel.user?.policy?.isAdministrator ?? false {
                 ChevronButton(L10n.scheduledTasks)
                     .onSelect {
                         router.route(to: \.scheduledTasks)
@@ -76,24 +74,6 @@ struct UserDashboardView: View {
         .onAppear {
             currentUserViewModel.send(.fetchUser)
             sessionsViewModel.send(.refresh)
-        }
-    }
-
-    // MARK: Server Name & URL Switching
-
-    @ViewBuilder
-    private var serverFunctions: some View {
-        TextPairView(
-            leading: L10n.name,
-            trailing: serverViewModel.server.name
-        )
-
-        Picker(L10n.url, selection: $currentServerURL) {
-            ForEach(serverViewModel.server.urls.sorted(using: \.absoluteString)) { url in
-                Text(url.absoluteString)
-                    .tag(url)
-                    .foregroundColor(.secondary)
-            }
         }
     }
 }

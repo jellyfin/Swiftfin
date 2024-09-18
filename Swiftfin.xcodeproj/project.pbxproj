@@ -53,6 +53,8 @@
 		4EB1404A2C8E33B2008691F3 /* ConnectionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB140492C8E33B2008691F3 /* ConnectionSection.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EB1A8CA2C9A766200F43898 /* ActiveDevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */; };
+		4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */; };
+		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -1036,6 +1038,8 @@
 		4EB140492C8E33B2008691F3 /* ConnectionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSection.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveDevicesView.swift; sourceTree = "<group>"; };
+		4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskButton.swift; sourceTree = "<group>"; };
+		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -1810,6 +1814,7 @@
 			isa = PBXGroup;
 			children = (
 				4E182C9E2C94A1E000FBEFD5 /* ScheduledTaskButton.swift */,
+				4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1837,10 +1842,10 @@
 		4E63B9F52C8A5BEF00C25378 /* UserDashboardView */ = {
 			isa = PBXGroup;
 			children = (
-				4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */,
-				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
+				4EB1A8CF2C9B2FA200F43898 /* ActiveDevicesView */,
 				4E6C27062C8BD09200FD2185 /* ActiveDeviceDetailView */,
 				4E6C27052C8BD05400FD2185 /* Components */,
+				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
 			path = UserDashboardView;
@@ -1849,7 +1854,6 @@
 		4E6C27052C8BD05400FD2185 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4EB140452C8E157F008691F3 /* ActiveSessionButton.swift */,
 				4EE141632C8B8DCE0045B661 /* Sections */,
 			);
 			path = Components;
@@ -1878,6 +1882,24 @@
 			children = (
 				4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */,
 				4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB1A8CF2C9B2FA200F43898 /* ActiveDevicesView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB1A8C92C9A765800F43898 /* ActiveDevicesView.swift */,
+				4EB1A8D02C9B2FB600F43898 /* Components */,
+			);
+			path = ActiveDevicesView;
+			sourceTree = "<group>";
+		};
+		4EB1A8D02C9B2FB600F43898 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EB140452C8E157F008691F3 /* ActiveSessionButton.swift */,
+				4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -4881,6 +4903,7 @@
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
 				E14EA1692BF7330A00DE757A /* UserProfileImageViewModel.swift in Sources */,
 				E18ACA952A15A3E100BB4F35 /* (null) in Sources */,
+				4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */,
 				E1D5C39B28DF993400CDBEFB /* ThumbSlider.swift in Sources */,
 				E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */,
 				E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
@@ -4914,6 +4937,7 @@
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
+				4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */,
 				E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */,
 				E10B1EB62BD98C6600A92EAF /* AddUserRow.swift in Sources */,
 				E1CB75802C80F28F00217C76 /* SubtitleProfile.swift in Sources */,

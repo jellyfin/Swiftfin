@@ -60,42 +60,22 @@ struct ScheduledTasksView: View {
 
     @ViewBuilder
     private var primaryFunctions: some View {
-        Button(role: .destructive) {
-            showRestartConfirmation = true
-        } label: {
-            HStack {
-                L10n.restartServer.text
-                Spacer()
-                Image(systemName: "arrow.clockwise.circle")
-            }
-        }
-        .confirmationDialog(
-            L10n.restartWarning,
-            isPresented: $showRestartConfirmation,
-            titleVisibility: .visible
+        ServerTaskButton(
+            label: L10n.restartServer,
+            icon: "arrow.clockwise.circle",
+            warningMessage: L10n.restartWarning,
+            isPresented: $showRestartConfirmation
         ) {
-            Button(L10n.restartServer, role: .destructive) {
-                viewModel.send(.restartApplication)
-            }
+            viewModel.send(.restartApplication)
         }
 
-        Button(role: .destructive) {
-            showShutdownConfirmation = true
-        } label: {
-            HStack {
-                L10n.shutdownServer.text
-                Spacer()
-                Image(systemName: "power.circle")
-            }
-        }
-        .confirmationDialog(
-            L10n.shutdownWarning,
-            isPresented: $showShutdownConfirmation,
-            titleVisibility: .visible
+        ServerTaskButton(
+            label: L10n.shutdownServer,
+            icon: "power.circle",
+            warningMessage: L10n.shutdownWarning,
+            isPresented: $showShutdownConfirmation
         ) {
-            Button(L10n.shutdownServer, role: .destructive) {
-                viewModel.send(.shutdownApplication)
-            }
+            viewModel.send(.shutdownApplication)
         }
     }
 
@@ -116,11 +96,7 @@ struct ScheduledTasksView: View {
                    let taskID = task.id
                 {
                     ScheduledTaskButton(
-                        taskID: taskID,
-                        taskName: taskName,
-                        taskLastStartTime: task.lastExecutionResult?.startTimeUtc,
-                        taskLastEndTime: task.lastExecutionResult?.endTimeUtc,
-                        taskLastStatus: task.lastExecutionResult?.status,
+                        task: task,
                         progress: viewModel.progress[taskID],
                         onSelect: {
                             viewModel.send(.startTask(taskID))

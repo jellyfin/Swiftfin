@@ -12,11 +12,7 @@ import SwiftUI
 
 extension ScheduledTasksView {
     struct ScheduledTaskButton: View {
-        var taskID: String
-        var taskName: String
-        var taskLastStartTime: Date?
-        var taskLastEndTime: Date?
-        var taskLastStatus: TaskCompletionStatus?
+        var task: TaskInfo
         var progress: Double?
         var onSelect: () -> Void
         var onCancel: () -> Void
@@ -43,16 +39,19 @@ extension ScheduledTasksView {
                 }
             }
             .confirmationDialog(
-                "Are you sure you want to run '\(taskName.localizedCapitalized)'?",
+                """
+                \(task.name?.localizedCapitalized ?? L10n.unknown)
+                \(task.lastExecutionResult?.longErrorMessage ?? "")
+                """,
                 isPresented: $showConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(L10n.confirm) {
+                Button(task.lastExecutionResult?.status == .completed ? "Run" : "Rerun") {
                     onSelect()
                     isStarting = true
                 }
             }
-            .onChange(of: taskLastStartTime) { _ in
+            .onChange(of: task.lastExecutionResult?.startTimeUtc) { _ in
                 isStarting = false
             }
         }
@@ -62,26 +61,21 @@ extension ScheduledTasksView {
         @ViewBuilder
         private var taskView: some View {
             VStack(alignment: .leading, spacing: 4) {
-                Text(taskName.localizedCapitalized)
+                Text(task.name?.localizedCapitalized ?? L10n.unknown)
                     .foregroundColor(.primary)
                 if (progress == nil || progress == 100 || progress == 0) && !isStarting {
-                    lastRanTextView
+                    lastRanView
                         .foregroundColor(.secondary)
-                    if let taskLastStartTime,
-                       let taskLastEndTime
-                    {
-                        HStack {
-                            getRunDuration(
-                                startDate: taskLastStartTime,
-                                endDate: taskLastEndTime
+                    if let taskStatus = task.lastExecutionResult?.status {
+                        if taskStatus == .completed {
+                            Text(taskStatus.rawValue)
+                                .foregroundColor(.green)
+                        } else {
+                            Label(
+                                taskStatus.rawValue,
+                                systemImage: "exclamationmark.circle.fill"
                             )
-                            .foregroundColor(.secondary)
-                            .font(.footnote)
-                            if let taskLastStatus {
-                                Text(taskLastStatus.rawValue)
-                                    .foregroundColor(getStatusColor(taskStatus: taskLastStatus))
-                                    .font(.footnote)
-                            }
+                            .foregroundColor(.yellow)
                         }
                     }
                 } else {
@@ -131,41 +125,13 @@ extension ScheduledTasksView {
 
         // MARK: Last Ran X Minutes Ago View
 
-        private var lastRanTextView: some View {
+        private var lastRanView: some View {
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .full
-            if let taskLastEndTime {
-                return Text("Last ran \(formatter.localizedString(for: taskLastEndTime, relativeTo: Date()))")
+            if let taskEndTime = task.lastExecutionResult?.endTimeUtc {
+                return Text("Last ran \(formatter.localizedString(for: taskEndTime, relativeTo: Date()))")
             }
             return Text("Last ran never.")
-        }
-
-        // MARK: Ran for X Minutes View
-
-        private func getRunDuration(startDate: Date, endDate: Date) -> some View {
-            let duration = endDate.timeIntervalSince(startDate)
-            let minutes = Int(duration / 60)
-            let hours = Int(minutes / 60)
-            let remainingMinutes = minutes % 60
-
-            if hours > 0 {
-                return Text("Ran for \(hours) hour(s) and \(remainingMinutes) minute(s)")
-            } else {
-                return Text("Ran for \(minutes) minute(s)")
-            }
-        }
-
-        private func getStatusColor(taskStatus: TaskCompletionStatus) -> Color {
-            switch taskStatus {
-            case .completed:
-                return .green
-            case .failed:
-                return .red
-            case .aborted:
-                return .yellow
-            case .cancelled:
-                return .blue
-            }
         }
     }
 }

@@ -208,7 +208,7 @@ struct ActiveDeviceDetailView: View {
 
         if let itemOverview = item.overview {
             TruncatedText(itemOverview)
-                .lineLimit(4)
+                .lineLimit(3)
         } else {
             L10n.noOverviewAvailable.text
         }
