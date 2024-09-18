@@ -72,7 +72,7 @@ struct UserDashboardView: View {
         }
         .navigationTitle(L10n.dashboard)
         .onAppear {
-            currentUserViewModel.send(.fetchUser)
+            currentUserViewModel.send(.getUser)
             sessionsViewModel.send(.refresh)
         }
     }
