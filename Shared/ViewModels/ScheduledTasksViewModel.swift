@@ -125,7 +125,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     // MARK: - Fetch All Tasks
 
     private func fetchTasks() async throws {
-        let request = Paths.getTasks()
+        let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
