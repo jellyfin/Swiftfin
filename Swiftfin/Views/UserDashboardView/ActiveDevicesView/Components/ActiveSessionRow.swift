@@ -105,8 +105,8 @@ extension ActiveDevicesView {
                     deviceName: session.deviceName,
                     applicationVersion: session.applicationVersion
                 )
+                .font(.subheadline)
                 .foregroundColor(.primary)
-                .font(.caption)
 
                 Spacer()
 
@@ -116,8 +116,8 @@ extension ActiveDevicesView {
                         currentDate: Date(),
                         prefixText: true
                     )
+                    .font(.subheadline)
                     .foregroundColor(.primary)
-                    .font(.caption)
                 }
             }
         }

@@ -42,6 +42,13 @@ extension ActiveDevicesView {
                                     EmptyView()
                                 }
                                 .id(nowPlayingItem.portraitImageSources(maxWidth: 150).hashValue)
+                        } else {
+                            Image(.jellyfinBlobBlue)
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.primary)
+                                .padding(8)
+                                .frame(width: 75)
                         }
 
                         sessionDetails
