@@ -35,17 +35,15 @@ extension VideoPlayer.Overlay {
                 BarActionButtons()
             }
             .background {
-                EmptyHistTestView()
+                EmptyHitTestView()
             }
             .offset(y: isPresentingOverlay ? 0 : -20)
             .animation(.bouncy, value: isPresentingOverlay)
             .font(.system(size: 24))
             .buttonStyle(.videoPlayerBarButton { isPressed in
                 if isPressed {
-                    print("stopped")
                     overlayTimer.stop()
                 } else {
-                    print("delayed")
                     overlayTimer.delay()
                 }
             })

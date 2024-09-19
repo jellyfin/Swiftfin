@@ -100,6 +100,7 @@ extension VideoPlayer.Overlay {
                     .environment(\.isPresentingDrawer, $isPresentingDrawer)
                     .offset(y: isPresentingOverlay ? 0 : 10)
                     .animation(.bouncy, value: isPresentingOverlay)
+                    .visible(!isScrubbing)
 
                 if isPresentingDrawer {
                     Color.red
@@ -110,7 +111,11 @@ extension VideoPlayer.Overlay {
             .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
             .disabled(manager.state == .loadingItem)
             .onChange(of: isPresentingDrawer) { newValue in
-                print("drawer:", newValue)
+                if newValue {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.delay()
+                }
             }
 //            .onChange(of: manager.state) { newValue in
 //                pulse = newValue == .loadingItem

@@ -27,7 +27,7 @@ extension VideoPlayer {
         private var safeAreaInsets
 
         @State
-        private var actualSafeArea: EdgeInsets = .zero
+        private var effectiveSafeArea: EdgeInsets = .zero
 
         @StateObject
         private var overlayTimer: DelayIntervalTimer = .init(defaultInterval: 5)
@@ -36,7 +36,7 @@ extension VideoPlayer {
         private var topBar: some View {
             Overlay.TopBarView()
                 .edgePadding(.vertical)
-                .padding(actualSafeArea)
+                .padding(effectiveSafeArea)
                 .background {
                     OpacityLinearGradient {
                         (0, 0.9)
@@ -52,7 +52,7 @@ extension VideoPlayer {
         private var bottomBar: some View {
             Overlay.BottomBarView()
                 .edgePadding(.vertical)
-                .padding(actualSafeArea)
+                .padding(effectiveSafeArea)
                 .background {
                     OpacityLinearGradient {
                         (0, 0)
@@ -107,12 +107,12 @@ extension VideoPlayer {
             }
             .onSizeChanged { newSize in
                 if newSize.isPortrait {
-                    actualSafeArea = .init(
+                    effectiveSafeArea = .init(
                         vertical: min(safeAreaInsets.top, safeAreaInsets.bottom),
                         horizontal: 0
                     )
                 } else {
-                    actualSafeArea = .init(
+                    effectiveSafeArea = .init(
                         vertical: 0,
                         horizontal: min(safeAreaInsets.leading, safeAreaInsets.trailing)
                     )
