@@ -19,13 +19,17 @@ extension ActiveDevicesView {
             VStack(alignment: .leading) {
                 if let contentItem = item {
                     Text(self.getTitle(item: contentItem))
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
 
                     if let parent = self.getParent(item: contentItem) {
                         Text(parent)
+                            .lineLimit(1)
                     }
 
                     if let episode = self.getEpisode(item: contentItem) {
                         Text(episode)
+                            .lineLimit(1)
                     }
                 }
             }

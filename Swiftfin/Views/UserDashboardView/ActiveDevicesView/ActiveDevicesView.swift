@@ -50,9 +50,9 @@ struct ActiveDevicesView: View {
     private static func padLayout(viewType: LibraryDisplayType) -> CollectionVGridLayout {
         switch viewType {
         case .grid:
-            .minWidth(200)
+            .columns(2)
         case .list:
-            .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+            .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
         }
     }
 
@@ -63,7 +63,7 @@ struct ActiveDevicesView: View {
         case .grid:
             .columns(1)
         case .list:
-            .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
+            .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
         }
     }
 

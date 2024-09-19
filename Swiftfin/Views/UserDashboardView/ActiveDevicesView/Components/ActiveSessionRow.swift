@@ -28,24 +28,30 @@ extension ActiveDevicesView {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: 75)
-                                        .cornerRadius(4)
+                                        .cornerRadius(8)
                                 }
                                 .placeholder { imageSource in
                                     ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
                                         .frame(width: 75)
-                                        .cornerRadius(4)
+                                        .cornerRadius(8)
                                 }
                                 .failure {
                                     EmptyView()
                                 }
                                 .id(nowPlayingItem.portraitImageSources(maxWidth: 75).hashValue)
+                        } else {
+                            Image(.jellyfinBlobBlue)
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.primary)
+                                .padding(8)
+                                .frame(width: 75)
                         }
 
                         sessionDetails
                     }
-                    .padding(.horizontal, 16)
+                    .padding(16)
                     Divider()
-                        .padding(.vertical, 8)
                 }
             }
         }
@@ -55,63 +61,63 @@ extension ActiveDevicesView {
         @ViewBuilder
         private var sessionDetails: some View {
             if let nowPlayingItem = session.nowPlayingItem {
-                VStack(alignment: .leading) {
-                    Text(session.userName ?? L10n.unknown)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-
-                    Text(nowPlayingItem.name ?? L10n.unknown)
-                        .foregroundColor(.primary)
-
-                    ProgressSection(
-                        item: nowPlayingItem,
-                        playState: session.playState,
-                        transcodingInfo: session.transcodingInfo
-                    )
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-                }
+                activeSessionDetails(nowPlayingItem)
             } else {
-                VStack(alignment: .leading) {
-                    Text(session.userName ?? L10n.unknown)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                idleSessionDetails
+            }
+        }
 
-                    Spacer()
+        @ViewBuilder
+        private func activeSessionDetails(_ nowPlayingItem: BaseItemDto) -> some View {
+            VStack(alignment: .leading) {
+                Text(session.userName ?? L10n.unknown)
+                    .font(.headline)
+                    .foregroundColor(.primary)
 
-                    HStack {
-                        Text(L10n.deviceWithString(""))
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Text(session.deviceName ?? L10n.unknown)
-                            .foregroundColor(.secondary)
-                    }
+                Spacer()
+
+                Text(nowPlayingItem.name ?? L10n.unknown)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                ProgressSection(
+                    item: nowPlayingItem,
+                    playState: session.playState,
+                    transcodingInfo: session.transcodingInfo
+                )
+                .foregroundColor(.secondary)
+                .font(.caption)
+            }
+        }
+
+        @ViewBuilder
+        private var idleSessionDetails: some View {
+            VStack(alignment: .leading) {
+                Text(session.userName ?? L10n.unknown)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+
+                Spacer()
+
+                ActiveDevicesView.ClientSection(
+                    client: session.client,
+                    deviceName: session.deviceName,
+                    applicationVersion: session.applicationVersion
+                )
+                .foregroundColor(.primary)
+                .font(.caption)
+
+                Spacer()
+
+                if let lastActivityDate = session.lastActivityDate {
+                    ConnectionSection(
+                        lastActivityDate: lastActivityDate,
+                        currentDate: Date(),
+                        prefixText: true
+                    )
+                    .foregroundColor(.primary)
                     .font(.caption)
-
-                    HStack {
-                        Text(L10n.versionWithString(""))
-                            .foregroundColor(.primary)
-                        Spacer()
-                        Text(session.applicationVersion ?? L10n.unknown)
-                            .foregroundColor(.secondary)
-                    }
-                    .font(.caption)
-
-                    Spacer()
-
-                    if let lastActivityDate = session.lastActivityDate {
-                        ConnectionSection(
-                            lastActivityDate: lastActivityDate,
-                            currentDate: Date(),
-                            prefixText: true
-                        )
-                        .foregroundColor(.secondary)
-                        .font(.caption)
-                    } else {
-                        Text(session.deviceName ?? session.client ?? L10n.unknown)
-                            .font(.headline)
-                        Spacer()
-                    }
                 }
             }
         }

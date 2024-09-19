@@ -20,7 +20,8 @@ extension ActiveDevicesView {
         var body: some View {
             Button(action: onSelect) {
                 VStack(alignment: .leading) {
-                    headerSection
+                    Text(session.userName ?? L10n.unknown)
+                        .font(.headline)
                         .foregroundColor(.primary)
 
                     Spacer()
@@ -42,6 +43,7 @@ extension ActiveDevicesView {
                                 }
                                 .id(nowPlayingItem.portraitImageSources(maxWidth: 150).hashValue)
                         }
+
                         sessionDetails
                             .foregroundColor(.primary)
                     }
@@ -72,15 +74,6 @@ extension ActiveDevicesView {
                     )
                 }
             }
-        }
-
-        // MARK: - Header
-
-        private var headerSection: some View {
-            UserSection(
-                userName: session.userName,
-                client: session.client
-            )
         }
 
         // MARK: - Footer
