@@ -17,20 +17,7 @@ extension VideoPlayer {
         private var isPresentingOverlay
 
         var body: some View {
-            ZStack {
-
-                VideoPlayer.MainOverlay()
-
-//                ChapterOverlay()
-//                    .visible(currentOverlayType == .chapters)
-            }
-
-//            .animation(.linear(duration: 0.1), value: currentOverlayType)
-//            .environment(\.currentOverlayType, $currentOverlayType)
-//            .onChange(of: isPresentingOverlay) { newValue in
-//                guard newValue else { return }
-//                currentOverlayType = .main
-//            }
+            VideoPlayer.MainOverlay()
         }
     }
 }

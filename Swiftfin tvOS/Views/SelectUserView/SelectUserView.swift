@@ -67,7 +67,7 @@ struct SelectUserView: View {
                 .map { server, users in
                     users.map { (server: server, user: $0) }
                 }
-                .flatMap { $0 }
+                .flattened()
                 .sorted(using: \.user.username)
                 .reversed()
                 .map { UserGridItem.user($0.user, server: $0.server) }

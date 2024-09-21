@@ -22,6 +22,7 @@ extension BaseItemDto: Displayable {
 }
 
 extension BaseItemDto: LibraryParent {
+
     var libraryType: BaseItemKind? {
         type
     }
@@ -58,6 +59,7 @@ extension BaseItemDto {
 
     // MARK: Calculations
 
+    // TODO: convert to FormatStyle, unwrap runTimeTicks at use time
     var runTimeLabel: String? {
         let timeHMSFormatter: DateComponentsFormatter = {
             let formatter = DateComponentsFormatter()

@@ -16,7 +16,6 @@ import MediaPlayer
 import UIKit
 import VLCUI
 
-// TODO: better online/offline handling
 // TODO: proper error catching
 // TODO: better solution for previous/next/queuing
 // TODO: should view models handle progress reports instead, with a protocol
@@ -24,6 +23,7 @@ import VLCUI
 
 protocol MediaPlayerListener {
     func stateDidChange(newState: MediaPlayerManager.State)
+    func secondsDidChange(newSeconds: TimeInterval)
 }
 
 // TODO: queue provider
@@ -158,6 +158,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
     }
 
+    // TODO: remove?
     private func buildCurrentItem(with item: BaseItemDto, mediaSource: MediaSourceInfo) {
         itemBuildTask?.cancel()
 
