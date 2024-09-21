@@ -11,7 +11,6 @@ import UIKit
 
 protocol AppIcon: CaseIterable, Identifiable, Displayable, RawRepresentable {
     var iconName: String { get }
-    var iconPreview: UIImage { get }
     static var tag: String { get }
 
     static func createCase(iconName: String) -> Self?
@@ -21,10 +20,6 @@ extension AppIcon where ID == String, RawValue == String {
 
     var iconName: String {
         "AppIcon-\(Self.tag)-\(rawValue)"
-    }
-
-    var iconPreview: UIImage {
-        UIImage(named: iconName) ?? UIImage()
     }
 
     var id: String {
