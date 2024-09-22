@@ -29,11 +29,6 @@ extension VideoPlayer.Overlay {
         @Binding
         private var isScrubbing: Bool
 
-//        @Environment(\.isPresentingDrawer)
-//        @Binding
-        @State
-        private var isPresentingDrawer: Bool = false
-
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
@@ -41,11 +36,6 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var scrubbedProgress: ProgressBox
-
-        @State
-        private var currentChapter: ChapterInfo.FullInfo?
-        @State
-        private var pulse = false
 
         @ViewBuilder
         private var capsuleSlider: some View {
@@ -84,42 +74,12 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 0) {
-                if !isPresentingDrawer {
-                    Group {
-                        switch sliderType {
-                        case .capsule: capsuleSlider
-                        case .thumb: thumbSlider
-                        }
-                    }
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .offset(y: isPresentingOverlay ? 0 : 20)
-                    .animation(.bouncy, value: isPresentingOverlay)
-                }
-
-                DrawerSectionView(selectedDrawerSection: .mock(-1))
-                    .environment(\.isPresentingDrawer, $isPresentingDrawer)
-                    .offset(y: isPresentingOverlay ? 0 : 10)
-                    .animation(.bouncy, value: isPresentingOverlay)
-                    .visible(!isScrubbing)
-
-                if isPresentingDrawer {
-                    Color.red
-                        .frame(height: 100)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                switch sliderType {
+                case .capsule: capsuleSlider
+                case .thumb: thumbSlider
                 }
             }
-            .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
             .disabled(manager.state == .loadingItem)
-            .onChange(of: isPresentingDrawer) { newValue in
-                if newValue {
-                    overlayTimer.stop()
-                } else {
-                    overlayTimer.delay()
-                }
-            }
-//            .onChange(of: manager.state) { newValue in
-//                pulse = newValue == .loadingItem
-//            }
         }
     }
 }

@@ -350,6 +350,8 @@
 		E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1C828D132B800678D5D /* RecentlyAddedView.swift */; };
 		E12CC1CB28D1333400678D5D /* CinematicResumeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */; };
 		E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CC28D135C700678D5D /* NextUpView.swift */; };
+		E12D02442C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
+		E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
 		E12E30F1296383810022FAC9 /* SplitFormWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */; };
 		E12E30F329638B140022FAC9 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F229638B140022FAC9 /* ChevronButton.swift */; };
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
@@ -1218,6 +1220,7 @@
 		E12CC1C828D132B800678D5D /* RecentlyAddedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyAddedView.swift; sourceTree = "<group>"; };
 		E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicResumeItemView.swift; sourceTree = "<group>"; };
 		E12CC1CC28D135C700678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
+		E12D02432C9FB772003B27CB /* MediaProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressManager.swift; sourceTree = "<group>"; };
 		E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFormWindowView.swift; sourceTree = "<group>"; };
 		E12E30F229638B140022FAC9 /* ChevronButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronButton.swift; sourceTree = "<group>"; };
 		E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPickerView.swift; sourceTree = "<group>"; };
@@ -2307,6 +2310,7 @@
 			children = (
 				E11D5A152C7918F1008A99F4 /* MediaPlayerItem.swift */,
 				E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */,
+				E12D02432C9FB772003B27CB /* MediaProgressManager.swift */,
 				E1EDFB452C75309D00C42FD3 /* MediaPlayerProxy */,
 			);
 			path = MediaPlayerManager;
@@ -4127,6 +4131,7 @@
 				E12CC1CB28D1333400678D5D /* CinematicResumeItemView.swift in Sources */,
 				4E2AC4D42C6C4C1200DD600D /* OrderedSectionSelectorView.swift in Sources */,
 				E1575E9C293E7B1E001665B1 /* Collection.swift in Sources */,
+				E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */,
 				E1C9260F2887565C002A7A66 /* AttributeHStack.swift in Sources */,
 				E11CEB9428999D9E003E74C7 /* EpisodeItemContentView.swift in Sources */,
 				E1CAF65E2BA345830087D991 /* MediaType.swift in Sources */,
@@ -4484,6 +4489,7 @@
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
+				E12D02442C9FB772003B27CB /* MediaProgressManager.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,

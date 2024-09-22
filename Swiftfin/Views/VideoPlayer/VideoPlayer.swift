@@ -29,8 +29,6 @@ struct VideoPlayer: View {
     @State
     private var isAspectFilled: Bool = false
     @State
-    private var isGestureLocked: Bool = false
-    @State
     private var isPresentingOverlay: Bool = true
     @State
     private var isScrubbing: Bool = false
@@ -40,8 +38,6 @@ struct VideoPlayer: View {
     private var subtitleOffset: Int = 0
     @State
     private var safeAreaInsets: EdgeInsets = .zero
-    @State
-    private var contentSize: CGSize = .zero
 
     @StateObject
     private var scrubbedProgress: ProgressBox = .init()
@@ -116,7 +112,7 @@ struct VideoPlayer: View {
             .ignoresSafeArea()
             .navigationBarHidden()
             .statusBarHidden()
-            .trackingSize($contentSize, $safeAreaInsets)
+            .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
                 vlcUIProxy.setAudioDelay(.ticks(newValue))
             }

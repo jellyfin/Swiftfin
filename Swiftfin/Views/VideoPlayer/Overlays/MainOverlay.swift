@@ -46,6 +46,8 @@ extension VideoPlayer {
                     .visible(playbackButtonType == .compact)
                 }
                 .visible(!isScrubbing && isPresentingOverlay)
+                .offset(y: isPresentingOverlay ? 0 : -20)
+                .animation(.bouncy, value: isPresentingOverlay)
         }
 
         @ViewBuilder
@@ -62,6 +64,9 @@ extension VideoPlayer {
                     .visible(isScrubbing || playbackButtonType == .compact)
                 }
                 .visible(isScrubbing || isPresentingOverlay)
+                .transition(.move(edge: .top).combined(with: .opacity))
+                .offset(y: isPresentingOverlay ? 0 : 20)
+                .animation(.bouncy, value: isPresentingOverlay)
         }
 
         var body: some View {
@@ -78,6 +83,17 @@ extension VideoPlayer {
                         .allowsHitTesting(false)
 
                     bottomBar
+
+//                    DrawerSectionView(selectedDrawerSection: $selectedDrawerIndex)
+//                        .offset(y: isPresentingOverlay ? 0 : 10)
+//                        .animation(.bouncy, value: isPresentingOverlay)
+//                        .visible(!isScrubbing)
+//
+//                    if isPresentingDrawer {
+//                        Color.red
+//                            .frame(height: 100)
+//                            .transition(.move(edge: .bottom).combined(with: .opacity))
+//                    }
                 }
 
                 if playbackButtonType == .large {
@@ -87,6 +103,14 @@ extension VideoPlayer {
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .environmentObject(overlayTimer)
+//            .onChange(of: isPresentingDrawer) { newValue in
+//                print("here")
+//                if newValue {
+//                    overlayTimer.stop()
+//                } else {
+//                    overlayTimer.delay()
+//                }
+//            }
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.delay()

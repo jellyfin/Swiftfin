@@ -16,8 +16,12 @@ extension VideoPlayer {
         @Binding
         private var isPresentingOverlay
 
+        @State
+        private var isPresentingDrawer = false
+
         var body: some View {
             VideoPlayer.MainOverlay()
+                .environment(\.isPresentingDrawer, $isPresentingDrawer)
         }
     }
 }

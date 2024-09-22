@@ -48,7 +48,7 @@ class NowPlayable {
         )
     }
 
-    func handleNowPlayableSessionStart() {
+    func startSession() {
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
@@ -59,7 +59,7 @@ class NowPlayable {
         }
     }
 
-    func handleNowPlayableSessionEnd() {
+    func stopSession() {
 
         for command in NowPlayableCommand.allCases {
             command.removeHandler()
