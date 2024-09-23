@@ -9,15 +9,11 @@
 import Foundation
 
 class MediaProgressManager: MediaPlayerListener {
-    
-    func stateDidChange(newState: MediaPlayerManager.State) {
-        
-    }
-    
-    func secondsDidChange(newSeconds: TimeInterval) {
-        
-    }
-    
+
+    func stateDidChange(newState: MediaPlayerManager.State) {}
+
+    func secondsDidChange(newSeconds: TimeInterval) {}
+
     //    func sendStartReport() {
     //
     //        #if DEBUG

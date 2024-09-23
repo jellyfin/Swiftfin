@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
 // TODO: split out into separate files under folder `GestureAction`
@@ -14,7 +13,7 @@ import Foundation
 // Optional values aren't yet supported in Defaults
 // https://github.com/sindresorhus/Defaults/issues/54
 
-protocol GestureAction: CaseIterable, Codable, Defaults.Serializable, Displayable {}
+protocol GestureAction: CaseIterable, Codable, Displayable, Storable {}
 
 enum LongPressAction: String, GestureAction {
 

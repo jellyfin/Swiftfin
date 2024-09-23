@@ -9,7 +9,6 @@
 import Defaults
 import JellyfinAPI
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay {
 
@@ -22,9 +21,6 @@ extension VideoPlayer.Overlay {
         @Default(.VideoPlayer.Overlay.sliderType)
         private var sliderType
 
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay: Bool
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -52,7 +48,6 @@ extension VideoPlayer.Overlay {
                             .disabled(isScrubbing)
                     }
                 }
-                .frame(height: 50)
         }
 
         @ViewBuilder

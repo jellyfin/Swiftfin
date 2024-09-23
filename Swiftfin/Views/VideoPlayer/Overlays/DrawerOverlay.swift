@@ -8,6 +8,11 @@
 
 import SwiftUI
 
+enum DrawerOverlaySize {
+    case small
+    case fullscreen
+}
+
 extension VideoPlayer.Overlay {
 
     struct DrawerOverlay: View {

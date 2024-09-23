@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
 enum TrailingTimestampType: String, CaseIterable, Displayable, Storable {

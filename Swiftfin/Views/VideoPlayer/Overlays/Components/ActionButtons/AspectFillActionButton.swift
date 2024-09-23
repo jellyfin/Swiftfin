@@ -8,7 +8,6 @@
 
 import Defaults
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay.ActionButtons {
 

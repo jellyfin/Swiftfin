@@ -9,7 +9,7 @@
 import Defaults
 import Foundation
 
-enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displayable, Identifiable {
+enum VideoPlayerActionButton: String, CaseIterable, Displayable, Identifiable, Storable, SystemImageable {
 
     case aspectFill
     case audio
@@ -42,7 +42,7 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
         rawValue
     }
 
-    var settingsSystemImage: String {
+    var systemImage: String {
         switch self {
         case .aspectFill:
             return "arrow.up.left.and.arrow.down.right"

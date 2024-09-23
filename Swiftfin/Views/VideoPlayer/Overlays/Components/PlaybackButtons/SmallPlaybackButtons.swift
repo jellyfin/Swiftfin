@@ -64,6 +64,7 @@ extension VideoPlayer.Overlay {
                 .font(.system(size: 28, weight: .bold, design: .default))
                 .frame(width: 50, height: 50)
             }
+            .fixedSize()
             .contentShape(Rectangle())
         }
 

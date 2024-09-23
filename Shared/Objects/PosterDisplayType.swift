@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {

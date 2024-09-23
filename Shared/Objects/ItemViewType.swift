@@ -6,10 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
-enum ItemViewType: String, CaseIterable, Displayable, Defaults.Serializable {
+enum ItemViewType: String, CaseIterable, Displayable, Storable {
 
     case compactPoster
     case compactLogo

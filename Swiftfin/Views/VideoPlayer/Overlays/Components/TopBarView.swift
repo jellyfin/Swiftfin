@@ -13,10 +13,6 @@ extension VideoPlayer.Overlay {
 
     struct TopBarView: View {
 
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay: Bool
-
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject

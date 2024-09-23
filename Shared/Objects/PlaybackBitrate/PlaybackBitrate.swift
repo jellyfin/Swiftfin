@@ -11,7 +11,7 @@ import Factory
 import Foundation
 import JellyfinAPI
 
-enum PlaybackBitrate: Int, CaseIterable, Defaults.Serializable, Displayable {
+enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
 
     case auto = 0
     case max = 360_000_000

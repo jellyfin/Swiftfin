@@ -190,12 +190,12 @@ class UIGestureView: UIView {
             action: #selector(didPerformHorizontalPan)
         )
 
-//        addGestureRecognizer(pinchGesture)
+        addGestureRecognizer(pinchGesture)
         addGestureRecognizer(tapGesture)
-//        addGestureRecognizer(doubleTouchGesture)
-//        addGestureRecognizer(longPressGesture)
-//        addGestureRecognizer(verticalPanGesture)
-//        addGestureRecognizer(horizontalPanGesture)
+        addGestureRecognizer(doubleTouchGesture)
+        addGestureRecognizer(longPressGesture)
+        addGestureRecognizer(verticalPanGesture)
+        addGestureRecognizer(horizontalPanGesture)
     }
 
     @available(*, unavailable)

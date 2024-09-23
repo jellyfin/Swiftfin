@@ -8,9 +8,6 @@
 
 import Foundation
 
-// TODO: require remote sign in every time
-//       - actually found to be a bit difficult?
-
 enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
 
     case none

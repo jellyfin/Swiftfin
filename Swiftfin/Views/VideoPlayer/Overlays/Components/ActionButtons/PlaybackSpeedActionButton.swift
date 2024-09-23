@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay.ActionButtons {
 
@@ -15,8 +14,8 @@ extension VideoPlayer.Overlay.ActionButtons {
 
         @EnvironmentObject
         private var videoPlayerManager: MediaPlayerManager
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+//        @EnvironmentObject
+//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
         var body: some View {
             Menu(

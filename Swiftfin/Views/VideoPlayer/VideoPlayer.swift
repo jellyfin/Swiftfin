@@ -90,7 +90,7 @@ struct VideoPlayer: View {
                     }
             }
 
-            MainOverlay()
+            Overlay()
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isPresentingOverlay, $isPresentingOverlay)
                 .environment(\.isScrubbing, $isScrubbing)

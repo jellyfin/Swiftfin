@@ -8,7 +8,6 @@
 
 import Defaults
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay.ActionButtons {
 
@@ -16,10 +15,8 @@ extension VideoPlayer.Overlay.ActionButtons {
 
         @EnvironmentObject
         private var videoPlayerManager: MediaPlayerManager
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 //        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
+//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
         private var systemImage: String {
 //            if isAudioTrackSelected {
