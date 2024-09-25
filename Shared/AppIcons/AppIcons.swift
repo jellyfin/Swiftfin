@@ -28,7 +28,7 @@ extension AppIcon where ID == String, RawValue == String {
 
     static func createCase(iconName: String) -> Self? {
         let split = iconName.split(separator: "-")
-        guard split.count == 3, split[1] == Self.tag else { return nil }
+        guard split.count == 3, split[1] == tag else { return nil }
 
         return Self(rawValue: String(split[2]))
     }
