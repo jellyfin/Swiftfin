@@ -10,7 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-protocol VideoPlayerDrawerProvider {
+protocol MediaPlayerSupplement {
 
     associatedtype Body: View
 
@@ -19,7 +19,14 @@ protocol VideoPlayerDrawerProvider {
     func makeBody() -> Self.Body
 }
 
-struct ChapterDrawerButton: VideoPlayerDrawerProvider {
+extension MediaPlayerSupplement where Body == EmptyView {
+
+    func makeBody() -> EmptyView {
+        EmptyView()
+    }
+}
+
+struct ChapterDrawerButton: MediaPlayerSupplement {
 
     let title: String = "Chapters"
 
@@ -28,7 +35,7 @@ struct ChapterDrawerButton: VideoPlayerDrawerProvider {
     }
 }
 
-struct ItemInfoDrawerProvider: VideoPlayerDrawerProvider {
+struct ItemInfoDrawerProvider: MediaPlayerSupplement {
 
     let title: String = "Info"
 

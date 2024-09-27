@@ -181,6 +181,8 @@ extension VideoPlayer {
         videoPlayerProxy.vlcUIProxy = vlcUIProxy
         manager.proxy = videoPlayerProxy
 
+        manager.listeners.append(NowPlayableListener(manager: manager))
+
         self.init(
             manager: manager,
             vlcUIProxy: vlcUIProxy
@@ -195,6 +197,8 @@ extension VideoPlayer {
 
         videoPlayerProxy.vlcUIProxy = vlcUIProxy
         manager.proxy = videoPlayerProxy
+
+        manager.listeners.append(NowPlayableListener(manager: manager))
 
         self.init(
             manager: manager,

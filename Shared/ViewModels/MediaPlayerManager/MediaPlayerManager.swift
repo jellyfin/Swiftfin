@@ -22,8 +22,12 @@ import VLCUI
 //       for other types of media handling
 
 protocol MediaPlayerListener {
-    func stateDidChange(newState: MediaPlayerManager.State)
-    func secondsDidChange(newSeconds: TimeInterval)
+
+    var manager: MediaPlayerManager? { get set }
+
+//    func itemDidChange(newItem: MediaPlayerItem)
+//    func secondsDidChange(newSeconds: TimeInterval)
+//    func stateDidChange(newState: MediaPlayerManager.State)
 }
 
 // TODO: queue provider
@@ -62,16 +66,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     private(set) var playbackItem: MediaPlayerItem! = nil
-//    {
-//        didSet {
-//            guard let playbackItem else { return }
-//            eventSubject.send(.playNew(playbackItem: playbackItem))
-//        }
-//    }
 
     @Published
     private(set) var item: BaseItemDto
-//    @Published
+    @Published
     private(set) var progress: ProgressBox = .init(progress: 0, seconds: 0)
     @Published
     private(set) var queue: [BaseItemDto] = []
@@ -80,6 +78,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     final var state: State = .initial
+
     @Published
     final var lastAction: Action? = nil
 
@@ -197,43 +196,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 // MARK: OLD
 
 extension MediaPlayerManager {
-//
-//    class CurrentProgressHandler: ObservableObject {
-//
-//        @Published
-//        var progress: CGFloat = 0
-//        @Published
-//        var scrubbedProgress: CGFloat = 0
-//
-//        @Published
-//        var seconds: Int = 0
-//        @Published
-//        var scrubbedSeconds: Int = 0
-//    }
-
-    // MARK: select
-
-//    func selectNextViewModel() {
-//        guard let nextViewModel else { return }
-//        currentViewModel = nextViewModel
-//        previousViewModel = nil
-//        self.nextViewModel = nil
-//
-//        nowPlayable.handleNowPlayableItemChange(
-//            metadata: currentViewModel.nowPlayingMetadata
-//        )
-//    }
-//
-//    func selectPreviousViewModel() {
-//        guard let previousViewModel else { return }
-//        currentViewModel = previousViewModel
-//        self.previousViewModel = nil
-//        nextViewModel = nil
-//
-//        nowPlayable.handleNowPlayableItemChange(
-//            metadata: currentViewModel.nowPlayingMetadata
-//        )
-//    }
 
     // MARK: onTicksUpdated
 
@@ -257,29 +219,6 @@ extension MediaPlayerManager {
 //    }
 
     // MARK: onStateUpdated
-
-//    func onStateUpdated(newState: VLCVideoPlayer.State) {
-//        guard state != newState else { return }
-//        state = newState
-
-//        nowPlayable.handleNowPlayableItemChange(
-//            metadata: currentViewModel.nowPlayingMetadata
-//        )
-//
-//        if !hasSentStart, newState == .playing {
-//            hasSentStart = true
-//            sendStartReport()
-//        }
-//
-//        if hasSentStart, newState == .paused {
-//            hasSentStart = false
-//            sendPauseReport()
-//        }
-//
-//        if newState == .stopped || newState == .ended {
-//            sendStopReport()
-//        }
-//    }
 
 //    func getAdjacentEpisodes(for item: BaseItemDto) {
 //        Task { @MainActor in

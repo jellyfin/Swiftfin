@@ -10,10 +10,36 @@ import Foundation
 
 class MediaProgressManager: MediaPlayerListener {
 
-    func stateDidChange(newState: MediaPlayerManager.State) {}
+    weak var manager: MediaPlayerManager?
+
+    func itemDidChange(newItem: MediaPlayerItem) {}
 
     func secondsDidChange(newSeconds: TimeInterval) {}
 
+    func stateDidChange(newState: MediaPlayerManager.State) {}
+
+    //    func onStateUpdated(newState: VLCVideoPlayer.State) {
+    //        guard state != newState else { return }
+    //        state = newState
+
+    //        nowPlayable.handleNowPlayableItemChange(
+    //            metadata: currentViewModel.nowPlayingMetadata
+    //        )
+    //
+    //        if !hasSentStart, newState == .playing {
+    //            hasSentStart = true
+    //            sendStartReport()
+    //        }
+    //
+    //        if hasSentStart, newState == .paused {
+    //            hasSentStart = false
+    //            sendPauseReport()
+    //        }
+    //
+    //        if newState == .stopped || newState == .ended {
+    //            sendStopReport()
+    //        }
+    //    }
     //    func sendStartReport() {
     //
     //        #if DEBUG

@@ -6,16 +6,66 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Factory
 import Foundation
 import MediaPlayer
 
-extension Container {
+class NowPlayableListener: MediaPlayerListener {
 
-    var nowPlayable: Factory<NowPlayable> {
-        self {
-            NowPlayable()
-        }.singleton
+    weak var manager: MediaPlayerManager? {
+        willSet {
+            guard let newValue else { return }
+            setup(with: newValue)
+        }
+    }
+
+    private let nowPlayable: NowPlayable
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(manager: MediaPlayerManager) {
+        self.nowPlayable = .init()
+        self.manager = manager
+
+        try! nowPlayable.handleNowPlayableConfiguration(
+            commands: nowPlayable.defaultRegisteredCommands,
+            commandHandler: { _, _ in .success },
+            interruptionHandler: { _ in }
+        )
+
+        setup(with: manager)
+    }
+
+    private func setup(with manager: MediaPlayerManager) {
+        manager.$playbackItem.sink(receiveValue: itemDidChange).store(in: &cancellables)
+        manager.$progress.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+//        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+    }
+
+    private func itemDidChange(newItem: MediaPlayerItem?) {
+        guard let newItem else { return }
+
+        nowPlayable.handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
+    }
+
+    private func secondsDidChange(newProgress: ProgressBox) {
+        nowPlayable.handleNowPlayablePlaybackChange(
+            playing: true,
+            metadata: .init(
+                position: Float(newProgress.seconds),
+                duration: Float(manager?.item.runTimeSeconds ?? 0)
+            )
+        )
+    }
+
+    private func stateDidChange(newState: MediaPlayerManager.State) {
+        nowPlayable.handleNowPlayablePlaybackChange(
+            playing: true,
+            metadata: .init(
+                position: 12,
+                duration: 123
+            )
+        )
     }
 }
 
@@ -49,6 +99,7 @@ class NowPlayable {
     }
 
     func startSession() {
+
         let audioSession = AVAudioSession.sharedInstance()
 
         do {
@@ -81,7 +132,7 @@ class NowPlayable {
         MPNowPlayingInfoCenter.default().playbackState = playing ? .playing : .paused
     }
 
-    func configureRemoteCommands(
+    private func configureRemoteCommands(
         _ commands: [NowPlayableCommand],
         commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent)
             -> MPRemoteCommandHandlerStatus
@@ -106,7 +157,7 @@ class NowPlayable {
     private func setNowPlayingMetadata(_ metadata: NowPlayableStaticMetadata) {
 
         let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo = [String: Any]()
+        var nowPlayingInfo: [String: Any] = [:]
 
         nowPlayingInfo[MPNowPlayingInfoPropertyMediaType] = metadata.mediaType.rawValue
         nowPlayingInfo[MPNowPlayingInfoPropertyIsLiveStream] = metadata.isLiveStream
@@ -125,7 +176,7 @@ class NowPlayable {
     private func setNowPlayingPlaybackInfo(_ metadata: NowPlayableDynamicMetadata) {
 
         let nowPlayingInfoCenter = MPNowPlayingInfoCenter.default()
-        var nowPlayingInfo = nowPlayingInfoCenter.nowPlayingInfo ?? [String: Any]()
+        var nowPlayingInfo: [String: Any] = nowPlayingInfoCenter.nowPlayingInfo ?? [:]
 
         nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = metadata.duration
         nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = metadata.position

@@ -15,10 +15,10 @@ extension View {
 
     @ViewBuilder
     func iOS15<Content: View>(@ViewBuilder _ content: (Self) -> Content) -> some View {
-        if #available(iOS 16, *) {
-            self
-        } else {
+        if #unavailable(iOS 16) {
             content(self)
+        } else {
+            self
         }
     }
 
