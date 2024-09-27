@@ -31,7 +31,8 @@ struct DownloadTaskButton: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.green)
             case let .downloading(progress):
-                CircularProgressView(progress: progress)
+                EmptyView()
+//                CircularProgressView(progress: progress)
             case .error:
                 Image(systemName: "exclamationmark.circle.fill")
                     .foregroundColor(.red)

@@ -44,7 +44,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
-    var serverDetail = makeServerDetail
+    var serverConnection = makeServerConnection
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
@@ -154,13 +154,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeServerDetail(server: ServerState) -> some View {
+    func makeServerConnection(server: ServerState) -> some View {
         EditServerView(server: server)
     }
 
     @ViewBuilder
-    func makeUserDashboard(server: ServerState) -> some View {
-        UserDashboardView(server: server)
+    func makeUserDashboard() -> some View {
+        UserDashboardView()
     }
 
     @ViewBuilder

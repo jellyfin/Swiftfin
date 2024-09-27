@@ -11,7 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDevicesView {
+
     struct ActiveSessionRow: View {
+
         var session: SessionInfo
         var onSelect: () -> Void
 

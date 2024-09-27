@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveDeviceDetailView: View {
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -22,7 +23,8 @@ struct ActiveDeviceDetailView: View {
 
     // MARK: - Timer
 
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 5, on: .main, in: .common)
+        .autoconnect()
 
     // MARK: Get Active Session
 
@@ -56,9 +58,9 @@ struct ActiveDeviceDetailView: View {
         .onAppear {
             viewModel.send(.refresh)
         }
-        .onReceive(timer) { _ in
+        .onReceive(timer) { date in
             viewModel.send(.backgroundRefresh)
-            currentDate = Date()
+            currentDate = date
         }
         .animation(.spring(), value: session.nowPlayingItem != nil)
     }
@@ -159,7 +161,6 @@ struct ActiveDeviceDetailView: View {
 
     @ViewBuilder
     private func nowPlayingSection(_ item: BaseItemDto) -> some View {
-        // Create a Cinematic poster for the Now Playing Item
         ImageView(item.cinematicImageSources())
             .image { image in
                 image

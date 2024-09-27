@@ -12,6 +12,8 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+// TODO: replace current progress tracking after socket implementation
+
 final class ScheduledTasksViewModel: ViewModel, Stateful {
 
     // MARK: - Action
@@ -20,7 +22,6 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case restartApplication
         case shutdownApplication
         case fetchTasks
-        case backgroundRefresh
         case startTask(String)
         case stopTask(String)
         case error(JellyfinAPIError)
@@ -28,36 +29,28 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
 
     // MARK: - BackgroundState
 
-    enum BackgroundStates: Hashable {
-        case refresh
+    enum BackgroundState: Hashable {
+        case fetchingTasks
     }
 
     // MARK: - State
 
     enum State: Hashable {
-        case idle
-        case running
-        case stopping
+        case content
         case error(JellyfinAPIError)
-        case fetchedTasks([TaskInfo])
+        case initial
     }
 
-    // MARK: - Constants
-
-    private let progressPollingInterval: UInt64 = 5_000_000_000 // Check for Task Updates every 5 seconds
-
-    // MARK: - Published Variables
-
     @Published
-    final var state: State = .idle
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    var progress: [String: Double] = [:]
+    final var progress: [String: Double] = [:]
     @Published
-    var tasks: [TaskInfo] = []
+    final var state: State = .initial
+    @Published
+    final var tasks: OrderedDictionary<String, [TaskInfo]> = [:]
 
-    // MARK: - Private Variables
-
-    private var sessionTasks: [String: Task<Void, Never>] = [:]
+    private var sessionTasks: [String: AnyCancellable] = [:]
 
     // MARK: - Stateful Conformance
 
@@ -72,12 +65,13 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         default:
             handleTaskAction(action)
         }
-        return .running
+        return .content
     }
 
     // MARK: - Handle Task Actions
 
     private func handleTaskAction(_ action: Action, taskID: String? = nil, shouldTrackProgress: Bool = false) {
+
         sessionTasks[taskID ?? "general"]?.cancel()
 
         let task = Task {
@@ -88,11 +82,13 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
                     try await pollTaskProgress(for: taskID)
                 }
             } catch {
+                // TODO: don't have view model error for task errors
                 await MainActor.run {
-                    state = .error(JellyfinAPIError(error.localizedDescription))
+                    state = .error(.init(error.localizedDescription))
                 }
             }
         }
+        .asAnyCancellable()
 
         if let taskID = taskID {
             sessionTasks[taskID] = task
@@ -113,7 +109,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
             try await startTask(taskID)
         case let .stopTask(taskID):
             try await stopTask(taskID)
-        case .fetchTasks, .backgroundRefresh:
+        case .fetchTasks:
             try await fetchTasks()
         case let .error(error):
             await MainActor.run {
@@ -128,9 +124,12 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
 
+        let newTasks = OrderedDictionary(grouping: response.value, by: { $0.category ?? "" })
+            .mapValues { $0.compacted(using: \.id) }
+
         await MainActor.run {
-            tasks = response.value
-            state = .fetchedTasks(tasks)
+            tasks = newTasks
+            state = .content
         }
 
         for task in response.value where task.currentProgressPercentage ?? 0 > 0 && task.currentProgressPercentage ?? 0 < 100 {
@@ -155,11 +154,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
                 break
             }
 
-            try await Task.sleep(nanoseconds: progressPollingInterval)
-        }
-
-        await MainActor.run {
-            state = .idle
+            try await Task.sleep(nanoseconds: 2_000_000_000)
         }
     }
 
@@ -182,10 +177,6 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     private func sendRestartRequest() async throws {
         let request = Paths.restartApplication
         try await userSession.client.send(request)
-
-        await MainActor.run {
-            state = .idle
-        }
     }
 
     // MARK: - Shutdown Application
@@ -193,9 +184,5 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     private func sendShutdownRequest() async throws {
         let request = Paths.shutdownApplication
         try await userSession.client.send(request)
-
-        await MainActor.run {
-            state = .idle
-        }
     }
 }

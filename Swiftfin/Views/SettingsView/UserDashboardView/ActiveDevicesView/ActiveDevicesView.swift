@@ -12,18 +12,19 @@ import JellyfinAPI
 import SwiftUI
 
 struct ActiveDevicesView: View {
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-
-    @StateObject
-    private var viewModel = ActiveSessionsViewModel()
 
     @State
     private var displayType: LibraryDisplayType
     @State
     private var layout: CollectionVGridLayout
 
-    @StoredValue
+    @StateObject
+    private var viewModel = ActiveSessionsViewModel()
+
+    @StoredValue(.User.activeDevicesDisplayType())
     private var storedDisplayType: LibraryDisplayType
 
     // MARK: - Timer
@@ -33,7 +34,6 @@ struct ActiveDevicesView: View {
     // MARK: - Init
 
     init() {
-        self._storedDisplayType = StoredValue(.User.activeDevicesDisplayType())
 
         let initialDisplayType = _storedDisplayType.wrappedValue
         self._displayType = State(initialValue: initialDisplayType)
@@ -113,36 +113,34 @@ struct ActiveDevicesView: View {
     @ViewBuilder
     var body: some View {
         contentView
+            .navigationTitle(L10n.activeDevices)
             .onReceive(timer) { _ in
                 viewModel.send(.backgroundRefresh)
             }
-            .navigationTitle(L10n.activeDevices)
-            .onAppear {
+            .onFirstAppear {
                 viewModel.send(.refresh)
             }
             .refreshable {
                 viewModel.send(.refresh)
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        if displayType == .grid {
-                            displayType = .list
-                        } else {
-                            displayType = .grid
-                        }
-
-                        storedDisplayType = displayType
-
-                        if UIDevice.isPhone {
-                            layout = Self.phoneLayout(viewType: displayType)
-                        } else {
-                            layout = Self.padLayout(viewType: displayType)
-                        }
-                    } label: {
-                        Image(systemName: displayType == .grid ? "list.bullet" : "square.grid.2x2")
-                            .animation(.easeInOut)
+            .topBarTrailing {
+                Button {
+                    if displayType == .grid {
+                        displayType = .list
+                    } else {
+                        displayType = .grid
                     }
+
+                    storedDisplayType = displayType
+
+                    if UIDevice.isPhone {
+                        layout = Self.phoneLayout(viewType: displayType)
+                    } else {
+                        layout = Self.padLayout(viewType: displayType)
+                    }
+                } label: {
+                    Image(systemName: displayType == .grid ? "list.bullet" : "square.grid.2x2")
+                        .animation(.easeInOut)
                 }
             }
     }

@@ -11,24 +11,27 @@ import JellyfinAPI
 import SwiftUI
 
 extension ScheduledTasksView {
+
     struct ServerTaskButton: View {
-        var label: String
-        var icon: String
-        var warningMessage: String
-        var isPresented: Binding<Bool>
-        var action: () -> Void
+
+        let title: String
+        let systemImage: String
+        let warningMessage: String
+        let isPresented: Binding<Bool>
+        let action: () -> Void
 
         // MARK: - Body
 
-        @ViewBuilder
         var body: some View {
             Button(role: .destructive) {
                 isPresented.wrappedValue = true
             } label: {
                 HStack {
-                    Text(label)
+                    Text(title)
+
                     Spacer()
-                    Image(systemName: icon)
+
+                    Image(systemName: systemImage)
                 }
             }
             .confirmationDialog(
@@ -36,7 +39,7 @@ extension ScheduledTasksView {
                 isPresented: isPresented,
                 titleVisibility: .visible
             ) {
-                Button(label, role: .destructive, action: action)
+                Button(title, role: .destructive, action: action)
             }
         }
     }

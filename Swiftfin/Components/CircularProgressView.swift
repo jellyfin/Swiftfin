@@ -6,35 +6,43 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
 
-struct CircularProgressView: View {
+// SwiftUI gauge style not available on iOS 15
 
-    @State
-    private var lineWidth: CGFloat = 1
+struct GaugeProgressStyle: ProgressViewStyle {
 
-    let progress: Double
+    @Default(.accentColor)
+    private var accentColor
 
-    var body: some View {
+    func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Circle()
                 .stroke(
-                    Color.green.opacity(0.5),
-                    lineWidth: lineWidth
+                    Color.gray.opacity(0.2),
+                    lineWidth: 20 / 3
                 )
+
             Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: configuration.fractionCompleted ?? 0)
                 .stroke(
-                    Color.green,
+                    accentColor,
                     style: StrokeStyle(
-                        lineWidth: lineWidth,
+                        lineWidth: 20 / 3,
                         lineCap: .round
                     )
                 )
                 .rotationEffect(.degrees(-90))
         }
-        .onSizeChanged { size in
-            lineWidth = size.width / 3.5
-        }
+        .animation(.linear(duration: 0.1), value: configuration.fractionCompleted)
+        .frame(height: 20)
+    }
+}
+
+extension ProgressViewStyle where Self == GaugeProgressStyle {
+
+    static var gauge: GaugeProgressStyle {
+        GaugeProgressStyle()
     }
 }
