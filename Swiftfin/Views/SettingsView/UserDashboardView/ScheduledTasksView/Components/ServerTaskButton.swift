@@ -35,11 +35,13 @@ extension ScheduledTasksView {
                 }
             }
             .confirmationDialog(
-                warningMessage,
+                title,
                 isPresented: isPresented,
-                titleVisibility: .visible
+                titleVisibility: .hidden
             ) {
                 Button(title, role: .destructive, action: action)
+            } message: {
+                Text(warningMessage)
             }
         }
     }

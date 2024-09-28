@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove timer after socket implementation
+
 struct ScheduledTasksView: View {
 
     @EnvironmentObject
@@ -49,25 +51,6 @@ struct ScheduledTasksView: View {
         }
     }
 
-    // MARK: - Section for Category
-
-    @ViewBuilder
-    private func taskSection(for category: String, tasks: [TaskInfo]) -> some View {
-        if tasks.isNotEmpty {
-            Section(category) {
-                ForEach(tasks) { task in
-                    ScheduledTaskButton(
-                        task: task
-                    ) {
-                        viewModel.send(.startTask(task.id!))
-                    } onCancel: {
-                        viewModel.send(.stopTask(task.id!))
-                    }
-                }
-            }
-        }
-    }
-
     // MARK: - Body
 
     @ViewBuilder
@@ -77,9 +60,11 @@ struct ScheduledTasksView: View {
                 serverFunctions
             }
 
-            if viewModel.tasks.isNotEmpty {
-                ForEach(viewModel.tasks.keys, id: \.self) { category in
-                    taskSection(for: category, tasks: viewModel.tasks[category] ?? [])
+            ForEach(viewModel.tasks.keys, id: \.self) { category in
+                Section(category) {
+                    ForEach(viewModel.tasks[category] ?? []) { task in
+                        ScheduledTaskButton(observer: task)
+                    }
                 }
             }
         }
@@ -89,7 +74,7 @@ struct ScheduledTasksView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.fetchTasks)
+                viewModel.send(.refreshTasks)
             }
     }
 
@@ -106,12 +91,13 @@ struct ScheduledTasksView: View {
                 DelayedProgressView()
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.scheduledTasks)
-        .topBarTrailing {
-//            if viewModel.background
-        }
         .onFirstAppear {
-            viewModel.send(.fetchTasks)
+            viewModel.send(.refreshTasks)
+        }
+        .onFinalDisappear {
+            viewModel.stopObservers()
         }
         .onReceive(timer) { _ in
             viewModel.send(.fetchTasks)

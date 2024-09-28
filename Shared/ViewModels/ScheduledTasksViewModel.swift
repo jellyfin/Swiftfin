@@ -12,7 +12,8 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-// TODO: replace current progress tracking after socket implementation
+// TODO: do something for errors from restart/shutdown
+//       - toast?
 
 final class ScheduledTasksViewModel: ViewModel, Stateful {
 
@@ -22,9 +23,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case restartApplication
         case shutdownApplication
         case fetchTasks
-        case startTask(String)
-        case stopTask(String)
-        case error(JellyfinAPIError)
+        case refreshTasks
     }
 
     // MARK: - BackgroundState
@@ -44,132 +43,103 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var progress: [String: Double] = [:]
-    @Published
     final var state: State = .initial
     @Published
-    final var tasks: OrderedDictionary<String, [TaskInfo]> = [:]
+    final var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
 
-    private var sessionTasks: [String: AnyCancellable] = [:]
-
-    // MARK: - Stateful Conformance
+    private var fetchTasksCancellable: AnyCancellable?
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .startTask(taskID):
-            handleTaskAction(action, taskID: taskID, shouldTrackProgress: true)
-        case let .stopTask(taskID):
-            handleTaskAction(action, taskID: taskID, shouldTrackProgress: true)
-        case let .error(error):
-            return .error(error)
-        default:
-            handleTaskAction(action)
-        }
-        return .content
-    }
-
-    // MARK: - Handle Task Actions
-
-    private func handleTaskAction(_ action: Action, taskID: String? = nil, shouldTrackProgress: Bool = false) {
-
-        sessionTasks[taskID ?? "general"]?.cancel()
-
-        let task = Task {
-            do {
-                try await sendRequest(for: action)
-
-                if let taskID = taskID, shouldTrackProgress {
-                    try await pollTaskProgress(for: taskID)
-                }
-            } catch {
-                // TODO: don't have view model error for task errors
-                await MainActor.run {
-                    state = .error(.init(error.localizedDescription))
-                }
-            }
-        }
-        .asAnyCancellable()
-
-        if let taskID = taskID {
-            sessionTasks[taskID] = task
-        } else {
-            sessionTasks["general"] = task
-        }
-    }
-
-    // MARK: - Send Request via Desired API
-
-    private func sendRequest(for action: Action) async throws {
-        switch action {
         case .restartApplication:
-            try await sendRestartRequest()
-        case .shutdownApplication:
-            try await sendShutdownRequest()
-        case let .startTask(taskID):
-            try await startTask(taskID)
-        case let .stopTask(taskID):
-            try await stopTask(taskID)
-        case .fetchTasks:
-            try await fetchTasks()
-        case let .error(error):
-            await MainActor.run {
-                state = .error(error)
+            Task {
+                try await sendRestartRequest()
             }
+            .store(in: &cancellables)
+
+            return .content
+        case .shutdownApplication:
+            Task {
+                try await sendShutdownRequest()
+            }
+            .store(in: &cancellables)
+
+            return .content
+        case .fetchTasks:
+            fetchTasksCancellable?.cancel()
+
+            fetchTasksCancellable = Task {
+                do {
+                    try await fetchTasks()
+
+                    await MainActor.run {
+                        self.state = .content
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        stopObservers()
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+        case .refreshTasks:
+            fetchTasksCancellable?.cancel()
+
+            fetchTasksCancellable = Task {
+                do {
+                    try await fetchTasks()
+
+                    await MainActor.run {
+                        self.state = .content
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        stopObservers()
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .initial
         }
     }
 
     // MARK: - Fetch All Tasks
 
+    // Note: If task list was modified while on this view it won't update
+    //       until popped and presented again. However, that is a rare case.
     private func fetchTasks() async throws {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
 
-        let newTasks = OrderedDictionary(grouping: response.value, by: { $0.category ?? "" })
-            .mapValues { $0.compacted(using: \.id) }
-
-        await MainActor.run {
-            tasks = newTasks
-            state = .content
-        }
-
-        for task in response.value where task.currentProgressPercentage ?? 0 > 0 && task.currentProgressPercentage ?? 0 < 100 {
-            handleTaskAction(.startTask(task.id ?? ""), taskID: task.id, shouldTrackProgress: true)
-        }
-    }
-
-    // MARK: - Track Task Progress
-
-    private func pollTaskProgress(for taskID: String) async throws {
-        while true {
-            let request = Paths.getTask(taskID: taskID)
-            let response = try await userSession.client.send(request)
-
-            let currentProgress = response.value.currentProgressPercentage ?? 0
+        if tasks.isEmpty {
+            let observers = response.value.map { ServerTaskObserver(task: $0) }
+            let newTasks = OrderedDictionary(grouping: observers, by: { $0.task.category ?? "" })
 
             await MainActor.run {
-                progress[taskID] = currentProgress
+                self.tasks = newTasks
             }
+        }
 
-            if currentProgress >= 100 {
-                break
+        for runningTask in response.value where runningTask.state == .running {
+            if let observer = tasks.values
+                .flatMap(\.self)
+                .first(where: { $0.task.id == runningTask.id })
+            {
+                await observer.send(.start)
             }
-
-            try await Task.sleep(nanoseconds: 2_000_000_000)
         }
     }
 
-    // MARK: - Start Task From ID
-
-    private func startTask(_ taskID: String) async throws {
-        let request = Paths.startTask(taskID: taskID)
-        try await userSession.client.send(request)
-    }
-
-    // MARK: - Stop Task From ID
-
-    private func stopTask(_ taskID: String) async throws {
-        let request = Paths.stopTask(taskID: taskID)
-        try await userSession.client.send(request)
+    @MainActor
+    func stopObservers() {
+        for observer in tasks.values.flatMap(\.self) {
+            observer.send(.stopObserving)
+        }
     }
 
     // MARK: - Restart Application

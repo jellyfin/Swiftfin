@@ -7,31 +7,32 @@
 //
 
 import JellyfinAPI
+import Stinsen
 import SwiftUI
 
 extension ScheduledTasksView {
 
     struct ScheduledTaskButton: View {
 
-        // MARK: - Tracked States
+        @EnvironmentObject
+        private var router: SettingsCoordinator.Router
+
+        @ObservedObject
+        var observer: ServerTaskObserver
 
         @State
-        private var isCancelling = false
-        @State
-        private var isStarting = false
+        private var currentTime: Date = .now
         @State
         private var isPresentingConfirmation = false
 
-        var task: TaskInfo
-        var onSelect: () -> Void
-        var onCancel: () -> Void
+        private let timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
 
         // MARK: - Body
 
         @ViewBuilder
         var body: some View {
             Button {
-                isCancelling = false
                 isPresentingConfirmation = true
             } label: {
                 HStack {
@@ -42,19 +43,36 @@ extension ScheduledTasksView {
                     statusView
                 }
             }
+            .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
+            .onReceive(timer) { newValue in
+                currentTime = newValue
+            }
             .confirmationDialog(
-                confirmationDialogText,
+                observer.task.name ?? .emptyDash,
                 isPresented: $isPresentingConfirmation,
                 titleVisibility: .visible
             ) {
-                Button(task.lastExecutionResult?.status == .completed ? "Run" : "Rerun") {
-                    onSelect()
-                    isStarting = true
+                Group {
+                    if observer.state == .running {
+                        Button("Stop") {
+                            observer.send(.stop)
+                        }
+                    } else {
+                        Button("Run") {
+                            observer.send(.start)
+                        }
+                    }
                 }
-            }
-            .onChange(of: task.lastExecutionResult?.startTimeUtc) { _ in
-                isStarting = false
+                .disabled(observer.task.state == .cancelling)
+
+                Button("Edit") {
+                    router.route(to: \.editScheduledTask, observer)
+                }
+            } message: {
+                if let description = observer.task.description {
+                    Text(description)
+                }
             }
         }
 
@@ -64,22 +82,12 @@ extension ScheduledTasksView {
         private var taskView: some View {
             VStack(alignment: .leading, spacing: 4) {
 
-                Text(task.name?.localizedCapitalized ?? L10n.unknown)
+                Text(observer.task.name ?? L10n.unknown)
                     .fontWeight(.semibold)
 
-                Group {
-                    if !isActive {
-                        if let taskEndTime = task.lastExecutionResult?.endTimeUtc {
-                            Text("Last ran \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
-                        }
-
-                        taskResultView
-                    } else {
-                        Text("Running...")
-                    }
-                }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                taskResultView
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
         }
 
@@ -87,21 +95,22 @@ extension ScheduledTasksView {
 
         @ViewBuilder
         private var statusView: some View {
-            if isActive {
-                if isCancelling {
-                    Text(L10n.canceled)
-                        .foregroundStyle(.red)
-                } else {
-
-                    ProgressView(value: task.currentProgressPercentage)
-                        .progressViewStyle(.gauge)
-
+            switch observer.state {
+            case .running:
+                ZStack {
                     Image(systemName: "stop.fill")
-                        .foregroundStyle(.red)
+                        .foregroundStyle(.secondary)
+                        .padding(6)
+                        .overlay {
+                            ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
+                                .progressViewStyle(.gauge(lineWidthRatio: 8))
+                        }
                 }
-            } else {
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+            default:
                 Image(systemName: "play.fill")
                     .foregroundStyle(.secondary)
+                    .transition(.opacity.combined(with: .scale).animation(.bouncy))
             }
         }
 
@@ -109,53 +118,30 @@ extension ScheduledTasksView {
 
         @ViewBuilder
         private var taskResultView: some View {
-            if let taskStatus = task.lastExecutionResult?.status, taskStatus != .completed {
-                Label(
-                    taskStatus.rawValue,
-                    systemImage: "exclamationmark.circle.fill"
-                )
-                .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                .foregroundStyle(.orange)
+            if observer.state == .running {
+                Text("Running...")
+            } else if observer.task.state == .cancelling {
+                Text("Cancelling...")
+            } else {
+                if let taskEndTime = observer.task.lastExecutionResult?.endTimeUtc {
+                    Text("Last ran \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
+                        .id(currentTime)
+                        .monospacedDigit()
+                } else {
+                    Text("Never run")
+                }
+
+                if let status = observer.task.lastExecutionResult?.status, status != .completed {
+                    Label(
+                        status.rawValue,
+                        systemImage: "exclamationmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    .foregroundStyle(.orange)
+                    .backport
+                    .fontWeight(.semibold)
+                }
             }
-        }
-
-        // MARK: - Task is Active
-
-        private var isActive: Bool {
-            task.currentProgressPercentage != nil || isStarting
-        }
-
-        // MARK: - Task Confirmation
-
-        private var confirmationDialogText: String {
-            """
-            \(task.name?.localizedCapitalized ?? L10n.unknown)
-            \(task.lastExecutionResult?.longErrorMessage ?? "")
-            """
-        }
-
-        // MARK: - Cancel Button
-
-        @ViewBuilder
-        private var cancelButton: some View {
-//            Image(systemName: "xmark.circle.fill")
-//                .backport
-//                .fontWeight(.bold)
-//                .symbolRenderingMode(.palette)
-//                .foregroundStyle(.black, .pink)
-
-            Image(systemName: "stop.fill")
-                .backport
-                .fontWeight(.bold)
-                .symbolRenderingMode(.palette)
-                .foregroundStyle(.red)
-                .frame(width: 20)
-
-//                .foregroundStyle(.red)
-//                .onTapGesture {
-//                    isCancelling = true
-//                    onCancel()
-//                }
         }
     }
 }
@@ -163,81 +149,83 @@ extension ScheduledTasksView {
 #Preview {
     List {
         ScheduledTasksView.ScheduledTaskButton(
-            task: TaskInfo(
-                category: "test",
-                currentProgressPercentage: nil,
-                description: nil,
-                id: "123",
-                isHidden: false,
-                key: "123",
-                lastExecutionResult: TaskResult(
-                    endTimeUtc: Date(timeIntervalSinceNow: -10),
-                    errorMessage: nil,
-                    id: nil,
-                    key: nil,
-                    longErrorMessage: nil,
-                    name: nil,
-                    startTimeUtc: Date(),
-                    status: .completed
-                ),
-                name: "Test",
-                state: .idle,
-                triggers: nil
-            ),
-            onSelect: {},
-            onCancel: {}
+            observer: .init(
+                task: TaskInfo(
+                    category: "test",
+                    currentProgressPercentage: nil,
+                    description: nil,
+                    id: "123",
+                    isHidden: false,
+                    key: "123",
+                    lastExecutionResult: TaskResult(
+                        endTimeUtc: Date(timeIntervalSinceNow: -10),
+                        errorMessage: nil,
+                        id: nil,
+                        key: nil,
+                        longErrorMessage: nil,
+                        name: nil,
+                        startTimeUtc: Date(),
+                        status: .completed
+                    ),
+                    name: "Test",
+                    state: .running,
+                    triggers: nil
+                )
+            )
         )
 
         ScheduledTasksView.ScheduledTaskButton(
-            task: TaskInfo(
-                category: "test",
-                currentProgressPercentage: nil,
-                description: nil,
-                id: "123",
-                isHidden: false,
-                key: "123",
-                lastExecutionResult: TaskResult(
-                    endTimeUtc: Date(timeIntervalSinceNow: -10),
-                    errorMessage: nil,
-                    id: nil,
-                    key: nil,
-                    longErrorMessage: nil,
-                    name: nil,
-                    startTimeUtc: Date(),
-                    status: .cancelled
+            observer: .init(
+                task: TaskInfo(
+                    category: "test",
+                    currentProgressPercentage: 0.6,
+                    description: nil,
+                    id: "123",
+                    isHidden: false,
+                    key: "123",
+                    lastExecutionResult: TaskResult(
+                        endTimeUtc: Date(timeIntervalSinceNow: -10),
+                        errorMessage: nil,
+                        id: nil,
+                        key: nil,
+                        longErrorMessage: nil,
+                        name: nil,
+                        startTimeUtc: Date(),
+                        status: .completed
+                    ),
+                    name: "Test",
+                    state: .running,
+                    triggers: nil
                 ),
-                name: "Test",
-                state: .idle,
-                triggers: nil
-            ),
-            onSelect: {},
-            onCancel: {}
+                ServerTaskObserver.State.running
+            )
         )
 
         ScheduledTasksView.ScheduledTaskButton(
-            task: TaskInfo(
-                category: "test",
-                currentProgressPercentage: 0.6,
-                description: nil,
-                id: "123",
-                isHidden: false,
-                key: "123",
-                lastExecutionResult: TaskResult(
-                    endTimeUtc: Date(timeIntervalSinceNow: -10),
-                    errorMessage: nil,
-                    id: nil,
-                    key: nil,
-                    longErrorMessage: nil,
-                    name: nil,
-                    startTimeUtc: Date(),
-                    status: .cancelled
+            observer: .init(
+                task: TaskInfo(
+                    category: "test",
+                    currentProgressPercentage: 0.6,
+                    description: nil,
+                    id: "123",
+                    isHidden: false,
+                    key: "123",
+                    lastExecutionResult: TaskResult(
+                        endTimeUtc: Date(timeIntervalSinceNow: -10),
+                        errorMessage: nil,
+                        id: nil,
+                        key: nil,
+                        longErrorMessage: nil,
+                        name: nil,
+                        startTimeUtc: Date(),
+                        status: .failed
+                    ),
+                    name: "Test",
+                    state: .idle,
+                    triggers: nil
                 ),
-                name: "Test",
-                state: .idle,
-                triggers: nil
-            ),
-            onSelect: {},
-            onCancel: {}
+                ServerTaskObserver.State.initial
+            )
         )
     }
 }

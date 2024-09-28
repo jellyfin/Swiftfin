@@ -958,6 +958,9 @@
 		E1EA9F6B28F8A79E00BEC442 /* VideoPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */; };
 		E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */; };
 		E1EBCB46278BD595009FE6E9 /* ItemOverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */; };
+		E1ED7FD62CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */; };
+		E1ED7FD82CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */; };
+		E1ED7FD92CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */; };
 		E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91162B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91172B95993300802036 /* TitledLibraryParent.swift */; };
@@ -1651,6 +1654,8 @@
 		E1EA9F6928F8A79E00BEC442 /* VideoPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerManager.swift; sourceTree = "<group>"; };
 		E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruncatedText.swift; sourceTree = "<group>"; };
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
+		E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScheduledTaskView.swift; sourceTree = "<group>"; };
+		E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskObserver.swift; sourceTree = "<group>"; };
 		E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestInLibraryViewModel.swift; sourceTree = "<group>"; };
 		E1ED91172B95993300802036 /* TitledLibraryParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledLibraryParent.swift; sourceTree = "<group>"; };
 		E1EF4C402911B783008CC695 /* StreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamType.swift; sourceTree = "<group>"; };
@@ -1844,6 +1849,7 @@
 			children = (
 				4E6C27062C8BD09200FD2185 /* ActiveDeviceDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveDevicesView */,
+				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
@@ -1979,6 +1985,7 @@
 				E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */,
 				E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */,
 				E173DA5326D050F500CC4EB7 /* ServerConnectionViewModel.swift */,
+				E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
 				E14EA1682BF7330A00DE757A /* UserProfileImageViewModel.swift */,
@@ -4308,6 +4315,7 @@
 				E1575E5F293E77B5001665B1 /* StreamType.swift in Sources */,
 				E1803EA22BFBD6CF0039F90E /* Hashable.swift in Sources */,
 				E1388A42293F0AAD009721B1 /* PreferenceUIHostingSwizzling.swift in Sources */,
+				E1ED7FD82CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */,
 				E1575E93293E7B1E001665B1 /* Double.swift in Sources */,
 				E1B5784228F8AFCB00D42911 /* WrappedView.swift in Sources */,
 				E11895AA289383BC0042947B /* ScrollViewOffsetModifier.swift in Sources */,
@@ -4647,6 +4655,7 @@
 				E1A3E4CD2BB7D8C8005C59F8 /* Label-iOS.swift in Sources */,
 				E13DD3EC27178A54009D4DAF /* UserSignInViewModel.swift in Sources */,
 				E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */,
+				E1ED7FD92CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */,
 				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
@@ -4954,6 +4963,7 @@
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
 				E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */,
 				E1A7B1662B9ADAD300152546 /* ItemTypeLibraryViewModel.swift in Sources */,
+				E1ED7FD62CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift in Sources */,
 				E1545BD82BDC55C300D9578F /* ResetUserPasswordView.swift in Sources */,
 				E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */,
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,

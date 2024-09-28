@@ -60,6 +60,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var itemOverviewView = makeItemOverviewView
     @Route(.push)
     var scheduledTasks = makeScheduledTasks
+    @Route(.push)
+    var editScheduledTask = makeEditScheduledTask
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -184,6 +186,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeScheduledTasks() -> some View {
         ScheduledTasksView()
+    }
+
+    @ViewBuilder
+    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
+        EditScheduledTaskView(observer: observer)
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
