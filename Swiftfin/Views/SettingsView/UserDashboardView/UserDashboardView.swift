@@ -17,15 +17,28 @@ struct UserDashboardView: View {
 
     var body: some View {
         List {
+
+            ListTitleSection(
+                "Dashboard",
+                description: "Perform administrative tasks for your Jellyfin server."
+            )
+
             ChevronButton(L10n.activeDevices)
                 .onSelect {
                     router.route(to: \.activeDevices)
                 }
 
-            ChevronButton(L10n.scheduledTasks)
-                .onSelect {
-                    router.route(to: \.scheduledTasks)
-                }
+            Section("Advanced") {
+                ChevronButton(L10n.scheduledTasks)
+                    .onSelect {
+                        router.route(to: \.scheduledTasks)
+                    }
+
+                ChevronButton("Logs")
+                    .onSelect {
+                        router.route(to: \.serverLogs)
+                    }
+            }
         }
         .navigationTitle(L10n.dashboard)
     }

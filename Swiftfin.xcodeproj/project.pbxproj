@@ -962,6 +962,9 @@
 		E1ED7FDB2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */; };
 		E1ED7FDC2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */; };
 		E1ED7FDE2CAA641F00ACB6E3 /* ListTitleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */; };
+		E1ED7FE02CAA685900ACB6E3 /* ServerLogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */; };
+		E1ED7FE22CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */; };
+		E1ED7FE32CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */; };
 		E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91162B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91172B95993300802036 /* TitledLibraryParent.swift */; };
@@ -1657,6 +1660,8 @@
 		E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskObserver.swift; sourceTree = "<group>"; };
 		E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStateInfo.swift; sourceTree = "<group>"; };
 		E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTitleSection.swift; sourceTree = "<group>"; };
+		E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerLogsView.swift; sourceTree = "<group>"; };
+		E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerLogsViewModel.swift; sourceTree = "<group>"; };
 		E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestInLibraryViewModel.swift; sourceTree = "<group>"; };
 		E1ED91172B95993300802036 /* TitledLibraryParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledLibraryParent.swift; sourceTree = "<group>"; };
 		E1EF4C402911B783008CC695 /* StreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamType.swift; sourceTree = "<group>"; };
@@ -1852,6 +1857,7 @@
 				4EB1A8CF2C9B2FA200F43898 /* ActiveDevicesView */,
 				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
+				E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
 			path = UserDashboardView;
@@ -1976,6 +1982,7 @@
 				E13DD3F82717E961009D4DAF /* SelectUserViewModel.swift */,
 				E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */,
 				E173DA5326D050F500CC4EB7 /* ServerConnectionViewModel.swift */,
+				E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */,
 				E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
@@ -4405,6 +4412,7 @@
 				E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */,
 				E1575E84293E7A00001665B1 /* PrimaryAppIcon.swift in Sources */,
 				E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */,
+				E1ED7FE22CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */,
 				E1CB75762C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
 				E102315B2BCF8AF8009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
@@ -4742,6 +4750,7 @@
 				E1A8FDEC2C0574A800D0A51C /* ListRow.swift in Sources */,
 				4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */,
 				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
+				E1ED7FE02CAA685900ACB6E3 /* ServerLogsView.swift in Sources */,
 				E1194F4E2BEABA9100888DB6 /* NavigationBarCloseButton.swift in Sources */,
 				E113133428BE988200930F75 /* NavigationBarFilterDrawer.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
@@ -4997,6 +5006,7 @@
 				E1D4BF8A2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
 				E1D37F482B9C648E00343D2B /* MaxHeightText.swift in Sources */,
 				BD3957752C112A330078CEF8 /* ButtonSection.swift in Sources */,
+				E1ED7FE32CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
 				E1194F502BEB1E3000888DB6 /* StoredValues+Temp.swift in Sources */,

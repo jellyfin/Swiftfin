@@ -14,6 +14,7 @@ import SwiftUI
 
 // TODO: do something for errors from restart/shutdown
 //       - toast?
+// TODO: rename `fetch` to `get`
 
 final class ScheduledTasksViewModel: ViewModel, Stateful {
 

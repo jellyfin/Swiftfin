@@ -14,7 +14,7 @@ struct ListTitleSection: View {
 
     private let title: String
     private let description: String?
-    private var onLearnMore: (() -> Void)?
+    private let onLearnMore: (() -> Void)?
 
     var body: some View {
         Section {

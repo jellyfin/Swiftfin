@@ -61,8 +61,7 @@ struct ScheduledTasksView: View {
                 "Tasks",
                 description: "Tasks are operations that are scheduled to run periodically or can be triggered manually."
             ) {
-                guard let url = URL(string: "https://jellyfin.org/docs/general/server/tasks") else { return }
-                UIApplication.shared.open(url)
+                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/server/tasks")!)
             }
 
             Section(L10n.server) {
