@@ -21,24 +21,13 @@ struct ActiveDevicesView: View {
     private var router: SettingsCoordinator.Router
 
     @State
-    private var layout: CollectionVGridLayout
+    private var layout: CollectionVGridLayout = .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
     private let timer = Timer.publish(every: 5, on: .main, in: .common)
         .autoconnect()
-
-    // MARK: - Init
-
-    init() {
-
-        if UIDevice.isPhone {
-            layout = .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
-        } else {
-            layout = .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
-        }
-    }
 
     // MARK: - Content View
 

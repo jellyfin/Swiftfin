@@ -160,7 +160,29 @@ struct ActiveDeviceDetailView: View {
                 .frame(width: 100)
                 .accessibilityIgnoresInvertColors()
 
-                ActiveDevicesView.ContentSection(item: item)
+                // TODO: verify with live tv
+                VStack(alignment: .leading) {
+
+                    if let parent = item.parentTitle {
+                        Text(parent)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    }
+
+                    Text(item.displayTitle)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.primary)
+                        .lineLimit(2)
+
+                    if let subtitle = item.subtitle {
+                        Text(subtitle)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.bottom)
             }
         }
         .listRowBackground(Color.clear)

@@ -42,6 +42,7 @@ extension ActiveDevicesView {
                 }
 
                 if let playMethod = playState.playMethod, playMethod == .transcode {
+                    // TODO: localize instead of using raw value
                     Text(playMethod.rawValue)
                 }
 
