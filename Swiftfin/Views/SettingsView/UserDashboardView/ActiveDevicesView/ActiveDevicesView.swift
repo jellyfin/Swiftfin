@@ -13,6 +13,9 @@ import SwiftUI
 
 struct ActiveDevicesView: View {
 
+    @StoredValue(.User.activeDevicesDisplayType)
+    private var storedDisplayType: LibraryDisplayType
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -24,12 +27,7 @@ struct ActiveDevicesView: View {
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
 
-    @StoredValue(.User.activeDevicesDisplayType())
-    private var storedDisplayType: LibraryDisplayType
-
-    // MARK: - Timer
-
-    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 
     // MARK: - Init
 
@@ -71,20 +69,22 @@ struct ActiveDevicesView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        CollectionVGrid(
-            orderedSessions,
-            layout: $layout
-        ) { session in
-            switch displayType {
-            case .grid:
-                gridItem(session: session)
-            case .list:
-                listItem(session: session)
+        if viewModel.sessions.isEmpty {
+            L10n.noResults.text
+        } else {
+            CollectionVGrid(
+                viewModel.sessions,
+                layout: $layout
+            ) { session in
+                switch displayType {
+                case .grid:
+                    gridItem(session: session)
+                case .list:
+                    listItem(session: session)
+                }
             }
         }
     }
-
-    // MARK: - Grid View
 
     @ViewBuilder
     private func gridItem(session: SessionInfo) -> some View {
@@ -96,8 +96,6 @@ struct ActiveDevicesView: View {
         }
     }
 
-    // MARK: - List View
-
     @ViewBuilder
     private func listItem(session: SessionInfo) -> some View {
         ActiveSessionRow(session: session) {
@@ -108,64 +106,60 @@ struct ActiveDevicesView: View {
         }
     }
 
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refreshSessions)
+            }
+    }
+
     // MARK: - Body
 
     @ViewBuilder
     var body: some View {
-        contentView
-            .navigationTitle(L10n.activeDevices)
-            .onReceive(timer) { _ in
-                viewModel.send(.backgroundRefresh)
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                contentView
+            case let .error(error):
+                errorView(with: error)
+            case .initial:
+                DelayedProgressView()
             }
-            .onFirstAppear {
-                viewModel.send(.refresh)
-            }
-            .refreshable {
-                viewModel.send(.refresh)
-            }
-            .topBarTrailing {
-                Button {
-                    if displayType == .grid {
-                        displayType = .list
-                    } else {
-                        displayType = .grid
-                    }
+        }
+        .navigationTitle(L10n.activeDevices)
+        .onReceive(timer) { _ in
+            viewModel.send(.getSessions)
+        }
+        .onFirstAppear {
+            viewModel.send(.refreshSessions)
+        }
+        .refreshable {
+            viewModel.send(.refreshSessions)
+        }
+        .topBarTrailing {
 
-                    storedDisplayType = displayType
+            if viewModel.backgroundStates.contains(.gettingSessions) {
+                ProgressView()
+            }
 
-                    if UIDevice.isPhone {
-                        layout = Self.phoneLayout(viewType: displayType)
-                    } else {
-                        layout = Self.padLayout(viewType: displayType)
-                    }
-                } label: {
-                    Image(systemName: displayType == .grid ? "list.bullet" : "square.grid.2x2")
-                        .animation(.easeInOut)
+            Button {
+                if displayType == .grid {
+                    displayType = .list
+                } else {
+                    displayType = .grid
                 }
-            }
-    }
 
-    // MARK: - Ordered Sessions
+                storedDisplayType = displayType
 
-    private var orderedSessions: [SessionInfo] {
-        viewModel.sessions.sorted {
-            let isPlaying0 = $0.nowPlayingItem != nil
-            let isPlaying1 = $1.nowPlayingItem != nil
-
-            if isPlaying0 && !isPlaying1 {
-                return true
-            } else if !isPlaying0 && isPlaying1 {
-                return false
-            }
-
-            if $0.userName != $1.userName {
-                return ($0.userName ?? "") < ($1.userName ?? "")
-            }
-
-            if isPlaying0 && isPlaying1 {
-                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
-            } else {
-                return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
+                if UIDevice.isPhone {
+                    layout = Self.phoneLayout(viewType: displayType)
+                } else {
+                    layout = Self.padLayout(viewType: displayType)
+                }
+            } label: {
+                Image(systemName: displayType == .grid ? "list.bullet" : "square.grid.2x2")
             }
         }
     }

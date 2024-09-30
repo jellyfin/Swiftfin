@@ -14,103 +14,83 @@ extension ActiveDevicesView {
 
     struct ActiveSessionRow: View {
 
-        var session: SessionInfo
-        var onSelect: () -> Void
+        let session: SessionInfo
+        let onSelect: () -> Void
 
-        // MARK: - Body
+        @ViewBuilder
+        private var rowLeading: some View {
+            // TODO: better handling for different poster types
+            Group {
+                if session.nowPlayingItem?.type == .audio {
+                    ZStack {
+                        Color.clear
 
-        var body: some View {
-            Button(action: onSelect) {
-                VStack {
-                    HStack(alignment: .center, spacing: 12) {
-                        if let nowPlayingItem = session.nowPlayingItem {
-                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 75))
-                                .image { image in
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 75)
-                                        .cornerRadius(8)
-                                }
-                                .placeholder { imageSource in
-                                    ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
-                                        .frame(width: 75)
-                                        .cornerRadius(8)
-                                }
-                                .failure {
-                                    EmptyView()
-                                }
-                                .id(nowPlayingItem.portraitImageSources(maxWidth: 75).hashValue)
-                        } else {
-                            Image(.jellyfinBlobBlue)
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundColor(.primary)
-                                .padding(8)
-                                .frame(width: 75)
-                        }
-
-                        sessionDetails
+                        ImageView(session.nowPlayingItem?.squareImageSources(maxWidth: 60) ?? [])
+                            .failure {
+                                SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                            }
                     }
-                    .padding(16)
-                    Divider()
+                    .squarePosterStyle()
+                } else {
+                    ZStack {
+                        Color.clear
+
+                        ImageView(session.nowPlayingItem?.portraitImageSources(maxWidth: 60) ?? [])
+                            .failure {
+                                SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                            }
+                    }
+                    .posterStyle(.portrait)
                 }
             }
+            .frame(width: 60)
+            .posterShadow()
+            .padding(.vertical, 8)
         }
 
-        // MARK: - Session Details
-
-        @ViewBuilder
-        private var sessionDetails: some View {
-            if let nowPlayingItem = session.nowPlayingItem {
-                activeSessionDetails(nowPlayingItem)
-            } else {
-                idleSessionDetails
+        var body: some View {
+            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+                rowLeading
+            } content: {
+                if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
+                    activeSessionDetails(nowPlayingItem, playState: playState)
+                } else {
+                    idleSessionDetails
+                }
             }
+            .onSelect(perform: onSelect)
         }
 
         @ViewBuilder
-        private func activeSessionDetails(_ nowPlayingItem: BaseItemDto) -> some View {
+        private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading) {
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
-                    .foregroundColor(.primary)
-
-                Spacer()
 
                 Text(nowPlayingItem.name ?? L10n.unknown)
-                    .foregroundColor(.primary)
-
-                Spacer()
 
                 ProgressSection(
                     item: nowPlayingItem,
-                    playState: session.playState,
+                    playState: playState,
                     transcodingInfo: session.transcodingInfo
                 )
-                .foregroundColor(.secondary)
-                .font(.caption)
             }
+            .font(.subheadline)
         }
 
         @ViewBuilder
         private var idleSessionDetails: some View {
             VStack(alignment: .leading) {
+
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
-                    .foregroundColor(.primary)
 
-                Spacer()
-
-                ActiveDevicesView.ClientSection(
-                    client: session.client,
-                    deviceName: session.deviceName,
-                    applicationVersion: session.applicationVersion
-                )
-                .font(.subheadline)
-                .foregroundColor(.primary)
-
-                Spacer()
+//                ActiveDevicesView.ClientSection(
+//                    client: session.client,
+//                    deviceName: session.deviceName,
+//                    applicationVersion: session.applicationVersion
+//                )
+//                .font(.subheadline)
 
                 if let lastActivityDate = session.lastActivityDate {
                     ConnectionSection(
@@ -119,9 +99,47 @@ extension ActiveDevicesView {
                         prefixText: true
                     )
                     .font(.subheadline)
-                    .foregroundColor(.primary)
                 }
             }
         }
+    }
+}
+
+#Preview {
+    VStack {
+        ActiveDevicesView.ActiveSessionRow(
+            session: .init(
+                additionalUsers: nil,
+                applicationVersion: nil,
+                capabilities: nil,
+                client: nil,
+                deviceID: nil,
+                deviceName: nil,
+                deviceType: nil,
+                fullNowPlayingItem: nil,
+                hasCustomDeviceName: nil,
+                id: nil,
+                isActive: nil,
+                lastActivityDate: nil,
+                lastPlaybackCheckIn: nil,
+                nowPlayingItem: .init(name: "New Girl", runTimeTicks: 30000),
+                nowPlayingQueue: nil,
+                nowPlayingQueueFullItems: nil,
+                nowViewingItem: nil,
+                playState: .init(playMethod: .directPlay, positionTicks: 10000),
+                playableMediaTypes: nil,
+                playlistItemID: nil,
+                remoteEndPoint: nil,
+                serverID: nil,
+                supportedCommands: nil,
+                isSupportsMediaControl: nil,
+                isSupportsRemoteControl: nil,
+                transcodingInfo: nil,
+                userID: nil,
+                userName: "Steve Jobs",
+                userPrimaryImageTag: nil
+            ),
+            onSelect: {}
+        )
     }
 }

@@ -21,7 +21,9 @@ extension ActiveDevicesView {
 
         var body: some View {
             Button(action: onSelect) {
+
                 VStack(alignment: .leading) {
+
                     Text(session.userName ?? L10n.unknown)
                         .font(.headline)
                         .foregroundColor(.primary)
@@ -76,11 +78,12 @@ extension ActiveDevicesView {
                 if let nowPlayingItem = session.nowPlayingItem {
                     ContentSection(item: nowPlayingItem)
                 } else {
-                    ClientSection(
-                        client: session.client,
-                        deviceName: session.deviceName,
-                        applicationVersion: session.applicationVersion
-                    )
+                    EmptyView()
+//                    ClientSection(
+//                        client: session.client,
+//                        deviceName: session.deviceName,
+//                        applicationVersion: session.applicationVersion
+//                    )
                 }
             }
         }
@@ -89,20 +92,22 @@ extension ActiveDevicesView {
 
         @ViewBuilder
         private var footerSection: some View {
-            if let nowPlayingItem = session.nowPlayingItem {
-                ProgressSection(
-                    item: nowPlayingItem,
-                    playState: session.playState,
-                    transcodingInfo: session.transcodingInfo
-                )
-                .font(.caption)
-            } else if let lastActivityDate = session.lastActivityDate {
-                ConnectionSection(
-                    lastActivityDate: lastActivityDate,
-                    currentDate: Date(),
-                    prefixText: true
-                )
-            }
+            EmptyView()
+
+//            if let nowPlayingItem = session.nowPlayingItem {
+//                ProgressSection(
+//                    item: nowPlayingItem,
+//                    playState: session.playState,
+//                    transcodingInfo: session.transcodingInfo
+//                )
+//                .font(.caption)
+//            } else if let lastActivityDate = session.lastActivityDate {
+//                ConnectionSection(
+//                    lastActivityDate: lastActivityDate,
+//                    currentDate: Date(),
+//                    prefixText: true
+//                )
+//            }
         }
     }
 }

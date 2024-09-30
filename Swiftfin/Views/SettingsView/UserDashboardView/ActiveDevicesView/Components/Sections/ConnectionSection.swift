@@ -10,7 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDevicesView {
+
     struct ConnectionSection: View {
+
         let lastActivityDate: Date
         let currentDate: Date
         let prefixText: Bool
@@ -18,13 +20,6 @@ extension ActiveDevicesView {
         // MARK: - Body
 
         var body: some View {
-            contentView
-        }
-
-        // MARK: - Content View
-
-        @ViewBuilder
-        private var contentView: some View {
             if prefixText {
                 lastSeenDateView
             } else {

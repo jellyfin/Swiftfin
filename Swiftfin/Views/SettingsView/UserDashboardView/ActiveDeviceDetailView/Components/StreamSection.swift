@@ -10,25 +10,16 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDeviceDetailView {
+
     struct StreamSection: View {
 
         let nowPlayingItem: BaseItemDto
         let transcodingInfo: TranscodingInfo?
-        let playMethod: PlayMethod?
 
         // MARK: - Body
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-
-                // Create and Center the PlayMethod Description
-                HStack {
-                    Spacer()
-                    Text(playMethod?.rawValue ?? L10n.unknown)
-                    Spacer()
-                }
-
-                Divider()
 
                 // Create the Audio Codec Flow if the stream uses Audio
                 if let sourceAudioCodec = nowPlayingItem.mediaStreams?.first(where: { $0.type == .audio })?.codec {
@@ -58,12 +49,15 @@ extension ActiveDeviceDetailView {
 
         // MARK: - Transcoding Details
 
+        @ViewBuilder
         private func getMediaComparison(sourceComponent: String, destinationComponent: String) -> some View {
             HStack {
                 Text(sourceComponent.uppercased())
                     .frame(maxWidth: .infinity, alignment: .trailing)
+
                 Image(systemName: (destinationComponent != sourceComponent) ? "shuffle" : "arrow.right")
                     .frame(maxWidth: .infinity, alignment: .center)
+
                 Text(destinationComponent.uppercased())
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

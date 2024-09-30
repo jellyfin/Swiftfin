@@ -96,9 +96,9 @@ struct ScheduledTasksView: View {
         .onFirstAppear {
             viewModel.send(.refreshTasks)
         }
-        .onFinalDisappear {
-            viewModel.stopObservers()
-        }
+//        .onFinalDisappear {
+//            viewModel.send(.stopObserving)
+//        }
         .onReceive(timer) { _ in
             viewModel.send(.fetchTasks)
         }

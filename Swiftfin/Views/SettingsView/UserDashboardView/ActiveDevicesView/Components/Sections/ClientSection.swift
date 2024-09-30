@@ -10,7 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDevicesView {
+
     struct ClientSection: View {
+
         let client: String?
         let deviceName: String?
         let applicationVersion: String?
@@ -29,12 +31,6 @@ extension ActiveDevicesView {
                     Text(L10n.deviceWithString(""))
                     Spacer()
                     Text(deviceName ?? L10n.unknown)
-                        .foregroundColor(.secondary)
-                }
-                HStack {
-                    Text(L10n.versionWithString(""))
-                    Spacer()
-                    Text(applicationVersion ?? L10n.unknown)
                         .foregroundColor(.secondary)
                 }
             }

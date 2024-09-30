@@ -17,98 +17,136 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     // MARK: - Action
 
     enum Action: Equatable {
-        case backgroundRefresh
-        case error(JellyfinAPIError)
-        case refresh
+        case getSessions
+        case refreshSessions
     }
 
     // MARK: - BackgroundState
 
-    enum BackgroundStates: Hashable {
-        case refresh
+    enum BackgroundState: Hashable {
+        case gettingSessions
     }
 
     // MARK: - State
 
     enum State: Hashable {
-        case sessions
+        case content
         case error(JellyfinAPIError)
         case initial
-        case refreshing
     }
 
-    // MARK: - Published Variables
-
     @Published
-    var sessions: OrderedSet<SessionInfo> = []
+    final var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
+    final var sessions: OrderedSet<SessionInfo> = []
     @Published
     final var state: State = .initial
 
-    // MARK: - Variables
-
-    var deviceID: String?
-    var activeWithinSeconds: Int
-    private var sessionTask: Task<Void, Never>?
+    private let deviceID: String?
+    private let activeWithinSeconds: Int = 960
+    private var sessionTask: AnyCancellable?
 
     // MARK: - Init
 
-    init(deviceID: String? = nil, activeWithinSeconds: Int = 960) {
+    init(deviceID: String? = nil) {
         self.deviceID = deviceID
-        self.activeWithinSeconds = activeWithinSeconds // Defaults to 960 seconds to mirror Jellyfin-Web
     }
 
     // MARK: - Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
-        case .refresh, .backgroundRefresh:
-            getSessions()
-            return .refreshing
+        case .getSessions:
+            sessionTask?.cancel()
 
-        case let .error(error):
-            return .error(error)
-        }
-    }
-
-    // MARK: - Load Active Sessions
-
-    func getSessions() {
-        sessionTask?.cancel()
-
-        sessionTask = Task {
-            do {
-                try await loadSessions()
-            } catch {
+            sessionTask = Task { [weak self] in
                 await MainActor.run {
-                    state = .error(JellyfinAPIError(error.localizedDescription))
+                    let _ = self?.backgroundStates.append(.gettingSessions)
+                }
+
+                do {
+                    let newSessions = try await self?.getSessions()
+
+                    guard let self else { return }
+
+                    await MainActor.run {
+                        self.sessions = newSessions ?? []
+                    }
+                } catch {
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
+
+                await MainActor.run {
+                    let _ = self?.backgroundStates.remove(.gettingSessions)
                 }
             }
-        }
-    }
+            .asAnyCancellable()
 
-    // MARK: - Fetch Active Sessions & Handle State
+            return state
+        case .refreshSessions:
+            sessionTask?.cancel()
 
-    private func loadSessions() async throws {
-        let fetchedSessions = try await requestSessions(deviceID)
+            sessionTask = Task { [weak self] in
+                await MainActor.run {
+                    self?.state = .initial
+                }
 
-        await MainActor.run {
-            sessions = fetchedSessions
-            state = .sessions
+                do {
+                    let newSessions = try await self?.getSessions()
+
+                    guard let self else { return }
+
+                    await MainActor.run {
+                        self.sessions = newSessions ?? []
+                        self.state = .content
+                    }
+                } catch {
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .initial
         }
     }
 
     // MARK: - Fetch Sessions via API
 
-    private func requestSessions(_ deviceID: String?) async throws -> OrderedSet<SessionInfo> {
+    private func getSessions() async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
-        if let deviceID = deviceID {
-            parameters.deviceID = deviceID
-        }
+        parameters.deviceID = deviceID
 
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        return OrderedSet(response.value)
+        let newSessions = response.value.sorted {
+            let isPlaying0 = $0.nowPlayingItem != nil
+            let isPlaying1 = $1.nowPlayingItem != nil
+
+            if isPlaying0 && !isPlaying1 {
+                return true
+            } else if !isPlaying0 && isPlaying1 {
+                return false
+            }
+
+            if $0.userName != $1.userName {
+                return ($0.userName ?? "") < ($1.userName ?? "")
+            }
+
+            if isPlaying0 && isPlaying1 {
+                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
+            } else {
+                return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
+            }
+        }
+
+        return OrderedSet(newSessions)
     }
 }

@@ -6,114 +6,73 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import JellyfinAPI
 import SwiftUI
 
 extension ActiveDevicesView {
+
     struct ProgressSection: View {
+
+        @Default(.accentColor)
+        private var accentColor
+
         let item: BaseItemDto
-        let playState: PlayerStateInfo?
+        let playState: PlayerStateInfo
         let transcodingInfo: TranscodingInfo?
 
-        // MARK: - Body
+        private var playbackPercentage: Double {
+            clamp(Double(playState.positionTicks ?? 0) / Double(item.runTimeTicks ?? 1), min: 0, max: 1)
+        }
+
+        private var transcodingPercentage: Double? {
+            guard let c = transcodingInfo?.completionPercentage else { return nil }
+            return clamp(c / 100.0, min: 0, max: 1)
+        }
 
         var body: some View {
             VStack {
-                playbackInformation
                 playbackTimeline
+
+                playbackInformation
             }
         }
-
-        // MARK: - Playback Information
 
         @ViewBuilder
         private var playbackInformation: some View {
             HStack {
-                if let playMethod = playState?.playMethod {
+                if let playMethod = playState.playMethod {
                     Text(playMethod.rawValue)
                 }
-                Spacer()
-                if let transcodingInfo = transcodingInfo {
-                    Text(getTranscodeFPS(transcodingInfo: transcodingInfo))
-                }
-                Spacer()
-                if let playState = playState {
-                    Text(
-                        getProgressTimestamp(
-                            item: item,
-                            playState: playState
-                        )
-                    )
-                }
-            }
-        }
 
-        // MARK: - Playback Timeline
+                Spacer()
+
+                HStack(spacing: 2) {
+                    Text(playState.positionSeconds ?? 0, format: .runtime)
+
+                    Text("/")
+
+                    Text(item.runTimeSeconds, format: .runtime)
+                }
+                .monospacedDigit()
+            }
+            .font(.subheadline)
+        }
 
         @ViewBuilder
         private var playbackTimeline: some View {
             HStack {
-                getProgressIcon(isPaused: playState?.isPaused)
-                    .font(.subheadline)
 
-                TimelineSection(
-                    playbackPercentage: Double(playState?.positionTicks ?? 0) / Double(item.runTimeTicks ?? 0),
-                    transcodingPercentage: (transcodingInfo?.completionPercentage ?? 0) / 100.0
-                )
-            }
-        }
+                if playState.isPaused ?? false {
+                    Image(systemName: "pause.fill")
+                } else {
+                    Image(systemName: "play.fill")
+                }
 
-        // MARK: - Get Formatted Time
-
-        private func formattedTime(_ ticks: Int64) -> String {
-            let seconds = ticks / 10_000_000
-            return seconds.timeLabel
-        }
-
-        // MARK: - Get Playback Progress Percentage
-
-        private func getProgressPercentage(item: BaseItemDto?, playState: PlayerStateInfo?) -> Double? {
-            let positionTicks = playState?.positionTicks ?? 0
-            let totalTicks = item?.runTimeTicks ?? 0
-
-            if totalTicks == 0 {
-                return nil
-            } else {
-                return Double(positionTicks) / Double(totalTicks)
-            }
-        }
-
-        // MARK: - Get Playback Progress Icon
-
-        private func getProgressIcon(isPaused: Bool?) -> Image? {
-            if isPaused ?? false {
-                Image(systemName: "pause.fill")
-            } else {
-                Image(systemName: "play.fill")
-            }
-        }
-
-        // MARK: - Get Playback Progress Timestamp
-
-        private func getProgressTimestamp(item: BaseItemDto?, playState: PlayerStateInfo?) -> String {
-            let positionTicks = playState?.positionTicks ?? 0
-            let totalTicks = item?.runTimeTicks ?? 0
-
-            return L10n.itemOverItem(
-                formattedTime(Int64(positionTicks)),
-                formattedTime(Int64(totalTicks))
-            )
-        }
-
-        // MARK: - Get Playback Progress Frames Per Second
-
-        private func getTranscodeFPS(transcodingInfo: TranscodingInfo) -> String {
-            if let framerate = transcodingInfo.framerate {
-                return L10n.fpsWithString(
-                    Int(framerate).description
-                )
-            } else {
-                return ""
+                ProgressView(value: playbackPercentage)
+                    .progressViewStyle(.SwiftfinLinear(secondaryProgress: transcodingPercentage))
+                    .frame(height: 5)
+                    .foregroundStyle(.primary, .secondary, .orange)
             }
         }
     }

@@ -56,13 +56,12 @@ struct ActiveDeviceDetailView: View {
         }
         .navigationTitle(session.userName ?? "")
         .onAppear {
-            viewModel.send(.refresh)
+            viewModel.send(.getSessions)
         }
         .onReceive(timer) { date in
-            viewModel.send(.backgroundRefresh)
+            viewModel.send(.refreshSessions)
             currentDate = date
         }
-        .animation(.spring(), value: session.nowPlayingItem != nil)
     }
 
     // MARK: Create Idle Content View
@@ -120,19 +119,29 @@ struct ActiveDeviceDetailView: View {
 
             // Always show the Client Details
             Section(L10n.device) {
-                ActiveDevicesView.ClientSection(
-                    client: client,
-                    deviceName: deviceName,
-                    applicationVersion: applicationVersion
-                )
+                if let client {
+                    TextPairView(leading: "Client", trailing: client)
+                }
+
+                if let deviceName {
+                    TextPairView(leading: "Device", trailing: deviceName)
+                }
+
+                if let applicationVersion {
+                    TextPairView(leading: "Application Version", trailing: applicationVersion)
+                }
             }
 
             // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen ticker.
             Section(L10n.streams) {
+                if let playMethod = playState.playMethod {
+                    // TODO: localize instead of using raw value
+                    TextPairView(leading: "Method", trailing: playMethod.rawValue)
+                }
+
                 StreamSection(
                     nowPlayingItem: nowPlayingItem,
-                    transcodingInfo: transcodingInfo,
-                    playMethod: playState.playMethod
+                    transcodingInfo: transcodingInfo
                 )
             }
 
@@ -151,39 +160,26 @@ struct ActiveDeviceDetailView: View {
     private var progressSection: some View {
         let playbackPercentage = Double(session.playState?.positionTicks ?? 0) / Double(session.nowPlayingItem?.runTimeTicks ?? 0)
 
-        ActiveDevicesView.TimelineSection(
-            playbackPercentage: playbackPercentage,
-            transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
-        )
+//        ActiveDevicesView.TimelineSection(
+//            playbackPercentage: playbackPercentage,
+//            transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
+//        )
     }
 
     // MARK: Now Playing Section
 
     @ViewBuilder
     private func nowPlayingSection(_ item: BaseItemDto) -> some View {
-        ImageView(item.cinematicImageSources())
-            .image { image in
-                image
-            }
-            .placeholder { imageSource in
-                ImageView.DefaultPlaceholderView(blurHash: imageSource.blurHash)
-            }
-            .failure {
-                Color.accentColor
-                    .opacity(0.75)
-                    .overlay {
-                        Text(item.name ?? L10n.unknown)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                    }
-            }
-            .id(item.cinematicImageSources().hashValue)
-            .scaledToFill()
-            .clipShape(
-                RoundedRectangle(
-                    cornerRadius: 4
-                )
-            )
+//        ImageView(item.cinematicImageSources())
+//            .failure {
+//                Color.accentColor
+//                    .opacity(0.75)
+//                    .overlay {
+//                        Text(item.name ?? L10n.unknown)
+//                            .font(.headline)
+//                            .foregroundColor(.primary)
+//                    }
+//            }
 
         // Get the Name/Parent/Episode details for the Now Playing Item
         ActiveDevicesView.ContentSection(item: session.nowPlayingItem)

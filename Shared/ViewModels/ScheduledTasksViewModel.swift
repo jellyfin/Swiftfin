@@ -24,6 +24,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         case shutdownApplication
         case fetchTasks
         case refreshTasks
+        case stopObserving
     }
 
     // MARK: - BackgroundState
@@ -78,7 +79,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
                 } catch {
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
-                        stopObservers()
+                        self.send(.stopObserving)
                     }
                 }
             }
@@ -98,11 +99,20 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
                 } catch {
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
-                        stopObservers()
+                        self.send(.stopObserving)
                     }
                 }
             }
             .asAnyCancellable()
+
+            return .initial
+        case .stopObserving:
+            for observer in tasks.values.flatMap(\.self) where observer.state == .running {
+                // crash if not wrapped on view pop
+                DispatchQueue.main.async {
+                    observer.send(.stopObserving)
+                }
+            }
 
             return .initial
         }
@@ -132,13 +142,6 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
             {
                 await observer.send(.start)
             }
-        }
-    }
-
-    @MainActor
-    func stopObservers() {
-        for observer in tasks.values.flatMap(\.self) {
-            observer.send(.stopObserving)
         }
     }
 

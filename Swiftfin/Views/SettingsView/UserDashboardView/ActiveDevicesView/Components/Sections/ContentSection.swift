@@ -10,7 +10,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDevicesView {
+
     struct ContentSection: View {
+
         let item: BaseItemDto?
 
         // MARK: - Body
@@ -18,16 +20,16 @@ extension ActiveDevicesView {
         var body: some View {
             VStack(alignment: .leading) {
                 if let contentItem = item {
-                    Text(self.getTitle(item: contentItem))
+                    Text(getTitle(item: contentItem))
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    if let parent = self.getParent(item: contentItem) {
+                    if let parent = getParent(item: contentItem) {
                         Text(parent)
                             .lineLimit(1)
                     }
 
-                    if let episode = self.getEpisode(item: contentItem) {
+                    if let episode = getEpisode(item: contentItem) {
                         Text(episode)
                             .lineLimit(1)
                     }

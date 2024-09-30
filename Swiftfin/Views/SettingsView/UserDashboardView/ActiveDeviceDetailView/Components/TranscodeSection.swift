@@ -10,6 +10,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension ActiveDeviceDetailView {
+    
     struct TranscodeSection: View {
 
         let transcodeReasons: [TranscodeReason]
@@ -20,7 +21,9 @@ extension ActiveDeviceDetailView {
             if !transcodeReasons.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     getActiveTranscodeIcons(reasons: transcodeReasons)
+                    
                     Divider()
+                    
                     getActiveTranscodeReasons(reasons: transcodeReasons)
                 }
             }
@@ -46,7 +49,7 @@ extension ActiveDeviceDetailView {
             // Center the Transcoding Reason Icons for the Header
             HStack {
                 Spacer()
-                ForEach(Array(transcodeIcons), id: \.self) { icon in
+                ForEach(transcodeIcons, id: \.self) { icon in
                     Image(systemName: icon)
                         .foregroundColor(.primary)
                 }
