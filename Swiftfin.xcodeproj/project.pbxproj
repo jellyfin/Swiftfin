@@ -961,6 +961,7 @@
 		E1ED7FD92CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */; };
 		E1ED7FDB2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */; };
 		E1ED7FDC2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */; };
+		E1ED7FDE2CAA641F00ACB6E3 /* ListTitleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */; };
 		E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91162B95897500802036 /* LatestInLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */; };
 		E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1ED91172B95993300802036 /* TitledLibraryParent.swift */; };
@@ -1655,6 +1656,7 @@
 		E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditScheduledTaskView.swift; sourceTree = "<group>"; };
 		E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskObserver.swift; sourceTree = "<group>"; };
 		E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerStateInfo.swift; sourceTree = "<group>"; };
+		E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListTitleSection.swift; sourceTree = "<group>"; };
 		E1ED91142B95897500802036 /* LatestInLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestInLibraryViewModel.swift; sourceTree = "<group>"; };
 		E1ED91172B95993300802036 /* TitledLibraryParent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledLibraryParent.swift; sourceTree = "<group>"; };
 		E1EF4C402911B783008CC695 /* StreamType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamType.swift; sourceTree = "<group>"; };
@@ -2366,6 +2368,7 @@
 				4E16FD4E2C0183B500110147 /* LetterPickerBar */,
 				E1A8FDEB2C0574A800D0A51C /* ListRow.swift */,
 				E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */,
+				E1ED7FDD2CAA641F00ACB6E3 /* ListTitleSection.swift */,
 				E1FE69AF28C2DA4A0021BC93 /* NavigationBarFilterDrawer */,
 				E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */,
 				E18E01A5288746AF0022598C /* PillHStack.swift */,
@@ -4733,6 +4736,7 @@
 				E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
 				E1BAFE102BE921270069C4D7 /* SwiftfinApp+ValueObservation.swift in Sources */,
+				E1ED7FDE2CAA641F00ACB6E3 /* ListTitleSection.swift in Sources */,
 				62E632E6267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */,
 				E1A8FDEC2C0574A800D0A51C /* ListRow.swift in Sources */,

@@ -24,7 +24,11 @@ struct EditScheduledTaskView: View {
 
     var body: some View {
         List {
-            Text(observer.task.name ?? L10n.unknown)
+
+            ListTitleSection(
+                observer.task.name ?? L10n.unknown,
+                description: observer.task.description
+            )
 
             if let category = observer.task.category {
                 TextPairView(
@@ -46,12 +50,6 @@ struct EditScheduledTaskView: View {
                             "\(lastStartTime ..< lastEndTime, format: .components(style: .narrow))"
                         )
                     )
-                }
-            }
-
-            if let description = observer.task.description {
-                Section("Description") {
-                    Text(description)
                 }
             }
         }
@@ -86,5 +84,6 @@ struct EditScheduledTaskView: View {
                 )
             )
         )
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

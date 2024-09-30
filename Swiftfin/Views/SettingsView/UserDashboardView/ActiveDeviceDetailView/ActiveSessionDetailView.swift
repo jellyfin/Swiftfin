@@ -54,7 +54,7 @@ struct ActiveDeviceDetailView: View {
                 )
             }
         }
-        .navigationTitle(session.userName ?? "")
+        .navigationTitle("Session")
         .onAppear {
             viewModel.send(.getSessions)
         }
@@ -69,7 +69,6 @@ struct ActiveDeviceDetailView: View {
     @ViewBuilder
     private func idleContent(client: String?, deviceName: String?, applicationVersion: String?, lastActivityDate: Date?) -> some View {
         List {
-            // Always show the Client Details
             Section(L10n.device) {
                 ActiveDevicesView.ClientSection(
                     client: client,
@@ -103,12 +102,10 @@ struct ActiveDeviceDetailView: View {
         transcodingInfo: TranscodingInfo?
     ) -> some View {
         List {
-            // Show the Now Playing Details if something is being streamed
             Section(L10n.media) {
                 nowPlayingSection(nowPlayingItem)
             }
 
-            // Show the Now Playing Progress if something is being streamed
             Section(L10n.progress) {
                 ActiveDevicesView.ProgressSection(
                     item: nowPlayingItem,
@@ -117,7 +114,6 @@ struct ActiveDeviceDetailView: View {
                 )
             }
 
-            // Always show the Client Details
             Section(L10n.device) {
                 if let client {
                     TextPairView(leading: "Client", trailing: client)
@@ -132,7 +128,6 @@ struct ActiveDeviceDetailView: View {
                 }
             }
 
-            // Show the Stream Details if something is being streamed. Otherwise, show the Last Seen ticker.
             Section(L10n.streams) {
                 if let playMethod = playState.playMethod {
                     // TODO: localize instead of using raw value
@@ -145,7 +140,6 @@ struct ActiveDeviceDetailView: View {
                 )
             }
 
-            // Always show the Transcode Reasons if present
             if let transcodeReasons = transcodingInfo?.transcodeReasons {
                 Section(L10n.transcodeReasons) {
                     TranscodeSection(transcodeReasons: transcodeReasons)

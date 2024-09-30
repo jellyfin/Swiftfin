@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: remove timer after socket implementation
+// TODO: refactor after socket implementation
 
 struct ScheduledTasksView: View {
 
@@ -56,6 +56,15 @@ struct ScheduledTasksView: View {
     @ViewBuilder
     private var contentView: some View {
         List {
+
+            ListTitleSection(
+                "Tasks",
+                description: "Tasks are operations that are scheduled to run periodically or can be triggered manually."
+            ) {
+                guard let url = URL(string: "https://jellyfin.org/docs/general/server/tasks") else { return }
+                UIApplication.shared.open(url)
+            }
+
             Section(L10n.server) {
                 serverFunctions
             }

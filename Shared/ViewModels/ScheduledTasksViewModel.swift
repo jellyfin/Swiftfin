@@ -107,8 +107,8 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
 
             return .initial
         case .stopObserving:
+            // TODO: fix
             for observer in tasks.values.flatMap(\.self) where observer.state == .running {
-                // crash if not wrapped on view pop
                 DispatchQueue.main.async {
                     observer.send(.stopObserving)
                 }
@@ -127,7 +127,10 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(request)
 
         if tasks.isEmpty {
-            let observers = response.value.map { ServerTaskObserver(task: $0) }
+            let observers = response.value
+                .sorted(using: \.category)
+                .map { ServerTaskObserver(task: $0) }
+
             let newTasks = OrderedDictionary(grouping: observers, by: { $0.task.category ?? "" })
 
             await MainActor.run {
