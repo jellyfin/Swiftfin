@@ -8,6 +8,7 @@
 
 import Defaults
 import SwiftUI
+import SwiftUIIntrospect
 
 extension View {
 
@@ -76,5 +77,23 @@ extension View {
                 action: action
             )
         )
+    }
+
+    @ViewBuilder
+    func listRowCornerRadius(_ radius: CGFloat) -> some View {
+        if #unavailable(iOS 16) {
+            introspect(.listCell, on: .iOS(.v15)) { cell in
+                cell.layer.cornerRadius = radius
+            }
+        } else {
+            introspect(
+                .listCell,
+                on: .iOS(.v16),
+                .iOS(.v17),
+                .iOS(.v18)
+            ) { cell in
+                cell.layer.cornerRadius = radius
+            }
+        }
     }
 }

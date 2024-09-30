@@ -30,18 +30,18 @@ extension ActiveDevicesView {
             return clamp(c / 100.0, min: 0, max: 1)
         }
 
-        var body: some View {
-            VStack {
-                playbackTimeline
-
-                playbackInformation
-            }
-        }
-
         @ViewBuilder
         private var playbackInformation: some View {
             HStack {
-                if let playMethod = playState.playMethod {
+                if playState.isPaused ?? false {
+                    Image(systemName: "pause.fill")
+                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                } else {
+                    Image(systemName: "play.fill")
+                        .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                }
+
+                if let playMethod = playState.playMethod, playMethod == .transcode {
                     Text(playMethod.rawValue)
                 }
 
@@ -59,20 +59,14 @@ extension ActiveDevicesView {
             .font(.subheadline)
         }
 
-        @ViewBuilder
-        private var playbackTimeline: some View {
-            HStack {
-
-                if playState.isPaused ?? false {
-                    Image(systemName: "pause.fill")
-                } else {
-                    Image(systemName: "play.fill")
-                }
-
+        var body: some View {
+            VStack {
                 ProgressView(value: playbackPercentage)
                     .progressViewStyle(.SwiftfinLinear(secondaryProgress: transcodingPercentage))
                     .frame(height: 5)
                     .foregroundStyle(.primary, .secondary, .orange)
+
+                playbackInformation
             }
         }
     }

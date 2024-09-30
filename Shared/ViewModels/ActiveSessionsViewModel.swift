@@ -12,6 +12,17 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
+extension Binding where Value: Sequence {
+    
+    func first(where predicate: @escaping (Value.Element) throws -> Bool) rethrows -> Binding<Value.Element?> {
+        Binding<Value.Element?> {
+            try? wrappedValue.first(where: predicate)
+        } set: { _, _ in
+            
+        }
+    }
+}
+
 final class ActiveSessionsViewModel: ViewModel, Stateful {
 
     // MARK: - Action
@@ -46,13 +57,9 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     private let activeWithinSeconds: Int = 960
     private var sessionTask: AnyCancellable?
 
-    // MARK: - Init
-
     init(deviceID: String? = nil) {
         self.deviceID = deviceID
     }
-
-    // MARK: - Stateful Conformance
 
     func respond(to action: Action) -> State {
         switch action {
@@ -116,8 +123,6 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Fetch Sessions via API
-
     private func getSessions() async throws -> OrderedSet<SessionInfo> {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
@@ -143,7 +148,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
             if isPlaying0 && isPlaying1 {
                 return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
             } else {
-                return ($0.lastActivityDate ?? Date.distantPast) > ($1.lastActivityDate ?? Date.distantPast)
+                return ($0.lastActivityDate ?? Date.now) > ($1.lastActivityDate ?? Date.now)
             }
         }
 

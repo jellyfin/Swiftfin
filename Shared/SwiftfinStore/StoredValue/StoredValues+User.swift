@@ -89,14 +89,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static var activeDevicesDisplayType: Key<LibraryDisplayType> {
-            CurrentUserKey(
-                "activeDevicesDisplayType",
-                domain: "setting-activeDevicesDisplayType",
-                default: Defaults[.Customization.activeDevicesDisplayType]
-            )
-        }
-
         static var accessPolicy: Key<UserAccessPolicy> {
             CurrentUserKey(
                 "currentUserAccessPolicy",

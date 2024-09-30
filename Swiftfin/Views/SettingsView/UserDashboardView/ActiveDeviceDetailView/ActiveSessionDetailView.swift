@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ActiveDeviceDetailView: View {
 
@@ -30,38 +31,6 @@ struct ActiveDeviceDetailView: View {
 
     private var session: SessionInfo {
         viewModel.sessions.first ?? SessionInfo()
-    }
-
-    // MARK: Body
-
-    var body: some View {
-        Group {
-            if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
-                sessionContent(
-                    client: session.client,
-                    deviceName: session.deviceName,
-                    applicationVersion: session.applicationVersion,
-                    nowPlayingItem: nowPlayingItem,
-                    playState: playState,
-                    transcodingInfo: session.transcodingInfo
-                )
-            } else {
-                idleContent(
-                    client: session.client,
-                    deviceName: session.deviceName,
-                    applicationVersion: session.applicationVersion,
-                    lastActivityDate: session.lastActivityDate
-                )
-            }
-        }
-        .navigationTitle("Session")
-        .onAppear {
-            viewModel.send(.getSessions)
-        }
-        .onReceive(timer) { date in
-            viewModel.send(.refreshSessions)
-            currentDate = date
-        }
     }
 
     // MARK: Create Idle Content View
@@ -102,9 +71,8 @@ struct ActiveDeviceDetailView: View {
         transcodingInfo: TranscodingInfo?
     ) -> some View {
         List {
-            Section(L10n.media) {
-                nowPlayingSection(nowPlayingItem)
-            }
+
+            nowPlayingSection(nowPlayingItem)
 
             Section(L10n.progress) {
                 ActiveDevicesView.ProgressSection(
@@ -114,7 +82,16 @@ struct ActiveDeviceDetailView: View {
                 )
             }
 
-            Section(L10n.device) {
+            Section(L10n.user) {
+                if let userID = session.userID {
+                    SettingsView.UserProfileRow(
+                        user: .init(
+                            id: userID,
+                            name: session.userName
+                        )
+                    )
+                }
+
                 if let client {
                     TextPairView(leading: "Client", trailing: client)
                 }
@@ -124,7 +101,7 @@ struct ActiveDeviceDetailView: View {
                 }
 
                 if let applicationVersion {
-                    TextPairView(leading: "Application Version", trailing: applicationVersion)
+                    TextPairView(leading: "Version", trailing: applicationVersion)
                 }
             }
 
@@ -148,48 +125,52 @@ struct ActiveDeviceDetailView: View {
         }
     }
 
-    // MARK: Progress Section
-
-    @ViewBuilder
-    private var progressSection: some View {
-        let playbackPercentage = Double(session.playState?.positionTicks ?? 0) / Double(session.nowPlayingItem?.runTimeTicks ?? 0)
-
-//        ActiveDevicesView.TimelineSection(
-//            playbackPercentage: playbackPercentage,
-//            transcodingPercentage: (session.transcodingInfo?.completionPercentage ?? 0 / 100.0)
-//        )
-    }
-
     // MARK: Now Playing Section
 
     @ViewBuilder
     private func nowPlayingSection(_ item: BaseItemDto) -> some View {
-//        ImageView(item.cinematicImageSources())
-//            .failure {
-//                Color.accentColor
-//                    .opacity(0.75)
-//                    .overlay {
-//                        Text(item.name ?? L10n.unknown)
-//                            .font(.headline)
-//                            .foregroundColor(.primary)
-//                    }
-//            }
+        Section {
+            HStack(alignment: .bottom, spacing: 12) {
+                Group {
+                    if session.nowPlayingItem?.type == .audio {
+                        ZStack {
+                            Color.clear
 
-        // Get the Name/Parent/Episode details for the Now Playing Item
-        ActiveDevicesView.ContentSection(item: session.nowPlayingItem)
+                            ImageView(session.nowPlayingItem?.squareImageSources(maxWidth: 60) ?? [])
+                                .failure {
+                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                                }
+                        }
+                        .squarePosterStyle()
+                    } else {
+                        ZStack {
+                            Color.clear
 
-        // If available, get the Overview for the Now Playing Item
-        VStack(alignment: .leading, spacing: 10) {
+                            ImageView(session.nowPlayingItem?.portraitImageSources(maxWidth: 60) ?? [])
+                                .failure {
+                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                                }
+                        }
+                        .posterStyle(.portrait)
+                    }
+                }
+                .frame(width: 100)
+                .accessibilityIgnoresInvertColors()
 
-            if let firstTagline = item.taglines?.first {
-                Text(firstTagline)
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .multilineTextAlignment(.leading)
-                    .lineLimit(2)
+                if let item = session.nowPlayingItem {
+                    ActiveDevicesView.ContentSection(item: item)
+                }
             }
+        }
+        .listRowBackground(Color.clear)
+        .listRowCornerRadius(0)
+        .listRowInsets(.zero)
+    }
 
-            if let itemOverview = item.overview {
+    @ViewBuilder
+    private func itemDescription(_ item: BaseItemDto) -> some View {
+        if let itemOverview = item.overview {
+            Section {
                 TruncatedText(itemOverview)
                     .onSeeMore {
                         router.route(to: \.itemOverviewView, item)
@@ -199,5 +180,50 @@ struct ActiveDeviceDetailView: View {
                     .lineLimit(3)
             }
         }
+    }
+
+    var body: some View {
+        Group {
+            if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
+                sessionContent(
+                    client: session.client,
+                    deviceName: session.deviceName,
+                    applicationVersion: session.applicationVersion,
+                    nowPlayingItem: nowPlayingItem,
+                    playState: playState,
+                    transcodingInfo: session.transcodingInfo
+                )
+            } else {
+                idleContent(
+                    client: session.client,
+                    deviceName: session.deviceName,
+                    applicationVersion: session.applicationVersion,
+                    lastActivityDate: session.lastActivityDate
+                )
+            }
+        }
+        .navigationTitle("Session")
+        .onAppear {
+            viewModel.send(.getSessions)
+        }
+        .onReceive(timer) { date in
+            viewModel.send(.refreshSessions)
+            currentDate = date
+        }
+    }
+}
+
+final class InsetsGroupedCell: UITableViewCell {
+
+    override class var layerClass: AnyClass {
+        InsetsGroupedLayer.self
+    }
+}
+
+final class InsetsGroupedLayer: CALayer {
+
+    override var cornerRadius: CGFloat {
+        get { 16 }
+        set {}
     }
 }

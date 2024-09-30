@@ -98,6 +98,7 @@ extension ScheduledTasksView {
             switch observer.state {
             case .running:
                 ZStack {
+                    // TODO: make `gauge` view style also have option to embed stop
                     Image(systemName: "stop.fill")
                         .foregroundStyle(.secondary)
                         .padding(6)
@@ -143,89 +144,5 @@ extension ScheduledTasksView {
                 }
             }
         }
-    }
-}
-
-#Preview {
-    List {
-        ScheduledTasksView.ScheduledTaskButton(
-            observer: .init(
-                task: TaskInfo(
-                    category: "test",
-                    currentProgressPercentage: nil,
-                    description: nil,
-                    id: "123",
-                    isHidden: false,
-                    key: "123",
-                    lastExecutionResult: TaskResult(
-                        endTimeUtc: Date(timeIntervalSinceNow: -10),
-                        errorMessage: nil,
-                        id: nil,
-                        key: nil,
-                        longErrorMessage: nil,
-                        name: nil,
-                        startTimeUtc: Date(),
-                        status: .completed
-                    ),
-                    name: "Test",
-                    state: .running,
-                    triggers: nil
-                )
-            )
-        )
-
-        ScheduledTasksView.ScheduledTaskButton(
-            observer: .init(
-                task: TaskInfo(
-                    category: "test",
-                    currentProgressPercentage: 0.6,
-                    description: nil,
-                    id: "123",
-                    isHidden: false,
-                    key: "123",
-                    lastExecutionResult: TaskResult(
-                        endTimeUtc: Date(timeIntervalSinceNow: -10),
-                        errorMessage: nil,
-                        id: nil,
-                        key: nil,
-                        longErrorMessage: nil,
-                        name: nil,
-                        startTimeUtc: Date(),
-                        status: .completed
-                    ),
-                    name: "Test",
-                    state: .running,
-                    triggers: nil
-                ),
-                ServerTaskObserver.State.running
-            )
-        )
-
-        ScheduledTasksView.ScheduledTaskButton(
-            observer: .init(
-                task: TaskInfo(
-                    category: "test",
-                    currentProgressPercentage: 0.6,
-                    description: nil,
-                    id: "123",
-                    isHidden: false,
-                    key: "123",
-                    lastExecutionResult: TaskResult(
-                        endTimeUtc: Date(timeIntervalSinceNow: -10),
-                        errorMessage: nil,
-                        id: nil,
-                        key: nil,
-                        longErrorMessage: nil,
-                        name: nil,
-                        startTimeUtc: Date(),
-                        status: .failed
-                    ),
-                    name: "Test",
-                    state: .idle,
-                    triggers: nil
-                ),
-                ServerTaskObserver.State.initial
-            )
-        )
     }
 }

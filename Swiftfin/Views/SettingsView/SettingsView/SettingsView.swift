@@ -31,7 +31,7 @@ struct SettingsView: View {
 
             Section {
 
-                UserProfileRow {
+                UserProfileRow(user: viewModel.userSession.user.data) {
                     router.route(to: \.userProfile, viewModel)
                 }
 

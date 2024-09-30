@@ -13,28 +13,33 @@ extension ActiveDevicesView {
 
     struct ContentSection: View {
 
-        let item: BaseItemDto?
+        let item: BaseItemDto
 
         // MARK: - Body
 
         var body: some View {
             VStack(alignment: .leading) {
-                if let contentItem = item {
-                    Text(getTitle(item: contentItem))
+
+                if let parent = item.parentTitle {
+                    Text(parent)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                         .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+                }
 
-                    if let parent = getParent(item: contentItem) {
-                        Text(parent)
-                            .lineLimit(1)
-                    }
+                Text(item.displayTitle)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(2)
 
-                    if let episode = getEpisode(item: contentItem) {
-                        Text(episode)
-                            .lineLimit(1)
-                    }
+                if let subtitle = item.subtitle {
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
             }
+            .padding(.bottom)
         }
 
         // MARK: - Get Content Title
@@ -57,10 +62,6 @@ extension ActiveDevicesView {
                 return baseName
             }
 
-            if item.type == .episode && item.parentIndexNumber == 0 {
-                return baseName
-            }
-
             return baseName
         }
 
@@ -75,23 +76,6 @@ extension ActiveDevicesView {
                 return productionYear.description
             }
             return nil
-        }
-
-        // MARK: - Get Content Episode
-
-        private func getEpisode(item: BaseItemDto) -> String? {
-            guard item.indexNumber != nil, item.parentIndexNumber != nil else { return nil }
-
-            var number = L10n.seasonAndEpisode(
-                String(item.parentIndexNumber!),
-                String(item.indexNumber!)
-            )
-
-            if let indexNumberEnd = item.indexNumberEnd {
-                number += "-\(indexNumberEnd)"
-            }
-
-            return number
         }
     }
 }
