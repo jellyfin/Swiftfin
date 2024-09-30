@@ -11,6 +11,9 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: remove timer and have viewmodel debounce
+//       - or use `onReceive` for changes and trigger timer in views?
+
 struct ActiveDevicesView: View {
 
     @StoredValue(.User.activeDevicesDisplayType)
@@ -144,6 +147,7 @@ struct ActiveDevicesView: View {
                 ProgressView()
             }
 
+            // TODO: menu along with filter
             Button {
                 if displayType == .grid {
                     displayType = .list

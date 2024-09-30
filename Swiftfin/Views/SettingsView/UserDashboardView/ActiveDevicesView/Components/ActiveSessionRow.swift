@@ -105,6 +105,7 @@ extension ActiveDevicesView {
     }
 }
 
+// TODO: remove
 #Preview {
     VStack {
         ActiveDevicesView.ActiveSessionRow(

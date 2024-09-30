@@ -29,6 +29,7 @@ extension ActiveDevicesView {
 
         // MARK: - Last Seen Description
 
+        @ViewBuilder
         private var lastSeenTextView: some View {
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .full
@@ -42,6 +43,7 @@ extension ActiveDevicesView {
 
         // MARK: - Last Seen Date
 
+        @ViewBuilder
         private var lastSeenDateView: some View {
             HStack {
                 Text(L10n.lastSeenWithString(""))
