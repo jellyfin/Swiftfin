@@ -22,6 +22,12 @@ struct EditScheduledTaskView: View {
     @ObservedObject
     var observer: ServerTaskObserver
 
+    @State
+    private var currentDate: Date = .now
+
+    private let timer = Timer.publish(every: 1, on: .main, in: .common)
+        .autoconnect()
+
     var body: some View {
         List {
 
@@ -42,6 +48,8 @@ struct EditScheduledTaskView: View {
                     "Last run",
                     value: Text("\(lastEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
                 )
+                .id(currentDate)
+                .monospacedDigit()
 
                 if let lastStartTime = observer.task.lastExecutionResult?.startTimeUtc {
                     TextPairView(
@@ -54,6 +62,9 @@ struct EditScheduledTaskView: View {
             }
         }
         .navigationTitle("Task")
+        .onReceive(timer) { newValue in
+            currentDate = newValue
+        }
     }
 }
 

@@ -59,7 +59,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var itemOverviewView = makeItemOverviewView
     @Route(.push)
-    var scheduledTasks = makeScheduledTasks
+    var tasks = makeTasks
     @Route(.push)
     var editScheduledTask = makeEditScheduledTask
     @Route(.push)
@@ -173,10 +173,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeActiveDeviceDetails(viewModel: ActiveSessionsViewModel) -> some View {
-        ActiveDeviceDetailView(
-            viewModel: viewModel
-        )
+    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
+        ActiveDeviceDetailView(box: box)
     }
 
     func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -186,7 +184,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeScheduledTasks() -> some View {
+    func makeTasks() -> some View {
         ScheduledTasksView()
     }
 

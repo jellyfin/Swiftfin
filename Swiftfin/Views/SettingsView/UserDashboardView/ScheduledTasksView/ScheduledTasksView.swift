@@ -100,7 +100,7 @@ struct ScheduledTasksView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle(L10n.scheduledTasks)
+        .navigationTitle("Tasks")
         .onFirstAppear {
             viewModel.send(.refreshTasks)
         }

@@ -10,12 +10,30 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: inactive session device image
+
 extension ActiveDevicesView {
 
     struct ActiveSessionRow: View {
 
-        let session: SessionInfo
-        let onSelect: () -> Void
+        @ObservedObject
+        private var box: BindingBox<SessionInfo?>
+
+        @State
+        private var currentDate: Date = .now
+
+        private let onSelect: () -> Void
+        private let timer = Timer.publish(every: 1, on: .main, in: .common)
+            .autoconnect()
+
+        private var session: SessionInfo {
+            box.value ?? .init()
+        }
+
+        init(box: BindingBox<SessionInfo?>, onSelect action: @escaping () -> Void) {
+            self.box = box
+            self.onSelect = action
+        }
 
         @ViewBuilder
         private var rowLeading: some View {
@@ -48,19 +66,6 @@ extension ActiveDevicesView {
             .padding(.vertical, 8)
         }
 
-        var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
-                rowLeading
-            } content: {
-                if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
-                    activeSessionDetails(nowPlayingItem, playState: playState)
-                } else {
-                    idleSessionDetails
-                }
-            }
-            .onSelect(perform: onSelect)
-        }
-
         @ViewBuilder
         private func activeSessionDetails(_ nowPlayingItem: BaseItemDto, playState: PlayerStateInfo) -> some View {
             VStack(alignment: .leading) {
@@ -85,62 +90,40 @@ extension ActiveDevicesView {
                 Text(session.userName ?? L10n.unknown)
                     .font(.headline)
 
-//                ActiveDevicesView.ClientSection(
-//                    client: session.client,
-//                    deviceName: session.deviceName,
-//                    applicationVersion: session.applicationVersion
-//                )
-//                .font(.subheadline)
+                if let client = session.client {
+                    TextPairView(leading: "Client", trailing: client)
+                }
+
+                if let device = session.deviceName {
+                    TextPairView(leading: "Device", trailing: device)
+                }
 
                 if let lastActivityDate = session.lastActivityDate {
-                    ConnectionSection(
-                        lastActivityDate: lastActivityDate,
-                        currentDate: Date(),
-                        prefixText: true
+                    TextPairView(
+                        "Last seen",
+                        value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
                     )
-                    .font(.subheadline)
+                    .id(currentDate)
+                    .monospacedDigit()
                 }
             }
+            .font(.subheadline)
         }
-    }
-}
 
-// TODO: remove
-#Preview {
-    VStack {
-        ActiveDevicesView.ActiveSessionRow(
-            session: .init(
-                additionalUsers: nil,
-                applicationVersion: nil,
-                capabilities: nil,
-                client: nil,
-                deviceID: nil,
-                deviceName: nil,
-                deviceType: nil,
-                fullNowPlayingItem: nil,
-                hasCustomDeviceName: nil,
-                id: nil,
-                isActive: nil,
-                lastActivityDate: nil,
-                lastPlaybackCheckIn: nil,
-                nowPlayingItem: .init(name: "New Girl", runTimeTicks: 30000),
-                nowPlayingQueue: nil,
-                nowPlayingQueueFullItems: nil,
-                nowViewingItem: nil,
-                playState: .init(playMethod: .directPlay, positionTicks: 10000),
-                playableMediaTypes: nil,
-                playlistItemID: nil,
-                remoteEndPoint: nil,
-                serverID: nil,
-                supportedCommands: nil,
-                isSupportsMediaControl: nil,
-                isSupportsRemoteControl: nil,
-                transcodingInfo: nil,
-                userID: nil,
-                userName: "Steve Jobs",
-                userPrimaryImageTag: nil
-            ),
-            onSelect: {}
-        )
+        var body: some View {
+            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+                rowLeading
+            } content: {
+                if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
+                    activeSessionDetails(nowPlayingItem, playState: playState)
+                } else {
+                    idleSessionDetails
+                }
+            }
+            .onSelect(perform: onSelect)
+            .onReceive(timer) { newValue in
+                currentDate = newValue
+            }
+        }
     }
 }

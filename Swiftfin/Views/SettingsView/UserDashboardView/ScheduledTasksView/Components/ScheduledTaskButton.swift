@@ -21,60 +21,12 @@ extension ScheduledTasksView {
         var observer: ServerTaskObserver
 
         @State
-        private var currentTime: Date = .now
+        private var currentDate: Date = .now
         @State
         private var isPresentingConfirmation = false
 
         private let timer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
-
-        // MARK: - Body
-
-        @ViewBuilder
-        var body: some View {
-            Button {
-                isPresentingConfirmation = true
-            } label: {
-                HStack {
-                    taskView
-
-                    Spacer()
-
-                    statusView
-                }
-            }
-            .animation(.linear(duration: 0.1), value: observer.state)
-            .foregroundStyle(.primary, .secondary)
-            .onReceive(timer) { newValue in
-                currentTime = newValue
-            }
-            .confirmationDialog(
-                observer.task.name ?? .emptyDash,
-                isPresented: $isPresentingConfirmation,
-                titleVisibility: .visible
-            ) {
-                Group {
-                    if observer.state == .running {
-                        Button("Stop") {
-                            observer.send(.stop)
-                        }
-                    } else {
-                        Button("Run") {
-                            observer.send(.start)
-                        }
-                    }
-                }
-                .disabled(observer.task.state == .cancelling)
-
-                Button("Edit") {
-                    router.route(to: \.editScheduledTask, observer)
-                }
-            } message: {
-                if let description = observer.task.description {
-                    Text(description)
-                }
-            }
-        }
 
         // MARK: - Task Details Section
 
@@ -126,7 +78,7 @@ extension ScheduledTasksView {
             } else {
                 if let taskEndTime = observer.task.lastExecutionResult?.endTimeUtc {
                     Text("Last ran \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
-                        .id(currentTime)
+                        .id(currentDate)
                         .monospacedDigit()
                 } else {
                     Text("Never run")
@@ -141,6 +93,52 @@ extension ScheduledTasksView {
                     .foregroundStyle(.orange)
                     .backport
                     .fontWeight(.semibold)
+                }
+            }
+        }
+
+        @ViewBuilder
+        var body: some View {
+            Button {
+                isPresentingConfirmation = true
+            } label: {
+                HStack {
+                    taskView
+
+                    Spacer()
+
+                    statusView
+                }
+            }
+            .animation(.linear(duration: 0.1), value: observer.state)
+            .foregroundStyle(.primary, .secondary)
+            .onReceive(timer) { newValue in
+                currentDate = newValue
+            }
+            .confirmationDialog(
+                observer.task.name ?? .emptyDash,
+                isPresented: $isPresentingConfirmation,
+                titleVisibility: .visible
+            ) {
+                Group {
+                    if observer.state == .running {
+                        Button("Stop") {
+                            observer.send(.stop)
+                        }
+                    } else {
+                        Button("Run") {
+                            observer.send(.start)
+                        }
+                    }
+                }
+                .disabled(observer.task.state == .cancelling)
+
+                Button("Edit") {
+                    router.route(to: \.editScheduledTask, observer)
+                }
+            } message: {
+                if let description = observer.task.description {
+                    Text(description)
                 }
             }
         }

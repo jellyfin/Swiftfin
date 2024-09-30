@@ -12,17 +12,6 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-extension Binding where Value: Sequence {
-    
-    func first(where predicate: @escaping (Value.Element) throws -> Bool) rethrows -> Binding<Value.Element?> {
-        Binding<Value.Element?> {
-            try? wrappedValue.first(where: predicate)
-        } set: { _, _ in
-            
-        }
-    }
-}
-
 final class ActiveSessionsViewModel: ViewModel, Stateful {
 
     // MARK: - Action
@@ -49,7 +38,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var sessions: OrderedSet<SessionInfo> = []
+    final var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
     @Published
     final var state: State = .initial
 
@@ -72,13 +61,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                 }
 
                 do {
-                    let newSessions = try await self?.getSessions()
-
-                    guard let self else { return }
-
-                    await MainActor.run {
-                        self.sessions = newSessions ?? []
-                    }
+                    try await self?.updateSessions()
                 } catch {
                     guard let self else { return }
                     await MainActor.run {
@@ -102,12 +85,11 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                 }
 
                 do {
-                    let newSessions = try await self?.getSessions()
+                    try await self?.updateSessions()
 
                     guard let self else { return }
 
                     await MainActor.run {
-                        self.sessions = newSessions ?? []
                         self.state = .content
                     }
                 } catch {
@@ -123,7 +105,7 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         }
     }
 
-    private func getSessions() async throws -> OrderedSet<SessionInfo> {
+    private func updateSessions() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
         parameters.deviceID = deviceID
@@ -131,27 +113,66 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        let newSessions = response.value.sorted {
-            let isPlaying0 = $0.nowPlayingItem != nil
-            let isPlaying1 = $1.nowPlayingItem != nil
+        let removedSessionIDs = sessions.keys.filter { !response.value.map(\.id).contains($0) }
 
-            if isPlaying0 && !isPlaying1 {
-                return true
-            } else if !isPlaying0 && isPlaying1 {
-                return false
+        let existingIDs = sessions.keys
+            .filter {
+                response.value.map(\.id).contains($0)
+            }
+        let newSessions = response.value
+            .filter {
+                guard let id = $0.id else { return false }
+                return !sessions.keys.contains(id)
+            }
+            .map { s in
+                BindingBox<SessionInfo?>(
+                    source: .init(
+                        get: { s },
+                        set: { _ in }
+                    )
+                )
             }
 
-            if $0.userName != $1.userName {
-                return ($0.userName ?? "") < ($1.userName ?? "")
+        await MainActor.run {
+            for id in removedSessionIDs {
+                let t = sessions[id]
+                sessions[id] = nil
+                t?.value = nil
             }
 
-            if isPlaying0 && isPlaying1 {
-                return ($0.nowPlayingItem?.name ?? "") < ($1.nowPlayingItem?.name ?? "")
-            } else {
-                return ($0.lastActivityDate ?? Date.now) > ($1.lastActivityDate ?? Date.now)
+            for id in existingIDs {
+                sessions[id]?.value = response.value.first(where: { $0.id == id })
+            }
+
+            for session in newSessions {
+                guard let id = session.value?.id else { continue }
+
+                sessions[id] = session
+            }
+
+            sessions.sort { x, y in
+                let xs = x.value.value
+                let ys = y.value.value
+
+                let isPlaying0 = xs?.nowPlayingItem != nil
+                let isPlaying1 = ys?.nowPlayingItem != nil
+
+                if isPlaying0 && !isPlaying1 {
+                    return true
+                } else if !isPlaying0 && isPlaying1 {
+                    return false
+                }
+
+                if xs?.userName != ys?.userName {
+                    return (xs?.userName ?? "") < (ys?.userName ?? "")
+                }
+
+                if isPlaying0 && isPlaying1 {
+                    return (xs?.nowPlayingItem?.name ?? "") < (ys?.nowPlayingItem?.name ?? "")
+                } else {
+                    return (xs?.lastActivityDate ?? Date.now) > (ys?.lastActivityDate ?? Date.now)
+                }
             }
         }
-
-        return OrderedSet(newSessions)
     }
 }

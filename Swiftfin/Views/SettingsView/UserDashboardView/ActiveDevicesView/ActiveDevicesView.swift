@@ -48,13 +48,13 @@ struct ActiveDevicesView: View {
             L10n.noResults.text
         } else {
             CollectionVGrid(
-                viewModel.sessions,
+                viewModel.sessions.keys,
                 layout: $layout
-            ) { session in
-                ActiveSessionRow(session: session) {
+            ) { id in
+                ActiveSessionRow(box: viewModel.sessions[id]!) {
                     router.route(
                         to: \.activeDeviceDetails,
-                        ActiveSessionsViewModel(deviceID: session.deviceID)
+                        viewModel.sessions[id]!
                     )
                 }
             }

@@ -17,43 +17,49 @@ struct ActiveDeviceDetailView: View {
     private var router: SettingsCoordinator.Router
 
     @ObservedObject
-    var viewModel: ActiveSessionsViewModel
+    var box: BindingBox<SessionInfo?>
 
     @State
-    private var currentDate = Date()
+    private var currentDate: Date = .now
 
-    // MARK: - Timer
-
-    private let timer = Timer.publish(every: 5, on: .main, in: .common)
+    private let timer = Timer.publish(every: 1, on: .main, in: .common)
         .autoconnect()
-
-    // MARK: Get Active Session
-
-    private var session: SessionInfo {
-        viewModel.sessions.first ?? SessionInfo()
-    }
 
     // MARK: Create Idle Content View
 
     @ViewBuilder
-    private func idleContent(client: String?, deviceName: String?, applicationVersion: String?, lastActivityDate: Date?) -> some View {
+    private func idleContent(session: SessionInfo) -> some View {
         List {
-            Section(L10n.device) {
-                ActiveDevicesView.ClientSection(
-                    client: client,
-                    deviceName: deviceName,
-                    applicationVersion: applicationVersion
-                )
-            }
-
-            // Show the the Last Seen Ticker (if possible) on Idle
-            if let lastActivityDate = lastActivityDate {
-                Section(L10n.lastSeen) {
-                    ActiveDevicesView.ConnectionSection(
-                        lastActivityDate: lastActivityDate,
-                        currentDate: currentDate,
-                        prefixText: false
+            Section(L10n.user) {
+                if let userID = session.userID {
+                    SettingsView.UserProfileRow(
+                        user: .init(
+                            id: userID,
+                            name: session.userName
+                        )
                     )
+                }
+
+                if let client = session.client {
+                    TextPairView(leading: "Client", trailing: client)
+                }
+
+                if let device = session.deviceName {
+                    TextPairView(leading: "Device", trailing: device)
+                }
+
+                if let applicationVersion = session.applicationVersion {
+                    TextPairView(leading: "Version", trailing: applicationVersion)
+                }
+
+                // TODO: update not working?
+                if let lastActivityDate = session.lastActivityDate {
+                    TextPairView(
+                        "Last seen",
+                        value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
+                    )
+                    .id(currentDate)
+                    .monospacedDigit()
                 }
             }
         }
@@ -63,22 +69,19 @@ struct ActiveDeviceDetailView: View {
 
     @ViewBuilder
     private func sessionContent(
-        client: String?,
-        deviceName: String?,
-        applicationVersion: String?,
+        session: SessionInfo,
         nowPlayingItem: BaseItemDto,
-        playState: PlayerStateInfo,
-        transcodingInfo: TranscodingInfo?
+        playState: PlayerStateInfo
     ) -> some View {
         List {
 
-            nowPlayingSection(nowPlayingItem)
+            nowPlayingSection(item: nowPlayingItem)
 
             Section(L10n.progress) {
                 ActiveDevicesView.ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
-                    transcodingInfo: transcodingInfo
+                    transcodingInfo: session.transcodingInfo
                 )
             }
 
@@ -92,15 +95,15 @@ struct ActiveDeviceDetailView: View {
                     )
                 }
 
-                if let client {
+                if let client = session.client {
                     TextPairView(leading: "Client", trailing: client)
                 }
 
-                if let deviceName {
-                    TextPairView(leading: "Device", trailing: deviceName)
+                if let device = session.deviceName {
+                    TextPairView(leading: "Device", trailing: device)
                 }
 
-                if let applicationVersion {
+                if let applicationVersion = session.applicationVersion {
                     TextPairView(leading: "Version", trailing: applicationVersion)
                 }
             }
@@ -113,11 +116,11 @@ struct ActiveDeviceDetailView: View {
 
                 StreamSection(
                     nowPlayingItem: nowPlayingItem,
-                    transcodingInfo: transcodingInfo
+                    transcodingInfo: session.transcodingInfo
                 )
             }
 
-            if let transcodeReasons = transcodingInfo?.transcodeReasons {
+            if let transcodeReasons = session.transcodingInfo?.transcodeReasons {
                 Section(L10n.transcodeReasons) {
                     TranscodeSection(transcodeReasons: transcodeReasons)
                 }
@@ -128,17 +131,17 @@ struct ActiveDeviceDetailView: View {
     // MARK: Now Playing Section
 
     @ViewBuilder
-    private func nowPlayingSection(_ item: BaseItemDto) -> some View {
+    private func nowPlayingSection(item: BaseItemDto) -> some View {
         Section {
             HStack(alignment: .bottom, spacing: 12) {
                 Group {
-                    if session.nowPlayingItem?.type == .audio {
+                    if item.type == .audio {
                         ZStack {
                             Color.clear
 
-                            ImageView(session.nowPlayingItem?.squareImageSources(maxWidth: 60) ?? [])
+                            ImageView(item.squareImageSources(maxWidth: 60))
                                 .failure {
-                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                                    SystemImageContentView(systemName: item.systemImage)
                                 }
                         }
                         .squarePosterStyle()
@@ -146,9 +149,9 @@ struct ActiveDeviceDetailView: View {
                         ZStack {
                             Color.clear
 
-                            ImageView(session.nowPlayingItem?.portraitImageSources(maxWidth: 60) ?? [])
+                            ImageView(item.portraitImageSources(maxWidth: 60))
                                 .failure {
-                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
+                                    SystemImageContentView(systemName: item.systemImage)
                                 }
                         }
                         .posterStyle(.portrait)
@@ -157,9 +160,7 @@ struct ActiveDeviceDetailView: View {
                 .frame(width: 100)
                 .accessibilityIgnoresInvertColors()
 
-                if let item = session.nowPlayingItem {
-                    ActiveDevicesView.ContentSection(item: item)
-                }
+                ActiveDevicesView.ContentSection(item: item)
             }
         }
         .listRowBackground(Color.clear)
@@ -167,63 +168,26 @@ struct ActiveDeviceDetailView: View {
         .listRowInsets(.zero)
     }
 
-    @ViewBuilder
-    private func itemDescription(_ item: BaseItemDto) -> some View {
-        if let itemOverview = item.overview {
-            Section {
-                TruncatedText(itemOverview)
-                    .onSeeMore {
-                        router.route(to: \.itemOverviewView, item)
-                    }
-                    .seeMoreType(.view)
-                    .font(.footnote)
-                    .lineLimit(3)
-            }
-        }
-    }
-
     var body: some View {
-        Group {
-            if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
-                sessionContent(
-                    client: session.client,
-                    deviceName: session.deviceName,
-                    applicationVersion: session.applicationVersion,
-                    nowPlayingItem: nowPlayingItem,
-                    playState: playState,
-                    transcodingInfo: session.transcodingInfo
-                )
+        ZStack {
+            if let session = box.value {
+                if let nowPlayingItem = session.nowPlayingItem, let playState = session.playState {
+                    sessionContent(
+                        session: session,
+                        nowPlayingItem: nowPlayingItem,
+                        playState: playState
+                    )
+                } else {
+                    idleContent(session: session)
+                }
             } else {
-                idleContent(
-                    client: session.client,
-                    deviceName: session.deviceName,
-                    applicationVersion: session.applicationVersion,
-                    lastActivityDate: session.lastActivityDate
-                )
+                Text("No session")
             }
         }
+        .animation(.linear(duration: 0.2), value: box.value)
         .navigationTitle("Session")
-        .onAppear {
-            viewModel.send(.getSessions)
+        .onReceive(timer) { newValue in
+            currentDate = newValue
         }
-        .onReceive(timer) { date in
-            viewModel.send(.refreshSessions)
-            currentDate = date
-        }
-    }
-}
-
-final class InsetsGroupedCell: UITableViewCell {
-
-    override class var layerClass: AnyClass {
-        InsetsGroupedLayer.self
-    }
-}
-
-final class InsetsGroupedLayer: CALayer {
-
-    override var cornerRadius: CGFloat {
-        get { 16 }
-        set {}
     }
 }

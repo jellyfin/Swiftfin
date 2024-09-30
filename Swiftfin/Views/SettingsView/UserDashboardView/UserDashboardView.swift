@@ -29,14 +29,15 @@ struct UserDashboardView: View {
                 }
 
             Section("Advanced") {
-                ChevronButton(L10n.scheduledTasks)
-                    .onSelect {
-                        router.route(to: \.scheduledTasks)
-                    }
 
                 ChevronButton("Logs")
                     .onSelect {
                         router.route(to: \.serverLogs)
+                    }
+
+                ChevronButton("Tasks")
+                    .onSelect {
+                        router.route(to: \.tasks)
                     }
             }
         }
