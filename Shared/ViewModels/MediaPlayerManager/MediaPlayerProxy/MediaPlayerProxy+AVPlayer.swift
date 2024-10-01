@@ -8,6 +8,7 @@
 
 import AVFoundation
 import Foundation
+import JellyfinAPI
 
 class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
 
@@ -47,4 +48,7 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
     }
 
     func play(item: MediaPlayerItem) {}
+
+    func set(audioStream: MediaStream) {}
+    func set(subtitleStream: MediaStream) {}
 }

@@ -94,7 +94,7 @@ extension VideoPlayer.Overlay {
                 }
             }
             .tint(Color.white)
-            .foregroundColor(Color.white)
+            .foregroundStyle(Color.white)
         }
     }
 }

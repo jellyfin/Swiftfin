@@ -14,11 +14,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct Subtitles: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: MediaPlayerManager
-//        @EnvironmentObject
-//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-//        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
+        private var manager: MediaPlayerManager
 
         private var systemImage: String {
 //            if isAudioTrackSelected {
@@ -34,9 +30,22 @@ extension VideoPlayer.Overlay.ActionButtons {
                 systemImage: systemImage
             ) {
                 Section(L10n.subtitles) {
-                    Button("Test") {}
-                    Button("Test") {}
-                    Button("Test") {}
+//                    Button("Test") {}
+//                    Button("Test") {}
+//                    Button("Test") {}
+
+                    ForEach(manager.playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
+                        Button {
+                            manager.playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
+                            manager.proxy.set(subtitleStream: stream)
+                        } label: {
+                            if manager.playbackItem.selectedSubtitleStreamIndex == stream.index {
+                                Label(stream.displayTitle ?? .emptyDash, systemImage: "checkmark")
+                            } else {
+                                Text(stream.displayTitle ?? .emptyDash)
+                            }
+                        }
+                    }
                 }
             }
 //            Menu {

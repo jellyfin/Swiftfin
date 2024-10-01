@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 import VLCUI
 
 class VLCVideoPlayerProxy: MediaPlayerProxy {
@@ -40,4 +41,12 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
     func stop() {}
 
     func play(item: MediaPlayerItem) {}
+
+    func set(audioStream: MediaStream) {
+        vlcUIProxy?.setAudioTrack(.absolute(audioStream.index ?? -1))
+    }
+
+    func set(subtitleStream: MediaStream) {
+        vlcUIProxy?.setSubtitleTrack(.absolute(subtitleStream.index ?? -1))
+    }
 }

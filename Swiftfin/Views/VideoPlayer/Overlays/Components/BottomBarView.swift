@@ -29,7 +29,6 @@ extension VideoPlayer.Overlay {
         private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
-
         @EnvironmentObject
         private var scrubbedProgress: ProgressBox
 

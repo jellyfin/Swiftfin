@@ -59,7 +59,7 @@ extension VideoPlayer.Overlay.TopBarView {
             if let subtitle = item.subtitle {
                 Text(subtitle)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundStyle(.white)
                     .trackingSize($subtitleContentSize)
             }
         }

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import JellyfinAPI
 
 /// The proxy for top-down communication to an
 /// underlying media player
@@ -18,6 +19,8 @@ protocol MediaPlayerProxy {
     func jumpBackward(_ seconds: Int)
     func setRate(_ rate: Float)
     func setTime(_ time: TimeInterval)
+    func set(audioStream: MediaStream)
+    func set(subtitleStream: MediaStream)
 
     func stop()
 

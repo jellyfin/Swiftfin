@@ -14,9 +14,7 @@ extension VideoPlayer.Overlay.ActionButtons {
     struct Audio: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: MediaPlayerManager
-//        @EnvironmentObject
-//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        private var manager: MediaPlayerManager
 
         private var systemImage: String {
 //            if isAudioTrackSelected {
@@ -32,9 +30,16 @@ extension VideoPlayer.Overlay.ActionButtons {
                 systemImage: systemImage
             ) {
                 Section(L10n.audio) {
-                    Button("Test") {}
-                    Button("Test") {}
-                    Button("Test") {}
+                    ForEach(manager.playbackItem.audioStreams.prepending(.none), id: \.index) { stream in
+                        Button {
+                            manager.playbackItem.selectedAudioStreamIndex = stream.index ?? -1
+                            manager.proxy.set(audioStream: stream)
+                        } label: {}
+                    }
+
+//                    Button("Test") {}
+//                    Button("Test") {}
+//                    Button("Test") {}
                 }
 
 //                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in

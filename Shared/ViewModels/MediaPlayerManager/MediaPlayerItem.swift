@@ -28,6 +28,11 @@ class ProgressBox: ObservableObject {
 
 class MediaPlayerItem: ViewModel {
 
+    @Published
+    var selectedAudioStreamIndex: Int = -1
+    @Published
+    var selectedSubtitleStreamIndex: Int = -1
+
     let baseItem: BaseItemDto
     let chapters: [ChapterInfo.FullInfo]
     let mediaSource: MediaSourceInfo
@@ -82,6 +87,9 @@ class MediaPlayerItem: ViewModel {
             .compactMap(\.asPlaybackChild)
 
         vlcConfiguration = configuration
+
+        selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
+        selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
     }
 
     // MARK: build
