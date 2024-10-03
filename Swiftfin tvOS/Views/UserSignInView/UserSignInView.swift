@@ -16,6 +16,7 @@ import SwiftUI
 // TODO: change public users from list to grid
 
 struct UserSignInView: View {
+
     enum FocusField: Hashable {
         case username
         case password
@@ -53,7 +54,7 @@ struct UserSignInView: View {
     @ViewBuilder
     private var signInSection: some View {
         Section {
-            TextField(L10n.username, text: $username, prompt: Text("Required"))
+            TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .focused($focusedTextField, equals: .username)
@@ -61,7 +62,7 @@ struct UserSignInView: View {
             SecureField(L10n.password, text: $password)
                 .focused($focusedTextField, equals: .password)
                 .onSubmit {
-                    if username.isEmpty {
+                    guard username.isNotEmpty else {
                         return
                     }
                     viewModel.send(.signIn(username: username, password: password, policy: .none))
@@ -77,13 +78,7 @@ struct UserSignInView: View {
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
             Button(L10n.signIn) {
-                if username.isEmpty {
-                    focusedTextField = .username
-                } else if password.isEmpty {
-                    focusedTextField = .password
-                } else {
-                    viewModel.send(.signIn(username: username, password: password, policy: .none))
-                }
+                viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
             .disabled(username.isEmpty)
             .foregroundStyle(
