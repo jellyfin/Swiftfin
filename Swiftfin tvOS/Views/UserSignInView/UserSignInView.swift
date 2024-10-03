@@ -17,7 +17,7 @@ import SwiftUI
 
 struct UserSignInView: View {
 
-    enum FocusField: Hashable {
+    private enum FocusField: Hashable {
         case username
         case password
     }
