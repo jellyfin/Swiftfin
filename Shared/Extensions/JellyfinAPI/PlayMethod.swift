@@ -10,9 +10,9 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension PlayMethod {
+extension PlayMethod: Displayable {
 
-    var description: String {
+    var displayTitle: String {
         switch self {
         case .transcode:
             return L10n.transcode

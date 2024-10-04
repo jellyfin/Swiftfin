@@ -108,7 +108,7 @@ struct ActiveSessionDetailView: View {
             // TODO: don't show codec changes on direct play?
             Section(L10n.streams) {
                 if let playMethod = playState.playMethod {
-                    TextPairView(leading: L10n.method, trailing: playMethod.description)
+                    TextPairView(leading: L10n.method, trailing: playMethod.displayTitle)
                 }
 
                 StreamSection(

@@ -42,7 +42,7 @@ extension ActiveSessionsView {
                 }
 
                 if let playMethod = playState.playMethod, playMethod == .transcode {
-                    Text(playMethod.description)
+                    Text(playMethod)
                 }
 
                 Spacer()

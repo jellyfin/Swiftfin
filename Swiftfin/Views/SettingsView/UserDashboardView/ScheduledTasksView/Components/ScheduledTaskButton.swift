@@ -76,7 +76,7 @@ extension ScheduledTasksView {
 
                 if let status = observer.task.lastExecutionResult?.status, status != .completed {
                     Label(
-                        status.description,
+                        status.displayTitle,
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))

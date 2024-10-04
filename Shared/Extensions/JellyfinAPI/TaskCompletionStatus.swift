@@ -9,8 +9,9 @@
 import Foundation
 import JellyfinAPI
 
-extension TaskCompletionStatus {
-    var description: String {
+extension TaskCompletionStatus: Displayable {
+
+    var displayTitle: String {
         switch self {
         case .completed:
             return L10n.taskCompleted
