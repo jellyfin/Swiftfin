@@ -14,7 +14,6 @@ import SwiftUI
 
 // TODO: do something for errors from restart/shutdown
 //       - toast?
-// TODO: rename `fetch` to `get`
 
 final class ScheduledTasksViewModel: ViewModel, Stateful {
 
@@ -23,7 +22,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     enum Action: Equatable {
         case restartApplication
         case shutdownApplication
-        case fetchTasks
+        case getTasks
         case refreshTasks
         case stopObserving
     }
@@ -31,7 +30,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     // MARK: - BackgroundState
 
     enum BackgroundState: Hashable {
-        case fetchingTasks
+        case gettingTasks
     }
 
     // MARK: - State
@@ -49,7 +48,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
     @Published
     final var tasks: OrderedDictionary<String, [ServerTaskObserver]> = [:]
 
-    private var fetchTasksCancellable: AnyCancellable?
+    private var getTasksCancellable: AnyCancellable?
 
     func respond(to action: Action) -> State {
         switch action {
@@ -67,12 +66,12 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
             .store(in: &cancellables)
 
             return .content
-        case .fetchTasks:
-            fetchTasksCancellable?.cancel()
+        case .getTasks:
+            getTasksCancellable?.cancel()
 
-            fetchTasksCancellable = Task {
+            getTasksCancellable = Task {
                 do {
-                    try await fetchTasks()
+                    try await getTasks()
 
                     await MainActor.run {
                         self.state = .content
@@ -88,11 +87,11 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
 
             return state
         case .refreshTasks:
-            fetchTasksCancellable?.cancel()
+            getTasksCancellable?.cancel()
 
-            fetchTasksCancellable = Task {
+            getTasksCancellable = Task {
                 do {
-                    try await fetchTasks()
+                    try await getTasks()
 
                     await MainActor.run {
                         self.state = .content
@@ -119,11 +118,11 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Fetch All Tasks
+    // MARK: - Get All Tasks
 
     // Note: If task list was modified while on this view it won't update
     //       until popped and presented again. However, that is a rare case.
-    private func fetchTasks() async throws {
+    private func getTasks() async throws {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
 

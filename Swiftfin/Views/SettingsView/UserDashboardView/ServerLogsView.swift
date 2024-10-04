@@ -73,7 +73,7 @@ struct ServerLogsView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationBarTitle("Server Logs")
+        .navigationBarTitle(L10n.serverLogs)
         .onFirstAppear {
             viewModel.send(.getLogs)
         }

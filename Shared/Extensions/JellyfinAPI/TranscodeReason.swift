@@ -14,55 +14,90 @@ extension TranscodeReason {
     var description: String {
         switch self {
         case .containerNotSupported:
-            return "The container format is not supported"
+            return L10n.containerNotSupported
         case .videoCodecNotSupported:
-            return "The video codec is not supported"
+            return L10n.videoCodecNotSupported
         case .audioCodecNotSupported:
-            return "The audio codec is not supported"
+            return L10n.audioCodecNotSupported
         case .subtitleCodecNotSupported:
-            return "The subtitle codec is not supported"
+            return L10n.subtitleCodecNotSupported
         case .audioIsExternal:
-            return "The audio track is external and requires transcoding"
+            return L10n.audioIsExternal
         case .secondaryAudioNotSupported:
-            return "Secondary audio is not supported"
+            return L10n.secondaryAudioNotSupported
         case .videoProfileNotSupported:
-            return "The video profile is not supported"
+            return L10n.videoProfileNotSupported
         case .videoLevelNotSupported:
-            return "The video level is not supported"
+            return L10n.videoLevelNotSupported
         case .videoResolutionNotSupported:
-            return "The video resolution is not supported"
+            return L10n.videoResolutionNotSupported
         case .videoBitDepthNotSupported:
-            return "The video bit depth is not supported"
+            return L10n.videoBitDepthNotSupported
         case .videoFramerateNotSupported:
-            return "The video framerate is not supported"
+            return L10n.videoFramerateNotSupported
         case .refFramesNotSupported:
-            return "The number of reference frames is not supported"
+            return L10n.refFramesNotSupported
         case .anamorphicVideoNotSupported:
-            return "Anamorphic video is not supported"
+            return L10n.anamorphicVideoNotSupported
         case .interlacedVideoNotSupported:
-            return "Interlaced video is not supported"
+            return L10n.interlacedVideoNotSupported
         case .audioChannelsNotSupported:
-            return "The number of audio channels is not supported"
+            return L10n.audioChannelsNotSupported
         case .audioProfileNotSupported:
-            return "The audio profile is not supported"
+            return L10n.audioProfileNotSupported
         case .audioSampleRateNotSupported:
-            return "The audio sample rate is not supported"
+            return L10n.audioSampleRateNotSupported
         case .audioBitDepthNotSupported:
-            return "The audio bit depth is not supported"
+            return L10n.audioBitDepthNotSupported
         case .containerBitrateExceedsLimit:
-            return "The container bitrate exceeds the allowed limit"
+            return L10n.containerBitrateExceedsLimit
         case .videoBitrateNotSupported:
-            return "The video bitrate is not supported"
+            return L10n.videoBitrateNotSupported
         case .audioBitrateNotSupported:
-            return "The audio bitrate is not supported"
+            return L10n.audioBitrateNotSupported
         case .unknownVideoStreamInfo:
-            return "The video stream information is unknown"
+            return L10n.unknownVideoStreamInfo
         case .unknownAudioStreamInfo:
-            return "The audio stream information is unknown"
+            return L10n.unknownAudioStreamInfo
         case .directPlayError:
-            return "An error occurred during direct play"
+            return L10n.directPlayError
         case .videoRangeTypeNotSupported:
-            return "The video range type is not supported"
+            return L10n.videoRangeTypeNotSupported
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .containerNotSupported,
+             .containerBitrateExceedsLimit:
+            return "shippingbox"
+        case .audioCodecNotSupported,
+             .audioIsExternal,
+             .secondaryAudioNotSupported,
+             .audioChannelsNotSupported,
+             .audioProfileNotSupported,
+             .audioSampleRateNotSupported,
+             .audioBitDepthNotSupported,
+             .audioBitrateNotSupported,
+             .unknownAudioStreamInfo:
+            return "speaker.wave.2"
+        case .videoCodecNotSupported,
+             .videoProfileNotSupported,
+             .videoLevelNotSupported,
+             .videoResolutionNotSupported,
+             .videoBitDepthNotSupported,
+             .videoFramerateNotSupported,
+             .refFramesNotSupported,
+             .anamorphicVideoNotSupported,
+             .interlacedVideoNotSupported,
+             .videoBitrateNotSupported,
+             .unknownVideoStreamInfo,
+             .videoRangeTypeNotSupported:
+            return "photo.tv"
+        case .subtitleCodecNotSupported:
+            return "captions.bubble"
+        default:
+            return "questionmark.app"
         }
     }
 }

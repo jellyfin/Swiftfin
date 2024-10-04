@@ -38,14 +38,14 @@ struct EditScheduledTaskView: View {
 
             if let category = observer.task.category {
                 TextPairView(
-                    leading: "Category",
+                    leading: L10n.category,
                     trailing: category
                 )
             }
 
             if let lastEndTime = observer.task.lastExecutionResult?.endTimeUtc {
                 TextPairView(
-                    "Last run",
+                    L10n.lastRun,
                     value: Text("\(lastEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
                 )
                 .id(currentDate)
@@ -53,7 +53,7 @@ struct EditScheduledTaskView: View {
 
                 if let lastStartTime = observer.task.lastExecutionResult?.startTimeUtc {
                     TextPairView(
-                        "Runtime",
+                        L10n.runtime,
                         value: Text(
                             "\(lastStartTime ..< lastEndTime, format: .components(style: .narrow))"
                         )
@@ -61,7 +61,7 @@ struct EditScheduledTaskView: View {
                 }
             }
         }
-        .navigationTitle("Task")
+        .navigationTitle(L10n.task)
         .onReceive(timer) { newValue in
             currentDate = newValue
         }

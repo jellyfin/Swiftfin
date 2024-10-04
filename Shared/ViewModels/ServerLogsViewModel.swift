@@ -28,7 +28,7 @@ final class ServerLogsViewModel: ViewModel, Stateful {
     @Published
     final var state: State = .initial
     @Published
-    final var lastAction: Action? = nil
+    final var lastAction: Action?
 
     func respond(to action: Action) -> State {
         switch action {

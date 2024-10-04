@@ -91,16 +91,16 @@ extension ActiveDevicesView {
                     .font(.headline)
 
                 if let client = session.client {
-                    TextPairView(leading: "Client", trailing: client)
+                    TextPairView(leading: L10n.client, trailing: client)
                 }
 
                 if let device = session.deviceName {
-                    TextPairView(leading: "Device", trailing: device)
+                    TextPairView(leading: L10n.device, trailing: device)
                 }
 
                 if let lastActivityDate = session.lastActivityDate {
                     TextPairView(
-                        "Last seen",
+                        L10n.lastSeen,
                         value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
                     )
                     .id(currentDate)

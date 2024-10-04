@@ -50,7 +50,6 @@ extension ScheduledTasksView {
             switch observer.state {
             case .running:
                 ZStack {
-                    // TODO: make `gauge` view style also have option to embed stop
                     Image(systemName: "stop.fill")
                         .foregroundStyle(.secondary)
                         .padding(6)
@@ -72,21 +71,21 @@ extension ScheduledTasksView {
         @ViewBuilder
         private var taskResultView: some View {
             if observer.state == .running {
-                Text("Running...")
+                Text(L10n.running)
             } else if observer.task.state == .cancelling {
-                Text("Cancelling...")
+                Text(L10n.cancelling)
             } else {
                 if let taskEndTime = observer.task.lastExecutionResult?.endTimeUtc {
-                    Text("Last ran \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
+                    Text("\(L10n.lastRun) \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
                         .id(currentDate)
                         .monospacedDigit()
                 } else {
-                    Text("Never run")
+                    Text(L10n.neverRun)
                 }
 
                 if let status = observer.task.lastExecutionResult?.status, status != .completed {
                     Label(
-                        status.rawValue,
+                        status.description,
                         systemImage: "exclamationmark.circle.fill"
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
@@ -122,18 +121,18 @@ extension ScheduledTasksView {
             ) {
                 Group {
                     if observer.state == .running {
-                        Button("Stop") {
+                        Button(L10n.stop) {
                             observer.send(.stop)
                         }
                     } else {
-                        Button("Run") {
+                        Button(L10n.run) {
                             observer.send(.start)
                         }
                     }
                 }
                 .disabled(observer.task.state == .cancelling)
 
-                Button("Edit") {
+                Button(L10n.edit) {
                     router.route(to: \.editScheduledTask, observer)
                 }
             } message: {

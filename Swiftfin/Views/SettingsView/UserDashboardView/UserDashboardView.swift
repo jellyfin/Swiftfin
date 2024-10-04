@@ -19,8 +19,8 @@ struct UserDashboardView: View {
         List {
 
             ListTitleSection(
-                "Dashboard",
-                description: "Perform administrative tasks for your Jellyfin server."
+                L10n.dashboard,
+                description: L10n.dashboardDescription
             )
 
             ChevronButton(L10n.activeDevices)
@@ -28,14 +28,14 @@ struct UserDashboardView: View {
                     router.route(to: \.activeDevices)
                 }
 
-            Section("Advanced") {
+            Section(L10n.advanced) {
 
-                ChevronButton("Logs")
+                ChevronButton(L10n.logs)
                     .onSelect {
                         router.route(to: \.serverLogs)
                     }
 
-                ChevronButton("Tasks")
+                ChevronButton(L10n.tasks)
                     .onSelect {
                         router.route(to: \.tasks)
                     }

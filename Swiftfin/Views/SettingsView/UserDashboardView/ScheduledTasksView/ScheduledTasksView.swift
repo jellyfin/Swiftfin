@@ -58,8 +58,8 @@ struct ScheduledTasksView: View {
         List {
 
             ListTitleSection(
-                "Tasks",
-                description: "Tasks are operations that are scheduled to run periodically or can be triggered manually."
+                L10n.tasks,
+                description: L10n.tasksDescription
             ) {
                 UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/server/tasks")!)
             }
@@ -100,15 +100,12 @@ struct ScheduledTasksView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle("Tasks")
+        .navigationTitle(L10n.tasks)
         .onFirstAppear {
             viewModel.send(.refreshTasks)
         }
-//        .onFinalDisappear {
-//            viewModel.send(.stopObserving)
-//        }
         .onReceive(timer) { _ in
-            viewModel.send(.fetchTasks)
+            viewModel.send(.getTasks)
         }
     }
 }

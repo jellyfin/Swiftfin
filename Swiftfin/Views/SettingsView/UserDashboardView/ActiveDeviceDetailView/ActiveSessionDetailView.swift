@@ -41,21 +41,20 @@ struct ActiveDeviceDetailView: View {
                 }
 
                 if let client = session.client {
-                    TextPairView(leading: "Client", trailing: client)
+                    TextPairView(leading: L10n.client, trailing: client)
                 }
 
                 if let device = session.deviceName {
-                    TextPairView(leading: "Device", trailing: device)
+                    TextPairView(leading: L10n.device, trailing: device)
                 }
 
                 if let applicationVersion = session.applicationVersion {
-                    TextPairView(leading: "Version", trailing: applicationVersion)
+                    TextPairView(leading: L10n.version, trailing: applicationVersion)
                 }
 
-                // TODO: update not working?
                 if let lastActivityDate = session.lastActivityDate {
                     TextPairView(
-                        "Last seen",
+                        L10n.lastSeen,
                         value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
                     )
                     .id(currentDate)
@@ -96,22 +95,21 @@ struct ActiveDeviceDetailView: View {
                 }
 
                 if let client = session.client {
-                    TextPairView(leading: "Client", trailing: client)
+                    TextPairView(leading: L10n.client, trailing: client)
                 }
 
                 if let device = session.deviceName {
-                    TextPairView(leading: "Device", trailing: device)
+                    TextPairView(leading: L10n.device, trailing: device)
                 }
 
                 if let applicationVersion = session.applicationVersion {
-                    TextPairView(leading: "Version", trailing: applicationVersion)
+                    TextPairView(leading: L10n.version, trailing: applicationVersion)
                 }
             }
 
             Section(L10n.streams) {
                 if let playMethod = playState.playMethod {
-                    // TODO: localize instead of using raw value
-                    TextPairView(leading: "Method", trailing: playMethod.rawValue)
+                    TextPairView(leading: L10n.method, trailing: playMethod.description)
                 }
 
                 StreamSection(
@@ -160,7 +158,6 @@ struct ActiveDeviceDetailView: View {
                 .frame(width: 100)
                 .accessibilityIgnoresInvertColors()
 
-                // TODO: verify with live tv
                 VStack(alignment: .leading) {
 
                     if let parent = item.parentTitle {
@@ -203,11 +200,11 @@ struct ActiveDeviceDetailView: View {
                     idleContent(session: session)
                 }
             } else {
-                Text("No session")
+                Text(L10n.noSession)
             }
         }
         .animation(.linear(duration: 0.2), value: box.value)
-        .navigationTitle("Session")
+        .navigationTitle(L10n.session)
         .onReceive(timer) { newValue in
             currentDate = newValue
         }

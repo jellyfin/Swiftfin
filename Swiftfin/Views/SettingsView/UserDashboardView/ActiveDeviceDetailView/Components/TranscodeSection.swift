@@ -33,20 +33,9 @@ extension ActiveDeviceDetailView {
 
         @ViewBuilder
         private func getActiveTranscodeIcons(reasons: [TranscodeReason]) -> some View {
-            // Ensure the Icons are always in the same order
-            let iconOrder: [String] = [
-                "speaker.wave.2", // Audio
-                "photo.tv", // Video
-                "captions.bubble", // Subtitle
-                "shippingbox", // Container
-                "questionmark.app", // Unknown
-            ]
 
-            // Map the Transcoding Reason Icons
-            let uniqueIcons = Set(reasons.map { getActiveTranscodeReasons(reason: $0) })
-            let transcodeIcons = iconOrder.filter { uniqueIcons.contains($0) }
+            let transcodeIcons = Set(reasons.map(\.systemImage)).sorted()
 
-            // Center the Transcoding Reason Icons for the Header
             HStack {
                 Spacer()
                 ForEach(transcodeIcons, id: \.self) { icon in
@@ -57,50 +46,13 @@ extension ActiveDeviceDetailView {
             }
         }
 
-        // MARK: - Get Active Transcode Reason Icons
-
-        private func getActiveTranscodeReasons(reason: TranscodeReason) -> String {
-            switch reason {
-            case .containerNotSupported,
-                 .containerBitrateExceedsLimit:
-                return "shippingbox"
-            case .audioCodecNotSupported,
-                 .audioIsExternal,
-                 .secondaryAudioNotSupported,
-                 .audioChannelsNotSupported,
-                 .audioProfileNotSupported,
-                 .audioSampleRateNotSupported,
-                 .audioBitDepthNotSupported,
-                 .audioBitrateNotSupported,
-                 .unknownAudioStreamInfo:
-                return "speaker.wave.2"
-            case .videoCodecNotSupported,
-                 .videoProfileNotSupported,
-                 .videoLevelNotSupported,
-                 .videoResolutionNotSupported,
-                 .videoBitDepthNotSupported,
-                 .videoFramerateNotSupported,
-                 .refFramesNotSupported,
-                 .anamorphicVideoNotSupported,
-                 .interlacedVideoNotSupported,
-                 .videoBitrateNotSupported,
-                 .unknownVideoStreamInfo,
-                 .videoRangeTypeNotSupported:
-                return "photo.tv"
-            case .subtitleCodecNotSupported:
-                return "captions.bubble"
-            default:
-                return "questionmark.app"
-            }
-        }
-
         // MARK: - Get Active Transcode Reason Descriptions
 
         @ViewBuilder
         private func getActiveTranscodeReasons(reasons: [TranscodeReason]) -> some View {
             VStack(alignment: .center, spacing: 8) {
                 ForEach(reasons, id: \.self) { reason in
-                    Text(reason.rawValue)
+                    Text(reason.description)
                         .frame(maxWidth: .infinity)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
