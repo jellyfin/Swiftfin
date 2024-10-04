@@ -113,8 +113,7 @@ final class ScheduledTasksViewModel: ViewModel, Stateful {
 
     // MARK: - Get All Tasks
 
-    // Note: If task list was modified while on this view it won't update
-    //       until popped and presented again. However, that is a rare case.
+    // TODO: update tasks like `ActiveSessionsViewModel`
     private func getTasks() async throws {
         let request = Paths.getTasks(isHidden: false, isEnabled: true)
         let response = try await userSession.client.send(request)
