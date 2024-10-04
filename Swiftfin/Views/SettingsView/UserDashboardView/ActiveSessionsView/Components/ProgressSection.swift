@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveDevicesView {
+extension ActiveSessionsView {
 
     struct ProgressSection: View {
 
@@ -62,7 +62,7 @@ extension ActiveDevicesView {
         var body: some View {
             VStack {
                 ProgressView(value: playbackPercentage)
-                    .progressViewStyle(.SwiftfinLinear(secondaryProgress: transcodingPercentage))
+                    .progressViewStyle(.playback(secondaryProgress: transcodingPercentage))
                     .frame(height: 5)
                     .foregroundStyle(.primary, .secondary, .orange)
 

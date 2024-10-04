@@ -11,17 +11,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: remove timer and have viewmodel debounce
-//       - or use `onReceive` for changes and trigger timer in views?
 // TODO: filter for streaming/inactive
 
-struct ActiveDevicesView: View {
+struct ActiveSessionsView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-
-    @State
-    private var layout: CollectionVGridLayout = .columns(1, insets: .zero, itemSpacing: 4, lineSpacing: 4)
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()
@@ -38,7 +33,7 @@ struct ActiveDevicesView: View {
         } else {
             CollectionVGrid(
                 viewModel.sessions.keys,
-                layout: $layout
+                layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
             ) { id in
                 ActiveSessionRow(box: viewModel.sessions[id]!) {
                     router.route(
@@ -73,11 +68,11 @@ struct ActiveDevicesView: View {
             }
         }
         .navigationTitle(L10n.activeDevices)
-        .onReceive(timer) { _ in
-            viewModel.send(.getSessions)
-        }
         .onFirstAppear {
             viewModel.send(.refreshSessions)
+        }
+        .onReceive(timer) { _ in
+            viewModel.send(.getSessions)
         }
         .refreshable {
             viewModel.send(.refreshSessions)

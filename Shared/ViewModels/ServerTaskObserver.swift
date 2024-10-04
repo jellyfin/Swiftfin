@@ -28,7 +28,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
     }
 
     @Published
-    var state: State = .initial
+    final var state: State = .initial
     @Published
     private(set) var task: TaskInfo
 
@@ -37,10 +37,8 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
     var id: String? { task.id }
 
-    init(task: TaskInfo, _ manualState: State = .initial) {
+    init(task: TaskInfo) {
         self.task = task
-
-        self.state = manualState
     }
 
     func respond(to action: Action) -> State {
@@ -112,7 +110,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
                 self.task = response.value
             }
 
-            guard response.value.state == .running else {
+            guard response.value.state == .running || response.value.state == .cancelling else {
                 break
             }
 

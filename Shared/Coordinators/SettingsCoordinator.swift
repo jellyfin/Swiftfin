@@ -53,7 +53,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDashboard = makeUserDashboard
     @Route(.push)
-    var activeDevices = makeActiveDevices
+    var activeSessions = makeActiveSessions
     @Route(.push)
     var activeDeviceDetails = makeActiveDeviceDetails
     @Route(.modal)
@@ -168,13 +168,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeActiveDevices() -> some View {
-        ActiveDevicesView()
+    func makeActiveSessions() -> some View {
+        ActiveSessionsView()
     }
 
     @ViewBuilder
     func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
-        ActiveDeviceDetailView(box: box)
+        ActiveSessionDetailView(box: box)
     }
 
     func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

@@ -25,7 +25,7 @@ struct UserDashboardView: View {
 
             ChevronButton(L10n.activeDevices)
                 .onSelect {
-                    router.route(to: \.activeDevices)
+                    router.route(to: \.activeSessions)
                 }
 
             Section(L10n.advanced) {

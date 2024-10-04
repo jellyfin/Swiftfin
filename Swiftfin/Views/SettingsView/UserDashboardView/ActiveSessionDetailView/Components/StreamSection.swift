@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ActiveDeviceDetailView {
+extension ActiveSessionDetailView {
 
     struct StreamSection: View {
 
@@ -19,7 +19,7 @@ extension ActiveDeviceDetailView {
         // MARK: - Body
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading) {
 
                 // Create the Audio Codec Flow if the stream uses Audio
                 if let sourceAudioCodec = nowPlayingItem.mediaStreams?.first(where: { $0.type == .audio })?.codec {
@@ -52,13 +52,13 @@ extension ActiveDeviceDetailView {
         @ViewBuilder
         private func getMediaComparison(sourceComponent: String, destinationComponent: String) -> some View {
             HStack {
-                Text(sourceComponent.uppercased())
+                Text(sourceComponent)
                     .frame(maxWidth: .infinity, alignment: .trailing)
 
                 Image(systemName: (destinationComponent != sourceComponent) ? "shuffle" : "arrow.right")
                     .frame(maxWidth: .infinity, alignment: .center)
 
-                Text(destinationComponent.uppercased())
+                Text(destinationComponent)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
             .frame(maxWidth: .infinity)

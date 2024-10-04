@@ -14,6 +14,9 @@ extension ScheduledTasksView {
 
     struct ScheduledTaskButton: View {
 
+        @CurrentDate
+        private var currentDate: Date
+
         @EnvironmentObject
         private var router: SettingsCoordinator.Router
 
@@ -21,12 +24,7 @@ extension ScheduledTasksView {
         var observer: ServerTaskObserver
 
         @State
-        private var currentDate: Date = .now
-        @State
         private var isPresentingConfirmation = false
-
-        private let timer = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
 
         // MARK: - Task Details Section
 
@@ -49,16 +47,9 @@ extension ScheduledTasksView {
         private var statusView: some View {
             switch observer.state {
             case .running:
-                ZStack {
-                    Image(systemName: "stop.fill")
-                        .foregroundStyle(.secondary)
-                        .padding(6)
-                        .overlay {
-                            ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
-                                .progressViewStyle(.gauge(lineWidthRatio: 8))
-                        }
-                }
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
+                    .progressViewStyle(.gauge(systemImage: "stop.fill"))
+                    .transition(.opacity.combined(with: .scale).animation(.bouncy))
             default:
                 Image(systemName: "play.fill")
                     .foregroundStyle(.secondary)
@@ -76,7 +67,7 @@ extension ScheduledTasksView {
                 Text(L10n.cancelling)
             } else {
                 if let taskEndTime = observer.task.lastExecutionResult?.endTimeUtc {
-                    Text("\(L10n.lastRun) \(taskEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
+                    Text(L10n.lastRunTime(Date.RelativeFormatStyle(presentation: .numeric, unitsStyle: .narrow).format(taskEndTime)))
                         .id(currentDate)
                         .monospacedDigit()
                 } else {
@@ -107,13 +98,11 @@ extension ScheduledTasksView {
                     Spacer()
 
                     statusView
+                        .frame(width: 25, height: 25)
                 }
             }
             .animation(.linear(duration: 0.1), value: observer.state)
             .foregroundStyle(.primary, .secondary)
-            .onReceive(timer) { newValue in
-                currentDate = newValue
-            }
             .confirmationDialog(
                 observer.task.name ?? .emptyDash,
                 isPresented: $isPresentingConfirmation,

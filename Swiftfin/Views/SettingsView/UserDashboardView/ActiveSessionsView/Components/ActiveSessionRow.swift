@@ -12,20 +12,19 @@ import SwiftUI
 
 // TODO: inactive session device image
 
-extension ActiveDevicesView {
+extension ActiveSessionsView {
 
     struct ActiveSessionRow: View {
+
+        @CurrentDate
+        private var currentDate: Date
 
         @ObservedObject
         private var box: BindingBox<SessionInfo?>
 
-        @State
-        private var currentDate: Date = .now
-
         private let onSelect: () -> Void
-        private let timer = Timer.publish(every: 1, on: .main, in: .common)
-            .autoconnect()
 
+        // parent list won't show row if value is nil anyways
         private var session: SessionInfo {
             box.value ?? .init()
         }
@@ -121,9 +120,6 @@ extension ActiveDevicesView {
                 }
             }
             .onSelect(perform: onSelect)
-            .onReceive(timer) { newValue in
-                currentDate = newValue
-            }
         }
     }
 }

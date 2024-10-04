@@ -19,14 +19,11 @@ import SwiftUI
 
 struct EditScheduledTaskView: View {
 
+    @CurrentDate
+    private var currentDate: Date
+
     @ObservedObject
     var observer: ServerTaskObserver
-
-    @State
-    private var currentDate: Date = .now
-
-    private let timer = Timer.publish(every: 1, on: .main, in: .common)
-        .autoconnect()
 
     var body: some View {
         List {
@@ -62,13 +59,10 @@ struct EditScheduledTaskView: View {
             }
         }
         .navigationTitle(L10n.task)
-        .onReceive(timer) { newValue in
-            currentDate = newValue
-        }
     }
 }
 
-// TODO: remove
+// TODO: remove after view done
 #Preview {
     NavigationView {
         EditScheduledTaskView(

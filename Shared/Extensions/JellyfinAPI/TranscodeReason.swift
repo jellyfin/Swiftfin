@@ -10,8 +10,9 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-extension TranscodeReason {
-    var description: String {
+extension TranscodeReason: Displayable, SystemImageable {
+
+    var displayTitle: String {
         switch self {
         case .containerNotSupported:
             return L10n.containerNotSupported

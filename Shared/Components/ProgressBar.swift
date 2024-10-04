@@ -34,16 +34,16 @@ struct ProgressBar: View {
 
 // TODO: fix capsule with low progress
 
-extension ProgressViewStyle where Self == LinearProgressViewStyle {
+extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
 
-    static var SwiftfinLinear: Self { .init(secondaryProgress: nil) }
+    static var playback: Self { .init(secondaryProgress: nil) }
 
-    static func SwiftfinLinear(secondaryProgress: Double?) -> Self {
+    static func playback(secondaryProgress: Double?) -> Self {
         .init(secondaryProgress: secondaryProgress)
     }
 }
 
-struct LinearProgressViewStyle: ProgressViewStyle {
+struct PlaybackProgressViewStyle: ProgressViewStyle {
 
     @State
     private var contentSize: CGSize = .zero
@@ -78,10 +78,10 @@ struct LinearProgressViewStyle: ProgressViewStyle {
     }
 }
 
-#Preview {
-    ProgressView(value: 0.3)
-        .progressViewStyle(.SwiftfinLinear(secondaryProgress: 0.3))
-        .frame(height: 8)
-        .padding(.horizontal, 10)
-        .foregroundStyle(.primary, .secondary, .orange)
-}
+// #Preview {
+//    ProgressView(value: 0.3)
+//        .progressViewStyle(.SwiftfinLinear(secondaryProgress: 0.3))
+//        .frame(height: 8)
+//        .padding(.horizontal, 10)
+//        .foregroundStyle(.primary, .secondary, .orange)
+// }

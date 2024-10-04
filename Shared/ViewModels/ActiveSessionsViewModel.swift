@@ -42,13 +42,8 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     @Published
     final var state: State = .initial
 
-    private let deviceID: String?
     private let activeWithinSeconds: Int = 960
     private var sessionTask: AnyCancellable?
-
-    init(deviceID: String? = nil) {
-        self.deviceID = deviceID
-    }
 
     func respond(to action: Action) -> State {
         switch action {
@@ -108,7 +103,6 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     private func updateSessions() async throws {
         var parameters = Paths.GetSessionsParameters()
         parameters.activeWithinSeconds = activeWithinSeconds
-        parameters.deviceID = deviceID
 
         let request = Paths.getSessions(parameters: parameters)
         let response = try await userSession.client.send(request)

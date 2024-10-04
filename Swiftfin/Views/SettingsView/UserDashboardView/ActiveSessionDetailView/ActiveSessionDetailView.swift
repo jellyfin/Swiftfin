@@ -11,19 +11,16 @@ import JellyfinAPI
 import SwiftUI
 import SwiftUIIntrospect
 
-struct ActiveDeviceDetailView: View {
+struct ActiveSessionDetailView: View {
+
+    @CurrentDate
+    private var currentDate: Date
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @ObservedObject
     var box: BindingBox<SessionInfo?>
-
-    @State
-    private var currentDate: Date = .now
-
-    private let timer = Timer.publish(every: 1, on: .main, in: .common)
-        .autoconnect()
 
     // MARK: Create Idle Content View
 
@@ -77,7 +74,7 @@ struct ActiveDeviceDetailView: View {
             nowPlayingSection(item: nowPlayingItem)
 
             Section(L10n.progress) {
-                ActiveDevicesView.ProgressSection(
+                ActiveSessionsView.ProgressSection(
                     item: nowPlayingItem,
                     playState: playState,
                     transcodingInfo: session.transcodingInfo
@@ -107,6 +104,8 @@ struct ActiveDeviceDetailView: View {
                 }
             }
 
+            // TODO: allow showing item stream details?
+            // TODO: don't show codec changes on direct play?
             Section(L10n.streams) {
                 if let playMethod = playState.playMethod {
                     TextPairView(leading: L10n.method, trailing: playMethod.description)
@@ -118,7 +117,7 @@ struct ActiveDeviceDetailView: View {
                 )
             }
 
-            if let transcodeReasons = session.transcodingInfo?.transcodeReasons {
+            if let transcodeReasons = session.transcodingInfo?.transcodeReasons, transcodeReasons.isNotEmpty {
                 Section(L10n.transcodeReasons) {
                     TranscodeSection(transcodeReasons: transcodeReasons)
                 }
@@ -205,8 +204,5 @@ struct ActiveDeviceDetailView: View {
         }
         .animation(.linear(duration: 0.2), value: box.value)
         .navigationTitle(L10n.session)
-        .onReceive(timer) { newValue in
-            currentDate = newValue
-        }
     }
 }
