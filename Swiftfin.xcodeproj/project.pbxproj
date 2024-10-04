@@ -67,8 +67,6 @@
 		4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */; };
 		4EC50D612C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
 		4EC50D622C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
-		4EC50D642C93536F00FC3D0E /* UserServerSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D632C93536F00FC3D0E /* UserServerSecurityViewModel.swift */; };
-		4EC50D652C93536F00FC3D0E /* UserServerSecurityViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D632C93536F00FC3D0E /* UserServerSecurityViewModel.swift */; };
 		4EC6C16B2C92999800FC904B /* TranscodeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC6C16A2C92999800FC904B /* TranscodeSection.swift */; };
 		4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
 		4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
@@ -1056,7 +1054,6 @@
 		4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileSettingsView.swift; sourceTree = "<group>"; };
 		4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
 		4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTasksViewModel.swift; sourceTree = "<group>"; };
-		4EC50D632C93536F00FC3D0E /* UserServerSecurityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserServerSecurityViewModel.swift; sourceTree = "<group>"; };
 		4EC6C16A2C92999800FC904B /* TranscodeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeSection.swift; sourceTree = "<group>"; };
 		4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeReason.swift; sourceTree = "<group>"; };
 		4EE141682C8BABDF0045B661 /* ProgressSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSection.swift; sourceTree = "<group>"; };
@@ -1979,7 +1976,6 @@
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
 				E14EA1682BF7330A00DE757A /* UserProfileImageViewModel.swift */,
-				4EC50D632C93536F00FC3D0E /* UserServerSecurityViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				BD0BA2292AD6501300306A8D /* VideoPlayerManager */,
 				E14A08CA28E6831D004FC984 /* VideoPlayerViewModel.swift */,
@@ -4449,7 +4445,6 @@
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E18A17F2298C68BB00C22F62 /* MainOverlay.swift in Sources */,
 				E1763A6A2BF3D177004DF6AB /* PublicUserRow.swift in Sources */,
-				4EC50D652C93536F00FC3D0E /* UserServerSecurityViewModel.swift in Sources */,
 				E1E6C44B29AED2B70064123F /* HorizontalAlignment.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
 				53ABFDE5267974EF00886593 /* ViewModel.swift in Sources */,
@@ -4641,7 +4636,6 @@
 				E1763A742BF3FA4C004DF6AB /* AppLoadingView.swift in Sources */,
 				E17AC9712954F636003D2BC2 /* DownloadListCoordinator.swift in Sources */,
 				4EBE06532C7ED0E1004A6C03 /* DeviceProfile.swift in Sources */,
-				4EC50D642C93536F00FC3D0E /* UserServerSecurityViewModel.swift in Sources */,
 				E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */,
 				E150C0BA2BFD44F500944FFA /* ImagePipeline.swift in Sources */,
 				E18E01EB288747230022598C /* MovieItemContentView.swift in Sources */,
