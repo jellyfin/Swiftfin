@@ -65,12 +65,12 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    private(set) var playbackItem: MediaPlayerItem! = nil
+    private(set) var playbackItem: MediaPlayerItem? = nil
 
     @Published
     private(set) var item: BaseItemDto
-    @Published
-    private(set) var progress: ProgressBox = .init(progress: 0, seconds: 0)
+//    @Published
+    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
@@ -79,7 +79,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     final var state: State = .initial
 
-    @Published
+//    @Published
     final var lastAction: Action? = nil
 
     var events: AnyPublisher<Event, Never> {
@@ -98,16 +98,12 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    // TODO: remove?
-    init(
-        item: BaseItemDto,
-        mediaSource: MediaSourceInfo
-    ) {
+    init(item: BaseItemDto, mediaItemProvider: @escaping () async throws -> MediaPlayerItem) {
         self.item = item
         super.init()
 
-        buildCurrentItem(with: item, mediaSource: mediaSource)
-        queue.append(item)
+        // TODO: don't build on init
+        buildMediaItem(from: mediaItemProvider)
     }
 
     init(playbackItem: MediaPlayerItem) {
@@ -150,29 +146,61 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             return .buffering
         case let .seek(seconds: seconds):
 
-            progress.seconds = seconds
-            progress.progress = CGFloat(seconds) / CGFloat(item.runTimeSeconds)
+            progress = .init(
+                progress: CGFloat(seconds) / CGFloat(item.runTimeSeconds),
+                seconds: seconds
+            )
 
             return state
         }
     }
 
     // TODO: remove?
-    private func buildCurrentItem(with item: BaseItemDto, mediaSource: MediaSourceInfo) {
+//    private func buildCurrentItem(with item: BaseItemDto, mediaSource: MediaSourceInfo) {
+//        itemBuildTask?.cancel()
+//
+//        itemBuildTask = Task { [weak self] in
+//            do {
+//                await MainActor.run { [weak self] in
+//                    self?.state = .loadingItem
+//                }
+//
+//                let playbackItem = try await MediaPlayerItem.build(
+//                    for: item,
+//                    mediaSource: mediaSource
+//                )
+//
+    ////                try await Task.sleep(nanoseconds: 3_000_000_000)
+//
+//                guard let self else { return }
+//
+//                await MainActor.run {
+//                    self.state = .buffering
+//                    self.playbackItem = playbackItem
+//                    self.eventSubject.send(.playNew(playbackItem: playbackItem))
+//                }
+//            } catch {
+//                guard let self, !Task.isCancelled else { return }
+//
+//                await MainActor.run {
+//                    self.send(.error(.init(error.localizedDescription)))
+//                }
+//            }
+//        }
+//        .asAnyCancellable()
+//    }
+
+    private func buildMediaItem(from provider: @escaping () async throws -> MediaPlayerItem) {
         itemBuildTask?.cancel()
 
         itemBuildTask = Task { [weak self] in
             do {
+
                 await MainActor.run { [weak self] in
                     self?.state = .loadingItem
                 }
 
-                let playbackItem = try await MediaPlayerItem.build(
-                    for: item,
-                    mediaSource: mediaSource
-                )
-
-//                try await Task.sleep(nanoseconds: 3_000_000_000)
+                let playbackItem = try await provider()
 
                 guard let self else { return }
 

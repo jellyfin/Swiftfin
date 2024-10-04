@@ -67,11 +67,15 @@ struct VideoPlayer: View {
 
                         if !isScrubbing {
                             scrubbedProgress.progress = newProgress
+                            scrubbedProgress.seconds = newSeconds
                         }
 
                         manager.send(.seek(seconds: newSeconds))
                     }
                     .onStateUpdated { state, _ in
+
+                        guard state != .playing || manager.state != .playing else { return }
+
                         switch state {
                         case .buffering, .esAdded, .opening:
                             manager.send(.buffer)
@@ -126,9 +130,6 @@ struct VideoPlayer: View {
 
                 vlcUIProxy.setTime(.seconds(scrubbedProgress.seconds))
             }
-            .onChange(of: scrubbedProgress.progress) { progress in
-                scrubbedProgress.seconds = Int(progress * CGFloat(manager.item.runTimeSeconds))
-            }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
             }
@@ -170,41 +171,57 @@ struct VideoPlayer: View {
 
 extension VideoPlayer {
 
+    init(manager: MediaPlayerManager) {
+
+        let videoPlayerProxy = VLCVideoPlayerProxy()
+        let vlcUIProxy = VLCVideoPlayer.Proxy()
+
+        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+        manager.proxy = videoPlayerProxy
+
+        manager.listeners.append(NowPlayableListener(manager: manager))
+
+        self.init(
+            manager: manager,
+            vlcUIProxy: vlcUIProxy
+        )
+    }
+
     // TODO: take in manager instead
 
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+//    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+//
+//        let manager = MediaPlayerManager(item: item, mediaSource: mediaSource)
+//        let videoPlayerProxy = VLCVideoPlayerProxy()
+//        let vlcUIProxy = VLCVideoPlayer.Proxy()
+//
+//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+//        manager.proxy = videoPlayerProxy
+//
+//        manager.listeners.append(NowPlayableListener(manager: manager))
+//
+//        self.init(
+//            manager: manager,
+//            vlcUIProxy: vlcUIProxy
+//        )
+//    }
 
-        let manager = MediaPlayerManager(item: item, mediaSource: mediaSource)
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
-
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self.init(
-            manager: manager,
-            vlcUIProxy: vlcUIProxy
-        )
-    }
-
-    init(item: MediaPlayerItem) {
-
-        let manager = MediaPlayerManager(playbackItem: item)
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
-
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self.init(
-            manager: manager,
-            vlcUIProxy: vlcUIProxy
-        )
-    }
+//    init(item: MediaPlayerItem) {
+//
+//        let manager = MediaPlayerManager(playbackItem: item)
+//        let videoPlayerProxy = VLCVideoPlayerProxy()
+//        let vlcUIProxy = VLCVideoPlayer.Proxy()
+//
+//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+//        manager.proxy = videoPlayerProxy
+//
+//        manager.listeners.append(NowPlayableListener(manager: manager))
+//
+//        self.init(
+//            manager: manager,
+//            vlcUIProxy: vlcUIProxy
+//        )
+//    }
 }
 
 // struct VideoPlayer_Previews: PreviewProvider {

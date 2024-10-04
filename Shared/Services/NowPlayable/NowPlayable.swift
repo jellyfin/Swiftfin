@@ -38,7 +38,7 @@ class NowPlayableListener: MediaPlayerListener {
 
     private func setup(with manager: MediaPlayerManager) {
         manager.$playbackItem.sink(receiveValue: itemDidChange).store(in: &cancellables)
-        manager.$progress.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+//        manager.$progress.sink(receiveValue: secondsDidChange).store(in: &cancellables)
 //        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
 
@@ -48,7 +48,7 @@ class NowPlayableListener: MediaPlayerListener {
         nowPlayable.handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
     }
 
-    private func secondsDidChange(newProgress: ProgressBox) {
+    private func secondsDidChange(newProgress: ProgressBoxValue) {
         nowPlayable.handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(

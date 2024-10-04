@@ -15,12 +15,11 @@ struct SeeAllButton: View {
     var body: some View {
         Button(
             L10n.seeAll,
-            systemImage: "chevron.right"
-        ) {
-            action()
-        }
+            systemImage: "chevron.right",
+            action: action
+        )
         .font(.subheadline.weight(.bold))
-        .labelStyle(.trailingIcon)
+        .labelStyle(.titleAndIcon.trailingIcon)
     }
 }
 

@@ -17,54 +17,37 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var manager: MediaPlayerManager
 
         private var systemImage: String {
-//            if isAudioTrackSelected {
-//                "captions.bubble.fill"
-//            } else {
-            "captions.bubble"
-//            }
+            if manager.playbackItem?.selectedSubtitleStreamIndex == nil {
+                "captions.bubble"
+            } else {
+                "captions.bubble.fill"
+            }
         }
 
         var body: some View {
-            Menu(
-                L10n.subtitles,
-                systemImage: systemImage
-            ) {
-                Section(L10n.subtitles) {
-//                    Button("Test") {}
-//                    Button("Test") {}
-//                    Button("Test") {}
-
-                    ForEach(manager.playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
-                        Button {
-                            manager.playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
-                            manager.proxy.set(subtitleStream: stream)
-                        } label: {
-                            if manager.playbackItem.selectedSubtitleStreamIndex == stream.index {
-                                Label(stream.displayTitle ?? .emptyDash, systemImage: "checkmark")
-                            } else {
-                                Text(stream.displayTitle ?? .emptyDash)
+            if let playbackItem = manager.playbackItem {
+                Menu(
+                    L10n.subtitles,
+                    systemImage: systemImage
+                ) {
+                    Section(L10n.subtitles) {
+                        ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
+                            Button {
+                                playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
+//                                manager.proxy.set(subtitleStream: stream)
+                            } label: {
+                                if playbackItem.selectedSubtitleStreamIndex == stream.index {
+                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                                } else {
+                                    Text(stream.displayTitle ?? L10n.unknown)
+                                }
                             }
                         }
                     }
                 }
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .id(systemImage)
             }
-//            Menu {
-//                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
-//                    Button {
-//                        videoPlayerManager.subtitleTrackIndex = subtitleTrack.index ?? -1
-//                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
-//                    } label: {
-//                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
-//                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
-//                        } else {
-//                            Text(subtitleTrack.displayTitle ?? .emptyDash)
-//                        }
-//                    }
-//                }
-//            } label: {
-//                content(videoPlayerManager.subtitleTrackIndex != -1)
-//                    .eraseToAnyView()
-//            }
         }
     }
 }

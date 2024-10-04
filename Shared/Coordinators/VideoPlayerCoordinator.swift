@@ -37,6 +37,8 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             PreferencesView {
                 ZStack {
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                        VideoPlayer.init(manager: .init(item: <#T##BaseItemDto#>, mediaItemProvider: <#T##() async throws -> MediaPlayerItem#>))
+                        
                         VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
                     } else {
                         NativeVideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)

@@ -17,46 +17,36 @@ extension VideoPlayer.Overlay.ActionButtons {
         private var manager: MediaPlayerManager
 
         private var systemImage: String {
-//            if isAudioTrackSelected {
-//                "speaker.wave.2.fill"
-//            } else {
-            "speaker.wave.2"
-//            }
+            if manager.playbackItem?.selectedAudioStreamIndex == nil {
+                "speaker.wave.2"
+            } else {
+                "speaker.wave.2.fill"
+            }
         }
 
         var body: some View {
-            Menu(
-                L10n.audio,
-                systemImage: systemImage
-            ) {
-                Section(L10n.audio) {
-                    ForEach(manager.playbackItem.audioStreams.prepending(.none), id: \.index) { stream in
-                        Button {
-                            manager.playbackItem.selectedAudioStreamIndex = stream.index ?? -1
-                            manager.proxy.set(audioStream: stream)
-                        } label: {}
+            if let playbackItem = manager.playbackItem {
+                Menu(
+                    L10n.audio,
+                    systemImage: systemImage
+                ) {
+                    Section(L10n.audio) {
+                        ForEach(playbackItem.audioStreams, id: \.index) { stream in
+                            Button {
+                                playbackItem.selectedAudioStreamIndex = stream.index ?? -1
+                            } label: {
+                                if playbackItem.selectedAudioStreamIndex == stream.index {
+                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                                } else {
+                                    Text(stream.displayTitle ?? L10n.unknown)
+                                }
+                            }
+                        }
                     }
-
-//                    Button("Test") {}
-//                    Button("Test") {}
-//                    Button("Test") {}
                 }
-
-//                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
-//                    Button {
-//                        videoPlayerManager.audioTrackIndex = audioTrack.index ?? -1
-//                        videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
-//                    } label: {
-//                        if videoPlayerManager.audioTrackIndex == audioTrack.index ?? -1 {
-//                            Label(audioTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
-//                        } else {
-//                            Text(audioTrack.displayTitle ?? .emptyDash)
-//                        }
-//                    }
-//                }
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .id(systemImage)
             }
-            .transition(.scale.animation(.bouncy))
-//            .id(isAspectFilled)
         }
     }
 }

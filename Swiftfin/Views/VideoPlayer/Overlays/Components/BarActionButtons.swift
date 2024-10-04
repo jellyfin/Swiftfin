@@ -44,7 +44,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var menuButtons: some View {
             Menu(
-                "Button Menu",
+                "Menu",
                 systemImage: "ellipsis.circle"
             ) {
                 ForEach(menuActionButtons) { actionButton in

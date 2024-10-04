@@ -35,7 +35,10 @@ final class VideoPlayerWrapperCoordinator: NavigationCoordinatable {
 
     func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            VideoPlayer(item: parameters.0, mediaSource: parameters.1)
+            Text("")
+
+//            VideoPlayer(manager: VideoPlayerManager(item: parameters.0, mediaSource: parameters.1))
+//            VideoPlayer(item: parameters.0, mediaSource: parameters.1)
         }
     }
 

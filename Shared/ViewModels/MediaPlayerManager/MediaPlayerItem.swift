@@ -26,12 +26,18 @@ class ProgressBox: ObservableObject {
     }
 }
 
+struct ProgressBoxValue {
+
+    let progress: CGFloat
+    let seconds: Int
+}
+
 class MediaPlayerItem: ViewModel {
 
     @Published
-    var selectedAudioStreamIndex: Int = -1
+    var selectedAudioStreamIndex: Int? = nil
     @Published
-    var selectedSubtitleStreamIndex: Int = -1
+    var selectedSubtitleStreamIndex: Int? = nil
 
     let baseItem: BaseItemDto
     let chapters: [ChapterInfo.FullInfo]

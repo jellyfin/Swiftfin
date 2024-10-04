@@ -13,54 +13,54 @@ import JellyfinAPI
 //       with the channel retrieving method below and is mainly just for reference
 //       for how I should probably handle getting the channels of programs elsewhere.
 
-class LiveVideoPlayerManager: MediaPlayerManager {
-
-    @Published
-    var program: ChannelProgram?
-
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: ChannelProgram? = nil) {
-        self.program = program
-//        super.init()
-        super.init(item: item, mediaSource: mediaSource)
-
-        Task {
-//            let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
-
-//            await MainActor.run {
-//                self.currentViewModel = viewModel
+// class LiveVideoPlayerManager: MediaPlayerManager {
+//
+//    @Published
+//    var program: ChannelProgram?
+//
+//    init(item: BaseItemDto, mediaSource: MediaSourceInfo, program: ChannelProgram? = nil) {
+//        self.program = program
+////        super.init()
+//        super.init(item: item, mediaSource: mediaSource)
+//
+//        Task {
+////            let viewModel = try await item.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
+//
+////            await MainActor.run {
+////                self.currentViewModel = viewModel
+////            }
+//        }
+//    }
+//
+//    init(program: BaseItemDto) {
+//        super.init(item: program, mediaSource: .init())
+//
+//        Task {
+//            guard let channel = try? await self.getChannel(for: program), let mediaSource = channel.mediaSources?.first else {
+//                assertionFailure("No channel for program?")
+//                return
 //            }
-        }
-    }
-
-    init(program: BaseItemDto) {
-        super.init(item: program, mediaSource: .init())
-
-        Task {
-            guard let channel = try? await self.getChannel(for: program), let mediaSource = channel.mediaSources?.first else {
-                assertionFailure("No channel for program?")
-                return
-            }
-
-//            let viewModel = try await program.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
-
-//            await MainActor.run {
-//                self.currentViewModel = viewModel
-//            }
-        }
-    }
-
-    private func getChannel(for program: BaseItemDto) async throws -> BaseItemDto? {
-
-        var parameters = Paths.GetItemsByUserIDParameters()
-        parameters.fields = .MinimumFields
-        parameters.ids = [program.channelID ?? ""]
-
-        let request = Paths.getItemsByUserID(
-            userID: userSession.user.id,
-            parameters: parameters
-        )
-        let response = try await userSession.client.send(request)
-
-        return response.value.items?.first
-    }
-}
+//
+////            let viewModel = try await program.liveVideoPlayerViewModel(with: mediaSource, logger: logger)
+//
+////            await MainActor.run {
+////                self.currentViewModel = viewModel
+////            }
+//        }
+//    }
+//
+//    private func getChannel(for program: BaseItemDto) async throws -> BaseItemDto? {
+//
+//        var parameters = Paths.GetItemsByUserIDParameters()
+//        parameters.fields = .MinimumFields
+//        parameters.ids = [program.channelID ?? ""]
+//
+//        let request = Paths.getItemsByUserID(
+//            userID: userSession.user.id,
+//            parameters: parameters
+//        )
+//        let response = try await userSession.client.send(request)
+//
+//        return response.value.items?.first
+//    }
+// }

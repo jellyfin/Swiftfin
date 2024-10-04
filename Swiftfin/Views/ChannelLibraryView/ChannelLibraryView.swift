@@ -75,24 +75,24 @@ struct ChannelLibraryView: View {
 
     private func compactChannelView(channel: ChannelProgram) -> some View {
         CompactChannelView(channel: channel.channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                )
-            }
+//            .onSelect {
+//                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+//                mainRouter.route(
+//                    to: \.liveVideoPlayer,
+//                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+//                )
+//            }
     }
 
     private func detailedChannelView(channel: ChannelProgram) -> some View {
         DetailedChannelView(channel: channel)
-            .onSelect {
-                guard let mediaSource = channel.channel.mediaSources?.first else { return }
-                mainRouter.route(
-                    to: \.liveVideoPlayer,
-                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
-                )
-            }
+//            .onSelect {
+//                guard let mediaSource = channel.channel.mediaSources?.first else { return }
+//                mainRouter.route(
+//                    to: \.liveVideoPlayer,
+//                    LiveVideoPlayerManager(item: channel.channel, mediaSource: mediaSource)
+//                )
+//            }
     }
 
     @ViewBuilder
