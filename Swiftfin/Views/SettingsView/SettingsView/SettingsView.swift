@@ -6,9 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CoreData
 import Defaults
-import Factory
+import JellyfinAPI
 import Stinsen
 import SwiftUI
 
@@ -16,7 +15,6 @@ struct SettingsView: View {
 
     @Default(.userAccentColor)
     private var accentColor
-
     @Default(.userAppearance)
     private var appearance
     @Default(.VideoPlayer.videoPlayerType)
@@ -33,17 +31,23 @@ struct SettingsView: View {
 
             Section {
 
-                UserProfileRow {
+                UserProfileRow(user: viewModel.userSession.user.data) {
                     router.route(to: \.userProfile, viewModel)
                 }
 
-                // TODO: admin users go to dashboard instead
                 ChevronButton(
                     L10n.server,
                     subtitle: viewModel.userSession.server.name
                 )
                 .onSelect {
-                    router.route(to: \.serverDetail, viewModel.userSession.server)
+                    router.route(to: \.serverConnection, viewModel.userSession.server)
+                }
+
+                if viewModel.userSession.user.isAdministrator {
+                    ChevronButton(L10n.dashboard)
+                        .onSelect {
+                            router.route(to: \.userDashboard)
+                        }
                 }
             }
 

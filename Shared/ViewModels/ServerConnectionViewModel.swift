@@ -10,7 +10,7 @@ import CoreStore
 import Foundation
 import JellyfinAPI
 
-class EditServerViewModel: ViewModel {
+class ServerConnectionViewModel: ViewModel {
 
     @Published
     var server: ServerState

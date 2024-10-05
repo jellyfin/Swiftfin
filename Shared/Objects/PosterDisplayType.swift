@@ -9,6 +9,7 @@
 import Defaults
 import SwiftUI
 
+// TODO: think about what to do for square (music)
 enum PosterDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 
     case landscape

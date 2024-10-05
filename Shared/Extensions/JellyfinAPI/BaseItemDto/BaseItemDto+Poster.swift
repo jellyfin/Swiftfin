@@ -37,6 +37,8 @@ extension BaseItemDto: Poster {
 
     var systemImage: String {
         switch type {
+        case .audio, .musicAlbum:
+            "music.note"
         case .boxSet:
             "film.stack"
         case .channel, .tvChannel, .liveTvChannel, .program:
@@ -91,6 +93,15 @@ extension BaseItemDto: Poster {
             [seriesImageSource(.backdrop, maxWidth: maxWidth)]
         default:
             [imageSource(.backdrop, maxWidth: maxWidth)]
+        }
+    }
+
+    func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
+        switch type {
+        case .audio, .musicAlbum:
+            [imageSource(.primary, maxWidth: maxWidth)]
+        default:
+            []
         }
     }
 }

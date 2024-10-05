@@ -7,6 +7,7 @@
 //
 
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 extension SettingsView {
@@ -16,12 +17,13 @@ extension SettingsView {
         @Injected(\.currentUserSession)
         private var userSession: UserSession!
 
-        let action: () -> Void
+        private let user: UserDto
+        private let action: (() -> Void)?
 
         @ViewBuilder
         private var imageView: some View {
             RedrawOnNotificationView(.didChangeUserProfileImage) {
-                ImageView(userSession.user.profileImageSource(client: userSession.client, maxWidth: 120))
+                ImageView(user.profileImageSource(client: userSession.client, maxWidth: 120))
                     .pipeline(.Swiftfin.branding)
                     .placeholder { _ in
                         SystemImageContentView(systemName: "person.fill", ratio: 0.5)
@@ -34,6 +36,7 @@ extension SettingsView {
 
         var body: some View {
             Button {
+                guard let action else { return }
                 action()
             } label: {
                 HStack {
@@ -47,18 +50,37 @@ extension SettingsView {
                     .clipShape(.circle)
                     .frame(width: 50, height: 50)
 
-                    Text(userSession.user.username)
+                    Text(user.name ?? .emptyDash)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
 
                     Spacer()
 
-                    Image(systemName: "chevron.right")
-                        .font(.body.weight(.regular))
-                        .foregroundColor(.secondary)
+                    if action != nil {
+                        Image(systemName: "chevron.right")
+                            .font(.body.weight(.regular))
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             .foregroundStyle(.primary, .secondary)
         }
+    }
+}
+
+extension SettingsView.UserProfileRow {
+
+    init(user: UserDto) {
+        self.init(
+            user: user,
+            action: nil
+        )
+    }
+
+    init(user: UserDto, perform action: @escaping () -> Void) {
+        self.init(
+            user: user,
+            action: action
+        )
     }
 }
