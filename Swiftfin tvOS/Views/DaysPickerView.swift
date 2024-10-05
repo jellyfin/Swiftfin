@@ -25,10 +25,8 @@ struct DaysPickerView: View {
             switch days {
             case 0:
                 return L10n.disabled
-            case 1:
-                return "1 " + L10n.day
             default:
-                return "\(days) " + L10n.days
+                return days.dayLabel
             }
         }
     }

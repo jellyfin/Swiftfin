@@ -28,9 +28,14 @@ extension CustomizeViewsSettings {
                 Toggle(L10n.nextUpRewatch, isOn: $enableRewatching)
                 ChevronButton(
                     L10n.nextUpDays,
-                    subtitle: maxNextUp == 0 ? L10n.disabled :
-                        maxNextUp == 1 ? "\(maxNextUp) " + L10n.day :
-                        "\(maxNextUp) " + L10n.days
+                    subtitle: {
+                        switch maxNextUp {
+                        case 0:
+                            return L10n.disabled
+                        default:
+                            return maxNextUp.dayLabel
+                        }
+                    }()
                 )
                 .onSelect {
                     router.route(to: \.nextUpDaysSettings, $maxNextUp)
