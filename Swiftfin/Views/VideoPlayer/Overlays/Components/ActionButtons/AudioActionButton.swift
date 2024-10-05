@@ -44,7 +44,7 @@ extension VideoPlayer.Overlay.ActionButtons {
                         }
                     }
                 }
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .transition(.opacity.combined(with: .scale).animation(.snappy))
                 .id(systemImage)
             }
         }

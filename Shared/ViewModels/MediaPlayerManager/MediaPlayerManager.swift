@@ -155,41 +155,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
     }
 
-    // TODO: remove?
-//    private func buildCurrentItem(with item: BaseItemDto, mediaSource: MediaSourceInfo) {
-//        itemBuildTask?.cancel()
-//
-//        itemBuildTask = Task { [weak self] in
-//            do {
-//                await MainActor.run { [weak self] in
-//                    self?.state = .loadingItem
-//                }
-//
-//                let playbackItem = try await MediaPlayerItem.build(
-//                    for: item,
-//                    mediaSource: mediaSource
-//                )
-//
-    ////                try await Task.sleep(nanoseconds: 3_000_000_000)
-//
-//                guard let self else { return }
-//
-//                await MainActor.run {
-//                    self.state = .buffering
-//                    self.playbackItem = playbackItem
-//                    self.eventSubject.send(.playNew(playbackItem: playbackItem))
-//                }
-//            } catch {
-//                guard let self, !Task.isCancelled else { return }
-//
-//                await MainActor.run {
-//                    self.send(.error(.init(error.localizedDescription)))
-//                }
-//            }
-//        }
-//        .asAnyCancellable()
-//    }
-
     private func buildMediaItem(from provider: @escaping () async throws -> MediaPlayerItem) {
         itemBuildTask?.cancel()
 

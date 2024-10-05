@@ -32,7 +32,7 @@ extension VideoPlayer.Overlay.ActionButtons {
             ) {
                 isAspectFilled.toggle()
             }
-            .transition(.scale.combined(with: .opacity).animation(.snappy))
+            .transition(.opacity.combined(with: .scale).animation(.snappy))
             .id(isAspectFilled)
         }
     }

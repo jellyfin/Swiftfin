@@ -34,7 +34,6 @@ extension VideoPlayer.Overlay.ActionButtons {
                         ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
                             Button {
                                 playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
-//                                manager.proxy.set(subtitleStream: stream)
                             } label: {
                                 if playbackItem.selectedSubtitleStreamIndex == stream.index {
                                     Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
@@ -45,7 +44,7 @@ extension VideoPlayer.Overlay.ActionButtons {
                         }
                     }
                 }
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .transition(.opacity.combined(with: .scale).animation(.snappy))
                 .id(systemImage)
             }
         }
