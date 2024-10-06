@@ -29,10 +29,10 @@ struct EditServerView: View {
     private var isPresentingConfirmDeletion: Bool = false
 
     @StateObject
-    private var viewModel: EditServerViewModel
+    private var viewModel: ServerConnectionViewModel
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
+        self._viewModel = StateObject(wrappedValue: ServerConnectionViewModel(server: server))
         self._currentServerURL = State(initialValue: server.currentURL)
     }
 

@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import PulseUI
 import Stinsen
 import SwiftUI
@@ -43,11 +44,26 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
-    var serverDetail = makeServerDetail
+    var serverConnection = makeServerConnection
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+
+    @Route(.push)
+    var userDashboard = makeUserDashboard
+    @Route(.push)
+    var activeSessions = makeActiveSessions
+    @Route(.push)
+    var activeDeviceDetails = makeActiveDeviceDetails
+    @Route(.modal)
+    var itemOverviewView = makeItemOverviewView
+    @Route(.push)
+    var tasks = makeTasks
+    @Route(.push)
+    var editScheduledTask = makeEditScheduledTask
+    @Route(.push)
+    var serverLogs = makeServerLogs
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -142,8 +158,44 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeServerDetail(server: ServerState) -> some View {
+    func makeServerConnection(server: ServerState) -> some View {
         EditServerView(server: server)
+    }
+
+    @ViewBuilder
+    func makeUserDashboard() -> some View {
+        UserDashboardView()
+    }
+
+    @ViewBuilder
+    func makeActiveSessions() -> some View {
+        ActiveSessionsView()
+    }
+
+    @ViewBuilder
+    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
+        ActiveSessionDetailView(box: box)
+    }
+
+    func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemOverviewView(item: item)
+        }
+    }
+
+    @ViewBuilder
+    func makeTasks() -> some View {
+        ScheduledTasksView()
+    }
+
+    @ViewBuilder
+    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
+        EditScheduledTaskView(observer: observer)
+    }
+
+    @ViewBuilder
+    func makeServerLogs() -> some View {
+        ServerLogsView()
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

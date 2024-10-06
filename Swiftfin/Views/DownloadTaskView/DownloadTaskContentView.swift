@@ -56,9 +56,9 @@ extension DownloadTaskView {
                             .frame(height: 50)
                     case let .downloading(progress):
                         HStack {
-                            CircularProgressView(progress: progress)
-                                .buttonStyle(.plain)
-                                .frame(width: 30, height: 30)
+//                            CircularProgressView(progress: progress)
+//                                .buttonStyle(.plain)
+//                                .frame(width: 30, height: 30)
 
                             Text("\(Int(progress * 100))%")
                                 .foregroundColor(.secondary)

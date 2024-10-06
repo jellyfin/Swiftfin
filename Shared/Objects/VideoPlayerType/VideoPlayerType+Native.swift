@@ -21,7 +21,6 @@ extension VideoPlayerType {
             AudioCodec.alac
             AudioCodec.eac3
             AudioCodec.flac
-            AudioCodec.opus
         } videoCodecs: {
             VideoCodec.h261
             VideoCodec.hevc
@@ -110,7 +109,6 @@ extension VideoPlayerType {
             AudioCodec.alac
             AudioCodec.eac3
             AudioCodec.flac
-            AudioCodec.opus
         } videoCodecs: {
             VideoCodec.h264
             VideoCodec.hevc

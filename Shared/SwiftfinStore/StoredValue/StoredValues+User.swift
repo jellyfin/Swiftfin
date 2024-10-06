@@ -89,6 +89,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static var accessPolicy: Key<UserAccessPolicy> {
+            CurrentUserKey(
+                "currentUserAccessPolicy",
+                domain: "currentUserAccessPolicy",
+                default: .none
+            )
+        }
+
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,

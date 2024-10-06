@@ -42,6 +42,8 @@ struct EpisodeSelectorLabelStyle: LabelStyle {
 
 // MARK: SectionFooterWithImageLabelStyle
 
+// TODO: rename as not only used in section footers
+
 extension LabelStyle where Self == SectionFooterWithImageLabelStyle<AnyShapeStyle> {
 
     static func sectionFooterWithImage<ImageStyle: ShapeStyle>(imageStyle: ImageStyle) -> SectionFooterWithImageLabelStyle<ImageStyle> {

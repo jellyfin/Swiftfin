@@ -14,9 +14,6 @@ extension PagingLibraryView {
 
     struct LibraryRow: View {
 
-        @State
-        private var contentWidth: CGFloat = 0
-
         private let item: Element
         private var action: () -> Void
         private let posterType: PosterDisplayType

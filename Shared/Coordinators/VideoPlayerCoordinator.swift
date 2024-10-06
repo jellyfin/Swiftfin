@@ -83,6 +83,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             PreferencesView {
                 VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
             }
+            .ignoresSafeArea()
         } else {
             Color.red
 //            NativeVideoPlayer(manager: self.videoPlayerManager)

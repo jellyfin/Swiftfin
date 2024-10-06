@@ -8,6 +8,10 @@
 
 import Foundation
 
+// TODO: require remote sign in every time
+//       - actually found to be a bit difficult?
+// TODO: rename to not confuse with server access/UserDto
+
 enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
 
     case none
