@@ -42,13 +42,13 @@ final class UserSession {
 extension Container {
     var currentUserSession: Factory<UserSession?> {
         self {
-            guard case let .signedIn(userId) = Defaults[.lastSignedInUserID] else { return nil }
+            guard let lastUserID = Defaults[.lastSignedInUserID] else { return nil }
 
             guard let user = try? SwiftfinStore.dataStack.fetchOne(
-                From<UserModel>().where(\.$id == userId)
+                From<UserModel>().where(\.$id == lastUserID)
             ) else {
                 // had last user ID but no saved user
-                Defaults[.lastSignedInUserID] = .signedOut
+                Defaults[.lastSignedInUserID] = nil
 
                 return nil
             }

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct ChevronButton: View {
 
-    private let isExternal: Bool
     private let title: String
     private let subtitle: String?
     private var leadingView: () -> any View
@@ -35,7 +34,7 @@ struct ChevronButton: View {
                         .foregroundColor(.secondary)
                 }
 
-                Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
+                Image(systemName: "chevron.right")
                     .font(.body.weight(.regular))
                     .foregroundColor(.secondary)
             }
@@ -45,9 +44,8 @@ struct ChevronButton: View {
 
 extension ChevronButton {
 
-    init(_ title: String, subtitle: String? = nil, external: Bool = false) {
+    init(_ title: String, subtitle: String? = nil) {
         self.init(
-            isExternal: external,
             title: title,
             subtitle: subtitle,
             leadingView: { EmptyView() },

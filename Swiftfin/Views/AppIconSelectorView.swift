@@ -69,7 +69,7 @@ extension AppIconSelectorView {
             } label: {
                 HStack {
 
-                    Image(icon.iconName)
+                    Image(uiImage: icon.iconPreview)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)

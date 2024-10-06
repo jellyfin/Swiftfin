@@ -89,14 +89,6 @@ extension StoredValues.Keys {
             )
         }
 
-        static var accessPolicy: Key<UserAccessPolicy> {
-            CurrentUserKey(
-                "currentUserAccessPolicy",
-                domain: "currentUserAccessPolicy",
-                default: .none
-            )
-        }
-
         static func libraryDisplayType(parentID: String?) -> Key<LibraryDisplayType> {
             CurrentUserKey(
                 parentID,
@@ -138,14 +130,6 @@ extension StoredValues.Keys {
                 ownerID: id,
                 domain: "pinHint",
                 default: ""
-            )
-        }
-
-        static var customDeviceProfiles: Key<[CustomDeviceProfile]> {
-            CurrentUserKey(
-                "customDeviceProfiles",
-                domain: "customDeviceProfiles",
-                default: []
             )
         }
     }

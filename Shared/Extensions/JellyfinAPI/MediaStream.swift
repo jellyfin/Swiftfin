@@ -225,10 +225,10 @@ extension [MediaStream] {
 
         for (i, mediaStream) in mediaStreams.enumerated() {
             guard mediaStream.isExternal ?? false else { continue }
-            var copy = mediaStream
-            copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
+            var _mediaStream = mediaStream
+            _mediaStream.index = 1 + embeddedSubtitleCount + audioStreamCount
 
-            mediaStreams[i] = copy
+            mediaStreams[i] = _mediaStream
         }
 
         return mediaStreams

@@ -20,10 +20,10 @@ struct EditServerView: View {
     private var isPresentingConfirmDeletion: Bool = false
 
     @StateObject
-    private var viewModel: ServerConnectionViewModel
+    private var viewModel: EditServerViewModel
 
     init(server: ServerState) {
-        self._viewModel = StateObject(wrappedValue: ServerConnectionViewModel(server: server))
+        self._viewModel = StateObject(wrappedValue: EditServerViewModel(server: server))
     }
 
     var body: some View {

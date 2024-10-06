@@ -33,7 +33,7 @@ extension SwiftfinApp {
 
             lastSignInUserIDCancellable = Task {
                 for await newValue in Defaults.updates(.lastSignedInUserID) {
-                    if case .signedIn = newValue {
+                    if let _ = newValue {
                         setUserDefaultsObservation()
                     } else {
                         setAppDefaultsObservation()

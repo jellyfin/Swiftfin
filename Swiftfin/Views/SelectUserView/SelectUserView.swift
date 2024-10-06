@@ -561,7 +561,7 @@ struct SelectUserView: View {
             case let .signedIn(user):
                 UIDevice.feedback(.success)
 
-                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+                Defaults[.lastSignedInUserID] = user.id
                 Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }

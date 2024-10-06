@@ -64,10 +64,6 @@ extension UserState {
         }
     }
 
-    var isAdministrator: Bool {
-        data.policy?.isAdministrator ?? false
-    }
-
     var pinHint: String {
         get {
             StoredValues[.User.pinHint(id: id)]

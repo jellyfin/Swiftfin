@@ -13,17 +13,17 @@ import SwiftUI
 
 struct TextPairView: View {
 
-    private let leading: Text
-    private let trailing: Text
+    let leading: String
+    let trailing: String
 
     var body: some View {
         HStack {
-            leading
+            Text(leading)
                 .foregroundColor(.primary)
 
             Spacer()
 
-            trailing
+            Text(trailing)
                 .foregroundColor(.secondary)
         }
     }
@@ -33,22 +33,8 @@ extension TextPairView {
 
     init(_ textPair: TextPair) {
         self.init(
-            leading: Text(textPair.title),
-            trailing: Text(textPair.subtitle)
-        )
-    }
-
-    init(leading: String, trailing: String) {
-        self.init(
-            leading: Text(leading),
-            trailing: Text(trailing)
-        )
-    }
-
-    init(_ title: String, value: @autoclosure () -> Text) {
-        self.init(
-            leading: Text(title),
-            trailing: value()
+            leading: textPair.title,
+            trailing: textPair.subtitle
         )
     }
 }

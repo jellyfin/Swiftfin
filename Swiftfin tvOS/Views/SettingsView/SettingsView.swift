@@ -74,9 +74,9 @@ struct SettingsView: View {
                             router.route(to: \.videoPlayerSettings)
                         }
 
-                    ChevronButton(L10n.playbackQuality)
+                    ChevronButton(L10n.maximumBitrate)
                         .onSelect {
-                            router.route(to: \.playbackQualitySettings)
+                            router.route(to: \.maximumBitrateSettings)
                         }
                 }
 
@@ -86,11 +86,11 @@ struct SettingsView: View {
                         .onSelect {
                             router.route(to: \.customizeViewsSettings)
                         }
-//
-//                    ChevronButton(L10n.experimental)
-//                        .onSelect {
-//                            router.route(to: \.experimentalSettings)
-//                        }
+
+                    ChevronButton(L10n.experimental)
+                        .onSelect {
+                            router.route(to: \.experimentalSettings)
+                        }
                 }
 
                 Section {

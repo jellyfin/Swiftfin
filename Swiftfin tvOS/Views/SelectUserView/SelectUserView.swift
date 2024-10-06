@@ -305,7 +305,7 @@ struct SelectUserView: View {
                 self.error = eventError
                 self.isPresentingError = true
             case let .signedIn(user):
-                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+                Defaults[.lastSignedInUserID] = user.id
                 Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }

@@ -22,7 +22,7 @@ extension MediaSourceInfo {
         let playbackURL: URL
         let streamType: StreamType
 
-        if let transcodingURL {
+        if let transcodingURL, !Defaults[.Experimental.forceDirectPlay] {
             guard let fullTranscodeURL = userSession.client.fullURL(with: transcodingURL)
             else { throw JellyfinAPIError("Unable to make transcode URL") }
             playbackURL = fullTranscodeURL
@@ -61,8 +61,7 @@ extension MediaSourceInfo {
             subtitleStreams: subtitleStreams,
             selectedAudioStreamIndex: defaultAudioStreamIndex ?? -1,
             selectedSubtitleStreamIndex: defaultSubtitleStreamIndex ?? -1,
-//            chapters: item.fullChapterInfo,
-            chapters: [],
+            chapters: item.fullChapterInfo,
             streamType: streamType
         )
     }
@@ -73,7 +72,7 @@ extension MediaSourceInfo {
         let playbackURL: URL
         let streamType: StreamType
 
-        if let transcodingURL {
+        if let transcodingURL, !Defaults[.Experimental.liveTVForceDirectPlay] {
             guard let fullTranscodeURL = URL(string: transcodingURL, relativeTo: userSession.server.currentURL)
             else { throw JellyfinAPIError("Unable to construct transcoded url") }
             playbackURL = fullTranscodeURL

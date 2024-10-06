@@ -6,8 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CoreData
 import Defaults
-import JellyfinAPI
+import Factory
 import Stinsen
 import SwiftUI
 
@@ -15,6 +16,7 @@ struct SettingsView: View {
 
     @Default(.userAccentColor)
     private var accentColor
+
     @Default(.userAppearance)
     private var appearance
     @Default(.VideoPlayer.videoPlayerType)
@@ -31,23 +33,17 @@ struct SettingsView: View {
 
             Section {
 
-                UserProfileRow(user: viewModel.userSession.user.data) {
+                UserProfileRow {
                     router.route(to: \.userProfile, viewModel)
                 }
 
+                // TODO: admin users go to dashboard instead
                 ChevronButton(
                     L10n.server,
                     subtitle: viewModel.userSession.server.name
                 )
                 .onSelect {
-                    router.route(to: \.serverConnection, viewModel.userSession.server)
-                }
-
-                if viewModel.userSession.user.isAdministrator {
-                    ChevronButton(L10n.dashboard)
-                        .onSelect {
-                            router.route(to: \.userDashboard)
-                        }
+                    router.route(to: \.serverDetail, viewModel.userSession.server)
                 }
             }
 
@@ -76,9 +72,9 @@ struct SettingsView: View {
                         router.route(to: \.videoPlayerSettings)
                     }
 
-                ChevronButton(L10n.playbackQuality)
+                ChevronButton(L10n.maximumBitrate)
                     .onSelect {
-                        router.route(to: \.playbackQualitySettings)
+                        router.route(to: \.maximumBitrateSettings)
                     }
             }
 
@@ -90,13 +86,10 @@ struct SettingsView: View {
                         router.route(to: \.customizeViewsSettings)
                     }
 
-                // Note: uncomment if there are current
-                //       experimental settings
-
-//                ChevronButton(L10n.experimental)
-//                    .onSelect {
-//                        router.route(to: \.experimentalSettings)
-//                    }
+                ChevronButton(L10n.experimental)
+                    .onSelect {
+                        router.route(to: \.experimentalSettings)
+                    }
             }
 
             Section {

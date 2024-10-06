@@ -74,8 +74,12 @@ struct ResetUserPasswordView: View {
                 Text("Confirm New Password")
             } footer: {
                 if newPassword != confirmNewPassword {
-                    Label("New passwords to not match", systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                    HStack {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .foregroundStyle(.orange)
+
+                        Text("New passwords do not match")
+                    }
                 }
             }
 

@@ -45,7 +45,6 @@ extension LetterPickerBar {
                 }
                 .frame(width: 20, height: 20)
             }
-            .frame(width: 50, height: 20)
         }
     }
 }

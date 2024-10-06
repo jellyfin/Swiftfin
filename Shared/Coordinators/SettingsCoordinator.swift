@@ -6,7 +6,6 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import JellyfinAPI
 import PulseUI
 import Stinsen
 import SwiftUI
@@ -23,7 +22,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var nativePlayerSettings = makeNativePlayerSettings
     @Route(.push)
-    var playbackQualitySettings = makePlaybackQualitySettings
+    var maximumBitrateSettings = makeMaximumBitrateSettings
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
     @Route(.push)
@@ -44,31 +43,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
-    var serverConnection = makeServerConnection
+    var serverDetail = makeServerDetail
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
-    @Route(.push)
-    var customDeviceProfileSettings = makeCustomDeviceProfileSettings
-
-    @Route(.push)
-    var userDashboard = makeUserDashboard
-    @Route(.push)
-    var activeSessions = makeActiveSessions
-    @Route(.push)
-    var activeDeviceDetails = makeActiveDeviceDetails
-    @Route(.modal)
-    var itemOverviewView = makeItemOverviewView
-    @Route(.push)
-    var tasks = makeTasks
-    @Route(.push)
-    var editScheduledTask = makeEditScheduledTask
-    @Route(.push)
-    var serverLogs = makeServerLogs
-
-    @Route(.modal)
-    var editCustomDeviceProfile = makeEditCustomDeviceProfile
-    @Route(.modal)
-    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
     #if DEBUG
     @Route(.push)
@@ -82,15 +59,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
-    var indicatorSettings = makeIndicatorSettings
-    @Route(.modal)
     var log = makeLog
     @Route(.modal)
     var serverDetail = makeServerDetail
     @Route(.modal)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.modal)
-    var playbackQualitySettings = makePlaybackQualitySettings
+    var maximumBitrateSettings = makeMaximumBitrateSettings
     #endif
 
     #if os(iOS)
@@ -100,22 +75,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makePlaybackQualitySettings() -> some View {
-        PlaybackQualitySettingsView()
-    }
-
-    @ViewBuilder
-    func makeCustomDeviceProfileSettings() -> some View {
-        CustomDeviceProfileSettingsView()
-    }
-
-    func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
-    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
-        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
-    }
-
-    func makeCreateCustomDeviceProfile() -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
-        NavigationViewCoordinator(EditCustomDeviceProfileCoordinator())
+    func makeMaximumBitrateSettings() -> some View {
+        MaximumBitrateSettingsView()
     }
 
     @ViewBuilder
@@ -158,53 +119,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeServerConnection(server: ServerState) -> some View {
+    func makeServerDetail(server: ServerState) -> some View {
         EditServerView(server: server)
-    }
-
-    @ViewBuilder
-    func makeUserDashboard() -> some View {
-        UserDashboardView()
-    }
-
-    @ViewBuilder
-    func makeActiveSessions() -> some View {
-        ActiveSessionsView()
-    }
-
-    @ViewBuilder
-    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
-        ActiveSessionDetailView(box: box)
-    }
-
-    func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemOverviewView(item: item)
-        }
-    }
-
-    @ViewBuilder
-    func makeTasks() -> some View {
-        ScheduledTasksView()
-    }
-
-    @ViewBuilder
-    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
-        EditScheduledTaskView(observer: observer)
-    }
-
-    @ViewBuilder
-    func makeServerLogs() -> some View {
-        ServerLogsView()
-    }
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-            .navigationTitle(L10n.filters)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
     }
 
     #if DEBUG
@@ -214,15 +130,20 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
     #endif
 
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+    }
+
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
+    }
+
     #endif
 
     #if os(tvOS)
-    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator(
-            BasicNavigationViewCoordinator {
-                CustomizeViewsSettings()
-            }
-        )
+
+    func makeCustomizeViewsSettings() -> NavigationViewCoordinator<CustomizeSettingsCoordinator> {
+        NavigationViewCoordinator(CustomizeSettingsCoordinator())
     }
 
     func makeExperimentalSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
@@ -233,12 +154,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         )
     }
 
-    func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            IndicatorSettingsView()
-        }
-    }
-
     func makeServerDetail(server: ServerState) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditServerView(server: server)
@@ -246,15 +161,13 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeVideoPlayerSettings() -> NavigationViewCoordinator<VideoPlayerSettingsCoordinator> {
-        NavigationViewCoordinator(
-            VideoPlayerSettingsCoordinator()
-        )
+        NavigationViewCoordinator(VideoPlayerSettingsCoordinator())
     }
 
-    func makePlaybackQualitySettings() -> NavigationViewCoordinator<PlaybackQualitySettingsCoordinator> {
-        NavigationViewCoordinator(
-            PlaybackQualitySettingsCoordinator()
-        )
+    func makeMaximumBitrateSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            MaximumBitrateSettingsView()
+        }
     }
     #endif
 

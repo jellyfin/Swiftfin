@@ -6,22 +6,20 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Foundation
 
-enum StreamType: Displayable {
+enum VideoPlayerType: String, CaseIterable, Defaults.Serializable, Displayable {
 
-    case direct
-    case transcode
-    case hls
+    case native
+    case swiftfin
 
     var displayTitle: String {
         switch self {
-        case .direct:
-            return "Direct"
-        case .transcode:
-            return "Transcode"
-        case .hls:
-            return "HLS"
+        case .native:
+            return "Native"
+        case .swiftfin:
+            return "Swiftfin"
         }
     }
 }

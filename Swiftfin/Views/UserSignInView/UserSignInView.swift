@@ -73,7 +73,7 @@ struct UserSignInView: View {
         case let .signedIn(user):
             UIDevice.feedback(.success)
 
-            Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
+            Defaults[.lastSignedInUserID] = user.id
             Container.shared.currentUserSession.reset()
             Notifications[.didSignIn].post()
         }
@@ -208,11 +208,23 @@ struct UserSignInView: View {
         } footer: {
             switch accessPolicy {
             case .requireDeviceAuthentication:
-                Label("This user will require device authentication.", systemImage: "exclamationmark.circle.fill")
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require device authentication.")
+                }
             case .requirePin:
-                Label("This user will require a pin.", systemImage: "exclamationmark.circle.fill")
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                HStack {
+                    Image(systemName: "exclamationmark.circle.fill")
+                        .foregroundStyle(.orange)
+                        .backport
+                        .fontWeight(.bold)
+
+                    Text("This user will require a pin.")
+                }
             case .none:
                 EmptyView()
             }
