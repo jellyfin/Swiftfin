@@ -29,7 +29,7 @@ extension CustomizeViewsSettings {
         }
 
         var body: some View {
-            Section {
+            Section(L10n.home) {
 
                 Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
 
@@ -37,10 +37,16 @@ extension CustomizeViewsSettings {
 
                 ChevronButton(
                     L10n.nextUpDays,
-                    subtitle: Text(
-                        Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
-                        format: .components(style: .narrow, fields: [.year, .month, .week, .day])
-                    )
+                    subtitle: {
+                        if maxNextUp > 0 {
+                            return Text(
+                                Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
+                                format: .components(style: .narrow, fields: [.year, .month, .week, .day])
+                            )
+                        } else {
+                            return Text(L10n.disabled)
+                        }
+                    }()
                 )
                 .onSelect {
                     isPresentingNextUpDays = true
@@ -62,10 +68,6 @@ extension CustomizeViewsSettings {
 
                     maxNextUp = TimeInterval(clamp(maxNextUpDays, min: 0, max: 1000)) * 86400
                 }
-            } header: {
-                L10n.home.text
-            } footer: {
-                L10n.nextUpDaysDescription.text
             }
         }
     }
