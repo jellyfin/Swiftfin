@@ -35,8 +35,8 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var serverCheck = makeServerCheck
 
-    @Route(.fullScreen)
-    var liveVideoPlayer = makeLiveVideoPlayer
+//    @Route(.fullScreen)
+//    var liveVideoPlayer = makeLiveVideoPlayer
     @Route(.modal)
     var settings = makeSettings
     @Route(.fullScreen)
@@ -156,7 +156,7 @@ final class MainCoordinator: NavigationCoordinatable {
 //        VideoPlayerCoordinator(manager: manager)
 //    }
 
-    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
-        LiveVideoPlayerCoordinator(manager: manager)
-    }
+//    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
+//        LiveVideoPlayerCoordinator(manager: manager)
+//    }
 }
