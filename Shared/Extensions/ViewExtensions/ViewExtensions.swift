@@ -108,6 +108,16 @@ extension View {
         }
     }
 
+    // TODO: consolidate handling
+    @ViewBuilder
+    func squarePosterStyle(contentMode: ContentMode = .fill) -> some View {
+        aspectRatio(1.0, contentMode: contentMode)
+        #if !os(tvOS)
+            .posterBorder(ratio: 0.0375, of: \.width)
+            .cornerRadius(ratio: 0.0375, of: \.width)
+        #endif
+    }
+
     func posterBorder(ratio: CGFloat, of side: KeyPath<CGSize, CGFloat>) -> some View {
         modifier(OnSizeChangedModifier { size in
             overlay {

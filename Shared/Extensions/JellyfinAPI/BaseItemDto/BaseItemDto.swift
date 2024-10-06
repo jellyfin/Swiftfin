@@ -253,4 +253,16 @@ extension BaseItemDto {
 
         return L10n.play
     }
+
+    var parentTitle: String? {
+        switch type {
+        case .audio:
+            album
+        case .episode:
+            seriesName
+        case .program: nil
+        default:
+            nil
+        }
+    }
 }

@@ -13,12 +13,19 @@ import JellyfinAPI
 import Logging
 
 extension BaseItemDto {
+
     func videoPlayerViewModel(with mediaSource: MediaSourceInfo) async throws -> VideoPlayerViewModel {
+
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
+        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
-        let profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
+        let profile = DeviceProfile.build(
+            for: currentVideoPlayerType,
+            compatibilityMode: compatibilityMode,
+            maxBitrate: maxBitrate
+        )
 
         let userSession = Container.shared.currentUserSession()!
 
@@ -46,14 +53,17 @@ extension BaseItemDto {
     }
 
     func liveVideoPlayerViewModel(with mediaSource: MediaSourceInfo, logger: Logger) async throws -> VideoPlayerViewModel {
+
         let currentVideoPlayerType = Defaults[.VideoPlayer.videoPlayerType]
-        let currentVideoBitrate = Defaults[.VideoPlayer.appMaximumBitrate]
+        let currentVideoBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrate]
+        let compatibilityMode = Defaults[.VideoPlayer.Playback.compatibilityMode]
 
         let maxBitrate = try await getMaxBitrate(for: currentVideoBitrate)
-        var profile = DeviceProfile.build(for: currentVideoPlayerType, maxBitrate: maxBitrate)
-        if Defaults[.Experimental.liveTVForceDirectPlay] {
-            profile.directPlayProfiles = [DirectPlayProfile(type: .video)]
-        }
+        let profile = DeviceProfile.build(
+            for: currentVideoPlayerType,
+            compatibilityMode: compatibilityMode,
+            maxBitrate: maxBitrate
+        )
 
         let userSession = Container.shared.currentUserSession()!
 
@@ -101,7 +111,7 @@ extension BaseItemDto {
     }
 
     private func getMaxBitrate(for bitrate: PlaybackBitrate) async throws -> Int {
-        let settingBitrate = Defaults[.VideoPlayer.appMaximumBitrateTest]
+        let settingBitrate = Defaults[.VideoPlayer.Playback.appMaximumBitrateTest]
 
         guard bitrate != .auto else {
             return try await testBitrate(with: settingBitrate.rawValue)

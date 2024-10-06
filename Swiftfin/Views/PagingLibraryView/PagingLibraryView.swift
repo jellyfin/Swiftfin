@@ -32,7 +32,7 @@ import SwiftUI
 
  Note: For `rememberLayout` and `rememberSort`, there are quirks for observing changes while a
        library is open and the setting has been changed. For simplicity, do not enforce observing
-       changes and doing proper updates since there is complexitry with what "actual" settings
+       changes and doing proper updates since there is complexity with what "actual" settings
        should be applied.
  */
 

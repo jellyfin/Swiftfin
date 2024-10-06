@@ -171,7 +171,7 @@ struct UserSignInView: View {
             case let .signedIn(user):
                 router.dismissCoordinator()
 
-                Defaults[.lastSignedInUserID] = user.id
+                Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
                 Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }
