@@ -520,6 +520,8 @@ internal enum L10n {
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Save
+  internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scrub Current Time
   internal static let scrubCurrentTime = L10n.tr("Localizable", "scrubCurrentTime", fallback: "Scrub Current Time")
   /// Search

@@ -38,20 +38,12 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.fields = .MinimumFields
         parameters.limit = pageSize
         if maxNextUp > 0 {
-            parameters.nextUpDateCutoff = getNextUp(maxNextUp: maxNextUp)
+            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-maxNextUp)
         }
         parameters.enableRewatching = enableRewatching
         parameters.startIndex = page
         parameters.userID = userSession.user.id
 
         return parameters
-    }
-
-    private func getNextUp(maxNextUp: Int) -> Date? {
-        Calendar.current.date(
-            byAdding: .day,
-            value: -maxNextUp,
-            to: Date()
-        )
     }
 }

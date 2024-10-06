@@ -9,6 +9,7 @@
 import Defaults
 import SwiftUI
 
+// TODO: Fix the maxNextUp to allow changes. Currently doesn't do anything but looks great. Focus...
 extension CustomizeViewsSettings {
     struct CustomizeHomeSection: View {
 
@@ -19,28 +20,49 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Home.enableRewatching)
         private var enableRewatching
 
+        @State
+        private var isPresentingNextUpDays = false
+        @State
+        private var maxNextUpDays: Int
+
+        init() {
+            self._maxNextUpDays = .init(initialValue: Int(_maxNextUp.wrappedValue / 86400))
+        }
+
         var body: some View {
-            Section {
+            Section(L10n.home) {
+
                 Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+
                 Toggle(L10n.nextUpRewatch, isOn: $enableRewatching)
-                BasicStepper(
-                    title: L10n.nextUpDays,
-                    value: $maxNextUp,
-                    range: 0 ... 999,
-                    step: 1
+
+                ChevronButton(
+                    L10n.nextUpDays,
+                    subtitle: Text(
+                        Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
+                        format: .components(style: .narrow, fields: [.year, .month, .week, .day])
+                    )
                 )
-                .valueFormatter { days in
-                    switch days {
-                    case 0:
-                        return L10n.disabled
-                    default:
-                        return days.dayLabel
-                    }
+                .onSelect {
+                    isPresentingNextUpDays = true
                 }
-            } header: {
-                L10n.home.text
-            } footer: {
-                L10n.nextUpDaysDescription.text
+                .alert(L10n.nextUpDays, isPresented: $isPresentingNextUpDays) {
+
+                    TextField(
+                        L10n.nextUpDays,
+                        value: $maxNextUpDays,
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
+
+                } message: {
+                    Text(L10n.nextUpDaysDescription)
+                }
+                .onChange(of: isPresentingNextUpDays) { newValue in
+                    guard !newValue else { return }
+
+                    maxNextUp = TimeInterval(clamp(maxNextUpDays, min: 0, max: 1000)) * 86400
+                }
             }
         }
     }

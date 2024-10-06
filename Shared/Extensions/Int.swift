@@ -53,24 +53,6 @@ extension Int {
             .prepending("-", if: isNegative)
     }
 
-    /// Label if the current value represents days
-    var dayLabel: String {
-        let isNegative = self < 0
-        let value = abs(self)
-        let days = "\(value)"
-
-        switch self {
-        case 1:
-            return L10n.singleDay
-                .prepending("-", if: isNegative)
-        default:
-            return L10n.numberOfDays(
-                days
-                    .prepending("-", if: isNegative)
-            )
-        }
-    }
-
     init?(_ source: CGFloat?) {
         if let source = source {
             self.init(source)
