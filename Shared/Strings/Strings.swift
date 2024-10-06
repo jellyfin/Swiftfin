@@ -258,6 +258,8 @@ internal enum L10n {
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
   /// Display order
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
+  /// Done
+  internal static let done = L10n.tr("Localizable", "done", fallback: "Done")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Edit
@@ -428,6 +430,12 @@ internal enum L10n {
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
   /// Next Up
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
+  /// Days in Next Up
+  internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
+  /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
+  internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
+  /// Rewatching in Next Up
+  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No Cast devices found..
   internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
   /// No Codec
@@ -456,6 +464,10 @@ internal enum L10n {
   }
   /// No title
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
+  /// %@ Days
+  internal static func numberOfDays(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "numberOfDays", String(describing: p1), fallback: "%@ Days")
+  }
   /// Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
   /// Ok
@@ -726,6 +738,8 @@ internal enum L10n {
   internal static func signInToServer(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "signInToServer", p1, fallback: "Sign In to %s")
   }
+  /// 1 Day
+  internal static let singleDay = L10n.tr("Localizable", "singleDay", fallback: "1 Day")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slider Color

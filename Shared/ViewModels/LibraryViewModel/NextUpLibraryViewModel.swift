@@ -7,10 +7,16 @@
 //
 
 import Combine
+import Defaults
 import Foundation
 import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
+
+    @Default(.Customization.Home.maxNextUp)
+    private var maxNextUp
+    @Default(.Customization.Home.resumeNextUp)
+    private var resumeNextUp
 
     init() {
         super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp, id: "nextUp"))
@@ -31,6 +37,10 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.limit = pageSize
+        if maxNextUp > 0 {
+            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-maxNextUp)
+        }
+        parameters.enableRewatching = resumeNextUp
         parameters.startIndex = page
         parameters.userID = userSession.user.id
 

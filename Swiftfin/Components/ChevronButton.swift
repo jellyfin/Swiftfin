@@ -11,8 +11,8 @@ import SwiftUI
 struct ChevronButton: View {
 
     private let isExternal: Bool
-    private let title: String
-    private let subtitle: String?
+    private let title: Text
+    private let subtitle: Text?
     private var leadingView: () -> any View
     private var onSelect: () -> Void
 
@@ -25,13 +25,13 @@ struct ChevronButton: View {
                 leadingView()
                     .eraseToAnyView()
 
-                Text(title)
+                title
                     .foregroundColor(.primary)
 
                 Spacer()
 
                 if let subtitle {
-                    Text(subtitle)
+                    subtitle
                         .foregroundColor(.secondary)
                 }
 
@@ -45,11 +45,31 @@ struct ChevronButton: View {
 
 extension ChevronButton {
 
-    init(_ title: String, subtitle: String? = nil, external: Bool = false) {
+    init(
+        _ title: String,
+        subtitle: String? = nil,
+        external: Bool = false
+    ) {
         self.init(
             isExternal: external,
-            title: title,
-            subtitle: subtitle,
+            title: Text(title),
+            subtitle: {
+                if let subtitle {
+                    Text(subtitle)
+                } else {
+                    nil
+                }
+            }(),
+            leadingView: { EmptyView() },
+            onSelect: {}
+        )
+    }
+
+    init(_ title: String, external: Bool = false, subtitle: @autoclosure () -> Text) {
+        self.init(
+            isExternal: external,
+            title: Text(title),
+            subtitle: subtitle(),
             leadingView: { EmptyView() },
             onSelect: {}
         )
