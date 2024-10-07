@@ -13,10 +13,8 @@ import JellyfinAPI
 
 final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
-    @Default(.Customization.Home.maxNextUp)
-    private var maxNextUp
-    @Default(.Customization.Home.resumeNextUp)
-    private var resumeNextUp
+    let maxNextUp = Defaults[.Customization.Home.maxNextUp]
+    let resumeNextUp = Defaults[.Customization.Home.resumeNextUp]
 
     init() {
         super.init(parent: TitledLibraryParent(displayTitle: L10n.nextUp, id: "nextUp"))
