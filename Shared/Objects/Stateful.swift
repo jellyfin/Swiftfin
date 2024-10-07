@@ -17,6 +17,7 @@ import OrderedCollections
 // TODO: official way for a cleaner `respond` method so it doesn't have all Task
 //       construction and get bloated
 // TODO: make Action: Hashable just for consistency
+// TODO: make lastAction an event subject
 
 protocol Stateful: ObservableObject {
 

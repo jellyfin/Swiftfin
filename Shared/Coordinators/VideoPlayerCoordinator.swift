@@ -13,6 +13,7 @@ import PreferencesView
 import Stinsen
 import SwiftUI
 
+// TODO: should take a manager instead?
 final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
@@ -36,15 +37,14 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         if #available(iOS 16, *) {
             PreferencesView {
                 ZStack {
-                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        VideoPlayer(manager: .init(item: self.baseItem, mediaItemProvider: {
-                            try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
-                        }))
+                    let manager = MediaPlayerManager(item: self.baseItem) {
+                        try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
+                    }
 
-//                        VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
+                    if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                        VideoPlayer(manager: manager)
                     } else {
-                        Text("")
-//                        NativeVideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
+                        NativeVideoPlayer(manager: manager)
                     }
                 }
                 .preferredColorScheme(.dark)

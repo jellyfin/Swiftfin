@@ -17,12 +17,8 @@ struct NativeVideoPlayer: View {
     @StateObject
     private var manager: MediaPlayerManager
 
-//    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-//        self._manager = StateObject(wrappedValue: MediaPlayerManager(item: item, mediaSource: mediaSource))
-//    }
-
-    init(item: MediaPlayerItem) {
-        self._manager = StateObject(wrappedValue: MediaPlayerManager(playbackItem: item))
+    init(manager: MediaPlayerManager) {
+        self._manager = StateObject(wrappedValue: manager)
     }
 
     var body: some View {

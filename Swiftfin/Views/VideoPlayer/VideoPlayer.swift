@@ -41,7 +41,6 @@ struct VideoPlayer: View {
 
     @StateObject
     private var scrubbedProgress: ProgressBox = .init()
-
     @StateObject
     private var manager: MediaPlayerManager
     @StateObject
@@ -186,42 +185,6 @@ extension VideoPlayer {
             vlcUIProxy: vlcUIProxy
         )
     }
-
-    // TODO: take in manager instead
-
-//    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
-//
-//        let manager = MediaPlayerManager(item: item, mediaSource: mediaSource)
-//        let videoPlayerProxy = VLCVideoPlayerProxy()
-//        let vlcUIProxy = VLCVideoPlayer.Proxy()
-//
-//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-//        manager.proxy = videoPlayerProxy
-//
-//        manager.listeners.append(NowPlayableListener(manager: manager))
-//
-//        self.init(
-//            manager: manager,
-//            vlcUIProxy: vlcUIProxy
-//        )
-//    }
-
-//    init(item: MediaPlayerItem) {
-//
-//        let manager = MediaPlayerManager(playbackItem: item)
-//        let videoPlayerProxy = VLCVideoPlayerProxy()
-//        let vlcUIProxy = VLCVideoPlayer.Proxy()
-//
-//        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-//        manager.proxy = videoPlayerProxy
-//
-//        manager.listeners.append(NowPlayableListener(manager: manager))
-//
-//        self.init(
-//            manager: manager,
-//            vlcUIProxy: vlcUIProxy
-//        )
-//    }
 }
 
 // struct VideoPlayer_Previews: PreviewProvider {

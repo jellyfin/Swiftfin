@@ -11,7 +11,26 @@ import Factory
 import Foundation
 import MediaPlayer
 
+// TODO: cleanup
+
 class NowPlayableListener: MediaPlayerListener {
+
+    @Injected(\.logService)
+    private var logger
+
+    private var cancellables: Set<AnyCancellable> = []
+    private var defaultRegisteredCommands: [NowPlayableCommand] {
+        [
+            .play,
+            .pause,
+            .togglePausePlay,
+            .skipForward,
+            .skipBackward,
+            .changePlaybackPosition,
+            .nextTrack,
+            .previousTrack,
+        ]
+    }
 
     weak var manager: MediaPlayerManager? {
         willSet {
@@ -20,15 +39,11 @@ class NowPlayableListener: MediaPlayerListener {
         }
     }
 
-    private let nowPlayable: NowPlayable
-    private var cancellables: Set<AnyCancellable> = []
-
     init(manager: MediaPlayerManager) {
-        self.nowPlayable = .init()
         self.manager = manager
 
-        try! nowPlayable.handleNowPlayableConfiguration(
-            commands: nowPlayable.defaultRegisteredCommands,
+        try! handleNowPlayableConfiguration(
+            commands: defaultRegisteredCommands,
             commandHandler: { _, _ in .success },
             interruptionHandler: { _ in }
         )
@@ -45,11 +60,11 @@ class NowPlayableListener: MediaPlayerListener {
     private func itemDidChange(newItem: MediaPlayerItem?) {
         guard let newItem else { return }
 
-        nowPlayable.handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
+        handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
     }
 
     private func secondsDidChange(newProgress: ProgressBoxValue) {
-        nowPlayable.handleNowPlayablePlaybackChange(
+        handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(
                 position: Float(newProgress.seconds),
@@ -59,7 +74,7 @@ class NowPlayableListener: MediaPlayerListener {
     }
 
     private func stateDidChange(newState: MediaPlayerManager.State) {
-        nowPlayable.handleNowPlayablePlaybackChange(
+        handleNowPlayablePlaybackChange(
             playing: true,
             metadata: .init(
                 position: 12,
@@ -67,27 +82,37 @@ class NowPlayableListener: MediaPlayerListener {
             )
         )
     }
-}
 
-class NowPlayable {
+    //    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
+    //        switch command {
+    //        case .togglePausePlay:
+    //            if state == .playing {
+    //                proxy.pause()
+    //            } else {
+    //                proxy.play()
+    //            }
+    //        case .play:
+    //            proxy.play()
+    //        case .pause:
+    //            proxy.pause()
+    //        case .skipForward:
+    //            proxy.jumpForward(15)
+    //        case .skipBackward:
+    //            proxy.jumpBackward(15)
+    //        case .changePlaybackPosition:
+    //            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+    //            proxy.setTime(event.positionTime)
+    ////        case .nextTrack:
+    ////            selectNextViewModel()
+    ////        case .previousTrack:
+    ////            selectPreviousViewModel()
+    //        default: ()
+    //        }
+    //
+    //        return .success
+    //    }
 
-    @Injected(\.logService)
-    private var logger
-
-    var defaultRegisteredCommands: [NowPlayableCommand] {
-        [
-            .play,
-            .pause,
-            .togglePausePlay,
-            .skipForward,
-            .skipBackward,
-            .changePlaybackPosition,
-            .nextTrack,
-            .previousTrack,
-        ]
-    }
-
-    func handleNowPlayableConfiguration(
+    private func handleNowPlayableConfiguration(
         commands: [NowPlayableCommand],
         commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus,
         interruptionHandler: @escaping (NowPlayableInterruption) -> Void
@@ -123,11 +148,11 @@ class NowPlayable {
         }
     }
 
-    func handleNowPlayableItemChange(metadata: NowPlayableStaticMetadata) {
+    private func handleNowPlayableItemChange(metadata: NowPlayableStaticMetadata) {
         setNowPlayingMetadata(metadata)
     }
 
-    func handleNowPlayablePlaybackChange(playing: Bool, metadata: NowPlayableDynamicMetadata) {
+    private func handleNowPlayablePlaybackChange(playing: Bool, metadata: NowPlayableDynamicMetadata) {
         setNowPlayingPlaybackInfo(metadata)
         MPNowPlayingInfoCenter.default().playbackState = playing ? .playing : .paused
     }

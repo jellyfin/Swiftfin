@@ -79,9 +79,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     final var state: State = .initial
 
-//    @Published
-    final var lastAction: Action? = nil
-
     var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
@@ -268,38 +265,5 @@ extension MediaPlayerManager {
 //                self.previousViewModel = previousViewModel
 //            }
 //        }
-//    }
-
-    // MARK: reports
-
-    // MARK: commands
-
-//    private func handleCommand(command: NowPlayableCommand, event: MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus {
-//        switch command {
-//        case .togglePausePlay:
-//            if state == .playing {
-//                proxy.pause()
-//            } else {
-//                proxy.play()
-//            }
-//        case .play:
-//            proxy.play()
-//        case .pause:
-//            proxy.pause()
-//        case .skipForward:
-//            proxy.jumpForward(15)
-//        case .skipBackward:
-//            proxy.jumpBackward(15)
-//        case .changePlaybackPosition:
-//            guard let event = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
-//            proxy.setTime(event.positionTime)
-    ////        case .nextTrack:
-    ////            selectNextViewModel()
-    ////        case .previousTrack:
-    ////            selectPreviousViewModel()
-//        default: ()
-//        }
-//
-//        return .success
 //    }
 }

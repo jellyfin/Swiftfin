@@ -25,8 +25,8 @@ extension VideoPlayer.Overlay {
         @Binding
         private var isScrubbing: Bool
 
-        @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
+//        @EnvironmentObject
+//        private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
