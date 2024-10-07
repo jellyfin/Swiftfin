@@ -109,7 +109,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .initial
+            return .updated
         case let .removeTrigger(trigger):
             progressCancellable?.cancel()
             cancelCancellable?.cancel()
@@ -128,7 +128,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .initial
+            return .updated
         }
     }
 
@@ -182,9 +182,11 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
         let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
         try await userSession.client.send(updateRequest)
 
+        let getTaskRequest = Paths.getTask(taskID: id)
+        let response = try await userSession.client.send(getTaskRequest)
+
         await MainActor.run {
-            task.triggers = updatedTriggers
-            self.task = task
+            self.task = response.value
         }
     }
 }

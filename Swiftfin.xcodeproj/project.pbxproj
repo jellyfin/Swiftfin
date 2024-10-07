@@ -58,6 +58,11 @@
 		4EA556B52CB48D1600F71E7A /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */; };
 		4EA556B72CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */; };
 		4EA556B82CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */; };
+		4EA556BB2CB4A1F500F71E7A /* TriggerTypeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556BA2CB4A1F400F71E7A /* TriggerTypeSection.swift */; };
+		4EA556BD2CB4A21500F71E7A /* DayOfWeekSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556BC2CB4A21400F71E7A /* DayOfWeekSection.swift */; };
+		4EA556BF2CB4A22C00F71E7A /* TimeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556BE2CB4A22B00F71E7A /* TimeSection.swift */; };
+		4EA556C12CB4A24B00F71E7A /* IntervalSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556C02CB4A24A00F71E7A /* IntervalSection.swift */; };
+		4EA556C32CB4A26100F71E7A /* TimeLimitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556C22CB4A26000F71E7A /* TimeLimitSection.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EB1A8CA2C9A766200F43898 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */; };
 		4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */; };
@@ -1056,6 +1061,11 @@
 		4EA556B02CB48BB600F71E7A /* TriggerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerButton.swift; sourceTree = "<group>"; };
 		4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerType.swift; sourceTree = "<group>"; };
 		4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerInterval.swift; sourceTree = "<group>"; };
+		4EA556BA2CB4A1F400F71E7A /* TriggerTypeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerTypeSection.swift; sourceTree = "<group>"; };
+		4EA556BC2CB4A21400F71E7A /* DayOfWeekSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOfWeekSection.swift; sourceTree = "<group>"; };
+		4EA556BE2CB4A22B00F71E7A /* TimeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSection.swift; sourceTree = "<group>"; };
+		4EA556C02CB4A24A00F71E7A /* IntervalSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalSection.swift; sourceTree = "<group>"; };
+		4EA556C22CB4A26000F71E7A /* TimeLimitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLimitSection.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskButton.swift; sourceTree = "<group>"; };
@@ -1968,9 +1978,22 @@
 			isa = PBXGroup;
 			children = (
 				4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */,
+				4EA556B92CB4A0BE00F71E7A /* Sections */,
 				4EA556B02CB48BB600F71E7A /* TriggerButton.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA556B92CB4A0BE00F71E7A /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4EA556BC2CB4A21400F71E7A /* DayOfWeekSection.swift */,
+				4EA556C02CB4A24A00F71E7A /* IntervalSection.swift */,
+				4EA556C22CB4A26000F71E7A /* TimeLimitSection.swift */,
+				4EA556BE2CB4A22B00F71E7A /* TimeSection.swift */,
+				4EA556BA2CB4A1F400F71E7A /* TriggerTypeSection.swift */,
+			);
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */ = {
@@ -4682,6 +4705,7 @@
 				E1C812C5277A90B200918266 /* URLComponents.swift in Sources */,
 				E1C925F428875037002A7A66 /* ItemViewType.swift in Sources */,
 				E17DC74A2BE740D900B42379 /* StoredValues+Server.swift in Sources */,
+				4EA556BB2CB4A1F500F71E7A /* TriggerTypeSection.swift in Sources */,
 				62E632EC267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				625CB5732678C32A00530A6E /* HomeViewModel.swift in Sources */,
 				62C29EA826D103D500C1D2E7 /* MediaCoordinator.swift in Sources */,
@@ -4755,6 +4779,7 @@
 				C46DD8E02A8DC7790046A504 /* LiveOverlay.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E187F7672B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
+				4EA556C12CB4A24B00F71E7A /* IntervalSection.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
 				E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
@@ -4838,6 +4863,7 @@
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				4EA556B12CB48BB600F71E7A /* AddTaskTriggerView.swift in Sources */,
+				4EA556C32CB4A26100F71E7A /* TimeLimitSection.swift in Sources */,
 				4EA556B22CB48BB600F71E7A /* TriggerButton.swift in Sources */,
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
@@ -4914,6 +4940,7 @@
 				C46DD8E22A8DC7FB0046A504 /* LiveMainOverlay.swift in Sources */,
 				4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
+				4EA556BD2CB4A21500F71E7A /* DayOfWeekSection.swift in Sources */,
 				E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */,
 				E43918662AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
 				E1579EA72B97DC1500A31CA1 /* Eventful.swift in Sources */,
@@ -5070,6 +5097,7 @@
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1F5CF092CB0A04500607465 /* Text.swift in Sources */,
+				4EA556BF2CB4A22C00F71E7A /* TimeSection.swift in Sources */,
 				4E182C9F2C94A1E000FBEFD5 /* ScheduledTaskButton.swift in Sources */,
 				E1B490442967E26300D3EDCE /* PersistentLogHandler.swift in Sources */,
 				E1CB756F2C80E66700217C76 /* CommaStringBuilder.swift in Sources */,

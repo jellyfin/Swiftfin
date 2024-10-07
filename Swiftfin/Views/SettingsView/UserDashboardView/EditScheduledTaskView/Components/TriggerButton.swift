@@ -21,6 +21,8 @@ extension EditScheduledTaskView {
         @State
         private var isPresentingConfirmation = false
 
+        // MARK: - Body
+
         var body: some View {
             Button(action: {
                 isPresentingConfirmation = true
@@ -56,20 +58,30 @@ extension EditScheduledTaskView {
 
                 case .daily:
                     if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
-                        Text(L10n.itemAtItem(taskTriggerType.displayTitle, ticksToSeconds(timeOfDayTicks).formatted(.hourMinute)))
-                            .fontWeight(.semibold)
+                        Text(L10n.itemAtItem(
+                            taskTriggerType.displayTitle,
+                            timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                        ))
+                        .fontWeight(.semibold)
                     }
 
                 case .interval:
                     if let intervalTicks = taskTriggerInfo.intervalTicks {
-                        Text(L10n.everyInterval(ticksToSeconds(intervalTicks).formatted(.hourMinute)))
-                            .fontWeight(.semibold)
+                        Text(L10n.everyInterval(
+                            timeIntervalFromTicks(intervalTicks).formatted(.hourMinute)
+                        ))
+                        .fontWeight(.semibold)
                     }
 
                 case .weekly:
-                    if let dayOfWeek = taskTriggerInfo.dayOfWeek, let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
-                        Text(L10n.itemAtItem(dayOfWeek.rawValue.capitalized, ticksToSeconds(timeOfDayTicks).formatted(.hourMinute)))
-                            .fontWeight(.semibold)
+                    if let dayOfWeek = taskTriggerInfo.dayOfWeek,
+                       let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
+                    {
+                        Text(L10n.itemAtItem(
+                            dayOfWeek.rawValue.capitalized,
+                            timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                        ))
+                        .fontWeight(.semibold)
                     }
 
                 default:
@@ -78,9 +90,13 @@ extension EditScheduledTaskView {
                 }
 
                 if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                    Text(L10n.timeLimitLabelWithHours(ticksToSeconds(maxRuntimeTicks).formatted(.hourMinute)))
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    Text(
+                        L10n.timeLimitLabelWithHours(
+                            timeIntervalFromTicks(maxRuntimeTicks).formatted(.hourMinute)
+                        )
+                    )
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 }
             }
         }
@@ -100,8 +116,20 @@ extension EditScheduledTaskView {
             }
         }
 
-        private func ticksToSeconds(_ time: Int) -> TimeInterval {
-            TimeInterval(time / 10_000_000)
+        // MARK: - Convert Ticks to TimeInterval and Time from Ticks
+
+        private func timeIntervalFromTicks(_ ticks: Int) -> TimeInterval {
+            TimeInterval(ticks) / 10_000_000
+        }
+
+        private func timeFromTicks(_ ticks: Int) -> Date {
+            let totalSeconds = timeIntervalFromTicks(ticks)
+            let hours = Int(totalSeconds) / 3600
+            let minutes = (Int(totalSeconds) % 3600) / 60
+            var components = DateComponents()
+            components.hour = hours
+            components.minute = minutes
+            return Calendar.current.date(from: components) ?? Date()
         }
     }
 }
