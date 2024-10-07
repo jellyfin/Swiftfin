@@ -63,6 +63,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var editScheduledTask = makeEditScheduledTask
     @Route(.push)
+    var addScheduledTaskTrigger = makeAddScheduledTaskTrigger
+    @Route(.push)
     var serverLogs = makeServerLogs
 
     @Route(.modal)
@@ -191,6 +193,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
         EditScheduledTaskView(observer: observer)
+    }
+
+    @ViewBuilder
+    func makeAddScheduledTaskTrigger(observer: ServerTaskObserver) -> some View {
+        AddTaskTriggerView(observer: observer)
     }
 
     @ViewBuilder

@@ -52,6 +52,12 @@
 		4E9A24E92C82B79D0023DA83 /* EditCustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8572C80332500E2879E /* EditCustomDeviceProfileCoordinator.swift */; };
 		4E9A24EB2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */; };
 		4E9A24ED2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */; };
+		4EA556B12CB48BB600F71E7A /* AddTaskTriggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */; };
+		4EA556B22CB48BB600F71E7A /* TriggerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B02CB48BB600F71E7A /* TriggerButton.swift */; };
+		4EA556B42CB48D1600F71E7A /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */; };
+		4EA556B52CB48D1600F71E7A /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */; };
+		4EA556B72CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */; };
+		4EA556B82CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EB1A8CA2C9A766200F43898 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */; };
 		4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */; };
@@ -1046,6 +1052,10 @@
 		4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
 		4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileCoordinator.swift; sourceTree = "<group>"; };
 		4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
+		4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskTriggerView.swift; sourceTree = "<group>"; };
+		4EA556B02CB48BB600F71E7A /* TriggerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerButton.swift; sourceTree = "<group>"; };
+		4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerType.swift; sourceTree = "<group>"; };
+		4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerInterval.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskButton.swift; sourceTree = "<group>"; };
@@ -1860,7 +1870,7 @@
 			children = (
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
-				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
+				4EA556AD2CB48B5900F71E7A /* EditScheduledTaskView */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
 				E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
@@ -1941,6 +1951,24 @@
 			children = (
 				4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */,
 				4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EA556AD2CB48B5900F71E7A /* EditScheduledTaskView */ = {
+			isa = PBXGroup;
+			children = (
+				4EA556AE2CB48B6600F71E7A /* Components */,
+				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
+			);
+			path = EditScheduledTaskView;
+			sourceTree = "<group>";
+		};
+		4EA556AE2CB48B6600F71E7A /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */,
+				4EA556B02CB48BB600F71E7A /* TriggerButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2153,6 +2181,7 @@
 				E1EF4C402911B783008CC695 /* StreamType.swift */,
 				E11BDF792B85529D0045C54A /* SupportedCaseIterable.swift */,
 				E15D63EE2BD6DFC200AA665D /* SystemImageable.swift */,
+				4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */,
 				E1A1528428FD191A00600579 /* TextPair.swift */,
 				E1E306CC28EF6E8000537998 /* TimerProxy.swift */,
 				E129428F28F0BDC300796AC6 /* TimeStampType.swift */,
@@ -2466,6 +2495,7 @@
 				E145EB442BE0AD4E003BF6F3 /* Set.swift */,
 				621338922660107500A81A2A /* String.swift */,
 				E1DD55362B6EE533007501C0 /* Task.swift */,
+				4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */,
 				E1F5CF072CB0A04500607465 /* Text.swift */,
 				E1A2C153279A7D5A005EC829 /* UIApplication.swift */,
 				E1401CB029386C9200E8B599 /* UIColor.swift */,
@@ -4329,6 +4359,7 @@
 				4E9A24E62C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift in Sources */,
 				E1153D9A2BBA3E9800424D36 /* ErrorCard.swift in Sources */,
 				E1ED91162B95897500802036 /* LatestInLibraryViewModel.swift in Sources */,
+				4EA556B42CB48D1600F71E7A /* TaskTriggerType.swift in Sources */,
 				E12376B32A33DFAC001F5B44 /* ItemOverviewView.swift in Sources */,
 				E1ED7FDB2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift in Sources */,
 				E1A7F0E02BD4EC7400620DDD /* Dictionary.swift in Sources */,
@@ -4458,6 +4489,7 @@
 				62E632DD267D2E130063E547 /* SearchViewModel.swift in Sources */,
 				BD0BA22C2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */,
 				E1575EA2293E7B1E001665B1 /* Color.swift in Sources */,
+				4EA556B72CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */,
 				E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */,
 				E1575E72293E77B5001665B1 /* Utilities.swift in Sources */,
 				E164A7F72BE4816500A54B18 /* SelectUserServerSelection.swift in Sources */,
@@ -4805,6 +4837,8 @@
 				E113133428BE988200930F75 /* NavigationBarFilterDrawer.swift in Sources */,
 				5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */,
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
+				4EA556B12CB48BB600F71E7A /* AddTaskTriggerView.swift in Sources */,
+				4EA556B22CB48BB600F71E7A /* TriggerButton.swift in Sources */,
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
@@ -4932,6 +4966,7 @@
 				E1E7506A2A33E9B400B2C1EE /* RatingsCard.swift in Sources */,
 				E1D842912933F87500D1041A /* ItemFields.swift in Sources */,
 				E1BDF2F729524ECD00CC0294 /* PlaybackSpeedActionButton.swift in Sources */,
+				4EA556B82CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */,
 				E113132F28BDB66A00930F75 /* NavigationBarDrawerModifier.swift in Sources */,
 				E1E750692A33E9B400B2C1EE /* MediaSourcesCard.swift in Sources */,
 				E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */,
@@ -5050,6 +5085,7 @@
 				E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E111D8F528D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
 				E16AF11C292C98A7001422A8 /* GestureSettingsView.swift in Sources */,
+				4EA556B52CB48D1600F71E7A /* TaskTriggerType.swift in Sources */,
 				E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */,
 				C46DD8DC2A8DC3420046A504 /* LiveVideoPlayer.swift in Sources */,
 				E11BDF972B865F550045C54A /* ItemTag.swift in Sources */,
