@@ -47,6 +47,7 @@ extension CustomizeViewsSettings {
                 }
                 .alert(L10n.nextUpDays, isPresented: $isPresentingNextUpDays) {
 
+                    // TODO: Validate whether this says Done or a Number
                     TextField(
                         L10n.nextUpDays,
                         value: $maxNextUp,
