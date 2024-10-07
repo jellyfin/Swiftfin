@@ -21,12 +21,6 @@ extension CustomizeViewsSettings {
 
         @State
         private var isPresentingNextUpDays = false
-        @State
-        private var maxNextUpDays: Int
-
-        init() {
-            self._maxNextUpDays = .init(initialValue: Int(_maxNextUp.wrappedValue / 86400))
-        }
 
         var body: some View {
             Section(L10n.home) {

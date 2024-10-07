@@ -464,10 +464,6 @@ internal enum L10n {
   }
   /// No title
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
-  /// %@ Days
-  internal static func numberOfDays(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "numberOfDays", String(describing: p1), fallback: "%@ Days")
-  }
   /// Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
   /// Ok
@@ -738,8 +734,6 @@ internal enum L10n {
   internal static func signInToServer(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "signInToServer", p1, fallback: "Sign In to %s")
   }
-  /// 1 Day
-  internal static let singleDay = L10n.tr("Localizable", "singleDay", fallback: "1 Day")
   /// Slider
   internal static let slider = L10n.tr("Localizable", "slider", fallback: "Slider")
   /// Slider Color
