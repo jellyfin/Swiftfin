@@ -26,20 +26,21 @@ struct ChevronButton: View {
                     .eraseToAnyView()
 
                 Text(title)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(.primary)
 
                 Spacer()
 
                 if let subtitle {
                     Text(subtitle)
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
 
                 Image(systemName: isExternal ? "arrow.up.forward" : "chevron.right")
                     .font(.body.weight(.regular))
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
+        .foregroundStyle(.primary, .secondary)
     }
 }
 

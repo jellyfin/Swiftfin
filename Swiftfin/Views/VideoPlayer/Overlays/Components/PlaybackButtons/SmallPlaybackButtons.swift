@@ -22,9 +22,9 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var timerProxy: TimerProxy
+        private var timerProxy: DelayIntervalTimer
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
+        private var videoPlayerManager: MediaPlayerManager
         @EnvironmentObject
         private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
@@ -32,9 +32,9 @@ extension VideoPlayer.Overlay {
         private var jumpBackwardButton: some View {
             Button {
                 videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.start(5)
+                timerProxy.delay(interval: 5)
             } label: {
-                Image(systemName: jumpBackwardLength.backwardImageLabel)
+                Image(systemName: jumpBackwardLength.backwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
             }
             .contentShape(Rectangle())
@@ -49,11 +49,11 @@ extension VideoPlayer.Overlay {
                 default:
                     videoPlayerProxy.play()
                 }
-                timerProxy.start(5)
+                timerProxy.delay(interval: 5)
             } label: {
                 Group {
                     switch videoPlayerManager.state {
-                    case .stopped, .paused:
+                    case .paused:
                         Image(systemName: "play.fill")
                     case .playing:
                         Image(systemName: "pause.fill")
@@ -64,6 +64,7 @@ extension VideoPlayer.Overlay {
                 .font(.system(size: 28, weight: .bold, design: .default))
                 .frame(width: 50, height: 50)
             }
+            .fixedSize()
             .contentShape(Rectangle())
         }
 
@@ -71,9 +72,9 @@ extension VideoPlayer.Overlay {
         private var jumpForwardButton: some View {
             Button {
                 videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.start(5)
+                timerProxy.delay(interval: 5)
             } label: {
-                Image(systemName: jumpForwardLength.forwardImageLabel)
+                Image(systemName: jumpForwardLength.forwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
             }
             .contentShape(Rectangle())
@@ -93,7 +94,7 @@ extension VideoPlayer.Overlay {
                 }
             }
             .tint(Color.white)
-            .foregroundColor(Color.white)
+            .foregroundStyle(Color.white)
         }
     }
 }

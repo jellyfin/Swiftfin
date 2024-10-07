@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: break into separate files
+
 struct HourMinuteFormatStyle: FormatStyle {
 
     func format(_ value: TimeInterval) -> String {
@@ -51,4 +53,33 @@ struct RunTimeFormatStyle: FormatStyle {
 extension FormatStyle where Self == RunTimeFormatStyle {
 
     static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
+}
+
+struct VerbatimFormatStyle<Value: CustomStringConvertible>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.description
+    }
+}
+
+struct DisplayableFormatStyle<Value: Displayable>: FormatStyle {
+
+    func format(_ value: Value) -> String {
+        value.displayTitle
+    }
+}
+
+extension FormatStyle where Self == RateStyle {
+
+    static var rate: RateStyle {
+        RateStyle()
+    }
+}
+
+struct RateStyle: FormatStyle {
+
+    func format(_ value: TimeInterval) -> String {
+        String(format: "%.2f", value)
+            .appending("x")
+    }
 }

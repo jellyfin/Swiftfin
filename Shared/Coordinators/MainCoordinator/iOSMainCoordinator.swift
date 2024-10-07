@@ -35,8 +35,8 @@ final class MainCoordinator: NavigationCoordinatable {
     @Root
     var serverCheck = makeServerCheck
 
-    @Route(.fullScreen)
-    var liveVideoPlayer = makeLiveVideoPlayer
+//    @Route(.fullScreen)
+//    var liveVideoPlayer = makeLiveVideoPlayer
     @Route(.modal)
     var settings = makeSettings
     @Route(.fullScreen)
@@ -148,11 +148,15 @@ final class MainCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeVideoPlayer(manager: VideoPlayerManager) -> VideoPlayerCoordinator {
-        VideoPlayerCoordinator(manager: manager)
+    func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> VideoPlayerCoordinator {
+        VideoPlayerCoordinator(baseItem: parameters.0, mediaSource: parameters.1)
     }
 
-    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
-        LiveVideoPlayerCoordinator(manager: manager)
-    }
+//    func makeVideoPlayer(manager: MediaPlayerManager) -> VideoPlayerCoordinator {
+//        VideoPlayerCoordinator(manager: manager)
+//    }
+
+//    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
+//        LiveVideoPlayerCoordinator(manager: manager)
+//    }
 }

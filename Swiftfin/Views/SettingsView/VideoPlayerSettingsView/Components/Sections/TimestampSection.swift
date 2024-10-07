@@ -14,17 +14,9 @@ extension VideoPlayerSettingsView {
 
         @Default(.VideoPlayer.Overlay.trailingTimestampType)
         private var trailingTimestampType
-        @Default(.VideoPlayer.Overlay.showCurrentTimeWhileScrubbing)
-        private var showCurrentTimeWhileScrubbing
-        @Default(.VideoPlayer.Overlay.timestampType)
-        private var timestampType
 
         var body: some View {
             Section(L10n.timestamp) {
-
-                Toggle(L10n.scrubCurrentTime, isOn: $showCurrentTimeWhileScrubbing)
-
-                CaseIterablePicker(L10n.timestampType, selection: $timestampType)
 
                 CaseIterablePicker(L10n.trailingValue, selection: $trailingTimestampType)
             }

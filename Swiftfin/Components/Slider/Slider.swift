@@ -10,6 +10,7 @@ import SwiftUI
 
 struct Slider: View {
 
+    // TODO: rename `Style`
     enum Behavior {
         case thumb
         case track
@@ -42,7 +43,6 @@ struct Slider: View {
     private var leadingContent: () -> any View
     private var trailingContent: () -> any View
     private var onEditingChanged: (Bool) -> Void
-    private var progressAnimation: Animation
 
     private var trackDrag: some Gesture {
         DragGesture(coordinateSpace: .global)
@@ -131,7 +131,7 @@ struct Slider: View {
                     context[VerticalAlignment.center]
                 }
         }
-        .animation(progressAnimation, value: progress)
+        .animation(.linear(duration: 0.05), value: progress)
         .animation(.linear(duration: 0.2), value: isEditing)
     }
 }
@@ -151,8 +151,7 @@ extension Slider {
             bottomContent: { EmptyView() },
             leadingContent: { EmptyView() },
             trailingContent: { EmptyView() },
-            onEditingChanged: { _ in },
-            progressAnimation: .linear(duration: 0.05)
+            onEditingChanged: { _ in }
         )
     }
 
@@ -198,9 +197,5 @@ extension Slider {
 
     func gestureBehavior(_ sliderBehavior: Behavior) -> Self {
         copy(modifying: \.sliderBehavior, with: sliderBehavior)
-    }
-
-    func progressAnimation(_ animation: Animation) -> Self {
-        copy(modifying: \.progressAnimation, with: animation)
     }
 }

@@ -33,11 +33,11 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
     @Default(.VideoPlayer.jumpForwardLength)
     private var jumpForwardLength
 
-    @Environment(\.aspectFilled)
+    @Environment(\.isAspectFilled)
     private var isAspectFilled
 
     @EnvironmentObject
-    private var videoPlayerManager: VideoPlayerManager
+    private var videoPlayerManager: MediaPlayerManager
     @EnvironmentObject
     private var videoPlayerProxy: VLCVideoPlayer.Proxy
 
@@ -162,10 +162,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 )
 
                 let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: increase playback speed
@@ -182,10 +182,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 )
 
                 let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: reset playback speed
@@ -197,10 +197,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
             ) {
                 let newPlaybackSpeed = PlaybackSpeed.one
 
-                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(.absolute(Float(newPlaybackSpeed.rawValue)))
+//                videoPlayerManager.playbackSpeed = newPlaybackSpeed
+                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
-                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
+//                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
 
             // MARK: next item
@@ -210,7 +210,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: UIKeyCommand.inputRightArrow,
                 modifierFlags: .command
             ) {
-                videoPlayerManager.selectNextViewModel()
+//                videoPlayerManager.selectNextViewModel()
             }
 
             // MARK: previous item
@@ -220,7 +220,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: UIKeyCommand.inputLeftArrow,
                 modifierFlags: .command
             ) {
-                videoPlayerManager.selectPreviousViewModel()
+//                videoPlayerManager.selectPreviousViewModel()
             }
         }
     }

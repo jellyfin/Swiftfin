@@ -233,6 +233,13 @@ extension View {
         }
     }
 
+    func trackingSize(_ sizeBinding: Binding<CGSize>, _ safeAreaInsetBinding: Binding<EdgeInsets>) -> some View {
+        onSizeChanged {
+            sizeBinding.wrappedValue = $0
+            safeAreaInsetBinding.wrappedValue = $1
+        }
+    }
+
     func copy<Value>(modifying keyPath: WritableKeyPath<Self, Value>, with newValue: Value) -> Self {
         var copy = self
         copy[keyPath: keyPath] = newValue
@@ -342,6 +349,10 @@ extension View {
         modifier(ScrollIfLargerThanContainerModifier(padding: padding))
     }
 
+    func pulse(_ isPulsing: Binding<Bool> = .constant(true)) -> some View {
+        modifier(PulseViewModifier(isPulsing: isPulsing))
+    }
+
     // MARK: debug
 
     // Useful modifiers during development for layout without RocketSim
@@ -351,6 +362,14 @@ extension View {
         background {
             Rectangle()
                 .fill(fill)
+        }
+    }
+
+    func debugOverlay<S: ShapeStyle>(_ fill: S = .red.opacity(0.5)) -> some View {
+        overlay {
+            Rectangle()
+                .fill(fill)
+                .allowsHitTesting(false)
         }
     }
 

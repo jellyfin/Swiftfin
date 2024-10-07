@@ -14,6 +14,12 @@ extension VideoPlayer.Overlay {
 
     struct LargePlaybackButtons: View {
 
+        enum PlayButtonState {
+            case playing
+            case paused
+            case buffering
+        }
+
         @Default(.VideoPlayer.jumpBackwardLength)
         private var jumpBackwardLength
         @Default(.VideoPlayer.jumpForwardLength)
@@ -22,78 +28,76 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var timerProxy: TimerProxy
+        private var overlayTimer: DelayIntervalTimer
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
+        private var manager: MediaPlayerManager
 
-        @ViewBuilder
-        private var jumpBackwardButton: some View {
-            Button {
-                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.start(5)
-            } label: {
-                Image(systemName: jumpBackwardLength.backwardImageLabel)
-                    .font(.system(size: 36, weight: .regular, design: .default))
-                    .padding()
-                    .contentShape(Rectangle())
-            }
-            .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
-        }
+        @State
+        private var playButtonState: PlayButtonState = .buffering
 
         @ViewBuilder
         private var playButton: some View {
             Button {
-                switch videoPlayerManager.state {
+                switch manager.state {
                 case .playing:
-                    videoPlayerProxy.pause()
-                default:
-                    videoPlayerProxy.play()
+                    manager.proxy.pause()
+                case .paused:
+                    manager.proxy.play()
+                default: ()
                 }
-                timerProxy.start(5)
             } label: {
                 Group {
-                    switch videoPlayerManager.state {
-                    case .stopped, .paused:
-                        Image(systemName: "play.fill")
+                    switch playButtonState {
                     case .playing:
-                        Image(systemName: "pause.fill")
-                    default:
+                        Label(L10n.play, systemImage: "pause.fill")
+                    case .paused:
+                        Label(L10n.play, systemImage: "play.fill")
+                    case .buffering:
                         ProgressView()
-                            .scaleEffect(2)
                     }
                 }
+                .transition(.opacity.combined(with: .scale).animation(.bouncy))
                 .font(.system(size: 56, weight: .bold, design: .default))
-                .padding()
-                .transition(.opacity)
                 .contentShape(Rectangle())
+                .labelStyle(.iconOnly)
             }
-            .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
+            .fixedSize()
         }
 
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.start(5)
+//                manager.proxy.jumpForward(jumpForwardLength.rawValue)
             } label: {
-                Image(systemName: jumpForwardLength.forwardImageLabel)
-                    .font(.system(size: 36, weight: .regular, design: .default))
-                    .padding()
-                    .contentShape(Rectangle())
+                Label(
+                    jumpForwardLength.displayTitle,
+                    systemImage: jumpForwardLength.forwardSystemImage
+                )
+                .labelStyle(.iconOnly)
+                .font(.system(size: 36, weight: .regular, design: .default))
+                .padding(10)
             }
-            .contentShape(Rectangle())
-            .buttonStyle(ScalingButtonStyle(scale: 0.9))
+            .foregroundStyle(.primary)
+        }
+
+        @ViewBuilder
+        private var jumpBackwardButton: some View {
+            Button {
+//                manager.proxy.jumpBackward(jumpBackwardLength.rawValue)
+            } label: {
+                Label(
+                    jumpBackwardLength.displayTitle,
+                    systemImage: jumpBackwardLength.backwardSystemImage
+                )
+                .labelStyle(.iconOnly)
+                .font(.system(size: 36, weight: .regular, design: .default))
+                .padding(10)
+            }
+            .foregroundStyle(.primary)
         }
 
         var body: some View {
             HStack(spacing: 0) {
-
-                Spacer(minLength: 100)
-
                 if showJumpButtons {
                     jumpBackwardButton
                 }
@@ -104,11 +108,34 @@ extension VideoPlayer.Overlay {
                 if showJumpButtons {
                     jumpForwardButton
                 }
-
-                Spacer(minLength: 100)
             }
-            .tint(Color.white)
-            .foregroundColor(Color.white)
+            .buttonStyle(.videoPlayerBarButton { isPressed in
+                if isPressed {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.delay()
+                }
+            })
+            .onChange(of: manager.state) { state in
+                switch state {
+                case .playing:
+                    playButtonState = .playing
+                case .paused:
+                    playButtonState = .paused
+//                case .loadingItem, .buffering:
+                default: ()
+                    playButtonState = .buffering
+                }
+            }
         }
+    }
+}
+
+struct BounceButtonStyle: ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .animation(.bouncy, value: configuration.isPressed)
     }
 }

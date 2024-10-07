@@ -8,7 +8,6 @@
 
 import Defaults
 import Foundation
-import UIKit
 
 enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImageable {
 

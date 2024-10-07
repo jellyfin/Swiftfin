@@ -29,21 +29,21 @@ struct VideoPlayerSettingsView: View {
                     router.route(to: \.gestureSettings)
                 }
 
-            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
+//            CaseIterablePicker(L10n.jumpBackwardLength, selection: $jumpBackwardLength)
 
-            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
+//            CaseIterablePicker(L10n.jumpForwardLength, selection: $jumpForwardLength)
 
             Section {
 
                 BasicStepper(
-                    title: L10n.resumeOffset,
+                    L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30,
-                    step: 1
+                    formatter: .runtime
                 )
-                .valueFormatter {
-                    $0.secondLabel
-                }
+//                .valueFormatter {
+//                    $0.secondLabel
+//                }
             } footer: {
                 Text(L10n.resumeOffsetDescription)
             }

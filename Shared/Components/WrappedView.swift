@@ -12,6 +12,7 @@ import SwiftUI
 //       but doesn't work with animations/transitions.
 //       Look at alternative with just ZStack and remove
 
+// @available(*, deprecated, message: "Use ZStack instead")
 struct WrappedView<Content: View>: View {
 
     @ViewBuilder

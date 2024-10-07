@@ -18,11 +18,7 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    var timestampLabel: String {
-        let seconds = (startPositionTicks ?? 0) / 10_000_000
-        return seconds.timeLabel
-    }
-
+    // TODO: convert to TimeInterval
     var startTimeSeconds: Int {
         let playbackPositionTicks = startPositionTicks ?? 0
         return Int(playbackPositionTicks / 10_000_000)
