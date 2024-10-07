@@ -37,8 +37,6 @@ struct CustomizeViewsSettings: View {
     private var libraryRandomImage
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
-    @Default(.Customization.showRecentlyAdded)
-    private var showRecentlyAdded
 
     @EnvironmentObject
     private var router: CustomizeSettingsCoordinator.Router
@@ -89,9 +87,9 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
                     Toggle(L10n.showFavorites, isOn: $showFavorites)
-
-                    Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
                 }
+
+                HomeSection()
             }
             .withDescriptionTopPadding()
             .navigationTitle(L10n.customize)

@@ -37,8 +37,6 @@ struct CustomizeViewsSettings: View {
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.recentlyAddedPosterType)
-    private var recentlyAddedPosterType
-    @Default(.Customization.showRecentlyAdded)
     private var showRecentlyAdded
     @Default(.Customization.latestInLibraryPosterType)
     private var latestInLibraryPosterType
@@ -138,8 +136,6 @@ struct CustomizeViewsSettings: View {
 
                 CaseIterablePicker(L10n.next, selection: $nextUpPosterType)
 
-                CaseIterablePicker(L10n.recentlyAdded, selection: $recentlyAddedPosterType)
-
                 CaseIterablePicker(L10n.latestWithString(L10n.library), selection: $latestInLibraryPosterType)
 
                 CaseIterablePicker(L10n.recommended, selection: $similarPosterType)
@@ -162,9 +158,7 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
-            Section("Home") {
-                Toggle("Show recently added", isOn: $showRecentlyAdded)
-            }
+            HomeSection()
 
             Section {
                 Toggle("Remember layout", isOn: $rememberLibraryLayout)

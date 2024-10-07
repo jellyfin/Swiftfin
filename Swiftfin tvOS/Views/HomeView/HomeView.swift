@@ -19,7 +19,7 @@ struct HomeView: View {
     @StateObject
     private var viewModel = HomeViewModel()
 
-    @Default(.Customization.showRecentlyAdded)
+    @Default(.Customization.Home.showRecentlyAdded)
     private var showRecentlyAdded
 
     @ViewBuilder

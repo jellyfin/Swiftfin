@@ -52,3 +52,28 @@ extension FormatStyle where Self == RunTimeFormatStyle {
 
     static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
 }
+
+/// Represent intervals as 24 hour, 60 minute, 60 second days
+struct DayIntervalParseableFormatStyle: ParseableFormatStyle {
+
+    let range: ClosedRange<Int>
+    var parseStrategy: DayIntervalParseStrategy = .init()
+
+    func format(_ value: TimeInterval) -> String {
+        "\(clamp(Int(value / 86400), min: range.lowerBound, max: range.upperBound))"
+    }
+}
+
+struct DayIntervalParseStrategy: ParseStrategy {
+
+    func parse(_ value: String) throws -> TimeInterval {
+        (TimeInterval(value) ?? 0) * 86400
+    }
+}
+
+extension ParseableFormatStyle where Self == DayIntervalParseableFormatStyle {
+
+    static func dayInterval(range: ClosedRange<Int>) -> DayIntervalParseableFormatStyle {
+        .init(range: range)
+    }
+}
