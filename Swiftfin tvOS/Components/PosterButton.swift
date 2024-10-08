@@ -77,7 +77,7 @@ struct PosterButton<Item: Poster>: View {
                     }
             }
             .accessibilityLabel(item.displayTitle)
-            
+
             content()
                 .eraseToAnyView()
                 .zIndex(-1)
