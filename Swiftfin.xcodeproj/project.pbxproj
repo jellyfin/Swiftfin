@@ -53,7 +53,7 @@
 		4E9A24EB2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */; };
 		4E9A24ED2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */; };
 		4EA556B12CB48BB600F71E7A /* AddTaskTriggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */; };
-		4EA556B22CB48BB600F71E7A /* TriggerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B02CB48BB600F71E7A /* TriggerButton.swift */; };
+		4EA556B22CB48BB600F71E7A /* TriggerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B02CB48BB600F71E7A /* TriggerRow.swift */; };
 		4EA556B42CB48D1600F71E7A /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */; };
 		4EA556B52CB48D1600F71E7A /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */; };
 		4EA556B72CB48E1400F71E7A /* TaskTriggerInterval.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */; };
@@ -1058,7 +1058,7 @@
 		4E9A24EA2C82B9ED0023DA83 /* CustomDeviceProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileCoordinator.swift; sourceTree = "<group>"; };
 		4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskTriggerView.swift; sourceTree = "<group>"; };
-		4EA556B02CB48BB600F71E7A /* TriggerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerButton.swift; sourceTree = "<group>"; };
+		4EA556B02CB48BB600F71E7A /* TriggerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerRow.swift; sourceTree = "<group>"; };
 		4EA556B32CB48D1600F71E7A /* TaskTriggerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerType.swift; sourceTree = "<group>"; };
 		4EA556B62CB48E1400F71E7A /* TaskTriggerInterval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerInterval.swift; sourceTree = "<group>"; };
 		4EA556BA2CB4A1F400F71E7A /* TriggerTypeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerTypeSection.swift; sourceTree = "<group>"; };
@@ -1979,7 +1979,7 @@
 			children = (
 				4EA556AF2CB48BB600F71E7A /* AddTaskTriggerView.swift */,
 				4EA556B92CB4A0BE00F71E7A /* Sections */,
-				4EA556B02CB48BB600F71E7A /* TriggerButton.swift */,
+				4EA556B02CB48BB600F71E7A /* TriggerRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -4864,7 +4864,7 @@
 				E129428528F080B500796AC6 /* OnReceiveNotificationModifier.swift in Sources */,
 				4EA556B12CB48BB600F71E7A /* AddTaskTriggerView.swift in Sources */,
 				4EA556C32CB4A26100F71E7A /* TimeLimitSection.swift in Sources */,
-				4EA556B22CB48BB600F71E7A /* TriggerButton.swift in Sources */,
+				4EA556B22CB48BB600F71E7A /* TriggerRow.swift in Sources */,
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
@@ -5492,7 +5492,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -5508,7 +5508,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -5532,7 +5532,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -5548,7 +5548,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

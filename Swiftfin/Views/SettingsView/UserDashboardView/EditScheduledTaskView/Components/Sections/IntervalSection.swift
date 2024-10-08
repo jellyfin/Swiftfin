@@ -12,6 +12,7 @@ import SwiftUI
 extension AddTaskTriggerView {
 
     struct IntervalSection: View {
+
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 

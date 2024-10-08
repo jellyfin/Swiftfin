@@ -8,15 +8,16 @@
 
 import Foundation
 
-public enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemImageable {
+// TODO: move to SDK as patch file
+
+enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemImageable {
+
     case daily = "DailyTrigger"
     case weekly = "WeeklyTrigger"
     case interval = "IntervalTrigger"
     case startup = "StartupTrigger"
-    case manual = "ManualTrigger"
-    case unknown = ""
 
-    public var displayTitle: String {
+    var displayTitle: String {
         switch self {
         case .daily:
             return L10n.daily
@@ -26,10 +27,6 @@ public enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemI
             return L10n.interval
         case .startup:
             return L10n.onApplicationStartup
-        case .manual:
-            return L10n.manual
-        case .unknown:
-            return L10n.unknown
         }
     }
 
@@ -43,10 +40,6 @@ public enum TaskTriggerType: String, Codable, CaseIterable, Displayable, SystemI
             return "timer"
         case .startup:
             return "power"
-        case .manual:
-            return "hand.tap"
-        case .unknown:
-            return "questionmark"
         }
     }
 }

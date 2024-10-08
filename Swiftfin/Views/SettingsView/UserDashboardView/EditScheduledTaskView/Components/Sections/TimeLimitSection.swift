@@ -12,8 +12,10 @@ import SwiftUI
 extension AddTaskTriggerView {
 
     struct TimeLimitSection: View {
+
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
+
         @State
         private var isPresentingTimeLimitAlert = false
         @State

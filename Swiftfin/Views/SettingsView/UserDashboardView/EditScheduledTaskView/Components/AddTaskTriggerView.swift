@@ -16,16 +16,11 @@ struct AddTaskTriggerView: View {
 
     @State
     private var taskTriggerInfo: TaskTriggerInfo
+
     private let emptyTaskTriggerInfo: TaskTriggerInfo
 
     @State
     private var createTrigger: Bool
-    private let allowedTriggerTypes: [TaskTriggerType] = [
-        .daily,
-        .interval,
-        .weekly,
-        .startup,
-    ]
 
     @Environment(\.dismiss)
     private var dismiss
@@ -35,24 +30,6 @@ struct AddTaskTriggerView: View {
 
     private var hasUnsavedChanges: Bool {
         taskTriggerInfo != emptyTaskTriggerInfo
-    }
-
-    private var isValid: Bool {
-        guard let type = taskTriggerInfo.type else {
-            return false
-        }
-        switch type {
-        case TaskTriggerType.daily.rawValue:
-            return taskTriggerInfo.timeOfDayTicks != nil
-        case TaskTriggerType.weekly.rawValue:
-            return taskTriggerInfo.timeOfDayTicks != nil && taskTriggerInfo.dayOfWeek != nil
-        case TaskTriggerType.interval.rawValue:
-            return taskTriggerInfo.intervalTicks != nil
-        case TaskTriggerType.startup.rawValue:
-            return true
-        default:
-            return false
-        }
     }
 
     init(observer: ServerTaskObserver, createTrigger: Bool = true, taskTriggerInfo: TaskTriggerInfo? = nil) {
@@ -78,15 +55,18 @@ struct AddTaskTriggerView: View {
 
     var body: some View {
         Form {
-            TriggerTypeSection(taskTriggerInfo: $taskTriggerInfo, allowedTriggerTypes: allowedTriggerTypes)
+            TriggerTypeSection(taskTriggerInfo: $taskTriggerInfo, allowedTriggerTypes: TaskTriggerType.allCases)
+
             DayOfWeekSection(taskTriggerInfo: $taskTriggerInfo)
+
             TimeSection(taskTriggerInfo: $taskTriggerInfo)
+
             IntervalSection(taskTriggerInfo: $taskTriggerInfo)
+
             TimeLimitSection(taskTriggerInfo: $taskTriggerInfo)
         }
-        .interactiveDismissDisabled(hasUnsavedChanges)
+        .interactiveDismissDisabled(true)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
         .navigationBarCloseButton {
             if hasUnsavedChanges {
                 isPresentingNotSaved = true
@@ -97,12 +77,13 @@ struct AddTaskTriggerView: View {
         .navigationTitle(L10n.addTaskTrigger)
         .topBarTrailing {
             Button(L10n.save) {
-                observer.send(.addTrigger(taskTriggerInfo))
+
                 UIDevice.impact(.light)
+
+                observer.send(.addTrigger(taskTriggerInfo))
                 dismiss()
             }
             .buttonStyle(.toolbarPill)
-            .disabled(!isValid)
         }
         .alert(L10n.unsavedChangesMessage, isPresented: $isPresentingNotSaved) {
             Button(L10n.close, role: .destructive) {

@@ -24,26 +24,10 @@ struct EditScheduledTaskView: View {
     @ObservedObject
     var observer: ServerTaskObserver
 
-    var body: some View {
-        List {
-            ListTitleSection(observer.task.name ?? L10n.unknown, description: observer.task.description)
-
-            detailsSection
-            triggersSection
-        }
-        .navigationTitle(L10n.task)
-        .topBarTrailing {
-            if let triggers = observer.task.triggers,
-               triggers.isNotEmpty
-            {
-                Button(L10n.add) {
-                    UIDevice.impact(.light)
-                    router.route(to: \.addScheduledTaskTrigger, observer)
-                }
-                .buttonStyle(.toolbarPill)
-            }
-        }
-    }
+    @State
+    private var isPresentingDeleteConfirmation = false
+    @State
+    private var selectedTrigger: TaskTriggerInfo?
 
     private var detailsSection: some View {
         Section(L10n.details) {
@@ -65,22 +49,58 @@ struct EditScheduledTaskView: View {
                triggers.isNotEmpty
             {
                 ForEach(triggers, id: \.self) { trigger in
-                    if let triggerType = trigger.type,
-                       let taskTriggerType = TaskTriggerType(rawValue: triggerType)
-                    {
-                        TriggerButton(
-                            taskTriggerInfo: trigger,
-                            taskTriggerType: taskTriggerType
-                        ) {
-                            observer.send(.removeTrigger(trigger))
+                    TriggerRow(taskTriggerInfo: trigger)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(L10n.delete) {
+                                selectedTrigger = trigger
+                                isPresentingDeleteConfirmation = true
+                            }
+                            .tint(.red)
                         }
-                    }
                 }
             } else {
                 Button(L10n.addTaskTrigger) {
                     router.route(to: \.addScheduledTaskTrigger, observer)
                 }
             }
+        }
+    }
+
+    var body: some View {
+        List {
+            ListTitleSection(
+                observer.task.name ?? L10n.unknown,
+                description: observer.task.description
+            )
+
+            detailsSection
+
+            triggersSection
+        }
+        .navigationTitle(L10n.task)
+        .topBarTrailing {
+            if let triggers = observer.task.triggers,
+               triggers.isNotEmpty
+            {
+                Button(L10n.add) {
+                    UIDevice.impact(.light)
+                    router.route(to: \.addScheduledTaskTrigger, observer)
+                }
+                .buttonStyle(.toolbarPill)
+            }
+        }
+        .confirmationDialog(
+            L10n.deleteTrigger,
+            isPresented: $isPresentingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.cancel, role: .cancel) {}
+
+            Button(L10n.delete, role: .destructive) {
+                // TODO: delete selected trigger
+            }
+        } message: {
+            Text(L10n.deleteTriggerConfirmationMessage)
         }
     }
 }

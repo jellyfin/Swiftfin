@@ -12,8 +12,10 @@ import SwiftUI
 extension AddTaskTriggerView {
 
     struct TriggerTypeSection: View {
+
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
+
         let allowedTriggerTypes: [TaskTriggerType]
 
         private let defaultTimeOfDayTicks = 0
@@ -35,11 +37,10 @@ extension AddTaskTriggerView {
                 )
             ) {
                 ForEach(allowedTriggerTypes, id: \.self) { type in
-                    Text(type.displayTitle).tag(type as TaskTriggerType?)
+                    Text(type.displayTitle)
+                        .tag(type as TaskTriggerType?)
                 }
             }
-            .pickerStyle(.menu)
-            .foregroundStyle(.primary)
         }
 
         private func resetValuesForNewType(newType: TaskTriggerType?) {

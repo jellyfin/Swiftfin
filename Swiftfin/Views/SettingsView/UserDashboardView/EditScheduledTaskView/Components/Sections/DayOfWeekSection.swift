@@ -12,6 +12,7 @@ import SwiftUI
 extension AddTaskTriggerView {
 
     struct DayOfWeekSection: View {
+
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
@@ -26,12 +27,11 @@ extension AddTaskTriggerView {
                         set: { taskTriggerInfo.dayOfWeek = $0 }
                     )
                 ) {
+                    // TODO: don't use rawValue
                     ForEach(DayOfWeek.allCases, id: \.self) { day in
                         Text(day.rawValue.capitalized).tag(day)
                     }
                 }
-                .pickerStyle(.menu)
-                .foregroundStyle(.primary)
             }
         }
     }
