@@ -15,15 +15,15 @@ extension AddTaskTriggerView {
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
+        private let defaultDayOfWeek: DayOfWeek = .sunday
+
         var body: some View {
             if taskTriggerInfo.type == TaskTriggerType.weekly.rawValue {
                 Picker(
                     L10n.dayOfWeek,
-                    selection: Binding<DayOfWeek>(
-                        get: { taskTriggerInfo.dayOfWeek ?? defaultDayOfWeek() },
-                        set: { newValue in
-                            taskTriggerInfo.dayOfWeek = newValue
-                        }
+                    selection: Binding(
+                        get: { taskTriggerInfo.dayOfWeek ?? defaultDayOfWeek },
+                        set: { taskTriggerInfo.dayOfWeek = $0 }
                     )
                 ) {
                     ForEach(DayOfWeek.allCases, id: \.self) { day in
@@ -32,16 +32,7 @@ extension AddTaskTriggerView {
                 }
                 .pickerStyle(.menu)
                 .foregroundStyle(.primary)
-                .onAppear {
-                    if taskTriggerInfo.dayOfWeek == nil {
-                        taskTriggerInfo.dayOfWeek = defaultDayOfWeek()
-                    }
-                }
             }
-        }
-
-        private func defaultDayOfWeek() -> DayOfWeek {
-            .sunday
         }
     }
 }

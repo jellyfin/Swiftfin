@@ -77,7 +77,7 @@ struct EditScheduledTaskView: View {
                     }
                 }
             } else {
-                Button(L10n.addTrigger) {
+                Button(L10n.addTaskTrigger) {
                     router.route(to: \.addScheduledTaskTrigger, observer)
                 }
             }

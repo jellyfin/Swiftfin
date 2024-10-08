@@ -51,43 +51,8 @@ extension EditScheduledTaskView {
 
         private var labelView: some View {
             VStack(alignment: .leading) {
-                switch taskTriggerType {
-                case .startup:
-                    Text(taskTriggerType.displayTitle)
-                        .fontWeight(.semibold)
-
-                case .daily:
-                    if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
-                        Text(L10n.itemAtItem(
-                            taskTriggerType.displayTitle,
-                            timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
-                        ))
-                        .fontWeight(.semibold)
-                    }
-
-                case .interval:
-                    if let intervalTicks = taskTriggerInfo.intervalTicks {
-                        Text(L10n.everyInterval(
-                            timeIntervalFromTicks(intervalTicks).formatted(.hourMinute)
-                        ))
-                        .fontWeight(.semibold)
-                    }
-
-                case .weekly:
-                    if let dayOfWeek = taskTriggerInfo.dayOfWeek,
-                       let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
-                    {
-                        Text(L10n.itemAtItem(
-                            dayOfWeek.rawValue.capitalized,
-                            timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
-                        ))
-                        .fontWeight(.semibold)
-                    }
-
-                default:
-                    Text(L10n.unknown)
-                        .fontWeight(.semibold)
-                }
+                Text(triggerDisplayText)
+                    .fontWeight(.semibold)
 
                 if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                     Text(
@@ -99,6 +64,40 @@ extension EditScheduledTaskView {
                     .foregroundStyle(.secondary)
                 }
             }
+        }
+
+        // MARK: - Trigger Display Text
+
+        private var triggerDisplayText: String {
+            switch taskTriggerType {
+            case .startup:
+                return taskTriggerType.displayTitle
+            case .daily:
+                if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
+                    return L10n.itemAtItem(
+                        taskTriggerType.displayTitle,
+                        timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                    )
+                }
+            case .interval:
+                if let intervalTicks = taskTriggerInfo.intervalTicks {
+                    return L10n.everyInterval(
+                        timeIntervalFromTicks(intervalTicks).formatted(.hourMinute)
+                    )
+                }
+            case .weekly:
+                if let dayOfWeek = taskTriggerInfo.dayOfWeek,
+                   let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks
+                {
+                    return L10n.itemAtItem(
+                        dayOfWeek.rawValue.capitalized,
+                        timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                    )
+                }
+            default:
+                return L10n.unknown
+            }
+            return L10n.unknown
         }
 
         // MARK: - Icon View
@@ -116,11 +115,13 @@ extension EditScheduledTaskView {
             }
         }
 
-        // MARK: - Convert Ticks to TimeInterval and Time from Ticks
+        // MARK: - Convert Ticks to TimeInterval
 
         private func timeIntervalFromTicks(_ ticks: Int) -> TimeInterval {
             TimeInterval(ticks) / 10_000_000
         }
+
+        // MARK: - Convert Ticks to Time
 
         private func timeFromTicks(_ ticks: Int) -> Date {
             let totalSeconds = timeIntervalFromTicks(ticks)

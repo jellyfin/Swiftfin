@@ -15,17 +15,15 @@ extension AddTaskTriggerView {
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
+        private let defaultTimeOfDayTicks = 0
+
         var body: some View {
             if taskTriggerInfo.type == TaskTriggerType.daily.rawValue || taskTriggerInfo.type == TaskTriggerType.weekly.rawValue {
                 DatePicker(
                     L10n.time,
                     selection: Binding<Date>(
                         get: {
-                            if let ticks = taskTriggerInfo.timeOfDayTicks {
-                                return dateFromTimeOfDayTicks(ticks)
-                            } else {
-                                return dateFromTimeOfDayTicks(defaultTimeOfDayTicks())
-                            }
+                            dateFromTimeOfDayTicks(taskTriggerInfo.timeOfDayTicks ?? defaultTimeOfDayTicks)
                         },
                         set: { date in
                             taskTriggerInfo.timeOfDayTicks = timeOfDayTicksFromDate(date)
@@ -33,11 +31,6 @@ extension AddTaskTriggerView {
                     ),
                     displayedComponents: .hourAndMinute
                 )
-                .onAppear {
-                    if taskTriggerInfo.timeOfDayTicks == nil {
-                        taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks()
-                    }
-                }
             }
         }
 
@@ -55,10 +48,6 @@ extension AddTaskTriggerView {
             let components = Calendar.current.dateComponents([.hour, .minute], from: date)
             let totalSeconds = TimeInterval((components.hour ?? 0) * 3600 + (components.minute ?? 0) * 60)
             return Int(totalSeconds * 10_000_000)
-        }
-
-        private func defaultTimeOfDayTicks() -> Int {
-            0
         }
     }
 }

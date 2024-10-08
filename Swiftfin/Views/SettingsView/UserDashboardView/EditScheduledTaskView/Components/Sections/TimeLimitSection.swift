@@ -27,7 +27,7 @@ extension AddTaskTriggerView {
                 )
                 .onSelect {
                     isPresentingTimeLimitAlert = true
-                    loadInitialValue()
+                    inputValue = hoursFromTicks(taskTriggerInfo.maxRuntimeTicks)
                 }
                 .alert(L10n.timeLimit, isPresented: $isPresentingTimeLimitAlert) {
                     TextField(
@@ -38,41 +38,36 @@ extension AddTaskTriggerView {
                     .keyboardType(.numberPad)
 
                     Button(L10n.save) {
-                        saveTimeLimit()
+                        taskTriggerInfo.maxRuntimeTicks = ticksFromHours(inputValue)
+                        isPresentingTimeLimitAlert = false
                     }
                     Button(L10n.cancel, role: .cancel) {
                         isPresentingTimeLimitAlert = false
                     }
-                } message: {
-                    Text(L10n.timeLimit)
                 }
             }
         }
 
         private var timeLimitSubtitle: Text {
             if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks, maxRuntimeTicks > 0 {
-                let timeInterval = TimeInterval(maxRuntimeTicks) / 10_000_000
-                return Text(timeInterval.formatted(.hourMinute))
+                return Text(timeFromTicks(maxRuntimeTicks))
             } else {
                 return Text(L10n.disabled)
             }
         }
 
-        private func loadInitialValue() {
-            if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                inputValue = maxRuntimeTicks / (10_000_000 * 3600)
-            } else {
-                inputValue = 0
-            }
+        private func hoursFromTicks(_ ticks: Int?) -> Int {
+            guard let ticks = ticks else { return 0 }
+            return ticks / 36_000_000_000
         }
 
-        private func saveTimeLimit() {
-            if inputValue > 0 {
-                taskTriggerInfo.maxRuntimeTicks = inputValue * 10_000_000 * 3600
-            } else {
-                taskTriggerInfo.maxRuntimeTicks = nil
-            }
-            isPresentingTimeLimitAlert = false
+        private func ticksFromHours(_ hours: Int) -> Int? {
+            hours > 0 ? hours * 36_000_000_000 : nil
+        }
+
+        private func timeFromTicks(_ ticks: Int) -> String {
+            let timeInterval = TimeInterval(ticks) / 10_000_000
+            return timeInterval.formatted(.hourMinute)
         }
     }
 }

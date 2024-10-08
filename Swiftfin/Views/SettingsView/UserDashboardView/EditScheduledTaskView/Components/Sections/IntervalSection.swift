@@ -15,17 +15,15 @@ extension AddTaskTriggerView {
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
+        private let defaultIntervalTicks = 36_000_000_000
+
         var body: some View {
             if taskTriggerInfo.type == TaskTriggerType.interval.rawValue {
                 Picker(
                     L10n.every,
-                    selection: Binding<Int>(
-                        get: {
-                            taskTriggerInfo.intervalTicks ?? defaultIntervalTicks()
-                        },
-                        set: { newValue in
-                            taskTriggerInfo.intervalTicks = newValue
-                        }
+                    selection: Binding(
+                        get: { taskTriggerInfo.intervalTicks ?? defaultIntervalTicks },
+                        set: { taskTriggerInfo.intervalTicks = $0 }
                     )
                 ) {
                     ForEach(TaskTriggerInterval.allCases) { interval in
@@ -34,16 +32,7 @@ extension AddTaskTriggerView {
                 }
                 .pickerStyle(.menu)
                 .foregroundStyle(.primary)
-                .onAppear {
-                    if taskTriggerInfo.intervalTicks == nil {
-                        taskTriggerInfo.intervalTicks = defaultIntervalTicks()
-                    }
-                }
             }
-        }
-
-        private func defaultIntervalTicks() -> Int {
-            Int(3600 * 10_000_000)
         }
     }
 }

@@ -25,8 +25,8 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
     enum State: Hashable {
         case error(JellyfinAPIError)
         case initial
+        case updating
         case running
-        case updated
     }
 
     @Published
@@ -99,7 +99,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
                 do {
                     try await addTrigger(newTrigger: trigger)
                     await MainActor.run {
-                        self.state = .updated
+                        self.state = .updating
                     }
                 } catch {
                     await MainActor.run {
@@ -109,7 +109,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .updated
+            return .running
         case let .removeTrigger(trigger):
             progressCancellable?.cancel()
             cancelCancellable?.cancel()
@@ -118,7 +118,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
                 do {
                     try await removeTrigger(deleteTrigger: trigger)
                     await MainActor.run {
-                        self.state = .updated
+                        self.state = .updating
                     }
                 } catch {
                     await MainActor.run {
@@ -128,7 +128,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .updated
+            return .running
         }
     }
 
@@ -182,11 +182,8 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
         let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
         try await userSession.client.send(updateRequest)
 
-        let getTaskRequest = Paths.getTask(taskID: id)
-        let response = try await userSession.client.send(getTaskRequest)
-
         await MainActor.run {
-            self.task = response.value
+            self.task.triggers = updatedTriggers
         }
     }
 }

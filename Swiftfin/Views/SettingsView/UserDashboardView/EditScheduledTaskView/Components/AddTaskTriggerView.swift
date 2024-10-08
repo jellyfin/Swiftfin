@@ -94,12 +94,10 @@ struct AddTaskTriggerView: View {
                 dismiss()
             }
         }
-        .navigationTitle(L10n.customProfile)
+        .navigationTitle(L10n.addTaskTrigger)
         .topBarTrailing {
             Button(L10n.save) {
-                if createTrigger {
-                    observer.send(.addTrigger(taskTriggerInfo))
-                }
+                observer.send(.addTrigger(taskTriggerInfo))
                 UIDevice.impact(.light)
                 dismiss()
             }

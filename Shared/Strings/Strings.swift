@@ -26,8 +26,6 @@ internal enum L10n {
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add Task Trigger
   internal static let addTaskTrigger = L10n.tr("Localizable", "addTaskTrigger", fallback: "Add Task Trigger")
-  /// Add trigger
-  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Administration
@@ -288,8 +286,6 @@ internal enum L10n {
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Edit Server
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
-  /// Edit Task Trigger
-  internal static let editTaskTrigger = L10n.tr("Localizable", "editTaskTrigger", fallback: "Edit Task Trigger")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
   /// Enabled

@@ -16,44 +16,50 @@ extension AddTaskTriggerView {
         var taskTriggerInfo: TaskTriggerInfo
         let allowedTriggerTypes: [TaskTriggerType]
 
+        private let defaultTimeOfDayTicks = 0
+        private let defaultDayOfWeek: DayOfWeek = .sunday
+        private let defaultIntervalTicks = 36_000_000_000
+
         var body: some View {
             Picker(
                 L10n.triggerType,
-                selection: Binding<String?>(
-                    get: { taskTriggerInfo.type },
+                selection: Binding<TaskTriggerType?>(
+                    get: {
+                        TaskTriggerType(rawValue: taskTriggerInfo.type ?? "")
+                    },
                     set: { newValue in
-                        if taskTriggerInfo.type != newValue {
+                        if taskTriggerInfo.type != newValue?.rawValue {
                             resetValuesForNewType(newType: newValue)
                         }
                     }
                 )
             ) {
-                ForEach(allowedTriggerTypes, id: \.rawValue) { type in
-                    Text(type.displayTitle).tag(type.rawValue as String?)
+                ForEach(allowedTriggerTypes, id: \.self) { type in
+                    Text(type.displayTitle).tag(type as TaskTriggerType?)
                 }
             }
             .pickerStyle(.menu)
             .foregroundStyle(.primary)
         }
 
-        private func resetValuesForNewType(newType: String?) {
-            taskTriggerInfo.type = newType
+        private func resetValuesForNewType(newType: TaskTriggerType?) {
+            taskTriggerInfo.type = newType?.rawValue
             let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks
 
             switch newType {
-            case TaskTriggerType.daily.rawValue:
-                taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks()
+            case .daily:
+                taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks
                 taskTriggerInfo.dayOfWeek = nil
                 taskTriggerInfo.intervalTicks = nil
-            case TaskTriggerType.weekly.rawValue:
-                taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks()
-                taskTriggerInfo.dayOfWeek = defaultDayOfWeek()
+            case .weekly:
+                taskTriggerInfo.timeOfDayTicks = defaultTimeOfDayTicks
+                taskTriggerInfo.dayOfWeek = defaultDayOfWeek
                 taskTriggerInfo.intervalTicks = nil
-            case TaskTriggerType.interval.rawValue:
-                taskTriggerInfo.intervalTicks = defaultIntervalTicks()
+            case .interval:
+                taskTriggerInfo.intervalTicks = defaultIntervalTicks
                 taskTriggerInfo.timeOfDayTicks = nil
                 taskTriggerInfo.dayOfWeek = nil
-            case TaskTriggerType.startup.rawValue:
+            case .startup:
                 taskTriggerInfo.timeOfDayTicks = nil
                 taskTriggerInfo.dayOfWeek = nil
                 taskTriggerInfo.intervalTicks = nil
@@ -64,18 +70,6 @@ extension AddTaskTriggerView {
             }
 
             taskTriggerInfo.maxRuntimeTicks = maxRuntimeTicks
-        }
-
-        private func defaultTimeOfDayTicks() -> Int {
-            0
-        }
-
-        private func defaultDayOfWeek() -> DayOfWeek {
-            .sunday
-        }
-
-        private func defaultIntervalTicks() -> Int {
-            Int(3600 * 10_000_000)
         }
     }
 }
