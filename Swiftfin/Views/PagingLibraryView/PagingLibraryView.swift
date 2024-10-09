@@ -57,6 +57,8 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @EnvironmentObject
     private var router: LibraryCoordinator<Element>.Router
+    @EnvironmentObject
+    private var mainRouter: MainCoordinator.Router
 
     @State
     private var layout: CollectionVGridLayout
@@ -182,22 +184,43 @@ struct PagingLibraryView<Element: Poster>: View {
 
     @ViewBuilder
     private func landscapeGridItemView(item: Element) -> some View {
-        PosterButton(item: item, type: .landscape)
-            .content {
-                if item.showTitle {
-                    PosterButton.TitleContentView(item: item)
-                        .backport
-                        .lineLimit(1, reservesSpace: true)
-                } else if viewModel.parent?.libraryType == .folder {
-                    PosterButton.TitleContentView(item: item)
-                        .backport
-                        .lineLimit(1, reservesSpace: true)
-                        .hidden()
+        PosterButton(
+            item: item,
+            type: .landscape
+        )
+        .content {
+            if item.showTitle {
+                PosterButton.TitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
+            } else if viewModel.parent?.libraryType == .folder {
+                PosterButton.TitleContentView(item: item)
+                    .backport
+                    .lineLimit(1, reservesSpace: true)
+                    .hidden()
+            }
+        }
+        .onSelect {
+            onSelect(item)
+        }
+        .contextMenu {
+            PosterButton.ContextMenuView(
+                item: item,
+                onPlay: {
+                    if let baseItem = item as! BaseItemDto? {
+                        let mediaViewModel = ItemViewModel(item: baseItem)
+                        if let playButtonItem = mediaViewModel.playButtonItem,
+                           let selectedMediaSource = mediaViewModel.selectedMediaSource
+                        {
+                            mainRouter.route(
+                                to: \.videoPlayer,
+                                OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource)
+                            )
+                        }
+                    }
                 }
-            }
-            .onSelect {
-                onSelect(item)
-            }
+            )
+        }
     }
 
     @ViewBuilder
@@ -217,6 +240,34 @@ struct PagingLibraryView<Element: Poster>: View {
             }
             .onSelect {
                 onSelect(item)
+            }
+            .contextMenu {
+                PosterButton.ContextMenuView(
+                    item: item,
+                    onPlay: {
+                        if let baseItem = item as! BaseItemDto? {
+                            if let selectedMediaSource = baseItem.mediaSources?.first {
+                                mainRouter.route(
+                                    to: \.videoPlayer,
+                                    OnlineVideoPlayerManager(
+                                        item: baseItem,
+                                        mediaSource: selectedMediaSource
+                                    )
+                                )
+                            }
+                        }
+                    },
+                    onPlayedToggle: {
+                        if let baseItem = item as! BaseItemDto? {
+                            ItemViewModel(item: baseItem).send(.toggleIsPlayed)
+                        }
+                    },
+                    onFavoriteToggle: {
+                        if let baseItem = item as! BaseItemDto? {
+                            ItemViewModel(item: baseItem).send(.toggleIsFavorite)
+                        }
+                    }
+                )
             }
     }
 
