@@ -18,6 +18,7 @@ extension AddTaskTriggerView {
 
         private let defaultIntervalTicks = 36_000_000_000
 
+        // TODO: Make Normal Numbers?
         var body: some View {
             if taskTriggerInfo.type == TaskTriggerType.interval.rawValue {
                 Picker(
@@ -31,8 +32,6 @@ extension AddTaskTriggerView {
                         Text(interval.displayTitle).tag(Int(interval.rawValue))
                     }
                 }
-                .pickerStyle(.menu)
-                .foregroundStyle(.primary)
             }
         }
     }

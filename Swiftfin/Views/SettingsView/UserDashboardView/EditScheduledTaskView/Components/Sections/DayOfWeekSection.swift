@@ -27,9 +27,8 @@ extension AddTaskTriggerView {
                         set: { taskTriggerInfo.dayOfWeek = $0 }
                     )
                 ) {
-                    // TODO: don't use rawValue
                     ForEach(DayOfWeek.allCases, id: \.self) { day in
-                        Text(day.rawValue.capitalized).tag(day)
+                        Text(day.displayTitle).tag(day)
                     }
                 }
             }

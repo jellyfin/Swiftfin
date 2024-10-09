@@ -19,9 +19,6 @@ struct AddTaskTriggerView: View {
 
     private let emptyTaskTriggerInfo: TaskTriggerInfo
 
-    @State
-    private var createTrigger: Bool
-
     @Environment(\.dismiss)
     private var dismiss
 
@@ -32,25 +29,19 @@ struct AddTaskTriggerView: View {
         taskTriggerInfo != emptyTaskTriggerInfo
     }
 
-    init(observer: ServerTaskObserver, createTrigger: Bool = true, taskTriggerInfo: TaskTriggerInfo? = nil) {
+    init(observer: ServerTaskObserver) {
         self.observer = observer
 
-        if let taskTriggerInfo = taskTriggerInfo {
-            _taskTriggerInfo = State(initialValue: taskTriggerInfo)
-            self.emptyTaskTriggerInfo = taskTriggerInfo
-            self.createTrigger = false
-        } else {
-            let newTrigger = TaskTriggerInfo(
-                dayOfWeek: nil,
-                intervalTicks: nil,
-                maxRuntimeTicks: nil,
-                timeOfDayTicks: nil,
-                type: TaskTriggerType.startup.rawValue
-            )
-            _taskTriggerInfo = State(initialValue: newTrigger)
-            self.emptyTaskTriggerInfo = newTrigger
-            self.createTrigger = createTrigger
-        }
+        let newTrigger = TaskTriggerInfo(
+            dayOfWeek: nil,
+            intervalTicks: nil,
+            maxRuntimeTicks: nil,
+            timeOfDayTicks: nil,
+            type: TaskTriggerType.startup.rawValue
+        )
+
+        _taskTriggerInfo = State(initialValue: newTrigger)
+        self.emptyTaskTriggerInfo = newTrigger
     }
 
     var body: some View {

@@ -28,26 +28,31 @@ extension EditScheduledTaskView {
         // MARK: - Body
 
         var body: some View {
-            VStack(alignment: .leading) {
+            HStack {
+                VStack(alignment: .leading) {
 
-                Text(triggerDisplayText)
-                    .fontWeight(.semibold)
+                    Text(triggerDisplayText)
+                        .fontWeight(.semibold)
 
-                Group {
-                    if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                        Text(
-                            L10n.timeLimitLabelWithHours(
-                                timeIntervalFromTicks(maxRuntimeTicks).formatted(.hourMinute)
+                    Group {
+                        if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
+                            Text(
+                                L10n.timeLimitLabelWithHours(
+                                    timeIntervalFromTicks(maxRuntimeTicks).formatted(.hourMinute)
+                                )
                             )
-                        )
-                    } else {
-                        Text("No runtime limit")
+                        } else {
+                            Text(L10n.noRuntimeLimit)
+                        }
                     }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Image(systemName: taskTriggerType.systemImage)
+                    .foregroundStyle(.secondary)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
 
         // MARK: - Trigger Display Text

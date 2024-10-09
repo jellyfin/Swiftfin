@@ -238,6 +238,20 @@ internal enum L10n {
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
   /// Day of Week
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of Week")
+  /// Friday
+  internal static let dayOfWeekFriday = L10n.tr("Localizable", "dayOfWeekFriday", fallback: "Friday")
+  /// Monday
+  internal static let dayOfWeekMonday = L10n.tr("Localizable", "dayOfWeekMonday", fallback: "Monday")
+  /// Saturday
+  internal static let dayOfWeekSaturday = L10n.tr("Localizable", "dayOfWeekSaturday", fallback: "Saturday")
+  /// Sunday
+  internal static let dayOfWeekSunday = L10n.tr("Localizable", "dayOfWeekSunday", fallback: "Sunday")
+  /// Thursday
+  internal static let dayOfWeekThursday = L10n.tr("Localizable", "dayOfWeekThursday", fallback: "Thursday")
+  /// Tuesday
+  internal static let dayOfWeekTuesday = L10n.tr("Localizable", "dayOfWeekTuesday", fallback: "Tuesday")
+  /// Wednesday
+  internal static let dayOfWeekWednesday = L10n.tr("Localizable", "dayOfWeekWednesday", fallback: "Wednesday")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -300,12 +314,16 @@ internal enum L10n {
   internal static let episodes = L10n.tr("Localizable", "episodes", fallback: "Episodes")
   /// Error
   internal static let error = L10n.tr("Localizable", "error", fallback: "Error")
+  /// Error Details
+  internal static let errorDetails = L10n.tr("Localizable", "errorDetails", fallback: "Error Details")
   /// Every
   internal static let every = L10n.tr("Localizable", "every", fallback: "Every")
   /// Every %1$@
   internal static func everyInterval(_ p1: Any) -> String {
     return L10n.tr("Localizable", "everyInterval", String(describing: p1), fallback: "Every %1$@")
   }
+  /// Executed
+  internal static let executed = L10n.tr("Localizable", "executed", fallback: "Executed")
   /// Existing Server
   internal static let existingServer = L10n.tr("Localizable", "existingServer", fallback: "Existing Server")
   /// Existing User
@@ -500,6 +518,8 @@ internal enum L10n {
   internal static let noResults = L10n.tr("Localizable", "noResults", fallback: "No results.")
   /// Normal
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
+  /// No runtime limit
+  internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
   /// No session
   internal static let noSession = L10n.tr("Localizable", "noSession", fallback: "No session")
   /// N/A
@@ -804,6 +824,8 @@ internal enum L10n {
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
   /// Sports
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
+  /// Status
+  internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
   /// Streams
@@ -854,6 +876,12 @@ internal enum L10n {
   internal static let tasks = L10n.tr("Localizable", "tasks", fallback: "Tasks")
   /// Tasks are operations that are scheduled to run periodically or can be triggered manually.
   internal static let tasksDescription = L10n.tr("Localizable", "tasksDescription", fallback: "Tasks are operations that are scheduled to run periodically or can be triggered manually.")
+  /// Cancelling
+  internal static let taskStateCancelling = L10n.tr("Localizable", "taskStateCancelling", fallback: "Cancelling")
+  /// Idle
+  internal static let taskStateIdle = L10n.tr("Localizable", "taskStateIdle", fallback: "Idle")
+  /// Running
+  internal static let taskStateRunning = L10n.tr("Localizable", "taskStateRunning", fallback: "Running")
   /// Test Size
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
   /// Time

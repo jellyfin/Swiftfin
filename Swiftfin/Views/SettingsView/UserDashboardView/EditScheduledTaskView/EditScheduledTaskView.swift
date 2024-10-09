@@ -9,12 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: last run details
-//       - result, show error if available
 // TODO: observe running status
 //       - stop
 //       - run
-//       - progress
 
 struct EditScheduledTaskView: View {
 
@@ -29,25 +26,71 @@ struct EditScheduledTaskView: View {
     @State
     private var selectedTrigger: TaskTriggerInfo?
 
+    // MARK: - Task Details Section
+
+    @ViewBuilder
     private var detailsSection: some View {
         Section(L10n.details) {
             if let category = observer.task.category {
                 TextPairView(leading: L10n.category, trailing: category)
             }
+        }
+    }
 
-            if let lastEndTime = observer.task.lastExecutionResult?.endTimeUtc {
-                TextPairView(L10n.lastRun, value: Text("\(lastEndTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))"))
+    // MARK: - Last Run Details Section
+
+    @ViewBuilder
+    private func lastRunSection(_ lastExecutionResult: TaskResult) -> some View {
+        Section(L10n.lastRun) {
+            if let status = lastExecutionResult.status {
+                TextPairView(L10n.status, value: Text(status.displayTitle))
+            }
+            if let endTimeUtc = lastExecutionResult.endTimeUtc {
+                TextPairView(L10n.executed, value: Text("\(endTimeUtc, format: .relative(presentation: .numeric, unitsStyle: .narrow))"))
                     .monospacedDigit()
             }
         }
     }
 
+    // MARK: - Last Error Details Section
+
+    @ViewBuilder
+    private func lastErrorSection(_ lastExecutionResult: TaskResult) -> some View {
+        Section(L10n.errorDetails) {
+            if let errorMessage = lastExecutionResult.errorMessage {
+                Text(errorMessage)
+            }
+            if let longErrorMessage = lastExecutionResult.longErrorMessage {
+                Text(longErrorMessage)
+            }
+        }
+    }
+
+    // MARK: - Task Current Running Details Section
+
+    @ViewBuilder
+    private func currentRunningSection(_ task: TaskInfo) -> some View {
+        Section(L10n.progress) {
+            if let status = task.state {
+                TextPairView(L10n.status, value: Text(status.displayTitle))
+            }
+
+            if let currentProgressPercentage = task.currentProgressPercentage {
+                TextPairView(
+                    L10n.taskCompleted,
+                    value: Text("\(currentProgressPercentage / 100, format: .percent.precision(.fractionLength(1)))")
+                )
+                .monospacedDigit()
+            }
+        }
+    }
+
+    // MARK: - Task Triggers Section
+
     @ViewBuilder
     private var triggersSection: some View {
         Section(L10n.triggers) {
-            if let triggers = observer.task.triggers,
-               triggers.isNotEmpty
-            {
+            if let triggers = observer.task.triggers, !triggers.isEmpty {
                 ForEach(triggers, id: \.self) { trigger in
                     TriggerRow(taskTriggerInfo: trigger)
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -66,6 +109,14 @@ struct EditScheduledTaskView: View {
         }
     }
 
+    // MARK: - Trigger Haptic Feedback
+
+    private func triggerHapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
+        UIDevice.impact(style)
+    }
+
+    // MARK: - Body
+
     var body: some View {
         List {
             ListTitleSection(
@@ -75,15 +126,29 @@ struct EditScheduledTaskView: View {
 
             detailsSection
 
+            // Only Create the Last Run Section if there are Last Execution Results Available
+            if let lastExecutionResult = observer.task.lastExecutionResult {
+                lastRunSection(lastExecutionResult)
+
+                // Only Create the Last Error Section if there are Errors Available
+                // Errors can only exist if there is Last Execution Results
+                if lastExecutionResult.errorMessage != nil {
+                    lastErrorSection(lastExecutionResult)
+                }
+            }
+
+            // Only Create the Current Running Section if there is an Active Status
+            if observer.task.state == .running || observer.task.state == .cancelling {
+                currentRunningSection(observer.task)
+            }
+
             triggersSection
         }
         .navigationTitle(L10n.task)
         .topBarTrailing {
-            if let triggers = observer.task.triggers,
-               triggers.isNotEmpty
-            {
+            if observer.task.triggers?.isEmpty == false {
                 Button(L10n.add) {
-                    UIDevice.impact(.light)
+                    triggerHapticFeedback()
                     router.route(to: \.addScheduledTaskTrigger, observer)
                 }
                 .buttonStyle(.toolbarPill)
@@ -97,7 +162,9 @@ struct EditScheduledTaskView: View {
             Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.delete, role: .destructive) {
-                // TODO: delete selected trigger
+                if let selectedTrigger = selectedTrigger {
+                    observer.send(.removeTrigger(selectedTrigger))
+                }
             }
         } message: {
             Text(L10n.deleteTriggerConfirmationMessage)
