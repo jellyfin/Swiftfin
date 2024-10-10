@@ -76,6 +76,7 @@ struct PosterButton<Item: Poster>: View {
                         onFocusChanged(newValue)
                     }
             }
+            .accessibilityLabel(item.displayTitle)
 
             content()
                 .eraseToAnyView()
@@ -142,6 +143,7 @@ extension PosterButton {
             Text(item.displayTitle)
                 .font(.footnote.weight(.regular))
                 .foregroundColor(.primary)
+                .accessibilityLabel(item.displayTitle)
         }
     }
 

@@ -376,6 +376,11 @@ extension VideoPlayer {
     }
 
     private func handleDoubleTouchGesture(unitPoint: UnitPoint, taps: Int) {
+        if doubleTouchGesture == .gestureLock {
+            guard !isPresentingOverlay else { return }
+            isGestureLocked.toggle()
+        }
+
         guard !isGestureLocked else {
             updateViewProxy.present(systemName: "lock.fill", title: "Gestures Locked")
             return
@@ -385,10 +390,15 @@ extension VideoPlayer {
         case .none:
             return
         case .aspectFill: ()
-        case .gestureLock:
-            guard !isPresentingOverlay else { return }
-            isGestureLocked.toggle()
-        case .pausePlay: ()
+        case .pausePlay:
+            switch videoPlayerManager.state {
+            case .playing:
+                videoPlayerManager.proxy.pause()
+            default:
+                videoPlayerManager.proxy.play()
+            }
+        default:
+            break
         }
     }
 }

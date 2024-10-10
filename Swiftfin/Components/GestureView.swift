@@ -174,7 +174,7 @@ class UIGestureView: UIView {
 
         let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(didPerformPinch))
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
-        let doubleTouchGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformTap))
+        let doubleTouchGesture = UITapGestureRecognizer(target: self, action: #selector(didPerformDoubleTouch))
         doubleTouchGesture.numberOfTouchesRequired = 2
         let longPressGesture = UILongPressGestureRecognizer(target: self, action: #selector(didPerformLongPress))
         longPressGesture.minimumPressDuration = longPressMinimumDuration
