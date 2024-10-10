@@ -16,12 +16,6 @@ extension AddTaskTriggerView {
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
-        let allowedTriggerTypes: [TaskTriggerType]
-
-        private let defaultTimeOfDayTicks = 0
-        private let defaultDayOfWeek: DayOfWeek = .sunday
-        private let defaultIntervalTicks = 36_000_000_000
-
         var body: some View {
             Picker(
                 L10n.triggerType,
@@ -36,7 +30,7 @@ extension AddTaskTriggerView {
                     }
                 )
             ) {
-                ForEach(allowedTriggerTypes, id: \.self) { type in
+                ForEach(TaskTriggerType.allCases, id: \.self) { type in
                     Text(type.displayTitle)
                         .tag(type as TaskTriggerType?)
                 }

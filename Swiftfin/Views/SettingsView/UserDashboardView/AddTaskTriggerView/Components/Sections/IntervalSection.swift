@@ -11,24 +11,24 @@ import SwiftUI
 
 extension AddTaskTriggerView {
 
-    struct DayOfWeekSection: View {
+    struct IntervalSection: View {
 
         @Binding
         var taskTriggerInfo: TaskTriggerInfo
 
-        private let defaultDayOfWeek: DayOfWeek = .sunday
+        // MARK: - Body
 
         var body: some View {
-            if taskTriggerInfo.type == TaskTriggerType.weekly.rawValue {
+            if taskTriggerInfo.type == TaskTriggerType.interval.rawValue {
                 Picker(
-                    L10n.dayOfWeek,
+                    L10n.every,
                     selection: Binding(
-                        get: { taskTriggerInfo.dayOfWeek ?? defaultDayOfWeek },
-                        set: { taskTriggerInfo.dayOfWeek = $0 }
+                        get: { taskTriggerInfo.intervalTicks ?? defaultIntervalTicks },
+                        set: { taskTriggerInfo.intervalTicks = $0 }
                     )
                 ) {
-                    ForEach(DayOfWeek.allCases, id: \.self) { day in
-                        Text(day.displayTitle).tag(day)
+                    ForEach(Array(stride(from: 900, to: 86400 + 1, by: 900)), id: \.self) { interval in
+                        Text(TimeInterval(interval).formatted(.hourMinute)).tag(ServerTicks(seconds: interval).ticks)
                     }
                 }
             }

@@ -882,15 +882,21 @@ internal enum L10n {
   internal static let taskStateIdle = L10n.tr("Localizable", "taskStateIdle", fallback: "Idle")
   /// Running
   internal static let taskStateRunning = L10n.tr("Localizable", "taskStateRunning", fallback: "Running")
+  /// Sets the maximum runtime (in hours) for this task trigger
+  internal static let taskTriggerTimeLimit = L10n.tr("Localizable", "taskTriggerTimeLimit", fallback: "Sets the maximum runtime (in hours) for this task trigger")
   /// Test Size
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
   /// Time
   internal static let time = L10n.tr("Localizable", "time", fallback: "Time")
-  /// Time Limit (Hours)
-  internal static let timeLimit = L10n.tr("Localizable", "timeLimit", fallback: "Time Limit (Hours)")
+  /// Time Limit
+  internal static let timeLimit = L10n.tr("Localizable", "timeLimit", fallback: "Time Limit")
   /// Time limit: %1$@
   internal static func timeLimitLabelWithHours(_ p1: Any) -> String {
     return L10n.tr("Localizable", "timeLimitLabelWithHours", String(describing: p1), fallback: "Time limit: %1$@")
+  }
+  /// Time Limit (%@)
+  internal static func timeLimitWithUnit(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "timeLimitWithUnit", String(describing: p1), fallback: "Time Limit (%@)")
   }
   /// Timestamp
   internal static let timestamp = L10n.tr("Localizable", "timestamp", fallback: "Timestamp")

@@ -17,6 +17,7 @@ extension EditScheduledTaskView {
         let taskTriggerInfo: TaskTriggerInfo
 
         // TODO: remove after `TaskTriggerType` is provided by SDK
+
         private var taskTriggerType: TaskTriggerType {
             if let type = taskTriggerInfo.type {
                 return TaskTriggerType(rawValue: type)!
@@ -38,7 +39,8 @@ extension EditScheduledTaskView {
                         if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                             Text(
                                 L10n.timeLimitLabelWithHours(
-                                    timeIntervalFromTicks(maxRuntimeTicks).formatted(.hourMinute)
+                                    ServerTicks(ticks: maxRuntimeTicks)
+                                        .seconds.formatted(.hourMinute)
                                 )
                             )
                         } else {
@@ -63,7 +65,8 @@ extension EditScheduledTaskView {
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         taskTriggerType.displayTitle,
-                        timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                        ServerTicks(ticks: timeOfDayTicks)
+                            .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
             case .weekly:
@@ -72,38 +75,21 @@ extension EditScheduledTaskView {
                 {
                     return L10n.itemAtItem(
                         dayOfWeek.rawValue.capitalized,
-                        timeFromTicks(timeOfDayTicks).formatted(date: .omitted, time: .shortened)
+                        ServerTicks(ticks: timeOfDayTicks)
+                            .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
             case .interval:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
-                        timeIntervalFromTicks(intervalTicks).formatted(.hourMinute)
+                        ServerTicks(ticks: intervalTicks)
+                            .seconds.formatted(.hourMinute)
                     )
                 }
             case .startup:
                 return taskTriggerType.displayTitle
             }
-
             return L10n.unknown
-        }
-
-        // MARK: - Convert Ticks to TimeInterval
-
-        private func timeIntervalFromTicks(_ ticks: Int) -> TimeInterval {
-            TimeInterval(ticks) / 10_000_000
-        }
-
-        // MARK: - Convert Ticks to Time
-
-        private func timeFromTicks(_ ticks: Int) -> Date {
-            let totalSeconds = timeIntervalFromTicks(ticks)
-            let hours = Int(totalSeconds) / 3600
-            let minutes = (Int(totalSeconds) % 3600) / 60
-            var components = DateComponents()
-            components.hour = hours
-            components.minute = minutes
-            return Calendar.current.date(from: components) ?? Date()
         }
     }
 }

@@ -26,97 +26,6 @@ struct EditScheduledTaskView: View {
     @State
     private var selectedTrigger: TaskTriggerInfo?
 
-    // MARK: - Task Details Section
-
-    @ViewBuilder
-    private var detailsSection: some View {
-        Section(L10n.details) {
-            if let category = observer.task.category {
-                TextPairView(leading: L10n.category, trailing: category)
-            }
-        }
-    }
-
-    // MARK: - Last Run Details Section
-
-    @ViewBuilder
-    private func lastRunSection(_ lastExecutionResult: TaskResult) -> some View {
-        Section(L10n.lastRun) {
-            if let status = lastExecutionResult.status {
-                TextPairView(L10n.status, value: Text(status.displayTitle))
-            }
-            if let endTimeUtc = lastExecutionResult.endTimeUtc {
-                TextPairView(L10n.executed, value: Text("\(endTimeUtc, format: .relative(presentation: .numeric, unitsStyle: .narrow))"))
-                    .monospacedDigit()
-            }
-        }
-    }
-
-    // MARK: - Last Error Details Section
-
-    @ViewBuilder
-    private func lastErrorSection(_ lastExecutionResult: TaskResult) -> some View {
-        Section(L10n.errorDetails) {
-            if let errorMessage = lastExecutionResult.errorMessage {
-                Text(errorMessage)
-            }
-            if let longErrorMessage = lastExecutionResult.longErrorMessage {
-                Text(longErrorMessage)
-            }
-        }
-    }
-
-    // MARK: - Task Current Running Details Section
-
-    @ViewBuilder
-    private func currentRunningSection(_ task: TaskInfo) -> some View {
-        Section(L10n.progress) {
-            if let status = task.state {
-                TextPairView(L10n.status, value: Text(status.displayTitle))
-            }
-
-            if let currentProgressPercentage = task.currentProgressPercentage {
-                TextPairView(
-                    L10n.taskCompleted,
-                    value: Text("\(currentProgressPercentage / 100, format: .percent.precision(.fractionLength(1)))")
-                )
-                .monospacedDigit()
-            }
-        }
-    }
-
-    // MARK: - Task Triggers Section
-
-    @ViewBuilder
-    private var triggersSection: some View {
-        Section(L10n.triggers) {
-            if let triggers = observer.task.triggers, !triggers.isEmpty {
-                ForEach(triggers, id: \.self) { trigger in
-                    TriggerRow(taskTriggerInfo: trigger)
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(L10n.delete) {
-                                selectedTrigger = trigger
-                                isPresentingDeleteConfirmation = true
-                            }
-                            .tint(.red)
-                        }
-                }
-            } else {
-                Button(L10n.addTaskTrigger) {
-                    router.route(to: \.addScheduledTaskTrigger, observer)
-                }
-            }
-        }
-    }
-
-    // MARK: - Trigger Haptic Feedback
-
-    private func triggerHapticFeedback(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {
-        UIDevice.impact(style)
-    }
-
-    // MARK: - Body
-
     var body: some View {
         List {
             ListTitleSection(
@@ -124,31 +33,33 @@ struct EditScheduledTaskView: View {
                 description: observer.task.description
             )
 
-            detailsSection
+            DetailsSection(category: observer.task.category)
 
-            // Only Create the Last Run Section if there are Last Execution Results Available
             if let lastExecutionResult = observer.task.lastExecutionResult {
-                lastRunSection(lastExecutionResult)
+                LastRunSection(lastExecutionResult: lastExecutionResult)
 
-                // Only Create the Last Error Section if there are Errors Available
-                // Errors can only exist if there is Last Execution Results
                 if lastExecutionResult.errorMessage != nil {
-                    lastErrorSection(lastExecutionResult)
+                    LastErrorSection(lastExecutionResult: lastExecutionResult)
                 }
             }
 
-            // Only Create the Current Running Section if there is an Active Status
             if observer.task.state == .running || observer.task.state == .cancelling {
-                currentRunningSection(observer.task)
+                CurrentRunningSection(task: observer.task)
             }
 
-            triggersSection
+            TriggersSection(
+                triggers: observer.task.triggers,
+                isPresentingDeleteConfirmation: $isPresentingDeleteConfirmation,
+                selectedTrigger: $selectedTrigger,
+                deleteAction: { trigger in observer.send(.removeTrigger(trigger)) },
+                addAction: { router.route(to: \.addScheduledTaskTrigger, observer) }
+            )
         }
         .navigationTitle(L10n.task)
         .topBarTrailing {
             if observer.task.triggers?.isEmpty == false {
                 Button(L10n.add) {
-                    triggerHapticFeedback()
+                    UIDevice.impact(.light)
                     router.route(to: \.addScheduledTaskTrigger, observer)
                 }
                 .buttonStyle(.toolbarPill)

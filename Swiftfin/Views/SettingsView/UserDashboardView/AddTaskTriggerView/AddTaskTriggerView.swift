@@ -25,9 +25,19 @@ struct AddTaskTriggerView: View {
     @State
     private var isPresentingNotSaved = false
 
+    // MARK: - Default Trigger Values
+
+    static let defaultTimeOfDayTicks = 0
+    static let defaultDayOfWeek: DayOfWeek = .sunday
+    static let defaultIntervalTicks = 36_000_000_000
+
+    // MARK: - Unsaved Changes Validation
+
     private var hasUnsavedChanges: Bool {
         taskTriggerInfo != emptyTaskTriggerInfo
     }
+
+    // MARK: - Init
 
     init(observer: ServerTaskObserver) {
         self.observer = observer
@@ -44,9 +54,11 @@ struct AddTaskTriggerView: View {
         self.emptyTaskTriggerInfo = newTrigger
     }
 
+    // MARK: - Body
+
     var body: some View {
         Form {
-            TriggerTypeSection(taskTriggerInfo: $taskTriggerInfo, allowedTriggerTypes: TaskTriggerType.allCases)
+            TriggerTypeSection(taskTriggerInfo: $taskTriggerInfo)
 
             DayOfWeekSection(taskTriggerInfo: $taskTriggerInfo)
 
