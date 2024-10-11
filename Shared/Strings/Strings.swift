@@ -168,6 +168,8 @@ internal enum L10n {
   internal static let collections = L10n.tr("Localizable", "collections", fallback: "Collections")
   /// Color
   internal static let color = L10n.tr("Localizable", "color", fallback: "Color")
+  /// Columns
+  internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
   /// Coming soon
   internal static let comingSoon = L10n.tr("Localizable", "comingSoon", fallback: "Coming soon")
   /// Compact

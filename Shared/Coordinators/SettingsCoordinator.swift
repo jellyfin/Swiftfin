@@ -82,8 +82,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
     @Route(.modal)
-    var indicatorSettings = makeIndicatorSettings
-    @Route(.modal)
     var log = makeLog
     @Route(.modal)
     var serverDetail = makeServerDetail
