@@ -39,6 +39,11 @@ struct UserDashboardView: View {
                     .onSelect {
                         router.route(to: \.tasks)
                     }
+
+                ChevronButton(L10n.allDevices)
+                    .onSelect {
+                        router.route(to: \.devices)
+                    }
             }
         }
         .navigationTitle(L10n.dashboard)

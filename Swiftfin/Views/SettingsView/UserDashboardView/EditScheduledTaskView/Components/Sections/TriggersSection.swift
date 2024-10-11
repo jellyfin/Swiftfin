@@ -27,9 +27,11 @@ extension EditScheduledTaskView {
                     ForEach(triggers, id: \.self) { trigger in
                         TriggerRow(taskTriggerInfo: trigger)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(L10n.delete) {
+                                Button {
                                     selectedTrigger = trigger
                                     isPresentingDeleteConfirmation = true
+                                } label: {
+                                    Label(L10n.delete, systemImage: "trash")
                                 }
                                 .tint(.red)
                             }

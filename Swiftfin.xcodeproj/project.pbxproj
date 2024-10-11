@@ -49,6 +49,10 @@
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
 		4E762AAF2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
+		4E872ABE2CB84BF2008C17BC /* DeviceTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E872ABD2CB84BEF008C17BC /* DeviceTypes.swift */; };
+		4E872AC32CB861F5008C17BC /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E872AC12CB861F5008C17BC /* DevicesView.swift */; };
+		4E872AC42CB861F5008C17BC /* DeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E872ABF2CB861F5008C17BC /* DeviceRow.swift */; };
+		4E872AC62CB86308008C17BC /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E872AC52CB86308008C17BC /* DevicesViewModel.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E9A24E62C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24E52C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift */; };
@@ -1063,6 +1067,10 @@
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
+		4E872ABD2CB84BEF008C17BC /* DeviceTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTypes.swift; sourceTree = "<group>"; };
+		4E872ABF2CB861F5008C17BC /* DeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRow.swift; sourceTree = "<group>"; };
+		4E872AC12CB861F5008C17BC /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
+		4E872AC52CB86308008C17BC /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
 		4E9A24E52C82B5A50023DA83 /* CustomDeviceProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileSettingsView.swift; sourceTree = "<group>"; };
 		4E9A24E72C82B6190023DA83 /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
@@ -1898,9 +1906,10 @@
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
 				4E9DB3F22CB7952200D36A26 /* AddTaskTriggerView */,
+				4E872AC22CB861F5008C17BC /* DevicesView */,
 				4EA556AD2CB48B5900F71E7A /* EditScheduledTaskView */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
-				E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */,
+				4E872AC72CB86381008C17BC /* ServerLogsView */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
 			path = UserDashboardView;
@@ -1963,6 +1972,47 @@
 				4EB1A8D32C9B91A200F43898 /* Components */,
 			);
 			path = ActiveSessionDetailView;
+			sourceTree = "<group>";
+		};
+		4E872ABC2CB843F9008C17BC /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4EE141682C8BABDF0045B661 /* ProgressSection.swift */,
+			);
+			path = Sections;
+			sourceTree = "<group>";
+		};
+		4E872AC02CB861F5008C17BC /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E872ABF2CB861F5008C17BC /* DeviceRow.swift */,
+				4E872ACD2CB8A0A1008C17BC /* Sections */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E872AC22CB861F5008C17BC /* DevicesView */ = {
+			isa = PBXGroup;
+			children = (
+				4E872AC02CB861F5008C17BC /* Components */,
+				4E872AC12CB861F5008C17BC /* DevicesView.swift */,
+			);
+			path = DevicesView;
+			sourceTree = "<group>";
+		};
+		4E872AC72CB86381008C17BC /* ServerLogsView */ = {
+			isa = PBXGroup;
+			children = (
+				E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */,
+			);
+			path = ServerLogsView;
+			sourceTree = "<group>";
+		};
+		4E872ACD2CB8A0A1008C17BC /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		4E9A24E32C82B4700023DA83 /* CustomDeviceProfileSettingsView */ = {
@@ -2055,7 +2105,7 @@
 			isa = PBXGroup;
 			children = (
 				4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */,
-				4EE141682C8BABDF0045B661 /* ProgressSection.swift */,
+				4E872ABC2CB843F9008C17BC /* Sections */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -2107,6 +2157,7 @@
 				4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */,
 				E10231462BCF8A6D009D71FC /* ChannelLibraryViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
+				4E872AC52CB86308008C17BC /* DevicesViewModel.swift */,
 				E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */,
 				E113133928BEB71D00930F75 /* FilterViewModel.swift */,
 				625CB5722678C32A00530A6E /* HomeViewModel.swift */,
@@ -2507,6 +2558,7 @@
 				4E9DB3E52CB7021F00D36A26 /* ChevronInputButton.swift */,
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
 				E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */,
+				4E872ABD2CB84BEF008C17BC /* DeviceTypes.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
 				E1DE2B492B97ECB900F6715F /* ErrorView.swift */,
 				E1921B7528E63306003A5238 /* GestureView.swift */,
@@ -4828,6 +4880,9 @@
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,
 				E1BDF2F129524AB700CC0294 /* AutoPlayActionButton.swift in Sources */,
 				E145EB452BE0AD4E003BF6F3 /* Set.swift in Sources */,
+				4E872ABE2CB84BF2008C17BC /* DeviceTypes.swift in Sources */,
+				4E872AC32CB861F5008C17BC /* DevicesView.swift in Sources */,
+				4E872AC42CB861F5008C17BC /* DeviceRow.swift in Sources */,
 				E1BDF2F929524FDA00CC0294 /* PlayPreviousItemActionButton.swift in Sources */,
 				C46DD8E02A8DC7790046A504 /* LiveOverlay.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
@@ -4875,6 +4930,7 @@
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1CB75752C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
 				E1047E2327E5880000CB0D4A /* SystemImageContentView.swift in Sources */,
+				4E872AC62CB86308008C17BC /* DevicesViewModel.swift in Sources */,
 				E1C8CE5B28FE512400DF5D7B /* CGPoint.swift in Sources */,
 				E18ACA922A15A32F00BB4F35 /* (null) in Sources */,
 				E1A3E4C92BB74EA3005C59F8 /* LoadingCard.swift in Sources */,
