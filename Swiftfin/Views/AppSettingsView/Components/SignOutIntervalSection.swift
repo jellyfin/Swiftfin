@@ -43,7 +43,7 @@ extension AppSettingsView {
                             isEditingBackgroundSignOutInterval.toggle()
                         } label: {
                             HStack {
-                                Text(backgroundSignOutInterval, format: .hourMinute)
+                                Text(backgroundSignOutInterval, format: .components(style: .abbreviated, fields: [.hour, .minute]))
                                     .foregroundStyle(.secondary)
 
                                 Image(systemName: "chevron.right")

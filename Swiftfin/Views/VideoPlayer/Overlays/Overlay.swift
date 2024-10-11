@@ -48,9 +48,9 @@ extension VideoPlayer {
                         (1, 0)
                     }
                     .foregroundStyle(.black)
-                    .visible(playbackButtonType == .compact)
+                    .isVisible(playbackButtonType == .compact)
                 }
-                .visible(!isScrubbing && isPresentingOverlay)
+                .isVisible(!isScrubbing && isPresentingOverlay)
                 .offset(y: isPresentingOverlay ? 0 : -20)
                 .animation(.bouncy, value: isPresentingOverlay)
         }
@@ -66,9 +66,9 @@ extension VideoPlayer {
                         (1, 0.9)
                     }
                     .foregroundStyle(.black)
-                    .visible(isScrubbing || playbackButtonType == .compact)
+                    .isVisible(isScrubbing || playbackButtonType == .compact)
                 }
-                .visible(isScrubbing || isPresentingOverlay)
+                .isVisible(isScrubbing || isPresentingOverlay)
                 .transition(.move(edge: .top).combined(with: .opacity))
                 .offset(y: isPresentingOverlay ? 0 : 20)
                 .animation(.bouncy, value: isPresentingOverlay)
@@ -103,7 +103,7 @@ extension VideoPlayer {
 
                 if playbackButtonType == .large {
                     Overlay.LargePlaybackButtons()
-                        .visible(!isScrubbing && isPresentingOverlay)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
                 }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)

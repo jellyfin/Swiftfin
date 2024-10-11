@@ -26,7 +26,7 @@ struct SettingsBarButton: View {
             action()
         } label: {
             Image(systemName: "gearshape.fill")
-                .visible(!isUserImage)
+                .isVisible(!isUserImage)
                 .overlay {
                     ZStack {
                         Color.clear

@@ -185,8 +185,6 @@ extension View {
         }
     }
 
-    // TODO: have x/y tracked binding
-
     func onLocationChanged(_ onChange: @escaping (CGPoint) -> Void) -> some View {
         background {
             GeometryReader { reader in
@@ -246,12 +244,10 @@ extension View {
         return copy
     }
 
-    // TODO: rename isVisible
-
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable
-    func visible(_ isVisible: Bool) -> some View {
+    func isVisible(_ isVisible: Bool) -> some View {
         opacity(isVisible ? 1 : 0)
     }
 

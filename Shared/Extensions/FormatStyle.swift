@@ -34,7 +34,6 @@ struct RunTimeFormatStyle: FormatStyle {
     }
 
     func format(_ value: TimeInterval) -> String {
-        // truncation necessary
         let value = Int(value)
 
         let hours = value / 3600
