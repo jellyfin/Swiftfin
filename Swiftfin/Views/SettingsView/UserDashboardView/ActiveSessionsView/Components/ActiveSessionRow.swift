@@ -60,6 +60,7 @@ extension ActiveSessionsView {
                                 }
                         }
                         .squarePosterStyle()
+                        .frame(width: 60, height: 60)
                     } else {
                         ZStack {
                             Color.clear
@@ -70,10 +71,11 @@ extension ActiveSessionsView {
                                 }
                         }
                         .posterStyle(.portrait)
+                        .frame(width: 60, height: 90)
                     }
                 }
             }
-            .frame(width: 60)
+            .frame(width: 60, height: 90)
             .posterShadow()
             .padding(.vertical, 8)
         }
