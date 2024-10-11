@@ -231,8 +231,7 @@ final class DevicesViewModel: ViewModel, Stateful {
         let deviceIdsToDelete = self.devices.keys.filter { $0 != userSession.client.configuration.deviceID }
 
         for deviceId in deviceIdsToDelete {
-            print("Deleting: \(deviceId)")
-            // try await deleteDevice(id: deviceId)
+            try await deleteDevice(id: deviceId)
         }
 
         await MainActor.run {
