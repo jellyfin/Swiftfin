@@ -24,13 +24,8 @@ import VLCUI
 protocol MediaPlayerListener {
 
     var manager: MediaPlayerManager? { get set }
-
-//    func itemDidChange(newItem: MediaPlayerItem)
-//    func secondsDidChange(newSeconds: TimeInterval)
-//    func stateDidChange(newState: MediaPlayerManager.State)
 }
 
-// TODO: queue provider
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     enum Event {
@@ -69,15 +64,14 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     private(set) var item: BaseItemDto
-//    @Published
-    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
+    @Published
+    private(set) var playbackSpeed: PlaybackSpeed = .one
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
-    private(set) var playbackSpeed: PlaybackSpeed = .one
-
-    @Published
     final var state: State = .initial
+
+    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -87,9 +81,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    // proxy for the underlying video playing layer
     var proxy: MediaPlayerProxy!
-    var itemBuildTask: AnyCancellable?
+    private var itemBuildTask: AnyCancellable?
 
     var listeners: [any MediaPlayerListener] = []
 
@@ -99,7 +92,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         self.item = item
         super.init()
 
-        // TODO: don't build on init
+        // TODO: don't build on init?
         buildMediaItem(from: mediaItemProvider)
     }
 
@@ -197,15 +190,6 @@ extension MediaPlayerManager {
 //        if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
 //            subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
 //        }
-//
-//        nowPlayable.handleNowPlayablePlaybackChange(
-//            playing: true,
-//            metadata: .init(
-//                rate: Float(playbackSpeed.rawValue),
-//                position: Float(currentProgressHandler.seconds),
-//                duration: Float(currentViewModel.item.runTimeSeconds)
-//            )
-//        )
 //    }
 
     // MARK: onStateUpdated

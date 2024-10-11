@@ -56,7 +56,7 @@ struct CustomDrawerButton: View {
             .onTapGesture {
                 onSelect()
 
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                UIDevice.impact(.light)
             }
             .onLongPressGesture(minimumDuration: 0.1) {} onPressingChanged: { isPressing in
                 isPressed = isPressing

@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: REMOVE
+
 struct Slider: View {
 
     // TODO: rename `Style`

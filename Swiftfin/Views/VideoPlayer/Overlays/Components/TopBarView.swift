@@ -18,6 +18,14 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: DelayIntervalTimer
 
+        private func videoPlayerButtonPressed(_ isPressed: Bool) {
+            if isPressed {
+                overlayTimer.stop()
+            } else {
+                overlayTimer.delay()
+            }
+        }
+
         var body: some View {
             HStack(alignment: .center) {
                 Button("Close", systemImage: "xmark") {
@@ -34,13 +42,7 @@ extension VideoPlayer.Overlay {
                 EmptyHitTestView()
             }
             .font(.system(size: 24))
-            .buttonStyle(.videoPlayerBarButton { isPressed in
-                if isPressed {
-                    overlayTimer.stop()
-                } else {
-                    overlayTimer.delay()
-                }
-            })
+            .buttonStyle(.videoPlayerBarButton(perform: videoPlayerButtonPressed))
         }
     }
 }

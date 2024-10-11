@@ -32,23 +32,42 @@ struct ProgressBar: View {
     }
 }
 
-// TODO: fix capsule with low progress
-
 extension ProgressViewStyle where Self == PlaybackProgressViewStyle {
 
-    static var playback: Self { .init(secondaryProgress: nil) }
+    static var playback: Self { .init(secondaryProgress: nil, cornerStyle: .round) }
 
-    static func playback(secondaryProgress: Double?) -> Self {
-        .init(secondaryProgress: secondaryProgress)
+    func secondaryProgress(_ progress: Double?) -> Self {
+        copy(self, modifying: \.secondaryProgress, to: progress)
+    }
+
+    var square: Self {
+        copy(self, modifying: \.cornerStyle, to: .square)
     }
 }
 
 struct PlaybackProgressViewStyle: ProgressViewStyle {
 
+    enum CornerStyle {
+        case round
+        case square
+    }
+
     @State
     private var contentSize: CGSize = .zero
 
-    let secondaryProgress: Double?
+    var secondaryProgress: Double?
+    var cornerStyle: CornerStyle
+
+    @ViewBuilder
+    private func buildCapsule(for progress: Double) -> some View {
+        Rectangle()
+            .cornerRadius(
+                cornerStyle == .round ? contentSize.height / 2 : 0,
+                corners: [.topLeft, .bottomLeft]
+            )
+            .frame(width: contentSize.width * clamp(progress, min: 0, max: 1) + contentSize.height)
+            .offset(x: -contentSize.height)
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         Capsule()
@@ -57,31 +76,59 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
             .overlay(alignment: .leading) {
                 ZStack(alignment: .leading) {
 
-                    if let secondaryProgress {
-                        Capsule()
-                            .mask(alignment: .leading) {
-                                Rectangle()
-                            }
-                            .frame(width: contentSize.width * clamp(secondaryProgress, min: 0, max: 1))
+                    if let secondaryProgress,
+                       secondaryProgress > 0
+                    {
+                        buildCapsule(for: secondaryProgress)
                             .foregroundStyle(.tertiary)
                     }
 
-                    Capsule()
-                        .mask(alignment: .leading) {
-                            Rectangle()
-                        }
-                        .frame(width: contentSize.width * (configuration.fractionCompleted ?? 0))
-                        .foregroundStyle(.primary)
+                    if let fractionCompleted = configuration.fractionCompleted {
+                        buildCapsule(for: fractionCompleted)
+                            .foregroundStyle(.primary)
+                    }
                 }
             }
             .trackingSize($contentSize)
+            .mask {
+                Capsule()
+            }
     }
 }
 
-// #Preview {
-//    ProgressView(value: 0.3)
-//        .progressViewStyle(.SwiftfinLinear(secondaryProgress: 0.3))
-//        .frame(height: 8)
-//        .padding(.horizontal, 10)
-//        .foregroundStyle(.primary, .secondary, .orange)
-// }
+//struct Test: View {
+//
+//    @State
+//    private var p: Double = 0.1
+//    @State
+//    private var s: Double = 0.2
+//
+//    var body: some View {
+//        VStack {
+//            ProgressView(value: p)
+//                .progressViewStyle(.playback.secondaryProgress(s).square)
+//                .frame(height: 200)
+//                .padding(.horizontal, 10)
+//                .foregroundStyle(.primary, .secondary, .orange)
+//
+//            ProgressView(value: p)
+//                .progressViewStyle(.playback.secondaryProgress(s).square)
+//                .frame(height: 15)
+//                .foregroundStyle(.primary, .secondary, .orange)
+//                .padding(.horizontal, 10)
+//
+//            SwiftUI.Slider(value: $p, in: 0 ... 1)
+//            SwiftUI.Slider(value: $s, in: 0 ... 1)
+//            
+//            Button("Increment") {
+//                withAnimation(.bouncy) {
+//                    p += 0.1
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//#Preview {
+//    Test()
+//}

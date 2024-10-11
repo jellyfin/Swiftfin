@@ -22,7 +22,7 @@ extension VideoPlayer {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
-        
+
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
