@@ -45,7 +45,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
 
-        case seek(seconds: Int)
+        case seek(seconds: TimeInterval)
     }
 
     enum State: Hashable {
@@ -71,6 +71,14 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     final var state: State = .initial
 
+//    var progress: AnyPublisher<ProgressBoxValue, Never> {
+//        progressSubject
+//            .eraseToAnyPublisher()
+//    }
+//
+//    private let progressSubject: PassthroughSubject<ProgressBoxValue, Never> = .init()
+
+    @Published
     private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
 
     var events: AnyPublisher<Event, Never> {
@@ -136,10 +144,14 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             return .buffering
         case let .seek(seconds: seconds):
 
-            progress = .init(
+            let newProgress = ProgressBoxValue(
                 progress: CGFloat(seconds) / CGFloat(item.runTimeSeconds),
                 seconds: seconds
             )
+
+            progress = newProgress
+
+//            progressSubject.send(newProgress)
 
             return state
         }

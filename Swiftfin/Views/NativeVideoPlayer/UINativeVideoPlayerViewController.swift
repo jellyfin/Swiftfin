@@ -124,9 +124,9 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         return item.copy() as? AVMetadataItem
     }
 
-    private func seek(to seconds: Int) {
+    private func seek(to seconds: TimeInterval) {
         player?.seek(
-            to: CMTime(seconds: Double(seconds), preferredTimescale: 1),
+            to: CMTime(seconds: seconds, preferredTimescale: 1),
             toleranceBefore: .zero,
             toleranceAfter: .zero,
             completionHandler: { _ in

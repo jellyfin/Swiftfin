@@ -96,7 +96,7 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
     }
 }
 
-//struct Test: View {
+// struct Test: View {
 //
 //    @State
 //    private var p: Double = 0.1
@@ -119,7 +119,7 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
 //
 //            SwiftUI.Slider(value: $p, in: 0 ... 1)
 //            SwiftUI.Slider(value: $s, in: 0 ... 1)
-//            
+//
 //            Button("Increment") {
 //                withAnimation(.bouncy) {
 //                    p += 0.1
@@ -127,8 +127,8 @@ struct PlaybackProgressViewStyle: ProgressViewStyle {
 //            }
 //        }
 //    }
-//}
+// }
 //
-//#Preview {
+// #Preview {
 //    Test()
-//}
+// }

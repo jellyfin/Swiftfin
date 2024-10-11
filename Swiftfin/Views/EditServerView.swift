@@ -9,12 +9,10 @@
 import Factory
 import SwiftUI
 
-// Note: uses environment `isEditing` for deletion button. This was done
-//       to just prevent having 2 views that looked/interacted the same
-//       except for a single button.
-
 // TODO: change URL picker from menu to list with network-url mapping
 
+/// - Note: Set the environment `isEditing` to `true` to
+///         allow server deletion
 struct EditServerView: View {
 
     @EnvironmentObject

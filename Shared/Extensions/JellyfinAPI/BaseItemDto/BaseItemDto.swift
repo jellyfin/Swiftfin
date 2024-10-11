@@ -40,10 +40,9 @@ extension BaseItemDto {
         return genres.map(ItemGenre.init)
     }
 
-    // TODO: convert to TimeInterval
-    var runTimeSeconds: Int {
-        let playbackPositionTicks = runTimeTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    // TODO: optional?
+    var runTimeSeconds: TimeInterval {
+        TimeInterval(runTimeTicks ?? 0) / 10_000_000
     }
 
     var seasonEpisodeLabel: String? {
@@ -51,10 +50,9 @@ extension BaseItemDto {
         return L10n.seasonAndEpisode(String(seasonNo), String(episodeNo))
     }
 
-    // TODO: convert to TimeInterval
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = userData?.playbackPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    // TODO: optional?
+    var startTimeSeconds: TimeInterval {
+        TimeInterval(userData?.playbackPositionTicks ?? 0) / 10_000_000
     }
 
     // MARK: Calculations
@@ -172,10 +170,11 @@ extension BaseItemDto {
 
     // MARK: Chapter Images
 
+    // TODO: move to whatever listener for chapters
     var fullChapterInfo: [ChapterInfo.FullInfo] {
         guard let chapters else { return [] }
 
-        let ranges: [Range<Int>] = chapters
+        let ranges: [Range<TimeInterval>] = chapters
             .map(\.startTimeSeconds)
             .appending(runTimeSeconds + 1)
             .adjacentPairs()

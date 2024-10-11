@@ -35,8 +35,8 @@ final class AppSettingsCoordinator: NavigationCoordinatable {
 
     #if os(iOS)
     @ViewBuilder
-    func makeAbout(viewModel: SettingsViewModel) -> some View {
-        AboutAppView(viewModel: viewModel)
+    func makeAbout() -> some View {
+        AboutAppView()
     }
 
     @ViewBuilder

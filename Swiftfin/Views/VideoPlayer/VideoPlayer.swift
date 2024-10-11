@@ -57,11 +57,10 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-                    .onTicksUpdated { ticks, _ in
+                    .onSecondsUpdated { newSeconds, _ in
 
                         guard manager.state != .initial || manager.state != .loadingItem else { return }
 
-                        let newSeconds = ticks / 1000
                         let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
 
                         if !isScrubbing {
@@ -69,7 +68,7 @@ struct VideoPlayer: View {
                             scrubbedProgress.seconds = newSeconds
                         }
 
-                        manager.send(.seek(seconds: newSeconds))
+//                        manager.send(.seek(seconds: newSeconds))
                     }
                     .onStateUpdated { state, _ in
 
@@ -155,7 +154,7 @@ struct VideoPlayer: View {
                         .startTime
                         .asSeconds
 
-                    let progress = CGFloat(seconds) / CGFloat(item.baseItem.runTimeSeconds)
+                    let progress = seconds / item.baseItem.runTimeSeconds
 
                     scrubbedProgress.progress = progress
                     scrubbedProgress.seconds = seconds

@@ -17,7 +17,7 @@ struct ThumbSlider: View {
     @Binding
     private var isEditing: Bool
     @Binding
-    private var progress: CGFloat
+    private var progress: Double
 
     private var trackMask: () -> any View
     private var topContent: () -> any View
@@ -67,7 +67,7 @@ struct ThumbSlider: View {
 
 extension ThumbSlider {
 
-    init(progress: Binding<CGFloat>) {
+    init(progress: Binding<Double>) {
         self.init(
             isEditing: .constant(false),
             progress: progress,

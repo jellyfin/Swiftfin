@@ -23,6 +23,4 @@ protocol MediaPlayerProxy {
     func set(subtitleStream: MediaStream)
 
     func stop()
-
-    func play(item: MediaPlayerItem)
 }

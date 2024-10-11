@@ -47,8 +47,6 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
         avPlayer?.pause()
     }
 
-    func play(item: MediaPlayerItem) {}
-
     func set(audioStream: MediaStream) {}
     func set(subtitleStream: MediaStream) {}
 }

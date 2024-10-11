@@ -10,9 +10,6 @@ import SwiftUI
 
 struct AboutAppView: View {
 
-    @ObservedObject
-    var viewModel: SettingsViewModel
-
     var body: some View {
         List {
             Section {

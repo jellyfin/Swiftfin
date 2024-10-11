@@ -16,11 +16,11 @@ import VLCUI
 class ProgressBox: ObservableObject {
 
     @Published
-    var progress: CGFloat
+    var progress: Double
     @Published
-    var seconds: Int
+    var seconds: TimeInterval
 
-    init(progress: CGFloat = 0, seconds: Int = 0) {
+    init(progress: Double = 0, seconds: TimeInterval = 0) {
         self.progress = progress
         self.seconds = seconds
     }
@@ -29,7 +29,7 @@ class ProgressBox: ObservableObject {
 struct ProgressBoxValue {
 
     let progress: CGFloat
-    let seconds: Int
+    let seconds: TimeInterval
 }
 
 class MediaPlayerItem: ViewModel {
@@ -68,7 +68,7 @@ class MediaPlayerItem: ViewModel {
         let audioStreams = mediaSource.audioStreams ?? []
         let subtitleStreams = mediaSource.subtitleStreams ?? []
 
-        let startSeconds = max(0, baseItem.startTimeSeconds - Defaults[.VideoPlayer.resumeOffset])
+        let startSeconds = max(0, baseItem.startTimeSeconds - TimeInterval(Defaults[.VideoPlayer.resumeOffset]))
 
         self.videoStreams = mediaSource.videoStreams ?? []
         self.audioStreams = audioStreams

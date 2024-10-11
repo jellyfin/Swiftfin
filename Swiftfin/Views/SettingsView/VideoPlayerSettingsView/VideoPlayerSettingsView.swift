@@ -35,12 +35,12 @@ struct VideoPlayerSettingsView: View {
 
             Section {
 
-                BasicStepper(
-                    L10n.resumeOffset,
-                    value: $resumeOffset,
-                    range: 0 ... 30,
-                    formatter: .runtime
-                )
+//                BasicStepper(
+//                    L10n.resumeOffset,
+//                    value: $resumeOffset,
+//                    range: 0 ... 30,
+//                    formatter: .runtime
+//                )
 //                .valueFormatter {
 //                    $0.secondLabel
 //                }

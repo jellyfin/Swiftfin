@@ -35,12 +35,12 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
     }
 
     func setTime(_ time: TimeInterval) {
-        vlcUIProxy?.setTime(.seconds(Int(time)))
+        vlcUIProxy?.setTime(.seconds(time))
     }
 
-    func stop() {}
-
-    func play(item: MediaPlayerItem) {}
+    func stop() {
+        vlcUIProxy?.stop()
+    }
 
     func set(audioStream: MediaStream) {
         vlcUIProxy?.setAudioTrack(.absolute(audioStream.index ?? -1))

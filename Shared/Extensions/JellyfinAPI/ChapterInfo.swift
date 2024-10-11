@@ -18,10 +18,8 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    // TODO: convert to TimeInterval
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = startPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    var startTimeSeconds: TimeInterval {
+        TimeInterval(startPositionTicks ?? 0) / 10_000_000
     }
 }
 
@@ -35,7 +33,7 @@ extension ChapterInfo {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
-        let secondsRange: Range<Int>
+        let secondsRange: Range<TimeInterval>
 
         var displayTitle: String {
             chapterInfo.displayTitle
@@ -48,7 +46,7 @@ extension ChapterInfo {
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
-            secondsRange: Range<Int>
+            secondsRange: Range<TimeInterval>
         ) {
             self.chapterInfo = chapterInfo
             self.imageSource = imageSource

@@ -19,7 +19,7 @@ struct Slider: View {
     }
 
     @Binding
-    private var progress: CGFloat
+    private var progress: Double
 
     @State
     private var isEditing: Bool = false
@@ -140,7 +140,7 @@ struct Slider: View {
 
 extension Slider {
 
-    init(progress: Binding<CGFloat>) {
+    init(progress: Binding<Double>) {
         self.init(
             progress: progress,
             sliderBehavior: .track,
