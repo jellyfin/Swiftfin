@@ -10,6 +10,8 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: break out
+
 struct AnyMediaPlayerSupplement: Equatable, Identifiable {
 
     let supplement: any MediaPlayerSupplement

@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: loading view during `loadingItem` state
+
 struct NativeVideoPlayer: View {
 
     @EnvironmentObject
