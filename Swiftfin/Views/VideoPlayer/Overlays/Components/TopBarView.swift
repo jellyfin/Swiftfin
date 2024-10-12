@@ -16,13 +16,13 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
+        private var overlayTimer: PokeIntervalTimer
 
         private func videoPlayerButtonPressed(_ isPressed: Bool) {
             if isPressed {
                 overlayTimer.stop()
             } else {
-                overlayTimer.delay()
+                overlayTimer.poke()
             }
         }
 

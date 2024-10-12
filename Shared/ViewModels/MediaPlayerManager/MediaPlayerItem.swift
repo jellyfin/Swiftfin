@@ -32,12 +32,18 @@ struct ProgressBoxValue {
     let seconds: TimeInterval
 }
 
-class MediaPlayerItem: ViewModel {
+class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
     @Published
     var selectedAudioStreamIndex: Int? = nil
     @Published
     var selectedSubtitleStreamIndex: Int? = nil
+
+//    let infoProvider: ItemInfoDrawerProvider
+
+    weak var manager: MediaPlayerManager?
+
+    var supplements: [any MediaPlayerSupplement] = []
 
     let baseItem: BaseItemDto
     let chapters: [ChapterInfo.FullInfo]
@@ -96,6 +102,10 @@ class MediaPlayerItem: ViewModel {
 
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
+
+//        infoProvider = ItemInfoDrawerProvider(item: baseItem)
+
+        supplements.append(ItemInfoDrawerProvider(item: baseItem))
     }
 
     // MARK: build

@@ -61,7 +61,7 @@ struct VideoPlayer: View {
 
                         guard manager.state != .initial || manager.state != .loadingItem else { return }
 
-                        let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
+                        let newProgress = newSeconds / manager.item.runTimeSeconds
 
                         if !isScrubbing {
                             scrubbedProgress.progress = newProgress

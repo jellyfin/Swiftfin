@@ -10,9 +10,14 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    var isPresentingDrawer: Binding<Bool> {
-        get { self[IsPresentingDrawerKey.self] }
-        set { self[IsPresentingDrawerKey.self] = newValue }
+//    var isPresentingDrawer: Binding<Bool> {
+//        get { self[IsPresentingDrawerKey.self] }
+//        set { self[IsPresentingDrawerKey.self] = newValue }
+//    }
+
+    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> {
+        get { self[SelectedMediaPlayerSupplementKey.self] }
+        set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
     }
 
     var accentColor: Binding<Color> {

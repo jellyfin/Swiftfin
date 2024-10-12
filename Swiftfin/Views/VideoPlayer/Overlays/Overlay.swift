@@ -29,13 +29,21 @@ extension VideoPlayer {
         @Binding
         private var safeAreaInsets
 
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
+
         @State
-        private var isPresentingDrawer = false
+        private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @StateObject
-        private var overlayTimer: DelayIntervalTimer = .init(defaultInterval: 5)
+        private var overlayTimer: PokeIntervalTimer = .init(defaultInterval: 5)
+
+        private var isPresentingDrawer: Bool {
+            selectedSupplement != nil
+        }
 
         @ViewBuilder
         private var topBar: some View {
@@ -58,7 +66,6 @@ extension VideoPlayer {
         @ViewBuilder
         private var bottomBar: some View {
             Overlay.BottomBarView()
-                .edgePadding(.vertical)
                 .padding(effectiveSafeArea)
                 .background {
                     OpacityLinearGradient {
@@ -69,9 +76,20 @@ extension VideoPlayer {
                     .isVisible(isScrubbing || playbackButtonType == .compact)
                 }
                 .isVisible(isScrubbing || isPresentingOverlay)
-                .transition(.move(edge: .top).combined(with: .opacity))
                 .offset(y: isPresentingOverlay ? 0 : 20)
                 .animation(.bouncy, value: isPresentingOverlay)
+                .transition(.move(edge: .top).combined(with: .opacity))
+        }
+
+        @ViewBuilder
+        private var drawerTitleSection: some View {
+            HStack(spacing: 10) {
+                ForEach(manager.supplements.map { AnyMediaPlayerSupplement(supplement: $0) }) { supplement in
+                    DrawerSectionButton(
+                        supplement: supplement
+                    )
+                }
+            }
         }
 
         var body: some View {
@@ -81,51 +99,76 @@ extension VideoPlayer {
                     .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
 
+                GestureView()
+                    .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
+                        print("here")
+                        if isPresentingDrawer {
+                            selectedSupplement = nil
+                        } else {
+                            isPresentingOverlay.toggle()
+                        }
+                    }
+
                 VStack {
                     topBar
 
                     Spacer()
                         .allowsHitTesting(false)
 
-                    bottomBar
+                    if !isPresentingDrawer {
+                        bottomBar
+                    }
 
-//                    DrawerSectionView(selectedDrawerSection: $selectedDrawerIndex)
-//                        .offset(y: isPresentingOverlay ? 0 : 10)
-//                        .animation(.bouncy, value: isPresentingOverlay)
-//                        .visible(!isScrubbing)
-//
-//                    if isPresentingDrawer {
-//                        Color.red
-//                            .frame(height: 100)
-//                            .transition(.move(edge: .bottom).combined(with: .opacity))
-//                    }
+                    drawerTitleSection
+                        .padding(effectiveSafeArea)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
+                        .offset(y: isPresentingOverlay ? 0 : 20)
+                        .animation(.bouncy, value: isPresentingOverlay)
+
+                    if isPresentingDrawer {
+                        ZStack {
+                            if let selectedSupplement {
+                                selectedSupplement.supplement.makeBody()
+                                    .eraseToAnyView()
+                            }
+                        }
+                        .frame(height: 150)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                    }
+
+                    Color.clear
+                        .frame(height: EdgeInsets.edgePadding)
+                        .allowsHitTesting(false)
                 }
 
-                if playbackButtonType == .large {
+                if playbackButtonType == .large, !isPresentingDrawer {
                     Overlay.LargePlaybackButtons()
                         .isVisible(!isScrubbing && isPresentingOverlay)
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .environment(\.isPresentingDrawer, $isPresentingDrawer)
+            .animation(.bouncy, value: isPresentingDrawer)
+            .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(overlayTimer)
-//            .onChange(of: isPresentingDrawer) { newValue in
-//                print("here")
-//                if newValue {
-//                    overlayTimer.stop()
-//                } else {
-//                    overlayTimer.delay()
-//                }
-//            }
+            .onChange(of: selectedSupplement) { newValue in
+                if newValue == nil {
+                    overlayTimer.poke()
+                } else {
+                    overlayTimer.stop()
+                }
+            }
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
-                overlayTimer.delay()
+                overlayTimer.poke()
             }
             .onChange(of: isScrubbing) { newValue in
                 if newValue {
                     overlayTimer.stop()
                 } else {
-                    overlayTimer.delay()
+                    overlayTimer.poke()
                 }
             }
             .onReceive(overlayTimer.hasFired) { _ in
@@ -180,7 +223,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
             .environment(\.isAspectFilled, .mock(false))
             .environment(\.isPresentingOverlay, .constant(true))
             .environment(\.playbackSpeed, .constant(1.0))
-            .environment(\.isPresentingDrawer, .mock(false))
+            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
             .previewInterfaceOrientation(.landscapeLeft)
             .preferredColorScheme(.dark)
     }

@@ -9,13 +9,13 @@
 import Combine
 import SwiftUI
 
-class DelayIntervalTimer: ObservableObject {
+class PokeIntervalTimer: ObservableObject {
 
     private let defaultInterval: TimeInterval
     private var delaySubject: PassthroughSubject<Void, Never> = .init()
     private var delayedWorkItem: DispatchWorkItem?
 
-    init(defaultInterval: TimeInterval = -1) {
+    init(defaultInterval: TimeInterval = 5) {
         self.defaultInterval = defaultInterval
     }
 
@@ -25,16 +25,9 @@ class DelayIntervalTimer: ObservableObject {
             .eraseToAnyPublisher()
     }
 
-    func delay(interval: TimeInterval = -1) {
-        var interval = interval
+    func poke(interval: TimeInterval? = nil) {
 
-        if interval < 0 {
-            if defaultInterval < 0 {
-                return
-            } else {
-                interval = defaultInterval
-            }
-        }
+        let interval = interval ?? defaultInterval
 
         delayedWorkItem?.cancel()
 

@@ -63,4 +63,8 @@ extension EnvironmentValues {
     struct IsPresentingDrawerKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
+
+    struct SelectedMediaPlayerSupplementKey: EnvironmentKey {
+        static let defaultValue: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
+    }
 }

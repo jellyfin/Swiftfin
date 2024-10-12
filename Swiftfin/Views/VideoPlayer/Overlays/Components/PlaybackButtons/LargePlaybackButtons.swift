@@ -28,7 +28,7 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
+        private var overlayTimer: PokeIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
@@ -113,7 +113,7 @@ extension VideoPlayer.Overlay {
                 if isPressed {
                     overlayTimer.stop()
                 } else {
-                    overlayTimer.delay()
+                    overlayTimer.poke()
                 }
             })
             .onChange(of: manager.state) { state in

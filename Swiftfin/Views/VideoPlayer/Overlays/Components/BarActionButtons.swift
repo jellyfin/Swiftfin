@@ -19,7 +19,7 @@ extension VideoPlayer.Overlay {
         private var menuActionButtons
 
         @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
+        private var overlayTimer: PokeIntervalTimer
 
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {

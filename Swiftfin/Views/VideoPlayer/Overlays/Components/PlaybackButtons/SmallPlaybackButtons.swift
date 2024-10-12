@@ -22,7 +22,7 @@ extension VideoPlayer.Overlay {
         private var showJumpButtons
 
         @EnvironmentObject
-        private var timerProxy: DelayIntervalTimer
+        private var timerProxy: PokeIntervalTimer
         @EnvironmentObject
         private var videoPlayerManager: MediaPlayerManager
         @EnvironmentObject
@@ -32,7 +32,7 @@ extension VideoPlayer.Overlay {
         private var jumpBackwardButton: some View {
             Button {
                 videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.delay(interval: 5)
+                timerProxy.poke(interval: 5)
             } label: {
                 Image(systemName: jumpBackwardLength.backwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
@@ -49,7 +49,7 @@ extension VideoPlayer.Overlay {
                 default:
                     videoPlayerProxy.play()
                 }
-                timerProxy.delay(interval: 5)
+                timerProxy.poke(interval: 5)
             } label: {
                 Group {
                     switch videoPlayerManager.state {
@@ -72,7 +72,7 @@ extension VideoPlayer.Overlay {
         private var jumpForwardButton: some View {
             Button {
                 videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.delay(interval: 5)
+                timerProxy.poke(interval: 5)
             } label: {
                 Image(systemName: jumpForwardLength.forwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))

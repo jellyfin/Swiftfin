@@ -60,7 +60,11 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    private(set) var playbackItem: MediaPlayerItem? = nil
+    private(set) var playbackItem: MediaPlayerItem? = nil {
+        didSet {
+            supplements = playbackItem?.supplements ?? []
+        }
+    }
 
     @Published
     private(set) var item: BaseItemDto
@@ -81,6 +85,11 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
 
+    var listeners: [any MediaPlayerListener] = []
+
+    @Published
+    private(set) var supplements: [any MediaPlayerSupplement] = []
+
     var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
@@ -91,8 +100,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     var proxy: MediaPlayerProxy!
     private var itemBuildTask: AnyCancellable?
-
-    var listeners: [any MediaPlayerListener] = []
 
     // MARK: init
 
