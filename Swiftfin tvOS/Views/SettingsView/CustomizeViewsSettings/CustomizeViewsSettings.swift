@@ -37,6 +37,12 @@ struct CustomizeViewsSettings: View {
     private var libraryRandomImage
     @Default(.Customization.Library.showFavorites)
     private var showFavorites
+    @Default(.Customization.Library.displayType)
+    private var libraryDisplayType
+    @Default(.Customization.Library.posterType)
+    private var libraryPosterType
+    @Default(.Customization.Library.listColumnCount)
+    private var listColumnCount
 
     @EnvironmentObject
     private var router: CustomizeSettingsCoordinator.Router
@@ -76,8 +82,6 @@ struct CustomizeViewsSettings: View {
                     InlineEnumToggle(title: L10n.recommended, selection: $similarPosterType)
 
                     InlineEnumToggle(title: L10n.search, selection: $searchPosterType)
-
-                    InlineEnumToggle(title: L10n.library, selection: $libraryViewType)
                 }
 
                 Section(L10n.library) {
@@ -87,6 +91,18 @@ struct CustomizeViewsSettings: View {
                     Toggle(L10n.randomImage, isOn: $libraryRandomImage)
 
                     Toggle(L10n.showFavorites, isOn: $showFavorites)
+
+                    InlineEnumToggle(title: L10n.posters, selection: $libraryPosterType)
+                    InlineEnumToggle(title: L10n.library, selection: $libraryDisplayType)
+                    if libraryDisplayType == .list {
+                        ChevronButton(
+                            L10n.columns,
+                            subtitle: listColumnCount.description
+                        )
+                        .onSelect {
+                            router.route(to: \.listColumnSettings, $listColumnCount)
+                        }
+                    }
                 }
 
                 HomeSection()

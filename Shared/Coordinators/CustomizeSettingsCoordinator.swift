@@ -10,6 +10,7 @@ import Stinsen
 import SwiftUI
 
 final class CustomizeSettingsCoordinator: NavigationCoordinatable {
+
     let stack = NavigationStack(initial: \CustomizeSettingsCoordinator.start)
 
     @Root
@@ -17,11 +18,17 @@ final class CustomizeSettingsCoordinator: NavigationCoordinatable {
 
     @Route(.modal)
     var indicatorSettings = makeIndicatorSettings
+    @Route(.modal)
+    var listColumnSettings = makeListColumnSettings
 
     func makeIndicatorSettings() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             IndicatorSettingsView()
         }
+    }
+
+    func makeListColumnSettings(selection: Binding<Int>) -> some View {
+        ListColumnsPickerView(selection: selection)
     }
 
     @ViewBuilder
