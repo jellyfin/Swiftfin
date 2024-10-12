@@ -13,6 +13,7 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
+// TODO: remove `progress`
 class ProgressBox: ObservableObject {
 
     @Published
@@ -38,8 +39,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
     var selectedAudioStreamIndex: Int? = nil
     @Published
     var selectedSubtitleStreamIndex: Int? = nil
-
-//    let infoProvider: ItemInfoDrawerProvider
 
     weak var manager: MediaPlayerManager?
 

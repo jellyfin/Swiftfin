@@ -10,7 +10,7 @@ import SwiftUI
 
 // TODO: REMOVE
 
-struct Slider: View {
+struct SwiftfinSlider: View {
 
     // TODO: rename `Style`
     enum Behavior {
@@ -138,7 +138,7 @@ struct Slider: View {
     }
 }
 
-extension Slider {
+extension SwiftfinSlider {
 
     init(progress: Binding<Double>) {
         self.init(

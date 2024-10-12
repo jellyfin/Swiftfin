@@ -11,7 +11,6 @@ import SwiftUI
 
 extension VideoPlayer.Overlay {
 
-    // TODO: rename `ChapterTrackMask`
     struct ChapterTrackMask: View {
 
 //        @EnvironmentObject

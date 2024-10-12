@@ -10,6 +10,12 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: rename
+// TODO: bar color default to style
+// TODO: remove compact buttons?
+// TODO: timestamp handling
+// TODO: capsule scale on editing
+
 extension VideoPlayer.Overlay {
 
     struct BottomBarView: View {
@@ -32,19 +38,24 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var capsuleSlider: some View {
-            CapsuleSlider(progress: $scrubbedProgress.progress)
-                .isEditing(_isScrubbing.wrappedValue)
-                .bottomContent {
-                    SplitTimeStamp()
-                        .padding(5)
+            CapsuleSlider(value: $scrubbedProgress.progress)
+                .onEditingChanged { newValue in
+                    isScrubbing = newValue
                 }
-                .leadingContent {
-                    if playbackButtonType == .compact {
-                        SmallPlaybackButtons()
-                            .padding(.trailing)
-                            .disabled(isScrubbing)
-                    }
-                }
+            
+//            CapsuleSlider(progress: $scrubbedProgress.progress)
+//                .isEditing(_isScrubbing.wrappedValue)
+//                .bottomContent {
+//                    SplitTimeStamp()
+//                        .padding(5)
+//                }
+//                .leadingContent {
+//                    if playbackButtonType == .compact {
+//                        SmallPlaybackButtons()
+//                            .padding(.trailing)
+//                            .disabled(isScrubbing)
+//                    }
+//                }
         }
 
         @ViewBuilder

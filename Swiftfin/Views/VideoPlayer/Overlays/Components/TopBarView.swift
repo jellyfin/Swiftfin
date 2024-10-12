@@ -18,7 +18,7 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: PokeIntervalTimer
 
-        private func videoPlayerButtonPressed(_ isPressed: Bool) {
+        private func videoPlayerButtonPressed(isPressed: Bool) {
             if isPressed {
                 overlayTimer.stop()
             } else {

@@ -26,7 +26,7 @@ struct ThumbSlider: View {
     private var trailingContent: () -> any View
 
     var body: some View {
-        Slider(progress: $progress)
+        SwiftfinSlider(progress: $progress)
             .gestureBehavior(.thumb)
             .onEditingChanged { isEditing in
                 self.isEditing = isEditing
