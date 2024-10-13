@@ -370,6 +370,8 @@
 		E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
 		E12E2F072CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E2F082CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
+		E12E2F0A2CBB9EFF008C303A /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F092CBB9EFF008C303A /* ChapterOverlay.swift */; };
+		E12E2F0B2CBB9EFF008C303A /* ChapterOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F092CBB9EFF008C303A /* ChapterOverlay.swift */; };
 		E12E30F1296383810022FAC9 /* SplitFormWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */; };
 		E12E30F329638B140022FAC9 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F229638B140022FAC9 /* ChevronButton.swift */; };
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
@@ -1265,6 +1267,7 @@
 		E12CC1CC28D135C700678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12D02432C9FB772003B27CB /* MediaProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressManager.swift; sourceTree = "<group>"; };
 		E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfoSupplement.swift; sourceTree = "<group>"; };
+		E12E2F092CBB9EFF008C303A /* ChapterOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterOverlay.swift; sourceTree = "<group>"; };
 		E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFormWindowView.swift; sourceTree = "<group>"; };
 		E12E30F229638B140022FAC9 /* ChevronButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronButton.swift; sourceTree = "<group>"; };
 		E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPickerView.swift; sourceTree = "<group>"; };
@@ -2049,6 +2052,7 @@
 				E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */,
 				E13ECC6F2C922EDF0094601F /* MediaPlayerSupplement.swift */,
 				E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */,
+				E12E2F092CBB9EFF008C303A /* ChapterOverlay.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				4E3A785D2C3B87A400D33C11 /* PlaybackBitrate */,
@@ -4380,6 +4384,7 @@
 				E12CC1AF28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
 				E1CB758B2C80F9EC00217C76 /* CodecProfile.swift in Sources */,
 				E1763A252BF2F77B004DF6AB /* ScrollIfLargerThanContainerModifier.swift in Sources */,
+				E12E2F0A2CBB9EFF008C303A /* ChapterOverlay.swift in Sources */,
 				E11E374E293E7F08009EF240 /* MediaSourceInfo.swift in Sources */,
 				E1E1643A28BAC2EF00323B0A /* SearchView.swift in Sources */,
 				E1763A642BF3C9AA004DF6AB /* ListRowButton.swift in Sources */,
@@ -4851,6 +4856,7 @@
 				E1CB75792C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
 				E18ACA8F2A15A2CF00BB4F35 /* (null) in Sources */,
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
+				E12E2F0B2CBB9EFF008C303A /* ChapterOverlay.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
 				4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */,
