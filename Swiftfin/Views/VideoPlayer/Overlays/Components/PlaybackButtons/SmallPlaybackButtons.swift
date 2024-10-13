@@ -14,9 +14,9 @@ extension VideoPlayer.Overlay {
 
     struct SmallPlaybackButtons: View {
 
-        @Default(.VideoPlayer.jumpBackwardLength)
+        @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardLength
-        @Default(.VideoPlayer.jumpForwardLength)
+        @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardLength
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
@@ -31,8 +31,8 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-                timerProxy.poke(interval: 5)
+//                videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+//                timerProxy.poke(interval: 5)
             } label: {
                 Image(systemName: jumpBackwardLength.backwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))
@@ -71,8 +71,8 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-                timerProxy.poke(interval: 5)
+//                videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+//                timerProxy.poke(interval: 5)
             } label: {
                 Image(systemName: jumpForwardLength.forwardSystemImage)
                     .font(.system(size: 24, weight: .bold, design: .default))

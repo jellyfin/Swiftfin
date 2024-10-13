@@ -183,8 +183,8 @@ extension Defaults.Keys {
             "barActionButtons",
             default: VideoPlayerActionButton.defaultBarActionButtons
         )
-        static let jumpBackwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpBackwardLength", default: .fifteen)
-        static let jumpForwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpForwardLength", default: .fifteen)
+        static let jumpBackwardInterval: Key<MediaJumpInterval> = UserKey("jumpBackwardLength", default: .fifteen)
+        static let jumpForwardInterval: Key<MediaJumpInterval> = UserKey("jumpForwardLength", default: .fifteen)
         static let menuActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "menuActionButtons",
             default: VideoPlayerActionButton.defaultMenuActionButtons

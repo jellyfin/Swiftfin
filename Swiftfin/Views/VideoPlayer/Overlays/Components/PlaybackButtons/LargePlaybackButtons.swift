@@ -20,10 +20,10 @@ extension VideoPlayer.Overlay {
             case buffering
         }
 
-        @Default(.VideoPlayer.jumpBackwardLength)
-        private var jumpBackwardLength
-        @Default(.VideoPlayer.jumpForwardLength)
-        private var jumpForwardLength
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
         @Default(.VideoPlayer.showJumpButtons)
         private var showJumpButtons
 
@@ -70,8 +70,8 @@ extension VideoPlayer.Overlay {
 //                manager.proxy.jumpForward(jumpForwardLength.rawValue)
             } label: {
                 Label(
-                    jumpForwardLength.displayTitle,
-                    systemImage: jumpForwardLength.forwardSystemImage
+                    "\(jumpForwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
+                    systemImage: jumpForwardInterval.forwardSystemImage
                 )
                 .labelStyle(.iconOnly)
                 .font(.system(size: 36, weight: .regular, design: .default))
@@ -86,8 +86,8 @@ extension VideoPlayer.Overlay {
 //                manager.proxy.jumpBackward(jumpBackwardLength.rawValue)
             } label: {
                 Label(
-                    jumpBackwardLength.displayTitle,
-                    systemImage: jumpBackwardLength.backwardSystemImage
+                    "\(jumpBackwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
+                    systemImage: jumpBackwardInterval.backwardSystemImage
                 )
                 .labelStyle(.iconOnly)
                 .font(.system(size: 36, weight: .regular, design: .default))

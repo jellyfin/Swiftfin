@@ -69,7 +69,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var item: BaseItemDto
     @Published
-    private(set) var playbackSpeed: PlaybackSpeed = .one
+    private(set) var playbackRate: PlaybackRate = .one
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
@@ -82,8 +82,11 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 //
 //    private let progressSubject: PassthroughSubject<ProgressBoxValue, Never> = .init()
 
+//    @Published
+//    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
+    
     @Published
-    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
+    private(set) var seconds: TimeInterval = 0
 
     var listeners: [any MediaPlayerListener] = []
 
@@ -149,16 +152,18 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case .playNew:
 
             return .buffering
-        case let .seek(seconds: seconds):
+        case let .seek(newSeconds):
 
-            let newProgress = ProgressBoxValue(
-                progress: CGFloat(seconds) / CGFloat(item.runTimeSeconds),
-                seconds: seconds
-            )
-
-            progress = newProgress
+//            let newProgress = ProgressBoxValue(
+//                progress: CGFloat(seconds) / CGFloat(item.runTimeSeconds),
+//                seconds: seconds
+//            )
+//
+//            progress = newProgress
 
 //            progressSubject.send(newProgress)
+            
+            seconds = newSeconds
 
             return state
         }

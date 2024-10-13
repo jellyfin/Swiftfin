@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: match `CapsuleSlider` with `total` handling
+
 struct ThumbSlider: View {
 
     @Default(.VideoPlayer.Overlay.sliderColor)
@@ -20,14 +22,9 @@ struct ThumbSlider: View {
     private var progress: Double
 
     private var trackMask: () -> any View
-    private var topContent: () -> any View
-    private var bottomContent: () -> any View
-    private var leadingContent: () -> any View
-    private var trailingContent: () -> any View
 
     var body: some View {
         SwiftfinSlider(progress: $progress)
-            .gestureBehavior(.thumb)
             .onEditingChanged { isEditing in
                 self.isEditing = isEditing
             }
@@ -58,10 +55,6 @@ struct ThumbSlider: View {
                 }
             }
             .trackMask(trackMask)
-            .topContent(topContent)
-            .bottomContent(bottomContent)
-            .leadingContent(leadingContent)
-            .trailingContent(trailingContent)
     }
 }
 
@@ -71,11 +64,7 @@ extension ThumbSlider {
         self.init(
             isEditing: .constant(false),
             progress: progress,
-            trackMask: { Color.white },
-            topContent: { EmptyView() },
-            bottomContent: { EmptyView() },
-            leadingContent: { EmptyView() },
-            trailingContent: { EmptyView() }
+            trackMask: { Color.white }
         )
     }
 
@@ -85,21 +74,5 @@ extension ThumbSlider {
 
     func trackMask(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trackMask, with: content)
-    }
-
-    func topContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.topContent, with: content)
-    }
-
-    func bottomContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.bottomContent, with: content)
-    }
-
-    func leadingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.leadingContent, with: content)
-    }
-
-    func trailingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.trailingContent, with: content)
     }
 }

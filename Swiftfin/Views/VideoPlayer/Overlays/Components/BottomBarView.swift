@@ -30,20 +30,32 @@ extension VideoPlayer.Overlay {
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
+        @Environment(\.scrubbedSeconds)
+        @Binding
+        private var scrubbedSeconds: TimeInterval
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        @EnvironmentObject
-        private var scrubbedProgress: ProgressBox
+//        @EnvironmentObject
+//        private var scrubbedProgress: ProgressBox
 
         @ViewBuilder
         private var capsuleSlider: some View {
-            CapsuleSlider(value: $scrubbedProgress.progress)
-                .onEditingChanged { newValue in
-                    isScrubbing = newValue
-                }
-            
-//            CapsuleSlider(progress: $scrubbedProgress.progress)
+            // TODO: possible issue with runTimeSeconds == 0
+            CapsuleSlider(
+                value: _scrubbedSeconds.wrappedValue,
+                total: manager.item.runTimeSeconds
+            )
+            .onEditingChanged { newValue in
+                isScrubbing = newValue
+            }
+            .frame(height: 30)
+        }
+
+        @ViewBuilder
+        private var thumbSlider: some View {
+            EmptyView()
+//            ThumbSlider(progress: $scrubbedProgress.progress)
 //                .isEditing(_isScrubbing.wrappedValue)
 //                .bottomContent {
 //                    SplitTimeStamp()
@@ -58,31 +70,16 @@ extension VideoPlayer.Overlay {
 //                }
         }
 
-        @ViewBuilder
-        private var thumbSlider: some View {
-            ThumbSlider(progress: $scrubbedProgress.progress)
-                .isEditing(_isScrubbing.wrappedValue)
-                .bottomContent {
-                    SplitTimeStamp()
-                        .padding(5)
-                }
-                .leadingContent {
-                    if playbackButtonType == .compact {
-                        SmallPlaybackButtons()
-                            .padding(.trailing)
-                            .disabled(isScrubbing)
-                    }
-                }
-        }
-
         var body: some View {
-            VStack(alignment: .leading, spacing: 0) {
-                switch sliderType {
-                case .capsule: capsuleSlider
-                case .thumb: thumbSlider
-                }
-            }
-            .disabled(manager.state == .loadingItem)
+//            VStack(alignment: .leading, spacing: 0) {
+//                switch sliderType {
+//                case .capsule: capsuleSlider
+//                case .thumb: thumbSlider
+//                }
+//            }
+//            .disabled(manager.state == .loadingItem)
+            
+            capsuleSlider
         }
     }
 }

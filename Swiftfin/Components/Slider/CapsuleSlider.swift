@@ -8,25 +8,24 @@
 
 import SwiftUI
 
-// TODO: support `total` handling
-
-struct CapsuleSlider: View {
+struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
-    private var value: Double
+    private var value: V
     
     @State
     private var contentSize: CGSize = .zero
     @State
     private var isEditing: Bool = false
     @State
-    private var dragStartProgress: Double = 0
+    private var translationStartLocation: CGPoint = .zero
     @State
-    private var currentTranslationStartLocation: CGPoint = .zero
+    private var translationStartValue: V = 0
     @State
     private var currentTranslation: CGFloat = 0
     
     private var onEditingChanged: (Bool) -> Void
+    private let total: V
     
     private var trackDrag: some Gesture {
         DragGesture(coordinateSpace: .global)
@@ -34,15 +33,15 @@ struct CapsuleSlider: View {
                 if !isEditing {
                     isEditing = true
                     onEditingChanged(true)
-                    dragStartProgress = self.value
-                    currentTranslationStartLocation = newValue.location
+                    translationStartValue = value
+                    translationStartLocation = newValue.location
                     currentTranslation = 0
                 }
 
-                currentTranslation = currentTranslationStartLocation.x - newValue.location.x
+                currentTranslation = translationStartLocation.x - newValue.location.x
 
-                let newProgress = dragStartProgress - currentTranslation / contentSize.width
-                self.value = min(max(0, newProgress), 1)
+                let newProgress = translationStartValue - V(currentTranslation / contentSize.width) * total
+                value = clamp(newProgress, min: 0, max: total)
             }
             .onEnded { _ in
                 isEditing = false
@@ -51,7 +50,7 @@ struct CapsuleSlider: View {
     }
 
     var body: some View {
-        ProgressView(value: value)
+        ProgressView(value: value, total: total)
             .progressViewStyle(.playback)
             .overlay {
                 Color.clear
@@ -64,10 +63,11 @@ struct CapsuleSlider: View {
 
 extension CapsuleSlider {
 
-    init(value: Binding<Double>) {
+    init(value: Binding<V>, total: V = 1.0) {
         self.init(
             value: value,
-            onEditingChanged: { _ in }
+            onEditingChanged: { _ in },
+            total: total
         )
     }
     
@@ -79,18 +79,21 @@ extension CapsuleSlider {
 struct Test: View {
     
     @State
-    private var value = 0.1
+    private var value: Double = 50
     
     @State
     private var isEditing = false
     
     var body: some View {
-        CapsuleSlider(value: $value)
+        CapsuleSlider(value: $value, total: 100)
             .onEditingChanged { newValue in
                 isEditing = newValue
             }
-            .scaleEffect(isEditing ? 1.1 : 1)
+            .scaleEffect(!isEditing ? 0.95 : 1)
             .animation(.snappy(duration: 0.3), value: isEditing)
+            .onChange(of: value) { newValue in
+                print(newValue)
+            }
     }
 }
 

@@ -75,6 +75,9 @@ struct ItemInfoDrawerProvider: MediaPlayerSupplement {
         @Environment(\.safeAreaInsets)
         @Binding
         private var safeAreaInsets
+        
+        @State
+        private var contentSize: CGSize = .zero
 
         let item: BaseItemDto
 
@@ -98,7 +101,7 @@ struct ItemInfoDrawerProvider: MediaPlayerSupplement {
         }
 
         var body: some View {
-            HStack(spacing: EdgeInsets.edgePadding) {
+            HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
                 ZStack {
                     Color.clear
 
@@ -114,30 +117,38 @@ struct ItemInfoDrawerProvider: MediaPlayerSupplement {
                     Text(item.displayTitle)
                         .font(.callout)
                         .fontWeight(.semibold)
-                        .foregroundColor(.primary)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
+                    
+                    if let overview = item.overview {
+                        Text(overview)
+                            .font(.subheadline.weight(.semibold))
+                    }
 
                     accessoryView
                         .font(.caption)
-                        .foregroundColor(Color(UIColor.lightGray))
+                        .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
+//                .frame(maxHeight: .infinity, alignment: .center)
+                
+                VStack {
+                    Button {} label: {
+                        ZStack {
+//                            RoundedRectangle(cornerRadius: 7)
+//                                .fill(Color.gray.opacity(0.1))
+                            BlurView()
+                                .cornerRadius(7)
 
-                Button {} label: {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 7)
-                            .fill(Color.gray.opacity(0.1))
-
-                        Label("From Beginning", systemImage: "play.fill")
-                            .font(.subheadline)
+                            Label("From Beginning", systemImage: "play.fill")
+                                .font(.subheadline.weight(.semibold))
+                        }
+                        .frame(width: 150, height: 50)
                     }
-                    .frame(width: 150, height: 50)
                 }
             }
             .padding(.horizontal, safeAreaInsets.leading)
-            .frame(height: 150)
-//            .trackingSize($contentSize)
+            .trackingSize($contentSize)
         }
     }
 }
@@ -154,6 +165,7 @@ struct ContentView_Previews: PreviewProvider {
         .makeBody()
         .eraseToAnyView()
         .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
+        .frame(height: 110)
         .previewInterfaceOrientation(.landscapeRight)
     }
 }

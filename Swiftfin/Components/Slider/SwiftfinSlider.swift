@@ -8,15 +8,11 @@
 
 import SwiftUI
 
-// TODO: REMOVE
+// TODO: remove and just make into a thumb slider
+// TODO: maybe make a base slider style that takes
+//       the drag gesture
 
 struct SwiftfinSlider: View {
-
-    // TODO: rename `Style`
-    enum Behavior {
-        case thumb
-        case track
-    }
 
     @Binding
     private var progress: Double
@@ -34,16 +30,11 @@ struct SwiftfinSlider: View {
     @State
     private var thumbSize: CGSize = .zero
 
-    private var sliderBehavior: Behavior
     private var trackGesturePadding: EdgeInsets
     private var track: () -> any View
     private var trackBackground: () -> any View
     private var trackMask: () -> any View
     private var thumb: () -> any View
-    private var topContent: () -> any View
-    private var bottomContent: () -> any View
-    private var leadingContent: () -> any View
-    private var trailingContent: () -> any View
     private var onEditingChanged: (Bool) -> Void
 
     private var trackDrag: some Gesture {
@@ -69,16 +60,7 @@ struct SwiftfinSlider: View {
     }
 
     var body: some View {
-        HStack(alignment: .sliderCenterAlignmentGuide, spacing: 0) {
-            leadingContent()
-                .eraseToAnyView()
-                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
-                    context[VerticalAlignment.center]
-                }
-
             VStack(spacing: 0) {
-                topContent()
-                    .eraseToAnyView()
 
                 ZStack(alignment: .leading) {
 
@@ -100,9 +82,10 @@ struct SwiftfinSlider: View {
 
                     thumb()
                         .eraseToAnyView()
-                        .if(sliderBehavior == .thumb) { view in
-                            view.gesture(trackDrag)
-                        }
+//                        .if(sliderBehavior == .thumb) { view in
+//                            view.gesture(trackDrag)
+//                        }
+                        .gesture(trackDrag)
                         .onSizeChanged { newSize in
                             thumbSize = newSize
                         }
@@ -111,30 +94,9 @@ struct SwiftfinSlider: View {
                 .onSizeChanged { size in
                     totalWidth = size.width
                 }
-                .if(sliderBehavior == .track) { view in
-                    view.overlay {
-                        Color.clear
-                            .padding(trackGesturePadding)
-                            .contentShape(Rectangle())
-                            .highPriorityGesture(trackDrag)
-                    }
-                }
-                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
-                    context[VerticalAlignment.center]
-                }
-
-                bottomContent()
-                    .eraseToAnyView()
             }
-
-            trailingContent()
-                .eraseToAnyView()
-                .alignmentGuide(.sliderCenterAlignmentGuide) { context in
-                    context[VerticalAlignment.center]
-                }
-        }
-        .animation(.linear(duration: 0.05), value: progress)
-        .animation(.linear(duration: 0.2), value: isEditing)
+//        .animation(.linear(duration: 0.05), value: progress)
+//        .animation(.linear(duration: 0.2), value: isEditing)
     }
 }
 
@@ -143,16 +105,11 @@ extension SwiftfinSlider {
     init(progress: Binding<Double>) {
         self.init(
             progress: progress,
-            sliderBehavior: .track,
             trackGesturePadding: .zero,
             track: { EmptyView() },
             trackBackground: { EmptyView() },
             trackMask: { EmptyView() },
             thumb: { EmptyView() },
-            topContent: { EmptyView() },
-            bottomContent: { EmptyView() },
-            leadingContent: { EmptyView() },
-            trailingContent: { EmptyView() },
             onEditingChanged: { _ in }
         )
     }
@@ -173,31 +130,11 @@ extension SwiftfinSlider {
         copy(modifying: \.thumb, with: content)
     }
 
-    func topContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.topContent, with: content)
-    }
-
-    func bottomContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.bottomContent, with: content)
-    }
-
-    func leadingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.leadingContent, with: content)
-    }
-
-    func trailingContent(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.trailingContent, with: content)
-    }
-
     func trackGesturePadding(_ insets: EdgeInsets) -> Self {
         copy(modifying: \.trackGesturePadding, with: insets)
     }
 
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
-    }
-
-    func gestureBehavior(_ sliderBehavior: Behavior) -> Self {
-        copy(modifying: \.sliderBehavior, with: sliderBehavior)
     }
 }

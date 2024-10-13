@@ -19,6 +19,11 @@ extension EnvironmentValues {
         get { self[SelectedMediaPlayerSupplementKey.self] }
         set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
     }
+    
+    var scrubbedSeconds: Binding<TimeInterval> {
+        get { self[ScrubbedSecondsKey.self] }
+        set { self[ScrubbedSecondsKey.self] = newValue }
+    }
 
     var accentColor: Binding<Color> {
         get { self[AccentColor.self] }

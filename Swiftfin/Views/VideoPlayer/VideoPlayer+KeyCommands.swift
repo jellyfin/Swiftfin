@@ -28,9 +28,9 @@ extension View {
 
 struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
-    @Default(.VideoPlayer.jumpBackwardLength)
+    @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
+    @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
 
     @Environment(\.isAspectFilled)
@@ -68,35 +68,35 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 title: L10n.jumpForward,
                 input: UIKeyCommand.inputRightArrow
             ) {
-                if gestureStateHandler.jumpForwardKeyPressActive {
-                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
-
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpForwardKeyPressActive = false
-                        gestureStateHandler.jumpForwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                } else {
-                    gestureStateHandler.jumpForwardKeyPressActive = true
-                    gestureStateHandler.jumpForwardKeyPressAmount += 1
-
-                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpForwardKeyPressActive = false
-                        gestureStateHandler.jumpForwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                }
+//                if gestureStateHandler.jumpForwardKeyPressActive {
+//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem?.cancel()
+//
+//                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpForwardKeyPressActive = false
+//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                } else {
+//                    gestureStateHandler.jumpForwardKeyPressActive = true
+//                    gestureStateHandler.jumpForwardKeyPressAmount += 1
+//
+//                    videoPlayerProxy.jumpForward(Int(jumpForwardLength.rawValue))
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpForwardKeyPressActive = false
+//                        gestureStateHandler.jumpForwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpForwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                }
             }
 
             // MARK: jump backward
@@ -105,35 +105,35 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 title: L10n.jumpBackward,
                 input: UIKeyCommand.inputLeftArrow
             ) {
-                if gestureStateHandler.jumpBackwardKeyPressActive {
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
-
-                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                } else {
-                    gestureStateHandler.jumpBackwardKeyPressActive = true
-                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
-
-                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
-
-                    let task = DispatchWorkItem {
-                        gestureStateHandler.jumpBackwardKeyPressActive = false
-                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
-                    }
-
-                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
-                }
+//                if gestureStateHandler.jumpBackwardKeyPressActive {
+//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem?.cancel()
+//
+//                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpBackwardKeyPressActive = false
+//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                } else {
+//                    gestureStateHandler.jumpBackwardKeyPressActive = true
+//                    gestureStateHandler.jumpBackwardKeyPressAmount += 1
+//
+//                    videoPlayerProxy.jumpBackward(Int(jumpBackwardLength.rawValue))
+//
+//                    let task = DispatchWorkItem {
+//                        gestureStateHandler.jumpBackwardKeyPressActive = false
+//                        gestureStateHandler.jumpBackwardKeyPressAmount = 0
+//                    }
+//
+//                    gestureStateHandler.jumpBackwardKeyPressWorkItem = task
+//
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                }
             }
 
             // MARK: aspect fill
@@ -155,15 +155,15 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: "[",
                 modifierFlags: .command
             ) {
-                let clampedPlaybackSpeed = clamp(
-                    videoPlayerManager.playbackSpeed.rawValue - 0.25,
-                    min: 0.25,
-                    max: 2.0
-                )
+//                let clampedPlaybackSpeed = clamp(
+//                    videoPlayerManager.playbackRate.rate - 0.25,
+//                    min: 0.25,
+//                    max: 2.0
+//                )
 
-                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
+//                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
+//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
 //                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
@@ -175,15 +175,15 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: "]",
                 modifierFlags: .command
             ) {
-                let clampedPlaybackSpeed = clamp(
-                    videoPlayerManager.playbackSpeed.rawValue + 0.25,
-                    min: 0.25,
-                    max: 2.0
-                )
+//                let clampedPlaybackSpeed = clamp(
+//                    videoPlayerManager.playbackSpeed.rawValue + 0.25,
+//                    min: 0.25,
+//                    max: 2.0
+//                )
 
-                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
+//                let newPlaybackSpeed = PlaybackSpeed(rawValue: clampedPlaybackSpeed) ?? .one
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
+//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
 //                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }
@@ -195,10 +195,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: "\\",
                 modifierFlags: .command
             ) {
-                let newPlaybackSpeed = PlaybackSpeed.one
+//                let newPlaybackSpeed = PlaybackSpeed.one
 
 //                videoPlayerManager.playbackSpeed = newPlaybackSpeed
-                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
+//                videoPlayerManager.proxy.setRate(Float(newPlaybackSpeed.rawValue))
 
 //                updateViewProxy.present(systemName: "speedometer", title: newPlaybackSpeed.rawValue.rateLabel)
             }

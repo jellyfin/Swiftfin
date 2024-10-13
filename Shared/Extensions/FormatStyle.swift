@@ -85,3 +85,27 @@ struct RateStyle: FormatStyle {
             .appending("x")
     }
 }
+
+extension FormatStyle where Self == IntervalStyle {
+    
+    static func interval(style: Date.ComponentsFormatStyle.Style, fields: Set<Date.ComponentsFormatStyle.Field>) -> IntervalStyle {
+        IntervalStyle(style: style, fields: fields)
+    }
+}
+
+struct IntervalStyle: FormatStyle {
+    
+    let style: Date.ComponentsFormatStyle.Style
+    let fields: Set<Date.ComponentsFormatStyle.Field>
+    
+    func format(_ value: TimeInterval) -> String {
+        let t = Date.now
+        
+        return Date.ComponentsFormatStyle(
+            style: style,
+            locale: .current,
+            calendar: .current,
+            fields: fields
+        ).format(t ..< t.addingTimeInterval(value))
+    }
+}
