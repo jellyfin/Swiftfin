@@ -368,6 +368,8 @@
 		E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CC28D135C700678D5D /* NextUpView.swift */; };
 		E12D02442C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
 		E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
+		E12E2F072CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
+		E12E2F082CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E30F1296383810022FAC9 /* SplitFormWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */; };
 		E12E30F329638B140022FAC9 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F229638B140022FAC9 /* ChevronButton.swift */; };
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
@@ -1262,6 +1264,7 @@
 		E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicResumeItemView.swift; sourceTree = "<group>"; };
 		E12CC1CC28D135C700678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12D02432C9FB772003B27CB /* MediaProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressManager.swift; sourceTree = "<group>"; };
+		E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfoSupplement.swift; sourceTree = "<group>"; };
 		E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFormWindowView.swift; sourceTree = "<group>"; };
 		E12E30F229638B140022FAC9 /* ChevronButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronButton.swift; sourceTree = "<group>"; };
 		E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPickerView.swift; sourceTree = "<group>"; };
@@ -2045,6 +2048,7 @@
 				4E2AC4C02C6C48EB00DD600D /* MediaComponents */,
 				E1F0204D26CCCA74001C1C3B /* MediaJumpInterval.swift */,
 				E13ECC6F2C922EDF0094601F /* MediaPlayerSupplement.swift */,
+				E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */,
 				E1AA331E2782639D00F6439C /* OverlayType.swift */,
 				E1C925F62887504B002A7A66 /* PanDirectionGestureRecognizer.swift */,
 				4E3A785D2C3B87A400D33C11 /* PlaybackBitrate */,
@@ -4276,6 +4280,7 @@
 				E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */,
 				E1575E5C293E77B5001665B1 /* PlaybackRate.swift in Sources */,
 				E1DC9842296DEBD800982F06 /* WatchedIndicator.swift in Sources */,
+				E12E2F072CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */,
 				4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
 				E1575E6C293E77B5001665B1 /* SliderType.swift in Sources */,
 				E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
@@ -4714,6 +4719,7 @@
 				E1A3E4CB2BB74EFD005C59F8 /* EpisodeHStack.swift in Sources */,
 				E1E0BEB729EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */,
 				E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */,
+				E12E2F082CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */,
 				E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
 				E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E1EDFB442C752ACE00C42FD3 /* MediaPlayerProxy.swift in Sources */,

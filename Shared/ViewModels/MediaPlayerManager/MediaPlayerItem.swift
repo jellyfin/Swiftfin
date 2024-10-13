@@ -104,7 +104,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
 //        infoProvider = ItemInfoDrawerProvider(item: baseItem)
 
-        supplements.append(ItemInfoDrawerProvider(item: baseItem))
+        supplements.append(MediaInfoSupplement(item: baseItem))
     }
 
     // MARK: build
