@@ -126,16 +126,14 @@ extension VideoPlayer {
                         .offset(y: isPresentingOverlay ? 0 : 20)
                         .animation(.bouncy, value: isPresentingOverlay)
 
-                    if isPresentingDrawer {
-                        ZStack {
-                            if let selectedSupplement {
-                                selectedSupplement.supplement.makeBody()
-                                    .eraseToAnyView()
-                            }
-                        }
-                        .frame(height: 150)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                    // TODO: transition
+                    if isPresentingDrawer, let selectedSupplement {
+                        selectedSupplement.supplement
+                            .videoPlayerBody()
+                            .eraseToAnyView()
+                            .frame(height: 150)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
                     }
 
                     Color.clear
@@ -217,7 +215,6 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
                     )
                 )
             )
-            .environmentObject(ProgressBox(progress: 0, seconds: 100))
             .environmentObject(VLCVideoPlayer.Proxy())
             .environment(\.isScrubbing, .mock(false))
             .environment(\.isAspectFilled, .mock(false))

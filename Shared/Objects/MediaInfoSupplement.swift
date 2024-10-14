@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import SwiftUI
 
 struct MediaInfoSupplement: MediaPlayerSupplement {
@@ -14,7 +15,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     let title: String = "Info"
     let item: BaseItemDto
 
-    func makeBody() -> some View {
+    func videoPlayerBody() -> some View {
         _View(item: item)
     }
 
@@ -107,7 +108,7 @@ struct ContentView_Previews: PreviewProvider {
             runTimeTicks: 10_000_000_000,
             type: .episode
         ))
-        .makeBody()
+        .videoPlayerBody()
         .eraseToAnyView()
         .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
         .frame(height: 110)

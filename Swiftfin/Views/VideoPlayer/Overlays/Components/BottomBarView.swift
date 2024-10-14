@@ -36,8 +36,6 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
-//        @EnvironmentObject
-//        private var scrubbedProgress: ProgressBox
 
         @ViewBuilder
         private var capsuleSlider: some View {

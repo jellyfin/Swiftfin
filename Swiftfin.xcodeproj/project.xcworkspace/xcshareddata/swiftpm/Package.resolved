@@ -1,5 +1,5 @@
 {
-  "originHash" : "f4f2e9a2fd28039ca8d2d89e083fc37c963bce5698fd90ec3f8b2e9bb2a31a1b",
+  "originHash" : "17796999474b48f4cf2a754a6c30a7d5fb2f66ee9aaa1f2640d4b2389972a431",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
-      }
-    },
-    {
-      "identity" : "collectionhstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionHStack",
-      "state" : {
-        "branch" : "main",
-        "revision" : "894b595185bbfce007d60b219ee3e4013884131c"
       }
     },
     {

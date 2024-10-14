@@ -63,15 +63,15 @@ class NowPlayableListener: MediaPlayerListener {
         handleNowPlayableItemChange(metadata: .init(mediaType: .video, title: newItem.baseItem.displayTitle))
     }
 
-    private func secondsDidChange(newProgress: ProgressBoxValue) {
-        handleNowPlayablePlaybackChange(
-            playing: true,
-            metadata: .init(
-                position: Float(newProgress.seconds),
-                duration: Float(manager?.item.runTimeSeconds ?? 0)
-            )
-        )
-    }
+//    private func secondsDidChange(newProgress: ProgressBoxValue) {
+//        handleNowPlayablePlaybackChange(
+//            playing: true,
+//            metadata: .init(
+//                position: Float(newProgress.seconds),
+//                duration: Float(manager?.item.runTimeSeconds ?? 0)
+//            )
+//        )
+//    }
 
     private func stateDidChange(newState: MediaPlayerManager.State) {
         handleNowPlayablePlaybackChange(

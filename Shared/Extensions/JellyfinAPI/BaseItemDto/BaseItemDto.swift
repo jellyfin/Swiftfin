@@ -171,42 +171,42 @@ extension BaseItemDto {
     // MARK: Chapter Images
 
     // TODO: move to whatever listener for chapters
-//    var fullChapterInfo: [ChapterInfo.FullInfo] {
-//        guard let chapters else { return [] }
-//
-//        let ranges: [Range<TimeInterval>] = chapters
-//            .map(\.startTimeSeconds)
-//            .appending(runTimeSeconds + 1)
-//            .adjacentPairs()
-//            .map { $0 ..< $1 }
-//
-//        return zip(chapters, ranges)
-//            .enumerated()
-//            .map { i, zip in
-//
-//                let parameters = Paths.GetItemImageParameters(
-//                    maxWidth: 500,
-//                    quality: 90,
-//                    imageIndex: i
-//                )
-//
-//                let request = Paths.getItemImage(
-//                    itemID: id ?? "",
-//                    imageType: ImageType.chapter.rawValue,
-//                    parameters: parameters
-//                )
-//
-//                let imageURL = Container.shared.currentUserSession()!
-//                    .client
-//                    .fullURL(with: request)
-//
-//                return .init(
-//                    chapterInfo: zip.0,
-//                    imageSource: .init(url: imageURL),
-//                    secondsRange: zip.1
-//                )
-//            }
-//    }
+    var fullChapterInfo: [ChapterInfo.FullInfo] {
+        guard let chapters else { return [] }
+
+        let ranges: [Range<TimeInterval>] = chapters
+            .map(\.startTimeSeconds)
+            .appending(runTimeSeconds + 1)
+            .adjacentPairs()
+            .map { $0 ..< $1 }
+
+        return zip(chapters, ranges)
+            .enumerated()
+            .map { i, zip in
+
+                let parameters = Paths.GetItemImageParameters(
+                    maxWidth: 500,
+                    quality: 90,
+                    imageIndex: i
+                )
+
+                let request = Paths.getItemImage(
+                    itemID: id ?? "",
+                    imageType: ImageType.chapter.rawValue,
+                    parameters: parameters
+                )
+
+                let imageURL = Container.shared.currentUserSession()!
+                    .client
+                    .fullURL(with: request)
+
+                return .init(
+                    chapterInfo: zip.0,
+                    imageSource: .init(url: imageURL),
+                    secondsRange: zip.1
+                )
+            }
+    }
 
     // TODO: series-season-episode hierarchy for episodes
     // TODO: user hierarchy for downloads

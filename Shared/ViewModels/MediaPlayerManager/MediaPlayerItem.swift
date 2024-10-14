@@ -8,30 +8,9 @@
 
 import Defaults
 import Factory
-import Foundation
 import JellyfinAPI
 import SwiftUI
 import VLCUI
-
-// TODO: remove `progress`
-class ProgressBox: ObservableObject {
-
-    @Published
-    var progress: Double
-    @Published
-    var seconds: TimeInterval
-
-    init(progress: Double = 0, seconds: TimeInterval = 0) {
-        self.progress = progress
-        self.seconds = seconds
-    }
-}
-
-struct ProgressBoxValue {
-
-    let progress: CGFloat
-    let seconds: TimeInterval
-}
 
 class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
@@ -45,7 +24,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
     var supplements: [any MediaPlayerSupplement] = []
 
     let baseItem: BaseItemDto
-    let chapters: [ChapterInfo.FullInfo]
     let mediaSource: MediaSourceInfo
     let playSessionID: String
     let url: URL
@@ -65,7 +43,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         url: URL
     ) {
         self.baseItem = baseItem
-        self.chapters = baseItem.fullChapterInfo
         self.mediaSource = mediaSource
         self.playSessionID = playSessionID
         self.url = url
@@ -102,9 +79,11 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
 
-//        infoProvider = ItemInfoDrawerProvider(item: baseItem)
-
         supplements.append(MediaInfoSupplement(item: baseItem))
+        
+        if baseItem.chapters?.isNotEmpty ?? false {
+            supplements.append(MediaChaptersSupplement(chapters: baseItem.fullChapterInfo))
+        }
     }
 
     // MARK: build

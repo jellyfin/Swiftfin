@@ -14,200 +14,127 @@ import VLCUI
 
 // TODO: figure out why `continuousLeadingEdge` scroll behavior has different
 //       insets than default continuous
-extension VideoPlayer.Overlay {
 
-    struct ChapterOverlay: View {
 
-        @Default(.accentColor)
-        private var accentColor
-
-        @Environment(\.safeAreaInsets)
-        private var safeAreaInsets
-
-//        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-//        @EnvironmentObject
-//        private var overlayTimer: TimerProxy
-//        @EnvironmentObject
-//        private var videoPlayerManager: VideoPlayerManager
-//        @EnvironmentObject
-//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-//        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
-
-        @State
-        private var contentSize: CGSize = .zero
-
-        @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
-
-        var body: some View {
-            EmptyView()
-            
-//            VStack(spacing: 0) {
+//struct ChapterOverlay: View {
 //
-//                Spacer(minLength: 0)
-//                    .allowsHitTesting(false)
+//    @Default(.accentColor)
+//    private var accentColor
 //
-//                HStack {
-//                    L10n.chapters.text
-//                        .font(.title2)
-//                        .fontWeight(.semibold)
-//                        .foregroundColor(.white)
-//                        .accessibility(addTraits: [.isHeader])
+//    @Environment(\.safeAreaInsets)
+//    @Binding
+//    private var safeAreaInsets
 //
-//                    Spacer()
+//    @State
+//    private var contentSize: CGSize = .zero
 //
-//                    Button {
-//                        if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-//                            collectionHStackProxy.scrollTo(element: currentChapter, animated: true)
+//    @StateObject
+//    private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
+//    
+//    let chapters: [ChapterInfo.FullInfo]
+//
+//    var body: some View {
+//        CollectionHStack(chapters) { chapter in
+//            ChapterButton(chapter: chapter)
+//                .frame(height: 150)
+//        }
+//        .insets(horizontal: safeAreaInsets.leading)
+//        .proxy(collectionHStackProxy)
+//    }
+//}
+//
+//struct ChapterButton: View {
+//
+//    @Default(.accentColor)
+//    private var accentColor
+//    
+//    @Environment(\.isSelected)
+//    private var isSelected: Bool
+//
+//    let chapter: ChapterInfo.FullInfo
+//
+//    var body: some View {
+//        PosterButton(item: chapter, type: .landscape)
+////            .content { EmptyView() }
+//            .content {
+//                VStack(alignment: .leading, spacing: 5) {
+//                    
+//                    Text(chapter.chapterInfo.displayTitle)
+//                        .lineLimit(1)
+//                        .foregroundStyle(.white)
+//
+//                    Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
+//                        .foregroundStyle(Color(UIColor.systemBlue))
+//                        .padding(.vertical, 2)
+//                        .padding(.horizontal, 4)
+//                        .background {
+//                            Color(.darkGray)
+//                                .opacity(0.2)
+//                                .cornerRadius(4)
 //                        }
-//                    } label: {
-//                        Text(L10n.current)
-//                            .font(.title2)
-//                            .foregroundColor(accentColor)
-//                    }
 //                }
-//                .padding(.horizontal, safeAreaInsets.leading)
-//                .edgePadding(.horizontal)
-//
-//                CollectionHStack(
-//                    viewModel.chapters,
-//                    minWidth: 200
-//                ) { chapter in
-//                    ChapterButton(chapter: chapter)
-//                }
-//                .insets(horizontal: EdgeInsets.edgePadding, vertical: EdgeInsets.edgePadding)
-//                .proxy(collectionHStackProxy)
-//                .onChange(of: currentOverlayType) { newValue in
-//                    guard newValue == .chapters else { return }
-//
-//                    if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-//                        collectionHStackProxy.scrollTo(element: currentChapter, animated: false)
-//                    }
-//                }
-//                .trackingSize($size)
-//                .id(size.width)
+//                .font(.subheadline.weight(.semibold))
 //            }
-//            .background {
-//                LinearGradient(
-//                    stops: [
-//                        .init(color: .clear, location: 0),
-//                        .init(color: .black.opacity(0.4), location: 0.4),
-//                        .init(color: .black.opacity(0.9), location: 1),
-//                    ],
-//                    startPoint: .top,
-//                    endPoint: .bottom
-//                )
-//                .allowsHitTesting(false)
-//            }
-        }
-    }
-}
-
-extension VideoPlayer.Overlay.ChapterOverlay {
-
-    struct ChapterButton: View {
-
-        @Default(.accentColor)
-        private var accentColor
-
-//        @EnvironmentObject
-//        private var currentProgressHandler: VideoPlayerManager.CurrentProgressHandler
-//        @EnvironmentObject
-//        private var overlayTimer: TimerProxy
-//        @EnvironmentObject
-//        private var videoPlayerManager: VideoPlayerManager
-//        @EnvironmentObject
-//        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        
-        @Environment(\.isSelected)
-        private var isSelected: Bool
-
-        let chapter: ChapterInfo.FullInfo
-
-        var body: some View {
-            PosterButton(item: chapter, type: .landscape)
-                .content {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(chapter.chapterInfo.displayTitle)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .lineLimit(1)
-                            .foregroundStyle(.white)
-
-                        Text(chapter.chapterInfo.timestampLabel)
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color(UIColor.systemBlue))
-                            .padding(.vertical, 2)
-                            .padding(.horizontal, 4)
-                            .background {
-                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
-                            }
-                    }
-                }
-            
-            
-//            Button {
-//                let seconds = chapter.chapterInfo.startTimeSeconds
-//                videoPlayerProxy.setTime(.seconds(seconds))
-//
-//                if videoPlayerManager.state != .playing {
-//                    videoPlayerProxy.play()
-//                }
-//            } label: {
-//                VStack(alignment: .leading) {
-//                    ZStack {
-//                        Color.black
-//
-//                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
-//                            .failure {
-//                                SystemImageContentView(systemName: chapter.systemImage)
-//                            }
-//                            .aspectRatio(contentMode: .fit)
-//                    }
-//                    .overlay {
-//                        modifier(OnSizeChangedModifier { size in
-//                            if chapter.secondsRange.contains(currentProgressHandler.seconds) {
-//                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
-//                                    .stroke(accentColor, lineWidth: 8)
-//                                    .transition(.opacity.animation(.linear(duration: 0.1)))
-//                                    .clipped()
-//                            } else {
-//                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
-//                                    .stroke(
-//                                        .white.opacity(0.10),
-//                                        lineWidth: 1.5
-//                                    )
-//                                    .clipped()
-//                            }
-//                        })
-//                    }
-//                    .aspectRatio(1.77, contentMode: .fill)
-//                    .posterBorder(ratio: 1 / 30, of: \.width)
-//                    .cornerRadius(ratio: 1 / 30, of: \.width)
-//
-//                    VStack(alignment: .leading, spacing: 5) {
-//                        Text(chapter.chapterInfo.displayTitle)
-//                            .font(.subheadline)
-//                            .fontWeight(.semibold)
-//                            .lineLimit(1)
-//                            .foregroundColor(.white)
-//
-//                        Text(chapter.chapterInfo.timestampLabel)
-//                            .font(.subheadline)
-//                            .fontWeight(.semibold)
-//                            .foregroundColor(Color(UIColor.systemBlue))
-//                            .padding(.vertical, 2)
-//                            .padding(.horizontal, 4)
-//                            .background {
-//                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
-//                            }
-//                    }
-//                }
-//            }
-//            .buttonStyle(.plain)
-        }
-    }
-}
+//    }
+//}
+//            
+////            Button {
+////                let seconds = chapter.chapterInfo.startTimeSeconds
+////                videoPlayerProxy.setTime(.seconds(seconds))
+////
+////                if videoPlayerManager.state != .playing {
+////                    videoPlayerProxy.play()
+////                }
+////            } label: {
+////                VStack(alignment: .leading) {
+////                    ZStack {
+////                        Color.black
+////
+////                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
+////                            .failure {
+////                                SystemImageContentView(systemName: chapter.systemImage)
+////                            }
+////                            .aspectRatio(contentMode: .fit)
+////                    }
+////                    .overlay {
+////                        modifier(OnSizeChangedModifier { size in
+////                            if chapter.secondsRange.contains(currentProgressHandler.seconds) {
+////                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
+////                                    .stroke(accentColor, lineWidth: 8)
+////                                    .transition(.opacity.animation(.linear(duration: 0.1)))
+////                                    .clipped()
+////                            } else {
+////                                RoundedRectangle(cornerRadius: size.width * (1 / 30))
+////                                    .stroke(
+////                                        .white.opacity(0.10),
+////                                        lineWidth: 1.5
+////                                    )
+////                                    .clipped()
+////                            }
+////                        })
+////                    }
+////                    .aspectRatio(1.77, contentMode: .fill)
+////                    .posterBorder(ratio: 1 / 30, of: \.width)
+////                    .cornerRadius(ratio: 1 / 30, of: \.width)
+////
+////                    VStack(alignment: .leading, spacing: 5) {
+////                        Text(chapter.chapterInfo.displayTitle)
+////                            .font(.subheadline)
+////                            .fontWeight(.semibold)
+////                            .lineLimit(1)
+////                            .foregroundColor(.white)
+////
+////                        Text(chapter.chapterInfo.timestampLabel)
+////                            .font(.subheadline)
+////                            .fontWeight(.semibold)
+////                            .foregroundColor(Color(UIColor.systemBlue))
+////                            .padding(.vertical, 2)
+////                            .padding(.horizontal, 4)
+////                            .background {
+////                                Color(UIColor.darkGray).opacity(0.2).cornerRadius(4)
+////                            }
+////                    }
+////                }
+////            }
+////            .buttonStyle(.plain)
+////}

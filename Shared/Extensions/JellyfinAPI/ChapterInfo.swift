@@ -25,23 +25,20 @@ extension ChapterInfo {
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Equatable {
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
+    struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
         let secondsRange: Range<TimeInterval>
+        let systemImage: String = "film"
 
         var displayTitle: String {
             chapterInfo.displayTitle
         }
-
-        let systemImage: String = "film"
-        var subtitle: String?
-        var showTitle: Bool = true
+        
+        var id: Int {
+            chapterInfo.hashValue
+        }
 
         init(
             chapterInfo: ChapterInfo,
