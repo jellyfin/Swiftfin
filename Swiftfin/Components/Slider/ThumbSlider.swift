@@ -6,73 +6,96 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-// TODO: match `CapsuleSlider` with `total` handling
-
-struct ThumbSlider: View {
-
-    @Default(.VideoPlayer.Overlay.sliderColor)
-    private var sliderColor
+struct ThumbSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
-    private var isEditing: Bool
-    @Binding
-    private var progress: Double
-
+    private var value: V
+    
+    @State
+    private var contentSize: CGSize = .zero
+    @State
+    private var isEditing: Bool = false
+    @State
+    private var translationStartLocation: CGPoint = .zero
+    @State
+    private var translationStartValue: V = 0
+    @State
+    private var currentTranslation: CGFloat = 0
+    
+    private var onEditingChanged: (Bool) -> Void
+    private let total: V
     private var trackMask: () -> any View
 
-    var body: some View {
-        SwiftfinSlider(progress: $progress)
-            .onEditingChanged { isEditing in
-                self.isEditing = isEditing
-            }
-            .track {
-                Capsule()
-                    .foregroundColor(sliderColor)
-                    .frame(height: 5)
-            }
-            .trackBackground {
-                Capsule()
-                    .foregroundColor(Color.gray)
-                    .opacity(0.5)
-                    .frame(height: 5)
-            }
-            .thumb {
-                ZStack {
-                    Color.clear
-                        .frame(height: 25)
+    private var trackDrag: some Gesture {
+        DragGesture(coordinateSpace: .global)
+            .onChanged { newValue in
+                if !isEditing {
+                    isEditing = true
+                    onEditingChanged(true)
+                    translationStartValue = value
+                    translationStartLocation = newValue.location
+                    currentTranslation = 0
+                }
 
-                    Circle()
-                        .foregroundColor(sliderColor)
-                        .frame(width: isEditing ? 25 : 20)
-                }
-                .overlay {
-                    Color.clear
-                        .frame(width: 50, height: 50)
-                        .contentShape(Rectangle())
-                }
+                currentTranslation = translationStartLocation.x - newValue.location.x
+
+                let newProgress = translationStartValue - V(currentTranslation / contentSize.width) * total
+                value = clamp(newProgress, min: 0, max: total)
             }
-            .trackMask(trackMask)
+            .onEnded { _ in
+                isEditing = false
+                onEditingChanged(false)
+            }
+    }
+
+    var body: some View {
+        ProgressView(value: value, total: total)
+            .progressViewStyle(.playback.square)
+            .overlay(alignment: .leading) {
+                Circle()
+                    .foregroundStyle(.primary)
+                    .frame(height: 20)
+                    .gesture(trackDrag)
+                    .offset(x: Double(value / total) * contentSize.width - 10)
+            }
+            .trackingSize($contentSize)
     }
 }
 
 extension ThumbSlider {
-
-    init(progress: Binding<Double>) {
+    
+    init(value: Binding<V>, total: V = 1.0) {
         self.init(
-            isEditing: .constant(false),
-            progress: progress,
+            value: value,
+            onEditingChanged: { _ in },
+            total: total,
             trackMask: { Color.white }
         )
     }
-
-    func isEditing(_ isEditing: Binding<Bool>) -> Self {
-        copy(modifying: \._isEditing, with: isEditing)
+    
+    func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
+        copy(modifying: \.onEditingChanged, with: action)
     }
 
     func trackMask(@ViewBuilder _ content: @escaping () -> any View) -> Self {
         copy(modifying: \.trackMask, with: content)
     }
+}
+
+struct ThumbSliderTests: View {
+    
+    @State
+    private var value: Double = 0.3
+    
+    var body: some View {
+        ThumbSlider(value: $value, total: 1.0)
+            .frame(height: 5)
+            .padding(.horizontal, 10)
+    }
+}
+
+#Preview {
+    ThumbSliderTests()
 }

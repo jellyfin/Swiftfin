@@ -95,7 +95,6 @@ struct ChapterButton: View {
                     }
             }
             .font(.subheadline.weight(.semibold))
-            .frame(height: 150)
         }
     }
 }

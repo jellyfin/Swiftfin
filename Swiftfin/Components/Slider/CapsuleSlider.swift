@@ -97,14 +97,14 @@ struct Test: View {
     }
 }
 
-struct CapsuleSlider_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            
-            Test()
-                .frame(height: 30)
-        }
-        .padding(.horizontal, 10)
-        .previewInterfaceOrientation(.landscapeRight)
-    }
-}
+//struct CapsuleSlider_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack {
+//            
+//            Test()
+//                .frame(height: 30)
+//        }
+//        .padding(.horizontal, 10)
+//        .previewInterfaceOrientation(.landscapeRight)
+//    }
+//}
