@@ -12,6 +12,8 @@ import Stinsen
 import SwiftUI
 import VLCUI
 
+// TODO: move audio/subtitle offset to manager?
+
 struct VideoPlayer: View {
 
     @Default(.VideoPlayer.Subtitle.subtitleColor)
@@ -29,21 +31,14 @@ struct VideoPlayer: View {
     @State
     private var isAspectFilled: Bool = false
     @State
-    private var isPresentingOverlay: Bool = true
-    @State
     private var isScrubbing: Bool = false
     @State
-    private var playbackSpeed: Double = 1
-    @State
-    private var subtitleOffset: Int = 0
-    @State
     private var safeAreaInsets: EdgeInsets = .zero
-
     @State
     private var scrubbedSeconds: TimeInterval = 0.0
+    @State
+    private var subtitleOffset: Int = 0
     
-//    @StateObject
-//    private var scrubbedProgress: ProgressBox = .init()
     @StateObject
     private var manager: MediaPlayerManager
     @StateObject
@@ -67,15 +62,9 @@ struct VideoPlayer: View {
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
                         }
-
-//                        let newProgress = newSeconds / manager.item.runTimeSeconds
-
-//                        if !isScrubbing {
-//                            scrubbedProgress.progress = newProgress
-//                            scrubbedProgress.seconds = newSeconds
-//                        }
-
-//                        manager.send(.seek(seconds: newSeconds))
+                        
+                        // TODO: fix menu pulsing issue
+                        manager.send(.seek(seconds: newSeconds))
                     }
                     .onStateUpdated { state, _ in
 
@@ -101,13 +90,10 @@ struct VideoPlayer: View {
 
             Overlay()
                 .environment(\.isAspectFilled, $isAspectFilled)
-                .environment(\.isPresentingOverlay, $isPresentingOverlay)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.playbackSpeed, $playbackSpeed)
                 .environment(\.safeAreaInsets, $safeAreaInsets)
                 .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
-//                .environmentObject(scrubbedProgress)
                 .environmentObject(vlcUIProxy)
         }
     }
@@ -134,7 +120,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
-//                vlcUIProxy.setTime(.seconds(scrubbedProgress.seconds))
+                manager.send(.seek(seconds: scrubbedSeconds))
+                manager.proxy.setTime(scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -163,12 +150,6 @@ struct VideoPlayer: View {
                         .asSeconds
                     
                     scrubbedSeconds = seconds
-
-//                    let progress = seconds / item.baseItem.runTimeSeconds
-
-//                    scrubbedProgress.progress = progress
-//                    scrubbedProgress.seconds = seconds
-
                     vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }
             }

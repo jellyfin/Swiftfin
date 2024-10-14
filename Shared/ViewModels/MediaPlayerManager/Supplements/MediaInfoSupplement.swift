@@ -9,9 +9,11 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: scroll if description too long
+// TODO: other buttons depending on item type
+
 struct MediaInfoSupplement: MediaPlayerSupplement {
 
-//    weak var manager: MediaPlayerManager?
     let title: String = "Info"
     let item: BaseItemDto
 
@@ -24,6 +26,13 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         @Environment(\.safeAreaInsets)
         @Binding
         private var safeAreaInsets
+        
+        @Environment(\.selectedMediaPlayerSupplement)
+        @Binding
+        private var selectedMediaPlayerSupplement: AnyMediaPlayerSupplement?
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
         
         @State
         private var contentSize: CGSize = .zero
@@ -81,7 +90,10 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack {
-                    Button {} label: {
+                    Button {
+                        manager.proxy.setTime(0)
+                        selectedMediaPlayerSupplement = nil
+                    } label: {
                         ZStack {
                             BlurView()
                                 .cornerRadius(7)

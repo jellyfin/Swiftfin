@@ -59,9 +59,6 @@ extension Stateful {
         if action != lastAction {
             lastAction = action
         }
-
-//        state = respond(to: action)
-//        lastAction = action
     }
 }
 

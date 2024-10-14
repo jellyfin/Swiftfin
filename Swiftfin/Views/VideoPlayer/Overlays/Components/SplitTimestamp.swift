@@ -31,7 +31,6 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
 
                 Text(scrubbedSeconds, format: .runtime)
-                    .foregroundStyle(.primary)
 
                 if isScrubbing {
                     Group {
@@ -49,22 +48,19 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 2) {
                 if isScrubbing {
                     Group {
-                        Text(manager.item.runTimeSeconds - manager.seconds, format: .runtime.negated)
+//                        Text(manager.item.runTimeSeconds - manager.seconds, format: .runtime.negated)
 
                         Text("/")
                     }
                     .foregroundStyle(.secondary)
                 }
 
-                Group {
-                    switch trailingTimestampType {
-                    case .timeLeft:
-                        Text(manager.item.runTimeSeconds - scrubbedSeconds, format: .runtime.negated)
-                    case .totalTime:
-                        Text(manager.item.runTimeSeconds, format: .runtime)
-                    }
+                switch trailingTimestampType {
+                case .timeLeft: EmptyView()
+//                    Text(manager.item.runTimeSeconds - scrubbedSeconds, format: .runtime.negated)
+                case .totalTime: EmptyView()
+//                    Text(manager.item.runTimeSeconds, format: .runtime)
                 }
-                .foregroundStyle(.primary)
             }
         }
 

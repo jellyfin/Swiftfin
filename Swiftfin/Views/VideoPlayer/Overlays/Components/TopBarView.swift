@@ -9,6 +9,8 @@
 import JellyfinAPI
 import SwiftUI
 
+// TODO: rename
+
 extension VideoPlayer.Overlay {
 
     struct TopBarView: View {
@@ -54,7 +56,7 @@ extension VideoPlayer.Overlay.TopBarView {
         @State
         private var subtitleContentSize: CGSize = .zero
 
-        let item: BaseItemDto
+        let item: BaseItemDto!
 
         @ViewBuilder
         private var subtitle: some View {

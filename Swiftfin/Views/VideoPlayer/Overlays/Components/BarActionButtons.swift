@@ -31,7 +31,7 @@ extension VideoPlayer.Overlay {
             case .autoPlay:
                 ActionButtons.AutoPlay()
             case .playbackSpeed:
-                ActionButtons.PlaybackSpeedMenu()
+                ActionButtons.PlaybackRateMenu()
             case .playNextItem:
                 ActionButtons.PlayNextItem()
             case .playPreviousItem:

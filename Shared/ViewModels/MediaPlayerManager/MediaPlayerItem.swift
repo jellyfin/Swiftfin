@@ -78,8 +78,6 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
-
-        supplements.append(MediaInfoSupplement(item: baseItem))
         
         if baseItem.chapters?.isNotEmpty ?? false {
             supplements.append(MediaChaptersSupplement(chapters: baseItem.fullChapterInfo))

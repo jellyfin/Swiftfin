@@ -10,6 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
+// TODO: fullscreen supplement styles
 // TODO: break out
 
 struct AnyMediaPlayerSupplement: Equatable, Identifiable {
@@ -29,7 +30,7 @@ struct AnyMediaPlayerSupplement: Equatable, Identifiable {
     }
 }
 
-protocol MediaPlayerSupplement: Equatable, Identifiable<String> {
+protocol MediaPlayerSupplement: Identifiable<String> {
 
     associatedtype VideoPlayerBody: View
 
@@ -45,9 +46,7 @@ extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
     }
 }
 
-extension MediaPlayerSupplement where ID == String {
+extension MediaPlayerSupplement {
 
     var id: String { title }
 }
-
-

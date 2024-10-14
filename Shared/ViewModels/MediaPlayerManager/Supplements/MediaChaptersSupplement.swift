@@ -12,11 +12,12 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
-struct MediaChaptersSupplement: MediaPlayerSupplement {
+// TODO: current button
+// TODO: scroll to current chapter on appear
 
-//    weak var manager: MediaPlayerManager?
-    let title: String = "Chapters"
+struct MediaChaptersSupplement: MediaPlayerSupplement {
     
+    let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
 
     func videoPlayerBody() -> some View {
@@ -59,12 +60,19 @@ struct ChapterButton: View {
     
     @Environment(\.isSelected)
     private var isSelected: Bool
+    
+    @EnvironmentObject
+    private var manager: MediaPlayerManager
+    
+    @State
+    private var contentSize: CGSize = .zero
 
     let chapter: ChapterInfo.FullInfo
     
     var body: some View {
         Button {
-            
+//            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
+            manager.proxy.setTime(chapter.secondsRange.lowerBound)
         } label: {
             VStack(alignment: .leading, spacing: 5) {
                 ZStack {
@@ -74,6 +82,13 @@ struct ChapterButton: View {
                         .failure {
                             SystemImageContentView(systemName: chapter.systemImage)
                         }
+                }
+                .overlay {
+                    if chapter.secondsRange.contains(manager.seconds) {
+                        RoundedRectangle(cornerRadius: contentSize.width / 30)
+                            .stroke(accentColor, lineWidth: 8)
+                            .cornerRadius(ratio: 1 / 30, of: \.width)
+                    }
                 }
                 .aspectRatio(1.77, contentMode: .fill)
                 .posterBorder(ratio: 1 / 30, of: \.width)
@@ -96,6 +111,7 @@ struct ChapterButton: View {
             }
             .font(.subheadline.weight(.semibold))
         }
+        .trackingSize($contentSize)
     }
 }
 
@@ -110,6 +126,22 @@ struct MediaChaptersSupplement_Previews: PreviewProvider {
         ])
         .frame(height: 150)
         .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
+        .environmentObject(
+            MediaPlayerManager(
+                playbackItem: .init(
+                    baseItem: .init(
+                        indexNumber: 1,
+                        name: "The Bear",
+                        parentIndexNumber: 1,
+                        runTimeTicks: 10_000_000_000,
+                        type: .episode
+                    ),
+                    mediaSource: .init(),
+                    playSessionID: "",
+                    url: URL(string: "/")!
+                )
+            )
+        )
         .previewInterfaceOrientation(.landscapeRight)
         .preferredColorScheme(.dark)
     }

@@ -20,6 +20,7 @@ import VLCUI
 // TODO: better solution for previous/next/queuing
 // TODO: should view models handle progress reports instead, with a protocol
 //       for other types of media handling
+// TODO: set playback rate
 
 protocol MediaPlayerListener {
 
@@ -27,11 +28,15 @@ protocol MediaPlayerListener {
 }
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
+    
+    // MARK: Event
 
     enum Event {
         case playbackStopped
         case playNew(playbackItem: MediaPlayerItem)
     }
+    
+    // MARK: Action
 
     enum Action: Equatable {
 
@@ -47,6 +52,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         case seek(seconds: TimeInterval)
     }
+    
+    // MARK: State
 
     enum State: Hashable {
         case initial
@@ -62,34 +69,41 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var playbackItem: MediaPlayerItem? = nil {
         didSet {
-            supplements = playbackItem?.supplements ?? []
+            if let playbackItem {
+                supplements += playbackItem.supplements
+            }
         }
     }
 
     @Published
-    private(set) var item: BaseItemDto
+    private(set) var item: BaseItemDto? = nil {
+        didSet {
+            if let item {
+                supplements = [MediaInfoSupplement(item: item)]
+            }
+        }
+    }
     @Published
-    private(set) var playbackRate: PlaybackRate = .one
+    var playbackRate: PlaybackRate = .one {
+        didSet {
+            proxy.setRate(Float(playbackRate.rate))
+        }
+    }
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
     final var state: State = .initial
-
-//    var progress: AnyPublisher<ProgressBoxValue, Never> {
-//        progressSubject
-//            .eraseToAnyPublisher()
-//    }
-//
-//    private let progressSubject: PassthroughSubject<ProgressBoxValue, Never> = .init()
-
-//    @Published
-//    private(set) var progress: ProgressBoxValue = .init(progress: 0, seconds: 0)
     
     @Published
     private(set) var seconds: TimeInterval = 0
 
     var listeners: [any MediaPlayerListener] = []
 
+    /// Supplements to provide media players.
+    ///
+    /// The ordering of media players inserted are:
+    /// - MediaPlayerManager provided supplements
+    /// - PlaybackItem provided supplements
     @Published
     private(set) var supplements: [any MediaPlayerSupplement] = []
 
@@ -109,6 +123,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     init(item: BaseItemDto, mediaItemProvider: @escaping () async throws -> MediaPlayerItem) {
         self.item = item
         super.init()
+        
+        supplements = [MediaInfoSupplement(item: item)]
 
         // TODO: don't build on init?
         buildMediaItem(from: mediaItemProvider)
@@ -117,12 +133,16 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     init(playbackItem: MediaPlayerItem) {
         item = playbackItem.baseItem
         super.init()
+        
+        supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
 
         self.playbackItem = playbackItem
         queue.append(playbackItem.baseItem)
 
         state = .buffering
     }
+    
+    // MARK: respond
 
     @MainActor
     func respond(to action: Action) -> State {
@@ -153,21 +173,12 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
             return .buffering
         case let .seek(newSeconds):
-
-//            let newProgress = ProgressBoxValue(
-//                progress: CGFloat(seconds) / CGFloat(item.runTimeSeconds),
-//                seconds: seconds
-//            )
-//
-//            progress = newProgress
-
-//            progressSubject.send(newProgress)
-            
             seconds = newSeconds
-
             return state
         }
     }
+    
+    // MARK: buildMediaItem
 
     private func buildMediaItem(from provider: @escaping () async throws -> MediaPlayerItem) {
         itemBuildTask?.cancel()
@@ -180,6 +191,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 }
 
                 let playbackItem = try await provider()
+                
+                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 guard let self else { return }
 
@@ -198,80 +211,4 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
         .asAnyCancellable()
     }
-}
-
-// MARK: OLD
-
-extension MediaPlayerManager {
-
-    // MARK: onTicksUpdated
-
-//    func onTicksUpdated(ticks: Int, playbackInformation: VLCVideoPlayer.PlaybackInformation) {
-//        if audioTrackIndex != playbackInformation.currentAudioTrack.index {
-//            audioTrackIndex = playbackInformation.currentAudioTrack.index
-//        }
-//
-//        if subtitleTrackIndex != playbackInformation.currentSubtitleTrack.index {
-//            subtitleTrackIndex = playbackInformation.currentSubtitleTrack.index
-//        }
-//    }
-
-    // MARK: onStateUpdated
-
-//    func getAdjacentEpisodes(for item: BaseItemDto) {
-//        Task { @MainActor in
-//            guard let seriesID = item.seriesID, item.type == .episode else { return }
-//
-//            let parameters = Paths.GetEpisodesParameters(
-//                userID: userSession.user.id,
-//                fields: .MinimumFields,
-//                adjacentTo: item.id!,
-//                limit: 3
-//            )
-//            let request = Paths.getEpisodes(seriesID: seriesID, parameters: parameters)
-//            let response = try await userSession.client.send(request)
-//
-//            // 4 possible states:
-//            //  1 - only current episode
-//            //  2 - two episodes with next episode
-//            //  3 - two episodes with previous episode
-//            //  4 - three episodes with current in middle
-//
-//            // 1
-//            guard let items = response.value.items, items.count > 1 else { return }
-//
-//            var previousItem: BaseItemDto?
-//            var nextItem: BaseItemDto?
-//
-//            if items.count == 2 {
-//                if items[0].id == item.id {
-//                    // 2
-//                    nextItem = items[1]
-//
-//                } else {
-//                    // 3
-//                    previousItem = items[0]
-//                }
-//            } else {
-//                nextItem = items[2]
-//                previousItem = items[0]
-//            }
-//
-//            var nextViewModel: VideoPlayerViewModel?
-//            var previousViewModel: VideoPlayerViewModel?
-//
-//            if let nextItem, let nextItemMediaSource = nextItem.mediaSources?.first {
-//                nextViewModel = try await nextItem.videoPlayerViewModel(with: nextItemMediaSource)
-//            }
-//
-//            if let previousItem, let previousItemMediaSource = previousItem.mediaSources?.first {
-//                previousViewModel = try await previousItem.videoPlayerViewModel(with: previousItemMediaSource)
-//            }
-//
-//            await MainActor.run {
-//                self.nextViewModel = nextViewModel
-//                self.previousViewModel = previousViewModel
-//            }
-//        }
-//    }
 }

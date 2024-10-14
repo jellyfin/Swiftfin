@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: remove and just use primitive values instead?
+
 enum PlaybackRate: Storable {
 
     case half

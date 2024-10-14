@@ -9,6 +9,8 @@
 import Defaults
 import SwiftUI
 
+// TODO: drawer animation fixes
+
 extension VideoPlayer {
 
     struct Overlay: View {
@@ -16,9 +18,6 @@ extension VideoPlayer {
         @Default(.VideoPlayer.Overlay.playbackButtonType)
         private var playbackButtonType
 
-        @Environment(\.isPresentingOverlay)
-        @Binding
-        private var isPresentingOverlay
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -34,7 +33,8 @@ extension VideoPlayer {
 
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
-
+        @State
+        private var isPresentingOverlay: Bool = true
         @State
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
@@ -47,7 +47,7 @@ extension VideoPlayer {
 
         @ViewBuilder
         private var topBar: some View {
-            Overlay.TopBarView()
+            TopBarView()
                 .edgePadding(.vertical)
                 .padding(effectiveSafeArea)
                 .background {
@@ -64,21 +64,22 @@ extension VideoPlayer {
         }
 
         @ViewBuilder
-        private var bottomBar: some View {
-            Overlay.BottomBarView()
+        private var playbackProgress: some View {
+            PlaybackProgressView()
                 .padding(effectiveSafeArea)
-                .background {
-                    OpacityLinearGradient {
-                        (0, 0)
-                        (1, 0.9)
-                    }
-                    .foregroundStyle(.black)
-                    .isVisible(isScrubbing || playbackButtonType == .compact)
-                }
                 .isVisible(isScrubbing || isPresentingOverlay)
                 .offset(y: isPresentingOverlay ? 0 : 20)
                 .animation(.bouncy, value: isPresentingOverlay)
                 .transition(.move(edge: .top).combined(with: .opacity))
+            
+//                .background {
+//                    OpacityLinearGradient {
+//                        (0, 0)
+//                        (1, 0.9)
+//                    }
+//                    .foregroundStyle(.black)
+//                    .isVisible(isScrubbing || playbackButtonType == .compact)
+//                }
         }
 
         @ViewBuilder
@@ -101,7 +102,6 @@ extension VideoPlayer {
 
                 GestureView()
                     .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
-                        print("here")
                         if isPresentingDrawer {
                             selectedSupplement = nil
                         } else {
@@ -116,7 +116,7 @@ extension VideoPlayer {
                         .allowsHitTesting(false)
 
                     if !isPresentingDrawer {
-                        bottomBar
+                        playbackProgress
                     }
 
                     drawerTitleSection
@@ -148,7 +148,8 @@ extension VideoPlayer {
                 }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
-            .animation(.bouncy, value: isPresentingDrawer)
+            .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
+            .environment(\.isPresentingOverlay, $isPresentingOverlay)
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(overlayTimer)
             .onChange(of: selectedSupplement) { newValue in
