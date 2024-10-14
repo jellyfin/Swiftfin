@@ -47,7 +47,7 @@ extension VideoPlayer.Overlay {
             .onEditingChanged { newValue in
                 isScrubbing = newValue
             }
-            .frame(height: 30)
+            .frame(height: 10)
         }
 
         @ViewBuilder

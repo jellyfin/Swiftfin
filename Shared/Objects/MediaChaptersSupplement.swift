@@ -46,7 +46,7 @@ struct ChapterOverlay: View {
             ChapterButton(chapter: chapter)
                 .frame(height: 150)
         }
-//        .insets(horizontal: safeAreaInsets.leading)
+        .insets(horizontal: .zero)
         .proxy(collectionHStackProxy)
         .frame(height: 150)
     }
