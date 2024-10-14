@@ -12,7 +12,8 @@ import JellyfinAPI
 extension SessionInfo {
 
     var playMethodDisplayTitle: String? {
-        guard let playState = self.playState,
+        guard self.nowPlayingItem != nil,
+              let playState = self.playState,
               let playMethod = playState.playMethod
         else {
             return nil
