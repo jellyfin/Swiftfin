@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct UserDashboardView: View {
+struct AdminDashboardView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     // MARK: - Body
 
@@ -30,6 +30,11 @@ struct UserDashboardView: View {
 
             Section(L10n.advanced) {
 
+                ChevronButton(L10n.allDevices)
+                    .onSelect {
+                        router.route(to: \.devices)
+                    }
+
                 ChevronButton(L10n.logs)
                     .onSelect {
                         router.route(to: \.serverLogs)
@@ -40,12 +45,16 @@ struct UserDashboardView: View {
                         router.route(to: \.tasks)
                     }
 
-                ChevronButton(L10n.allDevices)
+                ChevronButton(L10n.users)
                     .onSelect {
-                        router.route(to: \.devices)
+                        router.route(to: \.users)
                     }
             }
         }
         .navigationTitle(L10n.dashboard)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
     }
 }

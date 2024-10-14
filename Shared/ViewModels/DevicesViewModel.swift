@@ -56,11 +56,9 @@ final class DevicesViewModel: ViewModel, Stateful {
         case .getDevices:
             deviceTask?.cancel()
 
-            deviceTask = Task { [weak self] in
-                await MainActor.run {
-                    let _ = self?.backgroundStates.append(.gettingDevices)
-                }
+            backgroundStates.append(.gettingDevices)
 
+            deviceTask = Task { [weak self] in
                 do {
                     try await self?.loadDevices()
                     await MainActor.run {
@@ -74,7 +72,7 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.gettingDevices)
+                    self?.backgroundStates.remove(.gettingDevices)
                 }
             }
             .asAnyCancellable()
@@ -84,11 +82,9 @@ final class DevicesViewModel: ViewModel, Stateful {
         case let .setCustomName(id, newName):
             deviceTask?.cancel()
 
-            deviceTask = Task { [weak self] in
-                await MainActor.run {
-                    let _ = self?.backgroundStates.append(.settingCustomName)
-                }
+            backgroundStates.append(.settingCustomName)
 
+            deviceTask = Task { [weak self] in
                 do {
                     try await self?.setCustomName(id: id, newName: newName)
                     await MainActor.run {
@@ -102,7 +98,7 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.settingCustomName)
+                    self?.backgroundStates.remove(.settingCustomName)
                 }
             }
             .asAnyCancellable()
@@ -112,11 +108,9 @@ final class DevicesViewModel: ViewModel, Stateful {
         case let .deleteDevice(id):
             deviceTask?.cancel()
 
-            deviceTask = Task { [weak self] in
-                await MainActor.run {
-                    let _ = self?.backgroundStates.append(.deletingDevice)
-                }
+            backgroundStates.append(.deletingDevice)
 
+            deviceTask = Task { [weak self] in
                 do {
                     try await self?.deleteDevice(id: id)
                     await MainActor.run {
@@ -130,7 +124,7 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.deletingDevice)
+                    self?.backgroundStates.remove(.deletingDevice)
                 }
             }
             .asAnyCancellable()
@@ -140,11 +134,9 @@ final class DevicesViewModel: ViewModel, Stateful {
         case .deleteAllDevices:
             deviceTask?.cancel()
 
-            deviceTask = Task { [weak self] in
-                await MainActor.run {
-                    let _ = self?.backgroundStates.append(.deletingAllDevices)
-                }
+            backgroundStates.append(.deletingAllDevices)
 
+            deviceTask = Task { [weak self] in
                 do {
                     try await self?.deleteAllDevices()
                     await MainActor.run {
@@ -158,7 +150,7 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.deletingAllDevices)
+                    self?.backgroundStates.remove(.deletingAllDevices)
                 }
             }
             .asAnyCancellable()

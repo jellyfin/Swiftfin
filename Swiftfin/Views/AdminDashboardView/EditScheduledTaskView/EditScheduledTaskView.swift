@@ -16,7 +16,7 @@ import SwiftUI
 struct EditScheduledTaskView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @ObservedObject
     var observer: ServerTaskObserver

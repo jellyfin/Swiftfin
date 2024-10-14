@@ -34,7 +34,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var photoPicker = makePhotoPicker
     @Route(.push)
     var userProfile = makeUserProfileSettings
-
     @Route(.push)
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.push)
@@ -45,30 +44,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
     var serverConnection = makeServerConnection
+    @Route(.modal)
+    var adminDashboard = makeAdminDashboard
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
-
-    @Route(.push)
-    var userDashboard = makeUserDashboard
-    @Route(.push)
-    var activeSessions = makeActiveSessions
-    @Route(.push)
-    var activeDeviceDetails = makeActiveDeviceDetails
     @Route(.modal)
     var itemOverviewView = makeItemOverviewView
-    @Route(.push)
-    var devices = makeDevices
-    @Route(.push)
-    var tasks = makeTasks
-    @Route(.push)
-    var editScheduledTask = makeEditScheduledTask
-    @Route(.modal)
-    var addScheduledTaskTrigger = makeAddScheduledTaskTrigger
-    @Route(.push)
-    var serverLogs = makeServerLogs
-
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
     @Route(.modal)
@@ -166,51 +149,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
-    @ViewBuilder
-    func makeUserDashboard() -> some View {
-        UserDashboardView()
-    }
-
-    @ViewBuilder
-    func makeActiveSessions() -> some View {
-        ActiveSessionsView()
-    }
-
-    @ViewBuilder
-    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
-        ActiveSessionDetailView(box: box)
+    func makeAdminDashboard() -> NavigationViewCoordinator<AdminDashboardCoordinator> {
+        NavigationViewCoordinator(AdminDashboardCoordinator())
     }
 
     func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ItemOverviewView(item: item)
         }
-    }
-
-    @ViewBuilder
-    func makeTasks() -> some View {
-        ScheduledTasksView()
-    }
-
-    @ViewBuilder
-    func makeDevices() -> some View {
-        DevicesView()
-    }
-
-    @ViewBuilder
-    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
-        EditScheduledTaskView(observer: observer)
-    }
-
-    func makeAddScheduledTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            AddTaskTriggerView(observer: observer)
-        }
-    }
-
-    @ViewBuilder
-    func makeServerLogs() -> some View {
-        ServerLogsView()
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

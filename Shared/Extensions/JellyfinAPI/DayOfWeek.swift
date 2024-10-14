@@ -11,22 +11,14 @@ import JellyfinAPI
 
 extension DayOfWeek {
 
-    var displayTitle: String {
-        switch self {
-        case .sunday:
-            return L10n.dayOfWeekSunday
-        case .monday:
-            return L10n.dayOfWeekMonday
-        case .tuesday:
-            return L10n.dayOfWeekTuesday
-        case .wednesday:
-            return L10n.dayOfWeekWednesday
-        case .thursday:
-            return L10n.dayOfWeekThursday
-        case .friday:
-            return L10n.dayOfWeekFriday
-        case .saturday:
-            return L10n.dayOfWeekSaturday
+    var displayTitle: String? {
+        let newLineRemoved = self.rawValue.replacingOccurrences(of: "\n", with: "")
+
+        guard let index = DateFormatter().weekdaySymbols.firstIndex(of: newLineRemoved) else {
+            return nil
         }
+
+        let localCal = Calendar.current
+        return localCal.weekdaySymbols[index].localizedCapitalized
     }
 }

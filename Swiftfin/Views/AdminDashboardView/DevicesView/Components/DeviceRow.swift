@@ -88,7 +88,7 @@ extension DevicesView {
         @ViewBuilder
         private var deviceDetails: some View {
             VStack(alignment: .leading) {
-                // TODO: Change t0 (CustomName ?? DeviceName) when available
+                // TODO: Change to (CustomName ?? DeviceName) when available
                 Text(device.name ?? L10n.unknown)
                     .font(.headline)
 

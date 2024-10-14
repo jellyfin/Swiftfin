@@ -37,14 +37,14 @@ struct DevicesView: View {
 
     var body: some View {
         Group {
-            mainContentView
+            contentView
         }
-        .navigationTitle(L10n.activeDevices)
+        .navigationTitle(L10n.allDevices)
         .onFirstAppear {
             viewModel.send(.getDevices)
         }
         .topBarTrailing {
-            topBarContent
+            navigationBarView
         }
         .confirmationDialog(
             L10n.deleteAllDevices,
@@ -74,9 +74,9 @@ struct DevicesView: View {
         }
     }
 
-    // MARK: - Main Content View
+    // MARK: - Content View
 
-    private var mainContentView: some View {
+    private var contentView: some View {
         Group {
             switch viewModel.state {
             case .content:
@@ -96,9 +96,9 @@ struct DevicesView: View {
         }
     }
 
-    // MARK: - Top Bar Content
+    // MARK: - Navigation Bar Content
 
-    private var topBarContent: some View {
+    private var navigationBarView: some View {
         Group {
             if viewModel.backgroundStates.contains(.gettingDevices) {
                 ProgressView()
@@ -159,12 +159,10 @@ struct DevicesView: View {
 
             Button(L10n.delete, role: .destructive) {
                 if let deviceToDelete = deviceToDelete {
-                    viewModel.send(.deleteDevice(id: deviceToDelete))
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        if viewModel.devices[deviceToDelete] != nil {
-                            isPresentingSelfDeleteError = true
-                        }
+                    if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
+                        isPresentingSelfDeleteError = true
+                    } else {
+                        viewModel.send(.deleteDevice(id: deviceToDelete))
                     }
                 }
             }

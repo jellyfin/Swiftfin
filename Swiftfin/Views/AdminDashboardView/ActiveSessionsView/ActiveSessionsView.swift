@@ -16,7 +16,7 @@ import SwiftUI
 struct ActiveSessionsView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @StateObject
     private var viewModel = ActiveSessionsViewModel()

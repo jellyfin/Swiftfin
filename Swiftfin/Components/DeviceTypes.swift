@@ -125,7 +125,7 @@ enum DeviceType: String, Displayable, SystemImageable, Codable, CaseIterable {
         case .opera:
             return Color(red: 1.0, green: 0.0, blue: 0.0) // Opera Red
         default:
-            return Color.systemBackground
+            return Color.black
         }
     }
 

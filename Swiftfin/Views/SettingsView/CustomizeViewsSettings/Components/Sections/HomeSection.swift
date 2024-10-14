@@ -20,7 +20,15 @@ extension CustomizeViewsSettings {
         private var resumeNextUp
 
         @State
-        private var isPresentingNextUpDays = false
+        var tempNextUp: TimeInterval?
+
+        // MARK: - Init
+
+        init() {
+            _tempNextUp = State(initialValue: maxNextUp)
+        }
+
+        // MARK: - Body
 
         var body: some View {
             Section(L10n.home) {
@@ -29,9 +37,9 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronButton(
-                    L10n.nextUpDays,
-                    subtitle: {
+                ChevronInputButton(
+                    title: L10n.nextUpDays,
+                    subtitleText: {
                         if maxNextUp > 0 {
                             return Text(
                                 Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
@@ -40,22 +48,21 @@ extension CustomizeViewsSettings {
                         } else {
                             return Text(L10n.disabled)
                         }
-                    }()
-                )
-                .onSelect {
-                    isPresentingNextUpDays = true
-                }
-                .alert(L10n.nextUpDays, isPresented: $isPresentingNextUpDays) {
-
+                    }(),
+                    description: L10n.nextUpDaysDescription
+                ) {
                     TextField(
                         L10n.nextUpDays,
-                        value: $maxNextUp,
+                        value: $tempNextUp,
                         format: .dayInterval(range: 0 ... 1000)
                     )
                     .keyboardType(.numberPad)
-
-                } message: {
-                    L10n.nextUpDaysDescription.text
+                } onSave: {
+                    if let tempNextUp = tempNextUp {
+                        maxNextUp = tempNextUp
+                    }
+                } onCancel: {
+                    tempNextUp = maxNextUp
                 }
             }
         }

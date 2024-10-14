@@ -39,6 +39,8 @@ final class MainCoordinator: NavigationCoordinatable {
     var liveVideoPlayer = makeLiveVideoPlayer
     @Route(.modal)
     var settings = makeSettings
+    @Route(.modal)
+    var adminDashboard = makeAdminDashboard
     @Route(.fullScreen)
     var videoPlayer = makeVideoPlayer
 
@@ -132,6 +134,10 @@ final class MainCoordinator: NavigationCoordinatable {
 
     func makeSettings() -> NavigationViewCoordinator<SettingsCoordinator> {
         NavigationViewCoordinator(SettingsCoordinator())
+    }
+
+    func makeAdminDashboard() -> NavigationViewCoordinator<AdminDashboardCoordinator> {
+        NavigationViewCoordinator(AdminDashboardCoordinator())
     }
 
     func makeMainTab() -> MainTabCoordinator {

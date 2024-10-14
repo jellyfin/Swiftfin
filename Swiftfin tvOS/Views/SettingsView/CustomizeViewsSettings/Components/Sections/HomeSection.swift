@@ -20,7 +20,7 @@ extension CustomizeViewsSettings {
         private var resumeNextUp
 
         @State
-        private var isPresentingNextUpDays = false
+        var tempNextUp: TimeInterval?
 
         var body: some View {
             Section(L10n.home) {
@@ -29,9 +29,9 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronButton(
-                    L10n.nextUpDays,
-                    subtitle: {
+                ChevronInputButton(
+                    title: L10n.nextUpDays,
+                    subtitleText: {
                         if maxNextUp > 0 {
                             return Text(
                                 Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
@@ -40,23 +40,21 @@ extension CustomizeViewsSettings {
                         } else {
                             return Text(L10n.disabled)
                         }
-                    }()
-                )
-                .onSelect {
-                    isPresentingNextUpDays = true
-                }
-                .alert(L10n.nextUpDays, isPresented: $isPresentingNextUpDays) {
-
-                    // TODO: Validate whether this says Done or a Number
+                    }(),
+                    description: L10n.nextUpDaysDescription
+                ) {
                     TextField(
                         L10n.nextUpDays,
-                        value: $maxNextUp,
-                        format: .dayInterval(range: 0 ... 1000)
+                        value: $tempNextUp,
+                        format: .number
                     )
                     .keyboardType(.numberPad)
-
-                } message: {
-                    L10n.nextUpDaysDescription.text
+                } onSave: {
+                    if let tempNextUp = tempNextUp {
+                        maxNextUp = tempNextUp
+                    }
+                } onCancel: {
+                    tempNextUp = maxNextUp
                 }
             }
         }

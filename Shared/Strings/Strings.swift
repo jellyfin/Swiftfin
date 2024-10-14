@@ -478,6 +478,8 @@ internal enum L10n {
   }
   /// Logs
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
+  /// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
+  internal static let logsDescription = L10n.tr("Localizable", "logsDescription", fallback: "Access the Jellyfin server logs for troubleshooting and monitoring purposes.")
   /// Manual
   internal static let manual = L10n.tr("Localizable", "manual", fallback: "Manual")
   /// Maximum Bitrate
@@ -986,6 +988,8 @@ internal enum L10n {
   }
   /// Username
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
+  /// Users
+  internal static let users = L10n.tr("Localizable", "users", fallback: "Users")
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video

@@ -40,6 +40,8 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
     @Published
     final var sessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
     @Published
+    final var activeSessions: OrderedDictionary<String, BindingBox<SessionInfo?>> = [:]
+    @Published
     final var state: State = .initial
 
     private let activeWithinSeconds: Int = 960
@@ -165,6 +167,21 @@ final class ActiveSessionsViewModel: ViewModel, Stateful {
                     return (xs?.nowPlayingItem?.name ?? "") < (ys?.nowPlayingItem?.name ?? "")
                 } else {
                     return (xs?.lastActivityDate ?? Date.now) > (ys?.lastActivityDate ?? Date.now)
+                }
+            }
+
+            activeSessions = sessions.filter { _, session in
+                session.value?.nowPlayingItem != nil
+            }
+
+            activeSessions.sort { x, y in
+                let xs = x.value.value
+                let ys = y.value.value
+
+                if xs?.userName != ys?.userName {
+                    return (xs?.userName ?? "") < (ys?.userName ?? "")
+                } else {
+                    return (xs?.nowPlayingItem?.name ?? "") < (ys?.nowPlayingItem?.name ?? "")
                 }
             }
         }
