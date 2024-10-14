@@ -600,6 +600,8 @@ internal enum L10n {
   internal static let removeAllUsers = L10n.tr("Localizable", "removeAllUsers", fallback: "Remove All Users")
   /// Remove From Resume
   internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume", fallback: "Remove From Resume")
+  /// Remux
+  internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Report an Issue
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature
