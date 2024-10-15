@@ -19,9 +19,6 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
 
-        @State
-        private var isPresentingNextUpDays = false
-
         var body: some View {
             Section(L10n.home) {
 
@@ -29,8 +26,8 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronButton(
-                    L10n.nextUpDays,
+                ChevronInputButton(
+                    title: Text(L10n.nextUpDays),
                     subtitle: {
                         if maxNextUp > 0 {
                             return Text(
@@ -40,23 +37,17 @@ extension CustomizeViewsSettings {
                         } else {
                             return Text(L10n.disabled)
                         }
-                    }()
+                    }(),
+                    description: L10n.nextUpDaysDescription,
+                    menu: {
+                        TextField(
+                            L10n.days,
+                            value: $maxNextUp,
+                            format: .dayInterval(range: 0 ... 1000)
+                        )
+                        .keyboardType(.numberPad)
+                    }
                 )
-                .onSelect {
-                    isPresentingNextUpDays = true
-                }
-                .alert(L10n.nextUpDays, isPresented: $isPresentingNextUpDays) {
-
-                    TextField(
-                        L10n.nextUpDays,
-                        value: $maxNextUp,
-                        format: .dayInterval(range: 0 ... 1000)
-                    )
-                    .keyboardType(.numberPad)
-
-                } message: {
-                    L10n.nextUpDaysDescription.text
-                }
             }
         }
     }

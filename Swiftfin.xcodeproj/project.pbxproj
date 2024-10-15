@@ -56,6 +56,8 @@
 		4EB1A8CA2C9A766200F43898 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */; };
 		4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */; };
 		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
+		4EB7B33B2CBDE645004A342E /* ChevronInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */; };
+		4EB7B33D2CBDE9BA004A342E /* ChevronInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -1053,6 +1055,8 @@
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskButton.swift; sourceTree = "<group>"; };
 		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
+		4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronInputButton.swift; sourceTree = "<group>"; };
+		4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronInputButton.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -2196,6 +2200,7 @@
 			isa = PBXGroup;
 			children = (
 				E12E30F229638B140022FAC9 /* ChevronButton.swift */,
+				4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */,
 				E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */,
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
@@ -2431,6 +2436,7 @@
 			children = (
 				E1D8429429346C6400D1041A /* BasicStepper.swift */,
 				E1A1528728FD229500600579 /* ChevronButton.swift */,
+				4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */,
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
 				E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
@@ -4418,6 +4424,7 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */,
+				4EB7B33D2CBDE9BA004A342E /* ChevronInputButton.swift in Sources */,
 				E11E0E8D2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */,
 				E1E2F8462B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -5044,6 +5051,7 @@
 				E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */,
 				E1A7B1662B9ADAD300152546 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1ED7FD62CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift in Sources */,
+				4EB7B33B2CBDE645004A342E /* ChevronInputButton.swift in Sources */,
 				E1545BD82BDC55C300D9578F /* ResetUserPasswordView.swift in Sources */,
 				E1E750682A33E9B400B2C1EE /* OverviewCard.swift in Sources */,
 				E1CCF13128AC07EC006CAC9E /* PosterHStack.swift in Sources */,

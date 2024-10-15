@@ -230,6 +230,8 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Perform administrative tasks for your Jellyfin server.
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Days
+  internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -434,8 +436,8 @@ internal enum L10n {
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
   /// Days in Next Up
   internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
-  /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
-  internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
+  /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it. Set the value to 0 to disable.
+  internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it. Set the value to 0 to disable.")
   /// Rewatching in Next Up
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No Cast devices found..
@@ -638,6 +640,8 @@ internal enum L10n {
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Save
+  internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
   /// Scheduled Tasks
