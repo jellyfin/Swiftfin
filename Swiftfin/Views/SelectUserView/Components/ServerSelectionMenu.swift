@@ -80,7 +80,7 @@ extension SelectUserView {
                         Color.tertiarySystemBackground
                     }
 
-                    Group {
+                    HStack {
                         switch serverSelection {
                         case .all:
                             Label("All Servers", systemImage: "person.2.fill")
@@ -89,6 +89,10 @@ extension SelectUserView {
                                 Label(server.name, systemImage: "server.rack")
                             }
                         }
+
+                        Image(systemName: "chevron.up.chevron.down")
+                            .foregroundStyle(.secondary)
+                            .font(.subheadline.weight(.semibold))
                     }
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)

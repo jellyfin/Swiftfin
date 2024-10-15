@@ -168,6 +168,8 @@ internal enum L10n {
   internal static let collections = L10n.tr("Localizable", "collections", fallback: "Collections")
   /// Color
   internal static let color = L10n.tr("Localizable", "color", fallback: "Color")
+  /// Columns
+  internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
   /// Coming soon
   internal static let comingSoon = L10n.tr("Localizable", "comingSoon", fallback: "Coming soon")
   /// Compact
@@ -228,6 +230,8 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Perform administrative tasks for your Jellyfin server.
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Days
+  internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -258,6 +262,8 @@ internal enum L10n {
   internal static let dismiss = L10n.tr("Localizable", "dismiss", fallback: "Dismiss")
   /// Display order
   internal static let displayOrder = L10n.tr("Localizable", "displayOrder", fallback: "Display order")
+  /// Done
+  internal static let done = L10n.tr("Localizable", "done", fallback: "Done")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Edit
@@ -428,6 +434,12 @@ internal enum L10n {
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
   /// Next Up
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
+  /// Days in Next Up
+  internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
+  /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it. Set the value to 0 to disable.
+  internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it. Set the value to 0 to disable.")
+  /// Rewatching in Next Up
+  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
   /// No Cast devices found..
   internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
   /// No Codec
@@ -628,6 +640,8 @@ internal enum L10n {
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Save
+  internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
   /// Scheduled Tasks

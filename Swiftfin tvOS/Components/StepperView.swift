@@ -13,6 +13,11 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
     @Binding
     private var value: Value
 
+    @State
+    private var updatedValue: Value
+    @Environment(\.presentationMode)
+    private var presentationMode
+
     private var title: String
     private var description: String?
     private var range: ClosedRange<Value>
@@ -36,7 +41,7 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
             }
             .frame(maxHeight: .infinity)
 
-            formatter(value).text
+            formatter(updatedValue).text
                 .font(.title)
                 .frame(height: 250)
 
@@ -44,8 +49,10 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
 
                 HStack {
                     Button {
-                        guard value >= range.lowerBound else { return }
-                        value = value.advanced(by: -step)
+                        if updatedValue > range.lowerBound {
+                            updatedValue = max(updatedValue.advanced(by: -step), range.lowerBound)
+                            value = updatedValue
+                        }
                     } label: {
                         Image(systemName: "minus")
                             .font(.title2.weight(.bold))
@@ -54,8 +61,10 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
                     .buttonStyle(.card)
 
                     Button {
-                        guard value <= range.upperBound else { return }
-                        value = value.advanced(by: step)
+                        if updatedValue < range.upperBound {
+                            updatedValue = min(updatedValue.advanced(by: step), range.upperBound)
+                            value = updatedValue
+                        }
                     } label: {
                         Image(systemName: "plus")
                             .font(.title2.weight(.bold))
@@ -64,10 +73,9 @@ struct StepperView<Value: CustomStringConvertible & Strideable>: View {
                     .buttonStyle(.card)
                 }
 
-                Button {
+                Button(L10n.close) {
                     onCloseSelected()
-                } label: {
-                    Text("Close")
+                    presentationMode.wrappedValue.dismiss()
                 }
 
                 Spacer()
@@ -86,15 +94,14 @@ extension StepperView {
         range: ClosedRange<Value>,
         step: Value.Stride
     ) {
-        self.init(
-            value: value,
-            title: title,
-            description: description,
-            range: range,
-            step: step,
-            formatter: { $0.description },
-            onCloseSelected: {}
-        )
+        self._value = value
+        self._updatedValue = State(initialValue: value.wrappedValue)
+        self.title = title
+        self.description = description
+        self.range = range
+        self.step = step
+        self.formatter = { $0.description }
+        self.onCloseSelected = {}
     }
 
     func valueFormatter(_ formatter: @escaping (Value) -> String) -> Self {

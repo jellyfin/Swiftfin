@@ -44,7 +44,6 @@ class SelectUserViewModel: ViewModel, Eventful, Stateful {
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
-            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 

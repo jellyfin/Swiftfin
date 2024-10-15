@@ -17,6 +17,11 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    private enum FocusField: Hashable {
+        case username
+        case password
+    }
+
     @Default(.accentColor)
     private var accentColor
 
@@ -24,7 +29,7 @@ struct UserSignInView: View {
     private var router: UserSignInCoordinator.Router
 
     @FocusState
-    private var focusedTextField: Int?
+    private var focusedTextField: FocusField?
 
     @State
     private var duplicateUser: UserState? = nil
@@ -52,17 +57,16 @@ struct UserSignInView: View {
             TextField(L10n.username, text: $username)
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
-                .focused($focusedTextField, equals: 0)
-                .onSubmit {
-                    focusedTextField = 1
-                }
+                .focused($focusedTextField, equals: .username)
 
-            TextField(L10n.password, text: $password) {
-                focusedTextField = nil
-            }
-            .autocorrectionDisabled()
-            .textInputAutocapitalization(.never)
-            .focused($focusedTextField, equals: 1)
+            SecureField(L10n.password, text: $password)
+                .focused($focusedTextField, equals: .password)
+                .onSubmit {
+                    guard username.isNotEmpty else {
+                        return
+                    }
+                    viewModel.send(.signIn(username: username, password: password, policy: .none))
+                }
         } header: {
             Text(L10n.signInToServer(viewModel.server.name))
         }
@@ -74,8 +78,6 @@ struct UserSignInView: View {
             .foregroundStyle(.red, .red.opacity(0.2))
         } else {
             Button(L10n.signIn) {
-                focusedTextField = nil
-
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
             .disabled(username.isEmpty)
@@ -123,7 +125,7 @@ struct UserSignInView: View {
                     ) {
                         username = user.name ?? ""
                         password = ""
-                        focusedTextField = 1
+                        focusedTextField = .password
                     }
                 }
             }
@@ -177,7 +179,7 @@ struct UserSignInView: View {
             }
         }
         .onFirstAppear {
-            focusedTextField = 0
+            focusedTextField = .username
             viewModel.send(.getPublicData)
         }
         .alert(
