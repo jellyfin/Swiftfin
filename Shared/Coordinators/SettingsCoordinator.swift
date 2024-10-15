@@ -49,26 +49,30 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+    @Route(.modal)
+    var itemOverviewView = makeItemOverviewView
 
+    @Route(.modal)
+    var editCustomDeviceProfile = makeEditCustomDeviceProfile
+    @Route(.modal)
+    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
+
+    // TODO: Move AdminDashboard items to its own coordinator ->
     @Route(.push)
     var userDashboard = makeUserDashboard
     @Route(.push)
     var activeSessions = makeActiveSessions
     @Route(.push)
     var activeDeviceDetails = makeActiveDeviceDetails
-    @Route(.modal)
-    var itemOverviewView = makeItemOverviewView
     @Route(.push)
     var tasks = makeTasks
     @Route(.push)
     var editScheduledTask = makeEditScheduledTask
+    @Route(.modal)
+    var addScheduledTaskTrigger = makeAddScheduledTaskTrigger
     @Route(.push)
     var serverLogs = makeServerLogs
-
-    @Route(.modal)
-    var editCustomDeviceProfile = makeEditCustomDeviceProfile
-    @Route(.modal)
-    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
+    // <- End of AdminDashboard Items
 
     #if DEBUG
     @Route(.push)
@@ -160,6 +164,22 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
+    func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemOverviewView(item: item)
+        }
+    }
+
+    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
+        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
+            .navigationTitle(L10n.filters)
+    }
+
+    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
+        VideoPlayerSettingsCoordinator()
+    }
+
+    // TODO: Move AdminDashboard items to its own coordinator ->
     @ViewBuilder
     func makeUserDashboard() -> some View {
         UserDashboardView()
@@ -175,12 +195,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ActiveSessionDetailView(box: box)
     }
 
-    func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemOverviewView(item: item)
-        }
-    }
-
     @ViewBuilder
     func makeTasks() -> some View {
         ScheduledTasksView()
@@ -191,19 +205,18 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditScheduledTaskView(observer: observer)
     }
 
+    func makeAddScheduledTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddTaskTriggerView(observer: observer)
+        }
+    }
+
     @ViewBuilder
     func makeServerLogs() -> some View {
         ServerLogsView()
     }
 
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-            .navigationTitle(L10n.filters)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
-    }
+    // <- End of AdminDashboard Items
 
     #if DEBUG
     @ViewBuilder
