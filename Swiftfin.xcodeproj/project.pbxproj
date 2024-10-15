@@ -11,6 +11,7 @@
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		4E0A8FFB2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
 		4E0A8FFC2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
+		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
@@ -1021,6 +1022,7 @@
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCompletionStatus.swift; sourceTree = "<group>"; };
+		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
@@ -3566,6 +3568,7 @@
 				E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */,
 				E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */,
 				4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */,
+				4E12F9152CBE9615006C217E /* DeviceType.swift */,
 				4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */,
 				E1CB75712C80E71800217C76 /* DirectPlayProfile.swift */,
 				E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */,
@@ -5034,6 +5037,7 @@
 				E10B1EB62BD98C6600A92EAF /* AddUserRow.swift in Sources */,
 				E1CB75802C80F28F00217C76 /* SubtitleProfile.swift in Sources */,
 				E1DD20412BE1EB8C00C0DE51 /* AddUserButton.swift in Sources */,
+				4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */,
 				E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */,
 				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
 				E14EA15E2BF6F72900DE757A /* PhotoPicker.swift in Sources */,
