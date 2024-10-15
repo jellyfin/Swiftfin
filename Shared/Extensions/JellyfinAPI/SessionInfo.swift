@@ -16,6 +16,7 @@ extension SessionInfo {
             client: self.client,
             deviceName: self.deviceName
         )
+    }
 
     var playMethodDisplayTitle: String? {
         guard nowPlayingItem != nil, let playState, let playMethod = playState.playMethod else { return nil }
