@@ -34,6 +34,7 @@
 		4E2AC4D42C6C4C1200DD600D /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */; };
 		4E2AC4D62C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D52C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift */; };
 		4E2AC4D92C6C4D9400DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D72C6C4D8D00DD600D /* PlaybackQualitySettingsView.swift */; };
+		4E4A53222CBE0A1C003BD24D /* ChevronInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E63B9FA2C8A5BEF00C25378 /* UserDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */; };
 		4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */; };
@@ -57,7 +58,6 @@
 		4EB1A8CC2C9B1BA200F43898 /* ServerTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */; };
 		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
 		4EB7B33B2CBDE645004A342E /* ChevronInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */; };
-		4EB7B33D2CBDE9BA004A342E /* ChevronInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -1056,7 +1056,6 @@
 		4EB1A8CB2C9B1B9700F43898 /* ServerTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskButton.swift; sourceTree = "<group>"; };
 		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
 		4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronInputButton.swift; sourceTree = "<group>"; };
-		4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronInputButton.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -2200,7 +2199,6 @@
 			isa = PBXGroup;
 			children = (
 				E12E30F229638B140022FAC9 /* ChevronButton.swift */,
-				4EB7B33C2CBDE9BA004A342E /* ChevronInputButton.swift */,
 				E1DC9818296DD1CD00982F06 /* CinematicBackgroundView.swift */,
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
@@ -2436,7 +2434,6 @@
 			children = (
 				E1D8429429346C6400D1041A /* BasicStepper.swift */,
 				E1A1528728FD229500600579 /* ChevronButton.swift */,
-				4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */,
 				E133328C2953AE4B00EE76AB /* CircularProgressView.swift */,
 				E1A3E4CE2BB7E02B005C59F8 /* DelayedProgressView.swift */,
 				E18E01A7288746AF0022598C /* DotHStack.swift */,
@@ -3600,6 +3597,7 @@
 				E104DC952B9E7E29008F506D /* AssertionFailureView.swift */,
 				E18E0203288749200022598C /* BlurView.swift */,
 				E145EB212BDCCA43003BF6F3 /* BulletedList.swift */,
+				4EB7B33A2CBDE63F004A342E /* ChevronInputButton.swift */,
 				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
@@ -4424,7 +4422,6 @@
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
 				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
 				E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */,
-				4EB7B33D2CBDE9BA004A342E /* ChevronInputButton.swift in Sources */,
 				E11E0E8D2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */,
 				E1E2F8462B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
@@ -4475,6 +4472,7 @@
 				E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */,
 				E1937A3C288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E18A17F0298C68B700C22F62 /* Overlay.swift in Sources */,
+				4E4A53222CBE0A1C003BD24D /* ChevronInputButton.swift in Sources */,
 				E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */,
 				4E2AC4CF2C6C4A0600DD600D /* PlaybackQualitySettingsCoordinator.swift in Sources */,
 				E1D37F492B9C648E00343D2B /* MaxHeightText.swift in Sources */,
