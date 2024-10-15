@@ -77,3 +77,31 @@ extension ParseableFormatStyle where Self == DayIntervalParseableFormatStyle {
         .init(range: range)
     }
 }
+
+extension FormatStyle where Self == TimeIntervalFormatStyle {
+
+    static func interval(
+        style: Date.ComponentsFormatStyle.Style,
+        fields: Set<Date.ComponentsFormatStyle.Field>
+    ) -> TimeIntervalFormatStyle {
+        TimeIntervalFormatStyle(style: style, fields: fields)
+    }
+}
+
+struct TimeIntervalFormatStyle: FormatStyle {
+
+    let style: Date.ComponentsFormatStyle.Style
+    let fields: Set<Date.ComponentsFormatStyle.Field>
+
+    func format(_ value: TimeInterval) -> String {
+        let value = abs(value)
+        let t = Date.now
+
+        return Date.ComponentsFormatStyle(
+            style: style,
+            locale: .current,
+            calendar: .current,
+            fields: fields
+        ).format(t ..< t.addingTimeInterval(value))
+    }
+}

@@ -10,6 +10,7 @@ import Defaults
 import SwiftUI
 
 extension CustomizeViewsSettings {
+
     struct HomeSection: View {
 
         @Default(.Customization.Home.showRecentlyAdded)
@@ -29,28 +30,24 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronInputButton(
-                    title: Text(L10n.nextUpDays),
+                ChevronAlertButton(
+                    L10n.nextUpDays,
                     subtitle: {
                         if maxNextUp > 0 {
-                            return Text(
-                                Date.now.addingTimeInterval(-maxNextUp) ..< Date.now,
-                                format: .components(style: .narrow, fields: [.year, .month, .week, .day])
-                            )
+                            return Text(maxNextUp, format: .interval(style: .narrow, fields: [.day]))
                         } else {
                             return Text(L10n.disabled)
                         }
                     }(),
-                    description: L10n.nextUpDaysDescription,
-                    menu: {
-                        TextField(
-                            L10n.days,
-                            value: $maxNextUp,
-                            format: .dayInterval(range: 0 ... 1000)
-                        )
-                        .keyboardType(.numberPad)
-                    }
-                )
+                    description: L10n.nextUpDaysDescription
+                ) {
+                    TextField(
+                        L10n.days,
+                        value: $maxNextUp,
+                        format: .dayInterval(range: 0 ... 1000)
+                    )
+                    .keyboardType(.numberPad)
+                }
             }
         }
     }

@@ -38,44 +38,34 @@ struct AboutAppView: View {
                     trailing: "\(UIApplication.appVersion ?? .emptyDash) (\(UIApplication.bundleVersion ?? .emptyDash))"
                 )
 
-                ChevronButton(L10n.sourceCode, external: true)
-                    .leadingView {
-                        Image(.logoGithub)
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.primary)
-                    }
-                    .onSelect {
-                        UIApplication.shared.open(.swiftfinGithub)
-                    }
+                ChevronButton(
+                    L10n.sourceCode,
+                    image: Image(.logoGithub),
+                    external: true
+                )
+                .onSelect {
+                    UIApplication.shared.open(.swiftfinGithub)
+                }
 
-                ChevronButton(L10n.bugsAndFeatures, external: true)
-                    .leadingView {
-                        Image(systemName: "plus.circle.fill")
-                            .resizable()
-                            .backport
-                            .fontWeight(.bold)
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.primary)
-                    }
-                    .onSelect {
-                        UIApplication.shared.open(.swiftfinGithubIssues)
-                    }
+                ChevronButton(
+                    L10n.bugsAndFeatures,
+                    systemName: "plus.circle.fill",
+                    external: true
+                )
+                .onSelect {
+                    UIApplication.shared.open(.swiftfinGithubIssues)
+                }
+                .symbolRenderingMode(.monochrome)
 
-                ChevronButton(L10n.settings, external: true)
-                    .leadingView {
-                        Image(systemName: "gearshape.fill")
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .foregroundColor(.primary)
-                    }
-                    .onSelect {
-                        guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-                        UIApplication.shared.open(url)
-                    }
+                ChevronButton(
+                    L10n.settings,
+                    systemName: "gearshape.fill",
+                    external: true
+                )
+                .onSelect {
+                    guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                    UIApplication.shared.open(url)
+                }
             }
         }
     }
