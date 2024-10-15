@@ -87,7 +87,6 @@ struct ChapterButton: View {
                     if chapter.secondsRange.contains(manager.seconds) {
                         RoundedRectangle(cornerRadius: contentSize.width / 30)
                             .stroke(accentColor, lineWidth: 8)
-                            .cornerRadius(ratio: 1 / 30, of: \.width)
                     }
                 }
                 .aspectRatio(1.77, contentMode: .fill)
