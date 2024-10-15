@@ -11,7 +11,6 @@ import Foundation
 import JellyfinAPI
 
 // TODO: refactor with socket implementation
-// TODO: edit triggers
 
 final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
@@ -19,11 +18,14 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
         case start
         case stop
         case stopObserving
+        case addTrigger(TaskTriggerInfo)
+        case removeTrigger(TaskTriggerInfo)
     }
 
     enum State: Hashable {
         case error(JellyfinAPIError)
         case initial
+        case updating
         case running
     }
 
@@ -89,6 +91,44 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             cancelCancellable?.cancel()
 
             return .initial
+        case let .addTrigger(trigger):
+            progressCancellable?.cancel()
+            cancelCancellable?.cancel()
+
+            cancelCancellable = Task {
+                do {
+                    try await addTrigger(newTrigger: trigger)
+                    await MainActor.run {
+                        self.state = .updating
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .running
+        case let .removeTrigger(trigger):
+            progressCancellable?.cancel()
+            cancelCancellable?.cancel()
+
+            cancelCancellable = Task {
+                do {
+                    try await removeTrigger(deleteTrigger: trigger)
+                    await MainActor.run {
+                        self.state = .updating
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .running
         }
     }
 
@@ -123,5 +163,27 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
         let request = Paths.stopTask(taskID: id)
         try await userSession.client.send(request)
+    }
+
+    private func addTrigger(newTrigger: TaskTriggerInfo) async throws {
+        var updatedTriggers = task.triggers ?? []
+        updatedTriggers.append(newTrigger)
+        try await updateTriggers(updatedTriggers)
+    }
+
+    private func removeTrigger(deleteTrigger: TaskTriggerInfo) async throws {
+        var updatedTriggers = task.triggers ?? []
+        updatedTriggers.removeAll { $0 == deleteTrigger }
+        try await updateTriggers(updatedTriggers)
+    }
+
+    private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
+        guard let id = task.id else { return }
+        let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
+        try await userSession.client.send(updateRequest)
+
+        await MainActor.run {
+            self.task.triggers = updatedTriggers
+        }
     }
 }
