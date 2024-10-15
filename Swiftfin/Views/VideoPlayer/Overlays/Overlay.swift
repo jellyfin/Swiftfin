@@ -39,17 +39,15 @@ extension VideoPlayer {
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
         @StateObject
-        private var overlayTimer: PokeIntervalTimer = .init(defaultInterval: 5)
+        private var overlayTimer: PokeIntervalTimer = .init()
 
         private var isPresentingDrawer: Bool {
             selectedSupplement != nil
         }
 
         @ViewBuilder
-        private var topBar: some View {
-            TopBarView()
-                .edgePadding(.vertical)
-                .padding(effectiveSafeArea)
+        private var navigationBar: some View {
+            NavigationBar()
                 .background {
                     OpacityLinearGradient {
                         (0, 0.9)
@@ -59,17 +57,12 @@ extension VideoPlayer {
                     .isVisible(playbackButtonType == .compact)
                 }
                 .isVisible(!isScrubbing && isPresentingOverlay)
-                .offset(y: isPresentingOverlay ? 0 : -20)
-                .animation(.bouncy, value: isPresentingOverlay)
         }
 
         @ViewBuilder
         private var playbackProgress: some View {
             PlaybackProgressView()
-                .padding(effectiveSafeArea)
                 .isVisible(isScrubbing || isPresentingOverlay)
-                .offset(y: isPresentingOverlay ? 0 : 20)
-                .animation(.bouncy, value: isPresentingOverlay)
                 .transition(.move(edge: .top).combined(with: .opacity))
             
 //                .background {
@@ -91,7 +84,19 @@ extension VideoPlayer {
                     )
                 }
             }
+            .isVisible(!isScrubbing && isPresentingOverlay)
         }
+        
+        @ViewBuilder
+        private var bottomContent: some View {
+            if !isPresentingDrawer {
+                playbackProgress
+            }
+            
+            drawerTitleSection
+        }
+        
+        // MARK: body
 
         var body: some View {
             ZStack {
@@ -110,23 +115,22 @@ extension VideoPlayer {
                     }
 
                 VStack {
-                    topBar
+                    navigationBar
+                        .edgePadding(.vertical)
+                        .padding(effectiveSafeArea)
+                        .offset(y: isPresentingOverlay ? 0 : -20)
+                        .animation(.bouncy, value: isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
 
-                    if !isPresentingDrawer {
-                        playbackProgress
-                    }
-
-                    drawerTitleSection
+                    bottomContent
                         .padding(effectiveSafeArea)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .isVisible(!isScrubbing && isPresentingOverlay)
                         .offset(y: isPresentingOverlay ? 0 : 20)
                         .animation(.bouncy, value: isPresentingOverlay)
 
-                    // TODO: transition
+                    // TODO: changing supplement transition
                     if isPresentingDrawer, let selectedSupplement {
                         selectedSupplement.supplement
                             .videoPlayerBody()

@@ -76,13 +76,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     }
 
     @Published
-    private(set) var item: BaseItemDto? = nil {
-        didSet {
-            if let item {
-                supplements = [MediaInfoSupplement(item: item)]
-            }
-        }
-    }
+    private(set) var item: BaseItemDto
     @Published
     var playbackRate: PlaybackRate = .one {
         didSet {
@@ -101,7 +95,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     /// Supplements to provide media players.
     ///
-    /// The ordering of media players inserted are:
+    /// Supplements are ordered as:
     /// - MediaPlayerManager provided supplements
     /// - PlaybackItem provided supplements
     @Published
@@ -192,7 +186,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
                 let playbackItem = try await provider()
                 
-                try await Task.sleep(nanoseconds: 3_000_000_000)
+//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 guard let self else { return }
 

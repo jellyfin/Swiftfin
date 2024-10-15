@@ -19,6 +19,10 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     
     let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
+    
+    func chapter(for second: TimeInterval) -> ChapterInfo.FullInfo? {
+        chapters.first { $0.secondsRange.contains(second) }
+    }
 
     func videoPlayerBody() -> some View {
         ChapterOverlay(chapters: chapters)

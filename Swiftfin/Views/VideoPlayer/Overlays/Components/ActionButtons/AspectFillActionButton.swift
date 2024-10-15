@@ -6,10 +6,9 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import SwiftUI
 
-extension VideoPlayer.Overlay.ActionButtons {
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct AspectFill: View {
 

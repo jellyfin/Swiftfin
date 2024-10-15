@@ -12,7 +12,6 @@ import SwiftUI
 
 // TODO: bar color default to style
 // TODO: remove compact buttons?
-// TODO: timestamp handling
 // TODO: capsule scale on editing
 // TODO: possible issue with runTimeSeconds == 0
 // TODO: live tv
@@ -44,7 +43,7 @@ extension VideoPlayer.Overlay {
         private var capsuleSlider: some View {
             CapsuleSlider(
                 value: _scrubbedSeconds.wrappedValue,
-                total: manager.item?.runTimeSeconds ?? 1
+                total: manager.item.runTimeSeconds
             )
             .onEditingChanged { newValue in
                 isScrubbing = newValue
@@ -57,7 +56,7 @@ extension VideoPlayer.Overlay {
         private var thumbSlider: some View {
             ThumbSlider(
                 value: _scrubbedSeconds.wrappedValue,
-                total: manager.item?.runTimeSeconds ?? 1
+                total: manager.item.runTimeSeconds
             )
             .onEditingChanged { newValue in
                 isScrubbing = newValue

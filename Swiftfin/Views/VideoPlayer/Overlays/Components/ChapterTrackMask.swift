@@ -12,37 +12,29 @@ import SwiftUI
 extension VideoPlayer.Overlay {
 
     struct ChapterTrackMask: View {
-
-//        @EnvironmentObject
-//        private var viewModel: VideoPlayerViewModel
-
+        
         @State
-        private var width: CGFloat = 0
-
-        private func maxWidth(for chapter: ChapterInfo.FullInfo) -> CGFloat {
-            0
-//            width * CGFloat(chapter.secondsRange.count) / CGFloat(viewModel.item.runTimeSeconds)
-        }
+        private var contentSize: CGSize = .zero
+        
+        let chapters: [ChapterInfo.FullInfo]
+        let item: BaseItemDto
 
         var body: some View {
-            Color.white
-//            HStack(spacing: 0) {
-//                ForEach(viewModel.chapters, id: \.self) { chapter in
-//                    HStack(spacing: 0) {
-//                        if chapter != viewModel.chapters.first {
-//                            Color.clear
-//                                .frame(width: 1.5)
-//                        }
-//
-//                        Color.white
-//                    }
-//                    .frame(maxWidth: maxWidth(for: chapter))
-//                }
-//            }
-//            .frame(maxWidth: .infinity)
-//            .onSizeChanged { newSize in
-//                width = newSize.width
-//            }
+            HStack(spacing: 0) {
+                ForEach(chapters) { chapter in
+                    HStack(spacing: 0) {
+                        
+                        if chapter.secondsRange.lowerBound != 0 {
+                            Color.clear
+                                .frame(width: 1.5)
+                        }
+
+                        Color.white
+                    }
+                    .frame(maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item.runTimeSeconds)
+                }
+            }
+            .trackingSize($contentSize)
         }
     }
 }

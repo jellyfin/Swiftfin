@@ -27,10 +27,10 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
 
 struct RunTimeFormatStyle: FormatStyle {
 
-    private var negate: Bool = false
+    private var isNegated: Bool = false
 
     var negated: RunTimeFormatStyle {
-        mutating(\.negate, with: true)
+        copy(self, modifying: \.isNegated, to: true)
     }
 
     func format(_ value: TimeInterval) -> String {
@@ -48,7 +48,7 @@ struct RunTimeFormatStyle: FormatStyle {
         return hourText
             .appending(minutesText)
             .appending(secondsText)
-            .prepending("-", if: negate)
+            .prepending("-", if: isNegated)
     }
 }
 

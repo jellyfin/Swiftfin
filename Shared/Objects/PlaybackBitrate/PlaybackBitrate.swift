@@ -11,6 +11,8 @@ import Factory
 import Foundation
 import JellyfinAPI
 
+// TODO: move bitrate test to `MediaPlayerManager`
+
 enum PlaybackBitrate: Int, CaseIterable, Displayable, Storable {
 
     case auto = 0

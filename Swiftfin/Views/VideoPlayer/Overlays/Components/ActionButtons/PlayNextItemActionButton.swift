@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay.ActionButtons {
+extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct PlayNextItem: View {
 

@@ -9,11 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: rename
-
 extension VideoPlayer.Overlay {
 
-    struct TopBarView: View {
+    struct NavigationBar: View {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
@@ -38,7 +36,7 @@ extension VideoPlayer.Overlay {
 
                 Spacer()
 
-                BarActionButtons()
+                ActionButtons()
             }
             .background {
                 EmptyHitTestView()
@@ -49,7 +47,7 @@ extension VideoPlayer.Overlay {
     }
 }
 
-extension VideoPlayer.Overlay.TopBarView {
+extension VideoPlayer.Overlay.NavigationBar {
 
     struct TitleView: View {
 
