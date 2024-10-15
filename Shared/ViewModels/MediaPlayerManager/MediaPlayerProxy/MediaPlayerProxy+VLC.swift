@@ -22,11 +22,11 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
         vlcUIProxy?.pause()
     }
 
-    func jumpForward(_ seconds: Int) {
+    func jumpForward(_ seconds: TimeInterval) {
         vlcUIProxy?.jumpForward(seconds)
     }
 
-    func jumpBackward(_ seconds: Int) {
+    func jumpBackward(_ seconds: TimeInterval) {
         vlcUIProxy?.jumpBackward(seconds)
     }
 
@@ -42,11 +42,11 @@ class VLCVideoPlayerProxy: MediaPlayerProxy {
         vlcUIProxy?.stop()
     }
 
-    func set(audioStream: MediaStream) {
-        vlcUIProxy?.setAudioTrack(.absolute(audioStream.index ?? -1))
+    func setAudioStream(_ stream: MediaStream) {
+        vlcUIProxy?.setAudioTrack(.absolute(stream.index ?? -1))
     }
 
-    func set(subtitleStream: MediaStream) {
-        vlcUIProxy?.setSubtitleTrack(.absolute(subtitleStream.index ?? -1))
+    func setSubtitleStream(_ stream: MediaStream) {
+        vlcUIProxy?.setSubtitleTrack(.absolute(stream.index ?? -1))
     }
 }

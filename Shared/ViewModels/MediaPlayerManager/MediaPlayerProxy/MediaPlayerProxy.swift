@@ -15,12 +15,12 @@ protocol MediaPlayerProxy {
 
     func play()
     func pause()
-    func jumpForward(_ seconds: Int)
-    func jumpBackward(_ seconds: Int)
+    func jumpForward(_ seconds: TimeInterval)
+    func jumpBackward(_ seconds: TimeInterval)
     func setRate(_ rate: Float)
     func setTime(_ time: TimeInterval)
-    func set(audioStream: MediaStream)
-    func set(subtitleStream: MediaStream)
+    func setAudioStream(_ stream: MediaStream)
+    func setSubtitleStream(_ stream: MediaStream)
 
     func stop()
 }

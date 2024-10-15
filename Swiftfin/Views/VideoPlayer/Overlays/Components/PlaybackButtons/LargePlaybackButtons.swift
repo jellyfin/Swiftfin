@@ -49,11 +49,12 @@ extension VideoPlayer.Overlay {
                 Group {
                     switch playButtonState {
                     case .playing:
-                        Label(L10n.play, systemImage: "pause.fill")
+                        Label("Pause", systemImage: "pause.fill")
                     case .paused:
                         Label(L10n.play, systemImage: "play.fill")
                     case .buffering:
                         ProgressView()
+                            .scaleEffect(2)
                     }
                 }
                 .transition(.opacity.combined(with: .scale).animation(.bouncy))
@@ -67,7 +68,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-//                manager.proxy.jumpForward(jumpForwardLength.rawValue)
+                manager.proxy.jumpForward(jumpForwardInterval.interval)
             } label: {
                 Label(
                     "\(jumpForwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
@@ -83,7 +84,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-//                manager.proxy.jumpBackward(jumpBackwardLength.rawValue)
+                manager.proxy.jumpBackward(jumpBackwardInterval.interval)
             } label: {
                 Label(
                     "\(jumpBackwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
@@ -122,9 +123,10 @@ extension VideoPlayer.Overlay {
                     playButtonState = .playing
                 case .paused:
                     playButtonState = .paused
-//                case .loadingItem, .buffering:
-                default: ()
+                case .loadingItem:
                     playButtonState = .buffering
+                default: ()
+//                    playButtonState = .buffering
                 }
             }
         }

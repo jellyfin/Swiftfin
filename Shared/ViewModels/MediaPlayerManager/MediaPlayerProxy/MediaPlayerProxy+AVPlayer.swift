@@ -22,14 +22,14 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
         avPlayer?.pause()
     }
 
-    func jumpForward(_ seconds: Int) {
+    func jumpForward(_ seconds: TimeInterval) {
         guard let avPlayer else { return }
         let time = avPlayer.currentTime() + CMTime(value: CMTimeValue(seconds), timescale: 1)
 
         avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
-    func jumpBackward(_ seconds: Int) {
+    func jumpBackward(_ seconds: TimeInterval) {
         guard let avPlayer else { return }
         let time = avPlayer.currentTime() - CMTime(value: CMTimeValue(seconds), timescale: 1)
 
@@ -47,6 +47,6 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
         avPlayer?.pause()
     }
 
-    func set(audioStream: MediaStream) {}
-    func set(subtitleStream: MediaStream) {}
+    func setAudioStream(_ stream: MediaStream) {}
+    func setSubtitleStream(_ stream: MediaStream) {}
 }
