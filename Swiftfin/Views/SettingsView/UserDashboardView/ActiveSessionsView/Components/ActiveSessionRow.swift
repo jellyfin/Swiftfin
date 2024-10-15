@@ -35,21 +35,18 @@ extension ActiveSessionsView {
         private var rowLeading: some View {
             // TODO: better handling for different poster types
             Group {
-                switch session.nowPlayingItem {
-                case .none:
+                if session.nowPlayingItem == nil {
                     ZStack {
-                        DeviceType(
-                            client: session.client,
-                            deviceName: session.deviceName
-                        ).clientColor
+                        session.device.clientColor
 
-                        Image(DeviceType(client: session.client, deviceName: session.deviceName).systemImage)
+                        Image(session.device.image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 40)
                     }
-                    .posterStyle(.portrait)
-                default:
+                    .squarePosterStyle()
+                    .frame(width: 60, height: 60)
+                } else {
                     if session.nowPlayingItem?.type == .audio {
                         ZStack {
                             Color.clear

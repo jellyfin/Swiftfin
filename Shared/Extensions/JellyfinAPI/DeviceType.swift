@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-enum DeviceType: String, Displayable, SystemImageable, Codable, CaseIterable {
+enum DeviceType: String, Displayable, Codable, CaseIterable {
     case android = "Device-android"
     case apple = "Device-apple"
     case chrome = "Device-browser-chrome"
@@ -84,8 +84,11 @@ enum DeviceType: String, Displayable, SystemImageable, Codable, CaseIterable {
 
     // MARK: - Client Image
 
-    var systemImage: String {
-        rawValue
+    var image: ImageResource {
+        ImageResource(
+            name: self.rawValue,
+            bundle: Bundle.main
+        )
     }
 
     // MARK: - Client Color
@@ -134,43 +137,43 @@ enum DeviceType: String, Displayable, SystemImageable, Codable, CaseIterable {
     var displayTitle: String {
         switch self {
         case .android:
-            return L10n.android
+            return "Android"
         case .apple:
-            return L10n.apple
+            return "Apple"
         case .chrome:
-            return L10n.chrome
+            return "Chrome"
         case .edge:
-            return L10n.edge
+            return "Edge"
         case .edgechromium:
-            return L10n.edgeChromium
+            return "Edge Chromium"
         case .finamp:
-            return L10n.finamp
+            return "Finamp"
         case .firefox:
-            return L10n.firefox
+            return "Firefox"
         case .homeAssistant:
-            return L10n.homeAssistant
+            return "Home Assistant"
         case .html5:
-            return L10n.html5
+            return "HTML5"
         case .kodi:
-            return L10n.kodi
+            return "Kodi"
         case .msie:
-            return L10n.internetExplorer
+            return "Internet Explorer"
         case .opera:
-            return L10n.opera
+            return "Opera"
         case .playstation:
-            return L10n.playstation
+            return "PlayStation"
         case .roku:
-            return L10n.roku
+            return "Roku"
         case .safari:
-            return L10n.safari
+            return "Safari"
         case .samsungtv:
-            return L10n.samsungTV
+            return "Samsung TV"
         case .windows:
-            return L10n.windows
+            return "Windows"
         case .xbox:
-            return L10n.xbox
+            return "Xbox"
         case .other:
-            return L10n.other
+            return "Other"
         }
     }
 }

@@ -40,14 +40,10 @@ internal enum L10n {
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// Anamorphic video is not supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
-  /// Android
-  internal static let android = L10n.tr("Localizable", "android", fallback: "Android")
   /// Appearance
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
   /// App Icon
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
-  /// Apple
-  internal static let apple = L10n.tr("Localizable", "apple", fallback: "Apple")
   /// Apply
   internal static let apply = L10n.tr("Localizable", "apply", fallback: "Apply")
   /// Aspect Fill
@@ -156,8 +152,6 @@ internal enum L10n {
   internal static let chapters = L10n.tr("Localizable", "chapters", fallback: "Chapters")
   /// Chapter Slider
   internal static let chapterSlider = L10n.tr("Localizable", "chapterSlider", fallback: "Chapter Slider")
-  /// Chrome
-  internal static let chrome = L10n.tr("Localizable", "chrome", fallback: "Chrome")
   /// Cinematic
   internal static let cinematic = L10n.tr("Localizable", "cinematic", fallback: "Cinematic")
   /// Cinematic Background
@@ -272,10 +266,6 @@ internal enum L10n {
   internal static let done = L10n.tr("Localizable", "done", fallback: "Done")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
-  /// Edge
-  internal static let edge = L10n.tr("Localizable", "edge", fallback: "Edge")
-  /// Edge Chromium
-  internal static let edgeChromium = L10n.tr("Localizable", "edgeChromium", fallback: "Edge Chromium")
   /// Edit
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
   /// Edit Jump Lengths
@@ -312,10 +302,6 @@ internal enum L10n {
   internal static let filterResults = L10n.tr("Localizable", "filterResults", fallback: "Filter Results")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
-  /// Finamp
-  internal static let finamp = L10n.tr("Localizable", "finamp", fallback: "Finamp")
-  /// Firefox
-  internal static let firefox = L10n.tr("Localizable", "firefox", fallback: "Firefox")
   /// %@fps
   internal static func fpsWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "fpsWithString", String(describing: p1), fallback: "%@fps")
@@ -332,18 +318,12 @@ internal enum L10n {
   internal static let hapticFeedback = L10n.tr("Localizable", "hapticFeedback", fallback: "Haptic Feedback")
   /// Home
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
-  /// Home Assistant
-  internal static let homeAssistant = L10n.tr("Localizable", "homeAssistant", fallback: "Home Assistant")
-  /// HTML5
-  internal static let html5 = L10n.tr("Localizable", "html5", fallback: "HTML5")
   /// Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
   /// Information
   internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
   /// Interlaced video is not supported
   internal static let interlacedVideoNotSupported = L10n.tr("Localizable", "interlacedVideoNotSupported", fallback: "Interlaced video is not supported")
-  /// Internet Explorer
-  internal static let internetExplorer = L10n.tr("Localizable", "internetExplorer", fallback: "Internet Explorer")
   /// Inverted Dark
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light
@@ -374,8 +354,6 @@ internal enum L10n {
   }
   /// Kids
   internal static let kids = L10n.tr("Localizable", "kids", fallback: "Kids")
-  /// Kodi
-  internal static let kodi = L10n.tr("Localizable", "kodi", fallback: "Kodi")
   /// Larger
   internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
   /// Largest
@@ -500,8 +478,6 @@ internal enum L10n {
   internal static let online = L10n.tr("Localizable", "online", fallback: "Online")
   /// On Now
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
-  /// Opera
-  internal static let opera = L10n.tr("Localizable", "opera", fallback: "Opera")
   /// Operating System
   internal static let operatingSystem = L10n.tr("Localizable", "operatingSystem", fallback: "Operating System")
   /// Orange
@@ -558,8 +534,6 @@ internal enum L10n {
   internal static let playOnActive = L10n.tr("Localizable", "playOnActive", fallback: "Play on active")
   /// Play Previous Item
   internal static let playPreviousItem = L10n.tr("Localizable", "playPreviousItem", fallback: "Play Previous Item")
-  /// PlayStation
-  internal static let playstation = L10n.tr("Localizable", "playstation", fallback: "PlayStation")
   /// Posters
   internal static let posters = L10n.tr("Localizable", "posters", fallback: "Posters")
   /// Present
@@ -660,18 +634,12 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// Right
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
-  /// Roku
-  internal static let roku = L10n.tr("Localizable", "roku", fallback: "Roku")
   /// Run
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
-  /// Safari
-  internal static let safari = L10n.tr("Localizable", "safari", fallback: "Safari")
-  /// Samsung TV
-  internal static let samsungTV = L10n.tr("Localizable", "samsungTV", fallback: "Samsung TV")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
@@ -922,12 +890,8 @@ internal enum L10n {
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Who's watching?
   internal static let whosWatching = L10n.tr("Localizable", "WhosWatching", fallback: "Who's watching?")
-  /// Windows
-  internal static let windows = L10n.tr("Localizable", "windows", fallback: "Windows")
   /// WIP
   internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
-  /// Xbox
-  internal static let xbox = L10n.tr("Localizable", "xbox", fallback: "Xbox")
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Your Favorites
