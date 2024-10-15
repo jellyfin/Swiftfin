@@ -730,5 +730,11 @@
 /* Done - Completed, end, or save */
 "done" = "Done";
 
+/* Save - Completed, end, or save */
+"save" = "Save";
+
+/* Time Interval Help Text - Days */
+"days" = "days";
+
 /* Section Title for Column Configuration */
 "columns" = "Columns";
