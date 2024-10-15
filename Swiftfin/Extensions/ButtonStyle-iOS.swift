@@ -51,3 +51,50 @@ struct ToolbarPillButtonStyle: ButtonStyle {
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
     }
 }
+
+extension ButtonStyle where Self == OnPressButtonStyle {
+
+    static func onPress(perform action: @escaping (Bool) -> Void) -> OnPressButtonStyle {
+        OnPressButtonStyle(onPress: action)
+    }
+}
+
+struct OnPressButtonStyle: ButtonStyle {
+
+    var onPress: (Bool) -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .onChange(of: configuration.isPressed) { newValue in
+                onPress(newValue)
+            }
+    }
+}
+
+extension ButtonStyle where Self == VideoPlayerBarButtonStyle {
+
+    static func videoPlayerBarButton(perform action: @escaping (Bool) -> Void) -> VideoPlayerBarButtonStyle {
+        VideoPlayerBarButtonStyle(onPress: action)
+    }
+}
+
+struct VideoPlayerBarButtonStyle: ButtonStyle {
+
+    @State
+    private var onTapIsPressed = false
+
+    var onPress: (Bool) -> Void
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.8 : 1)
+            .labelStyle(.iconOnly)
+            .contentShape(Rectangle())
+            .padding(8)
+            .scaleEffect(configuration.isPressed ? 0.85 : 1)
+            .animation(.bouncy(duration: 0.2, extraBounce: 0.2), value: configuration.isPressed)
+            .onChange(of: configuration.isPressed) { newValue in
+                onPress(newValue)
+            }
+    }
+}

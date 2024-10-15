@@ -21,7 +21,7 @@ struct ActionButtonSelectorView: View {
         )
         .label { button in
             HStack {
-                Image(systemName: button.settingsSystemImage)
+                Image(systemName: button.systemImage)
 
                 Text(button.displayTitle)
             }

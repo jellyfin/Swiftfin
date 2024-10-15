@@ -28,22 +28,22 @@ extension VideoPlayer {
         @State
         private var confirmCloseWorkItem: DispatchWorkItem?
         @State
-        private var currentOverlayType: VideoPlayer.OverlayType = .main
+        private var currentOverlayType: OverlayType = .main
 
         @StateObject
-        private var overlayTimer: TimerProxy = .init()
+        private var overlayTimer: DelayIntervalTimer = .init()
 
         @ViewBuilder
         private var currentOverlay: some View {
             switch currentOverlayType {
-            case .chapters:
-                ChapterOverlay()
+//            case .chapters:
+//                ChapterOverlay()
             case .confirmClose:
                 ConfirmCloseOverlay()
             case .main:
                 MainOverlay()
-            case .smallMenu:
-                SmallMenuOverlay()
+//            case .smallMenu:
+//                SmallMenuOverlay()
             }
         }
 
@@ -51,8 +51,55 @@ extension VideoPlayer {
             currentOverlay
                 .visible(isPresentingOverlay)
                 .animation(.linear(duration: 0.1), value: currentOverlayType)
-                .environment(\.currentOverlayType, $currentOverlayType)
+//                .environment(\.currentOverlayType, $currentOverlayType)
                 .environmentObject(overlayTimer)
+//                .onChange(of: currentOverlayType) { _, newValue in
+//                    if [.smallMenu, .chapters].contains(newValue) {
+//                        overlayTimer.pause()
+//                    } else if isPresentingOverlay {
+//                        overlayTimer.delay()
+//                    }
+//                }
+//                .onChange(of: overlayTimer.isActive) { _, isActive in
+//                    guard !isActive else { return }
+//
+//                    withAnimation(.linear(duration: 0.3)) {
+//                        isPresentingOverlay = false
+//                    }
+//                }
+//                .onSelectPressed {
+//                    currentOverlayType = .main
+//                    isPresentingOverlay = true
+//                    overlayTimer.delay()
+//                }
+//                .onMenuPressed {
+//
+//                    overlayTimer.delay()
+//                    confirmCloseWorkItem?.cancel()
+//
+//                    if isPresentingOverlay && currentOverlayType == .confirmClose {
+//                        proxy.stop()
+//                        router.dismissCoordinator()
+//                    } else if isPresentingOverlay && currentOverlayType == .smallMenu {
+//                        currentOverlayType = .main
+//                    } else {
+//                        withAnimation {
+//                            currentOverlayType = .confirmClose
+//                            isPresentingOverlay = true
+//                        }
+//
+//                        let task = DispatchWorkItem {
+//                            withAnimation {
+//                                isPresentingOverlay = false
+//                                overlayTimer.stop()
+//                            }
+//                        }
+//
+//                        confirmCloseWorkItem = task
+//
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: task)
+//                    }
+//                }
                 .onChange(of: isPresentingOverlay) {
                     if !isPresentingOverlay {
                         currentOverlayType = .main

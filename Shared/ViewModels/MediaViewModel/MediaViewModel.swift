@@ -11,6 +11,8 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
+// TODO: rename so doesn't become confused with actual media playback
+
 final class MediaViewModel: ViewModel, Stateful {
 
     // TODO: remove once collection types become an enum

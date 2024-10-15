@@ -8,46 +8,45 @@
 
 import Defaults
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay.ActionButtons {
 
     struct Subtitles: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var manager: MediaPlayerManager
 
-        private var content: (Bool) -> any View
+        private var systemImage: String {
+            if manager.playbackItem?.selectedSubtitleStreamIndex == nil {
+                "captions.bubble"
+            } else {
+                "captions.bubble.fill"
+            }
+        }
 
         var body: some View {
-            Menu {
-                ForEach(viewModel.subtitleStreams.prepending(.none), id: \.index) { subtitleTrack in
-                    Button {
-                        videoPlayerManager.subtitleTrackIndex = subtitleTrack.index ?? -1
-                        videoPlayerProxy.setSubtitleTrack(.absolute(subtitleTrack.index ?? -1))
-                    } label: {
-                        if videoPlayerManager.subtitleTrackIndex == subtitleTrack.index ?? -1 {
-                            Label(subtitleTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
-                        } else {
-                            Text(subtitleTrack.displayTitle ?? .emptyDash)
+            if let playbackItem = manager.playbackItem {
+                Menu(
+                    L10n.subtitles,
+                    systemImage: systemImage
+                ) {
+                    Section(L10n.subtitles) {
+                        ForEach(playbackItem.subtitleStreams.prepending(.none), id: \.index) { stream in
+                            Button {
+                                playbackItem.selectedSubtitleStreamIndex = stream.index ?? -1
+                            } label: {
+                                if playbackItem.selectedSubtitleStreamIndex == stream.index {
+                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                                } else {
+                                    Text(stream.displayTitle ?? L10n.unknown)
+                                }
+                            }
                         }
                     }
                 }
-            } label: {
-                content(videoPlayerManager.subtitleTrackIndex != -1)
-                    .eraseToAnyView()
+                .transition(.opacity.combined(with: .scale).animation(.snappy))
+                .id(systemImage)
             }
         }
-    }
-}
-
-extension VideoPlayer.Overlay.ActionButtons.Subtitles {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
     }
 }

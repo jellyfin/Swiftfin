@@ -11,6 +11,8 @@ import Get
 import JellyfinAPI
 import UIKit
 
+// TODO: move to SDK
+
 extension JellyfinClient {
 
     func fullURL<T>(with request: Request<T>, queryAPIKey: Bool = false) -> URL? {

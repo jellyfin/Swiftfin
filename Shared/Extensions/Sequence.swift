@@ -66,3 +66,10 @@ extension Sequence where Element: Equatable {
         filter { !other.contains($0) }
     }
 }
+
+extension Sequence where Element: Collection {
+
+    func flattened() -> [Element.Element] {
+        flatMap(\.self)
+    }
+}

@@ -6,34 +6,234 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import SwiftUI
+
+// TODO: drawer animation fixes
 
 extension VideoPlayer {
 
     struct Overlay: View {
 
-        @Environment(\.isPresentingOverlay)
+        @Default(.VideoPlayer.Overlay.playbackButtonType)
+        private var playbackButtonType
+
+        @Environment(\.isScrubbing)
         @Binding
-        private var isPresentingOverlay
+        private var isScrubbing: Bool
+
+        // since this view ignores safe area, it must
+        // get safe area insets from parent views
+        @Environment(\.safeAreaInsets)
+        @Binding
+        private var safeAreaInsets
+
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
         @State
-        private var currentOverlayType: VideoPlayer.OverlayType = .main
+        private var effectiveSafeArea: EdgeInsets = .zero
+        @State
+        private var isPresentingOverlay: Bool = true
+        @State
+        private var selectedSupplement: AnyMediaPlayerSupplement?
+
+        @StateObject
+        private var overlayTimer: PokeIntervalTimer = .init(defaultInterval: 5)
+
+        private var isPresentingDrawer: Bool {
+            selectedSupplement != nil
+        }
+
+        @ViewBuilder
+        private var topBar: some View {
+            TopBarView()
+                .edgePadding(.vertical)
+                .padding(effectiveSafeArea)
+                .background {
+                    OpacityLinearGradient {
+                        (0, 0.9)
+                        (1, 0)
+                    }
+                    .foregroundStyle(.black)
+                    .isVisible(playbackButtonType == .compact)
+                }
+                .isVisible(!isScrubbing && isPresentingOverlay)
+                .offset(y: isPresentingOverlay ? 0 : -20)
+                .animation(.bouncy, value: isPresentingOverlay)
+        }
+
+        @ViewBuilder
+        private var playbackProgress: some View {
+            PlaybackProgressView()
+                .padding(effectiveSafeArea)
+                .isVisible(isScrubbing || isPresentingOverlay)
+                .offset(y: isPresentingOverlay ? 0 : 20)
+                .animation(.bouncy, value: isPresentingOverlay)
+                .transition(.move(edge: .top).combined(with: .opacity))
+            
+//                .background {
+//                    OpacityLinearGradient {
+//                        (0, 0)
+//                        (1, 0.9)
+//                    }
+//                    .foregroundStyle(.black)
+//                    .isVisible(isScrubbing || playbackButtonType == .compact)
+//                }
+        }
+
+        @ViewBuilder
+        private var drawerTitleSection: some View {
+            HStack(spacing: 10) {
+                ForEach(manager.supplements.map { AnyMediaPlayerSupplement(supplement: $0) }) { supplement in
+                    DrawerSectionButton(
+                        supplement: supplement
+                    )
+                }
+            }
+        }
 
         var body: some View {
             ZStack {
 
-                MainOverlay()
-                    .visible(currentOverlayType == .main)
+                Color.black
+                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
+                    .allowsHitTesting(false)
 
-                ChapterOverlay()
-                    .visible(currentOverlayType == .chapters)
+                GestureView()
+                    .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
+                        if isPresentingDrawer {
+                            selectedSupplement = nil
+                        } else {
+                            isPresentingOverlay.toggle()
+                        }
+                    }
+
+                VStack {
+                    topBar
+
+                    Spacer()
+                        .allowsHitTesting(false)
+
+                    if !isPresentingDrawer {
+                        playbackProgress
+                    }
+
+                    drawerTitleSection
+                        .padding(effectiveSafeArea)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .isVisible(!isScrubbing && isPresentingOverlay)
+                        .offset(y: isPresentingOverlay ? 0 : 20)
+                        .animation(.bouncy, value: isPresentingOverlay)
+
+                    // TODO: transition
+                    if isPresentingDrawer, let selectedSupplement {
+                        selectedSupplement.supplement
+                            .videoPlayerBody()
+                            .eraseToAnyView()
+                            .frame(height: 150)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                    }
+
+                    Color.clear
+                        .frame(height: EdgeInsets.edgePadding)
+                        .allowsHitTesting(false)
+                }
+
+                if playbackButtonType == .large, !isPresentingDrawer {
+                    Overlay.LargePlaybackButtons()
+                        .isVisible(!isScrubbing && isPresentingOverlay)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
             }
-            .animation(.linear(duration: 0.1), value: currentOverlayType)
-            .environment(\.currentOverlayType, $currentOverlayType)
+            .animation(.linear(duration: 0.1), value: isScrubbing)
+            .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
+            .environment(\.isPresentingOverlay, $isPresentingOverlay)
+            .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
+            .environmentObject(overlayTimer)
+            .onChange(of: selectedSupplement) { newValue in
+                if newValue == nil {
+                    overlayTimer.poke()
+                } else {
+                    overlayTimer.stop()
+                }
+            }
             .onChange(of: isPresentingOverlay) { newValue in
-                guard newValue else { return }
-                currentOverlayType = .main
+                guard newValue, !isScrubbing else { return }
+                overlayTimer.poke()
+            }
+            .onChange(of: isScrubbing) { newValue in
+                if newValue {
+                    overlayTimer.stop()
+                } else {
+                    overlayTimer.poke()
+                }
+            }
+            .onReceive(overlayTimer.hasFired) { _ in
+                guard !isScrubbing else { return }
+
+                withAnimation(.linear(duration: 0.3)) {
+                    isPresentingOverlay = false
+                }
+            }
+            .onSizeChanged { newSize in
+                if newSize.isPortrait {
+                    effectiveSafeArea = .init(
+                        vertical: min(safeAreaInsets.top, safeAreaInsets.bottom),
+                        horizontal: 0
+                    )
+                } else {
+                    effectiveSafeArea = .init(
+                        vertical: 0,
+                        horizontal: min(safeAreaInsets.leading, safeAreaInsets.trailing)
+                    )
+                }
             }
         }
+    }
+}
+
+import VLCUI
+
+struct VideoPlayer_Overlay_Previews: PreviewProvider {
+
+    static var previews: some View {
+        VideoPlayer.Overlay()
+            .environmentObject(
+                MediaPlayerManager(
+                    playbackItem: .init(
+                        baseItem: .init(
+                            indexNumber: 1,
+                            name: "The Bear",
+                            parentIndexNumber: 1,
+                            runTimeTicks: 10_000_000_000,
+                            type: .episode
+                        ),
+                        mediaSource: .init(),
+                        playSessionID: "",
+                        url: URL(string: "/")!
+                    )
+                )
+            )
+            .environmentObject(VLCVideoPlayer.Proxy())
+            .environment(\.isScrubbing, .mock(false))
+            .environment(\.isAspectFilled, .mock(false))
+            .environment(\.isPresentingOverlay, .constant(true))
+            .environment(\.playbackSpeed, .constant(1.0))
+            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+            .previewInterfaceOrientation(.landscapeLeft)
+            .preferredColorScheme(.dark)
+    }
+}
+
+extension Binding {
+
+    static func mock(_ value: Value) -> Self {
+        var value = value
+        return Binding(
+            get: { value },
+            set: { value = $0 }
+        )
     }
 }

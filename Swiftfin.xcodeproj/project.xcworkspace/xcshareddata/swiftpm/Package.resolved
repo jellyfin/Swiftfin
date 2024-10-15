@@ -1,5 +1,5 @@
 {
-  "originHash" : "323b2ad9aaa9c000faf264d68272f0e9fab1349d9f910a0b95ee6aea10460f31",
+  "originHash" : "17796999474b48f4cf2a754a6c30a7d5fb2f66ee9aaa1f2640d4b2389972a431",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
-      }
-    },
-    {
-      "identity" : "collectionhstack",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/CollectionHStack",
-      "state" : {
-        "branch" : "main",
-        "revision" : "894b595185bbfce007d60b219ee3e4013884131c"
       }
     },
     {
@@ -233,15 +224,6 @@
       "state" : {
         "revision" : "4ce950479707ea109f229d7230ec074a133b15d7",
         "version" : "0.2.1"
-      }
-    },
-    {
-      "identity" : "vlcui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LePips/VLCUI",
-      "state" : {
-        "branch" : "main",
-        "revision" : "50d4f6ec05a2d8333952def0d8e45019a4207132"
       }
     }
   ],

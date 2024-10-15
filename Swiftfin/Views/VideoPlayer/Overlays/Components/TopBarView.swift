@@ -6,64 +6,78 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
-import Stinsen
+import JellyfinAPI
 import SwiftUI
-import VLCUI
+
+// TODO: rename
 
 extension VideoPlayer.Overlay {
 
     struct TopBarView: View {
 
         @EnvironmentObject
-        private var router: VideoPlayerCoordinator.Router
+        private var manager: MediaPlayerManager
         @EnvironmentObject
-        private var splitContentViewProxy: SplitContentViewProxy
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var overlayTimer: PokeIntervalTimer
+
+        private func videoPlayerButtonPressed(isPressed: Bool) {
+            if isPressed {
+                overlayTimer.stop()
+            } else {
+                overlayTimer.poke()
+            }
+        }
 
         var body: some View {
-            VStack(alignment: .VideoPlayerTitleAlignmentGuide, spacing: 0) {
-                HStack(alignment: .center) {
-                    Button {
-                        videoPlayerProxy.stop()
-                        router.dismissCoordinator()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .padding()
-                    }
-                    .contentShape(Rectangle())
-                    .buttonStyle(ScalingButtonStyle(scale: 0.8))
-
-                    Text(viewModel.item.displayTitle)
-                        .font(.title3)
-                        .fontWeight(.bold)
-                        .lineLimit(1)
-                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-                            dimensions[.leading]
-                        }
-
-                    Spacer()
-
-                    VideoPlayer.Overlay.BarActionButtons()
-                        .buttonStyle(ScalingButtonStyle(scale: 0.8))
+            HStack(alignment: .center) {
+                Button("Close", systemImage: "xmark") {
+                    manager.send(.stop)
                 }
-                .font(.system(size: 24))
-                .tint(Color.white)
-                .foregroundColor(Color.white)
 
-//                if let subtitle = viewModel.item.subtitle {
-//                    Text(subtitle)
-//                        .font(.subheadline)
-//                        .foregroundColor(.white)
-//                        .alignmentGuide(.VideoPlayerTitleAlignmentGuide) { dimensions in
-//                            dimensions[.leading]
-//                        }
-//                        .offset(y: -10)
-//                }
+                TitleView(item: manager.item)
+
+                Spacer()
+
+                BarActionButtons()
             }
+            .background {
+                EmptyHitTestView()
+            }
+            .font(.system(size: 24))
+            .buttonStyle(.videoPlayerBarButton(perform: videoPlayerButtonPressed))
+        }
+    }
+}
+
+extension VideoPlayer.Overlay.TopBarView {
+
+    struct TitleView: View {
+
+        @State
+        private var subtitleContentSize: CGSize = .zero
+
+        let item: BaseItemDto!
+
+        @ViewBuilder
+        private var subtitle: some View {
+            if let subtitle = item.subtitle {
+                Text(subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.white)
+                    .trackingSize($subtitleContentSize)
+            }
+        }
+
+        var body: some View {
+            Text(item.displayTitle)
+                .font(.system(size: 24))
+                .fontWeight(.bold)
+                .lineLimit(1)
+                .overlay(alignment: .bottomLeading) {
+                    subtitle
+                        .lineLimit(1)
+                        .offset(y: subtitleContentSize.height)
+                }
         }
     }
 }

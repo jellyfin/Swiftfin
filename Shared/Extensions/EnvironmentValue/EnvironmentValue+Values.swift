@@ -10,6 +10,21 @@ import SwiftUI
 
 extension EnvironmentValues {
 
+//    var isPresentingDrawer: Binding<Bool> {
+//        get { self[IsPresentingDrawerKey.self] }
+//        set { self[IsPresentingDrawerKey.self] = newValue }
+//    }
+
+    var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> {
+        get { self[SelectedMediaPlayerSupplementKey.self] }
+        set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
+    }
+    
+    var scrubbedSeconds: Binding<TimeInterval> {
+        get { self[ScrubbedSecondsKey.self] }
+        set { self[ScrubbedSecondsKey.self] = newValue }
+    }
+
     var accentColor: Binding<Color> {
         get { self[AccentColor.self] }
         set { self[AccentColor.self] = newValue }
@@ -20,15 +35,15 @@ extension EnvironmentValues {
         set { self[AudioOffsetKey.self] = newValue }
     }
 
-    var aspectFilled: Binding<Bool> {
+    var isAspectFilled: Binding<Bool> {
         get { self[AspectFilledKey.self] }
         set { self[AspectFilledKey.self] = newValue }
     }
 
-    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
-        get { self[CurrentOverlayTypeKey.self] }
-        set { self[CurrentOverlayTypeKey.self] = newValue }
-    }
+//    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
+//        get { self[CurrentOverlayTypeKey.self] }
+//        set { self[CurrentOverlayTypeKey.self] = newValue }
+//    }
 
     var isEditing: Bool {
         get { self[IsEditingKey.self] }
@@ -55,9 +70,15 @@ extension EnvironmentValues {
         set { self[PlaybackSpeedKey.self] = newValue }
     }
 
-    var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
+    var safeAreaInsets: Binding<EdgeInsets> {
+        get { self[SafeAreaInsetsKey.self] }
+        set { self[SafeAreaInsetsKey.self] = newValue }
     }
+
+//    var scrubbingProgress: Binding<ProgressBox> {
+//        get { self[ScrubbingProgressKey.self] }
+//        set { self[ScrubbingProgressKey.self] = newValue }
+//    }
 
     var subtitleOffset: Binding<Int> {
         get { self[SubtitleOffsetKey.self] }

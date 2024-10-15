@@ -8,46 +8,45 @@
 
 import Defaults
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay.ActionButtons {
 
     struct Audio: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: VideoPlayerManager
-        @EnvironmentObject
-        private var videoPlayerProxy: VLCVideoPlayer.Proxy
-        @EnvironmentObject
-        private var viewModel: VideoPlayerViewModel
+        private var manager: MediaPlayerManager
 
-        private var content: (Bool) -> any View
+        private var systemImage: String {
+            if manager.playbackItem?.selectedAudioStreamIndex == nil {
+                "speaker.wave.2"
+            } else {
+                "speaker.wave.2.fill"
+            }
+        }
 
         var body: some View {
-            Menu {
-                ForEach(viewModel.audioStreams.prepending(.none), id: \.index) { audioTrack in
-                    Button {
-                        videoPlayerManager.audioTrackIndex = audioTrack.index ?? -1
-                        videoPlayerProxy.setAudioTrack(.absolute(audioTrack.index ?? -1))
-                    } label: {
-                        if videoPlayerManager.audioTrackIndex == audioTrack.index ?? -1 {
-                            Label(audioTrack.displayTitle ?? .emptyDash, systemImage: "checkmark")
-                        } else {
-                            Text(audioTrack.displayTitle ?? .emptyDash)
+            if let playbackItem = manager.playbackItem {
+                Menu(
+                    L10n.audio,
+                    systemImage: systemImage
+                ) {
+                    Section(L10n.audio) {
+                        ForEach(playbackItem.audioStreams, id: \.index) { stream in
+                            Button {
+                                playbackItem.selectedAudioStreamIndex = stream.index ?? -1
+                            } label: {
+                                if playbackItem.selectedAudioStreamIndex == stream.index {
+                                    Label(stream.displayTitle ?? L10n.unknown, systemImage: "checkmark")
+                                } else {
+                                    Text(stream.displayTitle ?? L10n.unknown)
+                                }
+                            }
                         }
                     }
                 }
-            } label: {
-                content(videoPlayerManager.audioTrackIndex != -1)
-                    .eraseToAnyView()
+                .transition(.opacity.combined(with: .scale).animation(.snappy))
+                .id(systemImage)
             }
         }
-    }
-}
-
-extension VideoPlayer.Overlay.ActionButtons.Audio {
-
-    init(@ViewBuilder _ content: @escaping (Bool) -> any View) {
-        self.content = content
     }
 }

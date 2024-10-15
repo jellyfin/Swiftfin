@@ -191,8 +191,8 @@ extension Defaults.Keys {
             "barActionButtons",
             default: VideoPlayerActionButton.defaultBarActionButtons
         )
-        static let jumpBackwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpBackwardLength", default: .fifteen)
-        static let jumpForwardLength: Key<VideoPlayerJumpLength> = UserKey("jumpForwardLength", default: .fifteen)
+        static let jumpBackwardInterval: Key<MediaJumpInterval> = UserKey("jumpBackwardLength", default: .fifteen)
+        static let jumpForwardInterval: Key<MediaJumpInterval> = UserKey("jumpForwardLength", default: .fifteen)
         static let menuActionButtons: Key<[VideoPlayerActionButton]> = UserKey(
             "menuActionButtons",
             default: VideoPlayerActionButton.defaultMenuActionButtons
@@ -222,8 +222,6 @@ extension Defaults.Keys {
 
             // Timestamp
             static let trailingTimestampType: Key<TrailingTimestampType> = UserKey("trailingTimestamp", default: .timeLeft)
-            static let showCurrentTimeWhileScrubbing: Key<Bool> = UserKey("showCurrentTimeWhileScrubbing", default: true)
-            static let timestampType: Key<TimestampType> = UserKey("timestampType", default: .split)
         }
 
         enum Playback {

@@ -13,6 +13,7 @@ import PreferencesView
 import Stinsen
 import SwiftUI
 
+// TODO: should take a manager instead?
 final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     let stack = NavigationStack(initial: \VideoPlayerCoordinator.start)
@@ -20,10 +21,12 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    let videoPlayerManager: VideoPlayerManager
+    private let baseItem: BaseItemDto
+    private let mediaSource: MediaSourceInfo
 
-    init(manager: VideoPlayerManager) {
-        self.videoPlayerManager = manager
+    init(baseItem: BaseItemDto, mediaSource: MediaSourceInfo) {
+        self.baseItem = baseItem
+        self.mediaSource = mediaSource
     }
 
     // TODO: removed after iOS 15 support removed
@@ -33,11 +36,15 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
     private var versionedView: some View {
         if #available(iOS 16, *) {
             PreferencesView {
-                Group {
+                ZStack {
+                    let manager = MediaPlayerManager(item: self.baseItem) {
+                        try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
+                    }
+
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        VideoPlayer(manager: self.videoPlayerManager)
+                        VideoPlayer(manager: manager)
                     } else {
-                        NativeVideoPlayer(manager: self.videoPlayerManager)
+                        NativeVideoPlayer(manager: manager)
                     }
                 }
                 .preferredColorScheme(.dark)
@@ -46,13 +53,15 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         } else {
             Group {
                 if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                    VideoPlayer(manager: self.videoPlayerManager)
+//                    VideoPlayer(manager: self.videoPlayerManager)
+                    Color.red
                 } else {
-                    NativeVideoPlayer(manager: self.videoPlayerManager)
+                    Color.red
+//                    NativeVideoPlayer(manager: self.videoPlayerManager)
                 }
             }
             .preferredColorScheme(.dark)
-            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
+//            .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
         }
     }
     #endif
@@ -67,6 +76,7 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         // PreferencesView isn't in the right place in the VC chain so that
         // it can apply the settings, even SwiftUI settings.
         versionedView
+            .preferredColorScheme(.dark)
             .ignoresSafeArea()
             .backport
             .persistentSystemOverlays(.hidden)
@@ -74,11 +84,12 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         #else
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
             PreferencesView {
-                VideoPlayer(manager: self.videoPlayerManager)
+                VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
             }
             .ignoresSafeArea()
         } else {
-            NativeVideoPlayer(manager: self.videoPlayerManager)
+            Color.red
+//            NativeVideoPlayer(manager: self.videoPlayerManager)
         }
         #endif
     }

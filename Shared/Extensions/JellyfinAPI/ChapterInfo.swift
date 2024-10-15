@@ -18,41 +18,32 @@ extension ChapterInfo: Displayable {
 
 extension ChapterInfo {
 
-    var timestampLabel: String {
-        let seconds = (startPositionTicks ?? 0) / 10_000_000
-        return seconds.timeLabel
-    }
-
-    var startTimeSeconds: Int {
-        let playbackPositionTicks = startPositionTicks ?? 0
-        return Int(playbackPositionTicks / 10_000_000)
+    var startTimeSeconds: TimeInterval {
+        TimeInterval(startPositionTicks ?? 0) / 10_000_000
     }
 }
 
 extension ChapterInfo {
 
-    struct FullInfo: Poster, Equatable {
-
-        var id: Int {
-            chapterInfo.hashValue
-        }
+    struct FullInfo: Poster {
 
         let chapterInfo: ChapterInfo
         let imageSource: ImageSource
-        let secondsRange: Range<Int>
+        let secondsRange: Range<TimeInterval>
+        let systemImage: String = "film"
 
         var displayTitle: String {
             chapterInfo.displayTitle
         }
-
-        let systemImage: String = "film"
-        var subtitle: String?
-        var showTitle: Bool = true
+        
+        var id: Int {
+            chapterInfo.hashValue
+        }
 
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
-            secondsRange: Range<Int>
+            secondsRange: Range<TimeInterval>
         ) {
             self.chapterInfo = chapterInfo
             self.imageSource = imageSource
