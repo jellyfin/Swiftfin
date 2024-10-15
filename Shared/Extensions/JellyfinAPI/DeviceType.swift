@@ -9,130 +9,28 @@
 import SwiftUI
 
 enum DeviceType: String, Displayable, Codable, CaseIterable {
-    case android = "Device-android"
-    case apple = "Device-apple"
-    case chrome = "Device-browser-chrome"
-    case edge = "Device-browser-edge"
-    case edgechromium = "Device-browser-edgechromium"
-    case finamp = "Device-finamp"
-    case firefox = "Device-browser-firefox"
-    case homeAssistant = "Device-homeassistant"
-    case html5 = "Device-html5"
-    case kodi = "Device-kodi"
-    case msie = "Device-browser-msie"
-    case opera = "Device-browser-opera"
-    case playstation = "Device-playstation"
-    case roku = "Device-roku"
-    case safari = "Device-browser-safari"
-    case samsungtv = "Device-samsungtv"
-    case windows = "Device-windows"
-    case xbox = "Device-xbox"
-    case other = "Device-other"
+    case android
+    case apple
+    case chrome
+    case edge
+    case edgechromium
+    case finamp
+    case firefox
+    case homeAssistant
+    case html5
+    case kodi
+    case msie
+    case opera
+    case playstation
+    case roku
+    case safari
+    case samsungtv
+    case webos
+    case windows
+    case xbox
+    case other
 
-    // MARK: - Initialize the Client
-
-    init(client: String?, deviceName: String?) {
-        switch client {
-        case "Samsung Smart TV":
-            self = .samsungtv
-        case "Xbox One":
-            self = .xbox
-        case "Sony PS4":
-            self = .playstation
-        case "Kodi", "Kodi JellyCon":
-            self = .kodi
-        case "Jellyfin Android", "AndroidTV", "Android TV":
-            self = .android
-        case "Jellyfin Mobile (iOS)", "Jellyfin Mobile (iPadOS)", "Jellyfin iOS", "Jellyfin iPadOS", "Jellyfin tvOS", "Swiftfin iPadOS",
-             "Swiftfin iOS", "Swiftfin tvOS", "Infuse", "Infuse-Direct", "Infuse-Library":
-            self = .apple
-        case "Home Assistant":
-            self = .homeAssistant
-        case "Jellyfin Roku":
-            self = .roku
-        case "Finamp":
-            self = .finamp
-        case "Jellyfin Web", "Jellyfin Web (Vue)":
-            self = DeviceType(webBrowser: deviceName)
-        default:
-            self = .other
-        }
-    }
-
-    // MARK: - Initialize the Browser if Jellyfin-Web
-
-    private init(webBrowser: String?) {
-        switch webBrowser {
-        case "Opera", "Opera TV", "Opera Android":
-            self = .opera
-        case "Chrome", "Chrome Android":
-            self = .chrome
-        case "Firefox", "Firefox Android":
-            self = .firefox
-        case "Safari", "Safari iPad", "Safari iPhone":
-            self = .safari
-        case "Edge Chromium", "Edge Chromium Android", "Edge Chromium iPad", "Edge Chromium iPhone":
-            self = .edgechromium
-        case "Edge":
-            self = .edge
-        case "Internet Explorer":
-            self = .msie
-        default:
-            self = .html5
-        }
-    }
-
-    // MARK: - Client Image
-
-    var image: ImageResource {
-        ImageResource(
-            name: self.rawValue,
-            bundle: Bundle.main
-        )
-    }
-
-    // MARK: - Client Color
-
-    var clientColor: Color {
-        switch self {
-        case .samsungtv:
-            return Color(red: 0.0, green: 0.44, blue: 0.74) // Samsung Blue
-        case .xbox:
-            return Color(red: 0.0, green: 0.5, blue: 0.0) // Xbox Green
-        case .playstation:
-            return Color(red: 0.0, green: 0.32, blue: 0.65) // PlayStation Blue
-        case .kodi:
-            return Color(red: 0.0, green: 0.58, blue: 0.83) // Kodi Blue
-        case .android:
-            return Color(red: 0.18, green: 0.8, blue: 0.44) // Android Green
-        case .apple:
-            return Color(red: 0.35, green: 0.35, blue: 0.35) // Apple Gray
-        case .homeAssistant:
-            return Color(red: 0.0, green: 0.55, blue: 0.87) // Home Assistant Blue
-        case .roku:
-            return Color(red: 0.31, green: 0.09, blue: 0.55) // Roku Purple
-        case .finamp:
-            return Color(red: 0.61, green: 0.32, blue: 0.88) // Finamp Purple
-        case .chrome:
-            return Color(red: 0.98, green: 0.75, blue: 0.18) // Chrome Yellow
-        case .firefox:
-            return Color(red: 1.0, green: 0.33, blue: 0.0) // Firefox Orange
-        case .safari:
-            return Color(red: 0.0, green: 0.48, blue: 1.0) // Safari Blue
-        case .edgechromium:
-            return Color(red: 0.0, green: 0.45, blue: 0.75) // Edge Chromium Blue
-        case .edge:
-            return Color(red: 0.19, green: 0.31, blue: 0.51) // Edge Gray
-        case .msie:
-            return Color(red: 0.0, green: 0.53, blue: 1.0) // Internet Explorer Blue
-        case .opera:
-            return Color(red: 1.0, green: 0.0, blue: 0.0) // Opera Red
-        default:
-            return Color.black
-        }
-    }
-
-    // MARK: - Client Title
+    // MARK: - Display Title
 
     var displayTitle: String {
         switch self {
@@ -168,12 +66,212 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
             return "Safari"
         case .samsungtv:
             return "Samsung TV"
+        case .webos:
+            return "WebOS"
         case .windows:
             return "Windows"
         case .xbox:
             return "Xbox"
         case .other:
             return "Other"
+        }
+    }
+
+    // MARK: - Initialize the Client
+
+    init(client: String?, deviceName: String?) {
+        guard let client = client?.lowercased() else {
+            self = .other
+            return
+        }
+
+        switch client {
+
+        /* Samsung TV, Samsung Smart TV, or devices running Tizen */
+        case let str where str.range(of: #"samsung.+tv|tizen"#, options: .regularExpression) != nil:
+            self = .samsungtv
+
+        /* Xbox One or any Xbox device */
+        case let str where str.range(of: #"xbox"#, options: .regularExpression) != nil:
+            self = .xbox
+
+        /* Sony PS3, PS4, or any PlayStation */
+        case let str where str.range(of: #"sony\sps[3-4]|playstation"#, options: .regularExpression) != nil:
+            self = .playstation
+
+        /* Kodi or JellyCon */
+        case let str where str.range(of: #"kodi|jellycon"#, options: .regularExpression) != nil:
+            self = .kodi
+
+        /* Android or Findroid */
+        case let str where str.range(of: #"android|findroid"#, options: .regularExpression) != nil:
+            self = .android
+
+        /* iOS, tvOS, iPadOS, Swiftfin, or Infuse */
+        case let str where str.range(of: #"ios|tvos|ipados|swiftfin|infuse"#, options: .regularExpression) != nil:
+            self = .apple
+
+        /* Home Assistant or HomeAssistant */
+        case let str where str.range(of: #"home.assistant|homeassistant"#, options: .regularExpression) != nil:
+            self = .homeAssistant
+
+        /* Roku devices */
+        case let str where str.range(of: #"roku"#, options: .regularExpression) != nil:
+            self = .roku
+
+        /* Finamp */
+        case let str where str.range(of: #"finamp"#, options: .regularExpression) != nil:
+            self = .finamp
+
+        /* Jellyfin Web or JellyfinWeb (Vue versions included) */
+        case let str where str.range(of: #"jellyfin.web|jellyfinweb"#, options: .regularExpression) != nil:
+            self = DeviceType(webBrowser: deviceName)
+
+        // TODO: Let's get a webOS logo that's all white to match the existing logos
+        /* LG TV, LG Smart TV, or WebOS devices */
+        case let str where str.range(of: #"lg.+tv|webos"#, options: .regularExpression) != nil:
+            self = .html5
+
+        /* Default case for anything else */
+        default:
+            self = .other
+        }
+    }
+
+    // MARK: - Initialize the Browser if Jellyfin-Web
+
+    private init(webBrowser: String?) {
+        guard let webBrowser = webBrowser?.lowercased() else {
+            self = .html5
+            return
+        }
+
+        switch webBrowser {
+
+        /* Matches any string containing 'chrome' */
+        case let str where str.range(of: #"chrome"#, options: .regularExpression) != nil:
+            self = .chrome
+
+        /* Matches any string containing 'edge chromium' or 'edgechromium' */
+        case let str where str.range(of: #"edge.chromium|edgechromium"#, options: .regularExpression) != nil:
+            self = .edgechromium
+
+        /* Matches any string containing 'edge' but not 'chromium' */
+        case let str
+            where str.range(of: #"edge"#, options: .regularExpression) != nil && str
+            .range(of: #"chromium"#, options: .regularExpression) == nil:
+            self = .edge
+
+        /* Matches any string containing 'firefox' */
+        case let str where str.range(of: #"firefox"#, options: .regularExpression) != nil:
+            self = .firefox
+
+        /* Matches any string containing 'internet explorer', 'IE', 'MSIE', or 'MSFT IE' */
+        case let str
+            where str.range(of: #"internet.explorer|internetexplorer|ie\d|ie.\d|msie|msft.ie"#, options: .regularExpression) != nil:
+            self = .msie
+
+        /* Matches any string containing 'opera' */
+        case let str where str.range(of: #"opera"#, options: .regularExpression) != nil:
+            self = .opera
+
+        /* Matches any string containing 'safari' */
+        case let str where str.range(of: #"safari"#, options: .regularExpression) != nil:
+            self = .safari
+
+        /* Default case for anything else */
+        default:
+            self = .html5
+        }
+    }
+
+    // MARK: - Client Image
+
+    var image: ImageResource {
+        switch self {
+        case .android:
+            return .clientAndroid
+        case .apple:
+            return .clientApple
+        case .chrome:
+            return .browserChrome
+        case .edge:
+            return .browserEdge
+        case .edgechromium:
+            return .browserEdgeChromium
+        case .finamp:
+            return .clientFinamp
+        case .firefox:
+            return .browserFirefox
+        case .homeAssistant:
+            return .deviceHomeAssistant
+        case .html5:
+            return .deviceOther
+        case .kodi:
+            return .clientKodi
+        case .msie:
+            return .browserMsie
+        case .opera:
+            return .browserOpera
+        case .playstation:
+            return .clientPlaystation
+        case .roku:
+            return .clientRoku
+        case .safari:
+            return .browserSafari
+        case .samsungtv:
+            return .clientSamsung
+        case .webos:
+            return .clientWebOS
+        case .windows:
+            return .clientWindows
+        case .xbox:
+            return .clientXbox
+        case .other:
+            return .deviceOther
+        }
+    }
+
+    // MARK: - Client Color
+
+    var clientColor: Color {
+        switch self {
+        case .android:
+            return Color(red: 0.18, green: 0.8, blue: 0.44) // Android Green
+        case .apple:
+            return Color(red: 0.35, green: 0.35, blue: 0.35) // Apple Gray
+        case .chrome:
+            return Color(red: 0.98, green: 0.75, blue: 0.18) // Chrome Yellow
+        case .edge:
+            return Color(red: 0.19, green: 0.31, blue: 0.51) // Edge Gray
+        case .edgechromium:
+            return Color(red: 0.0, green: 0.45, blue: 0.75) // Edge Chromium Blue
+        case .firefox:
+            return Color(red: 1.0, green: 0.33, blue: 0.0) // Firefox Orange
+        case .finamp:
+            return Color(red: 0.61, green: 0.32, blue: 0.88) // Finamp Purple
+        case .homeAssistant:
+            return Color(red: 0.0, green: 0.55, blue: 0.87) // Home Assistant Blue
+        case .kodi:
+            return Color(red: 0.0, green: 0.58, blue: 0.83) // Kodi Blue
+        case .msie:
+            return Color(red: 0.0, green: 0.53, blue: 1.0) // Internet Explorer Blue
+        case .opera:
+            return Color(red: 1.0, green: 0.0, blue: 0.0) // Opera Red
+        case .playstation:
+            return Color(red: 0.0, green: 0.32, blue: 0.65) // PlayStation Blue
+        case .roku:
+            return Color(red: 0.31, green: 0.09, blue: 0.55) // Roku Purple
+        case .safari:
+            return Color(red: 0.0, green: 0.48, blue: 1.0) // Safari Blue
+        case .samsungtv:
+            return Color(red: 0.0, green: 0.44, blue: 0.74) // Samsung Blue
+        case .webos:
+            return Color(red: 0.6667, green: 0.1569, blue: 0.2745) // WebOS Pink
+        case .xbox:
+            return Color(red: 0.0, green: 0.5, blue: 0.0) // Xbox Green
+        default:
+            return Color.black
         }
     }
 }
