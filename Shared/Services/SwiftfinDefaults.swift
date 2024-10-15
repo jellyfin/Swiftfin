@@ -166,7 +166,7 @@ extension Defaults.Keys {
 
         enum Home {
             static let showRecentlyAdded: Key<Bool> = UserKey("showRecentlyAdded", default: true)
-            static let resumeNextUp: Key<Bool> = UserKey("homeResumeNextUp", default: true)
+            static let resumeNextUp: Key<Bool> = UserKey("homeResumeNextUp", default: false)
             static let maxNextUp: Key<TimeInterval> = UserKey(
                 "homeMaxNextUp",
                 default: 366 * 86400
