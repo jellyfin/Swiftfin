@@ -12,25 +12,26 @@ import JellyfinAPI
 extension SessionInfo {
 
     var playMethodDisplayTitle: String? {
-        guard self.nowPlayingItem != nil,
-              let playState = self.playState,
-              let playMethod = playState.playMethod
-        else {
-            return nil
+        guard nowPlayingItem != nil, let playState, let playMethod = playState.playMethod else { return nil }
+
+        if let transcodingInfo {
+
+            let isVideoDirect = transcodingInfo.isVideoDirect ?? false
+            let hasVideoCodec = transcodingInfo.videoCodec != nil
+            let isAudioDirect = transcodingInfo.isAudioDirect ?? false
+
+            if isVideoDirect || hasVideoCodec, isAudioDirect {
+                return L10n.remux
+            } else if isVideoDirect {
+                return PlayMethod.directStream.displayTitle
+            }
         }
 
-        if (self.transcodingInfo?.isVideoDirect ?? false || self.transcodingInfo?.videoCodec == nil) &&
-            self.transcodingInfo?.isAudioDirect ?? false
-        {
-            return L10n.remux
-        } else if self.transcodingInfo?.isVideoDirect ?? false {
-            return PlayMethod.directStream.displayTitle
-        } else if playMethod == .transcode {
+        switch playMethod {
+        case .transcode:
             return PlayMethod.transcode.displayTitle
-        } else if playMethod == .directStream || playMethod == .directPlay {
+        case .directPlay, .directStream:
             return PlayMethod.directPlay.displayTitle
         }
-
-        return nil
     }
 }
