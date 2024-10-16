@@ -220,9 +220,8 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
             return .deviceBrowserSafari
         case .samsungtv:
             return .deviceClientSamsungtv
-        // TODO: Update with WebOS Logo when available
         case .webos:
-            return .deviceBrowserHtml5 // .deviceClientWebos
+            return .deviceClientWebos
         case .windows:
             return .deviceClientWindows
         case .xbox:
