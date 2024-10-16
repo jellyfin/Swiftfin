@@ -9,51 +9,26 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Enable for CustomNames for Devices: 28, 52, & 55
+// TODO: Enable for CustomNames for Devices with SDK Changes
 
 extension DeviceDetailsView {
     struct CustomDeviceNameSection: View {
-        var device: DeviceInfo
-
-        @StateObject
-        private var viewModel: DevicesViewModel
-
-        @State
-        private var temporaryCustomName: String
-
-        // MARK: - Init
-
-        init(device: DeviceInfo) {
-            self.device = device
-            self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-            _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
-        }
+        @Binding
+        var customName: String
 
         // MARK: - Body
 
         var body: some View {
-            Section(L10n.customDeviceName) {
-                ChevronAlertButton(
-                    L10n.nickname,
-                    subtitle: temporaryCustomName,
-                    description: L10n.enterCustomDeviceName
-                ) {
-                    TextField(
-                        L10n.name,
-                        text: $temporaryCustomName
-                    )
-                } onSave: {
-                    if let deviceID = device.id, temporaryCustomName != "" {
-                        viewModel.send(.setCustomName(
-                            id: deviceID,
-                            newName: temporaryCustomName
-                        ))
-                    } else {
-                        temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-                    }
-                } onCancel: {
-                    temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-                }
+            Section {
+                TextField(
+                    L10n.name,
+                    text: $customName
+                )
+            } header: {
+                Text(L10n.customDeviceName)
+                // TODO: Remove Footer after SDK Changes
+            } footer: {
+                Text("This field will not reflect your custom device name on this version of Swiftin.")
             }
         }
     }

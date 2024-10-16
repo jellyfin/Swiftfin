@@ -12,7 +12,14 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class DevicesViewModel: ViewModel, Stateful {
+final class DevicesViewModel: ViewModel, Eventful, Stateful {
+
+    // MARK: Event
+
+    enum Event {
+        case error(JellyfinAPIError)
+        case success
+    }
 
     // MARK: - Action
 
@@ -38,6 +45,14 @@ final class DevicesViewModel: ViewModel, Stateful {
         case initial
     }
 
+    // MARK: Published Values
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
@@ -49,6 +64,7 @@ final class DevicesViewModel: ViewModel, Stateful {
     private(set) var userID: String?
 
     private var deviceTask: AnyCancellable?
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     // MARK: - Initializer
 
@@ -72,11 +88,14 @@ final class DevicesViewModel: ViewModel, Stateful {
                     )
                     await MainActor.run {
                         self?.state = .content
+                        self?.eventSubject.send(.success)
                     }
                 } catch {
                     guard let self else { return }
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
+                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
+                        self.state = .error(jellyfinError)
+                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
 
@@ -98,11 +117,14 @@ final class DevicesViewModel: ViewModel, Stateful {
                     try await self?.setCustomName(id: id, newName: newName)
                     await MainActor.run {
                         self?.state = .content
+                        self?.eventSubject.send(.success)
                     }
                 } catch {
                     guard let self else { return }
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
+                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
+                        self.state = .error(jellyfinError)
+                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
 
@@ -124,11 +146,13 @@ final class DevicesViewModel: ViewModel, Stateful {
                     try await self?.deleteDevices(ids: ids)
                     await MainActor.run {
                         self?.state = .content
+                        self?.eventSubject.send(.success)
                     }
                 } catch {
-                    guard let self else { return }
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
+                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
+                        self?.state = .error(jellyfinError)
+                        self?.eventSubject.send(.error(jellyfinError))
                     }
                 }
 

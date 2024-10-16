@@ -222,6 +222,10 @@ internal enum L10n {
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// Custom Device Name
   internal static let customDeviceName = L10n.tr("Localizable", "customDeviceName", fallback: "Custom Device Name")
+  /// Your custom device name '%1$@' has been saved.
+  internal static func customDeviceNameSaved(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "customDeviceNameSaved", String(describing: p1), fallback: "Your custom device name '%1$@' has been saved.")
+  }
   /// Custom profile is Added to the Existing Profiles
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles")
   /// Device Profile Section Description
@@ -470,8 +474,6 @@ internal enum L10n {
   internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
   /// Settings Description for enabling rewatching in Next Up
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
-  /// Nickname
-  internal static let nickname = L10n.tr("Localizable", "nickname", fallback: "Nickname")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No Cast devices found..
@@ -820,6 +822,8 @@ internal enum L10n {
   internal static let subtitlesDisclaimer = L10n.tr("Localizable", "subtitlesDisclaimer", fallback: "Settings only affect some subtitle types")
   /// Subtitle Size
   internal static let subtitleSize = L10n.tr("Localizable", "subtitleSize", fallback: "Subtitle Size")
+  /// Success
+  internal static let success = L10n.tr("Localizable", "success", fallback: "Success")
   /// Suggestions
   internal static let suggestions = L10n.tr("Localizable", "suggestions", fallback: "Suggestions")
   /// Content Uploading

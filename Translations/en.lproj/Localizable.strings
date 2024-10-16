@@ -825,7 +825,7 @@
 "supportsPersistentIdentifier" = "Persistent Identifier";
 
 // Supports Sync - Label
-// Indicates whether the device supports syncing content (e.g., media sync across devices)
+// Indicates whether the device suppoTestrts syncing content (e.g., media sync across devices)
 // Used in the capabilities section to display sync capability
 "supportsSync" = "Sync";
 
@@ -839,7 +839,12 @@
 // Used in the capabilities section as a negative response
 "no" = "No";
 
-// Nickname - Label
-// Title for setting a nickname for the device
-// Used in the custom device name section to display the nickname label
-"nickname" = "Nickname";
+// Custom Device Name Saved - Label
+// Confirms that the custom device name was saved successfully
+// Used after successfully saving a custom device name
+"customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
+
+// Success - Label
+// Indicates that an operation was successful
+// Used as a confirmation for successful actions
+"success" = "Success";
