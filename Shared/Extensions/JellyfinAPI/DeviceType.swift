@@ -270,7 +270,7 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
         case .xbox:
             return Color(red: 0.0, green: 0.5, blue: 0.0) // Xbox Green
         default:
-            return Color.black
+            return Color.secondarySystemFill
         }
     }
 }
