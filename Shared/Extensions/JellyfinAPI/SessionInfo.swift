@@ -11,6 +11,13 @@ import JellyfinAPI
 
 extension SessionInfo {
 
+    var device: DeviceType {
+        DeviceType(
+            client: client,
+            deviceName: deviceName
+        )
+    }
+
     var playMethodDisplayTitle: String? {
         guard nowPlayingItem != nil, let playState, let playMethod = playState.playMethod else { return nil }
 
