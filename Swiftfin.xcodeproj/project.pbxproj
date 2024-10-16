@@ -18,6 +18,8 @@
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
 		4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
 		4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */; };
+		4E17498E2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E17498D2CC00A2E00DD07D1 /* DeviceInfo.swift */; };
+		4E17498F2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E17498D2CC00A2E00DD07D1 /* DeviceInfo.swift */; };
 		4E182C9C2C94993200FBEFD5 /* ScheduledTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E182C9B2C94993200FBEFD5 /* ScheduledTasksView.swift */; };
 		4E182C9F2C94A1E000FBEFD5 /* ScheduledTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E182C9E2C94A1E000FBEFD5 /* ScheduledTaskButton.swift */; };
 		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
@@ -1036,6 +1038,7 @@
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
 		4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerOrientation.swift; sourceTree = "<group>"; };
+		4E17498D2CC00A2E00DD07D1 /* DeviceInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfo.swift; sourceTree = "<group>"; };
 		4E182C9B2C94993200FBEFD5 /* ScheduledTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTasksView.swift; sourceTree = "<group>"; };
 		4E182C9E2C94A1E000FBEFD5 /* ScheduledTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTaskButton.swift; sourceTree = "<group>"; };
 		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
@@ -3601,6 +3604,7 @@
 				E1002B632793CEE700E47059 /* ChapterInfo.swift */,
 				E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */,
 				E1CB758A2C80F9EC00217C76 /* CodecProfile.swift */,
+				4E17498D2CC00A2E00DD07D1 /* DeviceInfo.swift */,
 				4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */,
 				4E12F9152CBE9615006C217E /* DeviceType.swift */,
 				4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */,
@@ -4506,6 +4510,7 @@
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
+				4E17498F2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */,
 				E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */,
 				E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				4EDBDCD12CBDD6590033D347 /* SessionInfo.swift in Sources */,
@@ -4956,6 +4961,7 @@
 				E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */,
 				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				C46DD8E22A8DC7FB0046A504 /* LiveMainOverlay.swift in Sources */,
+				4E17498E2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */,
 				4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */,
 				4EED87512CBF84AD002354D2 /* DevicesViewModel.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,

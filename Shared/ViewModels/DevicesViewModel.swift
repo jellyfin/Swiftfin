@@ -20,6 +20,7 @@ final class DevicesViewModel: ViewModel, Stateful {
         case getDevices
         case setCustomName(id: String, newName: String)
         case deleteDevice(id: String)
+        case deleteDevices(ids: [String])
         case deleteAllDevices
     }
 
@@ -28,8 +29,7 @@ final class DevicesViewModel: ViewModel, Stateful {
     enum BackgroundState: Hashable {
         case gettingDevices
         case settingCustomName
-        case deletingDevice
-        case deletingAllDevices
+        case deletingDevices
     }
 
     // MARK: - State
@@ -108,7 +108,7 @@ final class DevicesViewModel: ViewModel, Stateful {
         case let .deleteDevice(id):
             deviceTask?.cancel()
 
-            backgroundStates.append(.deletingDevice)
+            backgroundStates.append(.deletingDevices)
 
             deviceTask = Task { [weak self] in
                 do {
@@ -124,21 +124,21 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.deletingDevice)
+                    self?.backgroundStates.remove(.deletingDevices)
                 }
             }
             .asAnyCancellable()
 
             return state
 
-        case .deleteAllDevices:
+        case let .deleteDevices(ids):
             deviceTask?.cancel()
 
-            backgroundStates.append(.deletingAllDevices)
+            backgroundStates.append(.deletingDevices)
 
             deviceTask = Task { [weak self] in
                 do {
-                    try await self?.deleteAllDevices()
+                    try await self?.deleteDevices(ids: ids)
                     await MainActor.run {
                         self?.state = .content
                     }
@@ -150,7 +150,35 @@ final class DevicesViewModel: ViewModel, Stateful {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.deletingAllDevices)
+                    self?.backgroundStates.remove(.deletingDevices)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+
+        case .deleteAllDevices:
+            deviceTask?.cancel()
+
+            backgroundStates.append(.deletingDevices)
+
+            deviceTask = Task { [weak self] in
+                do {
+                    try await self?.deleteDevices(
+                        ids: Array(self?.devices.keys ?? [])
+                    )
+                    await MainActor.run {
+                        self?.state = .content
+                    }
+                } catch {
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                    }
+                }
+
+                await MainActor.run {
+                    self?.backgroundStates.remove(.deletingDevices)
                 }
             }
             .asAnyCancellable()
@@ -165,25 +193,27 @@ final class DevicesViewModel: ViewModel, Stateful {
         let request = Paths.getDevices()
         let response = try await userSession.client.send(request)
 
+        guard let devices = response.value.items else {
+            return
+        }
+
         await MainActor.run {
-            if let devices = response.value.items {
-                for device in devices {
-                    guard let id = device.id else { continue }
+            for device in devices {
+                guard let id = device.id else { continue }
 
-                    if let existingDevice = self.devices[id] {
-                        existingDevice.value = device
-                    } else {
-                        self.devices[id] = BindingBox<DeviceInfo?>(
-                            source: .init(get: { device }, set: { _ in })
-                        )
-                    }
+                if let existingDevice = self.devices[id] {
+                    existingDevice.value = device
+                } else {
+                    self.devices[id] = BindingBox<DeviceInfo?>(
+                        source: .init(get: { device }, set: { _ in })
+                    )
                 }
+            }
 
-                self.devices.sort { x, y in
-                    let device0 = x.value.value
-                    let device1 = y.value.value
-                    return (device0?.dateLastActivity ?? Date()) > (device1?.dateLastActivity ?? Date())
-                }
+            self.devices.sort { x, y in
+                let device0 = x.value.value
+                let device1 = y.value.value
+                return (device0?.dateLastActivity ?? Date()) > (device1?.dateLastActivity ?? Date())
             }
         }
     }
@@ -217,17 +247,29 @@ final class DevicesViewModel: ViewModel, Stateful {
         }
     }
 
-    // MARK: - Delete All Devices
+    // MARK: - Delete Devices
 
-    private func deleteAllDevices() async throws {
-        let deviceIdsToDelete = self.devices.keys.filter { $0 != userSession.client.configuration.deviceID }
+    private func deleteDevices(ids: [String]) async throws {
+        guard !ids.isEmpty else {
+            return
+        }
 
-        for deviceId in deviceIdsToDelete {
-            try await deleteDevice(id: deviceId)
+        let deviceIdsToDelete = ids.filter { $0 != userSession.client.configuration.deviceID }
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for deviceId in deviceIdsToDelete {
+                group.addTask {
+                    try await self.deleteDevice(id: deviceId)
+                }
+            }
+
+            try await group.waitForAll()
         }
 
         await MainActor.run {
-            self.devices = self.devices.filter { $0.key == userSession.client.configuration.deviceID }
+            self.devices = self.devices.filter {
+                !deviceIdsToDelete.contains($0.key)
+            }
         }
     }
 }

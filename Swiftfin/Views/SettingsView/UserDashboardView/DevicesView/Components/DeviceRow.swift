@@ -24,7 +24,7 @@ extension DevicesView {
 
         // MARK: - Device Mapping
 
-        private var device: DeviceInfo {
+        private var deviceInfo: DeviceInfo {
             box.value ?? .init()
         }
 
@@ -63,12 +63,10 @@ extension DevicesView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            let deviceType = DeviceType(client: device.appName, deviceName: device.name)
-
             ZStack {
-                deviceType.clientColor
+                deviceInfo.device.clientColor
 
-                Image(deviceType.image)
+                Image(deviceInfo.device.image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40)
@@ -84,23 +82,23 @@ extension DevicesView {
         private var deviceDetails: some View {
             VStack(alignment: .leading) {
                 // TODO: Change to (CustomName ?? DeviceName) when available
-                Text(device.name ?? L10n.unknown)
+                Text(deviceInfo.name ?? L10n.unknown)
                     .font(.headline)
 
-                Text(device.lastUserName ?? L10n.unknown)
+                Text(deviceInfo.lastUserName ?? L10n.unknown)
 
                 TextPairView(
-                    leading: device.appName ?? L10n.unknown,
-                    trailing: device.appVersion ?? .emptyDash
+                    leading: deviceInfo.appName ?? L10n.unknown,
+                    trailing: deviceInfo.appVersion ?? .emptyDash
                 )
 
                 TextPairView(
                     L10n.lastSeen,
                     value: {
-                        if let dateLastActivity = device.dateLastActivity {
+                        if let dateLastActivity = deviceInfo.dateLastActivity {
                             Text(dateLastActivity, format: .relative(presentation: .numeric, unitsStyle: .narrow))
                         } else {
-                            Text("Never") // L10n.never)
+                            Text(L10n.never)
                         }
                     }()
                 )

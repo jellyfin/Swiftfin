@@ -36,80 +36,76 @@ struct DevicesView: View {
     // MARK: - Body
 
     var body: some View {
-        Group {
-            contentView
-        }
-        .navigationTitle(L10n.allDevices)
-        .onFirstAppear {
-            viewModel.send(.getDevices)
-        }
-        .topBarTrailing {
-            navigationBarView
-        }
-        .confirmationDialog(
-            L10n.deleteAllDevices,
-            isPresented: $isPresentingDeleteAllConfirmation,
-            titleVisibility: .visible
-        ) {
-            deleteAllDevicesConfirmationActions
-        } message: {
-            Text(L10n.deleteAllDevicesWarning)
-        }
-        .confirmationDialog(
-            L10n.deleteDevice,
-            isPresented: $isPresentingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            deleteDeviceConfirmationActions
-        } message: {
-            Text(L10n.deleteDeviceWarning)
-        }
-        .alert(isPresented: $isPresentingSelfDeleteError) {
-            deletionFailureAlert
-        }
-        .alert(L10n.customDeviceName, isPresented: $isPresentingRenameAlert) {
-            customDeviceNameAlert
-        } message: {
-            Text(L10n.enterCustomDeviceName)
-        }
+        contentView
+            .navigationTitle(L10n.allDevices)
+            .onFirstAppear {
+                viewModel.send(.getDevices)
+            }
+            .topBarTrailing {
+                navigationBarView
+            }
+            .confirmationDialog(
+                L10n.deleteAllDevices,
+                isPresented: $isPresentingDeleteAllConfirmation,
+                titleVisibility: .visible
+            ) {
+                deleteAllDevicesConfirmationActions
+            } message: {
+                Text(L10n.deleteAllDevicesWarning)
+            }
+            .confirmationDialog(
+                L10n.deleteDevice,
+                isPresented: $isPresentingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                deleteDeviceConfirmationActions
+            } message: {
+                Text(L10n.deleteDeviceWarning)
+            }
+            .alert(isPresented: $isPresentingSelfDeleteError) {
+                deletionFailureAlert
+            }
+            .alert(L10n.customDeviceName, isPresented: $isPresentingRenameAlert) {
+                customDeviceNameAlert
+            } message: {
+                Text(L10n.enterCustomDeviceName)
+            }
     }
 
     // MARK: - Content View
 
+    @ViewBuilder
     private var contentView: some View {
-        Group {
-            switch viewModel.state {
-            case .content:
-                if viewModel.devices.isEmpty {
-                    Text(L10n.none)
-                } else {
-                    deviceListView
-                }
-            case let .error(error):
-                ErrorView(error: error)
-                    .onRetry {
-                        viewModel.send(.getDevices)
-                    }
-            case .initial:
-                DelayedProgressView()
+        switch viewModel.state {
+        case .content:
+            if viewModel.devices.isEmpty {
+                Text(L10n.none)
+            } else {
+                deviceListView
             }
+        case let .error(error):
+            ErrorView(error: error)
+                .onRetry {
+                    viewModel.send(.getDevices)
+                }
+        case .initial:
+            DelayedProgressView()
         }
     }
 
     // MARK: - Navigation Bar Content
 
+    @ViewBuilder
     private var navigationBarView: some View {
-        Group {
-            if viewModel.backgroundStates.contains(.gettingDevices) {
-                ProgressView()
-            } else {
-                Button(L10n.deleteAll, role: .destructive) {
-                    isPresentingDeleteAllConfirmation = true
-                    UIDevice.impact(.light)
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.devices.isEmpty)
+        if viewModel.backgroundStates.contains(.gettingDevices) {
+            ProgressView()
+        } else {
+            Button(L10n.deleteAll, role: .destructive) {
+                isPresentingDeleteAllConfirmation = true
+                UIDevice.impact(.light)
             }
+            .buttonStyle(.toolbarPill)
+            .disabled(viewModel.devices.isEmpty)
         }
     }
 
@@ -121,7 +117,7 @@ struct DevicesView: View {
                 L10n.devices,
                 description: L10n.allDevicesDescription
             ) {
-                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/server/devices")!)
+                UIApplication.shared.open(.jellyfinDocsDevices)
             }
             ForEach(Array(viewModel.devices.keys), id: \.self) { id in
                 if let deviceBox = viewModel.devices[id] {
