@@ -13,6 +13,10 @@
 		4E0A8FFB2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
 		4E0A8FFC2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
 		4E10C8112CC030CD0012CC9F /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */; };
+		4E10C8172CC0455A0012CC9F /* CompatibilitiesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */; };
+		4E10C8192CC045700012CC9F /* CustomDeviceNameSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */; };
+		4E10C81B2CC0457E0012CC9F /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */; };
+		4E10C81D2CC046610012CC9F /* UserSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C81C2CC0465F0012CC9F /* UserSection.swift */; };
 		4E11805F2CBF52380077A588 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
@@ -1036,6 +1040,10 @@
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCompletionStatus.swift; sourceTree = "<group>"; };
 		4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
+		4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatibilitiesSection.swift; sourceTree = "<group>"; };
+		4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceNameSection.swift; sourceTree = "<group>"; };
+		4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
+		4E10C81C2CC0465F0012CC9F /* UserSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSection.swift; sourceTree = "<group>"; };
 		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
@@ -1833,9 +1841,29 @@
 		4E10C80F2CC030B20012CC9F /* DeviceDetailsView */ = {
 			isa = PBXGroup;
 			children = (
+				4E10C8122CC044F30012CC9F /* Components */,
 				4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */,
 			);
 			path = DeviceDetailsView;
+			sourceTree = "<group>";
+		};
+		4E10C8122CC044F30012CC9F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E10C8132CC044FF0012CC9F /* Sections */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E10C8132CC044FF0012CC9F /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */,
+				4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */,
+				4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */,
+				4E10C81C2CC0465F0012CC9F /* UserSection.swift */,
+			);
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
@@ -4816,6 +4844,7 @@
 				C46DD8E02A8DC7790046A504 /* LiveOverlay.swift in Sources */,
 				E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */,
 				E187F7672B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
+				4E10C8172CC0455A0012CC9F /* CompatibilitiesSection.swift in Sources */,
 				E1FA891B289A302300176FEB /* iPadOSCollectionItemView.swift in Sources */,
 				E14E9DF12BCF7A99004E3371 /* ItemLetter.swift in Sources */,
 				E1B5861229E32EEF00E45D6E /* Sequence.swift in Sources */,
@@ -4837,6 +4866,7 @@
 				E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */,
 				E1559A76294D960C00C1FFBC /* MainOverlay.swift in Sources */,
 				E14EDECC2B8FB709000F00A4 /* ItemYear.swift in Sources */,
+				4E10C81D2CC046610012CC9F /* UserSection.swift in Sources */,
 				E19D41AA2BF077130082B8B2 /* Keychain.swift in Sources */,
 				E1DE2B4A2B97ECB900F6715F /* ErrorView.swift in Sources */,
 				E104C870296E087200C1C3F9 /* IndicatorSettingsView.swift in Sources */,
@@ -4869,6 +4899,7 @@
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
+				4E10C81B2CC0457E0012CC9F /* DeviceSection.swift in Sources */,
 				4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */,
@@ -5023,6 +5054,7 @@
 				62C29EA626D1036A00C1D2E7 /* HomeCoordinator.swift in Sources */,
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				E18A8E8328D60BC400333B9A /* VideoPlayer.swift in Sources */,
+				4E10C8192CC045700012CC9F /* CustomDeviceNameSection.swift in Sources */,
 				4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */,
 				E1366A222C826DA700A36DED /* EditCustomDeviceProfileCoordinator.swift in Sources */,
 				E1CCF12E28ABF989006CAC9E /* PosterDisplayType.swift in Sources */,
