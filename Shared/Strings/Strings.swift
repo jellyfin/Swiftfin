@@ -34,8 +34,8 @@ internal enum L10n {
   }
   /// All Devices
   internal static let allDevices = L10n.tr("Localizable", "allDevices", fallback: "All Devices")
-  /// Devices are all the hardware that have connected to the server, including both current and past connections. You can view device details such as name, app version, and the associated user.
-  internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "Devices are all the hardware that have connected to the server, including both current and past connections. You can view device details such as name, app version, and the associated user.")
+  /// View all past and present devices that have connected.
+  internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All Genres
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
@@ -254,12 +254,12 @@ internal enum L10n {
   internal static func deleteDeviceSelfDeletion(_ p1: Any) -> String {
     return L10n.tr("Localizable", "deleteDeviceSelfDeletion", String(describing: p1), fallback: "Cannot delete a session from the same device (%1$@).")
   }
-  /// Are you sure you wish to delete this device? This session will be logged out. This device will reappear the next time this device signs in.
-  internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out. This device will reappear the next time this device signs in.")
+  /// Are you sure you wish to delete this device? This session will be logged out.
+  internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
-  /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out. Devices will reappear the next time a user signs in.
-  internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out. Devices will reappear the next time a user signs in.")
+  /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
+  internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.")
   /// Server Detail View - Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
   /// Delivery

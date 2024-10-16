@@ -17,9 +17,8 @@ final class DevicesViewModel: ViewModel, Stateful {
     // MARK: - Action
 
     enum Action: Equatable {
-        case getDevices(_ userID: String?)
+        case getDevices
         case setCustomName(id: String, newName: String)
-        case deleteDevice(id: String)
         case deleteDevices(ids: [String])
     }
 
@@ -46,20 +45,31 @@ final class DevicesViewModel: ViewModel, Stateful {
     @Published
     final var state: State = .initial
 
+    @Published
+    private(set) var userID: String?
+
     private var deviceTask: AnyCancellable?
+
+    // MARK: - Initializer
+
+    init(_ userID: String?) {
+        self.userID = userID
+    }
 
     // MARK: - Respond to Action
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .getDevices(userID):
+        case .getDevices:
             deviceTask?.cancel()
 
             backgroundStates.append(.gettingDevices)
 
             deviceTask = Task { [weak self] in
                 do {
-                    try await self?.loadDevices(userID: userID)
+                    try await self?.loadDevices(
+                        userID: self?.userID
+                    )
                     await MainActor.run {
                         self?.state = .content
                     }
@@ -104,32 +114,6 @@ final class DevicesViewModel: ViewModel, Stateful {
 
             return state
 
-        case let .deleteDevice(id):
-            deviceTask?.cancel()
-
-            backgroundStates.append(.deletingDevices)
-
-            deviceTask = Task { [weak self] in
-                do {
-                    try await self?.deleteDevice(id: id)
-                    await MainActor.run {
-                        self?.state = .content
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-
-                await MainActor.run {
-                    self?.backgroundStates.remove(.deletingDevices)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
         case let .deleteDevices(ids):
             deviceTask?.cancel()
 
@@ -161,12 +145,7 @@ final class DevicesViewModel: ViewModel, Stateful {
     // MARK: - Load Devices
 
     private func loadDevices(userID: String?) async throws {
-        var request = Paths.getDevices()
-
-        if let userID = userID {
-            request = Paths.getDevices(userID: userID)
-        }
-
+        let request = Paths.getDevices(userID: userID)
         let response = try await userSession.client.send(request)
 
         guard let devices = response.value.items else {
@@ -226,10 +205,11 @@ final class DevicesViewModel: ViewModel, Stateful {
     // MARK: - Delete Devices
 
     private func deleteDevices(ids: [String]) async throws {
-        guard !ids.isEmpty else {
+        guard ids.isNotEmpty else {
             return
         }
 
+        // Don't allow self-deletion
         let deviceIdsToDelete = ids.filter { $0 != userSession.client.configuration.deviceID }
 
         try await withThrowingTaskGroup(of: Void.self) { group in

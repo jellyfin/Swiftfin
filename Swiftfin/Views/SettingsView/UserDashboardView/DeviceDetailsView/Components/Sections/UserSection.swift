@@ -14,7 +14,7 @@ extension DeviceDetailsView {
         var device: DeviceInfo
 
         var body: some View {
-            Section(header: Text(L10n.user)) {
+            Section(L10n.user) {
                 if let userID = device.lastUserID {
                     SettingsView.UserProfileRow(
                         user: .init(

@@ -9,13 +9,14 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Enable for CustomNames for Devices: 27, 50, & 53
+// TODO: Enable for CustomNames for Devices: 28, 52, & 55
 
 extension DeviceDetailsView {
     struct CustomDeviceNameSection: View {
         var device: DeviceInfo
 
-        private var viewModel = DevicesViewModel()
+        @StateObject
+        private var viewModel: DevicesViewModel
 
         @State
         private var temporaryCustomName: String
@@ -25,6 +26,7 @@ extension DeviceDetailsView {
         init(device: DeviceInfo) {
             self.device = device
             self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
+            _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
         }
 
         // MARK: - Body

@@ -752,7 +752,7 @@
 // All Devices Description - Section Description
 // Description for the all devices section in the Admin Dashboard
 // Provides information about the devices connected to the server, including past and current connections
-"allDevicesDescription" = "Devices are all the hardware that have connected to the server, including both current and past connections. You can view device details such as name, app version, and the associated user.";
+"allDevicesDescription" = "View all past and present devices that have connected.";
 
 // Delete Selected Devices - Button
 // Button label for deleting all selected devices
@@ -767,12 +767,12 @@
 // Delete Selected Devices Warning - Warning Message
 // Warning message displayed when deleting all devices
 // Informs the user about the consequences of deleting all devices
-"deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out. Devices will reappear the next time a user signs in.";
+"deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.";
 
 // Delete Device Warning - Warning Message
 // Warning message displayed when deleting a single device
 // Informs the user about the consequences of deleting the device
-"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out. This device will reappear the next time this device signs in.";
+"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
 
 // Delete Device - Action
 // Message for deleting a single device in the all devices section

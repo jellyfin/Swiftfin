@@ -14,7 +14,7 @@ extension DeviceDetailsView {
         var device: DeviceInfo
 
         var body: some View {
-            Section(header: Text(L10n.capabilities)) {
+            Section(L10n.capabilities) {
                 if let supportsContentUploading = device.capabilities?.isSupportsContentUploading {
                     TextPairView(leading: L10n.supportsContentUploading, trailing: supportsContentUploading ? L10n.yes : L10n.no)
                 }

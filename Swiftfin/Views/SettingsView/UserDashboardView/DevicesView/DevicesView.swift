@@ -15,10 +15,8 @@ struct DevicesView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    var userID: String?
-
     @StateObject
-    private var viewModel = DevicesViewModel()
+    private var viewModel: DevicesViewModel
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -37,13 +35,19 @@ struct DevicesView: View {
     @State
     private var selectedDevices: Set<String> = []
 
+    // MARK: - Initializer
+
+    init(userID: String?) {
+        _viewModel = StateObject(wrappedValue: DevicesViewModel(userID))
+    }
+
     // MARK: - Body
 
     var body: some View {
         contentView
             .navigationTitle(L10n.allDevices)
             .onFirstAppear {
-                viewModel.send(.getDevices(userID))
+                viewModel.send(.getDevices)
             }
             .topBarTrailing {
                 navigationBarView
@@ -85,7 +89,7 @@ struct DevicesView: View {
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
-                    viewModel.send(.getDevices(userID))
+                    viewModel.send(.getDevices)
                 }
         case .initial:
             DelayedProgressView()
@@ -203,7 +207,7 @@ struct DevicesView: View {
                     if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
                         isPresentingSelfDeleteError = true
                     } else {
-                        viewModel.send(.deleteDevice(id: deviceToDelete))
+                        viewModel.send(.deleteDevices(ids: [deviceToDelete]))
                     }
                 }
             }
