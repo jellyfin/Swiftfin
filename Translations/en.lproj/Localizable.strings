@@ -738,3 +738,42 @@
 
 /* Section Title for Column Configuration */
 "columns" = "Columns";
+
+/* Devices section of the Admin Dashboard  */
+"devices" = "Devices";
+
+/* All Devices section of the Admin Dashboard */
+"allDevices" = "All Devices";
+
+/* All Devices description for the section of the Admin Dashboard */
+"allDevicesDescription" = "Devices are all the hardware that have connected to the server, including both current and past connections. You can view device details such as name, app version, and the associated user.";
+
+/* Delete All Devices from the All Devices section */
+"deleteAll" = "Delete All";
+
+/* Filler Text when something never has or never will occur */
+"never" = "Never";
+
+/* Delete All Devices Warning Message */
+"deleteAllDevicesWarning" = "Are you sure you wish to delete all devices? All other sessions will be logged out. Devices will reappear the next time a user signs in.";
+
+/* Delete a Device Warning Message */
+"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out. This device will reappear the next time this device signs in.";
+
+/* Delete All Devices message from the All Devices section */
+"deleteAllDevices" = "Delete All Devices";
+
+/* Delete Device message from the All Devices section */
+"deleteDevice" = "Delete Device";
+
+/* Indicates that a Device is You */
+"deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
+
+/* Title for failed Device Delection */
+"deleteDeviceFailed" = "Failed to Delete Device";
+
+/* Title for Custom Device Name */
+"customDeviceName" = "Custom Device Name";
+
+/* Alert Description for Entering a Custom Device Name */
+"enterCustomDeviceName" = "Supply a custom display name or leave empty to use the name reported by the device.";
