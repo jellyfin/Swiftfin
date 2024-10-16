@@ -15,15 +15,13 @@ struct DevicesView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    // This exists for some later usage. this can be used to initialize this for a single user. When the UserView is done, there will be a
-    // UserDetailView with a "Devices" section. That will vall this same view WITH a userID so it should filter to only that user.
     var userID: String?
 
     @StateObject
     private var viewModel = DevicesViewModel()
 
     @State
-    private var isPresentingDeleteAllConfirmation = false
+    private var isPresentingDeleteSelectionConfirmation = false
     @State
     private var isPresentingDeleteConfirmation = false
     @State
@@ -34,6 +32,10 @@ struct DevicesView: View {
     private var temporaryDeviceName: String = ""
     @State
     private var deviceToDelete: String?
+    @State
+    private var selectMode: Bool = false
+    @State
+    private var selectedDevices: Set<String> = []
 
     // MARK: - Body
 
@@ -47,13 +49,13 @@ struct DevicesView: View {
                 navigationBarView
             }
             .confirmationDialog(
-                L10n.deleteAllDevices,
-                isPresented: $isPresentingDeleteAllConfirmation,
+                L10n.deleteSelectedDevices,
+                isPresented: $isPresentingDeleteSelectionConfirmation,
                 titleVisibility: .visible
             ) {
-                deleteAllDevicesConfirmationActions
+                deleteSelectedDevicesConfirmationActions
             } message: {
-                Text(L10n.deleteAllDevicesWarning)
+                Text(L10n.deleteSelectionDevicesWarning)
             }
             .confirmationDialog(
                 L10n.deleteDevice,
@@ -97,9 +99,12 @@ struct DevicesView: View {
         if viewModel.backgroundStates.contains(.gettingDevices) {
             ProgressView()
         } else {
-            Button(L10n.deleteAll, role: .destructive) {
-                isPresentingDeleteAllConfirmation = true
-                UIDevice.impact(.light)
+            Button(selectMode ? L10n.cancel : L10n.edit) {
+                withAnimation {
+                    selectMode.toggle()
+                    UIDevice.impact(.light)
+                    if !selectMode { selectedDevices.removeAll() }
+                }
             }
             .buttonStyle(.toolbarPill)
             .disabled(viewModel.devices.isEmpty)
@@ -116,30 +121,73 @@ struct DevicesView: View {
             ) {
                 UIApplication.shared.open(.jellyfinDocsDevices)
             }
+
+            if selectMode {
+                Section {
+                    Button(selectedDevices == Set(viewModel.devices.keys) ? "Remove All" : "Select All") {
+                        withAnimation {
+                            if selectedDevices == Set(viewModel.devices.keys) {
+                                selectedDevices = []
+                            } else {
+                                selectedDevices = Set(viewModel.devices.keys)
+                            }
+                        }
+                    }
+                    .disabled(!selectMode)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+
+                    Button(L10n.deleteDevices, role: .destructive) {
+                        isPresentingDeleteSelectionConfirmation = true
+                    }
+                    .disabled(selectedDevices.isEmpty)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                .transition(.move(edge: .top).combined(with: .opacity))
+            }
+
             ForEach(Array(viewModel.devices.keys), id: \.self) { id in
                 if let deviceBox = viewModel.devices[id] {
-                    DeviceRow(box: deviceBox) {
-                        if let selectedDevice = deviceBox.value {
-                            router.route(to: \.deviceDetails, selectedDevice)
-                        }
-                    } onDelete: {
-                        deviceToDelete = deviceBox.value?.id
-                        selectedDevice = deviceBox.value
-                        isPresentingDeleteConfirmation = true
-                    }
+                    DeviceRow(
+                        box: deviceBox,
+                        onSelect: {
+                            if let selectedDevice = deviceBox.value {
+                                router.route(to: \.deviceDetails, selectedDevice)
+                            }
+                        },
+                        onDelete: {
+                            deviceToDelete = deviceBox.value?.id
+                            selectedDevice = deviceBox.value
+                            isPresentingDeleteConfirmation = true
+                        },
+                        selectMode: $selectMode,
+                        selected: Binding(
+                            get: { selectedDevices.contains(id) },
+                            set: { isSelected in
+                                withAnimation {
+                                    if isSelected {
+                                        selectedDevices.insert(id)
+                                    } else {
+                                        selectedDevices.remove(id)
+                                    }
+                                }
+                            }
+                        )
+                    )
                 }
             }
         }
+        .animation(.easeInOut, value: selectMode)
     }
 
-    // MARK: - Delete All Devices Confirmation Actions
+    // MARK: - Delete Selected Devices Confirmation Actions
 
-    private var deleteAllDevicesConfirmationActions: some View {
+    private var deleteSelectedDevicesConfirmationActions: some View {
         Group {
             Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.confirm, role: .destructive) {
-                viewModel.send(.deleteDevices(ids: Array(viewModel.devices.keys)))
+                viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
+                selectMode = false
             }
         }
     }

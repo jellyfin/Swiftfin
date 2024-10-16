@@ -10,7 +10,6 @@ import JellyfinAPI
 import SwiftUI
 
 extension DevicesView {
-
     struct DeviceRow: View {
 
         @CurrentDate
@@ -21,6 +20,11 @@ extension DevicesView {
 
         let onSelect: () -> Void
         let onDelete: () -> Void
+
+        @Binding
+        var selectMode: Bool
+        @Binding
+        var selected: Bool
 
         // MARK: - Device Mapping
 
@@ -33,22 +37,32 @@ extension DevicesView {
         init(
             box: BindingBox<DeviceInfo?>,
             onSelect editAction: @escaping () -> Void,
-            onDelete deleteAction: @escaping () -> Void
+            onDelete deleteAction: @escaping () -> Void,
+            selectMode: Binding<Bool>,
+            selected: Binding<Bool>
         ) {
             self.box = box
             self.onSelect = editAction
             self.onDelete = deleteAction
+            self._selectMode = selectMode
+            self._selected = selected
         }
 
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: EdgeInsets.edgePadding)) {
+            ListRow(insets: .init(vertical: 8, horizontal: 0)) {
                 rowLeading
             } content: {
                 deviceDetails
             }
-            .onSelect(perform: onSelect)
+            .onSelect {
+                if selectMode {
+                    selected.toggle()
+                } else {
+                    onSelect()
+                }
+            }
             .swipeActions {
                 Button {
                     onDelete()
@@ -63,17 +77,34 @@ extension DevicesView {
 
         @ViewBuilder
         private var rowLeading: some View {
-            ZStack {
-                deviceInfo.device.clientColor
+            HStack {
+                if selectMode {
+                    Button(action: {
+                        selected.toggle()
+                    }) {
+                        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                            .resizable()
+                            .foregroundColor(.accentColor)
+                            .frame(width: 24, height: 24)
+                    }
+                    .transition(.move(edge: .leading).combined(with: .opacity))
+                    .padding(.leading, 0)
+                    .padding(.trailing, 8)
+                    .buttonStyle(PlainButtonStyle())
+                }
 
-                Image(deviceInfo.device.image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40)
+                ZStack {
+                    deviceInfo.device.clientColor
+
+                    Image(deviceInfo.device.image)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40)
+                }
+                .squarePosterStyle()
+                .frame(width: 60, height: 60)
+                .padding(.vertical, 8)
             }
-            .squarePosterStyle()
-            .frame(width: 60, height: 60)
-            .padding(.vertical, 8)
         }
 
         // MARK: - Row Device Details
