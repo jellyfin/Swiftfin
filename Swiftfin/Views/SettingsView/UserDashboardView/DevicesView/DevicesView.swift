@@ -15,6 +15,10 @@ struct DevicesView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
+    // This exists for some later usage. this can be used to initialize this for a single user. When the UserView is done, there will be a
+    // UserDetailView with a "Devices" section. That will vall this same view WITH a userID so it should filter to only that user.
+    var userID: String?
+
     @StateObject
     private var viewModel = DevicesViewModel()
 
@@ -39,7 +43,7 @@ struct DevicesView: View {
         contentView
             .navigationTitle(L10n.allDevices)
             .onFirstAppear {
-                viewModel.send(.getDevices)
+                viewModel.send(.getDevices(userID))
             }
             .topBarTrailing {
                 navigationBarView
@@ -86,7 +90,7 @@ struct DevicesView: View {
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
-                    viewModel.send(.getDevices)
+                    viewModel.send(.getDevices(userID))
                 }
         case .initial:
             DelayedProgressView()

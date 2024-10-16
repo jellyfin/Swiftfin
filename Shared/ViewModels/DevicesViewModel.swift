@@ -17,7 +17,7 @@ final class DevicesViewModel: ViewModel, Stateful {
     // MARK: - Action
 
     enum Action: Equatable {
-        case getDevices
+        case getDevices(_ userID: String?)
         case setCustomName(id: String, newName: String)
         case deleteDevice(id: String)
         case deleteDevices(ids: [String])
@@ -53,14 +53,14 @@ final class DevicesViewModel: ViewModel, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case .getDevices:
+        case let .getDevices(userID):
             deviceTask?.cancel()
 
             backgroundStates.append(.gettingDevices)
 
             deviceTask = Task { [weak self] in
                 do {
-                    try await self?.loadDevices()
+                    try await self?.loadDevices(userID: userID)
                     await MainActor.run {
                         self?.state = .content
                     }
@@ -189,8 +189,13 @@ final class DevicesViewModel: ViewModel, Stateful {
 
     // MARK: - Load Devices
 
-    private func loadDevices() async throws {
-        let request = Paths.getDevices()
+    private func loadDevices(userID: String?) async throws {
+        var request = Paths.getDevices()
+
+        if let userID = userID {
+            request = Paths.getDevices(userID: userID)
+        }
+
         let response = try await userSession.client.send(request)
 
         guard let devices = response.value.items else {
