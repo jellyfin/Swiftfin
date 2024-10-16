@@ -43,6 +43,8 @@ struct EditScheduledTaskView: View {
                 }
             }
 
+            ManualRunSection(observer: observer)
+
             if observer.task.state == .running || observer.task.state == .cancelling {
                 CurrentRunningSection(task: observer.task)
             }
