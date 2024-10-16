@@ -8,72 +8,73 @@
 
 import Foundation
 
-struct ServerTicks {
-    private var ticksValue: Int
+typealias ServerTicks = Int
+
+extension ServerTicks {
 
     // MARK: - Conversion Constants
 
-    private let ticksPerSecond = 10_000_000
-    private let ticksPerMinute = 600_000_000
-    private let ticksPerHour = 36_000_000_000
-    private let ticksPerDay = 864_000_000_000
+    private static let ticksPerSecond = 10_000_000
+    private static let ticksPerMinute = 600_000_000
+    private static let ticksPerHour = 36_000_000_000
+    private static let ticksPerDay = 864_000_000_000
 
     // MARK: - Initializers
 
-    init(ticks: Int? = nil) {
-        self.ticksValue = ticks ?? 0
+    init(_ ticks: Int? = nil) {
+        self = ticks ?? 0
     }
 
     init(seconds: Int? = nil) {
-        self.ticksValue = (seconds ?? 0) * ticksPerSecond
+        self = (seconds ?? 0) * ServerTicks.ticksPerSecond
     }
 
     init(minutes: Int? = nil) {
-        self.ticksValue = (minutes ?? 0) * ticksPerMinute
+        self = (minutes ?? 0) * ServerTicks.ticksPerMinute
     }
 
     init(hours: Int? = nil) {
-        self.ticksValue = (hours ?? 0) * ticksPerHour
+        self = (hours ?? 0) * ServerTicks.ticksPerHour
     }
 
     init(days: Int? = nil) {
-        self.ticksValue = (days ?? 0) * ticksPerDay
+        self = (days ?? 0) * ServerTicks.ticksPerDay
     }
 
     init(timeInterval: TimeInterval? = nil) {
-        self.ticksValue = Int((timeInterval ?? 0) * Double(ticksPerSecond))
+        self = Int((timeInterval ?? 0) * Double(ServerTicks.ticksPerSecond))
     }
 
     init(date: Date) {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
         let totalSeconds = TimeInterval((components.hour ?? 0) * 3600 + (components.minute ?? 0) * 60)
-        self.ticksValue = Int(totalSeconds * 10_000_000)
+        self = Int(totalSeconds * 10_000_000)
     }
 
     // MARK: - Computed Properties
 
     var ticks: Int {
-        ticksValue
+        self
     }
 
     var seconds: TimeInterval {
-        TimeInterval(ticksValue) / Double(ticksPerSecond)
+        TimeInterval(self) / Double(ServerTicks.ticksPerSecond)
     }
 
     var minutes: TimeInterval {
-        TimeInterval(ticksValue) / Double(ticksPerMinute)
+        TimeInterval(self) / Double(ServerTicks.ticksPerMinute)
     }
 
     var hours: TimeInterval {
-        TimeInterval(ticksValue) / Double(ticksPerHour)
+        TimeInterval(self) / Double(ServerTicks.ticksPerHour)
     }
 
     var days: TimeInterval {
-        TimeInterval(ticksValue) / Double(ticksPerDay)
+        TimeInterval(self) / Double(ServerTicks.ticksPerDay)
     }
 
     var date: Date {
-        let totalSeconds = TimeInterval(ticksValue) / 10_000_000
+        let totalSeconds = TimeInterval(self) / 10_000_000
         let hours = Int(totalSeconds) / 3600
         let minutes = (Int(totalSeconds) % 3600) / 60
         var components = DateComponents()

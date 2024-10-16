@@ -19,17 +19,15 @@ extension AddTaskTriggerView {
         // MARK: - Body
 
         var body: some View {
-            if taskTriggerInfo.type == TaskTriggerType.weekly.rawValue {
-                Picker(
-                    L10n.dayOfWeek,
-                    selection: Binding(
-                        get: { taskTriggerInfo.dayOfWeek ?? defaultDayOfWeek },
-                        set: { taskTriggerInfo.dayOfWeek = $0 }
-                    )
-                ) {
-                    ForEach(DayOfWeek.allCases, id: \.self) { day in
-                        Text(day.displayTitle ?? L10n.unknown).tag(day)
-                    }
+            Picker(
+                L10n.dayOfWeek,
+                selection: Binding(
+                    get: { taskTriggerInfo.dayOfWeek ?? defaultDayOfWeek },
+                    set: { taskTriggerInfo.dayOfWeek = $0 }
+                )
+            ) {
+                ForEach(DayOfWeek.allCases, id: \.self) { day in
+                    Text(day.displayTitle ?? L10n.unknown).tag(day)
                 }
             }
         }

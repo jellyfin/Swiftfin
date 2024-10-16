@@ -23,7 +23,7 @@ extension AddTaskTriggerView {
 
         init(taskTriggerInfo: Binding<TaskTriggerInfo>) {
             self._taskTriggerInfo = taskTriggerInfo
-            _tempTimeLimit = State(initialValue: taskTriggerInfo.wrappedValue.maxRuntimeTicks)
+            _tempTimeLimit = State(initialValue: Int(ServerTicks(taskTriggerInfo.wrappedValue.maxRuntimeTicks).hours))
         }
 
         // MARK: - Body
@@ -49,7 +49,7 @@ extension AddTaskTriggerView {
                     }
                 } onCancel: {
                     if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                        tempTimeLimit = taskTriggerInfo.maxRuntimeTicks
+                        tempTimeLimit = Int(ServerTicks(maxRuntimeTicks).hours)
                     } else {
                         tempTimeLimit = nil
                     }
@@ -61,7 +61,7 @@ extension AddTaskTriggerView {
 
         private var subtitleString: String {
             if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
-                ServerTicks(ticks: maxRuntimeTicks).seconds.formatted(.hourMinute)
+                ServerTicks(maxRuntimeTicks).seconds.formatted(.hourMinute)
             } else {
                 L10n.disabled
             }

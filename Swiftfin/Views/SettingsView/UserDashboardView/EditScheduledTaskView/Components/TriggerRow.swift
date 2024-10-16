@@ -39,7 +39,7 @@ extension EditScheduledTaskView {
                         if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                             Text(
                                 L10n.timeLimitLabelWithValue(
-                                    ServerTicks(ticks: maxRuntimeTicks)
+                                    ServerTicks(maxRuntimeTicks)
                                         .seconds.formatted(.hourMinute)
                                 )
                             )
@@ -65,7 +65,7 @@ extension EditScheduledTaskView {
                 if let timeOfDayTicks = taskTriggerInfo.timeOfDayTicks {
                     return L10n.itemAtItem(
                         taskTriggerType.displayTitle,
-                        ServerTicks(ticks: timeOfDayTicks)
+                        ServerTicks(timeOfDayTicks)
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
@@ -75,14 +75,14 @@ extension EditScheduledTaskView {
                 {
                     return L10n.itemAtItem(
                         dayOfWeek.rawValue.capitalized,
-                        ServerTicks(ticks: timeOfDayTicks)
+                        ServerTicks(timeOfDayTicks)
                             .date.formatted(date: .omitted, time: .shortened)
                     )
                 }
             case .interval:
                 if let intervalTicks = taskTriggerInfo.intervalTicks {
                     return L10n.everyInterval(
-                        ServerTicks(ticks: intervalTicks)
+                        ServerTicks(intervalTicks)
                             .seconds.formatted(.hourMinute)
                     )
                 }

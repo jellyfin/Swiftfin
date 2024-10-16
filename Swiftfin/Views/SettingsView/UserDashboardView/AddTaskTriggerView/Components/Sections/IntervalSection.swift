@@ -19,35 +19,40 @@ extension AddTaskTriggerView {
         @State
         var tempInterval: Int?
 
+        // MARK: - Init
+
+        init(taskTriggerInfo: Binding<TaskTriggerInfo>) {
+            self._taskTriggerInfo = taskTriggerInfo
+            _tempInterval = State(initialValue: Int(ServerTicks(taskTriggerInfo.wrappedValue.intervalTicks).minutes))
+        }
+
         // MARK: - Body
 
         var body: some View {
-            if taskTriggerInfo.type == TaskTriggerType.interval.rawValue {
-                ChevronAlertButton(
-                    L10n.every,
-                    subtitle: ServerTicks(
-                        ticks: taskTriggerInfo.intervalTicks
-                    ).seconds.formatted(.hourMinute),
-                    description: L10n.taskTriggerInterval
-                ) {
-                    TextField(
-                        L10n.minutes,
-                        value: $tempInterval,
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
-                } onSave: {
-                    if tempInterval != nil && tempInterval != 0 {
-                        taskTriggerInfo.intervalTicks = ServerTicks(minutes: tempInterval).ticks
-                    } else {
-                        taskTriggerInfo.intervalTicks = nil
-                    }
-                } onCancel: {
-                    if let intervalTicks = taskTriggerInfo.intervalTicks {
-                        tempInterval = Int(ServerTicks(minutes: intervalTicks).minutes)
-                    } else {
-                        taskTriggerInfo.intervalTicks = nil
-                    }
+            ChevronAlertButton(
+                L10n.every,
+                subtitle: ServerTicks(
+                    taskTriggerInfo.intervalTicks
+                ).seconds.formatted(.hourMinute),
+                description: L10n.taskTriggerInterval
+            ) {
+                TextField(
+                    L10n.minutes,
+                    value: $tempInterval,
+                    format: .number
+                )
+                .keyboardType(.numberPad)
+            } onSave: {
+                if tempInterval != nil && tempInterval != 0 {
+                    taskTriggerInfo.intervalTicks = ServerTicks(minutes: tempInterval).ticks
+                } else {
+                    taskTriggerInfo.intervalTicks = nil
+                }
+            } onCancel: {
+                if let intervalTicks = taskTriggerInfo.intervalTicks {
+                    tempInterval = Int(ServerTicks(intervalTicks).minutes)
+                } else {
+                    tempInterval = nil
                 }
             }
         }

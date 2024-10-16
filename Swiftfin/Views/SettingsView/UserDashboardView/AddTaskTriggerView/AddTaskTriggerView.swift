@@ -54,17 +54,46 @@ struct AddTaskTriggerView: View {
         self.emptyTaskTriggerInfo = newTrigger
     }
 
+    // MARK: - View for TaskTriggerType.daily
+
+    @ViewBuilder
+    private var dailyView: some View {
+        TimeSection(taskTriggerInfo: $taskTriggerInfo)
+    }
+
+    // MARK: - View for TaskTriggerType.weekly
+
+    @ViewBuilder
+    private var weeklyView: some View {
+        DayOfWeekSection(taskTriggerInfo: $taskTriggerInfo)
+        TimeSection(taskTriggerInfo: $taskTriggerInfo)
+    }
+
+    // MARK: - View for TaskTriggerType.interval
+
+    @ViewBuilder
+    private var intervalView: some View {
+        IntervalSection(taskTriggerInfo: $taskTriggerInfo)
+    }
+
     // MARK: - Body
 
     var body: some View {
         Form {
             TriggerTypeSection(taskTriggerInfo: $taskTriggerInfo)
 
-            DayOfWeekSection(taskTriggerInfo: $taskTriggerInfo)
+            if let taskType = taskTriggerInfo.type {
+                if taskType == TaskTriggerType.daily.rawValue {
+                    TimeSection(taskTriggerInfo: $taskTriggerInfo)
 
-            TimeSection(taskTriggerInfo: $taskTriggerInfo)
+                } else if taskType == TaskTriggerType.weekly.rawValue {
+                    DayOfWeekSection(taskTriggerInfo: $taskTriggerInfo)
+                    TimeSection(taskTriggerInfo: $taskTriggerInfo)
 
-            IntervalSection(taskTriggerInfo: $taskTriggerInfo)
+                } else if taskType == TaskTriggerType.interval.rawValue {
+                    IntervalSection(taskTriggerInfo: $taskTriggerInfo)
+                }
+            }
 
             TimeLimitSection(taskTriggerInfo: $taskTriggerInfo)
         }

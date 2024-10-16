@@ -17,22 +17,20 @@ extension AddTaskTriggerView {
         var taskTriggerInfo: TaskTriggerInfo
 
         var body: some View {
-            if taskTriggerInfo.type == TaskTriggerType.daily.rawValue || taskTriggerInfo.type == TaskTriggerType.weekly.rawValue {
-                DatePicker(
-                    L10n.time,
-                    selection: Binding<Date>(
-                        get: {
-                            ServerTicks(
-                                ticks: taskTriggerInfo.timeOfDayTicks ?? defaultTimeOfDayTicks
-                            ).date
-                        },
-                        set: { date in
-                            taskTriggerInfo.timeOfDayTicks = ServerTicks(date: date).ticks
-                        }
-                    ),
-                    displayedComponents: .hourAndMinute
-                )
-            }
+            DatePicker(
+                L10n.time,
+                selection: Binding<Date>(
+                    get: {
+                        ServerTicks(
+                            taskTriggerInfo.timeOfDayTicks ?? defaultTimeOfDayTicks
+                        ).date
+                    },
+                    set: { date in
+                        taskTriggerInfo.timeOfDayTicks = ServerTicks(date: date).ticks
+                    }
+                ),
+                displayedComponents: .hourAndMinute
+            )
         }
     }
 }
