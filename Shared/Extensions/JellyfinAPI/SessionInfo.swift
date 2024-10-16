@@ -13,8 +13,8 @@ extension SessionInfo {
 
     var device: DeviceType {
         DeviceType(
-            client: self.client,
-            deviceName: self.deviceName
+            client: client,
+            deviceName: deviceName
         )
     }
 

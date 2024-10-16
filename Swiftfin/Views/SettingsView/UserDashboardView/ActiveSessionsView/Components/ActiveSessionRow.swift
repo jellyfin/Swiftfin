@@ -35,7 +35,31 @@ extension ActiveSessionsView {
         private var rowLeading: some View {
             // TODO: better handling for different poster types
             Group {
-                if session.nowPlayingItem == nil {
+                if let nowPlayingItem = session.nowPlayingItem {
+                    if nowPlayingItem.type == .audio {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60))
+                                .failure {
+                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
+                                }
+                        }
+                        .squarePosterStyle()
+                        .frame(width: 60, height: 60)
+                    } else {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60))
+                                .failure {
+                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
+                                }
+                        }
+                        .posterStyle(.portrait)
+                        .frame(width: 60, height: 90)
+                    }
+                } else {
                     ZStack {
                         session.device.clientColor
 
@@ -46,30 +70,6 @@ extension ActiveSessionsView {
                     }
                     .squarePosterStyle()
                     .frame(width: 60, height: 60)
-                } else {
-                    if session.nowPlayingItem?.type == .audio {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(session.nowPlayingItem?.squareImageSources(maxWidth: 60) ?? [])
-                                .failure {
-                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
-                                }
-                        }
-                        .squarePosterStyle()
-                        .frame(width: 60, height: 60)
-                    } else {
-                        ZStack {
-                            Color.clear
-
-                            ImageView(session.nowPlayingItem?.portraitImageSources(maxWidth: 60) ?? [])
-                                .failure {
-                                    SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
-                                }
-                        }
-                        .posterStyle(.portrait)
-                        .frame(width: 60, height: 90)
-                    }
                 }
             }
             .frame(width: 60, height: 90)
