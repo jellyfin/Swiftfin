@@ -87,6 +87,42 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
 
         switch client {
 
+        /* Android or Findroid */
+        case let str where str.range(of: #"android|findroid"#, options: .regularExpression) != nil:
+            self = .android
+
+        /* Apple devices: iOS, tvOS, iPadOS, Swiftfin, or Infuse */
+        case let str where str.range(of: #"ios|tvos|ipados|swiftfin|infuse"#, options: .regularExpression) != nil:
+            self = .apple
+
+        /* Finamp */
+        case let str where str.range(of: #"finamp"#, options: .regularExpression) != nil:
+            self = .finamp
+
+        /* Home Assistant or HomeAssistant */
+        case let str where str.range(of: #"home.assistant|homeassistant"#, options: .regularExpression) != nil:
+            self = .homeAssistant
+
+        /* Jellyfin Web or JellyfinWeb (Vue versions included) */
+        case let str where str.range(of: #"jellyfin.web|jellyfinweb"#, options: .regularExpression) != nil:
+            self = DeviceType(webBrowser: deviceName)
+
+        /* Kodi or JellyCon */
+        case let str where str.range(of: #"kodi|jellycon"#, options: .regularExpression) != nil:
+            self = .kodi
+
+        /* LG TV, LG Smart TV, or WebOS devices */
+        case let str where str.range(of: #"lg.+tv|webos"#, options: .regularExpression) != nil:
+            self = .webos
+
+        /* PlayStation: Sony PS3, PS4, or any PlayStation */
+        case let str where str.range(of: #"sony\sps[3-4]|playstation"#, options: .regularExpression) != nil:
+            self = .playstation
+
+        /* Roku devices */
+        case let str where str.range(of: #"roku"#, options: .regularExpression) != nil:
+            self = .roku
+
         /* Samsung TV, Samsung Smart TV, or devices running Tizen */
         case let str where str.range(of: #"samsung.+tv|tizen"#, options: .regularExpression) != nil:
             self = .samsungtv
@@ -94,43 +130,6 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
         /* Xbox One or any Xbox device */
         case let str where str.range(of: #"xbox"#, options: .regularExpression) != nil:
             self = .xbox
-
-        /* Sony PS3, PS4, or any PlayStation */
-        case let str where str.range(of: #"sony\sps[3-4]|playstation"#, options: .regularExpression) != nil:
-            self = .playstation
-
-        /* Kodi or JellyCon */
-        case let str where str.range(of: #"kodi|jellycon"#, options: .regularExpression) != nil:
-            self = .kodi
-
-        /* Android or Findroid */
-        case let str where str.range(of: #"android|findroid"#, options: .regularExpression) != nil:
-            self = .android
-
-        /* iOS, tvOS, iPadOS, Swiftfin, or Infuse */
-        case let str where str.range(of: #"ios|tvos|ipados|swiftfin|infuse"#, options: .regularExpression) != nil:
-            self = .apple
-
-        /* Home Assistant or HomeAssistant */
-        case let str where str.range(of: #"home.assistant|homeassistant"#, options: .regularExpression) != nil:
-            self = .homeAssistant
-
-        /* Roku devices */
-        case let str where str.range(of: #"roku"#, options: .regularExpression) != nil:
-            self = .roku
-
-        /* Finamp */
-        case let str where str.range(of: #"finamp"#, options: .regularExpression) != nil:
-            self = .finamp
-
-        /* Jellyfin Web or JellyfinWeb (Vue versions included) */
-        case let str where str.range(of: #"jellyfin.web|jellyfinweb"#, options: .regularExpression) != nil:
-            self = DeviceType(webBrowser: deviceName)
-
-        // TODO: Let's get a webOS logo that's all white to match the existing logos
-        /* LG TV, LG Smart TV, or WebOS devices */
-        case let str where str.range(of: #"lg.+tv|webos"#, options: .regularExpression) != nil:
-            self = .html5
 
         /* Default case for anything else */
         default:
@@ -190,45 +189,46 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
     var image: ImageResource {
         switch self {
         case .android:
-            return .clientAndroid
+            return .deviceClientAndroid
         case .apple:
-            return .clientApple
+            return .deviceClientApple
         case .chrome:
-            return .browserChrome
+            return .deviceBrowserChrome
         case .edge:
-            return .browserEdge
+            return .deviceBrowserEdge
         case .edgechromium:
-            return .browserEdgeChromium
+            return .deviceBrowserEdgechromium
         case .finamp:
-            return .clientFinamp
+            return .deviceClientFinamp
         case .firefox:
-            return .browserFirefox
+            return .deviceBrowserFirefox
         case .homeAssistant:
-            return .deviceHomeAssistant
+            return .deviceOtherHomeassistant
         case .html5:
-            return .deviceOther
+            return .deviceBrowserHtml5
         case .kodi:
-            return .clientKodi
+            return .deviceClientKodi
         case .msie:
-            return .browserMsie
+            return .deviceBrowserMsie
         case .opera:
-            return .browserOpera
+            return .deviceBrowserOpera
         case .playstation:
-            return .clientPlaystation
+            return .deviceClientPlaystation
         case .roku:
-            return .clientRoku
+            return .deviceClientRoku
         case .safari:
-            return .browserSafari
+            return .deviceBrowserSafari
         case .samsungtv:
-            return .clientSamsung
+            return .deviceClientSamsungtv
+        // TODO: Update with WebOS Logo when available
         case .webos:
-            return .clientWebOS
+            return .deviceBrowserHtml5 // .deviceClientWebos
         case .windows:
-            return .clientWindows
+            return .deviceClientWindows
         case .xbox:
-            return .clientXbox
+            return .deviceClientXbox
         case .other:
-            return .deviceOther
+            return .deviceOtherOther
         }
     }
 
