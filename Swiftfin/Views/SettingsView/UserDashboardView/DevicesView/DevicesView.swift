@@ -27,8 +27,6 @@ struct DevicesView: View {
     @State
     private var isPresentingDeleteConfirmation = false
     @State
-    private var isPresentingRenameAlert = false
-    @State
     private var isPresentingSelfDeleteError = false
     @State
     private var selectedDevice: DeviceInfo?
@@ -68,11 +66,6 @@ struct DevicesView: View {
             }
             .alert(isPresented: $isPresentingSelfDeleteError) {
                 deletionFailureAlert
-            }
-            .alert(L10n.customDeviceName, isPresented: $isPresentingRenameAlert) {
-                customDeviceNameAlert
-            } message: {
-                Text(L10n.enterCustomDeviceName)
             }
     }
 
@@ -126,9 +119,9 @@ struct DevicesView: View {
             ForEach(Array(viewModel.devices.keys), id: \.self) { id in
                 if let deviceBox = viewModel.devices[id] {
                     DeviceRow(box: deviceBox) {
-                        selectedDevice = deviceBox.value
-                        temporaryDeviceName = selectedDevice?.name ?? ""
-                        isPresentingRenameAlert = true
+                        if let selectedDevice = deviceBox.value {
+                            router.route(to: \.deviceDetails, selectedDevice)
+                        }
                     } onDelete: {
                         deviceToDelete = deviceBox.value?.id
                         selectedDevice = deviceBox.value
@@ -165,26 +158,6 @@ struct DevicesView: View {
                         viewModel.send(.deleteDevice(id: deviceToDelete))
                     }
                 }
-            }
-        }
-    }
-
-    // MARK: - Rename Custom Device Name Alert
-
-    private var customDeviceNameAlert: some View {
-        Group {
-            TextField(L10n.name, text: $temporaryDeviceName)
-                .keyboardType(.default)
-
-            Button(L10n.save) {
-                if let deviceId = selectedDevice?.id {
-                    viewModel.send(.setCustomName(id: deviceId, newName: temporaryDeviceName))
-                }
-                isPresentingRenameAlert = false
-            }
-
-            Button(L10n.cancel, role: .cancel) {
-                isPresentingRenameAlert = false
             }
         }
     }

@@ -739,41 +739,107 @@
 /* Section Title for Column Configuration */
 "columns" = "Columns";
 
-/* Devices section of the Admin Dashboard  */
+// Devices - Section Header
+// Title for the devices section in the Admin Dashboard
+// Used as the header for the devices section
 "devices" = "Devices";
 
-/* All Devices section of the Admin Dashboard */
+// All Devices - Section Header
+// Title for the all devices section in the Admin Dashboard
+// Used as the header for the all devices section
 "allDevices" = "All Devices";
 
-/* All Devices description for the section of the Admin Dashboard */
+// All Devices Description - Section Description
+// Description for the all devices section in the Admin Dashboard
+// Provides information about the devices connected to the server, including past and current connections
 "allDevicesDescription" = "Devices are all the hardware that have connected to the server, including both current and past connections. You can view device details such as name, app version, and the associated user.";
 
-/* Delete All Devices from the All Devices section */
+// Delete All - Button
+// Button label for deleting all devices
+// Used in the all devices section to delete all devices
 "deleteAll" = "Delete All";
 
-/* Filler Text when something never has or never will occur */
+// Never - Filler Text
+// Text displayed when something has never or will never occur
+// Used as placeholder text for events that never happen
 "never" = "Never";
 
-/* Delete All Devices Warning Message */
+// Delete All Devices Warning - Warning Message
+// Warning message displayed when deleting all devices
+// Informs the user about the consequences of deleting all devices
 "deleteAllDevicesWarning" = "Are you sure you wish to delete all devices? All other sessions will be logged out. Devices will reappear the next time a user signs in.";
 
-/* Delete a Device Warning Message */
+// Delete Device Warning - Warning Message
+// Warning message displayed when deleting a single device
+// Informs the user about the consequences of deleting the device
 "deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out. This device will reappear the next time this device signs in.";
 
-/* Delete All Devices message from the All Devices section */
+// Delete All Devices - Action
+// Message for deleting all devices in the all devices section
+// Used in the confirmation dialog to delete all devices
 "deleteAllDevices" = "Delete All Devices";
 
-/* Delete Device message from the All Devices section */
+// Delete Device - Action
+// Message for deleting a single device in the all devices section
+// Used in the confirmation dialog to delete a single device
 "deleteDevice" = "Delete Device";
 
-/* Indicates that a Device is You */
+// Delete Device Self-Deletion - Error Message
+// Error message when attempting to delete the current session's device
+// Used to inform the user that they cannot delete their own session
 "deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
 
-/* Title for failed Device Delection */
+// Delete Device Failed - Error Title
+// Title for the alert when device deletion fails
+// Displayed when the system fails to delete a device
 "deleteDeviceFailed" = "Failed to Delete Device";
 
-/* Title for Custom Device Name */
+// Custom Device Name - Title
+// Title for setting a custom device name
+// Used in the custom device name section
 "customDeviceName" = "Custom Device Name";
 
-/* Alert Description for Entering a Custom Device Name */
+// Enter Custom Device Name - Alert Description
+// Alert description for entering a custom device name
+// Explains that a custom name can be supplied or the default device name will be used
 "enterCustomDeviceName" = "Supply a custom display name or leave empty to use the name reported by the device.";
+
+// Capabilities - Section Header
+// Title for the section showing the device capabilities
+// Displayed as the header for the device capabilities section
+"capabilities" = "Capabilities";
+
+// Supports Content Uploading - Label
+// Indicates whether the device supports uploading content
+// Used in the capabilities section to display if content uploading is supported
+"supportsContentUploading" = "Content Uploading";
+
+// Supports Media Control - Label
+// Indicates whether the device supports media control (e.g., play, pause, stop)
+// Used in the capabilities section to display media control capability
+"supportsMediaControl" = "Media Control";
+
+// Supports Persistent Identifier - Label
+// Indicates whether the device supports a persistent identifier
+// Used in the capabilities section to display persistent identifier support
+"supportsPersistentIdentifier" = "Persistent Identifier";
+
+// Supports Sync - Label
+// Indicates whether the device supports syncing content (e.g., media sync across devices)
+// Used in the capabilities section to display sync capability
+"supportsSync" = "Sync";
+
+// Yes - Label
+// Indicates that a capability is supported
+// Used in the capabilities section as a positive response
+"yes" = "Yes";
+
+// No - Label
+// Indicates that a capability is not supported
+// Used in the capabilities section as a negative response
+"no" = "No";
+
+// Nickname - Label
+// Title for setting a nickname for the device
+// Used in the custom device name section to display the nickname label
+"nickname" = "Nickname";

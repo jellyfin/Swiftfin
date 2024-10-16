@@ -12,6 +12,7 @@
 		4E0253BD2CBF0C06007EB9CD /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E0A8FFB2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
 		4E0A8FFC2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
+		4E10C8112CC030CD0012CC9F /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */; };
 		4E11805F2CBF52380077A588 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
@@ -1034,6 +1035,7 @@
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCompletionStatus.swift; sourceTree = "<group>"; };
+		4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
 		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
@@ -1828,6 +1830,14 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E10C80F2CC030B20012CC9F /* DeviceDetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */,
+			);
+			path = DeviceDetailsView;
+			sourceTree = "<group>";
+		};
 		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1888,6 +1898,7 @@
 			children = (
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
+				4E10C80F2CC030B20012CC9F /* DeviceDetailsView */,
 				4EED87492CBF824B002354D2 /* DevicesView */,
 				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
@@ -4740,6 +4751,7 @@
 				E1A1528A28FD22F600600579 /* TextPairView.swift in Sources */,
 				E1BDF2E92951490400CC0294 /* ActionButtonSelectorView.swift in Sources */,
 				E170D0E2294CC8000017224C /* VideoPlayer+Actions.swift in Sources */,
+				4E10C8112CC030CD0012CC9F /* DeviceDetailsView.swift in Sources */,
 				E148128828C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
 				4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */,
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
