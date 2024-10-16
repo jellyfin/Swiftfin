@@ -146,7 +146,7 @@ struct DevicesView: View {
             Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.confirm, role: .destructive) {
-                viewModel.send(.deleteAllDevices)
+                viewModel.send(.deleteDevices(ids: Array(viewModel.devices.keys)))
             }
         }
     }

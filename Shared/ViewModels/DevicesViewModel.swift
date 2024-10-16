@@ -21,7 +21,6 @@ final class DevicesViewModel: ViewModel, Stateful {
         case setCustomName(id: String, newName: String)
         case deleteDevice(id: String)
         case deleteDevices(ids: [String])
-        case deleteAllDevices
     }
 
     // MARK: - BackgroundState
@@ -139,34 +138,6 @@ final class DevicesViewModel: ViewModel, Stateful {
             deviceTask = Task { [weak self] in
                 do {
                     try await self?.deleteDevices(ids: ids)
-                    await MainActor.run {
-                        self?.state = .content
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                    }
-                }
-
-                await MainActor.run {
-                    self?.backgroundStates.remove(.deletingDevices)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case .deleteAllDevices:
-            deviceTask?.cancel()
-
-            backgroundStates.append(.deletingDevices)
-
-            deviceTask = Task { [weak self] in
-                do {
-                    try await self?.deleteDevices(
-                        ids: Array(self?.devices.keys ?? [])
-                    )
                     await MainActor.run {
                         self?.state = .content
                     }
