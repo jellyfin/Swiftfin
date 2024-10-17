@@ -61,6 +61,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var tasks = makeTasks
     @Route(.push)
+    var users = makeUsers
+    @Route(.push)
+    var userDetails = makeUserDetails
+    @Route(.push)
+    var userPassword = makeUserPassword
+    @Route(.push)
     var editScheduledTask = makeEditScheduledTask
     @Route(.push)
     var serverLogs = makeServerLogs
@@ -184,6 +190,21 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeTasks() -> some View {
         ScheduledTasksView()
+    }
+
+    @ViewBuilder
+    func makeUsers() -> some View {
+        UserAdministrationView()
+    }
+
+    @ViewBuilder
+    func makeUserDetails(observer: UserAdministrationObserver) -> some View {
+        UserAdministrationDetailView(observer: observer)
+    }
+
+    @ViewBuilder
+    func makeUserPassword(observer: UserAdministrationObserver) -> some View {
+        UserAdmininstrationPasswordView(observer: observer)
     }
 
     @ViewBuilder
