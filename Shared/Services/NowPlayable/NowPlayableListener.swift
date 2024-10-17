@@ -13,6 +13,25 @@ import MediaPlayer
 
 // TODO: cleanup
 
+//    func getNowPlayingImage(_ completion: @escaping () -> Void) {
+//
+//        let imageSource = item.portraitImageSources(maxWidth: 200)
+//        guard let url = imageSource.compacted(using: \.url).first?.url else { return }
+//
+//        // TODO: look at Nuke loading for cache use
+//        DispatchQueue.global().async { [weak self] in
+//            if let data = try? Data(contentsOf: url) {
+//                if let image = UIImage(data: data) {
+//                    DispatchQueue.main.async {
+//                        guard let self else { return }
+//                        self.nowPlayingImage = image
+//                        completion()
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 class NowPlayableListener: MediaPlayerListener {
 
     @Injected(\.logService)
