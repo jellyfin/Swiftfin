@@ -282,7 +282,7 @@
 		E111D8F628D03B7500400001 /* PagingLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */; };
 		E111D8F828D03BF900400001 /* PagingLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F728D03BF900400001 /* PagingLibraryView.swift */; };
 		E111D8FA28D0400900400001 /* PagingLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111D8F928D0400900400001 /* PagingLibraryView.swift */; };
-		E11245B428D97D5D00D8A977 /* PlaybackProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11245B328D97D5D00D8A977 /* PlaybackProgressView.swift */; };
+		E11245B428D97D5D00D8A977 /* PlaybackProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */; };
 		E11245B728D97ED200D8A977 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11245B628D97ED200D8A977 /* NavigationBar.swift */; };
 		E113132B28BDB4B500930F75 /* NavigationBarDrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132A28BDB4B500930F75 /* NavigationBarDrawerView.swift */; };
 		E113132F28BDB66A00930F75 /* NavigationBarDrawerModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E113132E28BDB66A00930F75 /* NavigationBarDrawerModifier.swift */; };
@@ -370,8 +370,8 @@
 		E12CC1C928D132B800678D5D /* RecentlyAddedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1C828D132B800678D5D /* RecentlyAddedView.swift */; };
 		E12CC1CB28D1333400678D5D /* CinematicResumeItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */; };
 		E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CC28D135C700678D5D /* NextUpView.swift */; };
-		E12D02442C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
-		E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressManager.swift */; };
+		E12D02442C9FB772003B27CB /* MediaProgressListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressListener.swift */; };
+		E12D02452C9FB772003B27CB /* MediaProgressListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressListener.swift */; };
 		E12E2F072CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E2F082CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E2F0D2CBBA984008C303A /* MediaChaptersSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */; };
@@ -1220,7 +1220,7 @@
 		E111D8F428D03B7500400001 /* PagingLibraryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryViewModel.swift; sourceTree = "<group>"; };
 		E111D8F728D03BF900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
 		E111D8F928D0400900400001 /* PagingLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagingLibraryView.swift; sourceTree = "<group>"; };
-		E11245B328D97D5D00D8A977 /* PlaybackProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackProgressView.swift; sourceTree = "<group>"; };
+		E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackProgress.swift; sourceTree = "<group>"; };
 		E11245B628D97ED200D8A977 /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		E113132A28BDB4B500930F75 /* NavigationBarDrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarDrawerView.swift; sourceTree = "<group>"; };
 		E113132E28BDB66A00930F75 /* NavigationBarDrawerModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarDrawerModifier.swift; sourceTree = "<group>"; };
@@ -1273,7 +1273,7 @@
 		E12CC1C828D132B800678D5D /* RecentlyAddedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentlyAddedView.swift; sourceTree = "<group>"; };
 		E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicResumeItemView.swift; sourceTree = "<group>"; };
 		E12CC1CC28D135C700678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
-		E12D02432C9FB772003B27CB /* MediaProgressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressManager.swift; sourceTree = "<group>"; };
+		E12D02432C9FB772003B27CB /* MediaProgressListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressListener.swift; sourceTree = "<group>"; };
 		E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfoSupplement.swift; sourceTree = "<group>"; };
 		E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaChaptersSupplement.swift; sourceTree = "<group>"; };
 		E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFormWindowView.swift; sourceTree = "<group>"; };
@@ -2506,7 +2506,7 @@
 				E11D5A152C7918F1008A99F4 /* MediaPlayerItem.swift */,
 				E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */,
 				E1EDFB452C75309D00C42FD3 /* MediaPlayerProxy */,
-				E12D02432C9FB772003B27CB /* MediaProgressManager.swift */,
+				E12D02432C9FB772003B27CB /* MediaProgressListener.swift */,
 				E18120F92CBDCFB800682985 /* Supplements */,
 			);
 			path = MediaPlayerManager;
@@ -2732,7 +2732,7 @@
 				E1ED33CD2CBB1C1900E6BEB8 /* DrawerSectionButton.swift */,
 				E11245B628D97ED200D8A977 /* NavigationBar.swift */,
 				E1721FAC28FB801000762992 /* PlaybackButtons */,
-				E11245B328D97D5D00D8A977 /* PlaybackProgressView.swift */,
+				E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */,
 				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 			);
 			path = Components;
@@ -4347,7 +4347,7 @@
 				E12CC1CB28D1333400678D5D /* CinematicResumeItemView.swift in Sources */,
 				4E2AC4D42C6C4C1200DD600D /* OrderedSectionSelectorView.swift in Sources */,
 				E1575E9C293E7B1E001665B1 /* Collection.swift in Sources */,
-				E12D02452C9FB772003B27CB /* MediaProgressManager.swift in Sources */,
+				E12D02452C9FB772003B27CB /* MediaProgressListener.swift in Sources */,
 				E1C9260F2887565C002A7A66 /* AttributeHStack.swift in Sources */,
 				E11CEB9428999D9E003E74C7 /* EpisodeItemContentView.swift in Sources */,
 				E1CAF65E2BA345830087D991 /* MediaType.swift in Sources */,
@@ -4567,7 +4567,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E11245B428D97D5D00D8A977 /* PlaybackProgressView.swift in Sources */,
+				E11245B428D97D5D00D8A977 /* PlaybackProgress.swift in Sources */,
 				E17FB55528C1250B00311DFE /* SimilarItemsHStack.swift in Sources */,
 				5364F455266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E18845F526DD631E00B0C5B7 /* BaseItemDto+Poster.swift in Sources */,
@@ -4717,7 +4717,7 @@
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackRate.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
-				E12D02442C9FB772003B27CB /* MediaProgressManager.swift in Sources */,
+				E12D02442C9FB772003B27CB /* MediaProgressListener.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,

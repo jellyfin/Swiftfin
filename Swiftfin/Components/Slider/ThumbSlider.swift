@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: gesture padding
+
 struct ThumbSlider<V: BinaryFloatingPoint>: View {
 
     @Binding

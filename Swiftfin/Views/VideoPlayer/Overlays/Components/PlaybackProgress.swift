@@ -18,7 +18,7 @@ import SwiftUI
 
 extension VideoPlayer.Overlay {
 
-    struct PlaybackProgressView: View {
+    struct PlaybackProgress: View {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
@@ -41,15 +41,22 @@ extension VideoPlayer.Overlay {
 
         @ViewBuilder
         private var capsuleSlider: some View {
-            CapsuleSlider(
-                value: _scrubbedSeconds.wrappedValue,
-                total: manager.item.runTimeSeconds
-            )
-            .onEditingChanged { newValue in
-                isScrubbing = newValue
+            AlternateLayoutView {
+                Color.clear
+                    .frame(height: 10)
+            } content: {
+                CapsuleSlider(
+                    value: _scrubbedSeconds.wrappedValue,
+                    total: manager.item.runTimeSeconds
+                )
+                .gesturePadding(30)
+                .onEditingChanged { newValue in
+                    isScrubbing = newValue
+                }
+                .foregroundStyle(sliderColor)
+                .frame(height: isScrubbing ? 20 : 10)
+                .offset(y: isScrubbing ? 20 : 0)
             }
-            .foregroundStyle(sliderColor)
-            .frame(height: 10)
         }
 
         @ViewBuilder
@@ -65,13 +72,16 @@ extension VideoPlayer.Overlay {
         }
 
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 switch sliderType {
                 case .capsule: capsuleSlider
                 case .thumb: thumbSlider
                 }
                 
                 SplitTimeStamp()
+                    .if(sliderType == .capsule) { view in
+                        view.offset(y: isScrubbing ? 25 : 0)
+                    }
             }
             .disabled(manager.state == .loadingItem)
         }

@@ -63,7 +63,7 @@ extension VideoPlayer.Overlay {
                     y: isPressed ? 0.9 : 1,
                     anchor: .init(x: 0.5, y: 0.5)
                 )
-                .animation(.bouncy(duration: 0.4), value: isActive)
+//                .animation(.bouncy(duration: 0.4), value: isActive)
                 .animation(.bouncy(duration: 0.4), value: isPressed)
                 .opacity(isPressed ? 0.6 : 1)
         }

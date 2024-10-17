@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: gesture padding
+
 struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
@@ -24,6 +26,7 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
     @State
     private var currentTranslation: CGFloat = 0
     
+    private var gesturePadding: CGFloat = 0
     private var onEditingChanged: (Bool) -> Void
     private let total: V
     
@@ -54,6 +57,8 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
             .progressViewStyle(.playback)
             .overlay {
                 Color.clear
+//                    .opacity(0.5)
+                    .frame(height: contentSize.height + gesturePadding)
                     .contentShape(Rectangle())
                     .highPriorityGesture(trackDrag)
             }
@@ -74,6 +79,10 @@ extension CapsuleSlider {
     func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
+    
+    func gesturePadding(_ padding: CGFloat) -> Self {
+        copy(modifying: \.gesturePadding, with: padding)
+    }
 }
 
 struct Test: View {
@@ -89,22 +98,23 @@ struct Test: View {
             .onEditingChanged { newValue in
                 isEditing = newValue
             }
+            .gesturePadding(30)
             .scaleEffect(!isEditing ? 0.95 : 1)
-            .animation(.snappy(duration: 0.3), value: isEditing)
+            .animation(.bouncy(duration: 0.3), value: isEditing)
             .onChange(of: value) { newValue in
                 print(newValue)
             }
     }
 }
 
-//struct CapsuleSlider_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VStack {
-//            
-//            Test()
-//                .frame(height: 30)
-//        }
-//        .padding(.horizontal, 10)
-//        .previewInterfaceOrientation(.landscapeRight)
-//    }
-//}
+struct CapsuleSlider_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            
+            Test()
+                .frame(height: 30)
+        }
+        .padding(.horizontal, 10)
+        .previewInterfaceOrientation(.landscapeRight)
+    }
+}

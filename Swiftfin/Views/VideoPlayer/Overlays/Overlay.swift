@@ -32,9 +32,13 @@ extension VideoPlayer {
         private var manager: MediaPlayerManager
 
         @State
+        private var contentSize: CGSize = .zero
+        @State
         private var effectiveSafeArea: EdgeInsets = .zero
         @State
         private var isPresentingOverlay: Bool = true
+        @State
+        private var progressViewFrame: CGRect = .zero
         @State
         private var selectedSupplement: AnyMediaPlayerSupplement?
 
@@ -61,18 +65,10 @@ extension VideoPlayer {
 
         @ViewBuilder
         private var playbackProgress: some View {
-            PlaybackProgressView()
+            PlaybackProgress()
                 .isVisible(isScrubbing || isPresentingOverlay)
                 .transition(.move(edge: .top).combined(with: .opacity))
-            
-//                .background {
-//                    OpacityLinearGradient {
-//                        (0, 0)
-//                        (1, 0.9)
-//                    }
-//                    .foregroundStyle(.black)
-//                    .isVisible(isScrubbing || playbackButtonType == .compact)
-//                }
+                .trackingFrame($progressViewFrame)
         }
 
         @ViewBuilder
@@ -104,6 +100,15 @@ extension VideoPlayer {
                 Color.black
                     .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
                     .allowsHitTesting(false)
+                    .overlay(alignment: .bottom) {
+                        OpacityLinearGradient {
+                            (0, 0)
+                            (1, 0.5)
+                        }
+                        .foregroundStyle(.black)
+                        .isVisible(isScrubbing || playbackButtonType == .compact)
+                        .frame(height: max(0, contentSize.height - progressViewFrame.minY))
+                    }
 
                 GestureView()
                     .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
@@ -124,25 +129,30 @@ extension VideoPlayer {
                     Spacer()
                         .allowsHitTesting(false)
 
-                    bottomContent
-                        .padding(effectiveSafeArea)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .offset(y: isPresentingOverlay ? 0 : 20)
-                        .animation(.bouncy, value: isPresentingOverlay)
-
-                    // TODO: changing supplement transition
-                    if isPresentingDrawer, let selectedSupplement {
-                        selectedSupplement.supplement
-                            .videoPlayerBody()
-                            .eraseToAnyView()
-                            .frame(height: 150)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                            .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                    VStack {
+                        bottomContent
+                            .padding(effectiveSafeArea)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .offset(y: isPresentingOverlay ? 0 : 20)
+                            .animation(.bouncy, value: isPresentingOverlay)
+                        
+                        // TODO: changing supplement transition
+                        if isPresentingDrawer, let selectedSupplement {
+                            selectedSupplement.supplement
+                                .videoPlayerBody()
+                                .eraseToAnyView()
+                                .frame(height: 150)
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                                .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                        }
+                        
+                        Color.clear
+                            .frame(height: EdgeInsets.edgePadding)
+                            .allowsHitTesting(false)
                     }
-
-                    Color.clear
-                        .frame(height: EdgeInsets.edgePadding)
-                        .allowsHitTesting(false)
+                    .background {
+                        EmptyHitTestView()
+                    }
                 }
 
                 if playbackButtonType == .large, !isPresentingDrawer {
@@ -194,6 +204,7 @@ extension VideoPlayer {
                     )
                 }
             }
+            .trackingSize($contentSize)
         }
     }
 }
