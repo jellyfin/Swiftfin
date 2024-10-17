@@ -28,12 +28,13 @@ final class NextUpLibraryViewModel: PagingLibraryViewModel<BaseItemDto> {
 
     private func parameters(for page: Int) -> Paths.GetNextUpParameters {
 
+        let maxNextUp = Defaults[.Customization.Home.maxNextUp]
         var parameters = Paths.GetNextUpParameters()
         parameters.enableUserData = true
         parameters.fields = .MinimumFields
         parameters.limit = pageSize
-        if Defaults[.Customization.Home.maxNextUp] > 0 {
-            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-Defaults[.Customization.Home.maxNextUp])
+        if maxNextUp > 0 {
+            parameters.nextUpDateCutoff = Date.now.addingTimeInterval(-maxNextUp)
         }
         parameters.enableRewatching = Defaults[.Customization.Home.resumeNextUp]
         parameters.startIndex = page
