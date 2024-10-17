@@ -252,8 +252,6 @@ internal enum L10n {
   internal static let deleteDevice = L10n.tr("Localizable", "deleteDevice", fallback: "Delete Device")
   /// Failed to Delete Device
   internal static let deleteDeviceFailed = L10n.tr("Localizable", "deleteDeviceFailed", fallback: "Failed to Delete Device")
-  /// Delete Devices
-  internal static let deleteDevices = L10n.tr("Localizable", "deleteDevices", fallback: "Delete Devices")
   /// Cannot delete a session from the same device (%1$@).
   internal static func deleteDeviceSelfDeletion(_ p1: Any) -> String {
     return L10n.tr("Localizable", "deleteDeviceSelfDeletion", String(describing: p1), fallback: "Cannot delete a session from the same device (%1$@).")

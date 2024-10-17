@@ -779,11 +779,6 @@
 // Used in the confirmation dialog to delete a single device
 "deleteDevice" = "Delete Device";
 
-// Delete Devices - Action
-// Message for deleting a a selection of devices in the all devices section
-// Used in the confirmation dialog to delete an array of devices
-"deleteDevices" = "Delete Devices";
-
 // Delete Device Self-Deletion - Error Message
 // Error message when attempting to delete the current session's device
 // Used to inform the user that they cannot delete their own session
