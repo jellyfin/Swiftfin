@@ -39,6 +39,11 @@ struct UserDashboardView: View {
                     .onSelect {
                         router.route(to: \.tasks)
                     }
+
+                ChevronButton("Users") // L10n.users)
+                    .onSelect {
+                        router.route(to: \.users)
+                    }
             }
         }
         .navigationTitle(L10n.dashboard)
