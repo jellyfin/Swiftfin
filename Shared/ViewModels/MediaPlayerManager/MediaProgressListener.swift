@@ -11,31 +11,59 @@ import Defaults
 import Foundation
 import JellyfinAPI
 
-class MediaProgressListener: ViewModel, MediaPlayerListener {
+// TODO: how to get seconds for current item
 
-    weak var manager: MediaPlayerManager?
+class MediaProgressListener: ViewModel, MediaPlayerListener {
     
-    private var currentPlaybackItem: MediaPlayerItem?
-    private var seconds: TimeInterval = 0
+    @CurrentDate(interval: 5)
+    private var currentDate
+
+    weak var manager: MediaPlayerManager? {
+        didSet {
+            if let manager = manager {
+                setup(with: manager)
+            }
+        }
+    }
     
-    init(manager: MediaPlayerManager? = nil) {
-        super.init()
+    private var hasSentStart = false
+    private weak var item: MediaPlayerItem?
+    
+    init(manager: MediaPlayerManager?, item: MediaPlayerItem) {
+        self.item = item
         self.manager = manager
+        super.init()
     }
     
     private func setup(with manager: MediaPlayerManager) {
-        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
+        cancellables = []
+        
+//        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-//        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
+        manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
     
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
         
-        if let currentPlaybackItem {
-//            sendStopReport(for: currentPlaybackItem)
+        if let item, let seconds = manager?.seconds {
+            sendStopReport(for: item, seconds: seconds)
         }
+    }
+    
+    private func stateDidChange(newState: MediaPlayerManager.State) {
+        guard let item else { return }
         
-        currentPlaybackItem = newItem
+        switch newState {
+        case .initial, .loadingItem: ()
+        case .error, .stopped:
+            sendStopReport(for: item, seconds: 0)
+        case .playing:
+            sendStartReport(for: item, seconds: manager?.seconds ?? 0)
+        case .paused:
+            sendProgressReport(for: item, seconds: manager?.seconds ?? 0, isPaused: true)
+        case .buffering:
+            sendProgressReport(for: item, seconds: manager?.seconds ?? 0)
+        }
     }
     
     private func secondsDidChange(newSeconds: TimeInterval) {
@@ -43,6 +71,8 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     }
     
     private func sendStartReport(for item: MediaPlayerItem, seconds: TimeInterval) {
+        
+        hasSentStart = true
         
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }

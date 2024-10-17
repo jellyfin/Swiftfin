@@ -12,6 +12,8 @@ import JellyfinAPI
 import SwiftUI
 import VLCUI
 
+// TODO: rename `MediaPlaybackItem`?
+
 class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
     @Published
@@ -19,8 +21,15 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
     @Published
     var selectedSubtitleStreamIndex: Int? = nil
 
-    weak var manager: MediaPlayerManager?
+    weak var manager: MediaPlayerManager? {
+        didSet {
+            for var l in listeners {
+                l.manager = manager
+            }
+        }
+    }
 
+    var listeners: [any MediaPlayerListener] = []
     var supplements: [any MediaPlayerSupplement] = []
 
     let baseItem: BaseItemDto
@@ -75,6 +84,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             .compactMap(\.asPlaybackChild)
 
         vlcConfiguration = configuration
+        
+        super.init()
 
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
@@ -82,6 +93,8 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         if baseItem.chapters?.isNotEmpty ?? false {
             supplements.append(MediaChaptersSupplement(chapters: baseItem.fullChapterInfo))
         }
+        
+        listeners.append(MediaProgressListener(manager: nil, item: self))
     }
 
     // MARK: build

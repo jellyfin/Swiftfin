@@ -10,13 +10,19 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-class MediaPlayerQueue: MediaPlayerSupplement {
+class MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
     
     let title: String = "Queue"
     
     weak var manager: MediaPlayerManager?
     
-    var items: OrderedSet<BaseItemDto> = []
+    private(set) var items: OrderedSet<BaseItemDto> = []
+    
+    init(manager: MediaPlayerManager? = nil) {
+        self.manager = manager
+    }
+    
+    
     
     func videoPlayerBody() -> some View {
         Color.red

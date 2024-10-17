@@ -21,6 +21,7 @@ import VLCUI
 // TODO: should view models handle progress reports instead, with a protocol
 //       for other types of media handling
 // TODO: set playback rate
+//       - what if proxy couldn't set rate?
 
 protocol MediaPlayerListener {
 
@@ -38,6 +39,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
     // MARK: Action
 
+    // TODO: have play new MediaPlayerItem
     enum Action: Equatable {
 
         case error(JellyfinAPIError)
@@ -49,6 +51,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case stop
 
         case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
+//        case playNew(item: MediaPlayerItem)
 
         case seek(seconds: TimeInterval)
     }
@@ -71,6 +74,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         didSet {
             if let playbackItem {
                 supplements += playbackItem.supplements
+                playbackItem.manager = self
             }
         }
     }
@@ -91,6 +95,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var seconds: TimeInterval = 0
 
+    /// Listeners of the media player.
     var listeners: [any MediaPlayerListener] = []
 
     /// Supplements to provide media players.
@@ -109,6 +114,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
 
+    // TODO: no implicit unwrap
     var proxy: MediaPlayerProxy!
     private var itemBuildTask: AnyCancellable?
 
@@ -131,7 +137,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
 
         self.playbackItem = playbackItem
-        queue.append(playbackItem.baseItem)
+//        queue.append(playbackItem.baseItem)
 
         state = .buffering
     }

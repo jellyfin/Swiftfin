@@ -111,19 +111,19 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        MediaInfoSupplement(item: .init(
-            indexNumber: 1,
-            name: "The Bear",
-            parentIndexNumber: 1,
-            runTimeTicks: 10_000_000_000,
-            type: .episode
-        ))
-        .videoPlayerBody()
-        .eraseToAnyView()
-        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
-        .frame(height: 110)
-        .previewInterfaceOrientation(.landscapeRight)
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MediaInfoSupplement(item: .init(
+//            indexNumber: 1,
+//            name: "The Bear",
+//            parentIndexNumber: 1,
+//            runTimeTicks: 10_000_000_000,
+//            type: .episode
+//        ))
+//        .videoPlayerBody()
+//        .eraseToAnyView()
+//        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
+//        .frame(height: 110)
+//        .previewInterfaceOrientation(.landscapeRight)
+//    }
+//}

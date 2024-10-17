@@ -118,34 +118,34 @@ struct ChapterButton: View {
     }
 }
 
-struct MediaChaptersSupplement_Previews: PreviewProvider {
-    static var previews: some View {
-        ChapterOverlay(chapters: [
-            .init(chapterInfo: .init(name: "Test", startPositionTicks: 0), imageSource: .init(), secondsRange: 0 ..< 100),
-            .init(chapterInfo: .init(name: "Test", startPositionTicks: 100), imageSource: .init(), secondsRange: 100 ..< 200),
-            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
-            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
-            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 303),
-        ])
-        .frame(height: 150)
-        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
-        .environmentObject(
-            MediaPlayerManager(
-                playbackItem: .init(
-                    baseItem: .init(
-                        indexNumber: 1,
-                        name: "The Bear",
-                        parentIndexNumber: 1,
-                        runTimeTicks: 10_000_000_000,
-                        type: .episode
-                    ),
-                    mediaSource: .init(),
-                    playSessionID: "",
-                    url: URL(string: "/")!
-                )
-            )
-        )
-        .previewInterfaceOrientation(.landscapeRight)
-        .preferredColorScheme(.dark)
-    }
-}
+//struct MediaChaptersSupplement_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChapterOverlay(chapters: [
+//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 0), imageSource: .init(), secondsRange: 0 ..< 100),
+//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 100), imageSource: .init(), secondsRange: 100 ..< 200),
+//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
+//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 301),
+//            .init(chapterInfo: .init(name: "Test", startPositionTicks: 200), imageSource: .init(), secondsRange: 200 ..< 303),
+//        ])
+//        .frame(height: 150)
+//        .environment(\.safeAreaInsets, .constant(EdgeInsets.edgeInsets))
+//        .environmentObject(
+//            MediaPlayerManager(
+//                playbackItem: .init(
+//                    baseItem: .init(
+//                        indexNumber: 1,
+//                        name: "The Bear",
+//                        parentIndexNumber: 1,
+//                        runTimeTicks: 10_000_000_000,
+//                        type: .episode
+//                    ),
+//                    mediaSource: .init(),
+//                    playSessionID: "",
+//                    url: URL(string: "/")!
+//                )
+//            )
+//        )
+//        .previewInterfaceOrientation(.landscapeRight)
+//        .preferredColorScheme(.dark)
+//    }
+//}

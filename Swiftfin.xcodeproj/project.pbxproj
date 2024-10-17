@@ -2502,6 +2502,7 @@
 		BD0BA2292AD6501300306A8D /* MediaPlayerManager */ = {
 			isa = PBXGroup;
 			children = (
+				E173927E2C73EC0B00E3A1F3 /* NowPlayable */,
 				E11D5A152C7918F1008A99F4 /* MediaPlayerItem.swift */,
 				E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */,
 				E1EDFB452C75309D00C42FD3 /* MediaPlayerProxy */,
@@ -3048,7 +3049,6 @@
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E19D41A92BF077130082B8B2 /* Keychain.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
-				E173927E2C73EC0B00E3A1F3 /* NowPlayable */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
 				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
 				E1549657296CA2EF00C4EF88 /* UserSession.swift */,
@@ -3204,8 +3204,8 @@
 			isa = PBXGroup;
 			children = (
 				E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */,
-				E156D1412CC0D3A800908573 /* MediaPlayerQueue.swift */,
 				E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */,
+				E156D1412CC0D3A800908573 /* MediaPlayerQueue.swift */,
 				E13ECC6F2C922EDF0094601F /* MediaPlayerSupplement.swift */,
 			);
 			path = Supplements;
