@@ -632,6 +632,8 @@ internal enum L10n {
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
   /// Remove
   internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
+  /// Remove All
+  internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove All")
   /// Remove All Servers
   internal static let removeAllServers = L10n.tr("Localizable", "removeAllServers", fallback: "Remove All Servers")
   /// Remove All Users
@@ -708,6 +710,8 @@ internal enum L10n {
   internal static let seekSlideGestureEnabled = L10n.tr("Localizable", "seekSlideGestureEnabled", fallback: "Seek Slide Gesture Enabled")
   /// See More
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
+  /// Select All
+  internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
   /// Series

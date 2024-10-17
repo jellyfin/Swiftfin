@@ -19,7 +19,7 @@ struct DeviceDetailsView: View {
     @State
     private var temporaryCustomName: String
     @State
-    private var error: Error? = nil
+    private var error: Error?
     @State
     private var isPresentingError: Bool = false
     @State
@@ -28,6 +28,8 @@ struct DeviceDetailsView: View {
     @StateObject
     private var viewModel: DevicesViewModel
 
+    // MARK: - Initializer
+
     init(device: DeviceInfo) {
         self.device = device
         // TODO: Enable with SDK Change
@@ -35,14 +37,13 @@ struct DeviceDetailsView: View {
         _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
     }
 
+    // MARK: - Body
+
     var body: some View {
         List {
             UserSection(device: device)
-
             CustomDeviceNameSection(customName: $temporaryCustomName)
-
             DeviceSection(device: device)
-
             CapabilitiesSection(device: device)
         }
         .navigationTitle(L10n.device)
@@ -50,7 +51,6 @@ struct DeviceDetailsView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 error = eventError
                 isPresentingError = true
             case .success:

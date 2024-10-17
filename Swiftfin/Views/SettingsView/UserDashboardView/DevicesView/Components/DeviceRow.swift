@@ -12,12 +12,8 @@ import SwiftUI
 
 extension DevicesView {
     struct DeviceRow: View {
-
         @CurrentDate
         private var currentDate: Date
-
-        @Injected(\.currentUserSession)
-        private var userSession: UserSession!
 
         @ObservedObject
         private var box: BindingBox<DeviceInfo?>
@@ -34,13 +30,6 @@ extension DevicesView {
 
         private var deviceInfo: DeviceInfo {
             box.value ?? .init()
-        }
-
-        // MARK: - Same Device Check
-
-        // Don't allow selectMode on the from the same device
-        private var isSelf: Bool {
-            deviceInfo.id == userSession.client.configuration.deviceID
         }
 
         // MARK: - Initializer
@@ -68,7 +57,7 @@ extension DevicesView {
                 deviceDetails
             }
             .onSelect {
-                if selectMode && !isSelf {
+                if selectMode {
                     selected.toggle()
                 } else {
                     onSelect()
@@ -89,7 +78,7 @@ extension DevicesView {
         @ViewBuilder
         private var rowLeading: some View {
             HStack {
-                if selectMode && !isSelf {
+                if selectMode {
                     Button(action: {
                         selected.toggle()
                     }) {

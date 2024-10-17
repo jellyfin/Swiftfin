@@ -848,3 +848,13 @@
 // Indicates that an operation was successful
 // Used as a confirmation for successful actions
 "success" = "Success";
+
+// Remove All - Button
+// Deselects all currently selected devices
+// Used to clear all selections in selection mode
+"removeAll" = "Remove All";
+
+// Select All - Button
+// Selects all available devices
+// Used to select all items in selection mode
+"selectAll" = "Select All";

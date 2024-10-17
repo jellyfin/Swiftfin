@@ -46,11 +46,25 @@ struct DevicesView: View {
     var body: some View {
         contentView
             .navigationTitle(L10n.allDevices)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(selectMode)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if selectMode {
+                        navigationBarSelectView
+                    }
+                }
+                ToolbarItem(placement: .principal) {
+                    if selectMode {
+                        navigationBarDeleteView
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    navigationBarEditView
+                }
+            }
             .onFirstAppear {
                 viewModel.send(.getDevices)
-            }
-            .topBarTrailing {
-                navigationBarView
             }
             .confirmationDialog(
                 L10n.deleteSelectedDevices,
@@ -96,25 +110,6 @@ struct DevicesView: View {
         }
     }
 
-    // MARK: - Navigation Bar Content
-
-    @ViewBuilder
-    private var navigationBarView: some View {
-        if viewModel.backgroundStates.contains(.gettingDevices) {
-            ProgressView()
-        } else {
-            Button(selectMode ? L10n.cancel : L10n.edit) {
-                withAnimation {
-                    selectMode.toggle()
-                    UIDevice.impact(.light)
-                    if !selectMode { selectedDevices.removeAll() }
-                }
-            }
-            .buttonStyle(.toolbarPill)
-            .disabled(viewModel.devices.isEmpty)
-        }
-    }
-
     // MARK: - Device List View
 
     private var deviceListView: some View {
@@ -124,29 +119,6 @@ struct DevicesView: View {
                 description: L10n.allDevicesDescription
             ) {
                 UIApplication.shared.open(.jellyfinDocsDevices)
-            }
-
-            if selectMode {
-                Section {
-                    Button(selectedDevices == Set(viewModel.devices.keys) ? "Remove All" : "Select All") {
-                        withAnimation {
-                            if selectedDevices == Set(viewModel.devices.keys) {
-                                selectedDevices = []
-                            } else {
-                                selectedDevices = Set(viewModel.devices.keys)
-                            }
-                        }
-                    }
-                    .disabled(!selectMode)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-
-                    Button(L10n.deleteDevices, role: .destructive) {
-                        isPresentingDeleteSelectionConfirmation = true
-                    }
-                    .disabled(selectedDevices.isEmpty)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                }
-                .transition(.move(edge: .top).combined(with: .opacity))
             }
 
             ForEach(Array(viewModel.devices.keys), id: \.self) { id in
@@ -181,6 +153,50 @@ struct DevicesView: View {
             }
         }
         .animation(.easeInOut, value: selectMode)
+    }
+
+    // MARK: - Navigation Bar Edit Content
+
+    @ViewBuilder
+    private var navigationBarEditView: some View {
+        if viewModel.backgroundStates.contains(.gettingDevices) {
+            ProgressView()
+        } else {
+            Button(selectMode ? L10n.cancel : L10n.edit) {
+                selectMode.toggle()
+                UIDevice.impact(.light)
+                if !selectMode {
+                    selectedDevices.removeAll()
+                }
+            }
+            .buttonStyle(.toolbarPill)
+        }
+    }
+
+    // MARK: - Navigation Bar Select/Remove All Content
+
+    @ViewBuilder
+    private var navigationBarSelectView: some View {
+        Button(selectedDevices == Set(viewModel.devices.keys) ? L10n.removeAll : L10n.selectAll) {
+            if selectedDevices == Set(viewModel.devices.keys) {
+                selectedDevices = []
+            } else {
+                selectedDevices = Set(viewModel.devices.keys)
+            }
+        }
+        .buttonStyle(.toolbarPill)
+        .disabled(!selectMode)
+    }
+
+    // MARK: - Navigation Bar Delete All
+
+    @ViewBuilder
+    private var navigationBarDeleteView: some View {
+        Button(L10n.delete, role: .destructive) {
+            isPresentingDeleteSelectionConfirmation = true
+        }
+        .buttonStyle(.toolbarPill)
+        .disabled(selectedDevices.isEmpty)
     }
 
     // MARK: - Delete Selected Devices Confirmation Actions
