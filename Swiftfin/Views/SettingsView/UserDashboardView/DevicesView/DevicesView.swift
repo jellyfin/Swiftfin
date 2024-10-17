@@ -10,6 +10,8 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Replace with CustomName when Available
+
 struct DevicesView: View {
 
     @EnvironmentObject
@@ -25,15 +27,9 @@ struct DevicesView: View {
     @State
     private var isPresentingSelfDeleteError = false
     @State
-    private var selectedDevice: DeviceInfo?
-    @State
-    private var temporaryDeviceName: String = ""
-    @State
-    private var deviceToDelete: String?
-    @State
-    private var selectMode: Bool = false
-    @State
     private var selectedDevices: Set<String> = []
+    @State
+    private var editMode: Bool = false
 
     // MARK: - Initializer
 
@@ -47,16 +43,11 @@ struct DevicesView: View {
         contentView
             .navigationTitle(L10n.allDevices)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(selectMode)
+            .navigationBarBackButtonHidden(editMode)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if selectMode {
+                    if editMode {
                         navigationBarSelectView
-                    }
-                }
-                ToolbarItem(placement: .principal) {
-                    if selectMode {
-                        navigationBarDeleteView
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -113,46 +104,70 @@ struct DevicesView: View {
     // MARK: - Device List View
 
     private var deviceListView: some View {
-        List {
-            ListTitleSection(
-                L10n.devices,
-                description: L10n.allDevicesDescription
-            ) {
-                UIApplication.shared.open(.jellyfinDocsDevices)
-            }
+        VStack {
+            List {
+                ListTitleSection(
+                    L10n.devices,
+                    description: L10n.allDevicesDescription
+                ) {
+                    UIApplication.shared.open(.jellyfinDocsDevices)
+                }
 
-            ForEach(Array(viewModel.devices.keys), id: \.self) { id in
-                if let deviceBox = viewModel.devices[id] {
-                    DeviceRow(
-                        box: deviceBox,
-                        onSelect: {
-                            if let selectedDevice = deviceBox.value {
+                ForEach(Array(viewModel.devices.keys), id: \.self) { id in
+                    if let deviceBox = viewModel.devices[id] {
+                        DeviceRow(box: deviceBox) {
+                            if editMode {
+                                if selectedDevices.contains(id) {
+                                    selectedDevices.remove(id)
+                                } else {
+                                    selectedDevices.insert(id)
+                                }
+                            } else if let selectedDevice = deviceBox.value {
                                 router.route(to: \.deviceDetails, selectedDevice)
                             }
-                        },
-                        onDelete: {
-                            deviceToDelete = deviceBox.value?.id
-                            selectedDevice = deviceBox.value
+                        } onDelete: {
+                            selectedDevices.removeAll()
+                            selectedDevices.insert(id)
                             isPresentingDeleteConfirmation = true
-                        },
-                        selectMode: $selectMode,
-                        selected: Binding(
-                            get: { selectedDevices.contains(id) },
-                            set: { isSelected in
-                                withAnimation {
-                                    if isSelected {
-                                        selectedDevices.insert(id)
-                                    } else {
-                                        selectedDevices.remove(id)
-                                    }
-                                }
-                            }
-                        )
-                    )
+                        }
+                        .environment(\.isEditing, editMode)
+                        .environment(\.isSelected, selectedDevices.contains(id))
+                    }
                 }
             }
+
+            if editMode {
+                deleteDevicesButton
+                    .edgePadding([.bottom, .horizontal])
+            }
         }
-        .animation(.easeInOut, value: selectMode)
+    }
+
+    // MARK: - Button to Delete Devices
+
+    @ViewBuilder
+    private var deleteDevicesButton: some View {
+        Button {
+            isPresentingDeleteSelectionConfirmation = true
+        } label: {
+            ZStack {
+                Color.red
+
+                Text("Delete")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(selectedDevices.isNotEmpty ? .primary : .secondary)
+
+                if selectedDevices.isEmpty {
+                    Color.black
+                        .opacity(0.5)
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .frame(height: 50)
+            .frame(maxWidth: 400)
+        }
+        .disabled(selectedDevices.isEmpty)
+        .buttonStyle(.plain)
     }
 
     // MARK: - Navigation Bar Edit Content
@@ -162,10 +177,10 @@ struct DevicesView: View {
         if viewModel.backgroundStates.contains(.gettingDevices) {
             ProgressView()
         } else {
-            Button(selectMode ? L10n.cancel : L10n.edit) {
-                selectMode.toggle()
+            Button(editMode ? L10n.cancel : L10n.edit) {
+                editMode.toggle()
                 UIDevice.impact(.light)
-                if !selectMode {
+                if !editMode {
                     selectedDevices.removeAll()
                 }
             }
@@ -185,18 +200,7 @@ struct DevicesView: View {
             }
         }
         .buttonStyle(.toolbarPill)
-        .disabled(!selectMode)
-    }
-
-    // MARK: - Navigation Bar Delete All
-
-    @ViewBuilder
-    private var navigationBarDeleteView: some View {
-        Button(L10n.delete, role: .destructive) {
-            isPresentingDeleteSelectionConfirmation = true
-        }
-        .buttonStyle(.toolbarPill)
-        .disabled(selectedDevices.isEmpty)
+        .disabled(!editMode)
     }
 
     // MARK: - Delete Selected Devices Confirmation Actions
@@ -207,7 +211,8 @@ struct DevicesView: View {
 
             Button(L10n.confirm, role: .destructive) {
                 viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
-                selectMode = false
+                editMode = false
+                selectedDevices.removeAll()
             }
         }
     }
@@ -219,11 +224,12 @@ struct DevicesView: View {
             Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.delete, role: .destructive) {
-                if let deviceToDelete = deviceToDelete {
+                if let deviceToDelete = selectedDevices.first, selectedDevices.count == 1 {
                     if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
                         isPresentingSelfDeleteError = true
                     } else {
                         viewModel.send(.deleteDevices(ids: [deviceToDelete]))
+                        selectedDevices.removeAll()
                     }
                 }
             }
@@ -233,9 +239,12 @@ struct DevicesView: View {
     // MARK: - Deletion Failure Alert
 
     private var deletionFailureAlert: Alert {
-        Alert(
+        selectedDevices.removeAll()
+
+        return Alert(
             title: Text(L10n.deleteDeviceFailed),
-            message: Text(L10n.deleteDeviceSelfDeletion(selectedDevice?.name ?? L10n.unknown)),
+            // TODO: Replace with CustomName when Available
+            message: Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName)),
             dismissButton: .default(Text(L10n.ok))
         )
     }

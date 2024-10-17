@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Defaults
 import Factory
 import JellyfinAPI
 import SwiftUI
@@ -15,16 +16,29 @@ extension DevicesView {
         @CurrentDate
         private var currentDate: Date
 
+        private let accentColor = Defaults[.accentColor]
+
+        // MARK: - Environment Variables
+
+        @Environment(\.colorScheme)
+        private var colorScheme
+
+        // MARK: - Binding Variables
+
+        @Environment(\.isEditing)
+        private var isEditing
+        @Environment(\.isSelected)
+        private var isSelected
+
+        // MARK: - Observed Objects
+
         @ObservedObject
         private var box: BindingBox<DeviceInfo?>
 
-        let onSelect: () -> Void
-        let onDelete: () -> Void
+        // MARK: - Actions
 
-        @Binding
-        var selectMode: Bool
-        @Binding
-        var selected: Bool
+        private let onSelect: () -> Void
+        private let onDelete: () -> Void
 
         // MARK: - Device Mapping
 
@@ -36,33 +50,135 @@ extension DevicesView {
 
         init(
             box: BindingBox<DeviceInfo?>,
-            onSelect editAction: @escaping () -> Void,
-            onDelete deleteAction: @escaping () -> Void,
-            selectMode: Binding<Bool>,
-            selected: Binding<Bool>
+            onSelect: @escaping () -> Void,
+            onDelete: @escaping () -> Void
         ) {
             self.box = box
-            self.onSelect = editAction
-            self.onDelete = deleteAction
-            self._selectMode = selectMode
-            self._selected = selected
+            self.onSelect = onSelect
+            self.onDelete = onDelete
+        }
+
+        // MARK: - Label Styling
+
+        private var labelForegroundStyle: some ShapeStyle {
+            guard isEditing else { return .primary }
+
+            return isSelected ? .primary : .secondary
+        }
+
+        // MARK: - Device View
+
+        @ViewBuilder
+        private var deviceView: some View {
+            ZStack {
+                Group {
+                    if colorScheme == .light {
+                        Color.secondarySystemFill
+                    } else {
+                        Color.tertiarySystemBackground
+                    }
+                }
+                .posterShadow()
+
+                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
+                    .foregroundStyle(.secondary)
+            }
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
+        }
+
+        @ViewBuilder
+        private var deviceImage: some View {
+            ZStack {
+                deviceInfo.device.clientColor
+
+                Image(deviceInfo.device.image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 40)
+
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                }
+            }
+            .squarePosterStyle()
+            .frame(width: 60, height: 60)
+        }
+
+        // MARK: - Row Content
+
+        @ViewBuilder
+        private var rowContent: some View {
+            HStack {
+
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(deviceInfo.name ?? L10n.unknown)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+
+                    Text(deviceInfo.lastUserName ?? L10n.never)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
+                        .multilineTextAlignment(.leading)
+
+                    TextPairView(
+                        deviceInfo.appName ?? L10n.unknown,
+                        value: Text(deviceInfo.appVersion ?? .emptyDash)
+                    )
+
+                    TextPairView(
+                        L10n.lastSeen,
+                        value: {
+                            if let dateLastActivity = deviceInfo.dateLastActivity {
+                                Text(dateLastActivity, format: .relative(presentation: .numeric, unitsStyle: .narrow))
+                            } else {
+                                Text(L10n.never)
+                            }
+                        }()
+                    )
+                    .id(currentDate)
+                    .monospacedDigit()
+                }
+
+                Spacer()
+
+                if isEditing, isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.overlayColor, accentColor)
+
+                } else if isEditing {
+                    Image(systemName: "circle")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
 
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: 0)) {
-                rowLeading
+            ListRow(insets: .init(vertical: 8, horizontal: 8)) {
+                deviceImage
+                    .padding(.trailing, 8)
             } content: {
-                deviceDetails
+                rowContent
             }
-            .onSelect {
-                if selectMode {
-                    selected.toggle()
-                } else {
-                    onSelect()
-                }
-            }
+            .onSelect(perform: onSelect)
             .swipeActions {
                 Button {
                     onDelete()
@@ -71,72 +187,11 @@ extension DevicesView {
                 }
                 .tint(.red)
             }
-        }
-
-        // MARK: - Row Leading Image
-
-        @ViewBuilder
-        private var rowLeading: some View {
-            HStack {
-                if selectMode {
-                    Button(action: {
-                        selected.toggle()
-                    }) {
-                        Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                            .resizable()
-                            .foregroundColor(.accentColor)
-                            .frame(width: 24, height: 24)
-                    }
-                    .transition(.move(edge: .leading).combined(with: .opacity))
-                    .padding(.leading, 0)
-                    .padding(.trailing, 8)
-                    .buttonStyle(PlainButtonStyle())
+            .contextMenu {
+                Button(L10n.delete, role: .destructive) {
+                    onDelete()
                 }
-
-                ZStack {
-                    deviceInfo.device.clientColor
-
-                    Image(deviceInfo.device.image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 40)
-                }
-                .squarePosterStyle()
-                .frame(width: 60, height: 60)
-                .padding(.vertical, 8)
             }
-        }
-
-        // MARK: - Row Device Details
-
-        @ViewBuilder
-        private var deviceDetails: some View {
-            VStack(alignment: .leading) {
-                // TODO: Change to (CustomName ?? DeviceName) when available
-                Text(deviceInfo.name ?? L10n.unknown)
-                    .font(.headline)
-
-                Text(deviceInfo.lastUserName ?? L10n.unknown)
-
-                TextPairView(
-                    leading: deviceInfo.appName ?? L10n.unknown,
-                    trailing: deviceInfo.appVersion ?? .emptyDash
-                )
-
-                TextPairView(
-                    L10n.lastSeen,
-                    value: {
-                        if let dateLastActivity = deviceInfo.dateLastActivity {
-                            Text(dateLastActivity, format: .relative(presentation: .numeric, unitsStyle: .narrow))
-                        } else {
-                            Text(L10n.never)
-                        }
-                    }()
-                )
-                .id(currentDate)
-                .monospacedDigit()
-            }
-            .font(.subheadline)
         }
     }
 }
