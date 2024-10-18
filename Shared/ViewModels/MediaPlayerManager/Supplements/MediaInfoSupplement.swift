@@ -91,7 +91,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                 
                 VStack {
                     Button {
-                        manager.proxy.setTime(0)
+                        manager.proxy?.setTime(0)
                         selectedMediaPlayerSupplement = nil
                     } label: {
                         ZStack {

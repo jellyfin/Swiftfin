@@ -54,10 +54,10 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: " "
             ) {
                 if videoPlayerManager.state == .playing {
-                    videoPlayerManager.proxy.pause()
+                    videoPlayerManager.proxy?.pause()
                     updateViewProxy.present(systemName: "pause.fill", title: "Pause")
                 } else {
-                    videoPlayerManager.proxy.play()
+                    videoPlayerManager.proxy?.play()
                     updateViewProxy.present(systemName: "play.fill", title: "Play")
                 }
             }

@@ -76,7 +76,7 @@ struct ChapterButton: View {
     var body: some View {
         Button {
 //            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
-            manager.proxy.setTime(chapter.secondsRange.lowerBound)
+            manager.proxy?.setTime(chapter.secondsRange.lowerBound)
         } label: {
             VStack(alignment: .leading, spacing: 5) {
                 ZStack {

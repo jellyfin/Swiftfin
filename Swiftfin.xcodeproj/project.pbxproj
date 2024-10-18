@@ -2502,11 +2502,11 @@
 		BD0BA2292AD6501300306A8D /* MediaPlayerManager */ = {
 			isa = PBXGroup;
 			children = (
-				E173927E2C73EC0B00E3A1F3 /* NowPlayable */,
 				E11D5A152C7918F1008A99F4 /* MediaPlayerItem.swift */,
 				E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */,
 				E1EDFB452C75309D00C42FD3 /* MediaPlayerProxy */,
 				E12D02432C9FB772003B27CB /* MediaProgressListener.swift */,
+				E173927E2C73EC0B00E3A1F3 /* NowPlayable */,
 				E18120F92CBDCFB800682985 /* Supplements */,
 			);
 			path = MediaPlayerManager;

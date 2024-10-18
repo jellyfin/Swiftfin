@@ -40,9 +40,9 @@ extension VideoPlayer.Overlay {
             Button {
                 switch manager.state {
                 case .playing:
-                    manager.proxy.pause()
+                    manager.proxy?.pause()
                 case .paused:
-                    manager.proxy.play()
+                    manager.proxy?.play()
                 default: ()
                 }
             } label: {
@@ -68,7 +68,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpForwardButton: some View {
             Button {
-                manager.proxy.jumpForward(jumpForwardInterval.interval)
+                manager.proxy?.jumpForward(jumpForwardInterval.interval)
             } label: {
                 Label(
                     "\(jumpForwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",
@@ -84,7 +84,7 @@ extension VideoPlayer.Overlay {
         @ViewBuilder
         private var jumpBackwardButton: some View {
             Button {
-                manager.proxy.jumpBackward(jumpBackwardInterval.interval)
+                manager.proxy?.jumpBackward(jumpBackwardInterval.interval)
             } label: {
                 Label(
                     "\(jumpBackwardInterval.interval, format: .interval(style: .narrow, fields: [.second]))",

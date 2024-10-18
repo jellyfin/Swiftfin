@@ -73,6 +73,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     private(set) var playbackItem: MediaPlayerItem? = nil {
         didSet {
             if let playbackItem {
+                seconds = playbackItem.baseItem.startTimeSeconds
                 supplements += playbackItem.supplements
                 playbackItem.manager = self
             }
@@ -84,7 +85,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     var playbackRate: PlaybackRate = .one {
         didSet {
-            proxy.setRate(Float(playbackRate.rate))
+            proxy?.setRate(Float(playbackRate.rate))
         }
     }
     @Published
@@ -98,7 +99,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     /// Listeners of the media player.
     var listeners: [any MediaPlayerListener] = []
 
-    /// Supplements to provide media players.
+    /// Supplements of the media player.
     ///
     /// Supplements are ordered as:
     /// - MediaPlayerManager provided supplements
@@ -114,8 +115,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
 
-    // TODO: no implicit unwrap
-    var proxy: MediaPlayerProxy!
+    var proxy: MediaPlayerProxy?
     private var itemBuildTask: AnyCancellable?
 
     // MARK: init

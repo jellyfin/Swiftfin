@@ -24,15 +24,15 @@ class AVPlayerVideoPlayerProxy: MediaPlayerProxy {
 
     func jumpForward(_ seconds: TimeInterval) {
         guard let avPlayer else { return }
-        let time = avPlayer.currentTime() + CMTime(value: CMTimeValue(seconds), timescale: 1)
-
+        
+        let time = avPlayer.currentTime() + CMTime(seconds: seconds, preferredTimescale: 1)
         avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 
     func jumpBackward(_ seconds: TimeInterval) {
         guard let avPlayer else { return }
-        let time = avPlayer.currentTime() - CMTime(value: CMTimeValue(seconds), timescale: 1)
-
+        
+        let time = avPlayer.currentTime() - CMTime(seconds: seconds, preferredTimescale: 1)
         avPlayer.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
 

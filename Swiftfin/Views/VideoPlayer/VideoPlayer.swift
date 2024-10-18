@@ -121,7 +121,7 @@ struct VideoPlayer: View {
                 guard !isScrubbing else { return }
 
                 manager.send(.seek(seconds: scrubbedSeconds))
-                manager.proxy.setTime(scrubbedSeconds)
+                manager.proxy?.setTime(scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
