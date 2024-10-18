@@ -22,7 +22,7 @@ internal enum L10n {
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
-  /// Add Server
+  /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add Task Trigger
   internal static let addTaskTrigger = L10n.tr("Localizable", "addTaskTrigger", fallback: "Add Task Trigger")
@@ -36,6 +36,8 @@ internal enum L10n {
   internal static func airWithDate(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "airWithDate", p1, fallback: "Airs %s")
   }
+  /// View all past and present devices that have connected.
+  internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All Genres
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
@@ -142,6 +144,8 @@ internal enum L10n {
   internal static let cancelling = L10n.tr("Localizable", "cancelling", fallback: "Cancelling...")
   /// Cannot connect to host
   internal static let cannotConnectToHost = L10n.tr("Localizable", "cannotConnectToHost", fallback: "Cannot connect to host")
+  /// Capabilities
+  internal static let capabilities = L10n.tr("Localizable", "capabilities", fallback: "Capabilities")
   /// CAST
   internal static let cast = L10n.tr("Localizable", "cast", fallback: "CAST")
   /// Cast & Crew
@@ -220,6 +224,12 @@ internal enum L10n {
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
   /// PlaybackCompatibility Custom Category
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
+  /// Custom Device Name
+  internal static let customDeviceName = L10n.tr("Localizable", "customDeviceName", fallback: "Custom Device Name")
+  /// Your custom device name '%1$@' has been saved.
+  internal static func customDeviceNameSaved(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "customDeviceNameSaved", String(describing: p1), fallback: "Your custom device name '%1$@' has been saved.")
+  }
   /// Custom profile is Added to the Existing Profiles
   internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles")
   /// Device Profile Section Description
@@ -240,12 +250,26 @@ internal enum L10n {
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
   /// Day of Week
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of Week")
-  /// Days
-  internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
+  /// Time Interval Help Text - Days
+  internal static let days = L10n.tr("Localizable", "days", fallback: "days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Server Detail View - Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
+  /// Delete Device
+  internal static let deleteDevice = L10n.tr("Localizable", "deleteDevice", fallback: "Delete Device")
+  /// Failed to Delete Device
+  internal static let deleteDeviceFailed = L10n.tr("Localizable", "deleteDeviceFailed", fallback: "Failed to Delete Device")
+  /// Cannot delete a session from the same device (%1$@).
+  internal static func deleteDeviceSelfDeletion(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "deleteDeviceSelfDeletion", String(describing: p1), fallback: "Cannot delete a session from the same device (%1$@).")
+  }
+  /// Are you sure you wish to delete this device? This session will be logged out.
+  internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// Delete Selected Devices
+  internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
+  /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
+  internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.")
   /// Server Detail View - Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
   /// Delete Trigger
@@ -256,10 +280,12 @@ internal enum L10n {
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Details
   internal static let details = L10n.tr("Localizable", "details", fallback: "Details")
-  /// Device
+  /// Session Device Section Label
   internal static let device = L10n.tr("Localizable", "device", fallback: "Device")
   /// Section Header for Device Profiles
   internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
+  /// Devices
+  internal static let devices = L10n.tr("Localizable", "devices", fallback: "Devices")
   /// PlaybackCompatibility DirectPlay Category
   internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct Play")
   /// DIRECTOR
@@ -350,7 +376,7 @@ internal enum L10n {
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
   /// Idle
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
-  /// Indicators
+  /// Customize Server View - Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
   /// Information
   internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
@@ -366,7 +392,7 @@ internal enum L10n {
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
   }
-  /// %1$@ / %2$@
+  /// SessionPlaybackMethod Remaining Time
   internal static func itemOverItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemOverItem", String(describing: p1), String(describing: p2), fallback: "%1$@ / %2$@")
   }
@@ -434,7 +460,7 @@ internal enum L10n {
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
   /// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
   internal static let logsDescription = L10n.tr("Localizable", "logsDescription", fallback: "Access the Jellyfin server logs for troubleshooting and monitoring purposes.")
-  /// Maximum Bitrate
+  /// Option to set the maximum bitrate for playback
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
   /// Playback May Fail
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback")
@@ -466,6 +492,8 @@ internal enum L10n {
   internal static let networking = L10n.tr("Localizable", "networking", fallback: "Networking")
   /// Network timed out
   internal static let networkTimedOut = L10n.tr("Localizable", "networkTimedOut", fallback: "Network timed out")
+  /// Never
+  internal static let never = L10n.tr("Localizable", "never", fallback: "Never")
   /// Message shown when a task has never run
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
   /// News
@@ -482,6 +510,8 @@ internal enum L10n {
   internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
   /// Settings Description for enabling rewatching in Next Up
   internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
+  /// No
+  internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No Cast devices found..
   internal static let noCastdevicesfound = L10n.tr("Localizable", "noCastdevicesfound", fallback: "No Cast devices found..")
   /// No Codec
@@ -502,7 +532,7 @@ internal enum L10n {
   internal static let normal = L10n.tr("Localizable", "normal", fallback: "Normal")
   /// No runtime limit
   internal static let noRuntimeLimit = L10n.tr("Localizable", "noRuntimeLimit", fallback: "No runtime limit")
-  /// No session
+  /// No active session available
   internal static let noSession = L10n.tr("Localizable", "noSession", fallback: "No session")
   /// N/A
   internal static let notAvailableSlash = L10n.tr("Localizable", "notAvailableSlash", fallback: "N/A")
@@ -642,6 +672,8 @@ internal enum L10n {
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
   /// Remove
   internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
+  /// Remove All
+  internal static let removeAll = L10n.tr("Localizable", "removeAll", fallback: "Remove All")
   /// Remove All Servers
   internal static let removeAllServers = L10n.tr("Localizable", "removeAllServers", fallback: "Remove All Servers")
   /// Remove All Users
@@ -688,7 +720,7 @@ internal enum L10n {
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
-  /// Save - Completed, end, or save
+  /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Administration Dashboard Scan All Libraries Button
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
@@ -718,6 +750,8 @@ internal enum L10n {
   internal static let seekSlideGestureEnabled = L10n.tr("Localizable", "seekSlideGestureEnabled", fallback: "Seek Slide Gesture Enabled")
   /// See More
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
+  /// Select All
+  internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
   /// Series
@@ -810,7 +844,7 @@ internal enum L10n {
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
-  /// Stop
+  /// Button label to stop a task
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
   /// Session Streaming Clients
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
@@ -834,8 +868,18 @@ internal enum L10n {
   internal static let subtitlesDisclaimer = L10n.tr("Localizable", "subtitlesDisclaimer", fallback: "Settings only affect some subtitle types")
   /// Subtitle Size
   internal static let subtitleSize = L10n.tr("Localizable", "subtitleSize", fallback: "Subtitle Size")
+  /// Success
+  internal static let success = L10n.tr("Localizable", "success", fallback: "Success")
   /// Suggestions
   internal static let suggestions = L10n.tr("Localizable", "suggestions", fallback: "Suggestions")
+  /// Content Uploading
+  internal static let supportsContentUploading = L10n.tr("Localizable", "supportsContentUploading", fallback: "Content Uploading")
+  /// Media Control
+  internal static let supportsMediaControl = L10n.tr("Localizable", "supportsMediaControl", fallback: "Media Control")
+  /// Persistent Identifier
+  internal static let supportsPersistentIdentifier = L10n.tr("Localizable", "supportsPersistentIdentifier", fallback: "Persistent Identifier")
+  /// Sync
+  internal static let supportsSync = L10n.tr("Localizable", "supportsSync", fallback: "Sync")
   /// Switch User
   internal static let switchUser = L10n.tr("Localizable", "switchUser", fallback: "Switch User")
   /// Represents the system theme setting
@@ -862,7 +906,7 @@ internal enum L10n {
   internal static let taskTriggerInterval = L10n.tr("Localizable", "taskTriggerInterval", fallback: "Sets the duration (in minutes) in between task triggers.")
   /// Sets the maximum runtime (in hours) for this task trigger.
   internal static let taskTriggerTimeLimit = L10n.tr("Localizable", "taskTriggerTimeLimit", fallback: "Sets the maximum runtime (in hours) for this task trigger.")
-  /// Test Size
+  /// Option to set the test size for bitrate testing
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
   /// Time
   internal static let time = L10n.tr("Localizable", "time", fallback: "Time")
@@ -968,6 +1012,8 @@ internal enum L10n {
   internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
+  /// Yes
+  internal static let yes = L10n.tr("Localizable", "yes", fallback: "Yes")
   /// Your Favorites
   internal static let yourFavorites = L10n.tr("Localizable", "yourFavorites", fallback: "Your Favorites")
 }
