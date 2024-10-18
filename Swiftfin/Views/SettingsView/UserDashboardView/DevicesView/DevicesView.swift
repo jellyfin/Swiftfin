@@ -33,7 +33,7 @@ struct DevicesView: View {
 
     // MARK: - Initializer
 
-    init(userID: String?) {
+    init(userID: String? = nil) {
         _viewModel = StateObject(wrappedValue: DevicesViewModel(userID))
     }
 
@@ -57,12 +57,12 @@ struct DevicesView: View {
                 DelayedProgressView()
             }
         }
-        .navigationTitle(L10n.allDevices)
+        .navigationTitle(L10n.devices)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(editMode)
+        .navigationBarBackButtonHidden(isEditing)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                if editMode {
+                if isEditing {
                     navigationBarSelectView
                 }
             }
@@ -91,8 +91,10 @@ struct DevicesView: View {
         } message: {
             Text(L10n.deleteDeviceWarning)
         }
-        .alert(isPresented: $isPresentingSelfDeleteError) {
-            deletionFailureAlert
+        .alert(L10n.deleteDeviceFailed, isPresented: $isPresentingSelfDeleteError) {
+            Button(L10n.ok, role: .cancel) {}
+        } message: {
+            Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName))
         }
     }
 
@@ -206,11 +208,10 @@ struct DevicesView: View {
     private var deleteSelectedDevicesConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
-            Button(L10n.confirm, role: .destructive) {
-                viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
-                isEditing = false
-                selectedDevices.removeAll()
-            }
+        Button(L10n.confirm, role: .destructive) {
+            viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
+            isEditing = false
+            selectedDevices.removeAll()
         }
     }
 
