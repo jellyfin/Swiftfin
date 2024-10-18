@@ -10,8 +10,6 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-// TODO: inactive session device image
-
 extension ActiveSessionsView {
 
     struct ActiveSessionRow: View {
@@ -24,7 +22,6 @@ extension ActiveSessionsView {
 
         private let onSelect: () -> Void
 
-        // parent list won't show row if value is nil anyways
         private var session: SessionInfo {
             box.value ?? .init()
         }
@@ -38,29 +35,44 @@ extension ActiveSessionsView {
         private var rowLeading: some View {
             // TODO: better handling for different poster types
             Group {
-                if session.nowPlayingItem?.type == .audio {
-                    ZStack {
-                        Color.clear
+                if let nowPlayingItem = session.nowPlayingItem {
+                    if nowPlayingItem.type == .audio {
+                        ZStack {
+                            Color.clear
 
-                        ImageView(session.nowPlayingItem?.squareImageSources(maxWidth: 60) ?? [])
-                            .failure {
-                                SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
-                            }
+                            ImageView(nowPlayingItem.squareImageSources(maxWidth: 60))
+                                .failure {
+                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
+                                }
+                        }
+                        .squarePosterStyle()
+                        .frame(width: 60, height: 60)
+                    } else {
+                        ZStack {
+                            Color.clear
+
+                            ImageView(nowPlayingItem.portraitImageSources(maxWidth: 60))
+                                .failure {
+                                    SystemImageContentView(systemName: nowPlayingItem.systemImage)
+                                }
+                        }
+                        .posterStyle(.portrait)
+                        .frame(width: 60, height: 90)
                     }
-                    .squarePosterStyle()
                 } else {
                     ZStack {
-                        Color.clear
+                        session.device.clientColor
 
-                        ImageView(session.nowPlayingItem?.portraitImageSources(maxWidth: 60) ?? [])
-                            .failure {
-                                SystemImageContentView(systemName: session.nowPlayingItem?.systemImage)
-                            }
+                        Image(session.device.image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 40)
                     }
-                    .posterStyle(.portrait)
+                    .squarePosterStyle()
+                    .frame(width: 60, height: 60)
                 }
             }
-            .frame(width: 60)
+            .frame(width: 60, height: 90)
             .posterShadow()
             .padding(.vertical, 8)
         }
