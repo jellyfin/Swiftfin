@@ -11,7 +11,7 @@ import SwiftUI
 
 extension DeviceDetailsView {
     struct UserSection: View {
-        var device: DeviceInfo
+        let device: DeviceInfo
 
         var body: some View {
             Section(L10n.user) {

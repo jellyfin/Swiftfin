@@ -68,7 +68,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Initializer
 
-    init(_ userID: String?) {
+    init(_ userID: String? = nil) {
         self.userID = userID
     }
 

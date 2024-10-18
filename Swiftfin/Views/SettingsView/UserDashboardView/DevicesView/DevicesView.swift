@@ -29,7 +29,7 @@ struct DevicesView: View {
     @State
     private var selectedDevices: Set<String> = []
     @State
-    private var editMode: Bool = false
+    private var isEditing: Bool = false
 
     // MARK: - Initializer
 
@@ -41,12 +41,12 @@ struct DevicesView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.allDevices)
+            .navigationTitle(L10n.devices)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(editMode)
+            .navigationBarBackButtonHidden(isEditing)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if editMode {
+                    if isEditing {
                         navigationBarSelectView
                     }
                 }
@@ -75,8 +75,10 @@ struct DevicesView: View {
             } message: {
                 Text(L10n.deleteDeviceWarning)
             }
-            .alert(isPresented: $isPresentingSelfDeleteError) {
-                deletionFailureAlert
+            .alert(L10n.deleteDeviceFailed, isPresented: $isPresentingSelfDeleteError) {
+                Button(L10n.ok, role: .cancel) {}
+            } message: {
+                Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName))
             }
     }
 
@@ -116,7 +118,7 @@ struct DevicesView: View {
                 ForEach(Array(viewModel.devices.keys), id: \.self) { id in
                     if let deviceBox = viewModel.devices[id] {
                         DeviceRow(box: deviceBox) {
-                            if editMode {
+                            if isEditing {
                                 if selectedDevices.contains(id) {
                                     selectedDevices.remove(id)
                                 } else {
@@ -130,13 +132,13 @@ struct DevicesView: View {
                             selectedDevices.insert(id)
                             isPresentingDeleteConfirmation = true
                         }
-                        .environment(\.isEditing, editMode)
+                        .environment(\.isEditing, isEditing)
                         .environment(\.isSelected, selectedDevices.contains(id))
                     }
                 }
             }
 
-            if editMode {
+            if isEditing {
                 deleteDevicesButton
                     .edgePadding([.bottom, .horizontal])
             }
@@ -153,7 +155,7 @@ struct DevicesView: View {
             ZStack {
                 Color.red
 
-                Text("Delete")
+                Text(L10n.delete)
                     .font(.body.weight(.semibold))
                     .foregroundStyle(selectedDevices.isNotEmpty ? .primary : .secondary)
 
@@ -177,10 +179,10 @@ struct DevicesView: View {
         if viewModel.backgroundStates.contains(.gettingDevices) {
             ProgressView()
         } else {
-            Button(editMode ? L10n.cancel : L10n.edit) {
-                editMode.toggle()
+            Button(isEditing ? L10n.cancel : L10n.edit) {
+                isEditing.toggle()
                 UIDevice.impact(.light)
-                if !editMode {
+                if !isEditing {
                     selectedDevices.removeAll()
                 }
             }
@@ -192,15 +194,16 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        Button(selectedDevices == Set(viewModel.devices.keys) ? L10n.removeAll : L10n.selectAll) {
-            if selectedDevices == Set(viewModel.devices.keys) {
+        var allSelected: Bool = (selectedDevices.count == viewModel.devices.count)
+        Button(allSelected ? L10n.removeAll : L10n.selectAll) {
+            if allSelected {
                 selectedDevices = []
             } else {
                 selectedDevices = Set(viewModel.devices.keys)
             }
         }
         .buttonStyle(.toolbarPill)
-        .disabled(!editMode)
+        .disabled(!isEditing)
     }
 
     // MARK: - Delete Selected Devices Confirmation Actions
@@ -211,7 +214,7 @@ struct DevicesView: View {
 
             Button(L10n.confirm, role: .destructive) {
                 viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
-                editMode = false
+                isEditing = false
                 selectedDevices.removeAll()
             }
         }
@@ -234,18 +237,5 @@ struct DevicesView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Deletion Failure Alert
-
-    private var deletionFailureAlert: Alert {
-        selectedDevices.removeAll()
-
-        return Alert(
-            title: Text(L10n.deleteDeviceFailed),
-            // TODO: Replace with CustomName when Available
-            message: Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName)),
-            dismissButton: .default(Text(L10n.ok))
-        )
     }
 }

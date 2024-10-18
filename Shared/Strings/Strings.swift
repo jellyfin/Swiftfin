@@ -32,8 +32,6 @@ internal enum L10n {
   internal static func airWithDate(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "airWithDate", p1, fallback: "Airs %s")
   }
-  /// All Devices
-  internal static let allDevices = L10n.tr("Localizable", "allDevices", fallback: "All Devices")
   /// View all past and present devices that have connected.
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All Genres
@@ -304,8 +302,6 @@ internal enum L10n {
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
   /// Enabled
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
-  /// Supply a custom display name or leave empty to use the name reported by the device.
-  internal static let enterCustomDeviceName = L10n.tr("Localizable", "enterCustomDeviceName", fallback: "Supply a custom display name or leave empty to use the name reported by the device.")
   /// Episode Landscape Poster
   internal static let episodeLandscapePoster = L10n.tr("Localizable", "episodeLandscapePoster", fallback: "Episode Landscape Poster")
   /// Episode %1$@

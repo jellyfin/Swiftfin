@@ -744,11 +744,6 @@
 // Used as the header for the devices section
 "devices" = "Devices";
 
-// All Devices - Section Header
-// Title for the all devices section in the Admin Dashboard
-// Used as the header for the all devices section
-"allDevices" = "All Devices";
-
 // All Devices Description - Section Description
 // Description for the all devices section in the Admin Dashboard
 // Provides information about the devices connected to the server, including past and current connections
@@ -793,11 +788,6 @@
 // Title for setting a custom device name
 // Used in the custom device name section
 "customDeviceName" = "Custom Device Name";
-
-// Enter Custom Device Name - Alert Description
-// Alert description for entering a custom device name
-// Explains that a custom name can be supplied or the default device name will be used
-"enterCustomDeviceName" = "Supply a custom display name or leave empty to use the name reported by the device.";
 
 // Capabilities - Section Header
 // Title for the section showing the device capabilities

@@ -14,7 +14,7 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
-    var device: DeviceInfo
+    let device: DeviceInfo
 
     @State
     private var temporaryCustomName: String
@@ -42,7 +42,8 @@ struct DeviceDetailsView: View {
     var body: some View {
         List {
             UserSection(device: device)
-            CustomDeviceNameSection(customName: $temporaryCustomName)
+            // TODO: Enable with SDK Change
+            // CustomDeviceNameSection(customName: $temporaryCustomName)
             DeviceSection(device: device)
             CapabilitiesSection(device: device)
         }
@@ -59,23 +60,23 @@ struct DeviceDetailsView: View {
             }
         }
         .topBarTrailing {
-            HStack {
-                if viewModel.backgroundStates.contains(.settingCustomName) {
-                    ProgressView()
-                }
-                Button(L10n.save) {
-                    UIDevice.impact(.light)
-                    if device.id != nil {
-                        viewModel.send(.setCustomName(
-                            id: device.id ?? "",
-                            newName: temporaryCustomName
-                        ))
-                    }
-                }
-                .buttonStyle(.toolbarPill)
+            if viewModel.backgroundStates.contains(.settingCustomName) {
+                ProgressView()
+
                 // TODO: Enable with SDK Change
-                .disabled(temporaryCustomName == device.name)
-                // .disabled(temporaryCustomName == device.customName)
+                /*
+                 Button(L10n.save) {
+                     UIDevice.impact(.light)
+                     if device.id != nil {
+                         viewModel.send(.setCustomName(
+                             id: device.id ?? "",
+                             newName: temporaryCustomName
+                         ))
+                     }
+                 }
+                 .buttonStyle(.toolbarPill)
+                 .disabled(temporaryCustomName == device.customName)
+                  */
             }
         }
         .alert(

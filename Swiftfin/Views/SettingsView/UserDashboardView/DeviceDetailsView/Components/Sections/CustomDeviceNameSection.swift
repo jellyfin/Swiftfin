@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Enable for CustomNames for Devices with SDK Changes
-
 extension DeviceDetailsView {
     struct CustomDeviceNameSection: View {
         @Binding
@@ -19,16 +17,11 @@ extension DeviceDetailsView {
         // MARK: - Body
 
         var body: some View {
-            Section {
+            Section(L10n.customDeviceName) {
                 TextField(
                     L10n.name,
                     text: $customName
                 )
-            } header: {
-                Text(L10n.customDeviceName)
-                // TODO: Remove Footer after SDK Changes
-            } footer: {
-                Text("This field will not reflect your custom device name on this version of Swiftin.")
             }
         }
     }

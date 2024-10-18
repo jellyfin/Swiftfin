@@ -30,7 +30,7 @@ struct UserDashboardView: View {
 
             Section(L10n.advanced) {
 
-                ChevronButton(L10n.allDevices)
+                ChevronButton(L10n.devices)
                     .onSelect {
                         router.route(to: \.devices)
                     }

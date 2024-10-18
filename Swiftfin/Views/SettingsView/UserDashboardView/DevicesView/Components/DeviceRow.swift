@@ -66,26 +66,7 @@ extension DevicesView {
             return isSelected ? .primary : .secondary
         }
 
-        // MARK: - Device View
-
-        @ViewBuilder
-        private var deviceView: some View {
-            ZStack {
-                Group {
-                    if colorScheme == .light {
-                        Color.secondarySystemFill
-                    } else {
-                        Color.tertiarySystemBackground
-                    }
-                }
-                .posterShadow()
-
-                RelativeSystemImageView(systemName: "person.fill", ratio: 0.5)
-                    .foregroundStyle(.secondary)
-            }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-        }
+        // MARK: - Device Image View
 
         @ViewBuilder
         private var deviceImage: some View {
@@ -180,17 +161,12 @@ extension DevicesView {
             }
             .onSelect(perform: onSelect)
             .swipeActions {
-                Button {
-                    onDelete()
-                } label: {
-                    Label(L10n.delete, systemImage: "trash")
-                }
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
                 .tint(.red)
-            }
-            .contextMenu {
-                Button(L10n.delete, role: .destructive) {
-                    onDelete()
-                }
             }
         }
     }
