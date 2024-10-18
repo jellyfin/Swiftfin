@@ -40,66 +40,59 @@ struct DevicesView: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationTitle(L10n.devices)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(isEditing)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if isEditing {
-                        navigationBarSelectView
+        ZStack {
+            switch viewModel.state {
+            case .content:
+                if viewModel.devices.isEmpty {
+                    Text(L10n.none)
+                } else {
+                    deviceListView
+                }
+            case let .error(error):
+                ErrorView(error: error)
+                    .onRetry {
+                        viewModel.send(.getDevices)
                     }
+            case .initial:
+                DelayedProgressView()
+            }
+        }
+        .navigationTitle(L10n.allDevices)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(editMode)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if editMode {
+                    navigationBarSelectView
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    navigationBarEditView
-                }
             }
-            .onFirstAppear {
-                viewModel.send(.getDevices)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                navigationBarEditView
             }
-            .confirmationDialog(
-                L10n.deleteSelectedDevices,
-                isPresented: $isPresentingDeleteSelectionConfirmation,
-                titleVisibility: .visible
-            ) {
-                deleteSelectedDevicesConfirmationActions
-            } message: {
-                Text(L10n.deleteSelectionDevicesWarning)
-            }
-            .confirmationDialog(
-                L10n.deleteDevice,
-                isPresented: $isPresentingDeleteConfirmation,
-                titleVisibility: .visible
-            ) {
-                deleteDeviceConfirmationActions
-            } message: {
-                Text(L10n.deleteDeviceWarning)
-            }
-            .alert(L10n.deleteDeviceFailed, isPresented: $isPresentingSelfDeleteError) {
-                Button(L10n.ok, role: .cancel) {}
-            } message: {
-                Text(L10n.deleteDeviceSelfDeletion(viewModel.userSession.client.configuration.deviceName))
-            }
-    }
-
-    // MARK: - Content View
-
-    @ViewBuilder
-    private var contentView: some View {
-        switch viewModel.state {
-        case .content:
-            if viewModel.devices.isEmpty {
-                Text(L10n.none)
-            } else {
-                deviceListView
-            }
-        case let .error(error):
-            ErrorView(error: error)
-                .onRetry {
-                    viewModel.send(.getDevices)
-                }
-        case .initial:
-            DelayedProgressView()
+        }
+        .onFirstAppear {
+            viewModel.send(.getDevices)
+        }
+        .confirmationDialog(
+            L10n.deleteSelectedDevices,
+            isPresented: $isPresentingDeleteSelectionConfirmation,
+            titleVisibility: .visible
+        ) {
+            deleteSelectedDevicesConfirmationActions
+        } message: {
+            Text(L10n.deleteSelectionDevicesWarning)
+        }
+        .confirmationDialog(
+            L10n.deleteDevice,
+            isPresented: $isPresentingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            deleteDeviceConfirmationActions
+        } message: {
+            Text(L10n.deleteDeviceWarning)
+        }
+        .alert(isPresented: $isPresentingSelfDeleteError) {
+            deletionFailureAlert
         }
     }
 
@@ -115,7 +108,7 @@ struct DevicesView: View {
                     UIApplication.shared.open(.jellyfinDocsDevices)
                 }
 
-                ForEach(Array(viewModel.devices.keys), id: \.self) { id in
+                ForEach(viewModel.devices.keys, id: \.self) { id in
                     if let deviceBox = viewModel.devices[id] {
                         DeviceRow(box: deviceBox) {
                             if isEditing {
@@ -134,6 +127,7 @@ struct DevicesView: View {
                         }
                         .environment(\.isEditing, isEditing)
                         .environment(\.isSelected, selectedDevices.contains(id))
+                        .listRowSeparator(.hidden)
                     }
                 }
             }
@@ -208,9 +202,9 @@ struct DevicesView: View {
 
     // MARK: - Delete Selected Devices Confirmation Actions
 
+    @ViewBuilder
     private var deleteSelectedDevicesConfirmationActions: some View {
-        Group {
-            Button(L10n.cancel, role: .cancel) {}
+        Button(L10n.cancel, role: .cancel) {}
 
             Button(L10n.confirm, role: .destructive) {
                 viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
@@ -222,18 +216,17 @@ struct DevicesView: View {
 
     // MARK: - Delete Device Confirmation Actions
 
+    @ViewBuilder
     private var deleteDeviceConfirmationActions: some View {
-        Group {
-            Button(L10n.cancel, role: .cancel) {}
+        Button(L10n.cancel, role: .cancel) {}
 
-            Button(L10n.delete, role: .destructive) {
-                if let deviceToDelete = selectedDevices.first, selectedDevices.count == 1 {
-                    if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
-                        isPresentingSelfDeleteError = true
-                    } else {
-                        viewModel.send(.deleteDevices(ids: [deviceToDelete]))
-                        selectedDevices.removeAll()
-                    }
+        Button(L10n.delete, role: .destructive) {
+            if let deviceToDelete = selectedDevices.first, selectedDevices.count == 1 {
+                if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
+                    isPresentingSelfDeleteError = true
+                } else {
+                    viewModel.send(.deleteDevices(ids: [deviceToDelete]))
+                    selectedDevices.removeAll()
                 }
             }
         }
