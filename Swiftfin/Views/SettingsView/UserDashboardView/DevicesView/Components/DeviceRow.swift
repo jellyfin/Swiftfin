@@ -12,11 +12,11 @@ import JellyfinAPI
 import SwiftUI
 
 extension DevicesView {
-    struct DeviceRow: View {
-        @CurrentDate
-        private var currentDate: Date
 
-        private let accentColor = Defaults[.accentColor]
+    struct DeviceRow: View {
+
+        @Default(.accentColor)
+        private var accentColor
 
         // MARK: - Environment Variables
 
@@ -29,6 +29,9 @@ extension DevicesView {
         private var isEditing
         @Environment(\.isSelected)
         private var isSelected
+
+        @CurrentDate
+        private var currentDate: Date
 
         // MARK: - Observed Objects
 
@@ -111,18 +114,15 @@ extension DevicesView {
         @ViewBuilder
         private var rowContent: some View {
             HStack {
-
                 VStack(alignment: .leading, spacing: 5) {
                     Text(deviceInfo.name ?? L10n.unknown)
                         .font(.title3)
                         .fontWeight(.semibold)
-                        .foregroundStyle(labelForegroundStyle)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     Text(deviceInfo.lastUserName ?? L10n.never)
                         .fontWeight(.semibold)
-                        .foregroundStyle(labelForegroundStyle)
                         .lineLimit(1)
                         .multilineTextAlignment(.leading)
 
@@ -144,6 +144,7 @@ extension DevicesView {
                     .id(currentDate)
                     .monospacedDigit()
                 }
+                .foregroundStyle(labelForegroundStyle, .secondary)
 
                 Spacer()
 

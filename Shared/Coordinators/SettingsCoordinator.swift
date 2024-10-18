@@ -192,7 +192,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeDevices() -> some View {
-        DevicesView(userID: nil)
+        DevicesView()
     }
 
     @ViewBuilder
