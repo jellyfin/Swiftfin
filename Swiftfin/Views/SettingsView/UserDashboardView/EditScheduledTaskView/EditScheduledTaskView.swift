@@ -53,8 +53,12 @@ struct EditScheduledTaskView: View {
                 triggers: observer.task.triggers,
                 isPresentingDeleteConfirmation: $isPresentingDeleteConfirmation,
                 selectedTrigger: $selectedTrigger,
-                deleteAction: { trigger in observer.send(.removeTrigger(trigger)) },
-                addAction: { router.route(to: \.addScheduledTaskTrigger, observer) }
+                deleteAction: {
+                    trigger in observer.send(.removeTrigger(trigger))
+                },
+                addAction: {
+                    router.route(to: \.addScheduledTaskTrigger, observer)
+                }
             )
         }
         .navigationTitle(L10n.task)

@@ -10,15 +10,18 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditScheduledTaskView {
-
     struct CurrentRunningSection: View {
 
         var task: TaskInfo
 
+        @ViewBuilder
         var body: some View {
             Section(L10n.progress) {
                 if let status = task.state {
-                    TextPairView(L10n.status, value: Text(status.displayTitle))
+                    TextPairView(
+                        L10n.status,
+                        value: Text(status.displayTitle)
+                    )
                 }
 
                 if let currentProgressPercentage = task.currentProgressPercentage {
