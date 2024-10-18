@@ -14,9 +14,6 @@ import JellyfinAPI
 // TODO: how to get seconds for current item
 
 class MediaProgressListener: ViewModel, MediaPlayerListener {
-    
-    @CurrentDate(interval: 5)
-    private var currentDate
 
     weak var manager: MediaPlayerManager? {
         didSet {
@@ -28,17 +25,25 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     
     private var hasSentStart = false
     private weak var item: MediaPlayerItem?
+    private var lastManagerState: MediaPlayerManager.State = .initial
     
-    init(manager: MediaPlayerManager?, item: MediaPlayerItem) {
+    init(item: MediaPlayerItem) {
         self.item = item
-        self.manager = manager
         super.init()
+        
+        Timer.publish(every: 5, on: .main, in: .common)
+           .autoconnect()
+           .sink { [weak self] _ in
+               guard let self else { return }
+               
+               
+           }
+           .store(in: &cancellables)
     }
     
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
         
-//        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
@@ -51,19 +56,22 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     }
     
     private func stateDidChange(newState: MediaPlayerManager.State) {
-        guard let item else { return }
         
-        switch newState {
-        case .initial, .loadingItem: ()
-        case .error, .stopped:
-            sendStopReport(for: item, seconds: 0)
-        case .playing:
-            sendStartReport(for: item, seconds: manager?.seconds ?? 0)
-        case .paused:
-            sendProgressReport(for: item, seconds: manager?.seconds ?? 0, isPaused: true)
-        case .buffering:
-            sendProgressReport(for: item, seconds: manager?.seconds ?? 0)
-        }
+        lastManagerState = newState
+        
+//        guard let item else { return }
+//        
+//        switch newState {
+//        case .initial, .loadingItem: ()
+//        case .error, .stopped:
+//            sendStopReport(for: item, seconds: 0)
+//        case .playing:
+//            sendStartReport(for: item, seconds: manager?.seconds ?? 0)
+//        case .paused:
+//            sendProgressReport(for: item, seconds: manager?.seconds ?? 0, isPaused: true)
+//        case .buffering:
+//            sendProgressReport(for: item, seconds: manager?.seconds ?? 0)
+//        }
     }
     
     private func secondsDidChange(newSeconds: TimeInterval) {
@@ -132,27 +140,4 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             let _ = try await userSession.client.send(request)
         }
     }
-
-    //    func onStateUpdated(newState: VLCVideoPlayer.State) {
-    //        guard state != newState else { return }
-    //        state = newState
-
-    //        nowPlayable.handleNowPlayableItemChange(
-    //            metadata: currentViewModel.nowPlayingMetadata
-    //        )
-    //
-    //        if !hasSentStart, newState == .playing {
-    //            hasSentStart = true
-    //            sendStartReport()
-    //        }
-    //
-    //        if hasSentStart, newState == .paused {
-    //            hasSentStart = false
-    //            sendPauseReport()
-    //        }
-    //
-    //        if newState == .stopped || newState == .ended {
-    //            sendStopReport()
-    //        }
-    //    }
 }

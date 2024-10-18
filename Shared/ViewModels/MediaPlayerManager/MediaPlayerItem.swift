@@ -94,7 +94,7 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             supplements.append(MediaChaptersSupplement(chapters: baseItem.fullChapterInfo))
         }
         
-        listeners.append(MediaProgressListener(manager: nil, item: self))
+        listeners.append(MediaProgressListener(item: self))
     }
 
     // MARK: build

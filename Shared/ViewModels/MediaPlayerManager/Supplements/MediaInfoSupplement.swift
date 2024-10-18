@@ -57,6 +57,16 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                 }
             }
         }
+        
+        @ViewBuilder
+        private var fromBeginningButton: some View {
+            Button("From Beginning", systemImage: "play.fill") {
+                manager.proxy?.setTime(0)
+                selectedMediaPlayerSupplement = nil
+            }
+            .buttonStyle(.videoPlayerDrawerContent)
+            .frame(width: 150, height: 50)
+        }
 
         var body: some View {
             HStack(alignment: .bottom, spacing: EdgeInsets.edgePadding) {
@@ -81,6 +91,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                     if let overview = item.overview {
                         Text(overview)
                             .font(.subheadline.weight(.semibold))
+                            .lineLimit(3)
                     }
 
                     accessoryView
@@ -90,19 +101,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 
                 VStack {
-                    Button {
-                        manager.proxy?.setTime(0)
-                        selectedMediaPlayerSupplement = nil
-                    } label: {
-                        ZStack {
-                            BlurView()
-                                .cornerRadius(7)
-
-                            Label("From Beginning", systemImage: "play.fill")
-                                .font(.subheadline.weight(.semibold))
-                        }
-                        .frame(width: 150, height: 50)
-                    }
+                    fromBeginningButton
                 }
             }
             .padding(.horizontal, safeAreaInsets.leading)

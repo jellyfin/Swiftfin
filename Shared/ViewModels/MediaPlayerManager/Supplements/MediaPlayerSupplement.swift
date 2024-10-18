@@ -17,10 +17,6 @@ struct AnyMediaPlayerSupplement: Equatable, Identifiable {
 
     let supplement: any MediaPlayerSupplement
 
-//    init(supplement: any MediaPlayerSupplement) {
-//        self.supplement = supplement
-//    }
-
     var id: String {
         supplement.id
     }
@@ -46,6 +42,7 @@ extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
     }
 }
 
+// TODO: don't use title for id
 extension MediaPlayerSupplement {
 
     var id: String { title }

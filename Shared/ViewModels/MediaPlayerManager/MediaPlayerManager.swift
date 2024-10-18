@@ -40,7 +40,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     // MARK: Action
 
     // TODO: have play new MediaPlayerItem
-    enum Action: Equatable {
+    indirect enum Action: Equatable {
 
         case error(JellyfinAPIError)
 
@@ -120,14 +120,14 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    init(item: BaseItemDto, mediaItemProvider: @escaping () async throws -> MediaPlayerItem) {
+    init(item: BaseItemDto, playbackItemProvider: @escaping () async throws -> MediaPlayerItem) {
         self.item = item
         super.init()
         
         supplements = [MediaInfoSupplement(item: item)]
 
         // TODO: don't build on init?
-        buildMediaItem(from: mediaItemProvider)
+        buildMediaItem(from: playbackItemProvider)
     }
 
     init(playbackItem: MediaPlayerItem) {
@@ -136,10 +136,9 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
 
-        self.playbackItem = playbackItem
-//        queue.append(playbackItem.baseItem)
-
         state = .buffering
+        self.playbackItem = playbackItem
+        eventSubject.send(.playNew(playbackItem: playbackItem))
     }
     
     // MARK: respond
