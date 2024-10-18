@@ -65,6 +65,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDetails = makeUserDetails
     @Route(.push)
+    var userDevices = makeUserDevices
+    @Route(.push)
     var userPassword = makeUserPassword
     @Route(.push)
     var editScheduledTask = makeEditScheduledTask
@@ -200,6 +202,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserDetails(observer: UserAdministrationObserver) -> some View {
         UserAdministrationDetailView(observer: observer)
+    }
+
+    @ViewBuilder
+    func makeUserDevices(userId: String) -> some View {
+        DevicesView(userId: userId)
     }
 
     @ViewBuilder

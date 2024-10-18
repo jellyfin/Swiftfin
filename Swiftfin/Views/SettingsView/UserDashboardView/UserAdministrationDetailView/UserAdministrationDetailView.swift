@@ -31,7 +31,10 @@ struct UserAdministrationDetailView: View {
                     router.route(to: \.userPassword, observer)
                 }
 
-            // TODO: Devices
+            ChevronButton(L10n.devices)
+                .onSelect {
+                    router.route(to: \.userDevices, observer.user.id)
+                }
         }
         .navigationTitle(observer.user.name ?? L10n.user)
     }
