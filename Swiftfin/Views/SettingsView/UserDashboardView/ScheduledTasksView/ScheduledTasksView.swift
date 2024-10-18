@@ -61,7 +61,7 @@ struct ScheduledTasksView: View {
                 L10n.tasks,
                 description: L10n.tasksDescription
             ) {
-                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/server/tasks")!)
+                UIApplication.shared.open(.jellyfinDocsTasks)
             }
 
             Section(L10n.server) {

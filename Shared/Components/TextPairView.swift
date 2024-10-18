@@ -19,12 +19,12 @@ struct TextPairView: View {
     var body: some View {
         HStack {
             leading
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
 
             Spacer()
 
             trailing
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
         }
     }
 }
