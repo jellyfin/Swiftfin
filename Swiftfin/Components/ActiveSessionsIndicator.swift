@@ -61,12 +61,13 @@ struct ActiveSessionIndicator: View {
 
     // MARK: - Content View
 
+    @ViewBuilder
     var contentView: some View {
         switch viewModel.state {
         case .content, .initial:
-            AnyView(sessionsView)
+            sessionsView
         default:
-            AnyView(errorView)
+            errorView
         }
     }
 

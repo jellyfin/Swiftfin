@@ -31,7 +31,7 @@ extension CustomizeViewsSettings {
             Section(L10n.home) {
 
                 if userSession?.user.isAdministrator ?? false {
-                    Toggle("Activity Indicator", isOn: $activeSessionIndicator)
+                    Toggle(L10n.activityIndicator, isOn: $activeSessionIndicator)
                 }
 
                 Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)

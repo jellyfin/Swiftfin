@@ -93,7 +93,7 @@ struct HomeView: View {
             HStack(spacing: 0) {
                 if activeSessionIndicator {
                     ActiveSessionIndicator {
-                        print("This will take you to the Admin Dashboard once it's on its own coordinator...")
+                        // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
                     }
                 }
 

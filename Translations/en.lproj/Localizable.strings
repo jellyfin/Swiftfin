@@ -738,3 +738,6 @@
 
 /* Section Title for Column Configuration */
 "columns" = "Columns";
+
+/* Activity Indicator naming / settings label*/
+"activityIndicator" = "Activity Indicator";
