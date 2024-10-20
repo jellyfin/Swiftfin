@@ -11,35 +11,66 @@ import Foundation
 import JellyfinAPI
 
 // TODO: refactor with socket implementation
-// TODO: edit triggers
 
-final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
+final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
+
+    // MARK: Event
+
+    enum Event {
+        case completed
+        case error(JellyfinAPIError)
+    }
+
+    // MARK: Action
 
     enum Action: Equatable {
         case start
         case stop
         case stopObserving
+        case addTrigger(TaskTriggerInfo)
+        case removeTrigger(TaskTriggerInfo)
     }
+
+    // MARK: State
 
     enum State: Hashable {
         case error(JellyfinAPIError)
         case initial
+        case updating
         case running
     }
+
+    // MARK: Published Values
 
     @Published
     final var state: State = .initial
     @Published
     private(set) var task: TaskInfo
 
+    // MARK: Cancellable Tasks
+
     private var progressCancellable: AnyCancellable?
     private var cancelCancellable: AnyCancellable?
+
+    // MARK: Initialize from TaskId
 
     var id: String? { task.id }
 
     init(task: TaskInfo) {
         self.task = task
     }
+
+    // MARK: Event Variables
+
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
+    // MARK: Respond to Action
 
     func respond(to action: Action) -> State {
         switch action {
@@ -54,10 +85,12 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
                     await MainActor.run {
                         self.state = .initial
+                        self.eventSubject.send(.completed)
                     }
                 } catch {
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
                 }
             }
@@ -74,10 +107,12 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
                     await MainActor.run {
                         self.state = .initial
+                        self.eventSubject.send(.completed)
                     }
                 } catch {
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
                 }
             }
@@ -89,8 +124,52 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
             cancelCancellable?.cancel()
 
             return .initial
+        case let .addTrigger(trigger):
+            progressCancellable?.cancel()
+            cancelCancellable?.cancel()
+
+            cancelCancellable = Task {
+                do {
+                    try await addTrigger(newTrigger: trigger)
+                    await MainActor.run {
+                        self.state = .updating
+                        self.eventSubject.send(.completed)
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .running
+        case let .removeTrigger(trigger):
+            progressCancellable?.cancel()
+            cancelCancellable?.cancel()
+
+            cancelCancellable = Task {
+                do {
+                    try await removeTrigger(deleteTrigger: trigger)
+                    await MainActor.run {
+                        self.state = .updating
+                        self.eventSubject.send(.completed)
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .running
         }
     }
+
+    // MARK: Start Task
 
     private func start() async throws {
         guard let id = task.id else { return }
@@ -100,6 +179,8 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
 
         try await pollTaskProgress(id: id)
     }
+
+    // MARK: Poll Task Progress
 
     private func pollTaskProgress(id: String) async throws {
         while true {
@@ -118,10 +199,42 @@ final class ServerTaskObserver: ViewModel, Stateful, Identifiable {
         }
     }
 
+    // MARK: Stop Task
+
     private func stop() async throws {
         guard let id = task.id else { return }
 
         let request = Paths.stopTask(taskID: id)
         try await userSession.client.send(request)
+
+        try await pollTaskProgress(id: id)
+    }
+
+    // MARK: Add Trigger to Task
+
+    private func addTrigger(newTrigger: TaskTriggerInfo) async throws {
+        var updatedTriggers = task.triggers ?? []
+        updatedTriggers.append(newTrigger)
+        try await updateTriggers(updatedTriggers)
+    }
+
+    // MARK: Remove Trigger from Task
+
+    private func removeTrigger(deleteTrigger: TaskTriggerInfo) async throws {
+        var updatedTriggers = task.triggers ?? []
+        updatedTriggers.removeAll { $0 == deleteTrigger }
+        try await updateTriggers(updatedTriggers)
+    }
+
+    // MARK: Update Task Triggers (Add/Remove)
+
+    private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
+        guard let id = task.id else { return }
+        let updateRequest = Paths.updateTask(taskID: id, updatedTriggers)
+        try await userSession.client.send(updateRequest)
+
+        await MainActor.run {
+            self.task.triggers = updatedTriggers
+        }
     }
 }
