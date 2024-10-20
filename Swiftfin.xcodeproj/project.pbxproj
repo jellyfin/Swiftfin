@@ -12,6 +12,15 @@
 		4E0253BD2CBF0C06007EB9CD /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E0A8FFB2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
 		4E0A8FFC2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */; };
+		4E0DA7082CC0B91900EAAADA /* UserAdministrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7072CC0B91900EAAADA /* UserAdministrationViewModel.swift */; };
+		4E0DA7092CC0B91900EAAADA /* UserAdministrationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7062CC0B91900EAAADA /* UserAdministrationObserver.swift */; };
+		4E0DA70A2CC0B91900EAAADA /* UserAdministrationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7072CC0B91900EAAADA /* UserAdministrationViewModel.swift */; };
+		4E0DA70B2CC0B91900EAAADA /* UserAdministrationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7062CC0B91900EAAADA /* UserAdministrationObserver.swift */; };
+		4E0DA7112CC0B93300EAAADA /* UserProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA70D2CC0B93300EAAADA /* UserProfileView.swift */; };
+		4E0DA7122CC0B93300EAAADA /* UserAdministrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA70F2CC0B93300EAAADA /* UserAdministrationView.swift */; };
+		4E0DA7132CC0B93300EAAADA /* UserAdministrationRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA70C2CC0B93300EAAADA /* UserAdministrationRow.swift */; };
+		4E0DA7162CC0C1A200EAAADA /* UserAdministrationDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7152CC0C18500EAAADA /* UserAdministrationDetailView.swift */; };
+		4E0DA7192CC0C33000EAAADA /* UserAdministrationPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0DA7182CC0C32B00EAAADA /* UserAdministrationPasswordView.swift */; };
 		4E11805F2CBF52380077A588 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
@@ -1028,6 +1037,13 @@
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
 		4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCompletionStatus.swift; sourceTree = "<group>"; };
+		4E0DA7062CC0B91900EAAADA /* UserAdministrationObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationObserver.swift; sourceTree = "<group>"; };
+		4E0DA7072CC0B91900EAAADA /* UserAdministrationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationViewModel.swift; sourceTree = "<group>"; };
+		4E0DA70C2CC0B93300EAAADA /* UserAdministrationRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationRow.swift; sourceTree = "<group>"; };
+		4E0DA70D2CC0B93300EAAADA /* UserProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileView.swift; sourceTree = "<group>"; };
+		4E0DA70F2CC0B93300EAAADA /* UserAdministrationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationView.swift; sourceTree = "<group>"; };
+		4E0DA7152CC0C18500EAAADA /* UserAdministrationDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationDetailView.swift; sourceTree = "<group>"; };
+		4E0DA7182CC0C32B00EAAADA /* UserAdministrationPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdministrationPasswordView.swift; sourceTree = "<group>"; };
 		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
@@ -1818,6 +1834,40 @@
 			path = ServerDiscovery;
 			sourceTree = "<group>";
 		};
+		4E0DA70E2CC0B93300EAAADA /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4E0DA70C2CC0B93300EAAADA /* UserAdministrationRow.swift */,
+				4E0DA70D2CC0B93300EAAADA /* UserProfileView.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4E0DA7102CC0B93300EAAADA /* UserAdministrationView */ = {
+			isa = PBXGroup;
+			children = (
+				4E0DA70E2CC0B93300EAAADA /* Components */,
+				4E0DA70F2CC0B93300EAAADA /* UserAdministrationView.swift */,
+			);
+			path = UserAdministrationView;
+			sourceTree = "<group>";
+		};
+		4E0DA7142CC0C17800EAAADA /* UserAdministrationDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				4E0DA7152CC0C18500EAAADA /* UserAdministrationDetailView.swift */,
+			);
+			path = UserAdministrationDetailView;
+			sourceTree = "<group>";
+		};
+		4E0DA7172CC0C31C00EAAADA /* UserAdministrationPasswordView */ = {
+			isa = PBXGroup;
+			children = (
+				4E0DA7182CC0C32B00EAAADA /* UserAdministrationPasswordView.swift */,
+			);
+			path = UserAdministrationPasswordView;
+			sourceTree = "<group>";
+		};
 		4E16FD4E2C0183B500110147 /* LetterPickerBar */ = {
 			isa = PBXGroup;
 			children = (
@@ -1881,6 +1931,9 @@
 				E1ED7FD52CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift */,
 				4E182C9A2C94991800FBEFD5 /* ScheduledTasksView */,
 				E1ED7FDF2CAA685900ACB6E3 /* ServerLogsView.swift */,
+				4E0DA7142CC0C17800EAAADA /* UserAdministrationDetailView */,
+				4E0DA7172CC0C31C00EAAADA /* UserAdministrationPasswordView */,
+				4E0DA7102CC0B93300EAAADA /* UserAdministrationView */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
 			path = UserDashboardView;
@@ -2065,6 +2118,8 @@
 				E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */,
 				E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
+				4E0DA7062CC0B91900EAAADA /* UserAdministrationObserver.swift */,
+				4E0DA7072CC0B91900EAAADA /* UserAdministrationViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
 				E14EA1682BF7330A00DE757A /* UserProfileImageViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
@@ -4631,6 +4686,8 @@
 				E187A60329AB28F0008387E6 /* RotateContentView.swift in Sources */,
 				4EBE064E2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */,
 				E1575E94293E7B1E001665B1 /* VerticalAlignment.swift in Sources */,
+				4E0DA7082CC0B91900EAAADA /* UserAdministrationViewModel.swift in Sources */,
+				4E0DA7092CC0B91900EAAADA /* UserAdministrationObserver.swift in Sources */,
 				E1575EA3293E7B1E001665B1 /* UIDevice.swift in Sources */,
 				E193D547271941C500900D82 /* SelectUserView.swift in Sources */,
 				E1BDF2E62951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
@@ -4761,9 +4818,12 @@
 				E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
 				E133328829538D8D00EE76AB /* Files.swift in Sources */,
 				C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */,
+				4E0DA70A2CC0B91900EAAADA /* UserAdministrationViewModel.swift in Sources */,
+				4E0DA70B2CC0B91900EAAADA /* UserAdministrationObserver.swift in Sources */,
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
+				4E0DA7162CC0C1A200EAAADA /* UserAdministrationDetailView.swift in Sources */,
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,
 				E1BDF2F129524AB700CC0294 /* AutoPlayActionButton.swift in Sources */,
@@ -4888,6 +4948,7 @@
 				E1002B642793CEE800E47059 /* ChapterInfo.swift in Sources */,
 				C46DD8E52A8FA6510046A504 /* LiveTopBarView.swift in Sources */,
 				E18E01AD288746AF0022598C /* DotHStack.swift in Sources */,
+				4E0DA7192CC0C33000EAAADA /* UserAdministrationPasswordView.swift in Sources */,
 				E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */,
 				E102313B2BCF8A3C009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1937A61288F32DB00CB80AA /* Poster.swift in Sources */,
@@ -4938,6 +4999,9 @@
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
 				62E632F3267D54030063E547 /* ItemViewModel.swift in Sources */,
 				E102313D2BCF8A3C009D71FC /* ProgramsView.swift in Sources */,
+				4E0DA7112CC0B93300EAAADA /* UserProfileView.swift in Sources */,
+				4E0DA7122CC0B93300EAAADA /* UserAdministrationView.swift in Sources */,
+				4E0DA7132CC0B93300EAAADA /* UserAdministrationRow.swift in Sources */,
 				E170D105294D21FA0017224C /* MediaSourceInfoView.swift in Sources */,
 				E1D37F4B2B9CEA5C00343D2B /* ImageSource.swift in Sources */,
 				E1CAF6622BA363840087D991 /* UIHostingController.swift in Sources */,
