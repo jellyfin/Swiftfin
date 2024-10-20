@@ -64,6 +64,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var editScheduledTask = makeEditScheduledTask
     @Route(.push)
     var serverLogs = makeServerLogs
+    @Route(.push)
+    var apiKeys = makeAPIKeys
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -194,6 +196,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeServerLogs() -> some View {
         ServerLogsView()
+    }
+
+    @ViewBuilder
+    func makeAPIKeys() -> some View {
+        APIKeyView()
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

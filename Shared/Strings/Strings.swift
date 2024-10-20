@@ -20,6 +20,8 @@ internal enum L10n {
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
   /// ActiveSessionsView Header
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
+  /// Add
+  internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add URL
@@ -40,10 +42,22 @@ internal enum L10n {
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// TranscodeReason - Anamorphic Video Not Supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
+  /// API Key Copied
+  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API Key Copied")
+  /// Your API Key was copied to your clipboard!
+  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API Key was copied to your clipboard!")
+  /// API Keys
+  internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API Keys")
+  /// External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.
+  internal static let apiKeysDescription = L10n.tr("Localizable", "apiKeysDescription", fallback: "External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.")
+  /// API Keys
+  internal static let apiKeysTitle = L10n.tr("Localizable", "apiKeysTitle", fallback: "API Keys")
   /// Represents the Appearance setting label
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
   /// App Icon
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
+  /// Application Name
+  internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
   /// Apply
   internal static let apply = L10n.tr("Localizable", "apply", fallback: "Apply")
   /// Aspect Fill
@@ -186,6 +200,8 @@ internal enum L10n {
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
+  /// Are you sure? This change is permanent and cannot be undone.
+  internal static let confirmDeleteAPIKeyMessage = L10n.tr("Localizable", "confirmDeleteAPIKeyMessage", fallback: "Are you sure? This change is permanent and cannot be undone.")
   /// Connect
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
   /// Connect Manually
@@ -208,6 +224,10 @@ internal enum L10n {
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
   /// Continue Watching
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
+  /// Create API Key
+  internal static let createAPIKey = L10n.tr("Localizable", "createAPIKey", fallback: "Create API Key")
+  /// Please enter the application name for the new API key.
+  internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Please enter the application name for the new API key.")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
@@ -230,12 +250,16 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Description for the dashboard section
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Date Created
+  internal static let dateCreated = L10n.tr("Localizable", "dateCreated", fallback: "Date Created")
   /// Time Interval Help Text - Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
-  /// Server Detail View - Delete
+  /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
+  /// Delete API Key
+  internal static let deleteAPIKey = L10n.tr("Localizable", "deleteAPIKey", fallback: "Delete API Key")
   /// Server Detail View - Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
   /// Delivery
@@ -470,8 +494,8 @@ internal enum L10n {
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
   /// Video Player Settings View - Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
-  /// Ok
-  internal static let ok = L10n.tr("Localizable", "ok", fallback: "Ok")
+  /// OK
+  internal static let ok = L10n.tr("Localizable", "ok", fallback: "OK")
   /// 1 user
   internal static let oneUser = L10n.tr("Localizable", "oneUser", fallback: "1 user")
   /// Indicates that something is Online
@@ -642,7 +666,7 @@ internal enum L10n {
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
-  /// Save - Completed, end, or save
+  /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Administration Dashboard Scan All Libraries Button
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
