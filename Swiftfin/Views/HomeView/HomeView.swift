@@ -16,6 +16,9 @@ import SwiftUI
 //       - indicated by snapping to the top
 struct HomeView: View {
 
+    @StoredValue(.User.activeSessionIndicator)
+    private var activeSessionIndicator
+
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.Home.showRecentlyAdded)
@@ -87,11 +90,19 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            SettingsBarButton(
-                server: viewModel.userSession.server,
-                user: viewModel.userSession.user
-            ) {
-                mainRouter.route(to: \.settings)
+            HStack(spacing: 0) {
+                if activeSessionIndicator {
+                    ActiveSessionIndicator {
+                        print("This will take you to the Admin Dashboard once it's on its own coordinator...")
+                    }
+                }
+
+                SettingsBarButton(
+                    server: viewModel.userSession.server,
+                    user: viewModel.userSession.user
+                ) {
+                    mainRouter.route(to: \.settings)
+                }
             }
         }
         .sinceLastDisappear { interval in
