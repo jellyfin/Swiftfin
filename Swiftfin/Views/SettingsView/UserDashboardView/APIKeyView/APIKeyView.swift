@@ -77,14 +77,18 @@ struct APIKeyView: View {
         } message: {
             Text(L10n.apiKeyCopiedMessage)
         }
-        .alert(L10n.deleteAPIKey, isPresented: $showDeleteConfirmation, presenting: apiKeyToDelete) { _ in
-            Button(L10n.cancel, role: .cancel) {}
+        .confirmationDialog(
+            L10n.deleteAPIKey,
+            isPresented: $showDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
             Button(L10n.delete, role: .destructive) {
                 if let key = apiKeyToDelete {
                     viewModel.send(.deleteAPIKey(key: key))
                 }
             }
-        } message: { _ in
+            Button(L10n.cancel, role: .cancel) {}
+        } message: {
             Text(L10n.confirmDeleteAPIKeyMessage)
         }
         .alert(L10n.createAPIKey, isPresented: $showCreateAPIAlert) {
