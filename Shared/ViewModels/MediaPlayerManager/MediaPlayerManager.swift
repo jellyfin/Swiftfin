@@ -30,6 +30,8 @@ protocol MediaPlayerListener {
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
+    typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
+    
     // MARK: Event
 
     enum Event {
@@ -120,14 +122,18 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    init(item: BaseItemDto, playbackItemProvider: @escaping () async throws -> MediaPlayerItem) {
+    init(item: BaseItemDto, playbackItemProvider: @escaping MediaPlayerItemProvider) {
         self.item = item
         super.init()
         
         supplements = [MediaInfoSupplement(item: item)]
 
         // TODO: don't build on init?
-        buildMediaItem(from: playbackItemProvider)
+        buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
+//            self.state = .buffering
+//            self.playbackItem = newItem
+//            self.eventSubject.send(.playNew(playbackItem: newItem))
+        }
     }
 
     init(playbackItem: MediaPlayerItem) {
@@ -139,6 +145,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         state = .buffering
         self.playbackItem = playbackItem
         eventSubject.send(.playNew(playbackItem: playbackItem))
+    }
+    
+    private func addManagerSupplements() {
+        
     }
     
     // MARK: respond
@@ -179,7 +189,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
     // MARK: buildMediaItem
 
-    private func buildMediaItem(from provider: @escaping () async throws -> MediaPlayerItem) {
+    private func buildMediaItem(from provider: @escaping MediaPlayerItemProvider, onComplete: @escaping (MediaPlayerItem) async -> Void) {
         itemBuildTask?.cancel()
 
         itemBuildTask = Task { [weak self] in
@@ -195,11 +205,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
                 guard let self else { return }
 
-                await MainActor.run {
-                    self.state = .buffering
-                    self.playbackItem = playbackItem
-                    self.eventSubject.send(.playNew(playbackItem: playbackItem))
-                }
+                await onComplete(playbackItem)
             } catch {
                 guard let self, !Task.isCancelled else { return }
 

@@ -57,10 +57,11 @@ extension VideoPlayer.Overlay {
                             .scaleEffect(2)
                     }
                 }
-                .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
                 .font(.system(size: 56, weight: .bold, design: .default))
                 .contentShape(Rectangle())
                 .labelStyle(.iconOnly)
+                .padding(20)
             }
             .fixedSize()
         }
@@ -137,7 +138,7 @@ struct BounceButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.9 : 1)
-            .animation(.bouncy, value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.75 : 1)
+            .animation(.bouncy(duration: 0.7, extraBounce: 0.2), value: configuration.isPressed)
     }
 }

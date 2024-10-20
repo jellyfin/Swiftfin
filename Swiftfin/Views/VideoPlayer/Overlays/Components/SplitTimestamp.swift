@@ -32,33 +32,31 @@ extension VideoPlayer.Overlay {
 
                 Text(scrubbedSeconds, format: .runtime)
 
-                if isScrubbing {
-                    Group {
-                        Text("/")
+                Group {
+                    Text("/")
 
-                        Text(manager.seconds, format: .runtime)
-                    }
-                    .foregroundStyle(.secondary)
+                    Text(manager.seconds, format: .runtime)
                 }
+                .foregroundStyle(.secondary)
+                .isVisible(isScrubbing)
             }
         }
 
         @ViewBuilder
         private var trailingTimestamp: some View {
             HStack(spacing: 2) {
-                if isScrubbing {
-                    Group {
-                        Text(manager.item.runTimeSeconds - manager.seconds, format: .runtime.negated)
+                Group {
+                    Text(manager.item.runTimeSeconds - manager.seconds, format: .runtime.negated)
 
-                        Text("/")
-                    }
-                    .foregroundStyle(.secondary)
+                    Text("/")
                 }
+                .foregroundStyle(.secondary)
+                .isVisible(isScrubbing)
 
                 switch trailingTimestampType {
-                case .timeLeft: EmptyView()
+                case .timeLeft:
                     Text(manager.item.runTimeSeconds - scrubbedSeconds, format: .runtime.negated)
-                case .totalTime: EmptyView()
+                case .totalTime:
                     Text(manager.item.runTimeSeconds, format: .runtime)
                 }
             }

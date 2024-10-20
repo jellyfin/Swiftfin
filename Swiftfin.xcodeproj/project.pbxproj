@@ -724,6 +724,7 @@
 		E19D41B32BF2BFEF0082B8B2 /* URLSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D41AF2BF2B7540082B8B2 /* URLSessionConfiguration.swift */; };
 		E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1194F4F2BEB1E3000888DB6 /* StoredValues+Temp.swift */; };
 		E19D41B52BF2C0130082B8B2 /* V2AnyData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E164A8142BE58C2F00A54B18 /* V2AnyData.swift */; };
+		E19D53632CC45B800065C586 /* DebugPlaygroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19D53622CC45B800065C586 /* DebugPlaygroundView.swift */; };
 		E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E19DDEC62948EF9900954E10 /* OrderedCollections */; };
 		E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */; };
 		E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0428A0B958005C10C8 /* Nuke */; };
@@ -1470,6 +1471,7 @@
 		E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCheckView.swift; sourceTree = "<group>"; };
 		E19D41AD2BF288320082B8B2 /* ServerCheckViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerCheckViewModel.swift; sourceTree = "<group>"; };
 		E19D41AF2BF2B7540082B8B2 /* URLSessionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionConfiguration.swift; sourceTree = "<group>"; };
+		E19D53622CC45B800065C586 /* DebugPlaygroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPlaygroundView.swift; sourceTree = "<group>"; };
 		E19E551E2897326C003CE330 /* BottomEdgeGradientModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomEdgeGradientModifier.swift; sourceTree = "<group>"; };
 		E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaStreamInfoView.swift; sourceTree = "<group>"; };
 		E1A1528428FD191A00600579 /* TextPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPair.swift; sourceTree = "<group>"; };
@@ -2909,6 +2911,7 @@
 				E164A7F12BE471E700A54B18 /* AppSettingsView */,
 				E10231382BCF8A3C009D71FC /* ChannelLibraryView */,
 				5338F74D263B61370014BF09 /* ConnectToServerView.swift */,
+				E19D53622CC45B800065C586 /* DebugPlaygroundView.swift */,
 				E17AC96C2954E9CA003D2BC2 /* DownloadListView.swift */,
 				E13332922953BA9400EE76AB /* DownloadTaskView */,
 				E173DA4F26D048D600CC4EB7 /* EditServerView.swift */,
@@ -4695,6 +4698,7 @@
 				E14EDEC82B8FB65F000F00A4 /* ItemFilterType.swift in Sources */,
 				E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */,
 				62133890265F83A900A81A2A /* MediaView.swift in Sources */,
+				E19D53632CC45B800065C586 /* DebugPlaygroundView.swift in Sources */,
 				E1ED6FA82C867F3B0099B892 /* OpacityLinearGradient.swift in Sources */,
 				E1A8261C2C8F89190034361B /* Section.swift in Sources */,
 				E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */,

@@ -38,12 +38,16 @@ extension VideoPlayer.Overlay {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        @State
+        private var capsuleSliderSize = CGSize.zero
 
         @ViewBuilder
         private var capsuleSlider: some View {
             AlternateLayoutView {
-                Color.clear
+                EmptyHitTestView()
                     .frame(height: 10)
+                    .debugBackground()
             } content: {
                 CapsuleSlider(
                     value: _scrubbedSeconds.wrappedValue,
@@ -54,9 +58,10 @@ extension VideoPlayer.Overlay {
                     isScrubbing = newValue
                 }
                 .foregroundStyle(sliderColor)
+                .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
                 .frame(height: isScrubbing ? 20 : 10)
-                .offset(y: isScrubbing ? 20 : 0)
             }
+            .trackingSize($capsuleSliderSize)
         }
 
         @ViewBuilder
@@ -72,7 +77,7 @@ extension VideoPlayer.Overlay {
         }
 
         var body: some View {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .center, spacing: 10) {
                 switch sliderType {
                 case .capsule: capsuleSlider
                 case .thumb: thumbSlider
@@ -80,9 +85,11 @@ extension VideoPlayer.Overlay {
                 
                 SplitTimeStamp()
                     .if(sliderType == .capsule) { view in
-                        view.offset(y: isScrubbing ? 25 : 0)
+                        view.offset(y: isScrubbing ? 5 : 0)
+                            .frame(width: max(0, isScrubbing ? capsuleSliderSize.width : capsuleSliderSize.width - 30))
                     }
             }
+            .animation(.bouncy(duration: 0.5, extraBounce: 0.1), value: isScrubbing)
             .disabled(manager.state == .loadingItem)
         }
     }

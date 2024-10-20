@@ -99,6 +99,7 @@ extension VideoPlayer {
 
                 Color.black
                     .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
+                    .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
                     .allowsHitTesting(false)
                     .overlay(alignment: .bottom) {
                         OpacityLinearGradient {
@@ -124,7 +125,7 @@ extension VideoPlayer {
                         .edgePadding(.vertical)
                         .padding(effectiveSafeArea)
                         .offset(y: isPresentingOverlay ? 0 : -20)
-                        .animation(.bouncy, value: isPresentingOverlay)
+                        .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -151,13 +152,16 @@ extension VideoPlayer {
                             .allowsHitTesting(false)
                     }
                     .background {
-                        EmptyHitTestView()
+                        if isPresentingOverlay {
+                            EmptyHitTestView()
+                        }
                     }
                 }
 
                 if playbackButtonType == .large, !isPresentingDrawer {
                     Overlay.LargePlaybackButtons()
                         .isVisible(!isScrubbing && isPresentingOverlay)
+                        .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
@@ -187,7 +191,7 @@ extension VideoPlayer {
             .onReceive(overlayTimer.hasFired) { _ in
                 guard !isScrubbing else { return }
 
-                withAnimation(.linear(duration: 0.3)) {
+                withAnimation(.linear(duration: 0.25)) {
                     isPresentingOverlay = false
                 }
             }

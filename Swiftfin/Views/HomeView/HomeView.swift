@@ -93,6 +93,10 @@ struct HomeView: View {
             ) {
                 mainRouter.route(to: \.settings)
             }
+            
+            #if DEBUG
+            
+            #endif
         }
         .sinceLastDisappear { interval in
             if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {

@@ -27,6 +27,7 @@ struct AlternateLayoutView<Content: View, Layout: View>: View {
 
     var body: some View {
         layout()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .hidden()
             .overlay(alignment: alignment) {
                 content()

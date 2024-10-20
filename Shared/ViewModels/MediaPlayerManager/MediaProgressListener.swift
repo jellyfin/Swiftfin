@@ -24,58 +24,67 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     }
     
     private var hasSentStart = false
-    private weak var item: MediaPlayerItem?
+    private var item: MediaPlayerItem?
     private var lastManagerState: MediaPlayerManager.State = .initial
+    private var lastSeconds: TimeInterval = 0
     
     init(item: MediaPlayerItem) {
         self.item = item
         super.init()
-        
-        Timer.publish(every: 5, on: .main, in: .common)
-           .autoconnect()
-           .sink { [weak self] _ in
-               guard let self else { return }
-               
-               
-           }
-           .store(in: &cancellables)
+    }
+    
+    private func sendReport() {
+        guard let item else { return }
+    
+        switch lastManagerState {
+        case .initial, .loadingItem, .error: ()
+        case .stopped:
+            sendStopReport(for: item, seconds: lastSeconds)
+        case .playing:
+            if hasSentStart {
+                sendProgressReport(for: item, seconds: lastSeconds)
+            } else {
+                sendStartReport(for: item, seconds: lastSeconds)
+                hasSentStart = true
+            }
+        case .paused:
+            sendProgressReport(for: item, seconds: lastSeconds, isPaused: true)
+        case .buffering:
+            sendProgressReport(for: item, seconds: lastSeconds)
+        }
     }
     
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
         
+        Timer.publish(every: 5, on: .main, in: .common)
+           .autoconnect()
+           .sink { _ in
+               self.sendReport()
+           }
+           .store(in: &cancellables)
+        
+        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
     
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
         
-        if let item, let seconds = manager?.seconds {
-            sendStopReport(for: item, seconds: seconds)
+        if let item, newItem !== item {
+            sendStopReport(for: item, seconds: lastSeconds)
+            
+            // release
+            self.item = nil
         }
     }
     
     private func stateDidChange(newState: MediaPlayerManager.State) {
-        
         lastManagerState = newState
-        
-//        guard let item else { return }
-//        
-//        switch newState {
-//        case .initial, .loadingItem: ()
-//        case .error, .stopped:
-//            sendStopReport(for: item, seconds: 0)
-//        case .playing:
-//            sendStartReport(for: item, seconds: manager?.seconds ?? 0)
-//        case .paused:
-//            sendProgressReport(for: item, seconds: manager?.seconds ?? 0, isPaused: true)
-//        case .buffering:
-//            sendProgressReport(for: item, seconds: manager?.seconds ?? 0)
-//        }
     }
     
     private func secondsDidChange(newSeconds: TimeInterval) {
-        
+        lastSeconds = newSeconds
     }
     
     private func sendStartReport(for item: MediaPlayerItem, seconds: TimeInterval) {
