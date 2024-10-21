@@ -10,10 +10,6 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: observe running status
-//       - stop
-//       - run
-
 struct EditScheduledTaskView: View {
 
     @EnvironmentObject
@@ -118,7 +114,7 @@ struct EditScheduledTaskView: View {
                 switch event {
                 case .created:
                     eventSuccess = true
-                    eventMessage = L10n.serverTriggerCreated(TaskTriggerType(observer.task.name ?? L10n.unknown)
+                    eventMessage = L10n.serverTriggerCreated(observer.task.name ?? L10n.unknown)
                     showEventAlert = true
                 case .deleted:
                     eventSuccess = true

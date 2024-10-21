@@ -776,13 +776,13 @@ internal enum L10n {
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server Logs")
   /// Select Server View
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
-  /// A new %1$@ trigger was created for '%2$@'.
-  internal static func serverTriggerCreated(_ p1: Any, _ p2: Any) -> String {
-    return L10n.tr("Localizable", "serverTriggerCreated", String(describing: p1), String(describing: p2), fallback: "A new %1$@ trigger was created for '%2$@'.")
+  /// A new trigger was created for '%1$@'.
+  internal static func serverTriggerCreated(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "serverTriggerCreated", String(describing: p1), fallback: "A new trigger was created for '%1$@'.")
   }
-  /// The %1$@ trigger was deleted from '%2$@'.
-  internal static func serverTriggerDeleted(_ p1: Any, _ p2: Any) -> String {
-    return L10n.tr("Localizable", "serverTriggerDeleted", String(describing: p1), String(describing: p2), fallback: "The %1$@ trigger was deleted from '%2$@'.")
+  /// The selected trigger was deleted from '%1$@'.
+  internal static func serverTriggerDeleted(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "serverTriggerDeleted", String(describing: p1), fallback: "The selected trigger was deleted from '%1$@'.")
   }
   /// Server URL
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
