@@ -22,9 +22,6 @@ extension DevicesView {
 
         @Environment(\.colorScheme)
         private var colorScheme
-
-        // MARK: - Binding Variables
-
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
@@ -87,6 +84,7 @@ extension DevicesView {
                 }
             }
             .squarePosterStyle()
+            .posterShadow()
             .frame(width: 60, height: 60)
         }
 
@@ -95,21 +93,21 @@ extension DevicesView {
         @ViewBuilder
         private var rowContent: some View {
             HStack {
-                VStack(alignment: .leading, spacing: 5) {
+                VStack(alignment: .leading) {
+
                     Text(deviceInfo.name ?? L10n.unknown)
-                        .font(.title3)
-                        .fontWeight(.semibold)
+                        .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
-                    Text(deviceInfo.lastUserName ?? L10n.never)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .multilineTextAlignment(.leading)
+                    TextPairView(
+                        leading: L10n.user,
+                        trailing: deviceInfo.lastUserName ?? L10n.unknown
+                    )
 
                     TextPairView(
-                        deviceInfo.appName ?? L10n.unknown,
-                        value: Text(deviceInfo.appVersion ?? .emptyDash)
+                        leading: L10n.client,
+                        trailing: deviceInfo.appName ?? L10n.unknown
                     )
 
                     TextPairView(
@@ -125,6 +123,7 @@ extension DevicesView {
                     .id(currentDate)
                     .monospacedDigit()
                 }
+                .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)
 
                 Spacer()
@@ -154,11 +153,11 @@ extension DevicesView {
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: 8)) {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
                 deviceImage
-                    .padding(.trailing, 8)
             } content: {
                 rowContent
+                    .padding(.vertical, 8)
             }
             .onSelect(perform: onSelect)
             .swipeActions {

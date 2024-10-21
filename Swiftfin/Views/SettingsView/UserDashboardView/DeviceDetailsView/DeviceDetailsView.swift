@@ -14,7 +14,8 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
-    let device: DeviceInfo
+    @CurrentDate
+    private var currentDate: Date
 
     @State
     private var temporaryCustomName: String
@@ -27,6 +28,8 @@ struct DeviceDetailsView: View {
 
     @StateObject
     private var viewModel: DevicesViewModel
+
+    private let device: DeviceInfo
 
     // MARK: - Initializer
 
@@ -41,10 +44,22 @@ struct DeviceDetailsView: View {
 
     var body: some View {
         List {
-            UserSection(device: device)
+            if let lastUserID = device.lastUserID {
+                UserDashboardView.UserSection(
+                    user: .init(id: lastUserID, name: device.lastUserName),
+                    lastActivityDate: device.dateLastActivity
+                )
+            }
+
             // TODO: Enable with SDK Change
             // CustomDeviceNameSection(customName: $temporaryCustomName)
-            DeviceSection(device: device)
+
+            UserDashboardView.DeviceSection(
+                client: device.appName,
+                device: device.name,
+                version: device.appVersion
+            )
+
             CapabilitiesSection(device: device)
         }
         .navigationTitle(L10n.device)

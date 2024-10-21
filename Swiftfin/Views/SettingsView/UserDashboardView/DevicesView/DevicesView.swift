@@ -17,9 +17,6 @@ struct DevicesView: View {
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @StateObject
-    private var viewModel: DevicesViewModel
-
     @State
     private var isPresentingDeleteSelectionConfirmation = false
     @State
@@ -30,6 +27,9 @@ struct DevicesView: View {
     private var selectedDevices: Set<String> = []
     @State
     private var isEditing: Bool = false
+
+    @StateObject
+    private var viewModel: DevicesViewModel
 
     // MARK: - Initializer
 
@@ -57,6 +57,7 @@ struct DevicesView: View {
                 DelayedProgressView()
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.devices)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
@@ -100,15 +101,19 @@ struct DevicesView: View {
 
     // MARK: - Device List View
 
+    @ViewBuilder
     private var deviceListView: some View {
         VStack {
             List {
-                ListTitleSection(
+                InsetGroupedListHeader(
                     L10n.devices,
                     description: L10n.allDevicesDescription
                 ) {
                     UIApplication.shared.open(.jellyfinDocsDevices)
                 }
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .padding(.vertical, 24)
 
                 ForEach(viewModel.devices.keys, id: \.self) { id in
                     if let deviceBox = viewModel.devices[id] {
@@ -130,9 +135,11 @@ struct DevicesView: View {
                         .environment(\.isEditing, isEditing)
                         .environment(\.isSelected, selectedDevices.contains(id))
                         .listRowSeparator(.hidden)
+                        .listRowInsets(.zero)
                     }
                 }
             }
+            .listStyle(.plain)
 
             if isEditing {
                 deleteDevicesButton
@@ -190,9 +197,10 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        var allSelected: Bool = (selectedDevices.count == viewModel.devices.count)
-        Button(allSelected ? L10n.removeAll : L10n.selectAll) {
-            if allSelected {
+        let isAllSelected: Bool = selectedDevices.count == viewModel.devices.count
+
+        Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
+            if isAllSelected {
                 selectedDevices = []
             } else {
                 selectedDevices = Set(viewModel.devices.keys)

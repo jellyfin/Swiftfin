@@ -28,12 +28,14 @@ struct UserDashboardView: View {
                     router.route(to: \.activeSessions)
                 }
 
-            Section(L10n.advanced) {
-
+            Section("Activity") {
                 ChevronButton(L10n.devices)
                     .onSelect {
                         router.route(to: \.devices)
                     }
+            }
+
+            Section(L10n.advanced) {
 
                 ChevronButton(L10n.logs)
                     .onSelect {

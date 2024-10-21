@@ -15,7 +15,6 @@
 		4E10C8112CC030CD0012CC9F /* DeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */; };
 		4E10C8172CC0455A0012CC9F /* CompatibilitiesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */; };
 		4E10C8192CC045700012CC9F /* CustomDeviceNameSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */; };
-		4E10C81B2CC0457E0012CC9F /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */; };
 		4E10C81D2CC046610012CC9F /* UserSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C81C2CC0465F0012CC9F /* UserSection.swift */; };
 		4E11805F2CBF52380077A588 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
@@ -930,6 +929,7 @@
 		E1DD55372B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
 		E1DD55382B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
 		E1DE2B4A2B97ECB900F6715F /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE2B492B97ECB900F6715F /* ErrorView.swift */; };
+		E1DE64922CC6F0C900E423B6 /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE64912CC6F0C900E423B6 /* DeviceSection.swift */; };
 		E1DE84142B9531C1008CCE21 /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */; };
 		E1E0BEB729EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */; };
 		E1E0BEB829EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */; };
@@ -1042,7 +1042,6 @@
 		4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
 		4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatibilitiesSection.swift; sourceTree = "<group>"; };
 		4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceNameSection.swift; sourceTree = "<group>"; };
-		4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
 		4E10C81C2CC0465F0012CC9F /* UserSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSection.swift; sourceTree = "<group>"; };
 		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
@@ -1659,6 +1658,7 @@
 		E1DD20402BE1EB8C00C0DE51 /* AddUserButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
 		E1DD55362B6EE533007501C0 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		E1DE2B492B97ECB900F6715F /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
+		E1DE64912CC6F0C900E423B6 /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
 		E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSectionSelectorView.swift; sourceTree = "<group>"; };
 		E1E0BEB629EF450B0002E8D3 /* UIGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIGestureRecognizer.swift; sourceTree = "<group>"; };
 		E1E1643928BAC2EF00323B0A /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
@@ -1860,8 +1860,6 @@
 			children = (
 				4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */,
 				4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */,
-				4E10C81A2CC0457C0012CC9F /* DeviceSection.swift */,
-				4E10C81C2CC0465F0012CC9F /* UserSection.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -1924,6 +1922,7 @@
 		4E63B9F52C8A5BEF00C25378 /* UserDashboardView */ = {
 			isa = PBXGroup;
 			children = (
+				E1DE64902CC6F06C00E423B6 /* Components */,
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
 				4E10C80F2CC030B20012CC9F /* DeviceDetailsView */,
@@ -3919,6 +3918,15 @@
 			path = LibraryParent;
 			sourceTree = "<group>";
 		};
+		E1DE64902CC6F06C00E423B6 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				E1DE64912CC6F0C900E423B6 /* DeviceSection.swift */,
+				4E10C81C2CC0465F0012CC9F /* UserSection.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
 		E1E5D54A2783E26100692DFE /* SettingsView */ = {
 			isa = PBXGroup;
 			children = (
@@ -4899,7 +4907,6 @@
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
-				4E10C81B2CC0457E0012CC9F /* DeviceSection.swift in Sources */,
 				4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
 				E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */,
 				E10432F62BE4426F006FF9DD /* FormatStyle.swift in Sources */,
@@ -5136,6 +5143,7 @@
 				4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */,
 				E145EB422BE0A6EE003BF6F3 /* ServerSelectionMenu.swift in Sources */,
 				4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */,
+				E1DE64922CC6F0C900E423B6 /* DeviceSection.swift in Sources */,
 				E14EA15E2BF6F72900DE757A /* PhotoPicker.swift in Sources */,
 				E19F6C5D28F5189300C5197E /* MediaStreamInfoView.swift in Sources */,
 				E1D8429329340B8300D1041A /* Utilities.swift in Sources */,
