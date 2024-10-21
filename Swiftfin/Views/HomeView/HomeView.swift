@@ -90,19 +90,17 @@ struct HomeView: View {
                 ProgressView()
             }
 
-            HStack(spacing: 0) {
-                if activeSessionIndicator {
-                    ActiveSessionIndicator {
-                        // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
-                    }
+            if activeSessionIndicator {
+                ActiveSessionIndicator {
+                    // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
                 }
+            }
 
-                SettingsBarButton(
-                    server: viewModel.userSession.server,
-                    user: viewModel.userSession.user
-                ) {
-                    mainRouter.route(to: \.settings)
-                }
+            SettingsBarButton(
+                server: viewModel.userSession.server,
+                user: viewModel.userSession.user
+            ) {
+                mainRouter.route(to: \.settings)
             }
         }
         .sinceLastDisappear { interval in

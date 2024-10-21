@@ -75,32 +75,26 @@ struct ActiveSessionIndicator: View {
 
     var sessionsView: some View {
         HStack(alignment: .bottom) {
-            if isEnabled {
-                counterView
-                    .offset(x: 5)
-            }
-            ZStack {
-                imageView
-                if showSpinner {
-                    loadingSpinner
-                } else {
-                    idleCircle
+            imageView
+                .overlay {
+                    if !activeSessions.isEmpty {
+                        ActivityBadge(value: activeSessions.count)
+                    }
                 }
-            }
-            .onChange(of: viewModel.backgroundStates) { newState in
-                if newState.contains(.gettingSessions) {
-                    showSpinner = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        if !viewModel.backgroundStates.contains(.gettingSessions) {
+                .onChange(of: viewModel.backgroundStates) { newState in
+                    if newState.contains(.gettingSessions) {
+                        showSpinner = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            if !viewModel.backgroundStates.contains(.gettingSessions) {
+                                showSpinner = false
+                            }
+                        }
+                    } else {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             showSpinner = false
                         }
                     }
-                } else {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        showSpinner = false
-                    }
                 }
-            }
         }
     }
 
@@ -132,46 +126,5 @@ struct ActiveSessionIndicator: View {
                 Circle()
                     .fill(.yellow)
             )
-    }
-
-    // MARK: - Loading Spinner View
-
-    var loadingSpinner: some View {
-        Circle()
-            .trim(from: 0.25, to: 0.75)
-            .stroke(showSpinner ? (isEnabled ? Color.accentColor : .secondary) : Color.clear, lineWidth: 2)
-            .frame(width: 30, height: 30)
-            .rotationEffect(
-                Angle(degrees: isSpinning ? 360 : 0)
-            )
-            .animation(
-                .linear(duration: 1.5)
-                    .repeatForever(autoreverses: false),
-                value: isSpinning
-            )
-            .onAppear {
-                isSpinning = true
-            }
-            .onDisappear {
-                isSpinning = false
-            }
-    }
-
-    // MARK: - Spacer Spinner View
-
-    var idleCircle: some View {
-        // This exists to ensure spacing so the image doesn't move when loading happens
-        Circle()
-            .stroke(Color.clear, lineWidth: 2)
-            .frame(width: 30, height: 30)
-    }
-
-    // MARK: - Counter View
-
-    var counterView: some View {
-        Text("\(activeSessions.count)")
-            .font(.headline)
-            .padding(0)
-            .foregroundStyle(isEnabled ? Color.accentColor : .secondary)
     }
 }
