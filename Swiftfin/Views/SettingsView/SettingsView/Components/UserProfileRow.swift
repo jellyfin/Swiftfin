@@ -50,7 +50,7 @@ extension SettingsView {
                     .clipShape(.circle)
                     .frame(width: 50, height: 50)
 
-                    Text(user.name ?? .emptyDash)
+                    Text(user.name ?? L10n.unknown)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
 

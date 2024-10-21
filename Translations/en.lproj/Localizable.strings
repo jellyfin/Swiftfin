@@ -738,3 +738,108 @@
 
 /* Section Title for Column Configuration */
 "columns" = "Columns";
+
+// Devices - Section Header
+// Title for the devices section in the Admin Dashboard
+// Used as the header for the devices section
+"devices" = "Devices";
+
+// All Devices Description - Section Description
+// Description for the all devices section in the Admin Dashboard
+// Provides information about the devices connected to the server, including past and current connections
+"allDevicesDescription" = "View all past and present devices that have connected.";
+
+// Delete Selected Devices - Button
+// Button label for deleting all selected devices
+// Used in the all devices section to delete all selected devices
+"deleteSelectedDevices" = "Delete Selected Devices";
+
+// Never - Filler Text
+// Text displayed when something has never or will never occur
+// Used as placeholder text for events that never happen
+"never" = "Never";
+
+// Delete Selected Devices Warning - Warning Message
+// Warning message displayed when deleting all devices
+// Informs the user about the consequences of deleting all devices
+"deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.";
+
+// Delete Device Warning - Warning Message
+// Warning message displayed when deleting a single device
+// Informs the user about the consequences of deleting the device
+"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
+
+// Delete Device - Action
+// Message for deleting a single device in the all devices section
+// Used in the confirmation dialog to delete a single device
+"deleteDevice" = "Delete Device";
+
+// Delete Device Self-Deletion - Error Message
+// Error message when attempting to delete the current session's device
+// Used to inform the user that they cannot delete their own session
+"deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
+
+// Delete Device Failed - Error Title
+// Title for the alert when device deletion fails
+// Displayed when the system fails to delete a device
+"deleteDeviceFailed" = "Failed to Delete Device";
+
+// Custom Device Name - Title
+// Title for setting a custom device name
+// Used in the custom device name section
+"customDeviceName" = "Custom Device Name";
+
+// Capabilities - Section Header
+// Title for the section showing the device capabilities
+// Displayed as the header for the device capabilities section
+"capabilities" = "Capabilities";
+
+// Supports Content Uploading - Label
+// Indicates whether the device supports uploading content
+// Used in the capabilities section to display if content uploading is supported
+"supportsContentUploading" = "Content Uploading";
+
+// Supports Media Control - Label
+// Indicates whether the device supports media control (e.g., play, pause, stop)
+// Used in the capabilities section to display media control capability
+"supportsMediaControl" = "Media Control";
+
+// Supports Persistent Identifier - Label
+// Indicates whether the device supports a persistent identifier
+// Used in the capabilities section to display persistent identifier support
+"supportsPersistentIdentifier" = "Persistent Identifier";
+
+// Supports Sync - Label
+// Indicates whether the device suppoTestrts syncing content (e.g., media sync across devices)
+// Used in the capabilities section to display sync capability
+"supportsSync" = "Sync";
+
+// Yes - Label
+// Indicates that a capability is supported
+// Used in the capabilities section as a positive response
+"yes" = "Yes";
+
+// No - Label
+// Indicates that a capability is not supported
+// Used in the capabilities section as a negative response
+"no" = "No";
+
+// Custom Device Name Saved - Label
+// Confirms that the custom device name was saved successfully
+// Used after successfully saving a custom device name
+"customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
+
+// Success - Label
+// Indicates that an operation was successful
+// Used as a confirmation for successful actions
+"success" = "Success";
+
+// Remove All - Button
+// Deselects all currently selected devices
+// Used to clear all selections in selection mode
+"removeAll" = "Remove All";
+
+// Select All - Button
+// Selects all available devices
+// Used to select all items in selection mode
+"selectAll" = "Select All";
