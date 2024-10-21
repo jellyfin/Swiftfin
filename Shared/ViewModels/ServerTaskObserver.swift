@@ -17,7 +17,8 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
     // MARK: Event
 
     enum Event {
-        case completed
+        case created
+        case deleted
         case error(JellyfinAPIError)
     }
 
@@ -85,7 +86,6 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
 
                     await MainActor.run {
                         self.state = .initial
-                        self.eventSubject.send(.completed)
                     }
                 } catch {
                     await MainActor.run {
@@ -107,7 +107,6 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
 
                     await MainActor.run {
                         self.state = .initial
-                        self.eventSubject.send(.completed)
                     }
                 } catch {
                     await MainActor.run {
@@ -133,7 +132,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
                     try await addTrigger(newTrigger: trigger)
                     await MainActor.run {
                         self.state = .updating
-                        self.eventSubject.send(.completed)
+                        self.eventSubject.send(.created)
                     }
                 } catch {
                     await MainActor.run {
@@ -154,7 +153,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
                     try await removeTrigger(deleteTrigger: trigger)
                     await MainActor.run {
                         self.state = .updating
-                        self.eventSubject.send(.completed)
+                        self.eventSubject.send(.deleted)
                     }
                 } catch {
                     await MainActor.run {

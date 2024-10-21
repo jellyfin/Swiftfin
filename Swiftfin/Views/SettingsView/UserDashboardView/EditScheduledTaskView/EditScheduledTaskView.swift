@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import JellyfinAPI
 import SwiftUI
 
@@ -21,10 +22,25 @@ struct EditScheduledTaskView: View {
     @ObservedObject
     var observer: ServerTaskObserver
 
+    // MARK: - State Variables
+
     @State
     private var isPresentingDeleteConfirmation = false
     @State
+    private var showEventAlert = false
+    @State
+    private var eventSuccess = false
+    @State
+    private var eventMessage: String = ""
+    @State
     private var selectedTrigger: TaskTriggerInfo?
+
+    // MARK: - Cancellables for Combine Subscriptions
+
+    @State
+    private var cancellables: Set<AnyCancellable> = []
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -71,6 +87,9 @@ struct EditScheduledTaskView: View {
                 .buttonStyle(.toolbarPill)
             }
         }
+        .onAppear {
+            handleEvents()
+        }
         .confirmationDialog(
             L10n.deleteTrigger,
             isPresented: $isPresentingDeleteConfirmation,
@@ -86,5 +105,31 @@ struct EditScheduledTaskView: View {
         } message: {
             Text(L10n.deleteTriggerConfirmationMessage)
         }
+        .alert(eventSuccess ? L10n.success : L10n.error, isPresented: $showEventAlert) {} message: {
+            Text(eventMessage)
+        }
+    }
+
+    // MARK: - Handle Events
+
+    private func handleEvents() {
+        observer.events
+            .sink { event in
+                switch event {
+                case .created:
+                    eventSuccess = true
+                    eventMessage = L10n.serverTriggerCreated(TaskTriggerType(observer.task.name ?? L10n.unknown)
+                    showEventAlert = true
+                case .deleted:
+                    eventSuccess = true
+                    eventMessage = L10n.serverTriggerDeleted(observer.task.name ?? L10n.unknown)
+                    showEventAlert = true
+                case let .error(jellyfinError):
+                    eventSuccess = false
+                    eventMessage = jellyfinError.localizedDescription
+                    showEventAlert = true
+                }
+            }
+            .store(in: &cancellables)
     }
 }

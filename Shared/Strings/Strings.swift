@@ -251,7 +251,7 @@ internal enum L10n {
   /// Day of Week
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of Week")
   /// Time Interval Help Text - Days
-  internal static let days = L10n.tr("Localizable", "days", fallback: "days")
+  internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Server Detail View - Delete
@@ -776,6 +776,14 @@ internal enum L10n {
   internal static let serverLogs = L10n.tr("Localizable", "serverLogs", fallback: "Server Logs")
   /// Select Server View
   internal static let servers = L10n.tr("Localizable", "servers", fallback: "Servers")
+  /// A new %1$@ trigger was created for '%2$@'.
+  internal static func serverTriggerCreated(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "serverTriggerCreated", String(describing: p1), String(describing: p2), fallback: "A new %1$@ trigger was created for '%2$@'.")
+  }
+  /// The %1$@ trigger was deleted from '%2$@'.
+  internal static func serverTriggerDeleted(_ p1: Any, _ p2: Any) -> String {
+    return L10n.tr("Localizable", "serverTriggerDeleted", String(describing: p1), String(describing: p2), fallback: "The %1$@ trigger was deleted from '%2$@'.")
+  }
   /// Server URL
   internal static let serverURL = L10n.tr("Localizable", "serverURL", fallback: "Server URL")
   /// The title for the session view

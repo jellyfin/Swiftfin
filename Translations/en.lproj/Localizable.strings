@@ -1008,3 +1008,18 @@
 // Describes a task with no runtime limit
 // No task trigger runtime limit set
 "noRuntimeLimit" = "No runtime limit";
+
+// API Key Created - Success Message
+// A new Access Token was successfully created for the specified application
+// Appears in success alert when a new API key is created
+"serverTriggerCreated" = "A new trigger was created for '%1$@'.";
+
+// API Key Deleted - Success Message
+// The Access Token was successfully deleted for the specified application
+// Appears in success alert when an API key is deleted
+"serverTriggerDeleted" = "The selected trigger was deleted from '%1$@'.";
+
+// Save - Button
+// Confirms that something completed successfully or without error
+// Appears in the views with eventful to indicate a task did not fail
+"success" = "Success";
