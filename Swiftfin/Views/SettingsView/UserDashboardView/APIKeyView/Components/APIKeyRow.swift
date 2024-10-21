@@ -15,14 +15,23 @@ extension APIKeyView {
 
     struct APIKeyRow: View {
 
-        // MARK: - API Key Information
-
-        let apiKey: AuthenticationInfo
+        @ObservedObject
+        private var box: BindingBox<AuthenticationInfo?>
 
         // MARK: - Actions
 
-        let onSelect: () -> Void
-        let onDelete: () -> Void
+        private let onSelect: () -> Void
+        private let onDelete: () -> Void
+
+        private var apiKey: AuthenticationInfo {
+            box.value ?? .init()
+        }
+
+        init(box: BindingBox<AuthenticationInfo?>, onSelect: @escaping () -> Void, onDelete: @escaping () -> Void) {
+            self.box = box
+            self.onSelect = onSelect
+            self.onDelete = onDelete
+        }
 
         // MARK: - Row Content
 

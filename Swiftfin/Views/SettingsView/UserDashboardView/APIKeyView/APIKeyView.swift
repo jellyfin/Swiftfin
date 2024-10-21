@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionVGrid
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -105,23 +106,20 @@ struct APIKeyView: View {
     // MARK: - API Key List View
 
     private var apiKeyListView: some View {
-        VStack {
-            List {
-                ListTitleSection(
-                    L10n.apiKeysTitle,
-                    description: L10n.apiKeysDescription
-                )
-
-                ForEach(viewModel.apiKeys, id: \.accessToken) { apiKey in
-                    APIKeyRow(apiKey: apiKey) {
-                        UIPasteboard.general.string = apiKey.accessToken
-                        showCopiedAlert = true
-                    } onDelete: {
-                        apiKeyToDelete = apiKey.accessToken
-                        showDeleteConfirmation = true
-                    }
-                    .listRowSeparator(.hidden)
-                }
+        /* ListTitleSection(
+             L10n.apiKeysTitle,
+             description: L10n.apiKeysDescription
+         ) */
+        CollectionVGrid(
+            viewModel.apiKeys.keys,
+            layout: .columns(1, insets: .zero, itemSpacing: 8, lineSpacing: 8)
+        ) { key in
+            APIKeyRow(box: viewModel.apiKeys[key]!) {
+                UIPasteboard.general.string = viewModel.apiKeys[key]!.value?.accessToken
+                showCopiedAlert = true
+            } onDelete: {
+                apiKeyToDelete = viewModel.apiKeys[key]!.value?.accessToken
+                showDeleteConfirmation = true
             }
         }
     }

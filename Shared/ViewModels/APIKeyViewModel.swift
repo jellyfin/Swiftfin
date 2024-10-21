@@ -54,9 +54,7 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var sessions: OrderedDictionary<String, BindingBox<AuthenticationInfo?>> = [:]
-    @Published
-    final var apiKeys: OrderedSet<AuthenticationInfo> = []
+    final var apiKeys: OrderedDictionary<String, BindingBox<AuthenticationInfo?>> = [:]
     @Published
     final var state: State = .initial
 
@@ -118,14 +116,47 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
 
     private func getAPIKeys() async throws {
         let request = Paths.getKeys
-        let response = try await userSession.client.send(request).value
+        let response = try await userSession.client.send(request)
+
+        guard let items = response.value.items else { return }
+
+        let removedKeys = apiKeys.keys.filter { !items.map(\.accessToken).contains($0) }
+
+        let existingKeys = apiKeys.keys.filter { items.map(\.accessToken).contains($0) }
+
+        let newKeys = items.filter { key in
+            guard let accessToken = key.accessToken else { return false }
+            return !apiKeys.keys.contains(accessToken)
+        }.map { s in
+            BindingBox<AuthenticationInfo?>(
+                source: .init(
+                    get: { s },
+                    set: { _ in }
+                )
+            )
+        }
 
         await MainActor.run {
-            if let items = response.items {
-                let sortedKeys = items.sorted { $0.appName ?? "" < $1.appName ?? "" }
-                self.apiKeys = OrderedSet(sortedKeys)
-            } else {
-                self.apiKeys = []
+            for accessToken in removedKeys {
+                let t = apiKeys[accessToken]
+                apiKeys[accessToken] = nil
+                t?.value = nil
+            }
+
+            for accessToken in existingKeys {
+                apiKeys[accessToken]?.value = items.first(where: { $0.accessToken == accessToken })
+            }
+
+            for key in newKeys {
+                guard let accessToken = key.value?.accessToken else { continue }
+                apiKeys[accessToken] = key
+            }
+
+            apiKeys.sort { x, y in
+                let xs = x.value.value
+                let ys = y.value.value
+
+                return (xs?.accessToken ?? "") < (ys?.accessToken ?? "")
             }
         }
     }
@@ -134,6 +165,7 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.createKey(app: name)
         try await userSession.client.send(request).value
 
+        // Is there a better way? Request does not return the new key.
         try await getAPIKeys()
     }
 
@@ -141,8 +173,6 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.revokeKey(key: key)
         try await userSession.client.send(request)
 
-        if let existingKey = apiKeys.first(where: { $0.accessToken == key }) {
-            apiKeys.remove(existingKey)
-        }
+        self.apiKeys.removeValue(forKey: key)
     }
 }
