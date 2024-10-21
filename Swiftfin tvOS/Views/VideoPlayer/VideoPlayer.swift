@@ -8,40 +8,43 @@
 
 import Defaults
 import JellyfinAPI
-import MediaPlayer
 import Stinsen
 import SwiftUI
 import VLCUI
 
+// TODO: move audio/subtitle offset to manager?
+
 struct VideoPlayer: View {
 
-    enum OverlayType {
-//        case chapters
-        case confirmClose
-        case main
-//        case smallMenu
-    }
-
-    @Environment(\.scenePhase)
-    private var scenePhase
+    @Default(.VideoPlayer.Subtitle.subtitleColor)
+    private var subtitleColor
+    @Default(.VideoPlayer.Subtitle.subtitleFontName)
+    private var subtitleFontName
+    @Default(.VideoPlayer.Subtitle.subtitleSize)
+    private var subtitleSize
 
     @EnvironmentObject
     private var router: VideoPlayerCoordinator.Router
 
-//    @ObservedObject
-//    private var currentProgressHandler: MediaPlayerManager.CurrentProgressHandler
+    @State
+    private var audioOffset: Int = 0
+    @State
+    private var isAspectFilled: Bool = false
+    @State
+    private var isScrubbing: Bool = false
+    @State
+    private var safeAreaInsets: EdgeInsets = .zero
+    @State
+    private var scrubbedSeconds: TimeInterval = 0.0
+    @State
+    private var subtitleOffset: Int = 0
+
     @StateObject
     private var manager: MediaPlayerManager
     @StateObject
-    private var scrubbedProgress: ProgressBox = .init()
-
-    @State
-    private var isPresentingOverlay: Bool = false
-    @State
-    private var isScrubbing: Bool = false
-
-    @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
+
+    // MARK: playerView
 
     @ViewBuilder
     private var playerView: some View {
@@ -52,20 +55,21 @@ struct VideoPlayer: View {
             if let playbackitem = manager.playbackItem {
                 VLCVideoPlayer(configuration: playbackitem.vlcConfiguration)
                     .proxy(vlcUIProxy)
-                    .onTicksUpdated { ticks, _ in
+                    .onSecondsUpdated { newSeconds, _ in
 
                         guard manager.state != .initial || manager.state != .loadingItem else { return }
 
-                        let newSeconds = ticks / 1000
-                        let newProgress = CGFloat(newSeconds) / CGFloat(manager.item.runTimeSeconds)
-
                         if !isScrubbing {
-                            scrubbedProgress.progress = newProgress
+                            scrubbedSeconds = newSeconds
                         }
 
+                        // TODO: fix menu pulsing issue
                         manager.send(.seek(seconds: newSeconds))
                     }
                     .onStateUpdated { state, _ in
+
+                        guard state != .playing || manager.state != .playing else { return }
+
                         switch state {
                         case .buffering, .esAdded, .opening:
                             manager.send(.buffer)
@@ -85,66 +89,85 @@ struct VideoPlayer: View {
             }
 
             Overlay()
-//                .environment(\.isAspectFilled, $isAspectFilled)
-                    .environment(\.isPresentingOverlay, $isPresentingOverlay)
-                    .environment(\.isScrubbing, $isScrubbing)
-//                .environment(\.playbackSpeed, $playbackSpeed)
-                    .environmentObject(manager)
-                    .environmentObject(scrubbedProgress)
-                    .environmentObject(vlcUIProxy)
+                .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isScrubbing, $isScrubbing)
+                .environment(\.safeAreaInsets, $safeAreaInsets)
+                .environment(\.scrubbedSeconds, $scrubbedSeconds)
+                .environmentObject(manager)
+                .environmentObject(vlcUIProxy)
         }
     }
 
-    @ViewBuilder
-    private var loadingView: some View {
-        Text("Retrieving media information")
-    }
+    // MARK: body
 
     var body: some View {
+
+        let _ = Self._printChanges()
+
         playerView
             .ignoresSafeArea()
-//        .onChange(of: isScrubbing) { _, newValue in
-//            guard !newValue else { return }
-//            vlcUIProxy.setTime(.seconds(currentProgressHandler.scrubbedSeconds))
-//        }
-//        .onScenePhase(.active) {
-//            if Defaults[.VideoPlayer.Transition.playOnActive] {
-//                videoPlayerManager.proxy.play()
-//            }
-//        }
-//        .onScenePhase(.background) {
-//            if Defaults[.VideoPlayer.Transition.pauseOnBackground] {
-//                videoPlayerManager.proxy.pause()
-//            }
-//        }
+            .navigationBarHidden()
+            .trackingSize(.constant(.zero), $safeAreaInsets)
+            .onChange(of: audioOffset) {
+                vlcUIProxy.setAudioDelay(.ticks(audioOffset))
+            }
+            .onChange(of: isAspectFilled) {
+                UIView.animate(withDuration: 0.2) {
+                    vlcUIProxy.aspectFill(isAspectFilled ? 1 : 0)
+                }
+            }
+            .onChange(of: isScrubbing) {
+                guard !isScrubbing else { return }
+
+                manager.send(.seek(seconds: scrubbedSeconds))
+                manager.proxy?.setTime(scrubbedSeconds)
+            }
+            .onChange(of: subtitleColor) {
+                vlcUIProxy.setSubtitleColor(.absolute(subtitleColor.uiColor))
+            }
+            .onChange(of: subtitleFontName) {
+                vlcUIProxy.setSubtitleFont(subtitleFontName)
+            }
+            .onChange(of: subtitleOffset) {
+                vlcUIProxy.setSubtitleDelay(.ticks(subtitleOffset))
+            }
+            .onChange(of: subtitleSize) {
+                vlcUIProxy.setSubtitleSize(.absolute(24 - subtitleSize))
+            }
+            .onReceive(manager.events) { @MainActor event in
+                switch event {
+                case .playbackStopped:
+                    vlcUIProxy.stop()
+                    router.dismissCoordinator()
+                case let .playNew(playbackItem: item):
+                    isAspectFilled = false
+                    audioOffset = 0
+                    subtitleOffset = 0
+
+                    let seconds = item.vlcConfiguration
+                        .startTime
+                        .asSeconds
+
+                    scrubbedSeconds = seconds
+                    vlcUIProxy.playNewMedia(item.vlcConfiguration)
+                }
+            }
     }
 }
+
+// MARK: init
 
 extension VideoPlayer {
 
-    init(item: BaseItemDto, mediaSource: MediaSourceInfo) {
+    init(manager: MediaPlayerManager) {
 
-        let manager = VideoPlayerManager(item: item, mediaSource: mediaSource)
         let videoPlayerProxy = VLCVideoPlayerProxy()
         let vlcUIProxy = VLCVideoPlayer.Proxy()
 
         videoPlayerProxy.vlcUIProxy = vlcUIProxy
         manager.proxy = videoPlayerProxy
 
-        self.init(
-            manager: manager,
-            vlcUIProxy: vlcUIProxy
-        )
-    }
-
-    init(item: MediaPlayerItem) {
-
-        let manager = VideoPlayerManager(playbackItem: item)
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
+        manager.listeners.append(NowPlayableListener(manager: manager))
 
         self.init(
             manager: manager,
@@ -152,3 +175,18 @@ extension VideoPlayer {
         )
     }
 }
+
+// struct VideoPlayer_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoPlayer(
+//            item: .init(
+//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
+//                mediaSource: .init(),
+//                playSessionID: "",
+//                url: URL(string: "/")!
+//            )
+//        )
+//        .previewInterfaceOrientation(.landscapeLeft)
+//        .preferredColorScheme(.dark)
+//    }
+// }

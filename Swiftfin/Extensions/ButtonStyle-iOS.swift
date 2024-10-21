@@ -100,12 +100,12 @@ struct VideoPlayerBarButtonStyle: ButtonStyle {
 }
 
 struct VideoPlayerDrawerContentButton: ButtonStyle {
-    
+
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
             BlurView()
                 .cornerRadius(7)
-            
+
             configuration.label
                 .font(.subheadline.weight(.semibold))
         }
@@ -113,7 +113,7 @@ struct VideoPlayerDrawerContentButton: ButtonStyle {
 }
 
 extension ButtonStyle where Self == VideoPlayerDrawerContentButton {
-    
+
     static var videoPlayerDrawerContent: VideoPlayerDrawerContentButton {
         VideoPlayerDrawerContentButton()
     }

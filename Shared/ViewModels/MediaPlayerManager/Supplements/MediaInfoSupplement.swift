@@ -26,14 +26,14 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         @Environment(\.safeAreaInsets)
         @Binding
         private var safeAreaInsets
-        
+
         @Environment(\.selectedMediaPlayerSupplement)
         @Binding
         private var selectedMediaPlayerSupplement: AnyMediaPlayerSupplement?
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         @State
         private var contentSize: CGSize = .zero
 
@@ -57,14 +57,14 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                 }
             }
         }
-        
+
         @ViewBuilder
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
                 manager.proxy?.setTime(0)
                 selectedMediaPlayerSupplement = nil
             }
-            .buttonStyle(.videoPlayerDrawerContent)
+//            .buttonStyle(.videoPlayerDrawerContent)
             .frame(width: 150, height: 50)
         }
 
@@ -87,7 +87,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                         .fontWeight(.semibold)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
-                    
+
                     if let overview = item.overview {
                         Text(overview)
                             .font(.subheadline.weight(.semibold))
@@ -99,7 +99,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
                         .foregroundStyle(.secondary)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
+
                 VStack {
                     fromBeginningButton
                 }
@@ -110,7 +110,7 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
+// struct ContentView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        MediaInfoSupplement(item: .init(
 //            indexNumber: 1,
@@ -125,4 +125,4 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 //        .frame(height: 110)
 //        .previewInterfaceOrientation(.landscapeRight)
 //    }
-//}
+// }

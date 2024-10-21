@@ -38,7 +38,7 @@ struct VideoPlayer: View {
     private var scrubbedSeconds: TimeInterval = 0.0
     @State
     private var subtitleOffset: Int = 0
-    
+
     @StateObject
     private var manager: MediaPlayerManager
     @StateObject
@@ -58,11 +58,11 @@ struct VideoPlayer: View {
                     .onSecondsUpdated { newSeconds, _ in
 
                         guard manager.state != .initial || manager.state != .loadingItem else { return }
-                        
+
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
                         }
-                        
+
                         // TODO: fix menu pulsing issue
                         manager.send(.seek(seconds: newSeconds))
                     }
@@ -148,7 +148,7 @@ struct VideoPlayer: View {
                     let seconds = item.vlcConfiguration
                         .startTime
                         .asSeconds
-                    
+
                     scrubbedSeconds = seconds
                     vlcUIProxy.playNewMedia(item.vlcConfiguration)
                 }

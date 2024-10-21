@@ -34,8 +34,8 @@ extension VideoPlayerSettingsView {
                     range: 1 ... 24,
                     step: 1
                 )
-                
-                Text.init("Test")
+
+                Text("Test")
 
                 ColorPicker(selection: $subtitleColor, supportsOpacity: false) {
                     Text(L10n.subtitleColor)

@@ -16,10 +16,10 @@ import VLCUI
 // TODO: scroll to current chapter on appear
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
-    
+
     let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
-    
+
     func chapter(for second: TimeInterval) -> ChapterInfo.FullInfo? {
         chapters.first { $0.secondsRange.contains(second) }
     }
@@ -43,7 +43,7 @@ struct ChapterOverlay: View {
 
     @StateObject
     private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
-    
+
     let chapters: [ChapterInfo.FullInfo]
 
     var body: some View {
@@ -61,18 +61,18 @@ struct ChapterButton: View {
 
     @Default(.accentColor)
     private var accentColor
-    
+
     @Environment(\.isSelected)
     private var isSelected: Bool
-    
+
     @EnvironmentObject
     private var manager: MediaPlayerManager
-    
+
     @State
     private var contentSize: CGSize = .zero
 
     let chapter: ChapterInfo.FullInfo
-    
+
     var body: some View {
         Button {
 //            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
@@ -81,7 +81,7 @@ struct ChapterButton: View {
             VStack(alignment: .leading, spacing: 5) {
                 ZStack {
                     Color.clear
-                    
+
                     ImageView(chapter.landscapeImageSources(maxWidth: 500))
                         .failure {
                             SystemImageContentView(systemName: chapter.systemImage)
@@ -118,7 +118,7 @@ struct ChapterButton: View {
     }
 }
 
-//struct MediaChaptersSupplement_Previews: PreviewProvider {
+// struct MediaChaptersSupplement_Previews: PreviewProvider {
 //    static var previews: some View {
 //        ChapterOverlay(chapters: [
 //            .init(chapterInfo: .init(name: "Test", startPositionTicks: 0), imageSource: .init(), secondsRange: 0 ..< 100),
@@ -148,4 +148,4 @@ struct ChapterButton: View {
 //        .previewInterfaceOrientation(.landscapeRight)
 //        .preferredColorScheme(.dark)
 //    }
-//}
+// }

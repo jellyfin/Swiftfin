@@ -11,19 +11,17 @@ import OrderedCollections
 import SwiftUI
 
 class MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
-    
+
     let title: String = "Queue"
-    
+
     weak var manager: MediaPlayerManager?
-    
+
     private(set) var items: OrderedSet<BaseItemDto> = []
-    
+
     init(manager: MediaPlayerManager? = nil) {
         self.manager = manager
     }
-    
-    
-    
+
     func videoPlayerBody() -> some View {
         Color.red
             .opacity(0.5)

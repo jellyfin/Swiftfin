@@ -14,9 +14,9 @@ struct VideoPlayerSettingsView: View {
     @Default(.VideoPlayer.Subtitle.subtitleFontName)
     private var subtitleFontName
 
-    @Default(.VideoPlayer.jumpBackwardLength)
+    @Default(.VideoPlayer.jumpBackwardInterval)
     private var jumpBackwardLength
-    @Default(.VideoPlayer.jumpForwardLength)
+    @Default(.VideoPlayer.jumpForwardInterval)
     private var jumpForwardLength
     @Default(.VideoPlayer.resumeOffset)
     private var resumeOffset

@@ -84,16 +84,16 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             .compactMap(\.asPlaybackChild)
 
         vlcConfiguration = configuration
-        
+
         super.init()
 
         selectedAudioStreamIndex = mediaSource.defaultAudioStreamIndex ?? -1
         selectedSubtitleStreamIndex = mediaSource.defaultSubtitleStreamIndex ?? -1
-        
+
         if baseItem.chapters?.isNotEmpty ?? false {
             supplements.append(MediaChaptersSupplement(chapters: baseItem.fullChapterInfo))
         }
-        
+
         listeners.append(MediaProgressListener(item: self))
     }
 

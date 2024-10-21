@@ -67,7 +67,7 @@ extension EnvironmentValues {
     struct SelectedMediaPlayerSupplementKey: EnvironmentKey {
         static let defaultValue: Binding<AnyMediaPlayerSupplement?> = .constant(nil)
     }
-    
+
     struct ScrubbedSecondsKey: EnvironmentKey {
         static let defaultValue: Binding<TimeInterval> = .constant(0)
     }

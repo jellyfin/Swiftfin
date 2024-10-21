@@ -180,7 +180,7 @@ struct PagingLibraryView<Element: Poster>: View {
         ZStack {
             if cinematicBackground {
                 CinematicBackgroundView(viewModel: cinematicBackgroundViewModel)
-                    .visible(presentBackground)
+                    .isVisible(presentBackground)
                     .blurred()
             }
 

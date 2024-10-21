@@ -14,7 +14,7 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
     private var value: V
-    
+
     @State
     private var contentSize: CGSize = .zero
     @State
@@ -25,11 +25,11 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
     private var translationStartValue: V = 0
     @State
     private var currentTranslation: CGFloat = 0
-    
+
     private var gesturePadding: CGFloat = 0
     private var onEditingChanged: (Bool) -> Void
     private let total: V
-    
+
     private var trackDrag: some Gesture {
         DragGesture(coordinateSpace: .global)
             .onChanged { newValue in
@@ -58,9 +58,9 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
             .overlay {
                 Color.clear
 //                    .opacity(0.5)
-                    .frame(height: contentSize.height + gesturePadding)
-                    .contentShape(Rectangle())
-                    .highPriorityGesture(trackDrag)
+                        .frame(height: contentSize.height + gesturePadding)
+                        .contentShape(Rectangle())
+                        .highPriorityGesture(trackDrag)
             }
             .trackingSize($contentSize)
     }
@@ -75,44 +75,50 @@ extension CapsuleSlider {
             total: total
         )
     }
-    
+
     func onEditingChanged(perform action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
-    
+
     func gesturePadding(_ padding: CGFloat) -> Self {
         copy(modifying: \.gesturePadding, with: padding)
     }
 }
 
 struct Test: View {
-    
+
     @State
     private var value: Double = 50
-    
+
     @State
     private var isEditing = false
-    
+
     var body: some View {
-        CapsuleSlider(value: $value, total: 100)
-            .onEditingChanged { newValue in
-                isEditing = newValue
-            }
-            .gesturePadding(30)
-            .scaleEffect(!isEditing ? 0.95 : 1)
-            .animation(.bouncy(duration: 0.3), value: isEditing)
-            .onChange(of: value) { newValue in
-                print(newValue)
-            }
+        AlternateLayoutView {
+            Color.clear
+                .frame(height: 10)
+        } content: {
+            CapsuleSlider(value: $value, total: 100)
+                .onEditingChanged { newValue in
+                    isEditing = newValue
+                }
+                .gesturePadding(30)
+                .frame(height: isEditing ? 20 : 10)
+                .animation(.bouncy(duration: 0.3), value: isEditing)
+                .onChange(of: value) { newValue in
+                    print(newValue)
+                }
+        }
+        .animation(.linear(duration: 0.05), value: value)
     }
 }
 
 struct CapsuleSlider_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            
+
             Test()
-                .frame(height: 30)
+                .frame(height: 10)
         }
         .padding(.horizontal, 10)
         .previewInterfaceOrientation(.landscapeRight)

@@ -10,20 +10,20 @@ import Defaults
 import UIKit
 
 enum MediaJumpInterval: Storable {
-    
+
     case five
     case ten
     case fifteen
     case thirty
     case custom(interval: TimeInterval)
-    
+
     var interval: TimeInterval {
         switch self {
         case .five: 5
         case .ten: 10
         case .fifteen: 15
         case .thirty: 30
-        case .custom(let interval): interval
+        case let .custom(interval): interval
         }
     }
 

@@ -22,20 +22,20 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             }
         }
     }
-    
+
     private var hasSentStart = false
     private var item: MediaPlayerItem?
     private var lastManagerState: MediaPlayerManager.State = .initial
     private var lastSeconds: TimeInterval = 0
-    
+
     init(item: MediaPlayerItem) {
         self.item = item
         super.init()
     }
-    
+
     private func sendReport() {
         guard let item else { return }
-    
+
         switch lastManagerState {
         case .initial, .loadingItem, .error: ()
         case .stopped:
@@ -53,44 +53,44 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             sendProgressReport(for: item, seconds: lastSeconds)
         }
     }
-    
+
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
-        
+
         Timer.publish(every: 5, on: .main, in: .common)
-           .autoconnect()
-           .sink { _ in
-               self.sendReport()
-           }
-           .store(in: &cancellables)
-        
+            .autoconnect()
+            .sink { _ in
+                self.sendReport()
+            }
+            .store(in: &cancellables)
+
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
         manager.$state.sink(receiveValue: stateDidChange).store(in: &cancellables)
     }
-    
+
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
-        
+
         if let item, newItem !== item {
             sendStopReport(for: item, seconds: lastSeconds)
-            
+
             // release
             self.item = nil
         }
     }
-    
+
     private func stateDidChange(newState: MediaPlayerManager.State) {
         lastManagerState = newState
     }
-    
+
     private func secondsDidChange(newSeconds: TimeInterval) {
         lastSeconds = newSeconds
     }
-    
+
     private func sendStartReport(for item: MediaPlayerItem, seconds: TimeInterval) {
-        
+
         hasSentStart = true
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
@@ -104,36 +104,36 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             info.positionTicks = Int(seconds * 10_000_000)
             info.sessionID = item.playSessionID
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
-            
+
             let request = Paths.reportPlaybackStart(info)
             let _ = try await userSession.client.send(request)
         }
     }
-    
+
     private func sendStopReport(for item: MediaPlayerItem, seconds: TimeInterval) {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
-        
+
         Task {
             var info = PlaybackStopInfo()
             info.itemID = item.baseItem.id
             info.mediaSourceID = item.mediaSource.id
             info.positionTicks = Int(seconds * 10_000_000)
             info.sessionID = item.playSessionID
-            
+
             let request = Paths.reportPlaybackStopped(info)
             let _ = try await userSession.client.send(request)
         }
     }
-    
+
     private func sendProgressReport(for item: MediaPlayerItem, seconds: TimeInterval, isPaused: Bool = false) {
-        
+
         #if DEBUG
         guard Defaults[.sendProgressReports] else { return }
         #endif
-        
+
         Task {
             var info = PlaybackProgressInfo()
             info.audioStreamIndex = item.selectedAudioStreamIndex
@@ -144,7 +144,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             info.positionTicks = Int(seconds * 10_000_000)
             info.sessionID = item.playSessionID
             info.subtitleStreamIndex = item.selectedSubtitleStreamIndex
-            
+
             let request = Paths.reportPlaybackProgress(info)
             let _ = try await userSession.client.send(request)
         }

@@ -12,10 +12,10 @@ import SwiftUI
 extension VideoPlayer.Overlay {
 
     struct ChapterTrackMask: View {
-        
+
         @State
         private var contentSize: CGSize = .zero
-        
+
         let chapters: [ChapterInfo.FullInfo]
         let item: BaseItemDto
 
@@ -23,7 +23,7 @@ extension VideoPlayer.Overlay {
             HStack(spacing: 0) {
                 ForEach(chapters) { chapter in
                     HStack(spacing: 0) {
-                        
+
                         if chapter.secondsRange.lowerBound != 0 {
                             Color.clear
                                 .frame(width: 1.5)
@@ -31,7 +31,10 @@ extension VideoPlayer.Overlay {
 
                         Color.white
                     }
-                    .frame(maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item.runTimeSeconds)
+                    .frame(
+                        maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item
+                            .runTimeSeconds
+                    )
                 }
             }
             .trackingSize($contentSize)

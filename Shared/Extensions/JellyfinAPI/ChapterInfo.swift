@@ -35,7 +35,7 @@ extension ChapterInfo {
         var displayTitle: String {
             chapterInfo.displayTitle
         }
-        
+
         var id: Int {
             chapterInfo.hashValue
         }

@@ -82,11 +82,17 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
             .persistentSystemOverlays(.hidden)
 
         #else
+
+        let manager = MediaPlayerManager(item: self.baseItem) {
+            try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
+        }
+
         if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            PreferencesView {
-                VideoPlayer(item: self.baseItem, mediaSource: self.mediaSource)
-            }
-            .ignoresSafeArea()
+            VideoPlayer(manager: manager)
+
+//            PreferencesView {
+//            }
+//            .ignoresSafeArea()
         } else {
             Color.red
 //            NativeVideoPlayer(manager: self.videoPlayerManager)

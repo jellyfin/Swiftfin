@@ -9,25 +9,25 @@
 import Defaults
 import SwiftUI
 
-extension VideoPlayer.Overlay.ActionButtons {
-
-    struct AutoPlay: View {
-
-        @Default(.VideoPlayer.autoPlayEnabled)
-        private var autoPlayEnabled
-
-        @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
-
-        var body: some View {
-            SFSymbolButton(
-                systemName: autoPlayEnabled ? "play.circle.fill" : "stop.circle"
-            )
-            .onSelect {
-                autoPlayEnabled.toggle()
-                overlayTimer.delay()
-            }
-            .frame(maxWidth: 30, maxHeight: 30)
-        }
-    }
-}
+// extension VideoPlayer.Overlay.ActionButtons {
+//
+//    struct AutoPlay: View {
+//
+//        @Default(.VideoPlayer.autoPlayEnabled)
+//        private var autoPlayEnabled
+//
+//        @EnvironmentObject
+//        private var overlayTimer: DelayIntervalTimer
+//
+//        var body: some View {
+//            SFSymbolButton(
+//                systemName: autoPlayEnabled ? "play.circle.fill" : "stop.circle"
+//            )
+//            .onSelect {
+//                autoPlayEnabled.toggle()
+//                overlayTimer.delay()
+//            }
+//            .frame(maxWidth: 30, maxHeight: 30)
+//        }
+//    }
+// }

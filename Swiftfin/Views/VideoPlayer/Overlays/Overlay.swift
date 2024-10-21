@@ -82,16 +82,16 @@ extension VideoPlayer {
             }
             .isVisible(!isScrubbing && isPresentingOverlay)
         }
-        
+
         @ViewBuilder
         private var bottomContent: some View {
             if !isPresentingDrawer {
                 playbackProgress
             }
-            
+
             drawerTitleSection
         }
-        
+
         // MARK: body
 
         var body: some View {
@@ -132,11 +132,11 @@ extension VideoPlayer {
 
                     VStack {
                         bottomContent
-                            .padding(effectiveSafeArea)
                             .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(effectiveSafeArea)
                             .offset(y: isPresentingOverlay ? 0 : 20)
                             .animation(.bouncy, value: isPresentingOverlay)
-                        
+
                         // TODO: changing supplement transition
                         if isPresentingDrawer, let selectedSupplement {
                             selectedSupplement.supplement
@@ -146,7 +146,7 @@ extension VideoPlayer {
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
                                 .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
                         }
-                        
+
                         Color.clear
                             .frame(height: EdgeInsets.edgePadding)
                             .allowsHitTesting(false)

@@ -21,12 +21,12 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @ViewBuilder
-        private var autoPlayButton: some View {
-            if manager.item.type == .episode {
-                ActionButtons.AutoPlay()
-            }
-        }
+//        @ViewBuilder
+//        private var autoPlayButton: some View {
+//            if manager.item.type == .episode {
+//                ActionButtons.AutoPlay()
+//            }
+//        }
 
 //        @ViewBuilder
 //        private var chaptersButton: some View {
@@ -35,19 +35,19 @@ extension VideoPlayer.Overlay {
 //            }
 //        }
 
-        @ViewBuilder
-        private var playNextItemButton: some View {
-            if manager.item.type == .episode {
-                ActionButtons.PlayNextItem()
-            }
-        }
-
-        @ViewBuilder
-        private var playPreviousItemButton: some View {
-            if manager.item.type == .episode {
-                ActionButtons.PlayPreviousItem()
-            }
-        }
+//        @ViewBuilder
+//        private var playNextItemButton: some View {
+//            if manager.item.type == .episode {
+//                ActionButtons.PlayNextItem()
+//            }
+//        }
+//
+//        @ViewBuilder
+//        private var playPreviousItemButton: some View {
+//            if manager.item.type == .episode {
+//                ActionButtons.PlayPreviousItem()
+//            }
+//        }
 
 //        @ViewBuilder
 //        private var menuItemButton: some View {
@@ -63,11 +63,11 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             HStack {
-                playPreviousItemButton
+//                playPreviousItemButton
 
-                playNextItemButton
+//                playNextItemButton
 
-                autoPlayButton
+//                autoPlayButton
 
 //                chaptersButton
 

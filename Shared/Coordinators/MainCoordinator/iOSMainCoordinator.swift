@@ -34,12 +34,12 @@ final class MainCoordinator: NavigationCoordinatable {
     var selectUser = makeSelectUser
     @Root
     var serverCheck = makeServerCheck
-    
+
     #if DEBUG
     @Route(.fullScreen)
     var debugPlayground = makeDebugPlayground
     #endif
-    
+
 //    @Route(.fullScreen)
 //    var liveVideoPlayer = makeLiveVideoPlayer
     @Route(.modal)
@@ -84,7 +84,7 @@ final class MainCoordinator: NavigationCoordinatable {
         Notifications[.didSignOut].subscribe(self, selector: #selector(didSignOut))
         Notifications[.processDeepLink].subscribe(self, selector: #selector(processDeepLink(_:)))
         Notifications[.didChangeCurrentServerURL].subscribe(self, selector: #selector(didChangeCurrentServerURL(_:)))
-        
+
         #if DEBUG
         NotificationCenter.default.addObserver(
             self,
@@ -94,7 +94,7 @@ final class MainCoordinator: NavigationCoordinatable {
         )
         #endif
     }
-    
+
     @objc
     private func didShake() {
         self.route(to: \.debugPlayground)
@@ -170,7 +170,7 @@ final class MainCoordinator: NavigationCoordinatable {
     func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> VideoPlayerCoordinator {
         VideoPlayerCoordinator(baseItem: parameters.0, mediaSource: parameters.1)
     }
-    
+
     #if DEBUG
     @ViewBuilder
     func makeDebugPlayground() -> some View {
@@ -194,9 +194,9 @@ extension UIDevice {
 
 //  Override the default behavior of shake gestures to send our notification instead.
 extension UIWindow {
-     open override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+    override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
         if motion == .motionShake {
             NotificationCenter.default.post(name: UIDevice.deviceDidShakeNotification, object: nil)
         }
-     }
+    }
 }

@@ -25,11 +25,11 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 //                    Button("Test") {}
 //                    Button("Test") {}
 //                }
-                
+
                 Button("\(PlaybackRate.one.rate, format: .rate)") {
                     manager.playbackRate = .one
                 }
-                
+
                 Button("\(PlaybackRate.two.rate, format: .rate)") {
                     manager.playbackRate = .two
                 }

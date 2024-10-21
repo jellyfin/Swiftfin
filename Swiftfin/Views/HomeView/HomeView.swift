@@ -93,9 +93,9 @@ struct HomeView: View {
             ) {
                 mainRouter.route(to: \.settings)
             }
-            
+
             #if DEBUG
-            
+
             #endif
         }
         .sinceLastDisappear { interval in

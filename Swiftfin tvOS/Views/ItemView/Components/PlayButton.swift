@@ -36,6 +36,7 @@ extension ItemView {
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
+                    router.route(to: \.videoPlayer, (playButtonItem, selectedMediaSource))
 //                    router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
                 } else {
                     logger.error("No media source available")

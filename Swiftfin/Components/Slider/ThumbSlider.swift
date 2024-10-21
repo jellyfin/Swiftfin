@@ -14,7 +14,7 @@ struct ThumbSlider<V: BinaryFloatingPoint>: View {
 
     @Binding
     private var value: V
-    
+
     @State
     private var contentSize: CGSize = .zero
     @State
@@ -25,7 +25,7 @@ struct ThumbSlider<V: BinaryFloatingPoint>: View {
     private var translationStartValue: V = 0
     @State
     private var currentTranslation: CGFloat = 0
-    
+
     private var onEditingChanged: (Bool) -> Void
     private let total: V
     private var trackMask: () -> any View
@@ -67,7 +67,7 @@ struct ThumbSlider<V: BinaryFloatingPoint>: View {
 }
 
 extension ThumbSlider {
-    
+
     init(value: Binding<V>, total: V = 1.0) {
         self.init(
             value: value,
@@ -76,7 +76,7 @@ extension ThumbSlider {
             trackMask: { Color.white }
         )
     }
-    
+
     func onEditingChanged(_ action: @escaping (Bool) -> Void) -> Self {
         copy(modifying: \.onEditingChanged, with: action)
     }
@@ -87,10 +87,10 @@ extension ThumbSlider {
 }
 
 struct ThumbSliderTests: View {
-    
+
     @State
     private var value: Double = 0.3
-    
+
     var body: some View {
         ThumbSlider(value: $value, total: 1.0)
             .frame(height: 5)

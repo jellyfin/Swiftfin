@@ -29,16 +29,16 @@ protocol MediaPlayerListener {
 }
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
-    
+
     typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
-    
+
     // MARK: Event
 
     enum Event {
         case playbackStopped
         case playNew(playbackItem: MediaPlayerItem)
     }
-    
+
     // MARK: Action
 
     // TODO: have play new MediaPlayerItem
@@ -57,7 +57,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         case seek(seconds: TimeInterval)
     }
-    
+
     // MARK: State
 
     enum State: Hashable {
@@ -90,11 +90,12 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             proxy?.setRate(Float(playbackRate.rate))
         }
     }
+
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
     final var state: State = .initial
-    
+
     @Published
     private(set) var seconds: TimeInterval = 0
 
@@ -125,32 +126,28 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     init(item: BaseItemDto, playbackItemProvider: @escaping MediaPlayerItemProvider) {
         self.item = item
         super.init()
-        
+
         supplements = [MediaInfoSupplement(item: item)]
 
         // TODO: don't build on init?
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
-//            self.state = .buffering
-//            self.playbackItem = newItem
-//            self.eventSubject.send(.playNew(playbackItem: newItem))
+            self.state = .buffering
+            self.playbackItem = newItem
+            self.eventSubject.send(.playNew(playbackItem: newItem))
         }
     }
 
     init(playbackItem: MediaPlayerItem) {
         item = playbackItem.baseItem
         super.init()
-        
+
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
 
         state = .buffering
         self.playbackItem = playbackItem
         eventSubject.send(.playNew(playbackItem: playbackItem))
     }
-    
-    private func addManagerSupplements() {
-        
-    }
-    
+
     // MARK: respond
 
     @MainActor
@@ -186,7 +183,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             return state
         }
     }
-    
+
     // MARK: buildMediaItem
 
     private func buildMediaItem(from provider: @escaping MediaPlayerItemProvider, onComplete: @escaping (MediaPlayerItem) async -> Void) {
@@ -200,10 +197,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 }
 
                 let playbackItem = try await provider()
-                
-//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
-                guard let self else { return }
+//                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 await onComplete(playbackItem)
             } catch {

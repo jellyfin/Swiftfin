@@ -21,16 +21,16 @@ struct DebugPlaygroundView: View {
 
 #if DEBUG
 struct TestPlaybackProgressView: View {
-    
+
     @State
     private var isScrubbing: Bool = false
     @State
     private var scrubbedSeconds: TimeInterval = 0
-    
+
     var body: some View {
         ZStack {
             Spacer()
-            
+
             VideoPlayer.Overlay.PlaybackProgress()
                 .environmentObject(
                     MediaPlayerManager(
@@ -48,13 +48,13 @@ struct TestPlaybackProgressView: View {
                         )
                     )
                 )
-            
+
             Color.clear
                 .frame(height: 20)
         }
         .environment(\.scrubbedSeconds, $scrubbedSeconds)
         .environment(\.isScrubbing, $isScrubbing)
-            
+
 //            VideoPlayer.Overlay()
 //                .environmentObject(
 //                    MediaPlayerManager(

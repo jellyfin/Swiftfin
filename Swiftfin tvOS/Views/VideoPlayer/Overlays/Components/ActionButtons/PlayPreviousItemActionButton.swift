@@ -8,22 +8,22 @@
 
 import SwiftUI
 
-extension VideoPlayer.Overlay.ActionButtons {
-
-    struct PlayPreviousItem: View {
-
-        @EnvironmentObject
-        private var overlayTimer: DelayIntervalTimer
-        @EnvironmentObject
-        private var videoPlayerManager: MediaPlayerManager
-
-        var body: some View {
-            SFSymbolButton(systemName: "chevron.left.circle")
-                .onSelect {
-//                    videoPlayerManager.selectPreviousViewModel()
-//                    overlayTimer.delay()
-                }
-                .frame(maxWidth: 30, maxHeight: 30)
-        }
-    }
-}
+// extension VideoPlayer.Overlay.ActionButtons {
+//
+//    struct PlayPreviousItem: View {
+//
+//        @EnvironmentObject
+//        private var overlayTimer: DelayIntervalTimer
+//        @EnvironmentObject
+//        private var videoPlayerManager: MediaPlayerManager
+//
+//        var body: some View {
+//            SFSymbolButton(systemName: "chevron.left.circle")
+//                .onSelect {
+////                    videoPlayerManager.selectPreviousViewModel()
+////                    overlayTimer.delay()
+//                }
+//                .frame(maxWidth: 30, maxHeight: 30)
+//        }
+//    }
+// }
