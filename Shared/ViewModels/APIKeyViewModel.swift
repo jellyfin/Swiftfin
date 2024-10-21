@@ -153,10 +153,9 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
             }
 
             apiKeys.sort { x, y in
-                let xs = x.value.value
-                let ys = y.value.value
-
-                return (xs?.accessToken ?? "") < (ys?.accessToken ?? "")
+                let xs = x.value.value?.appName ?? ""
+                let ys = y.value.value?.appName ?? ""
+                return xs < ys
             }
         }
     }
@@ -173,6 +172,8 @@ final class APIKeyViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.revokeKey(key: key)
         try await userSession.client.send(request)
 
-        self.apiKeys.removeValue(forKey: key)
+        await MainActor.run {
+            self.apiKeys.removeValue(forKey: key)
+        }
     }
 }

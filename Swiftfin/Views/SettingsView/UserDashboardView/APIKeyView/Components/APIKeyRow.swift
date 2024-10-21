@@ -74,6 +74,7 @@ extension APIKeyView {
             ListRow(insets: .init(vertical: 8, horizontal: 8)) {} content: {
                 rowContent
             }
+            .isSeparatorVisible(false)
             .onSelect(perform: onSelect)
             .swipeActions {
                 Button(

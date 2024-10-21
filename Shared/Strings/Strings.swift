@@ -46,6 +46,14 @@ internal enum L10n {
   internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API Key Copied")
   /// Your API Key was copied to your clipboard!
   internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API Key was copied to your clipboard!")
+  /// A new Access Token was created for '%@'.
+  internal static func apiKeyCreated(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "apiKeyCreated", String(describing: p1), fallback: "A new Access Token was created for '%@'.")
+  }
+  /// The Access Token for '%@' has been revoked.
+  internal static func apiKeyDeleted(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "apiKeyDeleted", String(describing: p1), fallback: "The Access Token for '%@' has been revoked.")
+  }
   /// API Keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API Keys")
   /// External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.
@@ -200,8 +208,6 @@ internal enum L10n {
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
-  /// Are you sure? This change is permanent and cannot be undone.
-  internal static let confirmDeleteAPIKeyMessage = L10n.tr("Localizable", "confirmDeleteAPIKeyMessage", fallback: "Are you sure? This change is permanent and cannot be undone.")
   /// Connect
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
   /// Connect Manually
@@ -530,6 +536,8 @@ internal enum L10n {
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
+  /// This change is permanent and cannot be undone. Are you sure you want to proceed?
+  internal static let permanentActionConfirmationMessage = L10n.tr("Localizable", "permanentActionConfirmationMessage", fallback: "This change is permanent and cannot be undone. Are you sure you want to proceed?")
   /// Play
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause
@@ -810,6 +818,8 @@ internal enum L10n {
   internal static let subtitlesDisclaimer = L10n.tr("Localizable", "subtitlesDisclaimer", fallback: "Settings only affect some subtitle types")
   /// Subtitle Size
   internal static let subtitleSize = L10n.tr("Localizable", "subtitleSize", fallback: "Subtitle Size")
+  /// Success
+  internal static let success = L10n.tr("Localizable", "success", fallback: "Success")
   /// Suggestions
   internal static let suggestions = L10n.tr("Localizable", "suggestions", fallback: "Suggestions")
   /// Switch User

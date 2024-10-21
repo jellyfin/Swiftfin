@@ -782,7 +782,7 @@
 // Delete API Key - Confirmation Message
 // Warns the user that deletion is permanent
 // Displays a warning message before deletion
-"confirmDeleteAPIKeyMessage" = "Are you sure? This change is permanent and cannot be undone.";
+"permanentActionConfirmationMessage" = "This change is permanent and cannot be undone. Are you sure you wish to proceed?";
 
 // Cancel - Button
 // Cancels the current action
@@ -819,7 +819,17 @@
 // Appears in the navigation bar
 "apiKeys" = "API Keys";
 
-// None - Text
-// Displayed when there are no API keys
-// Appears in the list when no keys are available
-"none" = "None";
+// API Key Created - Success Message
+// A new Access Token was successfully created for the specified application
+// Appears in success alert when a new API key is created
+"apiKeyCreated" = "A new Access Token was created for '%@'.";
+
+// API Key Deleted - Success Message
+// The Access Token was successfully deleted for the specified application
+// Appears in success alert when an API key is deleted
+"apiKeyDeleted" = "The Access Token for '%@' has been revoked.";
+
+// Save - Button
+// Confirms that something completed successfully or without error
+// Appears in the views with eventful to indicate a task did not fail
+"success" = "Success";

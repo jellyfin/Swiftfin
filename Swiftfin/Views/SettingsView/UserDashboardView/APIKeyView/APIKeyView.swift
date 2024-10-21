@@ -7,6 +7,7 @@
 //
 
 import CollectionVGrid
+import Combine
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -32,9 +33,20 @@ struct APIKeyView: View {
     @State
     private var showCreateAPIAlert = false
     @State
+    private var showEventAlert = false
+    @State
+    private var eventSuccess = false
+    @State
+    private var eventMessage: String = ""
+    @State
     private var newAPIName: String = ""
     @State
-    private var apiKeyToDelete: String?
+    private var deleteAPI: AuthenticationInfo?
+
+    // MARK: - Cancellables for Combine Subscriptions
+
+    @State
+    private var cancellables: Set<AnyCancellable> = []
 
     // MARK: - Initializer
 
@@ -66,6 +78,9 @@ struct APIKeyView: View {
         .onFirstAppear {
             viewModel.send(.getAPIKeys)
         }
+        .onAppear {
+            handleEvents()
+        }
         .topBarTrailing {
             Button(L10n.add) {
                 showCreateAPIAlert = true
@@ -84,13 +99,13 @@ struct APIKeyView: View {
             titleVisibility: .visible
         ) {
             Button(L10n.delete, role: .destructive) {
-                if let key = apiKeyToDelete {
+                if let key = deleteAPI?.accessToken {
                     viewModel.send(.deleteAPIKey(key: key))
                 }
             }
             Button(L10n.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.confirmDeleteAPIKeyMessage)
+            Text(L10n.permanentActionConfirmationMessage)
         }
         .alert(L10n.createAPIKey, isPresented: $showCreateAPIAlert) {
             TextField(L10n.applicationName, text: $newAPIName)
@@ -101,26 +116,58 @@ struct APIKeyView: View {
         } message: {
             Text(L10n.createAPIKeyMessage)
         }
+        .alert(eventSuccess ? L10n.success : L10n.error, isPresented: $showEventAlert) {} message: {
+            Text(eventMessage)
+        }
     }
 
     // MARK: - API Key List View
 
     private var apiKeyListView: some View {
-        /* ListTitleSection(
-             L10n.apiKeysTitle,
-             description: L10n.apiKeysDescription
-         ) */
-        CollectionVGrid(
-            viewModel.apiKeys.keys,
-            layout: .columns(1, insets: .zero, itemSpacing: 8, lineSpacing: 8)
-        ) { key in
-            APIKeyRow(box: viewModel.apiKeys[key]!) {
-                UIPasteboard.general.string = viewModel.apiKeys[key]!.value?.accessToken
-                showCopiedAlert = true
-            } onDelete: {
-                apiKeyToDelete = viewModel.apiKeys[key]!.value?.accessToken
-                showDeleteConfirmation = true
+        List {
+            ListTitleSection(
+                L10n.apiKeysTitle,
+                description: L10n.apiKeysDescription
+            )
+
+            ForEach(viewModel.apiKeys.keys, id: \.self) { accessToken in
+                if let apiKey = viewModel.apiKeys[accessToken] {
+                    APIKeyRow(box: apiKey) {
+                        UIPasteboard.general.string = apiKey.value?.accessToken
+                        showCopiedAlert = true
+                    } onDelete: {
+                        deleteAPI = apiKey.value
+                        showDeleteConfirmation = true
+                    }
+                }
             }
         }
+    }
+
+    // MARK: - Handle Events
+
+    private func handleEvents() {
+        viewModel.events
+            .sink { event in
+                switch event {
+                case .created:
+                    eventSuccess = true
+                    eventMessage = L10n.apiKeyCreated(newAPIName)
+                    newAPIName = ""
+                    showEventAlert = true
+                case .deleted:
+                    eventSuccess = true
+                    eventMessage = L10n.apiKeyDeleted(deleteAPI?.appName ?? L10n.unknown)
+                    deleteAPI = nil
+                    showEventAlert = true
+                case let .error(jellyfinError):
+                    eventSuccess = false
+                    eventMessage = jellyfinError.localizedDescription
+                    showEventAlert = true
+                case .content:
+                    break
+                }
+            }
+            .store(in: &cancellables)
     }
 }
