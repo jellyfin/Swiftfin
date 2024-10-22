@@ -13,9 +13,6 @@ import SwiftUIIntrospect
 
 struct ActiveSessionDetailView: View {
 
-    @CurrentDate
-    private var currentDate: Date
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
@@ -27,37 +24,18 @@ struct ActiveSessionDetailView: View {
     @ViewBuilder
     private func idleContent(session: SessionInfo) -> some View {
         List {
-            Section(L10n.user) {
-                if let userID = session.userID {
-                    SettingsView.UserProfileRow(
-                        user: .init(
-                            id: userID,
-                            name: session.userName
-                        )
-                    )
-                }
-
-                if let client = session.client {
-                    TextPairView(leading: L10n.client, trailing: client)
-                }
-
-                if let device = session.deviceName {
-                    TextPairView(leading: L10n.device, trailing: device)
-                }
-
-                if let applicationVersion = session.applicationVersion {
-                    TextPairView(leading: L10n.version, trailing: applicationVersion)
-                }
-
-                if let lastActivityDate = session.lastActivityDate {
-                    TextPairView(
-                        L10n.lastSeen,
-                        value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
-                    )
-                    .id(currentDate)
-                    .monospacedDigit()
-                }
+            if let userID = session.userID {
+                UserDashboardView.UserSection(
+                    user: .init(id: userID, name: session.userName),
+                    lastActivityDate: session.lastActivityDate
+                )
             }
+
+            UserDashboardView.DeviceSection(
+                client: session.client,
+                device: session.deviceName,
+                version: session.applicationVersion
+            )
         }
     }
 
@@ -81,28 +59,17 @@ struct ActiveSessionDetailView: View {
                 )
             }
 
-            Section(L10n.user) {
-                if let userID = session.userID {
-                    SettingsView.UserProfileRow(
-                        user: .init(
-                            id: userID,
-                            name: session.userName
-                        )
-                    )
-                }
-
-                if let client = session.client {
-                    TextPairView(leading: L10n.client, trailing: client)
-                }
-
-                if let device = session.deviceName {
-                    TextPairView(leading: L10n.device, trailing: device)
-                }
-
-                if let applicationVersion = session.applicationVersion {
-                    TextPairView(leading: L10n.version, trailing: applicationVersion)
-                }
+            if let userID = session.userID {
+                UserDashboardView.UserSection(
+                    user: .init(id: userID, name: session.userName)
+                )
             }
+
+            UserDashboardView.DeviceSection(
+                client: session.client,
+                device: session.deviceName,
+                version: session.applicationVersion
+            )
 
             // TODO: allow showing item stream details?
             // TODO: don't show codec changes on direct play?
