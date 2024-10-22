@@ -87,7 +87,7 @@ struct ResetUserPasswordView: View {
                     }
                     .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
-                    ListRowButton("Save") {
+                    ListRowButton(L10n.save) {
                         focusedPassword = nil
                         viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                     }
@@ -135,7 +135,7 @@ struct ResetUserPasswordView: View {
             Text(error.localizedDescription)
         }
         .alert(
-            "Success",
+            L10n.success,
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {

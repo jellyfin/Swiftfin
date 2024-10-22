@@ -67,6 +67,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var tasks = makeTasks
     @Route(.push)
+    var devices = makeDevices
+    @Route(.push)
+    var deviceDetails = makeDeviceDetails
+    @Route(.push)
     var editScheduledTask = makeEditScheduledTask
     @Route(.modal)
     var addScheduledTaskTrigger = makeAddScheduledTaskTrigger
@@ -198,6 +202,16 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeTasks() -> some View {
         ScheduledTasksView()
+    }
+
+    @ViewBuilder
+    func makeDevices() -> some View {
+        DevicesView()
+    }
+
+    @ViewBuilder
+    func makeDeviceDetails(device: DeviceInfo) -> some View {
+        DeviceDetailsView(device: device)
     }
 
     @ViewBuilder
