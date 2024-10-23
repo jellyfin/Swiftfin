@@ -11,7 +11,7 @@ import SwiftUI
 
 extension AddTaskTriggerView {
 
-    struct DayOfWeekSection: View {
+    struct DayOfWeekRow: View {
 
         @Binding
         var taskTriggerInfo: TaskTriggerInfo

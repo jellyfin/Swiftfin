@@ -9,17 +9,22 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 // TODO: refactor with socket implementation
+// TODO: for trigger updating, could temp set new triggers
+//       and set back on failure
 
 final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
 
     // MARK: Event
 
     enum Event {
-        case created
-        case deleted
         case error(JellyfinAPIError)
+    }
+
+    enum BackgroundState {
+        case updatingTriggers
     }
 
     // MARK: Action
@@ -37,12 +42,13 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
     enum State: Hashable {
         case error(JellyfinAPIError)
         case initial
-        case updating
         case running
     }
 
     // MARK: Published Values
 
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var state: State = .initial
     @Published
@@ -128,17 +134,23 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
             cancelCancellable?.cancel()
 
             cancelCancellable = Task {
+                let updatedTriggers = (task.triggers ?? [])
+                    .appending(trigger)
+
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.updatingTriggers)
+                }
+
                 do {
-                    try await addTrigger(newTrigger: trigger)
-                    await MainActor.run {
-                        self.state = .updating
-                        self.eventSubject.send(.created)
-                    }
+                    try await updateTriggers(updatedTriggers)
                 } catch {
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updatingTriggers)
                 }
             }
             .asAnyCancellable()
@@ -149,17 +161,23 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
             cancelCancellable?.cancel()
 
             cancelCancellable = Task {
+                var updatedTriggers = (task.triggers ?? [])
+                updatedTriggers.removeAll { $0 == trigger }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.updatingTriggers)
+                }
+
                 do {
-                    try await removeTrigger(deleteTrigger: trigger)
-                    await MainActor.run {
-                        self.state = .updating
-                        self.eventSubject.send(.deleted)
-                    }
+                    try await updateTriggers(updatedTriggers)
                 } catch {
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updatingTriggers)
                 }
             }
             .asAnyCancellable()
@@ -209,23 +227,7 @@ final class ServerTaskObserver: ViewModel, Stateful, Eventful, Identifiable {
         try await pollTaskProgress(id: id)
     }
 
-    // MARK: Add Trigger to Task
-
-    private func addTrigger(newTrigger: TaskTriggerInfo) async throws {
-        var updatedTriggers = task.triggers ?? []
-        updatedTriggers.append(newTrigger)
-        try await updateTriggers(updatedTriggers)
-    }
-
-    // MARK: Remove Trigger from Task
-
-    private func removeTrigger(deleteTrigger: TaskTriggerInfo) async throws {
-        var updatedTriggers = task.triggers ?? []
-        updatedTriggers.removeAll { $0 == deleteTrigger }
-        try await updateTriggers(updatedTriggers)
-    }
-
-    // MARK: Update Task Triggers (Add/Remove)
+    // MARK: Update Triggers
 
     private func updateTriggers(_ updatedTriggers: [TaskTriggerInfo]) async throws {
         guard let id = task.id else { return }

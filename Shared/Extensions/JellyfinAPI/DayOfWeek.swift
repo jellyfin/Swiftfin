@@ -12,13 +12,14 @@ import JellyfinAPI
 extension DayOfWeek {
 
     var displayTitle: String? {
-        let newLineRemoved = self.rawValue.replacingOccurrences(of: "\n", with: "")
+        let newLineRemoved = rawValue.replacingOccurrences(of: "\n", with: "")
 
         guard let index = DateFormatter().weekdaySymbols.firstIndex(of: newLineRemoved) else {
             return nil
         }
 
-        let localCal = Calendar.current
-        return localCal.weekdaySymbols[index].localizedCapitalized
+        return Calendar.current
+            .weekdaySymbols[index]
+            .localizedCapitalized
     }
 }

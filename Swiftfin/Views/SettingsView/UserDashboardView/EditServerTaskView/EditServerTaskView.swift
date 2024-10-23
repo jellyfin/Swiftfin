@@ -58,8 +58,14 @@ struct EditServerTaskView: View {
         }
         .animation(.linear(duration: 0.2), value: observer.state)
         .animation(.linear(duration: 0.1), value: observer.task.state)
+        .animation(.linear(duration: 0.1), value: observer.task.triggers)
         .navigationTitle(L10n.task)
         .topBarTrailing {
+
+            if observer.backgroundStates.contains(.updatingTriggers) {
+                ProgressView()
+            }
+
             if let triggers = observer.task.triggers, triggers.isNotEmpty {
                 Button(L10n.add) {
                     UIDevice.impact(.light)
@@ -70,11 +76,19 @@ struct EditServerTaskView: View {
         }
         .onReceive(observer.events) { event in
             switch event {
-            case let .error(error):
-                self.error = error
-            default: ()
+            case let .error(eventError):
+                error = eventError
+                isPresentingEventAlert = true
             }
         }
-        .alert(isPresented: $isPresentingEventAlert, error: error) {}
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingEventAlert,
+            presenting: error
+        ) { _ in
+
+        } message: { error in
+            Text(error.localizedDescription)
+        }
     }
 }

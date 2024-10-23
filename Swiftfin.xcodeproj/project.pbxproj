@@ -43,11 +43,11 @@
 		4E2AC4D42C6C4C1200DD600D /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */; };
 		4E2AC4D62C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D52C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift */; };
 		4E2AC4D92C6C4D9400DD600D /* PlaybackQualitySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4D72C6C4D8D00DD600D /* PlaybackQualitySettingsView.swift */; };
-		4E35CE5C2CBED3F300DBD886 /* TimeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE562CBED3F300DBD886 /* TimeSection.swift */; };
-		4E35CE5D2CBED3F300DBD886 /* TriggerTypeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE572CBED3F300DBD886 /* TriggerTypeSection.swift */; };
+		4E35CE5C2CBED3F300DBD886 /* TimeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE562CBED3F300DBD886 /* TimeRow.swift */; };
+		4E35CE5D2CBED3F300DBD886 /* TriggerTypeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE572CBED3F300DBD886 /* TriggerTypeRow.swift */; };
 		4E35CE5E2CBED3F300DBD886 /* AddTaskTriggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE5A2CBED3F300DBD886 /* AddTaskTriggerView.swift */; };
-		4E35CE5F2CBED3F300DBD886 /* IntervalSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE542CBED3F300DBD886 /* IntervalSection.swift */; };
-		4E35CE602CBED3F300DBD886 /* DayOfWeekSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE532CBED3F300DBD886 /* DayOfWeekSection.swift */; };
+		4E35CE5F2CBED3F300DBD886 /* IntervalRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE542CBED3F300DBD886 /* IntervalRow.swift */; };
+		4E35CE602CBED3F300DBD886 /* DayOfWeekRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE532CBED3F300DBD886 /* DayOfWeekRow.swift */; };
 		4E35CE612CBED3F300DBD886 /* TimeLimitSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE552CBED3F300DBD886 /* TimeLimitSection.swift */; };
 		4E35CE642CBED69600DBD886 /* TaskTriggerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE632CBED69600DBD886 /* TaskTriggerType.swift */; };
 		4E35CE662CBED8B600DBD886 /* ServerTicks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E35CE652CBED8B300DBD886 /* ServerTicks.swift */; };
@@ -1080,11 +1080,11 @@
 		4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSectionSelectorView.swift; sourceTree = "<group>"; };
 		4E2AC4D52C6C4CDC00DD600D /* PlaybackQualitySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackQualitySettingsView.swift; sourceTree = "<group>"; };
 		4E2AC4D72C6C4D8D00DD600D /* PlaybackQualitySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackQualitySettingsView.swift; sourceTree = "<group>"; };
-		4E35CE532CBED3F300DBD886 /* DayOfWeekSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOfWeekSection.swift; sourceTree = "<group>"; };
-		4E35CE542CBED3F300DBD886 /* IntervalSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalSection.swift; sourceTree = "<group>"; };
+		4E35CE532CBED3F300DBD886 /* DayOfWeekRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayOfWeekRow.swift; sourceTree = "<group>"; };
+		4E35CE542CBED3F300DBD886 /* IntervalRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntervalRow.swift; sourceTree = "<group>"; };
 		4E35CE552CBED3F300DBD886 /* TimeLimitSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeLimitSection.swift; sourceTree = "<group>"; };
-		4E35CE562CBED3F300DBD886 /* TimeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSection.swift; sourceTree = "<group>"; };
-		4E35CE572CBED3F300DBD886 /* TriggerTypeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerTypeSection.swift; sourceTree = "<group>"; };
+		4E35CE562CBED3F300DBD886 /* TimeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeRow.swift; sourceTree = "<group>"; };
+		4E35CE572CBED3F300DBD886 /* TriggerTypeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriggerTypeRow.swift; sourceTree = "<group>"; };
 		4E35CE5A2CBED3F300DBD886 /* AddTaskTriggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskTriggerView.swift; sourceTree = "<group>"; };
 		4E35CE632CBED69600DBD886 /* TaskTriggerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTriggerType.swift; sourceTree = "<group>"; };
 		4E35CE652CBED8B300DBD886 /* ServerTicks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTicks.swift; sourceTree = "<group>"; };
@@ -1945,22 +1945,14 @@
 			path = MediaComponents;
 			sourceTree = "<group>";
 		};
-		4E35CE582CBED3F300DBD886 /* Sections */ = {
-			isa = PBXGroup;
-			children = (
-				4E35CE532CBED3F300DBD886 /* DayOfWeekSection.swift */,
-				4E35CE542CBED3F300DBD886 /* IntervalSection.swift */,
-				4E35CE552CBED3F300DBD886 /* TimeLimitSection.swift */,
-				4E35CE562CBED3F300DBD886 /* TimeSection.swift */,
-				4E35CE572CBED3F300DBD886 /* TriggerTypeSection.swift */,
-			);
-			path = Sections;
-			sourceTree = "<group>";
-		};
 		4E35CE592CBED3F300DBD886 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E35CE582CBED3F300DBD886 /* Sections */,
+				4E35CE532CBED3F300DBD886 /* DayOfWeekRow.swift */,
+				4E35CE542CBED3F300DBD886 /* IntervalRow.swift */,
+				4E35CE552CBED3F300DBD886 /* TimeLimitSection.swift */,
+				4E35CE562CBED3F300DBD886 /* TimeRow.swift */,
+				4E35CE572CBED3F300DBD886 /* TriggerTypeRow.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -5162,11 +5154,11 @@
 				E18A8E8028D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,
 				E18E01DC288747230022598C /* iPadOSCinematicScrollView.swift in Sources */,
 				E18E01E2288747230022598C /* EpisodeItemView.swift in Sources */,
-				4E35CE5C2CBED3F300DBD886 /* TimeSection.swift in Sources */,
-				4E35CE5D2CBED3F300DBD886 /* TriggerTypeSection.swift in Sources */,
+				4E35CE5C2CBED3F300DBD886 /* TimeRow.swift in Sources */,
+				4E35CE5D2CBED3F300DBD886 /* TriggerTypeRow.swift in Sources */,
 				4E35CE5E2CBED3F300DBD886 /* AddTaskTriggerView.swift in Sources */,
-				4E35CE5F2CBED3F300DBD886 /* IntervalSection.swift in Sources */,
-				4E35CE602CBED3F300DBD886 /* DayOfWeekSection.swift in Sources */,
+				4E35CE5F2CBED3F300DBD886 /* IntervalRow.swift in Sources */,
+				4E35CE602CBED3F300DBD886 /* DayOfWeekRow.swift in Sources */,
 				4E35CE612CBED3F300DBD886 /* TimeLimitSection.swift in Sources */,
 				E11B1B6C2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
 				E14EA1602BF6FF8900DE757A /* UserProfileImagePicker.swift in Sources */,
