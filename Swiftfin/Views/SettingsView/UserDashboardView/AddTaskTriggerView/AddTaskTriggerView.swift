@@ -92,7 +92,7 @@ struct AddTaskTriggerView: View {
                 }
             } footer: {
                 if isDuplicate {
-                    Label("Trigger already exists", systemImage: "exclamationmark.circle.fill")
+                    Label(L10n.triggerAlreadyExists, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }

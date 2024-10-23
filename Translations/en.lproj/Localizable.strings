@@ -1021,3 +1021,5 @@
 // Confirms that something completed successfully or without error
 // Appears in the views with eventful to indicate a task did not fail
 "success" = "Success";
+
+"triggerAlreadyExists" = "Trigger already exists";
