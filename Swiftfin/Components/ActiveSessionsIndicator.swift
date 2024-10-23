@@ -20,25 +20,12 @@ struct ActiveSessionIndicator: View {
     private let timer = Timer.publish(every: 60, on: .main, in: .common)
         .autoconnect()
 
-    // MARK: - Spinner States
-
-    @State
-    private var isSpinning = false
-    @State
-    private var showSpinner = false
-
     // MARK: - Session States
 
     var activeSessions: [SessionInfo] {
         viewModel.sessions.compactMap(\.value.value).filter {
             $0.nowPlayingItem != nil
         }
-    }
-
-    // MARK: - Do Active Sessions Exist
-
-    var isEnabled: Bool {
-        activeSessions.isNotEmpty
     }
 
     // MARK: - Initializer
@@ -81,20 +68,6 @@ struct ActiveSessionIndicator: View {
                         ActivityBadge(value: activeSessions.count)
                     }
                 }
-                .onChange(of: viewModel.backgroundStates) { newState in
-                    if newState.contains(.gettingSessions) {
-                        showSpinner = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            if !viewModel.backgroundStates.contains(.gettingSessions) {
-                                showSpinner = false
-                            }
-                        }
-                    } else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            showSpinner = false
-                        }
-                    }
-                }
         }
     }
 
@@ -105,11 +78,11 @@ struct ActiveSessionIndicator: View {
             .resizable()
             .scaledToFit()
             .padding(4)
-            .frame(width: 25, height: 23)
+            .frame(width: 25, height: 25)
             .foregroundColor(.primary)
             .background(
                 Circle()
-                    .fill(isEnabled ? Color.accentColor : .secondary)
+                    .fill(.secondary)
             )
     }
 
