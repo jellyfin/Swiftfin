@@ -18,14 +18,20 @@ internal enum L10n {
   internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
+  /// Active
+  internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// ActiveSessionsView Header
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
+  /// Activity
+  internal static let activity = L10n.tr("Localizable", "activity", fallback: "Activity")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Administration Dashboard Section
   internal static let administration = L10n.tr("Localizable", "administration", fallback: "Administration")
+  /// Administrator
+  internal static let administrator = L10n.tr("Localizable", "administrator", fallback: "Administrator")
   /// Advanced
   internal static let advanced = L10n.tr("Localizable", "advanced", fallback: "Advanced")
   /// Airs %s
@@ -40,6 +46,8 @@ internal enum L10n {
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
   /// Select Server View - Select All Servers
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
+  /// View and manage all registered users on the server, including their permissions and activity status.
+  internal static let allUsersDescription = L10n.tr("Localizable", "allUsersDescription", fallback: "View and manage all registered users on the server, including their permissions and activity status.")
   /// TranscodeReason - Anamorphic Video Not Supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
   /// Represents the Appearance setting label
@@ -668,6 +676,8 @@ internal enum L10n {
   internal static let retry = L10n.tr("Localizable", "retry", fallback: "Retry")
   /// Right
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
+  /// Role
+  internal static let role = L10n.tr("Localizable", "role", fallback: "Role")
   /// Button label to run a task
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Status label for when a task is running
@@ -910,6 +920,8 @@ internal enum L10n {
   }
   /// Username
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
+  /// Users
+  internal static let users = L10n.tr("Localizable", "users", fallback: "Users")
   /// Version
   internal static let version = L10n.tr("Localizable", "version", fallback: "Version")
   /// Video

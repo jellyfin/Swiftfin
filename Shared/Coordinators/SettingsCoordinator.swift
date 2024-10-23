@@ -68,6 +68,12 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var editScheduledTask = makeEditScheduledTask
     @Route(.push)
     var serverLogs = makeServerLogs
+    @Route(.push)
+    var users = makeUsers
+    @Route(.push)
+    var userDetails = makeUserDetails
+    @Route(.push)
+    var userDevices = makeUserDevices
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
@@ -208,6 +214,21 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeServerLogs() -> some View {
         ServerLogsView()
+    }
+
+    @ViewBuilder
+    func makeUsers() -> some View {
+        UsersView()
+    }
+
+    @ViewBuilder
+    func makeUserDetails(observer: UserObserver) -> some View {
+        UserDetailsView(observer: observer)
+    }
+
+    @ViewBuilder
+    func makeUserDevices(userID: String) -> some View {
+        DevicesView(userID: userID)
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {

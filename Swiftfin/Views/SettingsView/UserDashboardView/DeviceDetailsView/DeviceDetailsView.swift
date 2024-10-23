@@ -14,6 +14,9 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
     @CurrentDate
     private var currentDate: Date
 
@@ -44,11 +47,18 @@ struct DeviceDetailsView: View {
 
     var body: some View {
         List {
-            if let lastUserID = device.lastUserID {
+            if let userID = device.lastUserID,
+               let userName = device.lastUserName
+            {
+
+                let user = UserDto(id: userID, name: userName)
+
                 UserDashboardView.UserSection(
-                    user: .init(id: lastUserID, name: device.lastUserName),
+                    user: user,
                     lastActivityDate: device.dateLastActivity
-                )
+                ) {
+                    router.route(to: \.userDetails, UserObserver(user: user))
+                }
             }
 
             // TODO: Enable with SDK Change
