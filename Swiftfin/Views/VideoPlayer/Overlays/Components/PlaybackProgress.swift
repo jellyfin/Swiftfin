@@ -22,8 +22,6 @@ extension VideoPlayer.Overlay {
 
         @Default(.VideoPlayer.Overlay.chapterSlider)
         private var chapterSlider
-        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType
         @Default(.VideoPlayer.Overlay.sliderColor)
         private var sliderColor
         @Default(.VideoPlayer.Overlay.sliderType)
@@ -91,6 +89,11 @@ extension VideoPlayer.Overlay {
             }
             .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
             .disabled(manager.state == .loadingItem)
+            .onChange(of: scrubbedSeconds) { newValue in
+                if newValue == 0 || newValue == manager.item.runTimeSeconds {
+                    UIDevice.impact(.light)
+                }
+            }
         }
     }
 }

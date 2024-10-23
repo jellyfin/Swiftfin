@@ -15,9 +15,6 @@ extension VideoPlayer {
 
     struct Overlay: View {
 
-        @Default(.VideoPlayer.Overlay.playbackButtonType)
-        private var playbackButtonType
-
         @Environment(\.isScrubbing)
         @Binding
         private var isScrubbing: Bool
@@ -31,8 +28,6 @@ extension VideoPlayer {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @State
-        private var contentSize: CGSize = .zero
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
         @State
@@ -52,14 +47,6 @@ extension VideoPlayer {
         @ViewBuilder
         private var navigationBar: some View {
             NavigationBar()
-                .background {
-                    OpacityLinearGradient {
-                        (0, 0.9)
-                        (1, 0)
-                    }
-                    .foregroundStyle(.black)
-                    .isVisible(playbackButtonType == .compact)
-                }
                 .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
@@ -98,8 +85,7 @@ extension VideoPlayer {
             ZStack {
 
                 Color.black
-                    .opacity(!isScrubbing && playbackButtonType == .large && isPresentingOverlay ? 0.5 : 0)
-                    .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
+                    .isVisible(opacity: 0.5, !isScrubbing && isPresentingOverlay)
                     .allowsHitTesting(false)
                     .overlay(alignment: .bottom) {
                         OpacityLinearGradient {
@@ -107,9 +93,10 @@ extension VideoPlayer {
                             (1, 0.5)
                         }
                         .foregroundStyle(.black)
-                        .isVisible(isScrubbing || playbackButtonType == .compact)
-                        .frame(height: max(0, contentSize.height - progressViewFrame.minY))
+                        .isVisible(isScrubbing)
+                        .frame(height: progressViewFrame.height)
                     }
+                    .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
                 GestureView()
                     .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
@@ -125,7 +112,6 @@ extension VideoPlayer {
                         .edgePadding(.vertical)
                         .padding(effectiveSafeArea)
                         .offset(y: isPresentingOverlay ? 0 : -20)
-                        .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
 
                     Spacer()
                         .allowsHitTesting(false)
@@ -135,7 +121,6 @@ extension VideoPlayer {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(effectiveSafeArea)
                             .offset(y: isPresentingOverlay ? 0 : 20)
-                            .animation(.bouncy, value: isPresentingOverlay)
 
                         // TODO: changing supplement transition
                         if isPresentingDrawer, let selectedSupplement {
@@ -158,25 +143,18 @@ extension VideoPlayer {
                     }
                 }
 
-                if playbackButtonType == .large, !isPresentingDrawer {
-                    Overlay.LargePlaybackButtons()
+                if !isPresentingDrawer {
+                    PlaybackButtons()
                         .isVisible(!isScrubbing && isPresentingOverlay)
-                        .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)
+            .animation(.bouncy(duration: 0.25), value: isPresentingOverlay)
             .environment(\.isPresentingOverlay, $isPresentingOverlay)
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(overlayTimer)
-            .onChange(of: selectedSupplement) { newValue in
-                if newValue == nil {
-                    overlayTimer.poke()
-                } else {
-                    overlayTimer.stop()
-                }
-            }
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.poke()
@@ -195,6 +173,13 @@ extension VideoPlayer {
                     isPresentingOverlay = false
                 }
             }
+            .onChange(of: selectedSupplement) { newValue in
+                if newValue == nil {
+                    overlayTimer.poke()
+                } else {
+                    overlayTimer.stop()
+                }
+            }
             .onSizeChanged { newSize in
                 if newSize.isPortrait {
                     effectiveSafeArea = .init(
@@ -208,7 +193,6 @@ extension VideoPlayer {
                     )
                 }
             }
-            .trackingSize($contentSize)
         }
     }
 }

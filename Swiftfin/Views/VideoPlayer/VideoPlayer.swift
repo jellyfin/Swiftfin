@@ -57,7 +57,7 @@ struct VideoPlayer: View {
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
 
-                        guard manager.state != .initial || manager.state != .loadingItem else { return }
+                        guard manager.state == .playback else { return }
 
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
@@ -68,11 +68,11 @@ struct VideoPlayer: View {
                     }
                     .onStateUpdated { state, _ in
 
-                        guard state != .playing || manager.state != .playing else { return }
+//                        guard state != .playing || manager.state != .playing else { return }
 
                         switch state {
                         case .buffering, .esAdded, .opening:
-                            manager.send(.buffer)
+                            manager.playbackStatus = .buffering
                         case .ended, .stopped:
                             isScrubbing = false
                             manager.send(.ended)
@@ -81,9 +81,11 @@ struct VideoPlayer: View {
                             isScrubbing = false
                             manager.send(.error(.init("Unable to perform playback")))
                         case .playing:
-                            manager.send(.play)
+                            if manager.playbackStatus != .playing {
+                                manager.playbackStatus = .playing
+                            }
                         case .paused:
-                            manager.send(.pause)
+                            manager.playbackStatus = .paused
                         }
                     }
             }

@@ -12,13 +12,7 @@ import VLCUI
 
 extension VideoPlayer.Overlay {
 
-    struct LargePlaybackButtons: View {
-
-        enum PlayButtonState {
-            case playing
-            case paused
-            case buffering
-        }
+    struct PlaybackButtons: View {
 
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
@@ -32,22 +26,19 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var manager: MediaPlayerManager
 
-        @State
-        private var playButtonState: PlayButtonState = .buffering
-
         @ViewBuilder
         private var playButton: some View {
             Button {
-                switch manager.state {
-                case .playing:
-                    manager.proxy?.pause()
-                case .paused:
-                    manager.proxy?.play()
-                default: ()
-                }
+//                switch manager.playbackStatus {
+//                case .playing:
+//                    manager.proxy?.pause()
+//                case .paused:
+//                    manager.proxy?.play()
+//                default: ()
+//                }
             } label: {
                 Group {
-                    switch playButtonState {
+                    switch manager.playbackStatus {
                     case .playing:
                         Label("Pause", systemImage: "pause.fill")
                     case .paused:
@@ -119,16 +110,16 @@ extension VideoPlayer.Overlay {
                 }
             })
             .onChange(of: manager.state) { state in
-                switch state {
-                case .playing:
-                    playButtonState = .playing
-                case .paused:
-                    playButtonState = .paused
-                case .loadingItem:
-                    playButtonState = .buffering
-                default: ()
+//                switch state {
+//                case .playing:
+//                    playButtonState = .playing
+//                case .paused:
+//                    playButtonState = .paused
+//                case .loadingItem:
 //                    playButtonState = .buffering
-                }
+//                default: ()
+////                    playButtonState = .buffering
+//                }
             }
         }
     }

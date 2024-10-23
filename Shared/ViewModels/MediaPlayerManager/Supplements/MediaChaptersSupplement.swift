@@ -29,92 +29,82 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
     }
 }
 
-struct ChapterOverlay: View {
-
-    @Default(.accentColor)
-    private var accentColor
-
-    @Environment(\.safeAreaInsets)
-    @Binding
-    private var safeAreaInsets
-
-    @State
-    private var contentSize: CGSize = .zero
-
-    @StateObject
-    private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
-
-    let chapters: [ChapterInfo.FullInfo]
-
-    var body: some View {
-        CollectionHStack(chapters) { chapter in
-            ChapterButton(chapter: chapter)
-                .frame(height: 150)
+extension MediaChaptersSupplement {
+    
+    struct ChapterOverlay: View {
+        
+        @StateObject
+        private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
+        
+        let chapters: [ChapterInfo.FullInfo]
+        
+        var body: some View {
+            CollectionHStack(chapters) { chapter in
+                ChapterButton(chapter: chapter)
+                    .frame(height: 150)
+            }
+            .insets(horizontal: .zero)
+            .proxy(collectionHStackProxy)
+            .frame(height: 150)
         }
-        .insets(horizontal: .zero)
-        .proxy(collectionHStackProxy)
-        .frame(height: 150)
     }
-}
-
-struct ChapterButton: View {
-
-    @Default(.accentColor)
-    private var accentColor
-
-    @Environment(\.isSelected)
-    private var isSelected: Bool
-
-    @EnvironmentObject
-    private var manager: MediaPlayerManager
-
-    @State
-    private var contentSize: CGSize = .zero
-
-    let chapter: ChapterInfo.FullInfo
-
-    var body: some View {
-        Button {
-//            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
-            manager.proxy?.setTime(chapter.secondsRange.lowerBound)
-        } label: {
-            VStack(alignment: .leading, spacing: 5) {
-                ZStack {
-                    Color.clear
-
-                    ImageView(chapter.landscapeImageSources(maxWidth: 500))
-                        .failure {
-                            SystemImageContentView(systemName: chapter.systemImage)
+    
+    struct ChapterButton: View {
+        
+        @Default(.accentColor)
+        private var accentColor
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        
+        @State
+        private var contentSize: CGSize = .zero
+        
+        let chapter: ChapterInfo.FullInfo
+        
+        var body: some View {
+            Button {
+                //            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
+                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
+            } label: {
+                VStack(alignment: .leading, spacing: 5) {
+                    ZStack {
+                        Color.clear
+                        
+                        ImageView(chapter.landscapeImageSources(maxWidth: 500))
+                            .failure {
+                                SystemImageContentView(systemName: chapter.systemImage)
+                            }
+                    }
+                    .overlay {
+                        if chapter.secondsRange.contains(manager.seconds) {
+                            RoundedRectangle(cornerRadius: contentSize.width / 30)
+                                .stroke(accentColor, lineWidth: 8)
+                        }
+                    }
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .cornerRadius(ratio: 1 / 30, of: \.width)
+                    
+                    Text(chapter.chapterInfo.displayTitle)
+                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                        .frame(height: 15)
+                    
+                    Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
+                        .frame(height: 20)
+                        .foregroundStyle(Color(UIColor.systemBlue))
+                        .padding(.horizontal, 4)
+                        .background {
+                            Color(.darkGray)
+                                .opacity(0.2)
+                                .cornerRadius(4)
                         }
                 }
-                .overlay {
-                    if chapter.secondsRange.contains(manager.seconds) {
-                        RoundedRectangle(cornerRadius: contentSize.width / 30)
-                            .stroke(accentColor, lineWidth: 8)
-                    }
-                }
-                .aspectRatio(1.77, contentMode: .fill)
-                .posterBorder(ratio: 1 / 30, of: \.width)
-                .cornerRadius(ratio: 1 / 30, of: \.width)
-
-                Text(chapter.chapterInfo.displayTitle)
-                    .lineLimit(1)
-                    .foregroundStyle(.white)
-                    .frame(height: 15)
-
-                Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
-                    .frame(height: 20)
-                    .foregroundStyle(Color(UIColor.systemBlue))
-                    .padding(.horizontal, 4)
-                    .background {
-                        Color(.darkGray)
-                            .opacity(0.2)
-                            .cornerRadius(4)
-                    }
+                .font(.subheadline.weight(.semibold))
             }
-            .font(.subheadline.weight(.semibold))
+            .trackingSize($contentSize)
         }
-        .trackingSize($contentSize)
     }
 }
 

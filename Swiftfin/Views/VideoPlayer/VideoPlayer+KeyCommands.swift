@@ -53,13 +53,13 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 title: L10n.playAndPause,
                 input: " "
             ) {
-                if videoPlayerManager.state == .playing {
-                    videoPlayerManager.proxy?.pause()
-                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-                } else {
-                    videoPlayerManager.proxy?.play()
-                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-                }
+//                if videoPlayerManager.state == .playing {
+//                    videoPlayerManager.proxy?.pause()
+//                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+//                } else {
+//                    videoPlayerManager.proxy?.play()
+//                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+//                }
             }
 
             // MARK: jump forward

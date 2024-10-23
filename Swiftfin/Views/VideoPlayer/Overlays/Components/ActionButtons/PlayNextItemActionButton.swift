@@ -13,7 +13,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
     struct PlayNextItem: View {
 
         @EnvironmentObject
-        private var videoPlayerManager: MediaPlayerManager
+        private var manager: MediaPlayerManager
 
         var body: some View {
             Button(

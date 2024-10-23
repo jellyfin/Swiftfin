@@ -216,7 +216,6 @@ extension Defaults.Keys {
         enum Overlay {
 
             static let chapterSlider: Key<Bool> = UserKey("chapterSlider", default: true)
-            static let playbackButtonType: Key<PlaybackButtonType> = UserKey("videoPlayerPlaybackButtonLocation", default: .large)
             static let sliderColor: Key<Color> = UserKey("sliderColor", default: Color.white)
             static let sliderType: Key<SliderType> = UserKey("sliderType", default: .capsule)
 
@@ -229,6 +228,7 @@ extension Defaults.Keys {
             static let appMaximumBitrateTest: Key<PlaybackBitrateTestSize> = UserKey("appMaximumBitrateTest", default: .regular)
             static let compatibilityMode: Key<PlaybackCompatibility> = UserKey("compatibilityMode", default: .auto)
             static let customDeviceProfileAction: Key<CustomDeviceProfileAction> = UserKey("customDeviceProfileAction", default: .add)
+            static let rates: Key<[Float]> = UserKey("videoPlayerPlaybackRates", default: [0.5, 1.0, 1.25, 1.5, 2.0])
         }
 
         enum Subtitle {

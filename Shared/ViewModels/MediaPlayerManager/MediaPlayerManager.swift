@@ -31,6 +31,12 @@ protocol MediaPlayerListener {
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
+    
+    enum PlaybackStatus {
+        case playing
+        case paused
+        case buffering
+    }
 
     // MARK: Event
 
@@ -45,10 +51,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     indirect enum Action: Equatable {
 
         case error(JellyfinAPIError)
-
-        case pause
-        case play
-        case buffer
         case ended
         case stop
 
@@ -61,13 +63,9 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     // MARK: State
 
     enum State: Hashable {
-        case initial
-        case loadingItem
         case error(JellyfinAPIError)
-
-        case playing
-        case paused
-        case buffering
+        case loadingItem
+        case playback
         case stopped
     }
 
@@ -85,16 +83,19 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     @Published
     private(set) var item: BaseItemDto
     @Published
-    var playbackRate: PlaybackRate = .one {
+    var rate: Float = 1.0 {
         didSet {
-            proxy?.setRate(Float(playbackRate.rate))
+            proxy?.setRate(rate)
+//            proxy?.setRate(Float(playbackRate.rate))
         }
     }
 
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
-    final var state: State = .initial
+    var playbackStatus: PlaybackStatus = .playing
+    @Published
+    final var state: State = .playback
 
     @Published
     private(set) var seconds: TimeInterval = 0
@@ -131,7 +132,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         // TODO: don't build on init?
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
-            self.state = .buffering
+            self.state = .playback
             self.playbackItem = newItem
             self.eventSubject.send(.playNew(playbackItem: newItem))
         }
@@ -143,7 +144,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
 
-        state = .buffering
+        state = .playback
         self.playbackItem = playbackItem
         eventSubject.send(.playNew(playbackItem: playbackItem))
     }
@@ -158,14 +159,14 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         switch action {
         case let .error(error):
             return .error(error)
-        case .pause:
-
-            return .paused
-        case .play:
-
-            return .playing
-        case .buffer:
-            return .buffering
+//        case .pause:
+//
+//            return .paused
+//        case .play:
+//
+//            return .playing
+//        case .buffer:
+//            return .buffering
         case .ended:
             // TODO: go next in queue
             return .loadingItem
@@ -177,11 +178,17 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 //        case let .playNew(item: item, mediaSource: mediaSource):
         case .playNew:
 
-            return .buffering
+            return .playback
+//            return .playing
         case let .seek(newSeconds):
             seconds = newSeconds
             return state
         }
+    }
+    
+    @MainActor
+    func set(playbackStatus: PlaybackStatus) {
+        self.playbackStatus = playbackStatus
     }
 
     // MARK: buildMediaItem

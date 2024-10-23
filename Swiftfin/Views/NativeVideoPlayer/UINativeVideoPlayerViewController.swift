@@ -38,13 +38,22 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         allowsPictureInPicturePlayback = true
         updatesNowPlayingInfoCenter = false
-
-        // TODO: time and state observation and reporting
-//            timeObserver = newPlayer.addPeriodicTimeObserver(
-//                forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
-//                queue: .main
-//            ) { [weak self] newTime in
+        
+        timeObserver = newPlayer.addPeriodicTimeObserver(
+            forInterval: CMTime(seconds: 1, preferredTimescale: 1_000),
+            queue: .main
+        ) { newTime in
+            print(newTime)
+//            Task {
+//                await manager.send(.seek(seconds: newTime.seconds))
 //            }
+        }
+        
+        rateObserver = newPlayer.observe(\.rate, options: [.new, .initial]) { player, value in
+            if let rate = value.newValue {
+                print(rate)
+            }
+        }
 
         player = newPlayer
         videoPlayerProxy.avPlayer = player
@@ -88,6 +97,7 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
         seek(to: playbackItem.baseItem.startTimeSeconds)
     }
 
+    // TODO: get metadata from playback item
     private func createAVMetadata(for item: BaseItemDto) -> [AVMetadataItem] {
         let title: String
         var subtitle: String? = nil

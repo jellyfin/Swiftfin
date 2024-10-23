@@ -80,7 +80,7 @@ extension FormatStyle where Self == RateStyle {
 
 struct RateStyle: FormatStyle {
 
-    func format(_ value: TimeInterval) -> String {
+    func format(_ value: Float) -> String {
         String(format: "%.2f", value)
             .appending("x")
     }
@@ -111,6 +111,8 @@ extension ParseableFormatStyle where Self == DayIntervalParseableFormatStyle {
     }
 }
 
+// TODO: remove after iOS 15 support dropped and use `Duration`
+//       types and format styles instead
 extension FormatStyle where Self == TimeIntervalFormatStyle {
 
     static func interval(
@@ -130,6 +132,7 @@ struct TimeIntervalFormatStyle: FormatStyle {
         let value = abs(value)
         let t = Date.now
 
+        // issue: not a closed interval
         return Date.ComponentsFormatStyle(
             style: style,
             locale: .current,

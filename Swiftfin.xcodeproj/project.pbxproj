@@ -581,7 +581,6 @@
 		E170D0E4294CC8AB0017224C /* VideoPlayer+KeyCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */; };
 		E170D105294D21FA0017224C /* MediaSourceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D104294D21FA0017224C /* MediaSourceInfoView.swift */; };
 		E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */; };
-		E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */; };
 		E1722DB129491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
 		E1722DB229491C3900CC0239 /* ImageBlurHashes.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */; };
 		E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */; };
@@ -768,7 +767,7 @@
 		E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4C2BE1688E003BF6F3 /* SwiftinStore+UserState.swift */; };
 		E1AEFA392BE36C4C00CFAFD8 /* SwiftfinStore+ServerState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E145EB4E2BE168AC003BF6F3 /* SwiftfinStore+ServerState.swift */; };
 		E1B33EB028EA890D0073B0FD /* Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33EAF28EA890D0073B0FD /* Equatable.swift */; };
-		E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */; };
+		E1B33ED128EB860A0073B0FD /* PlaybackButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */; };
 		E1B490442967E26300D3EDCE /* PersistentLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */; };
 		E1B490452967E26300D3EDCE /* PersistentLogHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */; };
 		E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1B490462967E2E500D3EDCE /* CoreStore.swift */; };
@@ -1374,7 +1373,6 @@
 		E170D0E3294CC8AB0017224C /* VideoPlayer+KeyCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoPlayer+KeyCommands.swift"; sourceTree = "<group>"; };
 		E170D104294D21FA0017224C /* MediaSourceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoView.swift; sourceTree = "<group>"; };
 		E170D106294D23BA0017224C /* MediaSourceInfoCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaSourceInfoCoordinator.swift; sourceTree = "<group>"; };
-		E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallPlaybackButtons.swift; sourceTree = "<group>"; };
 		E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageBlurHashes.swift; sourceTree = "<group>"; };
 		E172D3AC2BAC9DF8007B4647 /* SeasonItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonItemViewModel.swift; sourceTree = "<group>"; };
 		E172D3B12BACA569007B4647 /* EpisodeContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeContent.swift; sourceTree = "<group>"; };
@@ -1502,7 +1500,7 @@
 		E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
 		E1B2AB9628808CDF0072B3B9 /* GoogleCast.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleCast.xcframework; path = Carthage/Build/GoogleCast.xcframework; sourceTree = "<group>"; };
 		E1B33EAF28EA890D0073B0FD /* Equatable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Equatable.swift; sourceTree = "<group>"; };
-		E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargePlaybackButtons.swift; sourceTree = "<group>"; };
+		E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackButtons.swift; sourceTree = "<group>"; };
 		E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentLogHandler.swift; sourceTree = "<group>"; };
 		E1B490462967E2E500D3EDCE /* CoreStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreStore.swift; sourceTree = "<group>"; };
 		E1B4E4362CA7795200DC49DE /* OrderedDictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedDictionary.swift; sourceTree = "<group>"; };
@@ -2736,7 +2734,7 @@
 				E1CFE27F28FA606800B7D34C /* ChapterTrackMask.swift */,
 				E1ED33CD2CBB1C1900E6BEB8 /* DrawerSectionButton.swift */,
 				E11245B628D97ED200D8A977 /* NavigationBar.swift */,
-				E1721FAC28FB801000762992 /* PlaybackButtons */,
+				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
 				E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */,
 				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 			);
@@ -3135,15 +3133,6 @@
 				E1E2F8442B757E3400B75998 /* SinceLastDisappearModifier.swift */,
 			);
 			path = Modifiers;
-			sourceTree = "<group>";
-		};
-		E1721FAC28FB801000762992 /* PlaybackButtons */ = {
-			isa = PBXGroup;
-			children = (
-				E1B33ED028EB860A0073B0FD /* LargePlaybackButtons.swift */,
-				E1721FAD28FB801C00762992 /* SmallPlaybackButtons.swift */,
-			);
-			path = PlaybackButtons;
 			sourceTree = "<group>";
 		};
 		E172D3AF2BACA54A007B4647 /* EpisodeSelector */ = {
@@ -4834,7 +4823,7 @@
 				E43918662AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
 				E173927F2C73EC0B00E3A1F3 /* NowPlayableListener.swift in Sources */,
 				E1579EA72B97DC1500A31CA1 /* Eventful.swift in Sources */,
-				E1B33ED128EB860A0073B0FD /* LargePlaybackButtons.swift in Sources */,
+				E1B33ED128EB860A0073B0FD /* PlaybackButtons.swift in Sources */,
 				E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */,
 				E102313F2BCF8A3C009D71FC /* DetailedChannelView.swift in Sources */,
 				E113133228BDC72000930F75 /* FilterView.swift in Sources */,
@@ -4962,7 +4951,6 @@
 				E187A60229AB28F0008387E6 /* RotateContentView.swift in Sources */,
 				BD3957792C113EC40078CEF8 /* SubtitleSection.swift in Sources */,
 				091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */,
-				E1721FAE28FB801C00762992 /* SmallPlaybackButtons.swift in Sources */,
 				E1A7B1662B9ADAD300152546 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E1ED7FD62CA8A7FD00ACB6E3 /* EditScheduledTaskView.swift in Sources */,
 				4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */,

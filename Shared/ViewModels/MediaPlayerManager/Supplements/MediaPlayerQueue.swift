@@ -10,18 +10,35 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-class MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
+//class MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
+//
+//    let title: String = "Queue"
+//
+//    weak var manager: MediaPlayerManager?
+//
+//    private(set) var items: OrderedSet<BaseItemDto> = []
+//
+//    init(manager: MediaPlayerManager? = nil) {
+//        self.manager = manager
+//    }
+//
+//    func videoPlayerBody() -> some View {
+//        Color.red
+//            .opacity(0.5)
+//    }
+//}
 
-    let title: String = "Queue"
+protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
+    
+    var items: OrderedSet<BaseItemDto> { get set }
+}
 
+class EpisodeMediaPlayerQueue: MediaPlayerQueue {
+    
+    var items: OrderedSet<BaseItemDto> = []
     weak var manager: MediaPlayerManager?
-
-    private(set) var items: OrderedSet<BaseItemDto> = []
-
-    init(manager: MediaPlayerManager? = nil) {
-        self.manager = manager
-    }
-
+    let title: String = "Up Next"
+    
     func videoPlayerBody() -> some View {
         Color.red
             .opacity(0.5)

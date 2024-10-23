@@ -247,8 +247,8 @@ extension View {
     /// - Important: Do not use this to add or remove a view from the view heirarchy.
     ///              Use a conditional statement instead.
     @inlinable
-    func isVisible(_ isVisible: Bool) -> some View {
-        opacity(isVisible ? 1 : 0)
+    func isVisible(opacity: Double = 1.0, _ isVisible: Bool) -> some View {
+        self.opacity(isVisible ? opacity : 0)
     }
 
     func blurred(style: UIBlurEffect.Style = .regular) -> some View {
