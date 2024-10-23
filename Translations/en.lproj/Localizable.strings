@@ -734,7 +734,7 @@
 "save" = "Save";
 
 /* Time Interval Help Text - Days */
-"days" = "days";
+"days" = "Days";
 
 /* Section Title for Column Configuration */
 "columns" = "Columns";
@@ -843,3 +843,183 @@
 // Selects all available devices
 // Used to select all items in selection mode
 "selectAll" = "Select All";
+
+// Logs Description - View
+// Access the Jellyfin server logs for troubleshooting and monitoring purposes
+// Describes the logs view in settings
+"logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
+
+/* Indicate a type */
+"type" = "Type";
+
+// Day of Week - Section Label
+// Specifies the day of the week for the trigger
+// Label for the day of week section
+"dayOfWeek" = "Day of Week";
+
+// Time - Section Label
+// Specifies the time for the trigger
+// Label for the time section
+"time" = "Time";
+
+// Daily - Description
+// Recurring trigger that runs daily
+// Describes the daily trigger type
+"daily" = "Daily";
+
+// Interval - Description
+// Recurring trigger based on time intervals
+// Describes the interval trigger type
+"interval" = "Interval";
+
+// Weekly - Description
+// Recurring trigger that runs weekly
+// Describes the weekly trigger type
+"weekly" = "Weekly";
+
+// On Application Startup - Description
+// Trigger that runs when the application starts
+// Describes the startup trigger type
+"onApplicationStartup" = "On application startup";
+
+// Task Trigger Time Limit - Section Description
+// Sets the maximum runtime (in hours) for this task trigger
+// Description for the task trigger time limit section
+"taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
+
+// Task Trigger Interval - Section Description
+// Sets the duration (in minutes) in between task triggers
+// Description for the task trigger interval section
+"taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
+
+// Every - Label
+// Used to select interval frequency
+// Label for selecting interval frequency
+"every" = "Every";
+
+// Time Limit with Unit - Label
+// Specifies time limit along with the unit
+// Time limit label with descriptive unit
+"timeLimitWithUnit" = "Time Limit (%@)";
+
+// Time Limit - Section Label
+// Specifies the time limit for the task
+// Label for the time limit section
+"timeLimit" = "Time Limit";
+
+// Hours - Input Field Placeholder
+// Placeholder for inputting hours
+// Input field placeholder for hours
+"hours" = "Hours";
+
+// Minutes - Input Field Placeholder
+// Placeholder for inputting minutes
+// Input field placeholder for minutes
+"minutes" = "Minutes";
+
+// Add Trigger - Title
+// Title for adding a new task trigger
+// Title for adding a new task trigger
+"addTrigger" = "Add trigger";
+
+// Save - Button Label
+// Button to save the current task trigger
+// Save button label
+"save" = "Save";
+
+// Changes Not Saved - Alert Title
+// Title for unsaved changes alert
+// Title for the unsaved changes alert
+"changesNotSaved" = "Changes not saved";
+
+// Discard Changes - Button Label
+// Button to discard unsaved changes
+// Button label for discarding unsaved changes
+"discardChanges" = "Discard Changes";
+
+// Unsaved Changes Message - Alert
+// Message for unsaved changes alert
+// Alert message for unsaved changes
+"unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
+
+// Delete Trigger - Confirmation Dialog Title
+// Title for the delete trigger confirmation dialog
+// Confirmation dialog title for deleting a trigger
+"deleteTrigger" = "Delete Trigger";
+
+// Delete Trigger Confirmation - Message
+// Message for deleting a trigger confirmation dialog
+// Confirmation dialog message for deleting a trigger
+"deleteTriggerConfirmationMessage" = "Are you sure you want to delete this trigger? This action cannot be undone.";
+
+// Item At Item - Label
+// Used to describe an item at another item
+// Label for something at something else
+"itemAtItem" = "%1$@ at %2$@";
+
+// Every Interval - Label
+// Describes an interval trigger with recurring time
+// Label for interval trigger with recurring time
+"everyInterval" = "Every %1$@";
+
+// Time Limit Label with Value - Label
+// Describes time limit with a value
+// Label for time limit with value
+"timeLimitLabelWithValue" = "Time limit: %1$@";
+
+// Add - Button Label
+// Button to add a new item
+// Button label for adding a new item
+"add" = "Add";
+
+// Idle - Task State
+// Describes the task state as idle
+// Localized text for task state 'Idle'
+"idle" = "Idle";
+
+// Status - Section Title
+// Title for the status section
+// Section title for a status section
+"status" = "Status";
+
+// Error Details - Section Title
+// Title for the error details section
+// Section title for a task error details
+"errorDetails" = "Error Details";
+
+// Details - Section Title
+// Title for the details section
+// Section title for any details section
+"details" = "Details";
+
+// Triggers - Section Header
+// Header for the scheduled task triggers section
+// Section header for scheduled task triggers
+"triggers" = "Triggers";
+
+// Executed - Section Title
+// Title for the task execution date section
+// Section title for a task execution date
+"executed" = "Executed";
+
+// No Runtime Limit - Label
+// Describes a task with no runtime limit
+// No task trigger runtime limit set
+"noRuntimeLimit" = "No runtime limit";
+
+// API Key Created - Success Message
+// A new Access Token was successfully created for the specified application
+// Appears in success alert when a new API key is created
+"serverTriggerCreated" = "A new trigger was created for '%1$@'.";
+
+// API Key Deleted - Success Message
+// The Access Token was successfully deleted for the specified application
+// Appears in success alert when an API key is deleted
+"serverTriggerDeleted" = "The selected trigger was deleted from '%1$@'.";
+
+// Save - Button
+// Confirms that something completed successfully or without error
+// Appears in the views with eventful to indicate a task did not fail
+"success" = "Success";
+
+"triggerAlreadyExists" = "Trigger already exists";
