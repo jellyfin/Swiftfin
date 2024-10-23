@@ -566,8 +566,8 @@ internal enum L10n {
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
-  /// This change is permanent and cannot be undone. Are you sure you want to proceed?
-  internal static let permanentActionConfirmationMessage = L10n.tr("Localizable", "permanentActionConfirmationMessage", fallback: "This change is permanent and cannot be undone. Are you sure you want to proceed?")
+  /// This change is permanent and cannot be undone. Are you sure you wish to proceed?
+  internal static let permanentActionConfirmationMessage = L10n.tr("Localizable", "permanentActionConfirmationMessage", fallback: "This change is permanent and cannot be undone. Are you sure you wish to proceed?")
   /// Play
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause
