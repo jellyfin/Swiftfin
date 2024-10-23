@@ -23,8 +23,7 @@ struct ActivityBadge: View {
                 .frame(width: size * widthMultplier(), height: size, alignment: .topTrailing)
                 .overlay {
                     Capsule()
-                        .stroke(Color.systemBackground, lineWidth: 2)
-                        .clipped()
+                        .stroke(Color.systemBackground, lineWidth: 1.5)
                 }
                 .position(x: x, y: y)
 
