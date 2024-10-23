@@ -67,6 +67,7 @@ struct ActiveSessionsView: View {
                 DelayedProgressView()
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
         .navigationTitle(L10n.activeDevices)
         .onFirstAppear {
             viewModel.send(.refreshSessions)
@@ -78,7 +79,6 @@ struct ActiveSessionsView: View {
             viewModel.send(.refreshSessions)
         }
         .topBarTrailing {
-
             if viewModel.backgroundStates.contains(.gettingSessions) {
                 ProgressView()
             }
