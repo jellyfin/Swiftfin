@@ -12,18 +12,13 @@ import SwiftUI
 
 // TODO: refactor after socket implementation
 
-struct ScheduledTasksView: View {
+struct ServerTasksView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @State
-    private var isPresentingRestartConfirmation = false
-    @State
-    private var isPresentingShutdownConfirmation = false
-
     @StateObject
-    private var viewModel = ScheduledTasksViewModel()
+    private var viewModel = ServerTasksViewModel()
 
     private let timer = Timer.publish(every: 5, on: .main, in: .common)
         .autoconnect()
@@ -32,20 +27,18 @@ struct ScheduledTasksView: View {
 
     @ViewBuilder
     private var serverFunctions: some View {
-        ServerTaskButton(
+        DestructiveServerTask(
             title: L10n.restartServer,
-            systemImage: "arrow.clockwise",
-            warningMessage: L10n.restartWarning,
-            isPresented: $isPresentingRestartConfirmation
+            systemName: "arrow.clockwise",
+            message: L10n.restartWarning
         ) {
             viewModel.send(.restartApplication)
         }
 
-        ServerTaskButton(
+        DestructiveServerTask(
             title: L10n.shutdownServer,
-            systemImage: "power",
-            warningMessage: L10n.shutdownWarning,
-            isPresented: $isPresentingShutdownConfirmation
+            systemName: "power",
+            message: L10n.shutdownWarning
         ) {
             viewModel.send(.shutdownApplication)
         }
@@ -71,7 +64,7 @@ struct ScheduledTasksView: View {
             ForEach(viewModel.tasks.keys, id: \.self) { category in
                 Section(category) {
                     ForEach(viewModel.tasks[category] ?? []) { task in
-                        ScheduledTaskButton(observer: task)
+                        ServerTaskRow(observer: task)
                     }
                 }
             }

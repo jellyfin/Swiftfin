@@ -9,21 +9,24 @@
 import JellyfinAPI
 import SwiftUI
 
-extension EditScheduledTaskView {
+extension EditServerTaskView {
 
     struct TriggersSection: View {
 
-        var triggers: [TaskTriggerInfo]?
-        @Binding
-        var isPresentingDeleteConfirmation: Bool
-        @Binding
-        var selectedTrigger: TaskTriggerInfo?
-        var deleteAction: (TaskTriggerInfo) -> Void
-        var addAction: () -> Void
+        @EnvironmentObject
+        private var router: SettingsCoordinator.Router
+
+        @ObservedObject
+        var observer: ServerTaskObserver
+
+        @State
+        private var isPresentingDeleteConfirmation: Bool = false
+        @State
+        private var selectedTrigger: TaskTriggerInfo?
 
         var body: some View {
             Section(L10n.triggers) {
-                if let triggers = triggers, !triggers.isEmpty {
+                if let triggers = observer.task.triggers, triggers.isNotEmpty {
                     ForEach(triggers, id: \.self) { trigger in
                         TriggerRow(taskTriggerInfo: trigger)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
@@ -37,10 +40,25 @@ extension EditScheduledTaskView {
                             }
                     }
                 } else {
-                    Button(L10n.addTaskTrigger) {
-                        addAction()
+                    Button(L10n.addTrigger) {
+                        router.route(to: \.addServerTaskTrigger, observer)
                     }
                 }
+            }
+            .confirmationDialog(
+                L10n.deleteTrigger,
+                isPresented: $isPresentingDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.cancel, role: .cancel) {}
+
+                Button(L10n.delete, role: .destructive) {
+                    if let selectedTrigger {
+                        observer.send(.removeTrigger(selectedTrigger))
+                    }
+                }
+            } message: {
+                Text(L10n.deleteTriggerConfirmationMessage)
             }
         }
     }

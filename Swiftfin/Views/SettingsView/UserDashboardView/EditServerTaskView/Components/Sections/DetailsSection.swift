@@ -8,17 +8,15 @@
 
 import SwiftUI
 
-extension EditScheduledTaskView {
+extension EditServerTaskView {
 
     struct DetailsSection: View {
 
-        var category: String?
+        let category: String
 
         var body: some View {
             Section(L10n.details) {
-                if let category = category {
-                    TextPairView(leading: L10n.category, trailing: category)
-                }
+                TextPairView(leading: L10n.category, trailing: category)
             }
         }
     }

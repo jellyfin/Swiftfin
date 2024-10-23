@@ -14,10 +14,10 @@ extension AddTaskTriggerView {
     struct TimeLimitSection: View {
 
         @Binding
-        var taskTriggerInfo: TaskTriggerInfo
+        private var taskTriggerInfo: TaskTriggerInfo
 
         @State
-        var tempTimeLimit: Int?
+        private var tempTimeLimit: Int?
 
         // MARK: - Init
 
@@ -63,7 +63,7 @@ extension AddTaskTriggerView {
             if let maxRuntimeTicks = taskTriggerInfo.maxRuntimeTicks {
                 ServerTicks(maxRuntimeTicks).seconds.formatted(.hourMinute)
             } else {
-                L10n.disabled
+                L10n.none
             }
         }
     }

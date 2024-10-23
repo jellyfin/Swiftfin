@@ -18,10 +18,14 @@ extension AddTaskTriggerView {
 
         var body: some View {
             Picker(
-                L10n.triggerType,
+                L10n.type,
                 selection: Binding<TaskTriggerType?>(
                     get: {
-                        TaskTriggerType(rawValue: taskTriggerInfo.type ?? "")
+                        if let t = taskTriggerInfo.type {
+                            return TaskTriggerType(rawValue: t)
+                        } else {
+                            return nil
+                        }
                     },
                     set: { newValue in
                         if taskTriggerInfo.type != newValue?.rawValue {

@@ -11,25 +11,21 @@ import SwiftUI
 
 struct AddTaskTriggerView: View {
 
+    @Environment(\.dismiss)
+    private var dismiss
+
     @ObservedObject
     var observer: ServerTaskObserver
 
     @State
-    private var taskTriggerInfo: TaskTriggerInfo
-
-    private let emptyTaskTriggerInfo: TaskTriggerInfo
-
-    @Environment(\.dismiss)
-    private var dismiss
-
-    @State
     private var isPresentingNotSaved = false
-
-    // MARK: - Default Trigger Values
+    @State
+    private var taskTriggerInfo: TaskTriggerInfo
 
     static let defaultTimeOfDayTicks = 0
     static let defaultDayOfWeek: DayOfWeek = .sunday
     static let defaultIntervalTicks = 36_000_000_000
+    private let emptyTaskTriggerInfo: TaskTriggerInfo
 
     // MARK: - Unsaved Changes Validation
 
@@ -97,7 +93,9 @@ struct AddTaskTriggerView: View {
 
             TimeLimitSection(taskTriggerInfo: $taskTriggerInfo)
         }
+        .animation(.linear(duration: 0.2), value: taskTriggerInfo.type)
         .interactiveDismissDisabled(true)
+        .navigationTitle(L10n.addTrigger)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             if hasUnsavedChanges {
@@ -106,7 +104,6 @@ struct AddTaskTriggerView: View {
                 dismiss()
             }
         }
-        .navigationTitle(L10n.addTaskTrigger)
         .topBarTrailing {
             Button(L10n.save) {
 

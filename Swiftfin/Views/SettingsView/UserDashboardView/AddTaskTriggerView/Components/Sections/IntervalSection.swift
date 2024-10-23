@@ -14,10 +14,10 @@ extension AddTaskTriggerView {
     struct IntervalSection: View {
 
         @Binding
-        var taskTriggerInfo: TaskTriggerInfo
+        private var taskTriggerInfo: TaskTriggerInfo
 
         @State
-        var tempInterval: Int?
+        private var tempInterval: Int?
 
         // MARK: - Init
 

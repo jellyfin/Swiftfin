@@ -849,10 +849,8 @@
 // Describes the logs view in settings
 "logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
 
-// Trigger Type - Section Label
-// Indicates the type of task trigger
-// Label for the trigger type section
-"triggerType" = "Trigger Type";
+/* Indicate a type */
+"type" = "Type";
 
 // Day of Week - Section Label
 // Specifies the day of the week for the trigger
@@ -919,10 +917,10 @@
 // Input field placeholder for minutes
 "minutes" = "Minutes";
 
-// Add Task Trigger - Title
+// Add Trigger - Title
 // Title for adding a new task trigger
 // Title for adding a new task trigger
-"addTaskTrigger" = "Add Task Trigger";
+"addTrigger" = "Add trigger";
 
 // Save - Button Label
 // Button to save the current task trigger

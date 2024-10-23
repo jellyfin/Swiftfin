@@ -10,7 +10,7 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-extension EditScheduledTaskView {
+extension EditServerTaskView {
 
     struct TriggerRow: View {
 
@@ -19,8 +19,8 @@ extension EditScheduledTaskView {
         // TODO: remove after `TaskTriggerType` is provided by SDK
 
         private var taskTriggerType: TaskTriggerType {
-            if let type = taskTriggerInfo.type {
-                return TaskTriggerType(rawValue: type)!
+            if let t = taskTriggerInfo.type, let type = TaskTriggerType(rawValue: t) {
+                return type
             } else {
                 return .startup
             }
@@ -53,6 +53,8 @@ extension EditScheduledTaskView {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 Image(systemName: taskTriggerType.systemImage)
+                    .backport
+                    .fontWeight(.bold)
                     .foregroundStyle(.secondary)
             }
         }
@@ -89,6 +91,7 @@ extension EditScheduledTaskView {
             case .startup:
                 return taskTriggerType.displayTitle
             }
+
             return L10n.unknown
         }
     }

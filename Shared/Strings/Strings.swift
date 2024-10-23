@@ -24,8 +24,8 @@ internal enum L10n {
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
-  /// Add Task Trigger
-  internal static let addTaskTrigger = L10n.tr("Localizable", "addTaskTrigger", fallback: "Add Task Trigger")
+  /// Add trigger
+  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Administration Dashboard Section
@@ -944,12 +944,12 @@ internal enum L10n {
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
   /// Triggers
   internal static let triggers = L10n.tr("Localizable", "triggers", fallback: "Triggers")
-  /// Trigger Type
-  internal static let triggerType = L10n.tr("Localizable", "triggerType", fallback: "Trigger Type")
   /// Try again
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain", fallback: "Try again")
   /// TV Shows
   internal static let tvShows = L10n.tr("Localizable", "tvShows", fallback: "TV Shows")
+  /// Indicate a type
+  internal static let type = L10n.tr("Localizable", "type", fallback: "Type")
   /// Unable to connect to server
   internal static let unableToConnectServer = L10n.tr("Localizable", "unableToConnectServer", fallback: "Unable to connect to server")
   /// Unable to find host

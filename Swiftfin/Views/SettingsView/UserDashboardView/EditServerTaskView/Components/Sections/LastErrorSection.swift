@@ -9,20 +9,15 @@
 import JellyfinAPI
 import SwiftUI
 
-extension EditScheduledTaskView {
+extension EditServerTaskView {
 
     struct LastErrorSection: View {
 
-        var lastExecutionResult: TaskResult
+        let message: String
 
         var body: some View {
             Section(L10n.errorDetails) {
-                if let errorMessage = lastExecutionResult.errorMessage {
-                    Text(errorMessage)
-                }
-                if let longErrorMessage = lastExecutionResult.longErrorMessage {
-                    Text(longErrorMessage)
-                }
+                Text(message)
             }
         }
     }

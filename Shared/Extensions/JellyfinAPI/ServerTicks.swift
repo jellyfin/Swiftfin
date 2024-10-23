@@ -8,6 +8,8 @@
 
 import Foundation
 
+// TODO: remove and have sdk use strong types instead
+
 typealias ServerTicks = Int
 
 extension ServerTicks {

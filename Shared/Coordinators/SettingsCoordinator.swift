@@ -71,9 +71,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var deviceDetails = makeDeviceDetails
     @Route(.push)
-    var editScheduledTask = makeEditScheduledTask
+    var editServerTask = makeEditServerTask
     @Route(.modal)
-    var addScheduledTaskTrigger = makeAddScheduledTaskTrigger
+    var addServerTaskTrigger = makeAddServerTaskTrigger
     @Route(.push)
     var serverLogs = makeServerLogs
     // <- End of AdminDashboard Items
@@ -201,7 +201,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeTasks() -> some View {
-        ScheduledTasksView()
+        ServerTasksView()
     }
 
     @ViewBuilder
@@ -215,11 +215,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
-        EditScheduledTaskView(observer: observer)
+    func makeEditServerTask(observer: ServerTaskObserver) -> some View {
+        EditServerTaskView(observer: observer)
     }
 
-    func makeAddScheduledTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeAddServerTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddTaskTriggerView(observer: observer)
         }
