@@ -9,12 +9,8 @@
 import SwiftUI
 
 struct ActivityBadge: View {
-    var value: Int
 
-    @State
-    var foreground: Color = .primary
-    @State
-    var background: Color = .accentColor
+    let value: Int
 
     private let size = 16.0
     private let x = 20.0
@@ -23,19 +19,26 @@ struct ActivityBadge: View {
     var body: some View {
         ZStack {
             Capsule()
-                .fill(background)
+                .fill(.primary)
                 .frame(width: size * widthMultplier(), height: size, alignment: .topTrailing)
+                .overlay {
+                    Capsule()
+                        .stroke(Color.systemBackground, lineWidth: 2)
+                        .clipped()
+                }
                 .position(x: x, y: y)
 
             if hasTwoOrLessDigits() {
                 Text("\(value)")
-                    .foregroundColor(foreground)
-                    .font(Font.caption)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
                     .position(x: x, y: y)
             } else {
                 Text("99+")
-                    .foregroundColor(foreground)
-                    .font(Font.caption)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.secondary)
                     .frame(width: size * widthMultplier(), height: size, alignment: .center)
                     .position(x: x, y: y)
             }
@@ -54,6 +57,28 @@ struct ActivityBadge: View {
             return 1.5
         } else {
             return 2.0
+        }
+    }
+}
+
+#Preview {
+    VStack {
+        Button {} label: {
+            Image(systemName: "waveform.path.ecg")
+                .resizable()
+                .backport
+                .fontWeight(.semibold)
+                .padding(4)
+                .frame(width: 25, height: 25)
+                .foregroundColor(.primary)
+                .background(
+                    Circle()
+                        .fill(.secondary)
+                )
+                .overlay {
+                    ActivityBadge(value: 24)
+                        .foregroundStyle(.blue, .blue.overlayColor)
+                }
         }
     }
 }
