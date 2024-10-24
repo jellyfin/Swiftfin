@@ -100,7 +100,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.gettingDevices)
+                    let _ = self?.backgroundStates.remove(.gettingDevices)
                 }
             }
             .asAnyCancellable()
@@ -129,7 +129,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.settingCustomName)
+                    let _ = self?.backgroundStates.remove(.settingCustomName)
                 }
             }
             .asAnyCancellable()
@@ -157,7 +157,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.deletingDevices)
+                    let _ = self?.backgroundStates.remove(.deletingDevices)
                 }
             }
             .asAnyCancellable()
@@ -203,7 +203,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.updateDeviceOptions(id: id, DeviceOptionsDto(customName: newName))
         try await userSession.client.send(request)
 
-        if let device = self.devices[id]?.value {
+        if let _ = devices[id]?.value {
             await MainActor.run {
                 self.devices[id]?.value?.name = newName
             }
@@ -222,7 +222,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         try await userSession.client.send(request)
 
         await MainActor.run {
-            self.devices.removeValue(forKey: id)
+            let _ = self.devices.removeValue(forKey: id)
         }
     }
 

@@ -15,7 +15,7 @@ import SwiftUI
 // TODO: do something for errors from restart/shutdown
 //       - toast?
 
-final class ScheduledTasksViewModel: ViewModel, Stateful {
+final class ServerTasksViewModel: ViewModel, Stateful {
 
     // MARK: - Action
 
