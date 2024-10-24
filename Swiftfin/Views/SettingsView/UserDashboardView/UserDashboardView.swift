@@ -37,6 +37,11 @@ struct UserDashboardView: View {
 
             Section(L10n.advanced) {
 
+                ChevronButton(L10n.apiKeys)
+                    .onSelect {
+                        router.route(to: \.apiKeys)
+                    }
+
                 ChevronButton(L10n.logs)
                     .onSelect {
                         router.route(to: \.serverLogs)

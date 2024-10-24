@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
+  /// Add API key
+  internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add trigger
@@ -46,10 +48,22 @@ internal enum L10n {
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// TranscodeReason - Anamorphic Video Not Supported
   internal static let anamorphicVideoNotSupported = L10n.tr("Localizable", "anamorphicVideoNotSupported", fallback: "Anamorphic video is not supported")
+  /// API Key Copied
+  internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API Key Copied")
+  /// Your API Key was copied to your clipboard!
+  internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API Key was copied to your clipboard!")
+  /// API Keys
+  internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API Keys")
+  /// External applications require an API key to communicate with your server.
+  internal static let apiKeysDescription = L10n.tr("Localizable", "apiKeysDescription", fallback: "External applications require an API key to communicate with your server.")
+  /// API Keys
+  internal static let apiKeysTitle = L10n.tr("Localizable", "apiKeysTitle", fallback: "API Keys")
   /// Represents the Appearance setting label
   internal static let appearance = L10n.tr("Localizable", "appearance", fallback: "Appearance")
   /// App Icon
   internal static let appIcon = L10n.tr("Localizable", "appIcon", fallback: "App Icon")
+  /// Application Name
+  internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
   /// Apply
   internal static let apply = L10n.tr("Localizable", "apply", fallback: "Apply")
   /// Aspect Fill
@@ -218,6 +232,10 @@ internal enum L10n {
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
   /// Continue Watching
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
+  /// Create API Key
+  internal static let createAPIKey = L10n.tr("Localizable", "createAPIKey", fallback: "Create API Key")
+  /// Enter the application name for the new API key.
+  internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
@@ -248,14 +266,18 @@ internal enum L10n {
   internal static let dashboard = L10n.tr("Localizable", "dashboard", fallback: "Dashboard")
   /// Description for the dashboard section
   internal static let dashboardDescription = L10n.tr("Localizable", "dashboardDescription", fallback: "Perform administrative tasks for your Jellyfin server.")
+  /// Date Created
+  internal static let dateCreated = L10n.tr("Localizable", "dateCreated", fallback: "Date Created")
   /// Day of Week
   internal static let dayOfWeek = L10n.tr("Localizable", "dayOfWeek", fallback: "Day of Week")
   /// Time Interval Help Text - Days
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
-  /// Server Detail View - Delete
+  /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
+  /// Are you sure you want to permanently delete this key?
+  internal static let deleteAPIKeyMessage = L10n.tr("Localizable", "deleteAPIKeyMessage", fallback: "Are you sure you want to permanently delete this key?")
   /// Delete Device
   internal static let deleteDevice = L10n.tr("Localizable", "deleteDevice", fallback: "Delete Device")
   /// Failed to Delete Device
@@ -544,8 +566,8 @@ internal enum L10n {
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
   /// Video Player Settings View - Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
-  /// Ok
-  internal static let ok = L10n.tr("Localizable", "ok", fallback: "Ok")
+  /// OK
+  internal static let ok = L10n.tr("Localizable", "ok", fallback: "OK")
   /// On application startup
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
   /// 1 user
