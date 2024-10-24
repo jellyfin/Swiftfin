@@ -24,6 +24,12 @@ struct ServerLogsView: View {
     @ViewBuilder
     private var contentView: some View {
         List {
+            ListTitleSection(
+                L10n.logs,
+                description: L10n.logsDescription
+            ) {
+                UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)
+            }
             ForEach(viewModel.logs, id: \.self) { log in
                 Button {
                     let request = Paths.getLogFile(name: log.name!)

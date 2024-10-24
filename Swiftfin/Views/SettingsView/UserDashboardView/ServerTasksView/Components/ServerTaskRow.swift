@@ -10,9 +10,9 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-extension ScheduledTasksView {
+extension ServerTasksView {
 
-    struct ScheduledTaskButton: View {
+    struct ServerTaskRow: View {
 
         @CurrentDate
         private var currentDate: Date
@@ -38,22 +38,6 @@ extension ScheduledTasksView {
                 taskResultView
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-            }
-        }
-
-        // MARK: - Task Status Section
-
-        @ViewBuilder
-        private var statusView: some View {
-            switch observer.state {
-            case .running:
-                ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
-                    .progressViewStyle(.gauge(systemImage: "stop.fill"))
-                    .transition(.opacity.combined(with: .scale).animation(.bouncy))
-            default:
-                Image(systemName: "play.fill")
-                    .foregroundStyle(.secondary)
-                    .transition(.opacity.combined(with: .scale).animation(.bouncy))
             }
         }
 
@@ -97,8 +81,16 @@ extension ScheduledTasksView {
 
                     Spacer()
 
-                    statusView
-                        .frame(width: 25, height: 25)
+                    if observer.state == .running {
+                        ProgressView(value: (observer.task.currentProgressPercentage ?? 0) / 100)
+                            .progressViewStyle(.gauge)
+                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
+                            .frame(width: 25, height: 25)
+                    }
+
+                    Image(systemName: "chevron.right")
+                        .font(.body.weight(.regular))
+                        .foregroundStyle(.secondary)
                 }
             }
             .animation(.linear(duration: 0.1), value: observer.state)
@@ -122,7 +114,7 @@ extension ScheduledTasksView {
                 .disabled(observer.task.state == .cancelling)
 
                 Button(L10n.edit) {
-                    router.route(to: \.editScheduledTask, observer)
+                    router.route(to: \.editServerTask, observer)
                 }
             } message: {
                 if let description = observer.task.description {
