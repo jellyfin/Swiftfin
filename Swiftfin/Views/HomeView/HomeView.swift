@@ -16,6 +16,9 @@ import SwiftUI
 //       - indicated by snapping to the top
 struct HomeView: View {
 
+    @StoredValue(.User.activeSessionIndicator)
+    private var activeSessionIndicator
+
     @Default(.Customization.nextUpPosterType)
     private var nextUpPosterType
     @Default(.Customization.Home.showRecentlyAdded)
@@ -85,6 +88,13 @@ struct HomeView: View {
 
             if viewModel.backgroundStates.contains(.refresh) {
                 ProgressView()
+            }
+
+            if activeSessionIndicator {
+                ActiveSessionIndicator {
+                    // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
+                }
+                .foregroundStyle(Color.accentColor, .secondary)
             }
 
             SettingsBarButton(

@@ -739,6 +739,9 @@
 /* Section Title for Column Configuration */
 "columns" = "Columns";
 
+/* Activity Indicator naming / settings label*/
+"activityIndicator" = "Activity Indicator";
+
 // Devices - Section Header
 // Title for the devices section in the Admin Dashboard
 // Used as the header for the devices section

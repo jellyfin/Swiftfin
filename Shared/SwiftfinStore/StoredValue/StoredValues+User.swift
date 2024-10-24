@@ -141,6 +141,14 @@ extension StoredValues.Keys {
             )
         }
 
+        static var activeSessionIndicator: Key<Bool> {
+            CurrentUserKey(
+                "activeSessionIndicator",
+                domain: "activeSessionIndicator",
+                default: false
+            )
+        }
+
         static var customDeviceProfiles: Key<[CustomDeviceProfile]> {
             CurrentUserKey(
                 "customDeviceProfiles",
