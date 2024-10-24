@@ -94,6 +94,7 @@ struct HomeView: View {
                 ActiveSessionIndicator {
                     // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
                 }
+                .foregroundStyle(Color.accentColor, .secondary)
             }
 
             SettingsBarButton(
