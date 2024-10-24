@@ -82,11 +82,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var userDetails = makeUserDetails
     @Route(.push)
     var userDevices = makeUserDevices
-
-    @Route(.modal)
-    var editCustomDeviceProfile = makeEditCustomDeviceProfile
-    @Route(.modal)
-    var createCustomDeviceProfile = makeCreateCustomDeviceProfile
     // <- End of AdminDashboard Items
 
     #if DEBUG
@@ -127,7 +122,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
-    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator>
+    {
         NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
     }
 
@@ -255,16 +251,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeUserDevices(userID: String) -> some View {
         DevicesView(userID: userID)
     }
+
     // <- End of AdminDashboard Items
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-            .navigationTitle(L10n.filters)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
-    }
 
     #if DEBUG
     @ViewBuilder
@@ -272,7 +260,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         DebugSettingsView()
     }
     #endif
-
     #endif
 
     #if os(tvOS)
