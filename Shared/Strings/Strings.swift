@@ -572,8 +572,8 @@ internal enum L10n {
   internal static let noTitle = L10n.tr("Localizable", "noTitle", fallback: "No title")
   /// Video Player Settings View - Offset
   internal static let offset = L10n.tr("Localizable", "offset", fallback: "Offset")
-  /// Ok
-  internal static let ok = L10n.tr("Localizable", "ok", fallback: "Ok")
+  /// OK
+  internal static let ok = L10n.tr("Localizable", "ok", fallback: "OK")
   /// On application startup
   internal static let onApplicationStartup = L10n.tr("Localizable", "onApplicationStartup", fallback: "On application startup")
   /// 1 user

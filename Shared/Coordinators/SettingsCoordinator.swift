@@ -236,16 +236,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     func makeAPIKeys() -> some View {
         APIKeyView()
     }
+
     // <- End of AdminDashboard Items
-
-    func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
-        OrderedSectionSelectorView(selection: selection, sources: ItemFilterType.allCases)
-            .navigationTitle(L10n.filters)
-    }
-
-    func makeVideoPlayerSettings() -> VideoPlayerSettingsCoordinator {
-        VideoPlayerSettingsCoordinator()
-    }
 
     #if DEBUG
     @ViewBuilder
