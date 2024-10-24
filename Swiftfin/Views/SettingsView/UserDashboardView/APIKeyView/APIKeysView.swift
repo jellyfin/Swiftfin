@@ -12,7 +12,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct APIKeyView: View {
+struct APIKeysView: View {
 
     // MARK: - Router
 
@@ -22,7 +22,7 @@ struct APIKeyView: View {
     // MARK: - View Model
 
     @StateObject
-    private var viewModel: APIKeyViewModel
+    private var viewModel = APIKeysViewModel()
 
     // MARK: - State Variables
 
@@ -33,12 +33,6 @@ struct APIKeyView: View {
     @State
     private var showCreateAPIAlert = false
     @State
-    private var showEventAlert = false
-    @State
-    private var eventSuccess = false
-    @State
-    private var eventMessage: String = ""
-    @State
     private var newAPIName: String = ""
     @State
     private var deleteAPI: AuthenticationInfo?
@@ -48,23 +42,13 @@ struct APIKeyView: View {
     @State
     private var cancellables: Set<AnyCancellable> = []
 
-    // MARK: - Initializer
-
-    init() {
-        self._viewModel = .init(wrappedValue: APIKeyViewModel())
-    }
-
     // MARK: - Body
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                if viewModel.apiKeys.isEmpty {
-                    Text(L10n.none)
-                } else {
-                    apiKeyListView
-                }
+                contentView
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {
@@ -78,15 +62,14 @@ struct APIKeyView: View {
         .onFirstAppear {
             viewModel.send(.getAPIKeys)
         }
-        .onAppear {
-            handleEvents()
-        }
         .topBarTrailing {
-            Button(L10n.add) {
-                showCreateAPIAlert = true
-                UIDevice.impact(.light)
+            if viewModel.apiKeys.isNotEmpty {
+                Button(L10n.add) {
+                    showCreateAPIAlert = true
+                    UIDevice.impact(.light)
+                }
+                .buttonStyle(.toolbarPill)
             }
-            .buttonStyle(.toolbarPill)
         }
         .alert(L10n.apiKeyCopied, isPresented: $showCopiedAlert) {
             Button(L10n.ok, role: .cancel) {}
@@ -94,7 +77,7 @@ struct APIKeyView: View {
             Text(L10n.apiKeyCopiedMessage)
         }
         .confirmationDialog(
-            L10n.deleteAPIKey,
+            L10n.delete,
             isPresented: $showDeleteConfirmation,
             titleVisibility: .visible
         ) {
@@ -105,7 +88,7 @@ struct APIKeyView: View {
             }
             Button(L10n.cancel, role: .cancel) {}
         } message: {
-            Text(L10n.permanentActionConfirmationMessage)
+            Text(L10n.deleteAPIKeyMessage)
         }
         .alert(L10n.createAPIKey, isPresented: $showCreateAPIAlert) {
             TextField(L10n.applicationName, text: $newAPIName)
@@ -116,58 +99,42 @@ struct APIKeyView: View {
         } message: {
             Text(L10n.createAPIKeyMessage)
         }
-        .alert(eventSuccess ? L10n.success : L10n.error, isPresented: $showEventAlert) {} message: {
-            Text(eventMessage)
-        }
     }
 
     // MARK: - API Key List View
 
+    @ViewBuilder
     private var apiKeyListView: some View {
+        ForEach(viewModel.apiKeys, id: \.self) { apiKey in
+            if let apiKey = apiKey {
+                APIKeysRow(apiKey: apiKey) {
+                    UIPasteboard.general.string = apiKey.accessToken
+                    showCopiedAlert = true
+                } onDelete: {
+                    deleteAPI = apiKey
+                    showDeleteConfirmation = true
+                }
+            }
+        }
+    }
+
+    // MARK: - API Key Content
+
+    private var contentView: some View {
         List {
             ListTitleSection(
                 L10n.apiKeysTitle,
                 description: L10n.apiKeysDescription
             )
 
-            ForEach(viewModel.apiKeys.keys, id: \.self) { accessToken in
-                if let apiKey = viewModel.apiKeys[accessToken] {
-                    APIKeyRow(box: apiKey) {
-                        UIPasteboard.general.string = apiKey.value?.accessToken
-                        showCopiedAlert = true
-                    } onDelete: {
-                        deleteAPI = apiKey.value
-                        showDeleteConfirmation = true
-                    }
+            if viewModel.apiKeys.isNotEmpty {
+                apiKeyListView
+            } else {
+                Button(L10n.addAPIKey) {
+                    showCreateAPIAlert = true
                 }
+                .foregroundStyle(Color.accentColor)
             }
         }
-    }
-
-    // MARK: - Handle Events
-
-    private func handleEvents() {
-        viewModel.events
-            .sink { event in
-                switch event {
-                case .created:
-                    eventSuccess = true
-                    eventMessage = L10n.apiKeyCreated(newAPIName)
-                    newAPIName = ""
-                    showEventAlert = true
-                case .deleted:
-                    eventSuccess = true
-                    eventMessage = L10n.apiKeyDeleted(deleteAPI?.appName ?? L10n.unknown)
-                    deleteAPI = nil
-                    showEventAlert = true
-                case let .error(jellyfinError):
-                    eventSuccess = false
-                    eventMessage = jellyfinError.localizedDescription
-                    showEventAlert = true
-                case .content:
-                    break
-                }
-            }
-            .store(in: &cancellables)
     }
 }

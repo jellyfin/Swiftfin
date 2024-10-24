@@ -752,10 +752,10 @@
 // API Keys - Description
 // Explains the usage of API keys in external applications
 // Displays below the title in the API key section
-"apiKeysDescription" = "External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.";
+"apiKeysDescription" = "External applications require an API key to communicate with your server.";
 
 // Add - Button
-// Adds a new API key
+// Adds a new record
 // Appears in the toolbar
 "add" = "Add";
 
@@ -774,15 +774,10 @@
 // Used to dismiss the alert
 "ok" = "OK";
 
-// Delete API Key - Alert
-// Asks for confirmation to delete an API key
-// Appears when the user attempts to delete an API key
-"deleteAPIKey" = "Delete API Key";
-
 // Delete API Key - Confirmation Message
 // Warns the user that deletion is permanent
 // Displays a warning message before deletion
-"permanentActionConfirmationMessage" = "This change is permanent and cannot be undone. Are you sure you wish to proceed?";
+"deleteAPIKeyMessage" = "Are you sure you want to permanently delete this key?";
 
 // Cancel - Button
 // Cancels the current action
@@ -802,7 +797,7 @@
 // Create API Key - Message
 // Asks the user to enter the name of the application for the new API key
 // Displays in the create API key dialog
-"createAPIKeyMessage" = "Please enter the application name for the new API key.";
+"createAPIKeyMessage" = "Enter the application name for the new API key.";
 
 // Application Name - Text Field
 // Placeholder text for entering the name of the application
@@ -818,21 +813,6 @@
 // Title for the API keys management screen
 // Appears in the navigation bar
 "apiKeys" = "API Keys";
-
-// API Key Created - Success Message
-// A new Access Token was successfully created for the specified application
-// Appears in success alert when a new API key is created
-"apiKeyCreated" = "A new Access Token was created for '%@'.";
-
-// API Key Deleted - Success Message
-// The Access Token was successfully deleted for the specified application
-// Appears in success alert when an API key is deleted
-"apiKeyDeleted" = "The Access Token for '%@' has been revoked.";
-
-// Save - Button
-// Confirms that something completed successfully or without error
-// Appears in the views with eventful to indicate a task did not fail
-"success" = "Success";
 
 // Devices - Section Header
 // Title for the devices section in the Admin Dashboard
@@ -1118,3 +1098,8 @@
 "success" = "Success";
 
 "triggerAlreadyExists" = "Trigger already exists";
+
+// Add API Key - Button
+// Creates an API Key if there are no keys available
+// Appears in place of the API Key list if there are no API Keys
+"addAPIKey" = "Add API key";

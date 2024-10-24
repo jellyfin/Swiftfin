@@ -22,6 +22,8 @@ internal enum L10n {
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
+  /// Add API key
+  internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add trigger
@@ -50,18 +52,10 @@ internal enum L10n {
   internal static let apiKeyCopied = L10n.tr("Localizable", "apiKeyCopied", fallback: "API Key Copied")
   /// Your API Key was copied to your clipboard!
   internal static let apiKeyCopiedMessage = L10n.tr("Localizable", "apiKeyCopiedMessage", fallback: "Your API Key was copied to your clipboard!")
-  /// A new Access Token was created for '%@'.
-  internal static func apiKeyCreated(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "apiKeyCreated", String(describing: p1), fallback: "A new Access Token was created for '%@'.")
-  }
-  /// The Access Token for '%@' has been revoked.
-  internal static func apiKeyDeleted(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "apiKeyDeleted", String(describing: p1), fallback: "The Access Token for '%@' has been revoked.")
-  }
   /// API Keys
   internal static let apiKeys = L10n.tr("Localizable", "apiKeys", fallback: "API Keys")
-  /// External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.
-  internal static let apiKeysDescription = L10n.tr("Localizable", "apiKeysDescription", fallback: "External applications are required to have an API key in order to communicate with the server. Keys are issued by logging in with a normal user account or manually granting the application a key.")
+  /// External applications require an API key to communicate with your server.
+  internal static let apiKeysDescription = L10n.tr("Localizable", "apiKeysDescription", fallback: "External applications require an API key to communicate with your server.")
   /// API Keys
   internal static let apiKeysTitle = L10n.tr("Localizable", "apiKeysTitle", fallback: "API Keys")
   /// Represents the Appearance setting label
@@ -240,8 +234,8 @@ internal enum L10n {
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
   /// Create API Key
   internal static let createAPIKey = L10n.tr("Localizable", "createAPIKey", fallback: "Create API Key")
-  /// Please enter the application name for the new API key.
-  internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Please enter the application name for the new API key.")
+  /// Enter the application name for the new API key.
+  internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
@@ -282,8 +276,8 @@ internal enum L10n {
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
   internal static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
-  /// Delete API Key
-  internal static let deleteAPIKey = L10n.tr("Localizable", "deleteAPIKey", fallback: "Delete API Key")
+  /// Are you sure you want to permanently delete this key?
+  internal static let deleteAPIKeyMessage = L10n.tr("Localizable", "deleteAPIKeyMessage", fallback: "Are you sure you want to permanently delete this key?")
   /// Delete Device
   internal static let deleteDevice = L10n.tr("Localizable", "deleteDevice", fallback: "Delete Device")
   /// Failed to Delete Device
@@ -610,8 +604,6 @@ internal enum L10n {
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
-  /// This change is permanent and cannot be undone. Are you sure you wish to proceed?
-  internal static let permanentActionConfirmationMessage = L10n.tr("Localizable", "permanentActionConfirmationMessage", fallback: "This change is permanent and cannot be undone. Are you sure you wish to proceed?")
   /// Play
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause

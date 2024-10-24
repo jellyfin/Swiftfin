@@ -234,7 +234,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
 
     @ViewBuilder
     func makeAPIKeys() -> some View {
-        APIKeyView()
+        APIKeysView()
     }
 
     // <- End of AdminDashboard Items

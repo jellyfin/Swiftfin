@@ -11,27 +11,17 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-extension APIKeyView {
-
-    struct APIKeyRow: View {
-
-        @ObservedObject
-        private var box: BindingBox<AuthenticationInfo?>
+extension APIKeysView {
+    struct APIKeysRow: View {
 
         // MARK: - Actions
 
-        private let onSelect: () -> Void
-        private let onDelete: () -> Void
+        let apiKey: AuthenticationInfo
 
-        private var apiKey: AuthenticationInfo {
-            box.value ?? .init()
-        }
+        // MARK: - Actions
 
-        init(box: BindingBox<AuthenticationInfo?>, onSelect: @escaping () -> Void, onDelete: @escaping () -> Void) {
-            self.box = box
-            self.onSelect = onSelect
-            self.onDelete = onDelete
-        }
+        let onSelect: () -> Void
+        let onDelete: () -> Void
 
         // MARK: - Row Content
 
@@ -66,24 +56,21 @@ extension APIKeyView {
 
                 Spacer()
             }
+            .onTapGesture(perform: onSelect)
         }
 
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(vertical: 8, horizontal: 8)) {} content: {
-                rowContent
-            }
-            .isSeparatorVisible(false)
-            .onSelect(perform: onSelect)
-            .swipeActions {
-                Button(
-                    L10n.delete,
-                    systemImage: "trash",
-                    action: onDelete
-                )
-                .tint(.red)
-            }
+            rowContent
+                .swipeActions {
+                    Button(
+                        L10n.delete,
+                        systemImage: "trash",
+                        action: onDelete
+                    )
+                    .tint(.red)
+                }
         }
     }
 }
