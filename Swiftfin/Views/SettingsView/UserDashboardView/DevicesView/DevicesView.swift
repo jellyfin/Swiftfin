@@ -8,9 +8,12 @@
 
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 // TODO: Replace with CustomName when Available
+// TODO: Why doesn't this filter on the user from the Init?
+// TODO: Remove var UserBox when filter on Init is fixed.
 
 struct DevicesView: View {
 
@@ -37,14 +40,31 @@ struct DevicesView: View {
         _viewModel = StateObject(wrappedValue: DevicesViewModel(userID))
     }
 
+    // MARK: - Device Box
+
+    private var deviceBox: OrderedDictionary<String, BindingBox<DeviceInfo?>> {
+        if let userID = viewModel.userID {
+            var filteredDevices = OrderedDictionary<String, BindingBox<DeviceInfo?>>()
+
+            for id in viewModel.devices.keys where viewModel.devices[id]?.value?.lastUserID == userID {
+                if let device = viewModel.devices[id] {
+                    filteredDevices[id] = device
+                }
+            }
+            return filteredDevices
+        } else {
+            return viewModel.devices
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
         ZStack {
             switch viewModel.state {
             case .content:
-                if viewModel.devices.isEmpty {
-                    Text(L10n.none)
+                if deviceBox.isEmpty {
+                    emptyListView
                 } else {
                     deviceListView
                 }
@@ -99,6 +119,32 @@ struct DevicesView: View {
         }
     }
 
+    // MARK: - No Device List View
+
+    @ViewBuilder
+    private var emptyListView: some View {
+        List {
+            InsetGroupedListHeader(
+                L10n.devices,
+                description: L10n.allDevicesDescription
+            ) {
+                UIApplication.shared.open(.jellyfinDocsDevices)
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .padding(.vertical, 24)
+
+            HStack {
+                Spacer()
+                Text(L10n.none)
+                Spacer()
+            }
+            .listRowSeparator(.hidden)
+            .listRowInsets(.zero)
+        }
+        .listStyle(.plain)
+    }
+
     // MARK: - Device List View
 
     @ViewBuilder
@@ -115,7 +161,7 @@ struct DevicesView: View {
                 .listRowSeparator(.hidden)
                 .padding(.vertical, 24)
 
-                ForEach(viewModel.devices.keys, id: \.self) { id in
+                ForEach(deviceBox.keys, id: \.self) { id in
                     if let deviceBox = viewModel.devices[id] {
                         DeviceRow(box: deviceBox) {
                             if isEditing {

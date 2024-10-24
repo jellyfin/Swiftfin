@@ -9,8 +9,6 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: if lastActivityDate not in same day, use date instead of relative
-
 extension UserDashboardView {
 
     struct UserSection: View {
@@ -20,26 +18,56 @@ extension UserDashboardView {
 
         private let user: UserDto
         private let lastActivityDate: Date?
+        private let action: (() -> Void)?
 
-        init(user: UserDto, lastActivityDate: Date? = nil) {
+        // MARK: - Initializer
+
+        init(user: UserDto, lastActivityDate: Date? = nil, action: (() -> Void)? = nil) {
             self.user = user
             self.lastActivityDate = lastActivityDate
+            self.action = action
         }
+
+        // MARK: - Body
 
         var body: some View {
             Section(L10n.user) {
-                SettingsView.UserProfileRow(
-                    user: user
-                )
+                profileView
 
                 if let lastActivityDate {
+                    let timeInterval = currentDate.timeIntervalSince(lastActivityDate)
+                    let twentyFourHours: TimeInterval = 24 * 60 * 60
+
                     TextPairView(
                         L10n.lastSeen,
-                        value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
+                        value: timeInterval <= twentyFourHours ?
+                            Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow)) :
+                            Text(lastActivityDate, style: .date)
                     )
                     .id(currentDate)
                     .monospacedDigit()
+                } else {
+                    TextPairView(
+                        L10n.lastSeen,
+                        value: Text(L10n.never)
+                    )
                 }
+            }
+        }
+
+        // MARK: - Profile View
+
+        private var profileView: some View {
+            if let onSelect = action {
+                SettingsView.UserProfileRow(
+                    user: user
+                ) {
+                    onSelect()
+                }
+            } else {
+                SettingsView.UserProfileRow(
+                    user: user
+                )
             }
         }
     }
