@@ -95,6 +95,7 @@ struct APIKeysView: View {
             Button(L10n.cancel, role: .cancel) {}
             Button(L10n.save) {
                 viewModel.send(.createAPIKey(name: newAPIName))
+                newAPIName = ""
             }
         } message: {
             Text(L10n.createAPIKeyMessage)
