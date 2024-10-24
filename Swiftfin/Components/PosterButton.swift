@@ -113,6 +113,86 @@ extension PosterButton {
 
     // MARK: Default Content
 
+    struct ContextMenuView: View {
+
+        let item: Item
+        var onPlay: (() -> Void)?
+        var onRestart: (() -> Void)?
+        var onShuffle: (() -> Void)?
+        var onPlayed: (() -> Void)?
+        var onUnplayed: (() -> Void)?
+        var onPlayedToggle: (() -> Void)?
+        var onFavoriteToggle: (() -> Void)?
+        var onDownload: (() -> Void)?
+
+        var body: some View {
+            if let baseItem = item as? BaseItemDto {
+
+                if let playedPercentage = baseItem.userData?.playedPercentage, playedPercentage > 0 && playedPercentage < 100 {
+                    if let onRestart = onRestart {
+                        Button(action: onRestart) {
+                            Label("Play From Beginning", systemImage: "memories")
+                        }
+                    }
+                    if let onPlay = onPlay {
+                        Button(action: onPlay) {
+                            Label("Resume", systemImage: "forward.end.fill")
+                        }
+                    }
+                } else if let onPlay = onPlay {
+                    Button(action: onPlay) {
+                        Label("Play", systemImage: "play.fill")
+                    }
+                }
+
+                if let onShuffle = onShuffle {
+                    Button(action: onShuffle) {
+                        Label("Shuffle", systemImage: "shuffle")
+                    }
+                }
+
+                if let onPlayedToggle = onPlayedToggle {
+                    if let isPlayed = baseItem.userData?.isPlayed {
+                        Button(action: onPlayedToggle) {
+                            Label(
+                                isPlayed ? L10n.unplayed : L10n.played,
+                                systemImage: isPlayed ? "minus.circle" : "checkmark.circle"
+                            )
+                        }
+                    }
+                } else {
+                    if let onPlayed = onPlayed {
+                        Button(action: onPlayed) {
+                            Label(L10n.played, systemImage: "checkmark.circle")
+                        }
+                    }
+                    if let onUnplayed = onUnplayed {
+                        Button(action: onUnplayed) {
+                            Label(L10n.unplayed, systemImage: "minus.circle")
+                        }
+                    }
+                }
+
+                if let isFavorite = baseItem.userData?.isFavorite,
+                   let onFavoriteToggle = onFavoriteToggle
+                {
+                    Button(action: onFavoriteToggle) {
+                        Label(
+                            isFavorite ? "Unfavorite" : "Favorite",
+                            systemImage: isFavorite ? "heart.slash" : "heart"
+                        )
+                    }
+                }
+
+                if let onDownload = onDownload {
+                    Button(action: onDownload) {
+                        Label("Download", systemImage: "arrow.down.circle")
+                    }
+                }
+            }
+        }
+    }
+
     struct TitleContentView: View {
 
         let item: Item
