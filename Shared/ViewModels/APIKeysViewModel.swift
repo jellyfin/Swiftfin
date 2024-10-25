@@ -31,16 +31,10 @@ final class APIKeysViewModel: ViewModel, Stateful {
         case content
     }
 
-    // MARK: Event Publishing
-
-    private var AuthenticationTokenTask: AnyCancellable?
-
     // MARK: Published Variables
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    final var apiKeys: [AuthenticationInfo?] = []
+    final var apiKeys: [AuthenticationInfo] = []
     @Published
     final var state: State = .initial
 
@@ -49,9 +43,10 @@ final class APIKeysViewModel: ViewModel, Stateful {
     func respond(to action: Action) -> State {
         switch action {
         case .getAPIKeys:
-            AuthenticationTokenTask = Task {
+            Task {
                 do {
                     try await getAPIKeys()
+
                     await MainActor.run {
                         self.state = .content
                     }
@@ -61,12 +56,12 @@ final class APIKeysViewModel: ViewModel, Stateful {
                     }
                 }
             }
-            .asAnyCancellable()
-
+            .store(in: &cancellables)
         case let .createAPIKey(name):
-            AuthenticationTokenTask = Task {
+            Task {
                 do {
                     try await createAPIKey(name: name)
+
                     await MainActor.run {
                         self.state = .content
                     }
@@ -76,12 +71,12 @@ final class APIKeysViewModel: ViewModel, Stateful {
                     }
                 }
             }
-            .asAnyCancellable()
-
+            .store(in: &cancellables)
         case let .deleteAPIKey(key):
-            AuthenticationTokenTask = Task {
+            Task {
                 do {
                     try await deleteAPIKey(key: key)
+
                     await MainActor.run {
                         self.state = .content
                     }
@@ -91,8 +86,9 @@ final class APIKeysViewModel: ViewModel, Stateful {
                     }
                 }
             }
-            .asAnyCancellable()
+            .store(in: &cancellables)
         }
+
         return state
     }
 

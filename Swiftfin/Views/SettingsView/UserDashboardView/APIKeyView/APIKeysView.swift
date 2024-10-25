@@ -6,25 +6,13 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import CollectionVGrid
-import Combine
-import Defaults
 import JellyfinAPI
 import SwiftUI
 
 struct APIKeysView: View {
 
-    // MARK: - Router
-
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-
-    // MARK: - View Model
-
-    @StateObject
-    private var viewModel = APIKeysViewModel()
-
-    // MARK: - State Variables
 
     @State
     private var showCopiedAlert = false
@@ -37,10 +25,8 @@ struct APIKeysView: View {
     @State
     private var deleteAPI: AuthenticationInfo?
 
-    // MARK: - Cancellables for Combine Subscriptions
-
-    @State
-    private var cancellables: Set<AnyCancellable> = []
+    @StateObject
+    private var viewModel = APIKeysViewModel()
 
     // MARK: - Body
 
@@ -58,6 +44,8 @@ struct APIKeysView: View {
                 DelayedProgressView()
             }
         }
+        .animation(.linear(duration: 0.2), value: viewModel.state)
+        .animation(.linear(duration: 0.1), value: viewModel.apiKeys)
         .navigationTitle(L10n.apiKeys)
         .onFirstAppear {
             viewModel.send(.getAPIKeys)
@@ -102,23 +90,6 @@ struct APIKeysView: View {
         }
     }
 
-    // MARK: - API Key List View
-
-    @ViewBuilder
-    private var apiKeyListView: some View {
-        ForEach(viewModel.apiKeys, id: \.self) { apiKey in
-            if let apiKey = apiKey {
-                APIKeysRow(apiKey: apiKey) {
-                    UIPasteboard.general.string = apiKey.accessToken
-                    showCopiedAlert = true
-                } onDelete: {
-                    deleteAPI = apiKey
-                    showDeleteConfirmation = true
-                }
-            }
-        }
-    }
-
     // MARK: - API Key Content
 
     private var contentView: some View {
@@ -129,7 +100,15 @@ struct APIKeysView: View {
             )
 
             if viewModel.apiKeys.isNotEmpty {
-                apiKeyListView
+                ForEach(viewModel.apiKeys, id: \.accessToken) { apiKey in
+                    APIKeysRow(apiKey: apiKey) {
+                        UIPasteboard.general.string = apiKey.accessToken
+                        showCopiedAlert = true
+                    } onDelete: {
+                        deleteAPI = apiKey
+                        showDeleteConfirmation = true
+                    }
+                }
             } else {
                 Button(L10n.addAPIKey) {
                     showCreateAPIAlert = true

@@ -12,6 +12,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension APIKeysView {
+
     struct APIKeysRow: View {
 
         // MARK: - Actions
@@ -27,50 +28,45 @@ extension APIKeysView {
 
         @ViewBuilder
         private var rowContent: some View {
-            HStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(apiKey.appName ?? L10n.unknown)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .lineLimit(2)
-                        .multilineTextAlignment(.leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(apiKey.appName ?? L10n.unknown)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
 
-                    Text(apiKey.accessToken ?? L10n.unknown)
-                        .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .multilineTextAlignment(.leading)
+                Text(apiKey.accessToken ?? L10n.unknown)
+                    .lineLimit(2)
 
-                    TextPairView(
-                        L10n.dateCreated,
-                        value: {
-                            if let creationDate = apiKey.dateCreated {
-                                Text(creationDate, format: .dateTime)
-                            } else {
-                                Text(L10n.unknown)
-                            }
-                        }()
-                    )
-                    .monospacedDigit()
-                }
-                .foregroundStyle(.primary, .secondary)
-
-                Spacer()
+                TextPairView(
+                    L10n.dateCreated,
+                    value: {
+                        if let creationDate = apiKey.dateCreated {
+                            Text(creationDate, format: .dateTime)
+                        } else {
+                            Text(L10n.unknown)
+                        }
+                    }()
+                )
+                .monospacedDigit()
             }
-            .onTapGesture(perform: onSelect)
+            .font(.subheadline)
+            .multilineTextAlignment(.leading)
         }
 
         // MARK: - Body
 
         var body: some View {
-            rowContent
-                .swipeActions {
-                    Button(
-                        L10n.delete,
-                        systemImage: "trash",
-                        action: onDelete
-                    )
-                    .tint(.red)
-                }
+            Button(action: onSelect) {
+                rowContent
+            }
+            .foregroundStyle(.primary, .secondary)
+            .swipeActions {
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
+                .tint(.red)
+            }
         }
     }
 }
