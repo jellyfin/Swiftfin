@@ -739,6 +739,81 @@
 /* Section Title for Column Configuration */
 "columns" = "Columns";
 
+// Date Created - Label
+// Label for displaying the date an API key was created
+// Appears in the API key details
+"dateCreated" = "Date Created";
+
+// API Keys - Title
+// Section Title for displaying API keys in the list
+// Displays the title of the API key section
+"apiKeysTitle" = "API Keys";
+
+// API Keys - Description
+// Explains the usage of API keys in external applications
+// Displays below the title in the API key section
+"apiKeysDescription" = "External applications require an API key to communicate with your server.";
+
+// Add - Button
+// Adds a new record
+// Appears in the toolbar
+"add" = "Add";
+
+// API Key Copied - Alert
+// Informs the user that the API key was copied to the clipboard
+// Displays an alert after the user copies the key
+"apiKeyCopied" = "API Key Copied";
+
+// API Key Copied - Alert Message
+// Informs the user that the key was copied successfully
+// Appears as a message in the alert
+"apiKeyCopiedMessage" = "Your API Key was copied to your clipboard!";
+
+// OK - Button
+// Acknowledges an action
+// Used to dismiss the alert
+"ok" = "OK";
+
+// Delete API Key - Confirmation Message
+// Warns the user that deletion is permanent
+// Displays a warning message before deletion
+"deleteAPIKeyMessage" = "Are you sure you want to permanently delete this key?";
+
+// Cancel - Button
+// Cancels the current action
+// Appears in dialogs and alerts
+"cancel" = "Cancel";
+
+// Delete - Button
+// Confirms the deletion of an API key
+// Appears in the delete confirmation dialog
+"delete" = "Delete";
+
+// Create API Key - Alert
+// Prompts the user to enter an app name to create an API key
+// Appears when creating a new API key
+"createAPIKey" = "Create API Key";
+
+// Create API Key - Message
+// Asks the user to enter the name of the application for the new API key
+// Displays in the create API key dialog
+"createAPIKeyMessage" = "Enter the application name for the new API key.";
+
+// Application Name - Text Field
+// Placeholder text for entering the name of the application
+// Appears in the create API key dialog
+"applicationName" = "Application Name";
+
+// Save - Button
+// Confirms the creation of the new API key
+// Appears in the create API key dialog
+"save" = "Save";
+
+// API Keys - Screen Title
+// Title for the API keys management screen
+// Appears in the navigation bar
+"apiKeys" = "API Keys";
+
 // Devices - Section Header
 // Title for the devices section in the Admin Dashboard
 // Used as the header for the devices section
@@ -1023,3 +1098,8 @@
 "success" = "Success";
 
 "triggerAlreadyExists" = "Trigger already exists";
+
+// Add API Key - Button
+// Creates an API Key if there are no keys available
+// Appears in place of the API Key list if there are no API Keys
+"addAPIKey" = "Add API key";

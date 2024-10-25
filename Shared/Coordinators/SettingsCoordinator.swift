@@ -76,6 +76,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var addServerTaskTrigger = makeAddServerTaskTrigger
     @Route(.push)
     var serverLogs = makeServerLogs
+    @Route(.push)
+    var apiKeys = makeAPIKeys
     // <- End of AdminDashboard Items
 
     #if DEBUG
@@ -228,6 +230,11 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeServerLogs() -> some View {
         ServerLogsView()
+    }
+
+    @ViewBuilder
+    func makeAPIKeys() -> some View {
+        APIKeysView()
     }
 
     // <- End of AdminDashboard Items
