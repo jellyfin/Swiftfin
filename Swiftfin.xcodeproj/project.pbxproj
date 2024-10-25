@@ -107,8 +107,7 @@
 		4EC2B19E2CC96EAB00D866BE /* UsersRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B19D2CC96EA300D866BE /* UsersRow.swift */; };
 		4EC2B1A22CC96F6600D866BE /* UsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A12CC96F6000D866BE /* UsersViewModel.swift */; };
 		4EC2B1A32CC96F6600D866BE /* UsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A12CC96F6000D866BE /* UsersViewModel.swift */; };
-		4EC2B1A52CC96FA400D866BE /* UserObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A42CC96F9F00D866BE /* UserObserver.swift */; };
-		4EC2B1A62CC96FA400D866BE /* UserObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A42CC96F9F00D866BE /* UserObserver.swift */; };
+		4EC2B1A52CC96FA400D866BE /* UserAdminViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A42CC96F9F00D866BE /* UserAdminViewModel.swift */; };
 		4EC2B1A92CC97C0700D866BE /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A82CC97C0400D866BE /* UserDetailsView.swift */; };
 		4EC50D612C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
 		4EC50D622C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
@@ -1140,7 +1139,7 @@
 		4EC2B19A2CC96E7000D866BE /* UsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersView.swift; sourceTree = "<group>"; };
 		4EC2B19D2CC96EA300D866BE /* UsersRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersRow.swift; sourceTree = "<group>"; };
 		4EC2B1A12CC96F6000D866BE /* UsersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersViewModel.swift; sourceTree = "<group>"; };
-		4EC2B1A42CC96F9F00D866BE /* UserObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserObserver.swift; sourceTree = "<group>"; };
+		4EC2B1A42CC96F9F00D866BE /* UserAdminViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAdminViewModel.swift; sourceTree = "<group>"; };
 		4EC2B1A82CC97C0400D866BE /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTasksViewModel.swift; sourceTree = "<group>"; };
 		4EC6C16A2C92999800FC904B /* TranscodeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeSection.swift; sourceTree = "<group>"; };
@@ -2292,8 +2291,8 @@
 				E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */,
 				E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
+				4EC2B1A42CC96F9F00D866BE /* UserAdminViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
-				4EC2B1A42CC96F9F00D866BE /* UserObserver.swift */,
 				E14EA1682BF7330A00DE757A /* UserProfileImageViewModel.swift */,
 				E13DD3EB27178A54009D4DAF /* UserSignInViewModel.swift */,
 				4EC2B1A12CC96F6000D866BE /* UsersViewModel.swift */,
@@ -4759,7 +4758,6 @@
 				E1CB75762C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
 				E102315B2BCF8AF8009D71FC /* ProgramProgressOverlay.swift in Sources */,
 				E1E6C45129B104850064123F /* Button.swift in Sources */,
-				4EC2B1A62CC96FA400D866BE /* UserObserver.swift in Sources */,
 				E19D41B52BF2C0130082B8B2 /* V2AnyData.swift in Sources */,
 				E102315C2BCF8AF8009D71FC /* ProgramsView.swift in Sources */,
 				E1DC981A296DD1CD00982F06 /* CinematicBackgroundView.swift in Sources */,
@@ -5016,7 +5014,7 @@
 				C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */,
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
-				4EC2B1A52CC96FA400D866BE /* UserObserver.swift in Sources */,
+				4EC2B1A52CC96FA400D866BE /* UserAdminViewModel.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,

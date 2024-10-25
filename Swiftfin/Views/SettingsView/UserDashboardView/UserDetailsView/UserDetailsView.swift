@@ -19,31 +19,31 @@ struct UserDetailsView: View {
     private var currentDate: Date
 
     @StateObject
-    var observer: UserObserver
+    var viewModel: UserAdminViewModel
 
     // MARK: - Body
 
     var body: some View {
         List {
-            if let userID = observer.user.id,
-               let userName = observer.user.name
+            if let userID = viewModel.user.id,
+               let userName = viewModel.user.name
             {
                 UserDashboardView.UserSection(
                     user: .init(id: userID, name: userName),
-                    lastActivityDate: observer.user.lastActivityDate
+                    lastActivityDate: viewModel.user.lastActivityDate
                 )
             }
 
             ChevronButton(L10n.devices)
                 .onSelect {
-                    if let userID = observer.user.id {
+                    if let userID = viewModel.user.id {
                         router.route(to: \.userDevices, userID)
                     }
                 }
         }
         .navigationTitle(L10n.user)
         .onAppear {
-            observer.send(.loadDetails)
+            viewModel.send(.loadDetails)
         }
     }
 }

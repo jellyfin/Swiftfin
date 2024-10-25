@@ -37,7 +37,7 @@ final class UsersViewModel: ViewModel, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var users: OrderedDictionary<String, BindingBox<UserDto?>> = [:]
+    final var users: [UserDto] = []
 
     @Published
     final var state: State = .initial
@@ -83,22 +83,12 @@ final class UsersViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            for user in response.value {
-                guard let id = user.id else { continue }
-
-                if let existingUser = self.users[id] {
-                    existingUser.value = user
-                } else {
-                    self.users[id] = BindingBox<UserDto?>(
-                        source: .init(get: { user }, set: { _ in })
-                    )
-                }
-            }
+            self.users = response.value
 
             self.users.sort { x, y in
-                let user0 = x.value.value
-                let user1 = y.value.value
-                return (user0?.name ?? "") < (user1?.name ?? "")
+                let user0 = x
+                let user1 = y
+                return (user0.name ?? "") < (user1.name ?? "")
             }
         }
     }

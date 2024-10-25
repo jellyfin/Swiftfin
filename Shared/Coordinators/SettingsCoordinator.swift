@@ -245,13 +245,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeUserDetails(observer: UserObserver) -> some View {
-        UserDetailsView(observer: observer)
+    func makeUserDetails(viewModel: UserAdminViewModel) -> some View {
+        UserDetailsView(viewModel: viewModel)
     }
 
     @ViewBuilder
     func makeUserDevices(userID: String) -> some View {
         DevicesView(userID: userID)
+    }
 
     @ViewBuilder
     func makeAPIKeys() -> some View {

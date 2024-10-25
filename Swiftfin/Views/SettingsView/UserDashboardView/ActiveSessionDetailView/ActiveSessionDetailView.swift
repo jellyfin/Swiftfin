@@ -31,7 +31,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastActivityDate
                 ) {
-                    router.route(to: \.userDetails, UserObserver(user: user))
+                    router.route(to: \.userDetails, UserAdminViewModel(user: user))
                 }
             }
 
@@ -70,7 +70,7 @@ struct ActiveSessionDetailView: View {
                     user: user,
                     lastActivityDate: session.lastPlaybackCheckIn
                 ) {
-                    router.route(to: \.userDetails, UserObserver(user: user))
+                    router.route(to: \.userDetails, UserAdminViewModel(user: user))
                 }
             }
 

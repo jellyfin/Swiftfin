@@ -65,18 +65,14 @@ struct UsersView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            ForEach(viewModel.users.keys, id: \.self) { id in
-                if let userBox = viewModel.users[id],
-                   let user = userBox.value
-                {
-                    UsersRow(box: userBox) {
-                        router.route(to: \.userDetails, UserObserver(user: user))
-                    } onDelete: {
-                        // TODO: Do we even want to allow User Deletion?
-                    }
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+            ForEach(viewModel.users, id: \.self) { user in
+                UsersRow(user: user) {
+                    router.route(to: \.userDetails, UserAdminViewModel(user: user))
+                } onDelete: {
+                    // TODO: Do we even want to allow User Deletion?
                 }
+                .listRowSeparator(.hidden)
+                .listRowInsets(.zero)
             }
         }
         .listStyle(.plain)

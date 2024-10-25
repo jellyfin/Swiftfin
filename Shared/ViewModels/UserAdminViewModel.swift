@@ -10,7 +10,7 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-final class UserObserver: ViewModel, Eventful, Stateful, Identifiable {
+final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     // MARK: Event
 

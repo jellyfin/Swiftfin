@@ -57,7 +57,7 @@ struct DeviceDetailsView: View {
                     user: user,
                     lastActivityDate: device.dateLastActivity
                 ) {
-                    router.route(to: \.userDetails, UserObserver(user: user))
+                    router.route(to: \.userDetails, UserAdminViewModel(user: user))
                 }
             }
 

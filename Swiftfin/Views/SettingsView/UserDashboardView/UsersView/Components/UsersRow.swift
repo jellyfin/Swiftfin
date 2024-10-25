@@ -29,26 +29,17 @@ extension UsersView {
         @CurrentDate
         private var currentDate: Date
 
-        // MARK: - Observed Objects
-
-        @ObservedObject
-        private var box: BindingBox<UserDto?>
+        private var user: UserDto
 
         // MARK: - Actions
 
         private let onSelect: () -> Void
         private let onDelete: () -> Void
 
-        // MARK: - User Mapping
-
-        private var userInfo: UserDto {
-            box.value ?? .init()
-        }
-
         // MARK: - User Status Mapping
 
         private var userActive: Bool {
-            if let isDisabled = userInfo.policy?.isDisabled {
+            if let isDisabled = user.policy?.isDisabled {
                 return !isDisabled
             } else {
                 return false
@@ -58,11 +49,11 @@ extension UsersView {
         // MARK: - Initializer
 
         init(
-            box: BindingBox<UserDto?>,
+            user: UserDto,
             onSelect: @escaping () -> Void,
             onDelete: @escaping () -> Void
         ) {
-            self.box = box
+            self.user = user
             self.onSelect = onSelect
             self.onDelete = onDelete
         }
@@ -78,7 +69,7 @@ extension UsersView {
         @ViewBuilder
         private var userImage: some View {
             ZStack {
-                ImageView(userInfo.profileImageSource(client: userSession!.client))
+                ImageView(user.profileImageSource(client: userSession!.client))
                     .pipeline(.Swiftfin.branding)
                     .placeholder { _ in
                         SystemImageContentView(systemName: "person.fill", ratio: 0.5)
@@ -100,7 +91,7 @@ extension UsersView {
             HStack {
                 VStack(alignment: .leading) {
 
-                    Text(userInfo.name ?? L10n.unknown)
+                    Text(user.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
@@ -115,7 +106,7 @@ extension UsersView {
                     TextPairView(
                         L10n.role,
                         value: {
-                            if let isAdministrator = userInfo.policy?.isAdministrator {
+                            if let isAdministrator = user.policy?.isAdministrator {
                                 Text(isAdministrator ? L10n.administrator : L10n.user)
                             } else {
                                 Text(L10n.unknown)
@@ -123,7 +114,7 @@ extension UsersView {
                         }()
                     )
 
-                    if let lastActivityDate = userInfo.lastActivityDate {
+                    if let lastActivityDate = user.lastActivityDate {
                         let timeInterval = currentDate.timeIntervalSince(lastActivityDate)
                         let twentyFourHours: TimeInterval = 24 * 60 * 60
 
