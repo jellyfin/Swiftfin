@@ -88,7 +88,9 @@ struct DevicesView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                navigationBarEditView
+                if deviceBox.isNotEmpty {
+                    navigationBarEditView
+                }
             }
         }
         .onFirstAppear {
