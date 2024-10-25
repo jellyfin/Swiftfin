@@ -82,6 +82,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var userDetails = makeUserDetails
     @Route(.push)
     var userDevices = makeUserDevices
+    @Route(.push)
+    var apiKeys = makeAPIKeys
     // <- End of AdminDashboard Items
 
     #if DEBUG
@@ -250,6 +252,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserDevices(userID: String) -> some View {
         DevicesView(userID: userID)
+
+    @ViewBuilder
+    func makeAPIKeys() -> some View {
+        APIKeysView()
     }
 
     // <- End of AdminDashboard Items
