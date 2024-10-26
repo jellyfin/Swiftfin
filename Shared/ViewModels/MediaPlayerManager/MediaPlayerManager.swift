@@ -55,8 +55,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
 //        case playNew(item: MediaPlayerItem)
-
-//        case seek(seconds: TimeInterval)
     }
 
     // MARK: State
@@ -81,22 +79,18 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     @Published
     private(set) var item: BaseItemDto
-    @Published
-    var rate: Float = 1.0 {
-        didSet {
-            proxy?.setRate(rate)
-        }
-    }
 
     @Published
-    private(set) var queue: [BaseItemDto] = []
+    private(set) var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
-    var playbackRequestStatus: PlaybackRequestStatus = .playing
-    @Published
-    final var state: State = .playback
-
+    private(set) var rate: Float = 1.0
     @Published
     private(set) var seconds: TimeInterval = 0
+    @Published
+    final var state: State = .playback
+    
+    var proxy: MediaPlayerProxy?
+    private(set) var queue: (any MediaPlayerQueue)?
 
     /// Listeners of the media player.
     var listeners: [any MediaPlayerListener] = []
@@ -116,8 +110,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     }
 
     private let eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    var proxy: MediaPlayerProxy?
     private var itemBuildTask: AnyCancellable?
 
     // MARK: init
@@ -181,6 +173,13 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     func set(playbackRequestStatus: PlaybackRequestStatus) {
         if playbackRequestStatus != self.playbackRequestStatus {
             self.playbackRequestStatus = playbackRequestStatus
+        }
+    }
+    
+    @MainActor
+    func set(rate: Float) {
+        if self.rate != rate {
+            self.rate = rate
         }
     }
 
