@@ -9,7 +9,9 @@
 import JellyfinAPI
 import SwiftUI
 
-extension VideoPlayer.Overlay {
+// TODO: fix
+
+extension VideoPlayer.Overlay.PlaybackProgress {
 
     struct ChapterTrackMask: View {
 
@@ -17,7 +19,6 @@ extension VideoPlayer.Overlay {
         private var contentSize: CGSize = .zero
 
         let chapters: [ChapterInfo.FullInfo]
-        let item: BaseItemDto
 
         var body: some View {
             HStack(spacing: 0) {
@@ -32,8 +33,8 @@ extension VideoPlayer.Overlay {
                         Color.white
                     }
                     .frame(
-                        maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item
-                            .runTimeSeconds
+//                        maxWidth: contentSize.width * (chapter.secondsRange.upperBound - chapter.secondsRange.lowerBound) / item
+                        maxWidth: contentSize.width * (chapter.unitRange.upperBound - chapter.unitRange.lowerBound)
                     )
                 }
             }

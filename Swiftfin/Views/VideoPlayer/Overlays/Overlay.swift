@@ -14,6 +14,9 @@ import SwiftUI
 extension VideoPlayer {
 
     struct Overlay: View {
+        
+        @ObserveInjection
+        private var injection
 
         @Environment(\.isScrubbing)
         @Binding
@@ -51,15 +54,14 @@ extension VideoPlayer {
         }
 
         @ViewBuilder
-        private var playbackProgress: some View {
-            PlaybackProgress()
-                .isVisible(isScrubbing || isPresentingOverlay)
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .trackingFrame($progressViewFrame)
-        }
+        private var bottomContent: some View {
+            if !isPresentingDrawer {
+                PlaybackProgress()
+                    .isVisible(isScrubbing || isPresentingOverlay)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .trackingFrame($progressViewFrame)
+            }
 
-        @ViewBuilder
-        private var drawerTitleSection: some View {
             HStack(spacing: 10) {
                 ForEach(manager.supplements.map { AnyMediaPlayerSupplement(supplement: $0) }) { supplement in
                     DrawerSectionButton(
@@ -68,15 +70,6 @@ extension VideoPlayer {
                 }
             }
             .isVisible(!isScrubbing && isPresentingOverlay)
-        }
-
-        @ViewBuilder
-        private var bottomContent: some View {
-            if !isPresentingDrawer {
-                playbackProgress
-            }
-
-            drawerTitleSection
         }
 
         // MARK: body
@@ -109,7 +102,7 @@ extension VideoPlayer {
 
                 VStack {
                     navigationBar
-                        .edgePadding(.vertical)
+                        .padding(.top, EdgeInsets.edgePadding / 2)
                         .padding(effectiveSafeArea)
                         .offset(y: isPresentingOverlay ? 0 : -20)
 
@@ -193,6 +186,7 @@ extension VideoPlayer {
                     )
                 }
             }
+            .enableInjection()
         }
     }
 }

@@ -25,7 +25,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
     private var hasSentStart = false
     private var item: MediaPlayerItem?
-    private var lastPlaybackStatus: MediaPlayerManager.PlaybackStatus = .playing
+    private var lastPlaybackStatus: MediaPlayerManager.PlaybackRequestStatus = .playing
     private var lastSeconds: TimeInterval = 0
 
     init(item: MediaPlayerItem) {
@@ -45,7 +45,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             }
         case .paused:
             sendProgressReport(for: item, seconds: lastSeconds, isPaused: true)
-        case .buffering: ()
+//        case .buffering: ()
         }
     }
 
@@ -61,7 +61,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
-        manager.$playbackStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
+        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
 
     private func playbackItemDidChange(newItem: MediaPlayerItem?) {
@@ -74,7 +74,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
         }
     }
     
-    private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackStatus) {
+    private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         lastPlaybackStatus = newStatus
     }
 

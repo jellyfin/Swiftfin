@@ -8,7 +8,6 @@
 
 import Defaults
 import SwiftUI
-import VLCUI
 
 extension VideoPlayer.Overlay {
 
@@ -25,27 +24,36 @@ extension VideoPlayer.Overlay {
         private var overlayTimer: PokeIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        
+        private func onPressed(isPressed: Bool) {
+            if isPressed {
+                overlayTimer.stop()
+            } else {
+                overlayTimer.poke()
+            }
+        }
 
         @ViewBuilder
         private var playButton: some View {
             Button {
-//                switch manager.playbackStatus {
-//                case .playing:
-//                    manager.proxy?.pause()
-//                case .paused:
-//                    manager.proxy?.play()
-//                default: ()
-//                }
+                switch manager.playbackRequestStatus {
+                case .playing:
+                    manager.proxy?.pause()
+                    manager.set(playbackRequestStatus: .paused)
+                case .paused:
+                    manager.proxy?.play()
+                    manager.set(playbackRequestStatus: .playing)
+                }
             } label: {
                 Group {
-                    switch manager.playbackStatus {
+                    switch manager.playbackRequestStatus {
                     case .playing:
                         Label("Pause", systemImage: "pause.fill")
                     case .paused:
                         Label(L10n.play, systemImage: "play.fill")
-                    case .buffering:
-                        ProgressView()
-                            .scaleEffect(2)
+//                    case .buffering:
+//                        ProgressView()
+//                            .scaleEffect(2)
                     }
                 }
                 .transition(.opacity.combined(with: .scale).animation(.bouncy(duration: 0.7, extraBounce: 0.2)))
@@ -102,34 +110,7 @@ extension VideoPlayer.Overlay {
                     jumpForwardButton
                 }
             }
-            .buttonStyle(.videoPlayerBarButton { isPressed in
-                if isPressed {
-                    overlayTimer.stop()
-                } else {
-                    overlayTimer.poke()
-                }
-            })
-            .onChange(of: manager.state) { state in
-//                switch state {
-//                case .playing:
-//                    playButtonState = .playing
-//                case .paused:
-//                    playButtonState = .paused
-//                case .loadingItem:
-//                    playButtonState = .buffering
-//                default: ()
-////                    playButtonState = .buffering
-//                }
-            }
+            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
         }
-    }
-}
-
-struct BounceButtonStyle: ButtonStyle {
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.75 : 1)
-            .animation(.bouncy(duration: 0.7, extraBounce: 0.2), value: configuration.isPressed)
     }
 }

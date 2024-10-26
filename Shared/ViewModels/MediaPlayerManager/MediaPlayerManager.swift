@@ -28,14 +28,13 @@ protocol MediaPlayerListener {
     var manager: MediaPlayerManager? { get set }
 }
 
-class MediaPlayerManager: ViewModel, Eventful, Stateful {
+typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
 
-    typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
+class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
-    enum PlaybackStatus {
+    enum PlaybackRequestStatus {
         case playing
         case paused
-        case buffering
     }
 
     // MARK: Event
@@ -57,7 +56,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
 //        case playNew(item: MediaPlayerItem)
 
-        case seek(seconds: TimeInterval)
+//        case seek(seconds: TimeInterval)
     }
 
     // MARK: State
@@ -86,14 +85,13 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var rate: Float = 1.0 {
         didSet {
             proxy?.setRate(rate)
-//            proxy?.setRate(Float(playbackRate.rate))
         }
     }
 
     @Published
     private(set) var queue: [BaseItemDto] = []
     @Published
-    var playbackStatus: PlaybackStatus = .playing
+    var playbackRequestStatus: PlaybackRequestStatus = .playing
     @Published
     final var state: State = .playback
 
@@ -159,14 +157,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         switch action {
         case let .error(error):
             return .error(error)
-//        case .pause:
-//
-//            return .paused
-//        case .play:
-//
-//            return .playing
-//        case .buffer:
-//            return .buffering
         case .ended:
             // TODO: go next in queue
             return .loadingItem
@@ -179,16 +169,19 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case .playNew:
 
             return .playback
-//            return .playing
-        case let .seek(newSeconds):
-            seconds = newSeconds
-            return state
         }
     }
     
     @MainActor
-    func set(playbackStatus: PlaybackStatus) {
-        self.playbackStatus = playbackStatus
+    func set(seconds: TimeInterval) {
+        self.seconds = seconds
+    }
+    
+    @MainActor
+    func set(playbackRequestStatus: PlaybackRequestStatus) {
+        if playbackRequestStatus != self.playbackRequestStatus {
+            self.playbackRequestStatus = playbackRequestStatus
+        }
     }
 
     // MARK: buildMediaItem

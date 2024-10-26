@@ -16,6 +16,9 @@ import VLCUI
 // TODO: scroll to current chapter on appear
 
 struct MediaChaptersSupplement: MediaPlayerSupplement {
+    var id: String {
+        "Chapters"
+    }
 
     let title: String = "Chapters"
     let chapters: [ChapterInfo.FullInfo]
@@ -64,7 +67,7 @@ extension MediaChaptersSupplement {
         
         var body: some View {
             Button {
-                //            manager.send(.seek(seconds: chapter.secondsRange.lowerBound))
+                manager.set(seconds: chapter.secondsRange.lowerBound)
                 manager.proxy?.setTime(chapter.secondsRange.lowerBound)
             } label: {
                 VStack(alignment: .leading, spacing: 5) {

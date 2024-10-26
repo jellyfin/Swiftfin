@@ -16,12 +16,16 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 
     let title: String = "Info"
     let item: BaseItemDto
+    
+    var id: String {
+        "MediaInfoSupplement"
+    }
 
     func videoPlayerBody() -> some View {
         _View(item: item)
     }
 
-    struct _View: View {
+    private struct _View: View {
 
         @Environment(\.safeAreaInsets)
         @Binding
@@ -62,10 +66,11 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
         private var fromBeginningButton: some View {
             Button("From Beginning", systemImage: "play.fill") {
                 manager.proxy?.setTime(0)
+                manager.set(seconds: 0)
                 selectedMediaPlayerSupplement = nil
             }
             .buttonStyle(.videoPlayerDrawerContent)
-            .frame(width: 150, height: 50)
+            .frame(width: 275, height: 50)
         }
 
         var body: some View {
@@ -90,8 +95,8 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
 
                     if let overview = item.overview {
                         Text(overview)
-                            .font(.subheadline.weight(.semibold))
-                            .lineLimit(3)
+                            .font(.subheadline.weight(.regular))
+                            .scrollIfLargerThanContainer()
                     }
 
                     accessoryView

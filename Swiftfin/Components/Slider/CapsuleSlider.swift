@@ -57,10 +57,9 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
             .progressViewStyle(.playback)
             .overlay {
                 Color.clear
-//                    .opacity(0.5)
-                        .frame(height: contentSize.height + gesturePadding)
-                        .contentShape(Rectangle())
-                        .highPriorityGesture(trackDrag)
+                    .frame(height: contentSize.height + gesturePadding)
+                    .contentShape(Rectangle())
+                    .highPriorityGesture(trackDrag)
             }
             .trackingSize($contentSize)
     }

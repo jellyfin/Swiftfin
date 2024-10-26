@@ -12,6 +12,9 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
+    
+    @ObserveInjection
+    private var inject
 
     @Default(.userAccentColor)
     private var accentColor
@@ -124,5 +127,6 @@ struct SettingsView: View {
         .navigationBarCloseButton {
             router.dismissCoordinator()
         }
+        .enableInjection()
     }
 }

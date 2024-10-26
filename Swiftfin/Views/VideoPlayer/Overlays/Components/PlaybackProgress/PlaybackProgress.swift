@@ -59,6 +59,7 @@ extension VideoPlayer.Overlay {
                 .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
                 .frame(height: isScrubbing ? 20 : 10)
             }
+            .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
         }
 

@@ -43,6 +43,22 @@ struct VideoPlayer: View {
     private var manager: MediaPlayerManager
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
+    
+    // MARK: init
+    
+    init(manager: MediaPlayerManager) {
+
+        let videoPlayerProxy = VLCVideoPlayerProxy()
+        let vlcUIProxy = VLCVideoPlayer.Proxy()
+
+        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+        manager.proxy = videoPlayerProxy
+
+        manager.listeners.append(NowPlayableListener(manager: manager))
+        
+        self._manager = StateObject(wrappedValue: manager)
+        self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
+    }
 
     // MARK: playerView
 
@@ -57,22 +73,20 @@ struct VideoPlayer: View {
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
 
-                        guard manager.state == .playback else { return }
-
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
                         }
 
                         // TODO: fix menu pulsing issue
-                        manager.send(.seek(seconds: newSeconds))
+                        manager.set(seconds: newSeconds)
                     }
                     .onStateUpdated { state, _ in
 
-//                        guard state != .playing || manager.state != .playing else { return }
-
                         switch state {
-                        case .buffering, .esAdded, .opening:
-                            manager.playbackStatus = .buffering
+                        case .buffering, .esAdded, .opening: ()
+//                            if manager.playbackStatus != .buffering {
+//                                manager.playbackStatus = .buffering
+//                            }
                         case .ended, .stopped:
                             isScrubbing = false
                             manager.send(.ended)
@@ -81,11 +95,9 @@ struct VideoPlayer: View {
                             isScrubbing = false
                             manager.send(.error(.init("Unable to perform playback")))
                         case .playing:
-                            if manager.playbackStatus != .playing {
-                                manager.playbackStatus = .playing
-                            }
+                            manager.set(playbackRequestStatus: .playing)
                         case .paused:
-                            manager.playbackStatus = .paused
+                            manager.set(playbackRequestStatus: .paused)
                         }
                     }
             }
@@ -96,7 +108,6 @@ struct VideoPlayer: View {
                 .environment(\.safeAreaInsets, $safeAreaInsets)
                 .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
-                .environmentObject(vlcUIProxy)
         }
     }
 
@@ -122,8 +133,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) { isScrubbing in
                 guard !isScrubbing else { return }
 
-                manager.send(.seek(seconds: scrubbedSeconds))
                 manager.proxy?.setTime(scrubbedSeconds)
+                manager.set(seconds: scrubbedSeconds)
             }
             .onChange(of: subtitleColor) { newValue in
                 vlcUIProxy.setSubtitleColor(.absolute(newValue.uiColor))
@@ -157,39 +168,3 @@ struct VideoPlayer: View {
             }
     }
 }
-
-// MARK: init
-
-extension VideoPlayer {
-
-    init(manager: MediaPlayerManager) {
-
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
-
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self.init(
-            manager: manager,
-            vlcUIProxy: vlcUIProxy
-        )
-    }
-}
-
-// struct VideoPlayer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VideoPlayer(
-//            item: .init(
-//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
-//                mediaSource: .init(),
-//                playSessionID: "",
-//                url: URL(string: "/")!
-//            )
-//        )
-//        .previewInterfaceOrientation(.landscapeLeft)
-//        .preferredColorScheme(.dark)
-//    }
-// }

@@ -6,6 +6,8 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+@_exported import Inject
+
 import CoreStore
 import Defaults
 import Factory

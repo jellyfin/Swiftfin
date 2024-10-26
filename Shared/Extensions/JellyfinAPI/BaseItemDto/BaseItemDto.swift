@@ -203,7 +203,8 @@ extension BaseItemDto {
                 return .init(
                     chapterInfo: zip.0,
                     imageSource: .init(url: imageURL),
-                    secondsRange: zip.1
+                    secondsRange: zip.1,
+                    runtimeSeconds: runTimeSeconds
                 )
             }
     }

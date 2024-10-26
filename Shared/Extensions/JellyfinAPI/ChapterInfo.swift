@@ -31,6 +31,7 @@ extension ChapterInfo {
         let imageSource: ImageSource
         let secondsRange: Range<TimeInterval>
         let systemImage: String = "film"
+        let unitRange: Range<Double>
 
         var displayTitle: String {
             chapterInfo.displayTitle
@@ -43,11 +44,13 @@ extension ChapterInfo {
         init(
             chapterInfo: ChapterInfo,
             imageSource: ImageSource,
-            secondsRange: Range<TimeInterval>
+            secondsRange: Range<TimeInterval>,
+            runtimeSeconds: TimeInterval
         ) {
             self.chapterInfo = chapterInfo
             self.imageSource = imageSource
             self.secondsRange = secondsRange
+            self.unitRange = secondsRange.lowerBound / runtimeSeconds ..< secondsRange.upperBound / runtimeSeconds
         }
 
         func landscapeImageSources(maxWidth: CGFloat?) -> [ImageSource] {

@@ -71,34 +71,6 @@ struct OnPressButtonStyle: ButtonStyle {
     }
 }
 
-extension ButtonStyle where Self == VideoPlayerBarButtonStyle {
-
-    static func videoPlayerBarButton(perform action: @escaping (Bool) -> Void) -> VideoPlayerBarButtonStyle {
-        VideoPlayerBarButtonStyle(onPress: action)
-    }
-}
-
-struct VideoPlayerBarButtonStyle: ButtonStyle {
-
-    @State
-    private var onTapIsPressed = false
-
-    var onPress: (Bool) -> Void
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .opacity(configuration.isPressed ? 0.8 : 1)
-            .labelStyle(.iconOnly)
-            .contentShape(Rectangle())
-            .padding(8)
-            .scaleEffect(configuration.isPressed ? 0.85 : 1)
-            .animation(.bouncy(duration: 0.2, extraBounce: 0.2), value: configuration.isPressed)
-            .onChange(of: configuration.isPressed) { newValue in
-                onPress(newValue)
-            }
-    }
-}
-
 struct VideoPlayerDrawerContentButton: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {

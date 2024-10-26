@@ -39,6 +39,10 @@ class EpisodeMediaPlayerQueue: MediaPlayerQueue {
     weak var manager: MediaPlayerManager?
     let title: String = "Up Next"
     
+    var id: String {
+        "EpisodeMediaPlayerQueue"
+    }
+    
     func videoPlayerBody() -> some View {
         Color.red
             .opacity(0.5)

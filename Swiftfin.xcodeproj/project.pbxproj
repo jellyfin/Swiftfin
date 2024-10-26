@@ -909,6 +909,8 @@
 		E1E5D54C2783E27200692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */; };
 		E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */; };
+		E1E657F22CCC78C8001D5B7B /* Inject in Frameworks */ = {isa = PBXBuildFile; productRef = E1E657F12CCC78C8001D5B7B /* Inject */; };
+		E1E657F72CCCAC62001D5B7B /* Overlay+ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E657F62CCCAC62001D5B7B /* Overlay+ButtonStyle.swift */; };
 		E1E6C43B29AECBD30064123F /* BottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C43A29AECBD30064123F /* BottomBarView.swift */; };
 		E1E6C43D29AECC310064123F /* BarActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C43C29AECC310064123F /* BarActionButtons.swift */; };
 		E1E6C44229AECCD50064123F /* ActionButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E6C44129AECCD50064123F /* ActionButtons.swift */; };
@@ -1604,6 +1606,7 @@
 		E1E5D54B2783E27200692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D5502783E67700692DFE /* ExperimentalSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperimentalSettingsView.swift; sourceTree = "<group>"; };
 		E1E5D552278419D900692DFE /* ConfirmCloseOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmCloseOverlay.swift; sourceTree = "<group>"; };
+		E1E657F62CCCAC62001D5B7B /* Overlay+ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Overlay+ButtonStyle.swift"; sourceTree = "<group>"; };
 		E1E6C43A29AECBD30064123F /* BottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBarView.swift; sourceTree = "<group>"; };
 		E1E6C43C29AECC310064123F /* BarActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarActionButtons.swift; sourceTree = "<group>"; };
 		E1E6C44129AECCD50064123F /* ActionButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButtons.swift; sourceTree = "<group>"; };
@@ -1714,6 +1717,7 @@
 				E15210582946DF1B00375CC2 /* PulseUI in Frameworks */,
 				E1153DA42BBA614F00424D36 /* CollectionVGrid in Frameworks */,
 				62666DF727E5012C00EC0ECD /* MobileVLCKit.xcframework in Frameworks */,
+				E1E657F22CCC78C8001D5B7B /* Inject in Frameworks */,
 				62666E0327E5017100EC0ECD /* CoreMedia.framework in Frameworks */,
 				E10706122942F57D00646DAF /* PulseLogHandler in Frameworks */,
 				E12FF6162C87F7BC009FA2C0 /* VLCUI in Frameworks */,
@@ -2730,12 +2734,11 @@
 		E11245B528D97EC200D8A977 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E1BDF2ED2952296000CC0294 /* ActionButtons */,
-				E1CFE27F28FA606800B7D34C /* ChapterTrackMask.swift */,
 				E1ED33CD2CBB1C1900E6BEB8 /* DrawerSectionButton.swift */,
-				E11245B628D97ED200D8A977 /* NavigationBar.swift */,
+				E1E657F32CCCA7E6001D5B7B /* NavigationBar */,
+				E1E657F62CCCAC62001D5B7B /* Overlay+ButtonStyle.swift */,
 				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
-				E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */,
+				E173D5842CCCC07B0099AE0C /* PlaybackProgress */,
 				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 			);
 			path = Components;
@@ -3167,6 +3170,15 @@
 				E173927D2C73EC0B00E3A1F3 /* NowPlayableMetadata.swift */,
 			);
 			path = NowPlayable;
+			sourceTree = "<group>";
+		};
+		E173D5842CCCC07B0099AE0C /* PlaybackProgress */ = {
+			isa = PBXGroup;
+			children = (
+				E1CFE27F28FA606800B7D34C /* ChapterTrackMask.swift */,
+				E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */,
+			);
+			path = PlaybackProgress;
 			sourceTree = "<group>";
 		};
 		E1763A672BF3D168004DF6AB /* UserSignInView */ = {
@@ -3774,6 +3786,15 @@
 			path = SettingsView;
 			sourceTree = "<group>";
 		};
+		E1E657F32CCCA7E6001D5B7B /* NavigationBar */ = {
+			isa = PBXGroup;
+			children = (
+				E1BDF2ED2952296000CC0294 /* ActionButtons */,
+				E11245B628D97ED200D8A977 /* NavigationBar.swift */,
+			);
+			path = NavigationBar;
+			sourceTree = "<group>";
+		};
 		E1E6C44329AECCD80064123F /* ActionButtons */ = {
 			isa = PBXGroup;
 			children = (
@@ -3961,6 +3982,7 @@
 				E150C0C02BFD62FD00944FFA /* JellyfinAPI */,
 				E12FF6152C87F7BC009FA2C0 /* VLCUI */,
 				E12E2F102CBCD2E4008C303A /* CollectionHStack */,
+				E1E657F12CCC78C8001D5B7B /* Inject */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -4034,6 +4056,7 @@
 				E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
 				E12FF6142C87F7BC009FA2C0 /* XCLocalSwiftPackageReference "../VLCUI" */,
 				E12E2F0F2CBCD2E4008C303A /* XCLocalSwiftPackageReference "../CollectionHStack" */,
+				E1E657F02CCC78C8001D5B7B /* XCRemoteSwiftPackageReference "Inject" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -4979,6 +5002,7 @@
 				E17392822C73EC0B00E3A1F3 /* NowPlayableMetadata.swift in Sources */,
 				E170D0E4294CC8AB0017224C /* VideoPlayer+KeyCommands.swift in Sources */,
 				4EC1C8692C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift in Sources */,
+				E1E657F72CCCAC62001D5B7B /* Overlay+ButtonStyle.swift in Sources */,
 				E18E01E6288747230022598C /* CollectionItemView.swift in Sources */,
 				E15D4F0A2B1BD88900442DB8 /* Edge.swift in Sources */,
 				6220D0BA26D6092100B8E046 /* FilterCoordinator.swift in Sources */,
@@ -5376,6 +5400,10 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Xlinker",
+					"-interposable",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -5416,6 +5444,10 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-Xlinker",
+					"-interposable",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -5625,6 +5657,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.0.0;
+			};
+		};
+		E1E657F02CCC78C8001D5B7B /* XCRemoteSwiftPackageReference "Inject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzysztofzablocki/Inject";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.2;
 			};
 		};
 		E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */ = {
@@ -5925,6 +5965,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
+		};
+		E1E657F12CCC78C8001D5B7B /* Inject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1E657F02CCC78C8001D5B7B /* XCRemoteSwiftPackageReference "Inject" */;
+			productName = Inject;
 		};
 		E1FAD1C52A0375BA007F5521 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;

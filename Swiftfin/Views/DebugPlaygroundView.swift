@@ -21,6 +21,9 @@ struct DebugPlaygroundView: View {
 
 #if DEBUG
 struct TestPlaybackProgressView: View {
+    
+    @ObserveInjection
+    private var inject
 
     @State
     private var isScrubbing: Bool = false
@@ -28,60 +31,30 @@ struct TestPlaybackProgressView: View {
     private var scrubbedSeconds: TimeInterval = 0
 
     var body: some View {
-        ZStack {
-            Spacer()
-
-            VideoPlayer.Overlay.PlaybackProgress()
-                .environmentObject(
-                    MediaPlayerManager(
-                        playbackItem: .init(
-                            baseItem: .init(
-                                indexNumber: 1,
-                                name: "The Bear",
-                                parentIndexNumber: 1,
-                                runTimeTicks: 10_000_000_000,
-                                type: .episode
-                            ),
-                            mediaSource: .init(),
-                            playSessionID: "",
-                            url: URL(string: "/")!
-                        )
+        VideoPlayer.Overlay()
+            .environmentObject(
+                MediaPlayerManager(
+                    playbackItem: .init(
+                        baseItem: .init(
+                            indexNumber: 1,
+                            name: "The Bear",
+                            parentIndexNumber: 1,
+                            runTimeTicks: 10_000_000_000,
+                            type: .episode
+                        ),
+                        mediaSource: .init(),
+                        playSessionID: "",
+                        url: URL(string: "/")!
                     )
                 )
-
-            Color.clear
-                .frame(height: 20)
-        }
-        .environment(\.scrubbedSeconds, $scrubbedSeconds)
-        .environment(\.isScrubbing, $isScrubbing)
-
-//            VideoPlayer.Overlay()
-//                .environmentObject(
-//                    MediaPlayerManager(
-//                        playbackItem: .init(
-//                            baseItem: .init(
-//                                indexNumber: 1,
-//                                name: "The Bear",
-//                                parentIndexNumber: 1,
-//                                runTimeTicks: 10_000_000_000,
-//                                type: .episode
-//                            ),
-//                            mediaSource: .init(),
-//                            playSessionID: "",
-//                            url: URL(string: "/")!
-//                        )
-//                    )
-//                    .withState(.playing)
-//                )
-//                .environmentObject(VLCVideoPlayer.Proxy())
-//                .environment(\.isScrubbing, .mock(false))
-//                .environment(\.isAspectFilled, .mock(false))
-//                .environment(\.isPresentingOverlay, .constant(true))
-//                .environment(\.playbackSpeed, .constant(1.0))
-//                .environment(\.selectedMediaPlayerSupplement, .mock(nil))
-//                .preferredColorScheme(.dark)
-//                .supportedOrientations(UIDevice.isPhone ? .landscape : .allButUpsideDown)
-//                .ignoresSafeArea()
+            )
+            .environmentObject(VLCVideoPlayer.Proxy())
+            .environment(\.isScrubbing, .mock(false))
+            .environment(\.isAspectFilled, .mock(false))
+            .environment(\.isPresentingOverlay, .constant(true))
+            .environment(\.playbackSpeed, .constant(1.0))
+            .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+        .enableInjection()
     }
 }
 #endif

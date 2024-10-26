@@ -25,6 +25,8 @@ extension EdgeInsets {
         #endif
     }()
 
+    /// The padding for Views against contextual edges,
+    /// typically the edges of the View's scene
     static let edgeInsets: EdgeInsets = .init(edgePadding)
 
     init(_ constant: CGFloat) {

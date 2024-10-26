@@ -41,9 +41,3 @@ extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
         EmptyView()
     }
 }
-
-// TODO: don't use title for id
-extension MediaPlayerSupplement {
-
-    var id: String { title }
-}

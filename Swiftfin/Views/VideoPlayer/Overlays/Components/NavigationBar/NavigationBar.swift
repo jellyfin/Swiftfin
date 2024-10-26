@@ -18,7 +18,7 @@ extension VideoPlayer.Overlay {
         @EnvironmentObject
         private var overlayTimer: PokeIntervalTimer
 
-        private func videoPlayerButtonPressed(isPressed: Bool) {
+        private func onPressed(isPressed: Bool) {
             if isPressed {
                 overlayTimer.stop()
             } else {
@@ -41,8 +41,8 @@ extension VideoPlayer.Overlay {
             .background {
                 EmptyHitTestView()
             }
-            .font(.system(size: 24))
-            .buttonStyle(.videoPlayerBarButton(perform: videoPlayerButtonPressed))
+            .font(.system(size: 24, weight: .semibold))
+            .buttonStyle(OverlayButtonStyle(onPressed: onPressed))
         }
     }
 }
@@ -68,7 +68,6 @@ extension VideoPlayer.Overlay.NavigationBar {
 
         var body: some View {
             Text(item.displayTitle)
-                .font(.system(size: 24))
                 .fontWeight(.bold)
                 .lineLimit(1)
                 .overlay(alignment: .bottomLeading) {
