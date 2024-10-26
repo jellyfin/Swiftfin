@@ -52,25 +52,6 @@ struct ToolbarPillButtonStyle: ButtonStyle {
     }
 }
 
-extension ButtonStyle where Self == OnPressButtonStyle {
-
-    static func onPress(perform action: @escaping (Bool) -> Void) -> OnPressButtonStyle {
-        OnPressButtonStyle(onPress: action)
-    }
-}
-
-struct OnPressButtonStyle: ButtonStyle {
-
-    var onPress: (Bool) -> Void
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .onChange(of: configuration.isPressed) { newValue in
-                onPress(newValue)
-            }
-    }
-}
-
 struct VideoPlayerDrawerContentButton: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {

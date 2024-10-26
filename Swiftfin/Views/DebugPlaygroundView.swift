@@ -54,7 +54,7 @@ struct TestPlaybackProgressView: View {
             .environment(\.isPresentingOverlay, .constant(true))
             .environment(\.playbackSpeed, .constant(1.0))
             .environment(\.selectedMediaPlayerSupplement, .mock(nil))
-        .enableInjection()
+            .enableInjection()
     }
 }
 #endif
