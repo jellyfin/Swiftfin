@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct UserDetailsView: View {
+struct ServerUserDetailsView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
@@ -19,7 +19,7 @@ struct UserDetailsView: View {
     private var currentDate: Date
 
     @StateObject
-    var viewModel: UserAdminViewModel
+    var viewModel: ServerUserAdminViewModel
 
     // MARK: - Body
 

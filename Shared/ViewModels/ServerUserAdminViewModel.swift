@@ -9,14 +9,21 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
-final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
+final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     // MARK: Event
 
     enum Event {
         case error(JellyfinAPIError)
         case success
+    }
+
+    // MARK: BackgroundState
+
+    enum BackgroundState {
+        case updating
     }
 
     // MARK: Action
@@ -34,7 +41,6 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
     enum State: Hashable {
         case error(JellyfinAPIError)
         case initial
-        case updating
     }
 
     // MARK: Published Values
@@ -45,6 +51,8 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .eraseToAnyPublisher()
     }
 
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var state: State = .initial
     @Published
@@ -68,11 +76,16 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
             return .initial
         case .resetPassword:
-            if case .updating = state {
+            if case .initial = state {
                 return state
             }
 
             resetTask = Task {
+
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.updating)
+                }
+
                 do {
                     try await resetPassword()
                     await MainActor.run {
@@ -86,12 +99,16 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
                         self.eventSubject.send(.error(jellyfinError))
                     }
                 }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
             }
             .asAnyCancellable()
 
-            return .updating
+            return .initial
         case .loadDetails:
-            if case .updating = state {
+            if case .initial = state {
                 return state
             }
 
@@ -112,9 +129,9 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .updating
+            return .initial
         case let .updatePassword(currentPassword, newPassword):
-            if case .updating = state {
+            if case .initial = state {
                 return state
             }
 
@@ -138,9 +155,9 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .updating
+            return .initial
         case let .updatePolicy(policy: policy):
-            if case .updating = state {
+            if case .initial = state {
                 return state
             }
 
@@ -161,7 +178,7 @@ final class UserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
             }
             .asAnyCancellable()
 
-            return .updating
+            return .initial
         }
     }
 

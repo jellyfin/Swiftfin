@@ -11,13 +11,13 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct UsersView: View {
+struct ServerUsersView: View {
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @StateObject
-    private var viewModel = UsersViewModel()
+    private var viewModel = ServerUsersViewModel()
 
     // MARK: - Body
 
@@ -66,8 +66,8 @@ struct UsersView: View {
             .padding(.vertical, 24)
 
             ForEach(viewModel.users, id: \.self) { user in
-                UsersRow(user: user) {
-                    router.route(to: \.userDetails, UserAdminViewModel(user: user))
+                ServerUsersRow(user: user) {
+                    router.route(to: \.userDetails, ServerUserAdminViewModel(user: user))
                 } onDelete: {
                     // TODO: Do we even want to allow User Deletion?
                 }

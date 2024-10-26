@@ -11,9 +11,9 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-extension UsersView {
+extension ServerUsersView {
 
-    struct UsersRow: View {
+    struct ServerUsersRow: View {
 
         @Injected(\.currentUserSession)
         private var userSession
@@ -29,7 +29,7 @@ extension UsersView {
         @CurrentDate
         private var currentDate: Date
 
-        private var user: UserDto
+        private let user: UserDto
 
         // MARK: - Actions
 
@@ -106,10 +106,12 @@ extension UsersView {
                     TextPairView(
                         L10n.role,
                         value: {
-                            if let isAdministrator = user.policy?.isAdministrator {
-                                Text(isAdministrator ? L10n.administrator : L10n.user)
+                            if let isAdministrator = user.policy?.isAdministrator,
+                               isAdministrator
+                            {
+                                Text(L10n.administrator)
                             } else {
-                                Text(L10n.unknown)
+                                Text(L10n.user)
                             }
                         }()
                     )

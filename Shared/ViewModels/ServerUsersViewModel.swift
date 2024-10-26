@@ -12,7 +12,7 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class UsersViewModel: ViewModel, Stateful {
+final class ServerUsersViewModel: ViewModel, Stateful {
 
     // MARK: - Action
 
@@ -84,6 +84,7 @@ final class UsersViewModel: ViewModel, Stateful {
 
         await MainActor.run {
             self.users = response.value
+                .sorted(using: \.name)
 
             self.users.sort { x, y in
                 let user0 = x
