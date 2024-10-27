@@ -400,6 +400,8 @@ internal enum L10n {
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
   /// Haptic Feedback
   internal static let hapticFeedback = L10n.tr("Localizable", "hapticFeedback", fallback: "Haptic Feedback")
+  /// Hidden
+  internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
   /// Home
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Hours

@@ -132,15 +132,14 @@ extension ServerUsersView {
                     .padding(.vertical, 8)
             }
             .onSelect(perform: onSelect)
-            // TODO: Do we even want to allow User Deletion?
-            /* .swipeActions {
-                 Button(
-                     L10n.delete,
-                     systemImage: "trash",
-                     action: onDelete
-                 )
-                 .tint(.red)
-             } */
+            .swipeActions {
+                Button(
+                    L10n.delete,
+                    systemImage: "trash",
+                    action: onDelete
+                )
+                .tint(.red)
+            }
         }
     }
 }
