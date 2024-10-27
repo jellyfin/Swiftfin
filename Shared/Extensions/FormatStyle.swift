@@ -120,7 +120,7 @@ struct LastSeenFormatStyle: FormatStyle {
         if timeInterval <= twentyFourHours {
             return value.formatted(.relative(presentation: .numeric, unitsStyle: .narrow))
         } else {
-            return value.formatted(.dateTime)
+            return value.formatted(Date.FormatStyle.dateTime.year().month().day())
         }
     }
 }
