@@ -1142,3 +1142,8 @@
 // Creates an API Key if there are no keys available
 // Appears in place of the API Key list if there are no API Keys
 "addAPIKey" = "Add API key";
+
+// Hidden - Filter
+// Users with a policy of isHidden == True
+// Appears on the ServerUsersView to filter Hidden vs Non-Hidden Users
+"hidden" = "Hidden";

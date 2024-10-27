@@ -25,7 +25,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
-        case getUsers
+        case getUsers(includeHidden: Bool = false, includeDisabled: Bool = false)
         case deleteUsers([String])
         case createUser(username: String, password: String)
     }
@@ -61,9 +61,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     @Published
     final var state: State = .initial
 
-    private var includeHidden: Bool = true
-    private var includeDisabled: Bool = true
-
     private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
@@ -71,13 +68,13 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     func respond(to action: Action) -> State {
         switch action {
-        case .getUsers:
+        case let .getUsers(includeHidden, includeDisabled):
             userTask?.cancel()
             backgroundStates.append(.gettingUsers)
 
             userTask = Task { [weak self] in
                 do {
-                    try await self?.loadUsers()
+                    try await self?.loadUsers(includeHidden: includeHidden, includeDisabled: includeDisabled)
                     await MainActor.run {
                         self?.state = .content
                     }
@@ -155,7 +152,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     // MARK: - Load Users
 
-    private func loadUsers() async throws {
+    private func loadUsers(includeHidden: Bool, includeDisabled: Bool) async throws {
         let request = Paths.getUsers()
         let response = try await userSession.client.send(request)
 
