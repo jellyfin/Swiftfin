@@ -30,7 +30,7 @@ struct AddServerUserView: View {
     private var confirmNewPassword: String = ""
 
     @State
-    private var error: Error? = nil
+    private var error: Error?
     @State
     private var isPresentingError: Bool = false
     @State
