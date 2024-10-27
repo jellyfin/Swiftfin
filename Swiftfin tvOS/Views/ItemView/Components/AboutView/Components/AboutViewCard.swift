@@ -38,7 +38,7 @@ extension ItemView.AboutView {
                     content()
                         .eraseToAnyView()
                 }
-                .padding2()
+                .padding()
                 .frame(width: 700, height: 405)
             }
             .buttonStyle(.card)

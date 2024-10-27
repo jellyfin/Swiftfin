@@ -43,8 +43,7 @@ extension LiveVideoPlayer {
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
                         .if(UIDevice.isPad) { view in
-                            view.padding(.top)
-                                .padding2(.horizontal)
+                            view.padding()
                         }
                         .background {
                             LinearGradient(
@@ -68,8 +67,7 @@ extension LiveVideoPlayer {
                                 .padding(.trailing, splitContentViewProxy.isPresentingSplitView ? 0 : safeAreaInsets.trailing)
                         }
                         .if(UIDevice.isPad) { view in
-                            view.padding2(.bottom)
-                                .padding2(.horizontal)
+                            view.padding()
                         }
                         .background {
                             LinearGradient(
