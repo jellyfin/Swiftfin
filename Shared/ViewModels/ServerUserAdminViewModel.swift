@@ -16,7 +16,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: Event
 
     enum Event {
-        case error(JellyfinAPIError)
         case success
     }
 
@@ -96,7 +95,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
                     await MainActor.run {
                         let jellyfinError = JellyfinAPIError(error.localizedDescription)
                         self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
 
@@ -123,7 +121,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
                     await MainActor.run {
                         let jellyfinError = JellyfinAPIError(error.localizedDescription)
                         self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
             }
@@ -149,7 +146,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
                     await MainActor.run {
                         let jellyfinError = JellyfinAPIError(error.localizedDescription)
                         self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
             }
@@ -172,7 +168,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
                     await MainActor.run {
                         let jellyfinError = JellyfinAPIError(error.localizedDescription)
                         self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
                     }
                 }
             }
