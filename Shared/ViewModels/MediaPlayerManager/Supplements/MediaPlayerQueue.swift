@@ -35,8 +35,9 @@ protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
 
 class EpisodeMediaPlayerQueue: MediaPlayerQueue {
     
-    var items: OrderedSet<BaseItemDto> = []
     weak var manager: MediaPlayerManager?
+    
+    var items: OrderedSet<BaseItemDto> = []
     let title: String = "Up Next"
     
     var id: String {

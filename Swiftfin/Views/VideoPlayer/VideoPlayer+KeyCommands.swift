@@ -14,13 +14,11 @@ import VLCUI
 extension View {
 
     func videoPlayerKeyCommands(
-        gestureStateHandler: VideoPlayer.GestureStateHandler,
-        updateViewProxy: UpdateViewProxy
+        gestureStateHandler: VideoPlayer.GestureStateHandler
     ) -> some View {
         modifier(
             VideoPlayerKeyCommandsModifier(
-                gestureStateHandler: gestureStateHandler,
-                updateViewProxy: updateViewProxy
+                gestureStateHandler: gestureStateHandler
             )
         )
     }
@@ -29,20 +27,18 @@ extension View {
 struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
     @Default(.VideoPlayer.jumpBackwardInterval)
-    private var jumpBackwardLength
+    private var jumpBackwardInterval
     @Default(.VideoPlayer.jumpForwardInterval)
-    private var jumpForwardLength
+    private var jumpForwardInterval
 
     @Environment(\.isAspectFilled)
+    @Binding
     private var isAspectFilled
 
     @EnvironmentObject
-    private var videoPlayerManager: MediaPlayerManager
-    @EnvironmentObject
-    private var videoPlayerProxy: VLCVideoPlayer.Proxy
+    private var manager: MediaPlayerManager
 
     let gestureStateHandler: VideoPlayer.GestureStateHandler
-    let updateViewProxy: UpdateViewProxy
 
     func body(content: Content) -> some View {
         content.keyCommands {
@@ -53,6 +49,12 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 title: L10n.playAndPause,
                 input: " "
             ) {
+                switch manager.playbackRequestStatus {
+                case .playing:
+                    manager.set(playbackRequestStatus: .paused)
+                case .paused:
+                    manager.set(playbackRequestStatus: .playing)
+                }
 //                if videoPlayerManager.state == .playing {
 //                    videoPlayerManager.proxy?.pause()
 //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
@@ -144,7 +146,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 modifierFlags: .command
             ) {
                 DispatchQueue.main.async {
-                    isAspectFilled.wrappedValue.toggle()
+                    isAspectFilled.toggle()
                 }
             }
 

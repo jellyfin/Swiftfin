@@ -26,7 +26,7 @@ extension ItemView {
                 items: items
             )
             .onSelect { item in
-                guard let mediaSource = item.mediaSources?.first else { return }
+//                guard let mediaSource = item.mediaSources?.first else { return }
 //                router.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: item, mediaSource: mediaSource))
             }
         }

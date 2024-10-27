@@ -39,10 +39,11 @@ extension ItemView {
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-                    mainRouter.route(to: \.videoPlayer, (playButtonItem, selectedMediaSource))
-
-//                    mainRouter.route(to: \.videoPlayer, VideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
-//                    mainRouter.route(to: \.videoPlayer, OnlineVideoPlayerManager(item: playButtonItem, mediaSource: selectedMediaSource))
+                    let manager = MediaPlayerManager(item: playButtonItem, queue: EpisodeMediaPlayerQueue()) {
+                        try await MediaPlayerItem.build(for: playButtonItem, mediaSource: selectedMediaSource)
+                    }
+                    
+                    mainRouter.route(to: \.videoPlayer, manager)
                 } else {
                     logger.error("No media source available")
                 }

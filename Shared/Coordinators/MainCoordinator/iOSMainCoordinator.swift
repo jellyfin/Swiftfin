@@ -40,8 +40,6 @@ final class MainCoordinator: NavigationCoordinatable {
     var debugPlayground = makeDebugPlayground
     #endif
 
-//    @Route(.fullScreen)
-//    var liveVideoPlayer = makeLiveVideoPlayer
     @Route(.modal)
     var settings = makeSettings
     @Route(.fullScreen)
@@ -167,8 +165,8 @@ final class MainCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeVideoPlayer(parameters: (BaseItemDto, MediaSourceInfo)) -> VideoPlayerCoordinator {
-        VideoPlayerCoordinator(baseItem: parameters.0, mediaSource: parameters.1)
+    func makeVideoPlayer(manager: MediaPlayerManager) -> VideoPlayerCoordinator {
+        VideoPlayerCoordinator(manager: manager)
     }
 
     #if DEBUG
@@ -177,14 +175,6 @@ final class MainCoordinator: NavigationCoordinatable {
         DebugPlaygroundView()
     }
     #endif
-
-//    func makeVideoPlayer(manager: MediaPlayerManager) -> VideoPlayerCoordinator {
-//        VideoPlayerCoordinator(manager: manager)
-//    }
-
-//    func makeLiveVideoPlayer(manager: LiveVideoPlayerManager) -> LiveVideoPlayerCoordinator {
-//        LiveVideoPlayerCoordinator(manager: manager)
-//    }
 }
 
 // The notification we'll send when a shake gesture happens.

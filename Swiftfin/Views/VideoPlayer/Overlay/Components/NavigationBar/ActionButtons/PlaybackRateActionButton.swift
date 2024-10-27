@@ -28,7 +28,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
             ) {
                 ForEach(rates, id: \.self) { rate in
                     Button {
-                        manager.rate = rate
+                        manager.set(rate: rate)
                     } label: {
                         if rate == manager.rate {
                             Label("\(rate, format: .rate)", systemImage: "checkmark")

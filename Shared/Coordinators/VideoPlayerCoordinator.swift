@@ -20,13 +20,11 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-
-    private let baseItem: BaseItemDto
-    private let mediaSource: MediaSourceInfo
-
-    init(baseItem: BaseItemDto, mediaSource: MediaSourceInfo) {
-        self.baseItem = baseItem
-        self.mediaSource = mediaSource
+    
+    private var manager: MediaPlayerManager
+    
+    init(manager: MediaPlayerManager) {
+        self.manager = manager
     }
 
     // TODO: removed after iOS 15 support removed
@@ -37,14 +35,10 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
         if #available(iOS 16, *) {
             PreferencesView {
                 ZStack {
-                    let manager = MediaPlayerManager(item: self.baseItem) {
-                        try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
-                    }
-
                     if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-                        VideoPlayer(manager: manager)
+                        VideoPlayer(manager: self.manager)
                     } else {
-                        NativeVideoPlayer(manager: manager)
+                        NativeVideoPlayer(manager: self.manager)
                     }
                 }
                 .preferredColorScheme(.dark)

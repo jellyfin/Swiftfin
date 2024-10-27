@@ -114,11 +114,15 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
     // MARK: init
 
-    init(item: BaseItemDto, playbackItemProvider: @escaping MediaPlayerItemProvider) {
+    init(item: BaseItemDto, queue: (any MediaPlayerQueue)? = nil, playbackItemProvider: @escaping MediaPlayerItemProvider) {
         self.item = item
+        self.queue = queue
         super.init()
+        
+        self.queue?.manager = self
 
         supplements = [MediaInfoSupplement(item: item)]
+            .appending(ifLet: queue)
 
         // TODO: don't build on init?
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
@@ -128,11 +132,15 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
     }
 
-    init(playbackItem: MediaPlayerItem) {
-        item = playbackItem.baseItem
+    init(playbackItem: MediaPlayerItem, queue: (any MediaPlayerQueue)? = nil) {
+        self.item = playbackItem.baseItem
+        self.queue = queue
         super.init()
+        
+        self.queue?.manager = self
 
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
+            .appending(ifLet: queue)
 
         state = .playback
         self.playbackItem = playbackItem
