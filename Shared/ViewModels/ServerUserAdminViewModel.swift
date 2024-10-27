@@ -220,7 +220,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     // MARK: - Update User Configuration
 
-    private func updatePolicy(configuration: UserConfiguration) async throws {
+    private func updateConfiguration(configuration: UserConfiguration) async throws {
         guard let userId = user.id else { return }
         let updateRequest = Paths.updateUserConfiguration(userID: userId, configuration)
         try await userSession.client.send(updateRequest)
