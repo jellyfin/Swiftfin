@@ -25,6 +25,10 @@ extension ServerUsersView {
 
         @Environment(\.colorScheme)
         private var colorScheme
+        @Environment(\.isEditing)
+        private var isEditing
+        @Environment(\.isSelected)
+        private var isSelected
 
         @CurrentDate
         private var currentDate: Date
@@ -61,7 +65,9 @@ extension ServerUsersView {
         // MARK: - Label Styling
 
         private var labelForegroundStyle: some ShapeStyle {
-            userActive ? .primary : .secondary
+            guard isEditing else { return userActive ? .primary : .secondary }
+
+            return isSelected ? .primary : .secondary
         }
 
         // MARK: - User Image View
@@ -78,6 +84,11 @@ extension ServerUsersView {
                         SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                     }
                     .grayscale(userActive ? 0.0 : 1.0)
+
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                }
             }
             .clipShape(.circle)
             .aspectRatio(1, contentMode: .fill)
@@ -119,6 +130,28 @@ extension ServerUsersView {
                 }
                 .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)
+
+                Spacer()
+
+                if isEditing, isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.overlayColor, accentColor)
+
+                } else if isEditing {
+                    Image(systemName: "circle")
+                        .resizable()
+                        .backport
+                        .fontWeight(.bold)
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
 

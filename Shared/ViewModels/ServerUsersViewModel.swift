@@ -25,6 +25,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
+        case cancel
         case getUsers(includeHidden: Bool = false, includeDisabled: Bool = false)
         case deleteUsers([String])
         case createUser(username: String, password: String)
@@ -68,6 +69,11 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     func respond(to action: Action) -> State {
         switch action {
+        case .cancel:
+            userTask?.cancel()
+
+            return .initial
+
         case let .getUsers(includeHidden, includeDisabled):
             userTask?.cancel()
             backgroundStates.append(.gettingUsers)
@@ -193,7 +199,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
         await MainActor.run {
             self.users = self.users.filter {
-                !userIdsToDelete.contains($0.id!)
+                !userIdsToDelete.contains($0.id ?? "")
             }
         }
     }

@@ -1147,3 +1147,58 @@
 // Users with a policy of isHidden == True
 // Appears on the ServerUsersView to filter Hidden vs Non-Hidden Users
 "hidden" = "Hidden";
+
+// Delete Selected Users Warning - Warning Message
+// Warning message displayed when deleting all users
+// Informs the user about the consequences of deleting all users
+"deleteSelectionUsersWarning" = "Are you sure you wish to delete all selected users?";
+
+// Delete User Warning - Warning Message
+// Warning message displayed when deleting a single user
+// Informs the user about the consequences of deleting the user
+"deleteUserWarning" = "Are you sure you wish to delete this user?";
+
+// Delete User - Action
+// Message for deleting a single device in the all users section
+// Used in the confirmation dialog to delete a single user
+"deleteUser" = "Delete User";
+
+// Delete User Self-Deletion - Error Message
+// Error message when attempting to delete the current session's user
+// Used to inform the user that they cannot delete their own user
+"deleteUserSelfDeletion" = "Cannot delete a user from the same user (%1$@).";
+
+// Delete Selected Users - Button
+// Button label for deleting all selected users
+// Used in the all devices section to delete all selected users
+"deleteSelectedUsers" = "Delete Selected Users";
+
+// Delete User Failed - Error Title
+// Title for the alert when users deletion fails
+// Displayed when the system fails to delete a user
+"deleteUserFailed" = "Failed to Delete User";
+
+// Confirm Password - TextField
+// Placeholder and label for confirming the password
+// Used in the New User creation form
+"confirmPassword" = "Confirm Password";
+
+// A username is required - Footer
+// Validation message shown when the username field is empty
+// Used in the New User creation form
+"usernameRequired" = "A username is required";
+
+// New passwords do not match - Footer
+// Validation message shown when the new password and confirm password fields do not match
+// Used in the New User creation form
+"passwordsDoNotMatch" = "New passwords do not match";
+
+// User has been created - Alert Message
+// Message shown when a new user is successfully created
+// Used in the success alert for the New User creation form
+"userCreatedMessage" = "User has been created!";
+
+// New User - Title
+// Title for the new user creation view
+// Used as the navigation title when creating a new user
+"newUser" = "New User";

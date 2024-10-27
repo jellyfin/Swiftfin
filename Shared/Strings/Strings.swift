@@ -218,6 +218,8 @@ internal enum L10n {
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
+  /// Confirm Password
+  internal static let confirmPassword = L10n.tr("Localizable", "confirmPassword", fallback: "Confirm Password")
   /// Connect
   internal static let connect = L10n.tr("Localizable", "connect", fallback: "Connect")
   /// Connect Manually
@@ -298,14 +300,28 @@ internal enum L10n {
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
+  /// Delete Selected Users
+  internal static let deleteSelectedUsers = L10n.tr("Localizable", "deleteSelectedUsers", fallback: "Delete Selected Users")
   /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
   internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.")
+  /// Are you sure you wish to delete all selected users?
+  internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Server Detail View - Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
   /// Delete Trigger
   internal static let deleteTrigger = L10n.tr("Localizable", "deleteTrigger", fallback: "Delete Trigger")
   /// Are you sure you want to delete this trigger? This action cannot be undone.
   internal static let deleteTriggerConfirmationMessage = L10n.tr("Localizable", "deleteTriggerConfirmationMessage", fallback: "Are you sure you want to delete this trigger? This action cannot be undone.")
+  /// Delete User
+  internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete User")
+  /// Failed to Delete User
+  internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to Delete User")
+  /// Cannot delete a user from the same user (%1$@).
+  internal static func deleteUserSelfDeletion(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "deleteUserSelfDeletion", String(describing: p1), fallback: "Cannot delete a user from the same user (%1$@).")
+  }
+  /// Are you sure you wish to delete this user?
+  internal static let deleteUserWarning = L10n.tr("Localizable", "deleteUserWarning", fallback: "Are you sure you wish to delete this user?")
   /// Delivery
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Details
@@ -530,6 +546,8 @@ internal enum L10n {
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
   /// News
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
+  /// New User
+  internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New User")
   /// Next
   internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
   /// Next Item
@@ -610,6 +628,8 @@ internal enum L10n {
   }
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
+  /// New passwords do not match
+  internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match")
   /// Video Player Settings View - Pause on Background
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// People
@@ -1022,8 +1042,12 @@ internal enum L10n {
   internal static func userAlreadySignedIn(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "userAlreadySignedIn", p1, fallback: "User %s is already signed in")
   }
+  /// User has been created!
+  internal static let userCreatedMessage = L10n.tr("Localizable", "userCreatedMessage", fallback: "User has been created!")
   /// Username
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
+  /// A username is required
+  internal static let usernameRequired = L10n.tr("Localizable", "usernameRequired", fallback: "A username is required")
   /// Users
   internal static let users = L10n.tr("Localizable", "users", fallback: "Users")
   /// Version
