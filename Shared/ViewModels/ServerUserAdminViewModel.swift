@@ -31,8 +31,9 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case cancel
         case loadDetails
         case resetPassword
-        case updatePassword(currentPassword: String?, newPassword: String)
+        case updatePassword(password: String)
         case updatePolicy(policy: UserPolicy)
+        case updateConfiguration(configuration: UserConfiguration)
     }
 
     // MARK: State
@@ -72,15 +73,10 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         switch action {
         case .cancel:
             resetTask?.cancel()
-
             return .initial
+
         case .resetPassword:
-            if case .initial = state {
-                return state
-            }
-
             resetTask = Task {
-
                 await MainActor.run {
                     _ = self.backgroundStates.append(.updating)
                 }
@@ -105,11 +101,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .asAnyCancellable()
 
             return .initial
-        case .loadDetails:
-            if case .initial = state {
-                return state
-            }
 
+        case .loadDetails:
             resetTask = Task {
                 do {
                     try await loadDetails()
@@ -127,17 +120,11 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .asAnyCancellable()
 
             return .initial
-        case let .updatePassword(currentPassword, newPassword):
-            if case .initial = state {
-                return state
-            }
 
+        case let .updatePassword(password):
             resetTask = Task {
                 do {
-                    try await updatePassword(
-                        currentPw: currentPassword,
-                        newPw: newPassword
-                    )
+                    try await updatePassword(password: password)
                     await MainActor.run {
                         self.state = .initial
                         self.eventSubject.send(.success)
@@ -152,14 +139,30 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .asAnyCancellable()
 
             return .initial
-        case let .updatePolicy(policy: policy):
-            if case .initial = state {
-                return state
-            }
 
+        case let .updatePolicy(policy):
             resetTask = Task {
                 do {
                     try await updatePolicy(policy: policy)
+                    await MainActor.run {
+                        self.state = .initial
+                        self.eventSubject.send(.success)
+                    }
+                } catch {
+                    await MainActor.run {
+                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
+                        self.state = .error(jellyfinError)
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return .initial
+
+        case let .updateConfiguration(configuration):
+            resetTask = Task {
+                do {
+                    try await updateConfiguration(configuration: configuration)
                     await MainActor.run {
                         self.state = .initial
                         self.eventSubject.send(.success)
@@ -182,8 +185,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     private func resetPassword() async throws {
         guard let userId = user.id else { return }
         let parameters = UpdateUserPassword(isResetPassword: true)
-        let updateRequest = Paths.updateUserPassword(userID: userId, parameters)
-        try await userSession.client.send(updateRequest)
+        let request = Paths.updateUserPassword(userID: userId, parameters)
+        try await userSession.client.send(request)
 
         await MainActor.run {
             self.user.hasPassword = false
@@ -192,26 +195,23 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     // MARK: - Update Password
 
-    private func updatePassword(currentPw: String? = nil, newPw: String) async throws {
-        guard let userId = user.id else { return }
-        let parameters = UpdateUserPassword(
-            currentPw: currentPw,
-            newPw: newPw
-        )
-        let updateRequest = Paths.updateUserPassword(userID: userId, parameters)
-        try await userSession.client.send(updateRequest)
+    private func updatePassword(password: String) async throws {
+        guard let userID = user.id else { return }
+        let parameters = UpdateUserPassword(newPw: password)
+        let request = Paths.updateUserPassword(userID: userID, parameters)
+        try await userSession.client.send(request)
 
         await MainActor.run {
-            self.user.hasPassword = (newPw != "")
+            self.user.hasPassword = (password != "")
         }
     }
 
     // MARK: - Update User Policy
 
     private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userId = user.id else { return }
-        let updateRequest = Paths.updateUserPolicy(userID: userId, policy)
-        try await userSession.client.send(updateRequest)
+        guard let userID = user.id else { return }
+        let request = Paths.updateUserPolicy(userID: userID, policy)
+        try await userSession.client.send(request)
 
         await MainActor.run {
             self.user.policy = policy
@@ -221,9 +221,9 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update User Configuration
 
     private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userId = user.id else { return }
-        let updateRequest = Paths.updateUserConfiguration(userID: userId, configuration)
-        try await userSession.client.send(updateRequest)
+        guard let userID = user.id else { return }
+        let request = Paths.updateUserConfiguration(userID: userID, configuration)
+        try await userSession.client.send(request)
 
         await MainActor.run {
             self.user.configuration = configuration
@@ -233,8 +233,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Load User
 
     private func loadDetails() async throws {
-        guard let userId = user.id else { return }
-        let request = Paths.getUserByID(userID: userId)
+        guard let userID = user.id else { return }
+        let request = Paths.getUserByID(userID: userID)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {

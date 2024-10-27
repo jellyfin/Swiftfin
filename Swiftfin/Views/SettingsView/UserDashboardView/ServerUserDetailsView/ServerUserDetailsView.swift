@@ -19,12 +19,12 @@ struct ServerUserDetailsView: View {
     private var currentDate: Date
 
     @StateObject
-    var viewModel: ServerUserAdminViewModel
+    private var viewModel: ServerUserAdminViewModel
 
     // MARK: - Initializer
 
     init(user: UserDto) {
-        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
     }
 
     // MARK: - Body

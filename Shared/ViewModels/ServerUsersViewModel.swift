@@ -12,18 +12,30 @@ import JellyfinAPI
 import OrderedCollections
 import SwiftUI
 
-final class ServerUsersViewModel: ViewModel, Stateful {
+final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
-    // MARK: - Action
+    // MARK: Event
+
+    enum Event {
+        case deleted
+        case created
+        case error(JellyfinAPIError)
+    }
+
+    // MARK: Actions
 
     enum Action: Equatable {
         case getUsers
+        case deleteUsers([String])
+        case createUser(username: String, password: String)
     }
 
     // MARK: - BackgroundState
 
     enum BackgroundState: Hashable {
         case gettingUsers
+        case creatingUser
+        case deletingUsers
     }
 
     // MARK: - State
@@ -34,15 +46,26 @@ final class ServerUsersViewModel: ViewModel, Stateful {
         case initial
     }
 
+    // MARK: Published Values
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
+
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var users: [UserDto] = []
-
     @Published
     final var state: State = .initial
 
+    private var includeHidden: Bool = true
+    private var includeDisabled: Bool = true
+
     private var userTask: AnyCancellable?
+    private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     // MARK: - Respond to Action
 
@@ -50,7 +73,6 @@ final class ServerUsersViewModel: ViewModel, Stateful {
         switch action {
         case .getUsers:
             userTask?.cancel()
-
             backgroundStates.append(.gettingUsers)
 
             userTask = Task { [weak self] in
@@ -63,11 +85,66 @@ final class ServerUsersViewModel: ViewModel, Stateful {
                     guard let self else { return }
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
                 }
 
                 await MainActor.run {
                     self?.backgroundStates.remove(.gettingUsers)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+
+        case let .deleteUsers(ids):
+            userTask?.cancel()
+            backgroundStates.append(.deletingUsers)
+
+            userTask = Task { [weak self] in
+                do {
+                    try await self?.deleteUsers(ids: ids)
+                    await MainActor.run {
+                        self?.state = .content
+                        self?.eventSubject.send(.deleted)
+                    }
+                } catch {
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+
+                await MainActor.run {
+                    self?.backgroundStates.remove(.deletingUsers)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+
+        case let .createUser(username, password):
+            userTask?.cancel()
+            backgroundStates.append(.creatingUser)
+
+            userTask = Task { [weak self] in
+                do {
+                    try await self?.createUser(username: username, password: password)
+                    await MainActor.run {
+                        self?.state = .content
+                        self?.eventSubject.send(.created)
+                    }
+                } catch {
+                    guard let self else { return }
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+
+                await MainActor.run {
+                    self?.backgroundStates.remove(.creatingUser)
                 }
             }
             .asAnyCancellable()
@@ -83,14 +160,63 @@ final class ServerUsersViewModel: ViewModel, Stateful {
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.users = response.value
-                .sorted(using: \.name)
+            var filteredUsers = response.value.sorted(using: \.name)
 
-            self.users.sort { x, y in
-                let user0 = x
-                let user1 = y
-                return (user0.name ?? "") < (user1.name ?? "")
+            if !includeHidden {
+                filteredUsers = filteredUsers.filter { $0.policy?.isHidden != true }
             }
+
+            if !includeDisabled {
+                filteredUsers = filteredUsers.filter { $0.policy?.isDisabled != true }
+            }
+
+            self.users = filteredUsers
+        }
+    }
+
+    // MARK: - Delete Users
+
+    private func deleteUsers(ids: [String]) async throws {
+        guard ids.isNotEmpty else {
+            return
+        }
+
+        // Don't allow self-deletion
+        let userIdsToDelete = ids.filter { $0 != userSession.user.id }
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for userId in userIdsToDelete {
+                group.addTask {
+                    try await self.deleteUser(id: userId)
+                }
+            }
+
+            try await group.waitForAll()
+        }
+
+        await MainActor.run {
+            self.users = self.users.filter {
+                !userIdsToDelete.contains($0.id!)
+            }
+        }
+    }
+
+    // MARK: - Delete User
+
+    private func deleteUser(id: String) async throws {
+        let request = Paths.deleteUser(userID: id)
+        try await userSession.client.send(request)
+    }
+
+    // MARK: - Create User
+
+    private func createUser(username: String, password: String) async throws {
+        let parameters = CreateUserByName(name: username, password: password)
+        let request = Paths.createUserByName(parameters)
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.users.append(response.value)
         }
     }
 }
