@@ -21,18 +21,20 @@ struct ServerUserDetailsView: View {
     @StateObject
     var viewModel: ServerUserAdminViewModel
 
+    // MARK: - Initializer
+
+    init(user: UserDto) {
+        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+    }
+
     // MARK: - Body
 
     var body: some View {
         List {
-            if let userID = viewModel.user.id,
-               let userName = viewModel.user.name
-            {
-                UserDashboardView.UserSection(
-                    user: .init(id: userID, name: userName),
-                    lastActivityDate: viewModel.user.lastActivityDate
-                )
-            }
+            UserDashboardView.UserSection(
+                user: viewModel.user,
+                lastActivityDate: viewModel.user.lastActivityDate
+            )
 
             ChevronButton(L10n.devices)
                 .onSelect {

@@ -79,7 +79,8 @@ extension ServerUsersView {
                     }
                     .grayscale(userActive ? 0.0 : 1.0)
             }
-            .squarePosterStyle()
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
             .posterShadow()
             .frame(width: 60, height: 60)
         }
@@ -97,13 +98,6 @@ extension ServerUsersView {
                         .multilineTextAlignment(.leading)
 
                     TextPairView(
-                        L10n.active,
-                        value: {
-                            Text(userActive ? L10n.yes : L10n.no)
-                        }()
-                    )
-
-                    TextPairView(
                         L10n.role,
                         value: {
                             if let isAdministrator = user.policy?.isAdministrator,
@@ -116,24 +110,12 @@ extension ServerUsersView {
                         }()
                     )
 
-                    if let lastActivityDate = user.lastActivityDate {
-                        let timeInterval = currentDate.timeIntervalSince(lastActivityDate)
-                        let twentyFourHours: TimeInterval = 24 * 60 * 60
-
-                        TextPairView(
-                            L10n.lastSeen,
-                            value: timeInterval <= twentyFourHours ?
-                                Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow)) :
-                                Text(lastActivityDate, style: .date)
-                        )
-                        .id(currentDate)
-                        .monospacedDigit()
-                    } else {
-                        TextPairView(
-                            L10n.lastSeen,
-                            value: Text(L10n.never)
-                        )
-                    }
+                    TextPairView(
+                        L10n.lastSeen,
+                        value: Text(user.lastActivityDate, format: .lastSeen)
+                    )
+                    .id(currentDate)
+                    .monospacedDigit()
                 }
                 .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)

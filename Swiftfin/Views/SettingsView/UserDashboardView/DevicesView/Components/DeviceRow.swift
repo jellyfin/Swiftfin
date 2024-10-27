@@ -112,13 +112,7 @@ extension DevicesView {
 
                     TextPairView(
                         L10n.lastSeen,
-                        value: {
-                            if let dateLastActivity = deviceInfo.dateLastActivity {
-                                Text(dateLastActivity, format: .relative(presentation: .numeric, unitsStyle: .narrow))
-                            } else {
-                                Text(L10n.never)
-                            }
-                        }()
+                        value: Text(deviceInfo.dateLastActivity, format: .lastSeen)
                     )
                     .id(currentDate)
                     .monospacedDigit()

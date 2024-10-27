@@ -67,7 +67,7 @@ struct ServerUsersView: View {
 
             ForEach(viewModel.users, id: \.self) { user in
                 ServerUsersRow(user: user) {
-                    router.route(to: \.userDetails, ServerUserAdminViewModel(user: user))
+                    router.route(to: \.userDetails, user)
                 } onDelete: {
                     // TODO: Do we even want to allow User Deletion?
                 }

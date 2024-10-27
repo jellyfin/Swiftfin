@@ -245,8 +245,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeUserDetails(viewModel: ServerUserAdminViewModel) -> some View {
-        ServerUserDetailsView(viewModel: viewModel)
+    func makeUserDetails(user: UserDto) -> some View {
+        ServerUserDetailsView(user: user)
     }
 
     @ViewBuilder

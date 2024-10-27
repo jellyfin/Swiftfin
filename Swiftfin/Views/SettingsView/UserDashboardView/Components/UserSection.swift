@@ -33,25 +33,12 @@ extension UserDashboardView {
         var body: some View {
             Section(L10n.user) {
                 profileView
-
-                if let lastActivityDate {
-                    let timeInterval = currentDate.timeIntervalSince(lastActivityDate)
-                    let twentyFourHours: TimeInterval = 24 * 60 * 60
-
-                    TextPairView(
-                        L10n.lastSeen,
-                        value: timeInterval <= twentyFourHours ?
-                            Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow)) :
-                            Text(lastActivityDate, style: .date)
-                    )
-                    .id(currentDate)
-                    .monospacedDigit()
-                } else {
-                    TextPairView(
-                        L10n.lastSeen,
-                        value: Text(L10n.never)
-                    )
-                }
+                TextPairView(
+                    L10n.lastSeen,
+                    value: Text(lastActivityDate, format: .lastSeen)
+                )
+                .id(currentDate)
+                .monospacedDigit()
             }
         }
 
