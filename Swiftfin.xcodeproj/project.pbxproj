@@ -374,6 +374,7 @@
 		E12CC1CD28D135C700678D5D /* NextUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12CC1CC28D135C700678D5D /* NextUpView.swift */; };
 		E12D02442C9FB772003B27CB /* MediaProgressListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressListener.swift */; };
 		E12D02452C9FB772003B27CB /* MediaProgressListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12D02432C9FB772003B27CB /* MediaProgressListener.swift */; };
+		E12DD8F32CCF041C00E2512E /* Overlay+Gesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12DD8F22CCF041C00E2512E /* Overlay+Gesture.swift */; };
 		E12E2F072CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E2F082CBB9E97008C303A /* MediaInfoSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */; };
 		E12E2F0D2CBBA984008C303A /* MediaChaptersSupplement.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */; };
@@ -1282,6 +1283,7 @@
 		E12CC1CA28D1333400678D5D /* CinematicResumeItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicResumeItemView.swift; sourceTree = "<group>"; };
 		E12CC1CC28D135C700678D5D /* NextUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextUpView.swift; sourceTree = "<group>"; };
 		E12D02432C9FB772003B27CB /* MediaProgressListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaProgressListener.swift; sourceTree = "<group>"; };
+		E12DD8F22CCF041C00E2512E /* Overlay+Gesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Overlay+Gesture.swift"; sourceTree = "<group>"; };
 		E12E2F062CBB9E97008C303A /* MediaInfoSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaInfoSupplement.swift; sourceTree = "<group>"; };
 		E12E2F0C2CBBA984008C303A /* MediaChaptersSupplement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaChaptersSupplement.swift; sourceTree = "<group>"; };
 		E12E30F0296383810022FAC9 /* SplitFormWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFormWindowView.swift; sourceTree = "<group>"; };
@@ -2733,6 +2735,7 @@
 			children = (
 				E11245B528D97EC200D8A977 /* Components */,
 				E1559A75294D960C00C1FFBC /* Overlay.swift */,
+				E12DD8F22CCF041C00E2512E /* Overlay+Gesture.swift */,
 			);
 			path = Overlay;
 			sourceTree = "<group>";
@@ -4714,6 +4717,7 @@
 				E11D5A162C7918F1008A99F4 /* MediaPlayerItem.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
 				E102314D2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
+				E12DD8F32CCF041C00E2512E /* Overlay+Gesture.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
 				E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */,
 				E17FB55228C119D400311DFE /* Displayable.swift in Sources */,

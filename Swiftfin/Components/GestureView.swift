@@ -13,6 +13,7 @@ import SwiftUI
 // TODO: change swipe to directional
 // TODO: figure out way for multitap near the middle be distinguished as different sides
 
+typealias LongPressGestureHandler = (UnitPoint) -> Void
 // state, point, velocity, translation
 typealias PanGestureHandler = (UIGestureRecognizer.State, UnitPoint, CGFloat, CGFloat) -> Void
 // state, point, scale
@@ -26,7 +27,7 @@ struct GestureView: UIViewRepresentable {
 
     private var onHorizontalPan: PanGestureHandler?
     private var onHorizontalSwipe: SwipeGestureHandler?
-    private var onLongPress: ((UnitPoint) -> Void)?
+    private var onLongPress: LongPressGestureHandler?
     private var onPinch: PinchGestureHandler?
     private var onTap: TapGestureHandler?
     private var onDoubleTouch: TapGestureHandler?
@@ -121,7 +122,7 @@ class UIGestureView: UIView {
 
     private let onHorizontalPan: PanGestureHandler?
     private let onHorizontalSwipe: SwipeGestureHandler?
-    private let onLongPress: ((UnitPoint) -> Void)?
+    private let onLongPress: LongPressGestureHandler?
     private let onPinch: PinchGestureHandler?
     private let onTap: TapGestureHandler?
     private let onDoubleTouch: TapGestureHandler?
@@ -145,7 +146,7 @@ class UIGestureView: UIView {
     init(
         onHorizontalPan: PanGestureHandler?,
         onHorizontalSwipe: SwipeGestureHandler?,
-        onLongPress: ((UnitPoint) -> Void)?,
+        onLongPress: LongPressGestureHandler?,
         onPinch: PinchGestureHandler?,
         onTap: TapGestureHandler?,
         onDoubleTouch: TapGestureHandler?,
@@ -184,11 +185,11 @@ class UIGestureView: UIView {
 //            target: self,
 //            action: #selector(didPerformVerticalPan)
 //        )
-//        let horizontalPanGesture = PanDirectionGestureRecognizer(
-//            direction: .horizontal,
-//            target: self,
-//            action: #selector(didPerformHorizontalPan)
-//        )
+        let horizontalPanGesture = PanDirectionGestureRecognizer(
+            direction: .horizontal,
+            target: self,
+            action: #selector(didPerformHorizontalPan)
+        )
 
         // TODO: handle conflicts
 
@@ -197,7 +198,7 @@ class UIGestureView: UIView {
 //        addGestureRecognizer(doubleTouchGesture)
 //        addGestureRecognizer(longPressGesture)
 //        addGestureRecognizer(verticalPanGesture)
-//        addGestureRecognizer(horizontalPanGesture)
+        addGestureRecognizer(horizontalPanGesture)
     }
 
     @available(*, unavailable)

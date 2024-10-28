@@ -77,28 +77,23 @@ extension VideoPlayer {
         var body: some View {
             ZStack {
 
-                Color.black
-                    .isVisible(opacity: 0.5, !isScrubbing && isPresentingOverlay)
-                    .allowsHitTesting(false)
-                    .overlay(alignment: .bottom) {
-                        OpacityLinearGradient {
-                            (0, 0)
-                            (1, 0.5)
-                        }
-                        .foregroundStyle(.black)
-                        .isVisible(isScrubbing)
-                        .frame(height: progressViewFrame.height)
+                ZStack(alignment: .bottom) {
+                    
+                    Color.black
+                        .isVisible(opacity: 0.5, !isScrubbing && isPresentingOverlay)
+                        .allowsHitTesting(false)
+                    
+                    OpacityLinearGradient {
+                        (0, 0)
+                        (1, 0.5)
                     }
-                    .animation(.linear(duration: 0.25), value: isPresentingOverlay)
+                    .foregroundStyle(.black)
+                    .isVisible(isScrubbing)
+                    .frame(height: progressViewFrame.height)
+                }
+                .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
-                GestureView()
-                    .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
-                        if isPresentingDrawer {
-                            selectedSupplement = nil
-                        } else {
-                            isPresentingOverlay.toggle()
-                        }
-                    }
+                GestureLayer()
 
                 VStack {
                     navigationBar

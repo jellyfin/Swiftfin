@@ -11,16 +11,45 @@ import PreferencesView
 import SwiftUI
 import VLCUI
 
-extension View {
-
-    func videoPlayerKeyCommands(
-        gestureStateHandler: VideoPlayer.GestureStateHandler
-    ) -> some View {
-        modifier(
-            VideoPlayerKeyCommandsModifier(
-                gestureStateHandler: gestureStateHandler
-            )
-        )
+extension VideoPlayer {
+    
+    struct KeyCommandsLayer: View {
+        
+        @Default(.VideoPlayer.jumpBackwardInterval)
+        private var jumpBackwardInterval
+        @Default(.VideoPlayer.jumpForwardInterval)
+        private var jumpForwardInterval
+        
+        @Environment(\.isAspectFilled)
+        @Binding
+        private var isAspectFilled
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        
+        var body: some View {
+            keyCommands {
+                
+                KeyCommandAction(
+                    title: L10n.playAndPause,
+                    input: " "
+                ) {
+                    switch manager.playbackRequestStatus {
+                    case .playing:
+                        manager.proxy?.pause()
+                    case .paused:
+                        manager.proxy?.play()
+                    }
+    //                if videoPlayerManager.state == .playing {
+    //                    videoPlayerManager.proxy?.pause()
+    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+    //                } else {
+    //                    videoPlayerManager.proxy?.play()
+    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+    //                }
+                }
+            }
+        }
     }
 }
 
@@ -42,27 +71,6 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.keyCommands {
-
-            // MARK: play/pause
-
-            KeyCommandAction(
-                title: L10n.playAndPause,
-                input: " "
-            ) {
-                switch manager.playbackRequestStatus {
-                case .playing:
-                    manager.set(playbackRequestStatus: .paused)
-                case .paused:
-                    manager.set(playbackRequestStatus: .playing)
-                }
-//                if videoPlayerManager.state == .playing {
-//                    videoPlayerManager.proxy?.pause()
-//                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-//                } else {
-//                    videoPlayerManager.proxy?.play()
-//                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-//                }
-            }
 
             // MARK: jump forward
 

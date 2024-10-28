@@ -203,7 +203,7 @@ extension Defaults.Keys {
 
         enum Gesture {
 
-            static let horizontalPanGesture: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
+            static let panAction: Key<PanAction> = UserKey("videoPlayerHorizontalPanGesture", default: .none)
             static let horizontalSwipeGesture: Key<SwipeAction> = UserKey("videoPlayerHorizontalSwipeGesture", default: .none)
             static let longPressGesture: Key<LongPressAction> = UserKey("videoPlayerLongPressGesture", default: .gestureLock)
             static let multiTapGesture: Key<MultiTapAction> = UserKey("videoPlayerMultiTapGesture", default: .none)

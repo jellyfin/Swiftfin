@@ -16,7 +16,7 @@ import SwiftUI
 
 struct GestureSettingsView: View {
 
-    @Default(.VideoPlayer.Gesture.horizontalPanGesture)
+    @Default(.VideoPlayer.Gesture.panAction)
     private var horizontalPanGesture
     @Default(.VideoPlayer.Gesture.horizontalSwipeGesture)
     private var horizontalSwipeGesture
