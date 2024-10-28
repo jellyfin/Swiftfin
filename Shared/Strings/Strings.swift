@@ -464,6 +464,8 @@ internal enum L10n {
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// Represents the light theme setting
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
+  /// Liked Items
+  internal static let likedItems = L10n.tr("Localizable", "likedItems", fallback: "Liked Items")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Live TV
