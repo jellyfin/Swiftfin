@@ -35,13 +35,6 @@ struct ServerUserDetailsView: View {
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
             )
-
-            ChevronButton(L10n.devices)
-                .onSelect {
-                    if let userID = viewModel.user.id {
-                        router.route(to: \.userDevices, userID)
-                    }
-                }
         }
         .navigationTitle(L10n.user)
         .onAppear {
