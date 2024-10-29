@@ -231,9 +231,9 @@
 "quickConnectInvalidError" = "Invalid Quick Connect code";
 "quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
 "showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
-"quickConnectStep1" = "1. Open the Jellyfin app on your phone or web browser and sign in with your account";
-"quickConnectStep2" = "2. Open the user menu and go to the Quick Connect page";
-"quickConnectStep3" = "3. Enter the following code:";
+"quickConnectStep1" = "Open the Jellyfin app on your phone or web browser and sign in with your account";
+"quickConnectStep2" = "Open the user menu and go to the Quick Connect page";
+"quickConnectStep3" = "Enter the following code:";
 "quickConnectNotEnabled" = "Note: Quick Connect not enabled";
 "episodeNumber" = "Episode %1$@";
 "compactPoster" = "Compact Poster";
@@ -278,6 +278,7 @@
 "grid" = "Grid";
 "list" = "List";
 "logs" = "Logs";
+"likedItems" = "Liked Items";
 
 "onNow" = "On Now";
 "sports" = "Sports";

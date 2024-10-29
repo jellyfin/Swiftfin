@@ -464,6 +464,8 @@ internal enum L10n {
   internal static let library = L10n.tr("Localizable", "library", fallback: "Library")
   /// Represents the light theme setting
   internal static let light = L10n.tr("Localizable", "light", fallback: "Light")
+  /// Liked Items
+  internal static let likedItems = L10n.tr("Localizable", "likedItems", fallback: "Liked Items")
   /// List
   internal static let list = L10n.tr("Localizable", "list", fallback: "List")
   /// Live TV
@@ -658,12 +660,12 @@ internal enum L10n {
   internal static let quickConnectInvalidError = L10n.tr("Localizable", "quickConnectInvalidError", fallback: "Invalid Quick Connect code")
   /// Note: Quick Connect not enabled
   internal static let quickConnectNotEnabled = L10n.tr("Localizable", "quickConnectNotEnabled", fallback: "Note: Quick Connect not enabled")
-  /// 1. Open the Jellyfin app on your phone or web browser and sign in with your account
-  internal static let quickConnectStep1 = L10n.tr("Localizable", "quickConnectStep1", fallback: "1. Open the Jellyfin app on your phone or web browser and sign in with your account")
-  /// 2. Open the user menu and go to the Quick Connect page
-  internal static let quickConnectStep2 = L10n.tr("Localizable", "quickConnectStep2", fallback: "2. Open the user menu and go to the Quick Connect page")
-  /// 3. Enter the following code:
-  internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "3. Enter the following code:")
+  /// Open the Jellyfin app on your phone or web browser and sign in with your account
+  internal static let quickConnectStep1 = L10n.tr("Localizable", "quickConnectStep1", fallback: "Open the Jellyfin app on your phone or web browser and sign in with your account")
+  /// Open the user menu and go to the Quick Connect page
+  internal static let quickConnectStep2 = L10n.tr("Localizable", "quickConnectStep2", fallback: "Open the user menu and go to the Quick Connect page")
+  /// Enter the following code:
+  internal static let quickConnectStep3 = L10n.tr("Localizable", "quickConnectStep3", fallback: "Enter the following code:")
   /// Authorizing Quick Connect successful. Please continue on your other device.
   internal static let quickConnectSuccessMessage = L10n.tr("Localizable", "quickConnectSuccessMessage", fallback: "Authorizing Quick Connect successful. Please continue on your other device.")
   /// Random

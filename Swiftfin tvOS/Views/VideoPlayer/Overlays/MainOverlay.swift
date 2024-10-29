@@ -34,8 +34,8 @@ extension VideoPlayer {
                 Spacer()
 
                 VideoPlayer.Overlay.BottomBarView()
-                    .padding2()
-                    .padding2()
+                    .padding()
+                    .padding()
                     .background {
                         LinearGradient(
                             stops: [

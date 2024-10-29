@@ -1,5 +1,5 @@
 {
-  "originHash" : "323b2ad9aaa9c000faf264d68272f0e9fab1349d9f910a0b95ee6aea10460f31",
+  "originHash" : "651194fc1966b57201a0de2cba27dc40798bbdf515febdc83f00d634d916fea4",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Pulse",
       "state" : {
-        "revision" : "d1e39ffaaa8b8becff80cb193c93a78e32077af8",
-        "version" : "4.2.0"
+        "revision" : "3ac5ee35ab233e900aa484919803d51791d1e351",
+        "version" : "4.2.7"
       }
     },
     {
