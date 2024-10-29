@@ -13,11 +13,11 @@ import SwiftUI
 
 struct ServerUsersView: View {
 
+    @Default(.accentColor)
+    private var accentColor
+
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
-
-    @StateObject
-    private var viewModel = ServerUsersViewModel()
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
@@ -31,9 +31,12 @@ struct ServerUsersView: View {
     private var isEditing: Bool = false
 
     @State
-    private var includeHidden: Bool = true
+    private var isHiddenFilterActive: Bool = false
     @State
-    private var includeDisabled: Bool = true
+    private var isDisabledFilterActive: Bool = false
+
+    @StateObject
+    private var viewModel = ServerUsersViewModel()
 
     // MARK: - Body
 
@@ -41,11 +44,7 @@ struct ServerUsersView: View {
         ZStack {
             switch viewModel.state {
             case .content:
-                if viewModel.users.isEmpty {
-                    emptyListView
-                } else {
-                    userListView
-                }
+                userListView
             case let .error(error):
                 errorView(with: error)
             case .initial:
@@ -53,25 +52,45 @@ struct ServerUsersView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle(L10n.devices)
+        .navigationTitle(L10n.users)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 if isEditing {
                     navigationBarSelectView
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if viewModel.users.isNotEmpty {
-                    navigationBarEditView
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                navigationBarEditView
+            }
+            ToolbarItem(placement: .bottomBar) {
+                if isEditing {
+                    Button(L10n.delete) {
+                        isPresentingDeleteSelectionConfirmation = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedUsers.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             }
         }
+        .onChange(of: isDisabledFilterActive) { newValue in
+            viewModel.send(.getUsers(
+                includeHidden: isHiddenFilterActive,
+                includeDisabled: newValue
+            ))
+        }
+        .onChange(of: isHiddenFilterActive) { newValue in
+            viewModel.send(.getUsers(
+                includeHidden: newValue,
+                includeDisabled: isDisabledFilterActive
+            ))
+        }
         .onFirstAppear {
             viewModel.send(.getUsers(
-                includeHidden: includeHidden,
-                includeDisabled: includeDisabled
+                includeHidden: isHiddenFilterActive,
+                includeDisabled: isDisabledFilterActive
             ))
         }
         .confirmationDialog(
@@ -79,7 +98,7 @@ struct ServerUsersView: View {
             isPresented: $isPresentingDeleteSelectionConfirmation,
             titleVisibility: .visible
         ) {
-            deleteSelectedDevicesConfirmationActions
+            deleteSelectedUsersConfirmationActions
         } message: {
             Text(L10n.deleteSelectionUsersWarning)
         }
@@ -88,7 +107,7 @@ struct ServerUsersView: View {
             isPresented: $isPresentingDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            deleteDeviceConfirmationActions
+            deleteUserConfirmationActions
         } message: {
             Text(L10n.deleteUserWarning)
         }
@@ -99,8 +118,10 @@ struct ServerUsersView: View {
         }
     }
 
+    // MARK: - User List View
+
     @ViewBuilder
-    private var emptyListView: some View {
+    private var userListView: some View {
         List {
             InsetGroupedListHeader(
                 L10n.users,
@@ -112,95 +133,31 @@ struct ServerUsersView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            listMenuView
-
-            HStack {
-                Spacer()
+            if viewModel.users.isEmpty {
                 Text(L10n.none)
-                Spacer()
             }
-            .listRowSeparator(.hidden)
-            .listRowInsets(.zero)
+
+            ForEach(viewModel.users, id: \.self) { user in
+                if let userID = user.id {
+                    ServerUsersRow(user: user) {
+                        if isEditing {
+                            selectedUsers.toggle(value: userID)
+                        } else {
+                            router.route(to: \.userDetails, user)
+                        }
+                    } onDelete: {
+                        selectedUsers.removeAll()
+                        selectedUsers.insert(userID)
+                        isPresentingDeleteConfirmation = true
+                    }
+                    .environment(\.isEditing, isEditing)
+                    .environment(\.isSelected, selectedUsers.contains(userID))
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
+                }
+            }
         }
         .listStyle(.plain)
-    }
-
-    // MARK: - User List View
-
-    @ViewBuilder
-    private var userListView: some View {
-        VStack {
-            List {
-                InsetGroupedListHeader(
-                    L10n.users,
-                    description: L10n.allUsersDescription
-                ) {
-                    UIApplication.shared.open(.jellyfinDocsUsers)
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .padding(.vertical, 24)
-
-                listMenuView
-
-                ForEach(viewModel.users, id: \.self) { user in
-                    if let userID = user.id {
-                        ServerUsersRow(user: user) {
-                            if isEditing {
-                                if selectedUsers.contains(userID) {
-                                    selectedUsers.remove(userID)
-                                } else {
-                                    selectedUsers.insert(userID)
-                                }
-                            } else {
-                                router.route(to: \.userDetails, user)
-                            }
-                        } onDelete: {
-                            selectedUsers.removeAll()
-                            selectedUsers.insert(userID)
-                            isPresentingDeleteConfirmation = true
-                        }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedUsers.contains(userID))
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.zero)
-                    }
-                }
-            }
-            .listStyle(.plain)
-
-            if isEditing {
-                deleteUsersButton
-                    .edgePadding([.bottom, .horizontal])
-            }
-        }
-    }
-
-    // MARK: - Button to Delete Devices
-
-    @ViewBuilder
-    private var deleteUsersButton: some View {
-        Button {
-            isPresentingDeleteSelectionConfirmation = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
-
-                if selectedUsers.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedUsers.isEmpty)
-        .buttonStyle(.plain)
     }
 
     // MARK: - Error View
@@ -209,52 +166,8 @@ struct ServerUsersView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.getUsers(includeHidden: includeHidden, includeDisabled: includeDisabled))
+                viewModel.send(.getUsers(includeHidden: isHiddenFilterActive, includeDisabled: isDisabledFilterActive))
             }
-    }
-
-    // MARK: - List Menu
-
-    private var listMenuView: some View {
-        HStack {
-            Menu {
-                Toggle(L10n.hidden, systemImage: "eye.slash", isOn: $includeHidden)
-                    .onChange(of: includeHidden) { newValue in
-                        viewModel.send(.getUsers(
-                            includeHidden: newValue,
-                            includeDisabled: includeDisabled
-                        ))
-                    }
-
-                Toggle(L10n.disabled, systemImage: "person.slash", isOn: $includeDisabled)
-                    .onChange(of: includeDisabled) { newValue in
-                        viewModel.send(.getUsers(
-                            includeHidden: includeHidden,
-                            includeDisabled: newValue
-                        ))
-                    }
-            } label: {
-                HStack {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                    L10n.filters.text
-                }
-                .font(.subheadline.bold())
-            }
-
-            Spacer()
-
-            Button {
-                router.route(to: \.userCreation, viewModel)
-            }
-            label: {
-                HStack {
-                    L10n.add.text
-                    Image(systemName: "plus")
-                }
-                .font(.subheadline.bold())
-            }
-        }
-        .foregroundStyle(Color.accentColor)
     }
 
     // MARK: - Navigation Bar Edit Content
@@ -263,15 +176,40 @@ struct ServerUsersView: View {
     private var navigationBarEditView: some View {
         if viewModel.backgroundStates.contains(.gettingUsers) {
             ProgressView()
-        } else {
+        }
+
+        if isEditing {
             Button(isEditing ? L10n.cancel : L10n.edit) {
                 isEditing.toggle()
+
                 UIDevice.impact(.light)
+
                 if !isEditing {
                     selectedUsers.removeAll()
                 }
             }
             .buttonStyle(.toolbarPill)
+            .foregroundStyle(accentColor)
+        } else {
+            Menu("Options", systemImage: "ellipsis.circle") {
+                Button("Add user", systemImage: "plus") {}
+
+                if viewModel.users.isNotEmpty {
+                    Button("Edit users", systemImage: "checkmark.circle") {
+                        isEditing = true
+                    }
+                }
+
+                Divider()
+
+                Section(L10n.filters) {
+                    Toggle(L10n.hidden, systemImage: "eye.slash", isOn: $isHiddenFilterActive)
+                    Toggle(L10n.disabled, systemImage: "person.slash", isOn: $isDisabledFilterActive)
+                }
+            }
+            .labelStyle(.iconOnly)
+            .backport
+            .fontWeight(.semibold)
         }
     }
 
@@ -279,6 +217,7 @@ struct ServerUsersView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
+
         let isAllSelected: Bool = selectedUsers.count == viewModel.users.count
 
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
@@ -290,12 +229,13 @@ struct ServerUsersView: View {
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
+        .foregroundStyle(accentColor)
     }
 
-    // MARK: - Delete Selected Devices Confirmation Actions
+    // MARK: - Delete Selected Users Confirmation Actions
 
     @ViewBuilder
-    private var deleteSelectedDevicesConfirmationActions: some View {
+    private var deleteSelectedUsersConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
@@ -305,18 +245,18 @@ struct ServerUsersView: View {
         }
     }
 
-    // MARK: - Delete Device Confirmation Actions
+    // MARK: - Delete User Confirmation Actions
 
     @ViewBuilder
-    private var deleteDeviceConfirmationActions: some View {
+    private var deleteUserConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-            if let deviceToDelete = selectedUsers.first, selectedUsers.count == 1 {
-                if deviceToDelete == viewModel.userSession.user.id {
+            if let userToDelete = selectedUsers.first, selectedUsers.count == 1 {
+                if userToDelete == viewModel.userSession.user.id {
                     isPresentingSelfDeleteError = true
                 } else {
-                    viewModel.send(.deleteUsers([deviceToDelete]))
+                    viewModel.send(.deleteUsers([userToDelete]))
                     selectedUsers.removeAll()
                 }
             }

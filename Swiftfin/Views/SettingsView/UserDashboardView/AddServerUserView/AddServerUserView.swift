@@ -88,11 +88,11 @@ struct AddServerUserView: View {
 
             Section {
                 if viewModel.backgroundStates.contains(.creatingUser) {
-                    ListRowButton(L10n.cancel) {
-                        viewModel.send(.cancel)
-                        focusedfield = 0
-                    }
-                    .foregroundStyle(.red, .red.opacity(0.2))
+//                    ListRowButton(L10n.cancel) {
+//                        viewModel.send(.cancel)
+//                        focusedfield = 0
+//                    }
+//                    .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
                     ListRowButton(L10n.save) {
                         focusedfield = nil

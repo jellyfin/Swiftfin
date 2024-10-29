@@ -25,7 +25,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
-        case cancel
         case getUsers(includeHidden: Bool = false, includeDisabled: Bool = false)
         case deleteUsers([String])
         case createUser(username: String, password: String)
@@ -69,32 +68,27 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     func respond(to action: Action) -> State {
         switch action {
-        case .cancel:
-            userTask?.cancel()
-
-            return .initial
-
-        case let .getUsers(includeHidden, includeDisabled):
+        case let .getUsers(isHidden, isDisabled):
             userTask?.cancel()
             backgroundStates.append(.gettingUsers)
 
-            userTask = Task { [weak self] in
+            userTask = Task {
                 do {
-                    try await self?.loadUsers(includeHidden: includeHidden, includeDisabled: includeDisabled)
+                    try await loadUsers(isHidden: isHidden, isDisabled: isDisabled)
+
                     await MainActor.run {
-                        self?.state = .content
+                        state = .content
                     }
                 } catch {
-                    guard let self else { return }
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
                     }
                 }
 
-                await MainActor.run {
-                    self?.backgroundStates.remove(.gettingUsers)
-                }
+//                await MainActor.run {
+//                    _ = self?.backgroundStates.remove(.gettingUsers)
+//                }
             }
             .asAnyCancellable()
 
@@ -107,6 +101,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             userTask = Task { [weak self] in
                 do {
                     try await self?.deleteUsers(ids: ids)
+
                     await MainActor.run {
                         self?.state = .content
                         self?.eventSubject.send(.deleted)
@@ -120,7 +115,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.deletingUsers)
+                    _ = self?.backgroundStates.remove(.deletingUsers)
                 }
             }
             .asAnyCancellable()
@@ -147,7 +142,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                 }
 
                 await MainActor.run {
-                    self?.backgroundStates.remove(.creatingUser)
+                    _ = self?.backgroundStates.remove(.creatingUser)
                 }
             }
             .asAnyCancellable()
@@ -158,22 +153,15 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     // MARK: - Load Users
 
-    private func loadUsers(includeHidden: Bool, includeDisabled: Bool) async throws {
-        let request = Paths.getUsers()
+    private func loadUsers(isHidden: Bool, isDisabled: Bool) async throws {
+        let request = Paths.getUsers(isHidden: isHidden ? true : nil, isDisabled: isDisabled ? true : nil)
         let response = try await userSession.client.send(request)
 
+        let newUsers = response.value
+            .sorted(using: \.name)
+
         await MainActor.run {
-            var filteredUsers = response.value.sorted(using: \.name)
-
-            if !includeHidden {
-                filteredUsers = filteredUsers.filter { $0.policy?.isHidden != true }
-            }
-
-            if !includeDisabled {
-                filteredUsers = filteredUsers.filter { $0.policy?.isDisabled != true }
-            }
-
-            self.users = filteredUsers
+            self.users = newUsers
         }
     }
 
