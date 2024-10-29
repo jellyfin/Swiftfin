@@ -52,12 +52,12 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
-        Timer.publish(every: 5, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in
-                self.sendReport()
-            }
-            .store(in: &cancellables)
+//        Timer.publish(every: 5, on: .main, in: .common)
+//            .autoconnect()
+//            .sink { _ in
+//                self.sendReport()
+//            }
+//            .store(in: &cancellables)
 
         manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
         manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)

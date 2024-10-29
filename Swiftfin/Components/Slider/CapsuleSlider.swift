@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-// TODO: gesture padding
-
 struct CapsuleSlider<V: BinaryFloatingPoint>: View {
 
     @Binding

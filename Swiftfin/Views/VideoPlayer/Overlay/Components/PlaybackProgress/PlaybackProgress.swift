@@ -15,6 +15,11 @@ import SwiftUI
 // TODO: capsule scale on editing
 // TODO: possible issue with runTimeSeconds == 0
 // TODO: live tv
+// TODO: scrubbing with preview view
+//       - move to overlay instead?
+//       - size
+//       - location
+//       - enabled
 
 extension VideoPlayer.Overlay {
 
@@ -39,6 +44,17 @@ extension VideoPlayer.Overlay {
 
         @State
         private var capsuleSliderSize = CGSize.zero
+        @State
+        private var sliderFrame: CGRect = .zero
+        
+        private var progress: Double {
+            scrubbedSeconds / manager.item.runTimeSeconds
+        }
+        
+        private var previewXOffset: CGFloat {
+            let p = sliderFrame.width * progress
+            return clamp(p, min: 100, max: sliderFrame.width - 100)
+        }
 
         @ViewBuilder
         private var capsuleSlider: some View {
@@ -58,6 +74,7 @@ extension VideoPlayer.Overlay {
                 .foregroundStyle(sliderColor)
                 .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
                 .frame(height: isScrubbing ? 20 : 10)
+                .trackingFrame($sliderFrame)
             }
             .animation(.linear(duration: 0.05), value: scrubbedSeconds)
             .frame(height: 10)
@@ -88,13 +105,21 @@ extension VideoPlayer.Overlay {
                             .frame(maxWidth: isScrubbing ? nil : max(0, capsuleSliderSize.width - 30))
                     }
             }
-            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
             .disabled(manager.state == .loadingItem)
             .onChange(of: scrubbedSeconds) { newValue in
                 if newValue == 0 || newValue == manager.item.runTimeSeconds {
                     UIDevice.impact(.light)
                 }
             }
+            .overlay(alignment: .top) {
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.white.opacity(0.5))
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .frame(width: 200)
+                    .position(x: previewXOffset, y: -75)
+                    .isVisible(isScrubbing)
+            }
+            .animation(.bouncy(duration: 0.4, extraBounce: 0.1), value: isScrubbing)
         }
     }
 }

@@ -49,11 +49,12 @@ struct TestPlaybackProgressView: View {
                 )
             )
             .environmentObject(VLCVideoPlayer.Proxy())
-            .environment(\.isScrubbing, .mock(false))
+            .environment(\.isScrubbing, $isScrubbing)
             .environment(\.isAspectFilled, .mock(false))
             .environment(\.isPresentingOverlay, .constant(true))
             .environment(\.playbackSpeed, .constant(1.0))
             .environment(\.selectedMediaPlayerSupplement, .mock(nil))
+            .environment(\.scrubbedSeconds, $scrubbedSeconds)
             .enableInjection()
     }
 }
