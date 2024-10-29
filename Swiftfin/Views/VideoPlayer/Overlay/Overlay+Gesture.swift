@@ -9,11 +9,18 @@
 import Defaults
 import SwiftUI
 
-struct PanGestureState {
+extension VideoPlayer.Overlay.GestureLayer {
     
-    var didStartWithOverlay: Bool = false
-    var startSeconds: TimeInterval = 0
-    var startPoint: UnitPoint = .zero
+    struct PanGestureState<Value: BinaryFloatingPoint> {
+        
+        var didStartWithOverlay: Bool = false
+        var startValue: Value = 0
+        var startPoint: UnitPoint = .zero
+        
+        static var zero: Self {
+            .init()
+        }
+    }
 }
 
 extension VideoPlayer.Overlay {
@@ -37,7 +44,9 @@ extension VideoPlayer.Overlay {
         private var manager: MediaPlayerManager
         
         @State
-        private var panGesturestate: PanGestureState = .init()
+        private var brightnessPanGestureState: PanGestureState<CGFloat> = .init()
+        @State
+        private var scrubPanGestureState: PanGestureState<TimeInterval> = .init()
 
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
@@ -92,10 +101,12 @@ extension VideoPlayer.Overlay.GestureLayer {
         let action = Defaults[.VideoPlayer.Gesture.panAction]
         
         switch action {
+        case .brightness:
+            brightnessAction(state: state, point: point)
         case .scrub:
-            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 1)
+            scrubAction(state: state, point: point, rate: 1)
         case .slowScrub:
-            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 0.1)
+            scrubAction(state: state, point: point, rate: 0.1)
         default: ()
         }
     }
@@ -103,25 +114,74 @@ extension VideoPlayer.Overlay.GestureLayer {
 
 extension VideoPlayer.Overlay.GestureLayer {
     
+    private func brightnessAction(
+        state: UIGestureRecognizer.State,
+        point: UnitPoint
+    ) {
+        if state == .began {
+            brightnessPanGestureState = .zero
+            brightnessPanGestureState.startValue = UIScreen.main.brightness
+            brightnessPanGestureState.startPoint = point
+        } else if state == .ended {
+            return
+        }
+        
+        let n = brightnessPanGestureState.startValue - (brightnessPanGestureState.startPoint.x - point.x)
+        let newBrightness = clamp(n, min: 0, max: 1.0)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            UIScreen.main.brightness = newBrightness
+        }
+    }
+    
     private func scrubAction(
         state: UIGestureRecognizer.State,
         point: UnitPoint,
-        velocity: CGFloat,
-        translation: CGFloat,
         rate: CGFloat
     ) {
         if state == .began {
-            panGesturestate = .init()
-            isScrubbing = true
+            scrubPanGestureState = .zero
+            scrubPanGestureState.startValue = scrubbedSeconds
+            scrubPanGestureState.startPoint = point
             
-            panGesturestate.startSeconds = scrubbedSeconds
-            panGesturestate.startPoint = point
+            isScrubbing = true
         } else if state == .ended {
             isScrubbing = false
             return
         }
         
-        let newSeconds = panGesturestate.startSeconds - (panGesturestate.startPoint.x - point.x) * rate * manager.item.runTimeSeconds
+        let newSeconds = scrubPanGestureState.startValue - (scrubPanGestureState.startPoint.x - point.x) * rate * manager.item.runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
 }
+
+//    private func brightnessAction(
+//        state: UIGestureRecognizer.State,
+//        point: CGFloat,
+//        velocity: CGFloat,
+//        translation: CGFloat
+//    ) {
+//        if state == .began {
+//            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+//            gestureStateHandler.beginningHorizontalPanUnit = point
+//            gestureStateHandler.beginningBrightnessValue = UIScreen.main.brightness
+//        } else if state == .ended {
+//            return
+//        }
+//
+//        let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
+//        let clampedBrightness = clamp(newBrightness, min: 0, max: 1.0)
+//        let flashPercentage = Int(clampedBrightness * 100)
+//
+//        if flashPercentage >= 67 {
+//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%", iconSize: .init(width: 30, height: 30))
+//        } else if flashPercentage >= 33 {
+//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%")
+//        } else {
+//            updateViewProxy.present(systemName: "sun.min.fill", title: "\(flashPercentage)%", iconSize: .init(width: 20, height: 20))
+//        }
+//
+//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
+//            UIScreen.main.brightness = clampedBrightness
+//        }
+//    }

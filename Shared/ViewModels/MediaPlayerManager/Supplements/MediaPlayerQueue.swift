@@ -30,10 +30,26 @@ import SwiftUI
 
 protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
     
+    var hasNextItem: Bool { get }
+    var hasPreviousItem: Bool { get }
+    
     var items: OrderedSet<BaseItemDto> { get set }
 }
 
-class EpisodeMediaPlayerQueue: MediaPlayerQueue {
+extension MediaPlayerQueue {
+    
+    var hasNextItem: Bool {
+        guard let currentItem = manager?.item else { return false }
+        return items.last != currentItem
+    }
+    
+    var hasPreviousItem: Bool {
+        guard let currentItem = manager?.item else { return false }
+        return items.first != currentItem
+    }
+}
+
+class EpisodeMediaPlayerQueue: ObservableObject, MediaPlayerQueue {
     
     weak var manager: MediaPlayerManager?
     
@@ -45,7 +61,6 @@ class EpisodeMediaPlayerQueue: MediaPlayerQueue {
     }
     
     func videoPlayerBody() -> some View {
-        Color.red
-            .opacity(0.5)
+        PosterHStack(type: .portrait, items: items)
     }
 }

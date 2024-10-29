@@ -101,8 +101,6 @@ struct VideoPlayer: View {
                         }
                     }
             }
-            
-            KeyCommandsLayer()
 
             Overlay()
                 .environment(\.isAspectFilled, $isAspectFilled)

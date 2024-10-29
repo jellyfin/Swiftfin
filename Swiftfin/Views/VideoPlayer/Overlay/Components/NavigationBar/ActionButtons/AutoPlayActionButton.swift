@@ -15,6 +15,9 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
         @Default(.VideoPlayer.autoPlayEnabled)
         private var isAutoPlayEnabled
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
 
         private var systemImage: String {
             if isAutoPlayEnabled {
@@ -33,6 +36,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
             }
             .transition(.scale.combined(with: .opacity).animation(.snappy))
             .id(isAutoPlayEnabled)
+            .disabled(manager.queue == nil)
         }
     }
 }

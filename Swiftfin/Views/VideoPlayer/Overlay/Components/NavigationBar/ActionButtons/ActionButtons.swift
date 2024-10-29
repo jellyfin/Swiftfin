@@ -19,6 +19,8 @@ extension VideoPlayer.Overlay.NavigationBar {
         private var menuActionButtons
 
         @EnvironmentObject
+        private var manager: MediaPlayerManager
+        @EnvironmentObject
         private var overlayTimer: PokeIntervalTimer
 
         @ViewBuilder
@@ -26,10 +28,19 @@ extension VideoPlayer.Overlay.NavigationBar {
             switch button {
             case .aspectFill: AspectFill()
             case .audio: Audio()
-            case .autoPlay: AutoPlay()
+            case .autoPlay:
+                if manager.queue != nil {
+                    AutoPlay()
+                }
             case .playbackSpeed: PlaybackRateMenu()
-            case .playNextItem: PlayNextItem()
-            case .playPreviousItem: PlayPreviousItem()
+            case .playNextItem:
+                if manager.queue != nil {
+                    PlayNextItem()
+                }
+            case .playPreviousItem:
+                if manager.queue != nil {
+                    PlayPreviousItem()
+                }
             case .subtitles: Subtitles()
             }
         }

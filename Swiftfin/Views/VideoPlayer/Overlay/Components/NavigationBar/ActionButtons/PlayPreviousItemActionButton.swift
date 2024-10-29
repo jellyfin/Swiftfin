@@ -22,8 +22,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
             ) {
                 // TODO: work
             }
-//            .disabled(videoPlayerManager.nextViewModel == nil)
-//            .foregroundColor(videoPlayerManager.nextViewModel == nil ? .gray : .white)
+            .disabled(!(manager.queue?.hasPreviousItem ?? false))
         }
     }
 }
