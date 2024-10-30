@@ -32,6 +32,10 @@ extension VideoPlayer.Overlay {
                 overlayTimer.poke()
             }
         }
+        
+        private var shouldShowJumpButtons: Bool {
+            showJumpButtons && !manager.item.isLiveStream
+        }
 
         @ViewBuilder
         private var playButton: some View {
@@ -99,14 +103,14 @@ extension VideoPlayer.Overlay {
 
         var body: some View {
             HStack(spacing: 0) {
-                if showJumpButtons {
+                if shouldShowJumpButtons {
                     jumpBackwardButton
                 }
 
                 playButton
                     .frame(minWidth: 100, maxWidth: 300)
 
-                if showJumpButtons {
+                if shouldShowJumpButtons {
                     jumpForwardButton
                 }
             }

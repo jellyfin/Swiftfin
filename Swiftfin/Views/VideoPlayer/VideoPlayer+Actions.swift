@@ -159,37 +159,6 @@ import SwiftUI
 //        audioOffset = clamp(newOffset, min: -30000, max: 30000)
 //    }
 //
-//    private func brightnessAction(
-//        state: UIGestureRecognizer.State,
-//        point: CGFloat,
-//        velocity: CGFloat,
-//        translation: CGFloat
-//    ) {
-//        if state == .began {
-//            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
-//            gestureStateHandler.beginningHorizontalPanUnit = point
-//            gestureStateHandler.beginningBrightnessValue = UIScreen.main.brightness
-//        } else if state == .ended {
-//            return
-//        }
-//
-//        let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
-//        let clampedBrightness = clamp(newBrightness, min: 0, max: 1.0)
-//        let flashPercentage = Int(clampedBrightness * 100)
-//
-//        if flashPercentage >= 67 {
-//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%", iconSize: .init(width: 30, height: 30))
-//        } else if flashPercentage >= 33 {
-//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%")
-//        } else {
-//            updateViewProxy.present(systemName: "sun.min.fill", title: "\(flashPercentage)%", iconSize: .init(width: 20, height: 20))
-//        }
-//
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-//            UIScreen.main.brightness = clampedBrightness
-//        }
-//    }
-//
 //    // TODO: decide on overlay behavior?
 //    private func jumpAction(
 //        unitPoint: UnitPoint,
@@ -232,33 +201,6 @@ import SwiftUI
 //        vlcUIProxy.setRate(.absolute(Float(clampedPlaybackSpeed)))
 //    }
 //
-//    private func scrubAction(
-//        state: UIGestureRecognizer.State,
-//        point: CGFloat,
-//        velocity: CGFloat,
-//        translation: CGFloat,
-//        rate: CGFloat
-//    ) {
-//        if state == .began {
-//            isScrubbing = true
-//
-//            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
-//            gestureStateHandler.beginningHorizontalPanUnit = point
-//            gestureStateHandler.beganPanWithOverlay = isPresentingOverlay
-//        } else if state == .ended {
-//            if !gestureStateHandler.beganPanWithOverlay {
-//                isPresentingOverlay = false
-//            }
-//
-//            isScrubbing = false
-//
-//            return
-//        }
-//
-//        let newProgress = gestureStateHandler.beginningPanProgress - (gestureStateHandler.beginningHorizontalPanUnit - point) * rate
-//        currentProgressHandler.scrubbedProgress = clamp(newProgress, min: 0, max: 1)
-//    }
-//
 //    private func subtitleOffsetAction(
 //        state: UIGestureRecognizer.State,
 //        point: CGFloat,
@@ -282,30 +224,6 @@ import SwiftUI
 //        updateViewProxy.present(systemName: "captions.bubble.fill", title: clampedOffset.millisecondLabel)
 //
 //        subtitleOffset = clampedOffset
-//    }
-//
-//    private func volumeAction(
-//        state: UIGestureRecognizer.State,
-//        point: CGFloat,
-//        velocity: CGFloat,
-//        translation: CGFloat
-//    ) {
-//        let volumeView = MPVolumeView()
-//        guard let slider = volumeView.subviews.first(where: { $0 is UISlider }) as? UISlider else { return }
-//
-//        if state == .began {
-//            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
-//            gestureStateHandler.beginningHorizontalPanUnit = point
-//            gestureStateHandler.beginningVolumeValue = AVAudioSession.sharedInstance().outputVolume
-//        } else if state == .ended {
-//            return
-//        }
-//
-//        let newVolume = gestureStateHandler.beginningVolumeValue - Float(gestureStateHandler.beginningHorizontalPanUnit - point)
-//
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-//            slider.value = newVolume
-//        }
 //    }
 // }
 

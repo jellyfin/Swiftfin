@@ -2748,7 +2748,6 @@
 				E1E657F62CCCAC62001D5B7B /* Overlay+ButtonStyle.swift */,
 				E1B33ED028EB860A0073B0FD /* PlaybackButtons.swift */,
 				E173D5842CCCC07B0099AE0C /* PlaybackProgress */,
-				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -3186,6 +3185,7 @@
 			children = (
 				E1CFE27F28FA606800B7D34C /* ChapterTrackMask.swift */,
 				E11245B328D97D5D00D8A977 /* PlaybackProgress.swift */,
+				E129428728F0831F00796AC6 /* SplitTimestamp.swift */,
 			);
 			path = PlaybackProgress;
 			sourceTree = "<group>";

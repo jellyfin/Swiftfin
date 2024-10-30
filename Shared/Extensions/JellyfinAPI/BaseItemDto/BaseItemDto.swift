@@ -39,6 +39,12 @@ extension BaseItemDto {
         guard let genres else { return nil }
         return genres.map(ItemGenre.init)
     }
+    
+    /// Differs from `isLive` to indicate an item
+    /// would be streaming from a live source.
+    var isLiveStream: Bool {
+        channelType == .tv
+    }
 
     // TODO: optional?
     var runTimeSeconds: TimeInterval {

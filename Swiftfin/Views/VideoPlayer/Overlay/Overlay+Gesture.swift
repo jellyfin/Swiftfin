@@ -7,6 +7,7 @@
 //
 
 import Defaults
+import MediaPlayer
 import SwiftUI
 
 extension VideoPlayer.Overlay.GestureLayer {
@@ -47,6 +48,8 @@ extension VideoPlayer.Overlay {
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .init()
         @State
         private var scrubPanGestureState: PanGestureState<TimeInterval> = .init()
+        @State
+        private var volumePanGestureState: PanGestureState<Float> = .init()
 
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
@@ -107,6 +110,8 @@ extension VideoPlayer.Overlay.GestureLayer {
             scrubAction(state: state, point: point, rate: 1)
         case .slowScrub:
             scrubAction(state: state, point: point, rate: 0.1)
+        case .volume:
+            volumeAction(state: state, point: point)
         default: ()
         }
     }
@@ -134,6 +139,25 @@ extension VideoPlayer.Overlay.GestureLayer {
         }
     }
     
+//    private func playbackRateAction(
+//        state: UIGestureRecognizer.State,
+//        point: UnitPoint
+//    ) {
+        //        if state == .began {
+        //            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
+        //            gestureStateHandler.beginningHorizontalPanUnit = point
+        //            gestureStateHandler.beginningPlaybackSpeed = playbackSpeed
+        //        } else if state == .ended {
+        //            return
+        //        }
+        //
+        //        let newPlaybackSpeed = round(
+        //            gestureStateHandler.beginningPlaybackSpeed - Double(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
+        //            toNearest: 0.25
+        //        )
+        //        let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
+//    }
+    
     private func scrubAction(
         state: UIGestureRecognizer.State,
         point: UnitPoint,
@@ -153,35 +177,27 @@ extension VideoPlayer.Overlay.GestureLayer {
         let newSeconds = scrubPanGestureState.startValue - (scrubPanGestureState.startPoint.x - point.x) * rate * manager.item.runTimeSeconds
         scrubbedSeconds = clamp(newSeconds, min: 0, max: manager.item.runTimeSeconds)
     }
+    
+    private func volumeAction(
+        state: UIGestureRecognizer.State,
+        point: UnitPoint
+    ) {
+        guard let slider = MPVolumeView()
+            .subviews
+            .first(where: { $0 is UISlider }) as? UISlider else { return }
+        
+        if state == .began {
+            volumePanGestureState = .zero
+            volumePanGestureState.startValue = AVAudioSession.sharedInstance().outputVolume
+            volumePanGestureState.startPoint = point
+        } else if state == .ended {
+            return
+        }
+        
+        let newVolume = volumePanGestureState.startValue - Float(volumePanGestureState.startPoint.x - point.x)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            slider.value = clamp(newVolume, min: 0, max: 1)
+        }
+    }
 }
-
-//    private func brightnessAction(
-//        state: UIGestureRecognizer.State,
-//        point: CGFloat,
-//        velocity: CGFloat,
-//        translation: CGFloat
-//    ) {
-//        if state == .began {
-//            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
-//            gestureStateHandler.beginningHorizontalPanUnit = point
-//            gestureStateHandler.beginningBrightnessValue = UIScreen.main.brightness
-//        } else if state == .ended {
-//            return
-//        }
-//
-//        let newBrightness = gestureStateHandler.beginningBrightnessValue - (gestureStateHandler.beginningHorizontalPanUnit - point)
-//        let clampedBrightness = clamp(newBrightness, min: 0, max: 1.0)
-//        let flashPercentage = Int(clampedBrightness * 100)
-//
-//        if flashPercentage >= 67 {
-//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%", iconSize: .init(width: 30, height: 30))
-//        } else if flashPercentage >= 33 {
-//            updateViewProxy.present(systemName: "sun.max.fill", title: "\(flashPercentage)%")
-//        } else {
-//            updateViewProxy.present(systemName: "sun.min.fill", title: "\(flashPercentage)%", iconSize: .init(width: 20, height: 20))
-//        }
-//
-//        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.01) {
-//            UIScreen.main.brightness = clampedBrightness
-//        }
-//    }

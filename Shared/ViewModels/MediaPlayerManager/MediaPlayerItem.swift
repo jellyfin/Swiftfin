@@ -128,11 +128,31 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         )
 
         let response = try await userSession.client.send(request)
-
-        guard let matchingMediaSource = response.value.mediaSources?
-            .first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id })
-        else {
-            throw JellyfinAPIError("Matching media source not in playback info")
+        
+        let matchingMediaSource: MediaSourceInfo? = {
+            
+            guard let mediaSources = response.value.mediaSources else { return nil }
+            
+            if let matchingTag = mediaSources.first(where: { $0.eTag == mediaSource.eTag }) {
+                return matchingTag
+            }
+            
+            for source in mediaSources {
+                if let openToken = source.openToken, let id = source.id {
+                    if openToken.contains(id) {
+                        return source
+                    }
+                }
+            }
+            
+            Container.shared.logService()
+                .log(level: .warning, "Unable to find matching media source, defaulting to first media source")
+            
+            return mediaSources.first
+        }()
+        
+        guard let matchingMediaSource else {
+            throw JellyfinAPIError("Unable to find media source for item")
         }
 
         guard let playSessionID = response.value.playSessionID else {

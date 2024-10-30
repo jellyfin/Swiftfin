@@ -26,13 +26,18 @@ extension VideoPlayer.Overlay.NavigationBar {
         @ViewBuilder
         private func view(for button: VideoPlayerActionButton) -> some View {
             switch button {
-            case .aspectFill: AspectFill()
-            case .audio: Audio()
+            case .aspectFill:
+                AspectFill()
+            case .audio:
+                if manager.playbackItem?.audioStreams.isNotEmpty ?? false {
+                    Audio()
+                }
             case .autoPlay:
                 if manager.queue != nil {
                     AutoPlay()
                 }
-            case .playbackSpeed: PlaybackRateMenu()
+            case .playbackSpeed:
+                PlaybackRateMenu()
             case .playNextItem:
                 if manager.queue != nil {
                     PlayNextItem()
@@ -41,7 +46,10 @@ extension VideoPlayer.Overlay.NavigationBar {
                 if manager.queue != nil {
                     PlayPreviousItem()
                 }
-            case .subtitles: Subtitles()
+            case .subtitles:
+                if manager.playbackItem?.subtitleStreams.isNotEmpty ?? false {
+                    Subtitles()
+                }
             }
         }
 

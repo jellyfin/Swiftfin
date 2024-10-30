@@ -6,22 +6,15 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import AVFoundation
 import Combine
-import Defaults
-import Factory
 import Foundation
 import JellyfinAPI
-import MediaPlayer
-import UIKit
 import VLCUI
 
 // TODO: proper error catching
-// TODO: better solution for previous/next/queuing
-// TODO: should view models handle progress reports instead, with a protocol
-//       for other types of media handling
 // TODO: set playback rate
 //       - what if proxy couldn't set rate?
+// TODO: buffering state
 
 protocol MediaPlayerListener {
 
@@ -32,8 +25,14 @@ typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
+    /// A status indicating the player's
+    /// request for media playback.
     enum PlaybackRequestStatus {
+        
+        /// The player requests more info to be playing
         case playing
+        
+        /// The player is paused
         case paused
     }
 
@@ -179,7 +178,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
     @MainActor
     func set(playbackRequestStatus: PlaybackRequestStatus) {
-        if playbackRequestStatus != self.playbackRequestStatus {
+        if self.playbackRequestStatus != playbackRequestStatus {
             self.playbackRequestStatus = playbackRequestStatus
         }
     }
