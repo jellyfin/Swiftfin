@@ -18,9 +18,9 @@ extension ItemView {
         var body: some View {
             HStack {
                 ActionButton(
-                    inactiveImage: "checkmark.circle",
-                    activeImage: "checkmark.circle.fill",
-                    activeColor: Color.jellyfinPurple
+                    icon: "checkmark.circle",
+                    selectedIcon: "checkmark.circle.fill",
+                    color: Color.jellyfinPurple
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
@@ -29,9 +29,9 @@ extension ItemView {
                 Spacer()
 
                 ActionButton(
-                    inactiveImage: "heart.circle",
-                    activeImage: "heart.circle.fill",
-                    activeColor: .pink
+                    icon: "heart.circle",
+                    selectedIcon: "heart.circle.fill",
+                    color: .pink
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }

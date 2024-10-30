@@ -21,12 +21,9 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
-        let inactiveImage: String
-        let activeImage: String
-        let inactiveColor: Color = .white
-        let activeColor: Color
-        let focusColor: Color = .black
-        let focusHighlight: Color = .white
+        let icon: String
+        let selectedIcon: String
+        let color: Color
         let onSelect: () -> Void
 
         // MARK: - Body
@@ -40,7 +37,7 @@ extension ItemView {
                 ZStack {
                     backgroundShape
                     foregroundIcon
-                        .padding(20)
+                        .padding(30)
                 }
                 .frame(width: 100, height: 100)
                 .scaleEffect(isFocused ? 1.1 : 1.0)
@@ -53,19 +50,19 @@ extension ItemView {
         // MARK: - Background Shape
 
         private var backgroundShape: some View {
-            Circle()
-                .foregroundStyle(isFocused ? focusHighlight : .clear)
+            RoundedRectangle(cornerRadius: 15)
+                .foregroundStyle(isFocused ? .primary : Color.clear)
                 .shadow(color: isFocused ? .black.opacity(0.2) : .clear, radius: isFocused ? 4 : 2, x: 0, y: 2)
         }
 
         // MARK: - Foreground Icon
 
         private var foregroundIcon: some View {
-            Image(systemName: isSelected ? activeImage : inactiveImage)
+            Image(systemName: isSelected ? selectedIcon : icon)
                 .resizable()
                 .foregroundStyle(
-                    isFocused ? focusColor : inactiveColor,
-                    isFocused ? (isSelected ? activeColor : focusColor) : (isSelected ? activeColor : inactiveColor)
+                    isFocused ? .black : .primary,
+                    isFocused ? (isSelected ? color : .black) : (isSelected ? color : .primary)
                 )
                 .font(.title3)
                 .shadow(color: isFocused || isSelected ? .clear : .black.opacity(0.3), radius: 2, x: 0, y: 2)
