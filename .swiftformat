@@ -14,7 +14,8 @@
 --wrapconditions after-first
 --funcattributes prev-line
 --typeattributes prev-line
---varattributes prev-line
+--computedvarattrs prev-line
+--storedvarattrs prev-line
 --trailingclosures
 --shortoptionals "always"
 --ifdef no-indent 
