@@ -1,6 +1,6 @@
 # version: 0.54.6
 
---swiftversion 5.5
+--swiftversion 5.6
 
 --tabwidth 4
 --xcodeindentation enabled
