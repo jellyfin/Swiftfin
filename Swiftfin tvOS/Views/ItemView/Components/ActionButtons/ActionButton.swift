@@ -64,8 +64,8 @@ extension ItemView {
             Image(systemName: isSelected ? activeImage : inactiveImage)
                 .resizable()
                 .foregroundStyle(
-                    isFocused ? (isSelected ? inactiveColor : focusColor) : inactiveColor,
-                    isFocused ? focusColor : (isSelected ? activeColor : inactiveColor)
+                    isFocused ? focusColor : inactiveColor,
+                    isFocused ? (isSelected ? activeColor : focusColor) : (isSelected ? activeColor : inactiveColor)
                 )
                 .font(.title3)
                 .shadow(color: isFocused || isSelected ? .clear : .black.opacity(0.3), radius: 2, x: 0, y: 2)
