@@ -109,12 +109,12 @@ struct TimeIntervalFormatStyle: FormatStyle {
 struct LastSeenFormatStyle: FormatStyle {
 
     func format(_ value: Date?) -> String {
-        guard let value = value else {
+        
+        guard let value else {
             return L10n.never
         }
 
-        let currentDate = Date()
-        let timeInterval = currentDate.timeIntervalSince(value)
+        let timeInterval = Date.now.timeIntervalSince(value)
         let twentyFourHours: TimeInterval = 24 * 60 * 60
 
         if timeInterval <= twentyFourHours {

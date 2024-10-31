@@ -24,7 +24,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
-        case getUsers(includeHidden: Bool = false, includeDisabled: Bool = false)
+        case getUsers(isHidden: Bool = false, isDisabled: Bool = false)
         case deleteUsers([String])
     }
 
@@ -45,18 +45,18 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     // MARK: Published Values
 
-    var events: AnyPublisher<Event, Never> {
-        eventSubject
-            .receive(on: RunLoop.main)
-            .eraseToAnyPublisher()
-    }
-
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     final var users: [UserDto] = []
     @Published
     final var state: State = .initial
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
+    }
 
     private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
@@ -84,7 +84,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                 }
 
                 await MainActor.run {
-                    self.backgroundStates.remove(.gettingUsers)
+                    _ = self.backgroundStates.remove(.gettingUsers)
                 }
             }
             .asAnyCancellable()
@@ -111,7 +111,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                 }
 
                 await MainActor.run {
-                    self.backgroundStates.remove(.deletingUsers)
+                    _ = self.backgroundStates.remove(.deletingUsers)
                 }
             }
             .asAnyCancellable()

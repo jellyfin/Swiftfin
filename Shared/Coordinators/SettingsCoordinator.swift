@@ -82,7 +82,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var userDetails = makeUserDetails
     @Route(.push)
     var userDevices = makeUserDevices
-    @Route(.push)
+    @Route(.modal)
     var addServerUser = makeAddServerUser
     @Route(.push)
     var apiKeys = makeAPIKeys
@@ -251,14 +251,15 @@ final class SettingsCoordinator: NavigationCoordinatable {
         ServerUserDetailsView(user: user)
     }
 
-    @ViewBuilder
-    func makeAddServerUser() -> some View {
-        AddServerUserView()
+    func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddServerUserView()
+        }
     }
 
     @ViewBuilder
-    func makeUserDevices(userID: String) -> some View {
-        DevicesView(userID: userID)
+    func makeUserDevices() -> some View {
+        DevicesView()
     }
 
     @ViewBuilder

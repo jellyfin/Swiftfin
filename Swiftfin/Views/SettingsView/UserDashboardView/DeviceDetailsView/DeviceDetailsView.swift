@@ -30,17 +30,21 @@ struct DeviceDetailsView: View {
     private var isPresentingSuccess: Bool = false
 
     @StateObject
-    private var viewModel: DevicesViewModel
+    private var viewModel: DeviceDetailViewModel
 
-    private let device: DeviceInfo
+    private var device: DeviceInfo {
+        viewModel.device
+    }
 
     // MARK: - Initializer
 
     init(device: DeviceInfo) {
-        self.device = device
+        _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
+
         // TODO: Enable with SDK Change
         self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-        _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
+
+//        _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
     }
 
     // MARK: - Body
@@ -79,13 +83,13 @@ struct DeviceDetailsView: View {
                 UIDevice.feedback(.error)
                 error = eventError
                 isPresentingError = true
-            case .success:
+            case .setCustomName:
                 UIDevice.feedback(.success)
                 isPresentingSuccess = true
             }
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.settingCustomName) {
+            if viewModel.backgroundStates.contains(.updating) {
                 ProgressView()
 
                 // TODO: Enable with SDK Change

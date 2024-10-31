@@ -13,21 +13,27 @@ import SwiftUI
 
 struct AddServerUserView: View {
 
+    private enum Field: Hashable {
+        case username
+        case password
+        case confirmPassword
+    }
+
     @Default(.accentColor)
     private var accentColor
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: BasicNavigationViewCoordinator.Router
 
     @FocusState
-    private var focusedfield: Int?
+    private var focusedfield: Field?
 
     @State
     private var username: String = ""
     @State
-    private var newPassword: String = ""
+    private var password: String = ""
     @State
-    private var confirmNewPassword: String = ""
+    private var confirmPassword: String = ""
 
     @State
     private var error: Error?
@@ -37,19 +43,23 @@ struct AddServerUserView: View {
     private var isPresentingSuccess: Bool = false
 
     @StateObject
-    var viewModel = AddServerUserViewModel()
+    private var viewModel = AddServerUserViewModel()
+
+    private var isValid: Bool {
+        username.isNotEmpty && password == confirmPassword
+    }
 
     var body: some View {
         List {
 
             Section {
                 TextField(L10n.username, text: $username) {
-                    focusedfield = 0
+                    focusedfield = .password
                 }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: 0)
-                .disabled(viewModel.backgroundStates.contains(.creatingUser))
+                .focused($focusedfield, equals: .username)
+                .disabled(viewModel.state == .creatingUser)
             } header: {
                 Text(L10n.username)
             } footer: {
@@ -60,49 +70,47 @@ struct AddServerUserView: View {
             }
 
             Section(L10n.password) {
-                UnmaskSecureField(L10n.password, text: $newPassword) {
-                    focusedfield = 1
+                UnmaskSecureField(L10n.password, text: $password) {
+                    focusedfield = .confirmPassword
                 }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: 1)
-                .disabled(viewModel.backgroundStates.contains(.creatingUser))
+                .focused($focusedfield, equals: .password)
+                .disabled(viewModel.state == .creatingUser)
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmPassword, text: $confirmNewPassword) {
-                    focusedfield = 2
-                }
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedfield, equals: 2)
-                .disabled(viewModel.backgroundStates.contains(.creatingUser))
+                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword) {}
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.none)
+                    .focused($focusedfield, equals: .confirmPassword)
+                    .disabled(viewModel.state == .creatingUser)
             } header: {
                 Text(L10n.confirmPassword)
             } footer: {
-                if newPassword != confirmNewPassword {
+                if password != confirmPassword {
                     Label(L10n.passwordsDoNotMatch, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
 
-            Section {
-                if !viewModel.backgroundStates.contains(.creatingUser) {
-                    ListRowButton(L10n.save) {
-                        focusedfield = nil
-                        viewModel.send(.createUser(username: username, password: newPassword))
-                    }
-                    .disabled(newPassword != confirmNewPassword || viewModel.backgroundStates.contains(.creatingUser))
-                    .foregroundStyle(accentColor.overlayColor, accentColor)
-                    .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
-                }
-            }
+//            ListRowButton(L10n.addUser) {
+//                focusedfield = nil
+//                viewModel.send(.createUser(username: username, password: newPassword))
+//            }
+//            .disabled(!isValid)
+//            .foregroundStyle(accentColor.overlayColor, accentColor)
+//            .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
         }
-        .interactiveDismissDisabled(viewModel.backgroundStates.contains(.creatingUser))
-        .navigationBarBackButtonHidden(viewModel.backgroundStates.contains(.creatingUser))
+        .animation(.linear(duration: 0.2), value: isValid)
+        .interactiveDismissDisabled(viewModel.state == .creatingUser)
         .navigationTitle(L10n.newUser)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
         .onFirstAppear {
-            focusedfield = 0
+            focusedfield = .username
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -111,15 +119,30 @@ struct AddServerUserView: View {
 
                 error = eventError
                 isPresentingError = true
-            case .created:
+            case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
 
-                isPresentingSuccess = true
+                // TODO: somehow route to new user details
+
+                router.dismissCoordinator()
             }
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.creatingUser) {
+            if viewModel.state == .creatingUser {
                 ProgressView()
+            }
+
+            if viewModel.state == .creatingUser {
+                Button(L10n.cancel) {
+                    viewModel.send(.cancel)
+                }
+                .buttonStyle(.toolbarPill(.red))
+            } else {
+                Button(L10n.save) {
+                    viewModel.send(.createUser(username: username, password: password))
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(!isValid)
             }
         }
         .alert(
@@ -128,20 +151,10 @@ struct AddServerUserView: View {
             presenting: error
         ) { _ in
             Button(L10n.dismiss, role: .cancel) {
-                focusedfield = 1
+                focusedfield = .username
             }
         } message: { error in
             Text(error.localizedDescription)
-        }
-        .alert(
-            L10n.success,
-            isPresented: $isPresentingSuccess
-        ) {
-            Button(L10n.dismiss, role: .cancel) {
-                router.pop()
-            }
-        } message: {
-            Text(L10n.userCreatedMessage)
         }
     }
 }

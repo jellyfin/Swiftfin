@@ -32,31 +32,9 @@ extension DevicesView {
 
         // MARK: - Observed Objects
 
-        @ObservedObject
-        private var box: BindingBox<DeviceInfo?>
-
-        // MARK: - Actions
-
-        private let onSelect: () -> Void
-        private let onDelete: () -> Void
-
-        // MARK: - Device Mapping
-
-        private var deviceInfo: DeviceInfo {
-            box.value ?? .init()
-        }
-
-        // MARK: - Initializer
-
-        init(
-            box: BindingBox<DeviceInfo?>,
-            onSelect: @escaping () -> Void,
-            onDelete: @escaping () -> Void
-        ) {
-            self.box = box
-            self.onSelect = onSelect
-            self.onDelete = onDelete
-        }
+        let device: DeviceInfo
+        let onSelect: () -> Void
+        let onDelete: () -> Void
 
         // MARK: - Label Styling
 
@@ -71,9 +49,9 @@ extension DevicesView {
         @ViewBuilder
         private var deviceImage: some View {
             ZStack {
-                deviceInfo.device.clientColor
+                device.type.clientColor
 
-                Image(deviceInfo.device.image)
+                Image(device.type.image)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 40)
@@ -95,24 +73,24 @@ extension DevicesView {
             HStack {
                 VStack(alignment: .leading) {
 
-                    Text(deviceInfo.name ?? L10n.unknown)
+                    Text(device.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     TextPairView(
                         leading: L10n.user,
-                        trailing: deviceInfo.lastUserName ?? L10n.unknown
+                        trailing: device.lastUserName ?? L10n.unknown
                     )
 
                     TextPairView(
                         leading: L10n.client,
-                        trailing: deviceInfo.appName ?? L10n.unknown
+                        trailing: device.appName ?? L10n.unknown
                     )
 
                     TextPairView(
                         L10n.lastSeen,
-                        value: Text(deviceInfo.dateLastActivity, format: .lastSeen)
+                        value: Text(device.dateLastActivity, format: .lastSeen)
                     )
                     .id(currentDate)
                     .monospacedDigit()

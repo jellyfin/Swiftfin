@@ -77,21 +77,18 @@ struct ServerUsersView: View {
         }
         .onChange(of: isDisabledFilterActive) { newValue in
             viewModel.send(.getUsers(
-                includeHidden: isHiddenFilterActive,
-                includeDisabled: newValue
+                isHidden: isHiddenFilterActive,
+                isDisabled: newValue
             ))
         }
         .onChange(of: isHiddenFilterActive) { newValue in
             viewModel.send(.getUsers(
-                includeHidden: newValue,
-                includeDisabled: isDisabledFilterActive
+                isHidden: newValue,
+                isDisabled: isDisabledFilterActive
             ))
         }
-        .onAppear {
-            viewModel.send(.getUsers(
-                includeHidden: isHiddenFilterActive,
-                includeDisabled: isDisabledFilterActive
-            ))
+        .onFirstAppear {
+            viewModel.send(.getUsers())
         }
         .confirmationDialog(
             L10n.deleteSelectedUsers,
@@ -166,7 +163,7 @@ struct ServerUsersView: View {
     private func errorView(with error: some Error) -> some View {
         ErrorView(error: error)
             .onRetry {
-                viewModel.send(.getUsers(includeHidden: isHiddenFilterActive, includeDisabled: isDisabledFilterActive))
+                viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
             }
     }
 

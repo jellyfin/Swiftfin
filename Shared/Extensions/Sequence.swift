@@ -24,6 +24,8 @@ extension Sequence {
         sorted(by: { $0[keyPath: keyPath] < $1[keyPath: keyPath] })
     }
 
+    // TODO: a flipped version of `sorted`
+
     /// Returns the elements of the sequence, sorted by comparing values
     /// at the given `KeyPath` of `Element`.
     ///

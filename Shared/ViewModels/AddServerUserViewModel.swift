@@ -17,28 +17,23 @@ final class AddServerUserViewModel: ViewModel, Eventful, Stateful, Identifiable 
     // MARK: Event
 
     enum Event {
-        case created
+        case createdNewUser(UserDto)
         case error(JellyfinAPIError)
     }
 
     // MARK: Actions
 
     enum Action: Equatable {
+        case cancel
         case createUser(username: String, password: String)
-    }
-
-    // MARK: - BackgroundState
-
-    enum BackgroundState: Hashable {
-        case creatingUser
     }
 
     // MARK: - State
 
     enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
         case initial
+        case creatingUser
+        case error(JellyfinAPIError)
     }
 
     // MARK: Published Values
@@ -50,8 +45,6 @@ final class AddServerUserViewModel: ViewModel, Eventful, Stateful, Identifiable 
     }
 
     @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
     final var state: State = .initial
 
     private var userTask: AnyCancellable?
@@ -61,40 +54,40 @@ final class AddServerUserViewModel: ViewModel, Eventful, Stateful, Identifiable 
 
     func respond(to action: Action) -> State {
         switch action {
+        case .cancel:
+            userTask?.cancel()
+            return .initial
         case let .createUser(username, password):
             userTask?.cancel()
-            backgroundStates.append(.creatingUser)
 
-            userTask = Task { [weak self] in
+            userTask = Task {
                 do {
-                    try await self?.createUser(username: username, password: password)
+                    let newUser = try await createUser(username: username, password: password)
+
                     await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.created)
+                        state = .initial
+                        eventSubject.send(.createdNewUser(newUser))
                     }
                 } catch {
-                    guard let self else { return }
                     await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
                     }
-                }
-
-                await MainActor.run {
-                    _ = self?.backgroundStates.remove(.creatingUser)
                 }
             }
             .asAnyCancellable()
 
-            return state
+            return .creatingUser
         }
     }
 
     // MARK: - Create User
 
-    private func createUser(username: String, password: String) async throws {
+    private func createUser(username: String, password: String) async throws -> UserDto {
         let parameters = CreateUserByName(name: username, password: password)
         let request = Paths.createUserByName(parameters)
         let response = try await userSession.client.send(request)
+
+        return response.value
     }
 }

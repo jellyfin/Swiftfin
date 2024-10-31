@@ -1193,11 +1193,6 @@
 // Used in the New User creation form
 "passwordsDoNotMatch" = "New passwords do not match";
 
-// User has been created - Alert Message
-// Message shown when a new user is successfully created
-// Used in the success alert for the New User creation form
-"userCreatedMessage" = "User has been created!";
-
 // New User - Title
 // Title for the new user creation view
 // Used as the navigation title when creating a new user

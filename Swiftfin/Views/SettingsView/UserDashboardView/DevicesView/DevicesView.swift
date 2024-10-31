@@ -12,8 +12,6 @@ import OrderedCollections
 import SwiftUI
 
 // TODO: Replace with CustomName when Available
-// TODO: Why doesn't this filter on the user from the Init?
-// TODO: Remove var UserBox when filter on Init is fixed.
 
 struct DevicesView: View {
 
@@ -32,30 +30,7 @@ struct DevicesView: View {
     private var isEditing: Bool = false
 
     @StateObject
-    private var viewModel: DevicesViewModel
-
-    // MARK: - Initializer
-
-    init(userID: String? = nil) {
-        _viewModel = StateObject(wrappedValue: DevicesViewModel(userID))
-    }
-
-    // MARK: - Device Box
-
-    private var deviceBox: OrderedDictionary<String, BindingBox<DeviceInfo?>> {
-        if let userID = viewModel.userID {
-            var filteredDevices = OrderedDictionary<String, BindingBox<DeviceInfo?>>()
-
-            for id in viewModel.devices.keys where viewModel.devices[id]?.value?.lastUserID == userID {
-                if let device = viewModel.devices[id] {
-                    filteredDevices[id] = device
-                }
-            }
-            return filteredDevices
-        } else {
-            return viewModel.devices
-        }
-    }
+    private var viewModel = DevicesViewModel()
 
     // MARK: - Body
 
@@ -63,11 +38,7 @@ struct DevicesView: View {
         ZStack {
             switch viewModel.state {
             case .content:
-                if deviceBox.isEmpty {
-                    emptyListView
-                } else {
-                    deviceListView
-                }
+                deviceListView
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {
@@ -88,7 +59,7 @@ struct DevicesView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                if deviceBox.isNotEmpty {
+                if viewModel.devices.isNotEmpty {
                     navigationBarEditView
                 }
             }
@@ -131,10 +102,10 @@ struct DevicesView: View {
         }
     }
 
-    // MARK: - No Device List View
+    // MARK: - Device List View
 
     @ViewBuilder
-    private var emptyListView: some View {
+    private var deviceListView: some View {
         List {
             InsetGroupedListHeader(
                 L10n.devices,
@@ -146,59 +117,43 @@ struct DevicesView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            HStack {
-                Spacer()
-                Text(L10n.none)
-                Spacer()
+            if viewModel.devices.isEmpty {
+                HStack {
+                    Spacer()
+                    Text(L10n.none)
+                    Spacer()
+                }
+                .listRowSeparator(.hidden)
+                .listRowInsets(.zero)
             }
-            .listRowSeparator(.hidden)
-            .listRowInsets(.zero)
+
+            ForEach(viewModel.devices, id: \.self) { device in
+                DeviceRow(device: device) {
+                    guard let id = device.id else { return }
+
+                    if isEditing {
+                        if selectedDevices.contains(id) {
+                            selectedDevices.remove(id)
+                        } else {
+                            selectedDevices.insert(id)
+                        }
+                    } else {
+                        router.route(to: \.deviceDetails, device)
+                    }
+                } onDelete: {
+                    guard let id = device.id else { return }
+
+                    selectedDevices.removeAll()
+                    selectedDevices.insert(id)
+                    isPresentingDeleteConfirmation = true
+                }
+                .environment(\.isEditing, isEditing)
+                .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
+                .listRowSeparator(.hidden)
+                .listRowInsets(.zero)
+            }
         }
         .listStyle(.plain)
-    }
-
-    // MARK: - Device List View
-
-    @ViewBuilder
-    private var deviceListView: some View {
-        VStack {
-            List {
-                InsetGroupedListHeader(
-                    L10n.devices,
-                    description: L10n.allDevicesDescription
-                ) {
-                    UIApplication.shared.open(.jellyfinDocsDevices)
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .padding(.vertical, 24)
-
-                ForEach(deviceBox.keys, id: \.self) { id in
-                    if let deviceBox = viewModel.devices[id] {
-                        DeviceRow(box: deviceBox) {
-                            if isEditing {
-                                if selectedDevices.contains(id) {
-                                    selectedDevices.remove(id)
-                                } else {
-                                    selectedDevices.insert(id)
-                                }
-                            } else if let selectedDevice = deviceBox.value {
-                                router.route(to: \.deviceDetails, selectedDevice)
-                            }
-                        } onDelete: {
-                            selectedDevices.removeAll()
-                            selectedDevices.insert(id)
-                            isPresentingDeleteConfirmation = true
-                        }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedDevices.contains(id))
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.zero)
-                    }
-                }
-            }
-            .listStyle(.plain)
-        }
     }
 
     // MARK: - Navigation Bar Edit Content
@@ -229,7 +184,7 @@ struct DevicesView: View {
             if isAllSelected {
                 selectedDevices = []
             } else {
-                selectedDevices = Set(viewModel.devices.keys)
+                selectedDevices = Set(viewModel.devices.compactMap(\.id))
             }
         }
         .buttonStyle(.toolbarPill)

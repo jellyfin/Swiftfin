@@ -1048,8 +1048,6 @@ internal enum L10n {
   internal static func userAlreadySignedIn(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "userAlreadySignedIn", p1, fallback: "User %s is already signed in")
   }
-  /// User has been created!
-  internal static let userCreatedMessage = L10n.tr("Localizable", "userCreatedMessage", fallback: "User has been created!")
   /// Username
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
   /// A username is required
