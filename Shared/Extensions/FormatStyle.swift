@@ -109,7 +109,7 @@ struct TimeIntervalFormatStyle: FormatStyle {
 struct LastSeenFormatStyle: FormatStyle {
 
     func format(_ value: Date?) -> String {
-        
+
         guard let value else {
             return L10n.never
         }
