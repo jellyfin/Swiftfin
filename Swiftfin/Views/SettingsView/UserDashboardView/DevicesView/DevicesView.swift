@@ -92,6 +92,16 @@ struct DevicesView: View {
                     navigationBarEditView
                 }
             }
+            ToolbarItem(placement: .bottomBar) {
+                if isEditing {
+                    Button(L10n.delete) {
+                        isPresentingDeleteSelectionConfirmation = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedDevices.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+            }
         }
         .onFirstAppear {
             viewModel.send(.getDevices)
@@ -188,39 +198,7 @@ struct DevicesView: View {
                 }
             }
             .listStyle(.plain)
-
-            if isEditing {
-                deleteDevicesButton
-                    .edgePadding([.bottom, .horizontal])
-            }
         }
-    }
-
-    // MARK: - Button to Delete Devices
-
-    @ViewBuilder
-    private var deleteDevicesButton: some View {
-        Button {
-            isPresentingDeleteSelectionConfirmation = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedDevices.isNotEmpty ? .primary : .secondary)
-
-                if selectedDevices.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedDevices.isEmpty)
-        .buttonStyle(.plain)
     }
 
     // MARK: - Navigation Bar Edit Content
