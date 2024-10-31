@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
+  /// Add User
+  internal static let addUser = L10n.tr("Localizable", "addUser", fallback: "Add User")
   /// Administration Dashboard Section
   internal static let administration = L10n.tr("Localizable", "administration", fallback: "Administration")
   /// Administrator
@@ -362,6 +364,8 @@ internal enum L10n {
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Select Server View - Edit an Existing Server
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
+  /// Edit Users
+  internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
   /// Enabled
@@ -606,6 +610,8 @@ internal enum L10n {
   internal static let onNow = L10n.tr("Localizable", "onNow", fallback: "On Now")
   /// Operating System
   internal static let operatingSystem = L10n.tr("Localizable", "operatingSystem", fallback: "Operating System")
+  /// Options
+  internal static let options = L10n.tr("Localizable", "options", fallback: "Options")
   /// Orange
   internal static let orange = L10n.tr("Localizable", "orange", fallback: "Orange")
   /// Order

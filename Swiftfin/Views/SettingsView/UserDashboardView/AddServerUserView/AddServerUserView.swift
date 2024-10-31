@@ -37,7 +37,7 @@ struct AddServerUserView: View {
     private var isPresentingSuccess: Bool = false
 
     @StateObject
-    var viewModel: ServerUsersViewModel
+    var viewModel = AddServerUserViewModel()
 
     var body: some View {
         List {
@@ -87,13 +87,7 @@ struct AddServerUserView: View {
             }
 
             Section {
-                if viewModel.backgroundStates.contains(.creatingUser) {
-//                    ListRowButton(L10n.cancel) {
-//                        viewModel.send(.cancel)
-//                        focusedfield = 0
-//                    }
-//                    .foregroundStyle(.red, .red.opacity(0.2))
-                } else {
+                if !viewModel.backgroundStates.contains(.creatingUser) {
                     ListRowButton(L10n.save) {
                         focusedfield = nil
                         viewModel.send(.createUser(username: username, password: newPassword))
@@ -121,8 +115,6 @@ struct AddServerUserView: View {
                 UIDevice.feedback(.success)
 
                 isPresentingSuccess = true
-            default:
-                break
             }
         }
         .topBarTrailing {

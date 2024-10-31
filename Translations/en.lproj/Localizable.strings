@@ -1202,3 +1202,18 @@
 // Title for the new user creation view
 // Used as the navigation title when creating a new user
 "newUser" = "New User";
+
+// Options - Menu
+// Menu title for additional actions
+// Used as the label for the options menu in the navigation bar
+"options" = "Options";
+
+// Add User - Button
+// Button title to add a new user
+// Used as the button label in the options menu
+"addUser" = "Add User";
+
+// Edit Users - Button
+// Button title to edit existing users
+// Used as the button label in the options menu when there are users to edit
+"editUsers" = "Edit Users";

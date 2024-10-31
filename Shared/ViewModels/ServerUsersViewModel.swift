@@ -18,7 +18,6 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     enum Event {
         case deleted
-        case created
         case error(JellyfinAPIError)
     }
 
@@ -27,14 +26,12 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     enum Action: Equatable {
         case getUsers(includeHidden: Bool = false, includeDisabled: Bool = false)
         case deleteUsers([String])
-        case createUser(username: String, password: String)
     }
 
     // MARK: - BackgroundState
 
     enum BackgroundState: Hashable {
         case gettingUsers
-        case creatingUser
         case deletingUsers
     }
 
@@ -86,9 +83,9 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                     }
                 }
 
-//                await MainActor.run {
-//                    _ = self?.backgroundStates.remove(.gettingUsers)
-//                }
+                await MainActor.run {
+                    self.backgroundStates.remove(.gettingUsers)
+                }
             }
             .asAnyCancellable()
 
@@ -98,16 +95,15 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             userTask?.cancel()
             backgroundStates.append(.deletingUsers)
 
-            userTask = Task { [weak self] in
+            userTask = Task {
                 do {
-                    try await self?.deleteUsers(ids: ids)
+                    try await self.deleteUsers(ids: ids)
 
                     await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.deleted)
+                        self.state = .content
+                        self.eventSubject.send(.deleted)
                     }
                 } catch {
-                    guard let self else { return }
                     await MainActor.run {
                         self.state = .error(.init(error.localizedDescription))
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
@@ -115,34 +111,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
                 }
 
                 await MainActor.run {
-                    _ = self?.backgroundStates.remove(.deletingUsers)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
-        case let .createUser(username, password):
-            userTask?.cancel()
-            backgroundStates.append(.creatingUser)
-
-            userTask = Task { [weak self] in
-                do {
-                    try await self?.createUser(username: username, password: password)
-                    await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.created)
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        self.state = .error(.init(error.localizedDescription))
-                        self.eventSubject.send(.error(.init(error.localizedDescription)))
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self?.backgroundStates.remove(.creatingUser)
+                    self.backgroundStates.remove(.deletingUsers)
                 }
             }
             .asAnyCancellable()
@@ -197,17 +166,5 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private func deleteUser(id: String) async throws {
         let request = Paths.deleteUser(userID: id)
         try await userSession.client.send(request)
-    }
-
-    // MARK: - Create User
-
-    private func createUser(username: String, password: String) async throws {
-        let parameters = CreateUserByName(name: username, password: password)
-        let request = Paths.createUserByName(parameters)
-        let response = try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.users.append(response.value)
-        }
     }
 }

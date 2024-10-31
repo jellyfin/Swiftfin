@@ -87,7 +87,7 @@ struct ServerUsersView: View {
                 includeDisabled: isDisabledFilterActive
             ))
         }
-        .onFirstAppear {
+        .onAppear {
             viewModel.send(.getUsers(
                 includeHidden: isHiddenFilterActive,
                 includeDisabled: isDisabledFilterActive
@@ -191,11 +191,13 @@ struct ServerUsersView: View {
             .buttonStyle(.toolbarPill)
             .foregroundStyle(accentColor)
         } else {
-            Menu("Options", systemImage: "ellipsis.circle") {
-                Button("Add user", systemImage: "plus") {}
+            Menu(L10n.options, systemImage: "ellipsis.circle") {
+                Button(L10n.addUser, systemImage: "plus") {
+                    router.route(to: \.addServerUser)
+                }
 
                 if viewModel.users.isNotEmpty {
-                    Button("Edit users", systemImage: "checkmark.circle") {
+                    Button(L10n.editUsers, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
                 }

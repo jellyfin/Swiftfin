@@ -252,8 +252,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeAddServerUser(viewModel: ServerUsersViewModel) -> some View {
-        AddServerUserView(viewModel: viewModel)
+    func makeAddServerUser() -> some View {
+        AddServerUserView()
     }
 
     @ViewBuilder
