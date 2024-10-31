@@ -69,9 +69,13 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
         let configuration = VLCVideoPlayer.Configuration(url: url)
         configuration.autoPlay = true
-        configuration.startTime = .seconds(startSeconds)
-        configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
-        configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
+        
+        if !baseItem.isLiveStream {
+            configuration.startTime = .seconds(startSeconds)
+            configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
+            configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
+        }
+        
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
 
@@ -138,10 +142,10 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
             }
             
             for source in mediaSources {
-                if let openToken = source.openToken, let id = source.id {
-                    if openToken.contains(id) {
-                        return source
-                    }
+                if let openToken = source.openToken,
+                    let id = source.id,
+                    openToken.contains(id) {
+                    return source
                 }
             }
             

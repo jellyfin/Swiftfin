@@ -98,7 +98,7 @@ extension BaseItemDto: Poster {
 
     func squareImageSources(maxWidth: CGFloat?) -> [ImageSource] {
         switch type {
-        case .audio, .musicAlbum:
+        case .audio, .channel, .tvChannel, .liveTvChannel, .musicAlbum:
             [imageSource(.primary, maxWidth: maxWidth)]
         default:
             []
