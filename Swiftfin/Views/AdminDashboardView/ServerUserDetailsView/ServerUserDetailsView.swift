@@ -13,7 +13,7 @@ import SwiftUI
 struct ServerUserDetailsView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @CurrentDate
     private var currentDate: Date
@@ -31,7 +31,7 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-            UserDashboardView.UserSection(
+            AdminDashboardView.UserSection(
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
             )

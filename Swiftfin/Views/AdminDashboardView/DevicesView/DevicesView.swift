@@ -16,7 +16,7 @@ import SwiftUI
 struct DevicesView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
