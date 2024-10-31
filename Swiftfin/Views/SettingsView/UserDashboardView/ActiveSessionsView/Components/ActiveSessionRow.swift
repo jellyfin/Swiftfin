@@ -112,7 +112,7 @@ extension ActiveSessionsView {
                 if let lastActivityDate = session.lastActivityDate {
                     TextPairView(
                         L10n.lastSeen,
-                        value: Text(lastActivityDate, format: .relative(presentation: .numeric, unitsStyle: .narrow))
+                        value: Text(lastActivityDate, format: .lastSeen)
                     )
                     .id(currentDate)
                     .monospacedDigit()

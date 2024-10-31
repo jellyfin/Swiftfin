@@ -920,6 +920,41 @@
 // Used to select all items in selection mode
 "selectAll" = "Select All";
 
+// Users - Section
+// Admin Dashboard Section with all Server Users
+// Used as a header and a button for All Users
+"users" = "Users";
+
+// Active - Label
+// Indication whether an item is active or inactive
+// Used as a User describer and a button for All Users
+"active" = "Active";
+
+// All Users Description - Section Description
+// Description for the all users section in the Admin Dashboard
+// Provides information about the users on the server
+"allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
+
+// Role - Label
+// Represents the role of the user
+// Shown in user information
+"role" = "Role";
+
+// Administrator - Title
+// Label for administrator role
+// Indicates the user is an admin
+"administrator" = "Administrator";
+
+// User - Title
+// Label for non-administrator users
+// Indicates the user is a standard user
+"user" = "User";
+
+// Activity - Label
+// Represents user activity status
+// Shown in user information
+"activity" = "Activity";
+
 // Logs Description - View
 // Access the Jellyfin server logs for troubleshooting and monitoring purposes
 // Describes the logs view in settings
@@ -1098,9 +1133,83 @@
 // Appears in the views with eventful to indicate a task did not fail
 "success" = "Success";
 
+
+// Trigger Already Exists - 
+// Message to indicate that a Task Trigger already exists
+// Appears in AddServerTask when there is an existing task with the same configuration
 "triggerAlreadyExists" = "Trigger already exists";
 
 // Add API Key - Button
 // Creates an API Key if there are no keys available
 // Appears in place of the API Key list if there are no API Keys
 "addAPIKey" = "Add API key";
+
+// Hidden - Filter
+// Users with a policy of isHidden == True
+// Appears on the ServerUsersView to filter Hidden vs Non-Hidden Users
+"hidden" = "Hidden";
+
+// Delete Selected Users Warning - Warning Message
+// Warning message displayed when deleting all users
+// Informs the user about the consequences of deleting all users
+"deleteSelectionUsersWarning" = "Are you sure you wish to delete all selected users?";
+
+// Delete User Warning - Warning Message
+// Warning message displayed when deleting a single user
+// Informs the user about the consequences of deleting the user
+"deleteUserWarning" = "Are you sure you wish to delete this user?";
+
+// Delete User - Action
+// Message for deleting a single device in the all users section
+// Used in the confirmation dialog to delete a single user
+"deleteUser" = "Delete User";
+
+// Delete User Self-Deletion - Error Message
+// Error message when attempting to delete the current session's user
+// Used to inform the user that they cannot delete their own user
+"deleteUserSelfDeletion" = "Cannot delete a user from the same user (%1$@).";
+
+// Delete Selected Users - Button
+// Button label for deleting all selected users
+// Used in the all devices section to delete all selected users
+"deleteSelectedUsers" = "Delete Selected Users";
+
+// Delete User Failed - Error Title
+// Title for the alert when users deletion fails
+// Displayed when the system fails to delete a user
+"deleteUserFailed" = "Failed to Delete User";
+
+// Confirm Password - TextField
+// Placeholder and label for confirming the password
+// Used in the New User creation form
+"confirmPassword" = "Confirm Password";
+
+// A username is required - Footer
+// Validation message shown when the username field is empty
+// Used in the New User creation form
+"usernameRequired" = "A username is required";
+
+// New passwords do not match - Footer
+// Validation message shown when the new password and confirm password fields do not match
+// Used in the New User creation form
+"passwordsDoNotMatch" = "New passwords do not match";
+
+// New User - Title
+// Title for the new user creation view
+// Used as the navigation title when creating a new user
+"newUser" = "New User";
+
+// Options - Menu
+// Menu title for additional actions
+// Used as the label for the options menu in the navigation bar
+"options" = "Options";
+
+// Add User - Button
+// Button title to add a new user
+// Used as the button label in the options menu
+"addUser" = "Add User";
+
+// Edit Users - Button
+// Button title to edit existing users
+// Used as the button label in the options menu when there are users to edit
+"editUsers" = "Edit Users";

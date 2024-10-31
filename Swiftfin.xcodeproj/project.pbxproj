@@ -85,6 +85,8 @@
 		4E9A24ED2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */; };
 		4EA09DE12CC4E4F100CB27E4 /* APIKeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA09DE02CC4E4F000CB27E4 /* APIKeysView.swift */; };
 		4EA09DE42CC4E85C00CB27E4 /* APIKeysRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */; };
+		4EA397462CD31CC000904C25 /* AddServerUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */; };
+		4EA397472CD31CC000904C25 /* AddServerUserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */; };
 		4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1404B2C8E45B1008691F3 /* StreamSection.swift */; };
 		4EB1A8CA2C9A766200F43898 /* ActiveSessionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */; };
 		4EB1A8CC2C9B1BA200F43898 /* DestructiveServerTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */; };
@@ -92,6 +94,7 @@
 		4EB4ECE32CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
 		4EB4ECE42CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
 		4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */; };
+		4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE06472C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
 		4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */; };
@@ -103,6 +106,12 @@
 		4EC1C8532C7FDFA300E2879E /* PlaybackDeviceProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8512C7FDFA300E2879E /* PlaybackDeviceProfile.swift */; };
 		4EC1C8692C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */; };
 		4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */; };
+		4EC2B19B2CC96E7400D866BE /* ServerUsersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B19A2CC96E7000D866BE /* ServerUsersView.swift */; };
+		4EC2B19E2CC96EAB00D866BE /* ServerUsersRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B19D2CC96EA300D866BE /* ServerUsersRow.swift */; };
+		4EC2B1A22CC96F6600D866BE /* ServerUsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A12CC96F6000D866BE /* ServerUsersViewModel.swift */; };
+		4EC2B1A32CC96F6600D866BE /* ServerUsersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A12CC96F6000D866BE /* ServerUsersViewModel.swift */; };
+		4EC2B1A52CC96FA400D866BE /* ServerUserAdminViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A42CC96F9F00D866BE /* ServerUserAdminViewModel.swift */; };
+		4EC2B1A92CC97C0700D866BE /* ServerUserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */; };
 		4EC50D612C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
 		4EC50D622C934B3A00FC3D0E /* ScheduledTasksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */; };
 		4EC6C16B2C92999800FC904B /* TranscodeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC6C16A2C92999800FC904B /* TranscodeSection.swift */; };
@@ -279,6 +288,8 @@
 		E1002B652793CEE800E47059 /* ChapterInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1002B632793CEE700E47059 /* ChapterInfo.swift */; };
 		E1002B682793CFBA00E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B672793CFBA00E47059 /* Algorithms */; };
 		E1002B6B2793E36600E47059 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = E1002B6A2793E36600E47059 /* Algorithms */; };
+		E101ECD52CD40489001EA89E /* DeviceDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E101ECD42CD40489001EA89E /* DeviceDetailViewModel.swift */; };
+		E101ECD62CD40489001EA89E /* DeviceDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E101ECD42CD40489001EA89E /* DeviceDetailViewModel.swift */; };
 		E102312C2BCF8A08009D71FC /* iOSLiveTVCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231292BCF8A08009D71FC /* iOSLiveTVCoordinator.swift */; };
 		E102312F2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E102312A2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift */; };
 		E10231392BCF8A3C009D71FC /* ProgramButtonContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10231302BCF8A3C009D71FC /* ProgramButtonContent.swift */; };
@@ -1115,12 +1126,14 @@
 		4E9A24EC2C82BAFB0023DA83 /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4EA09DE02CC4E4F000CB27E4 /* APIKeysView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysView.swift; sourceTree = "<group>"; };
 		4EA09DE32CC4E85700CB27E4 /* APIKeysRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysRow.swift; sourceTree = "<group>"; };
+		4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserViewModel.swift; sourceTree = "<group>"; };
 		4EB1404B2C8E45B1008691F3 /* StreamSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamSection.swift; sourceTree = "<group>"; };
 		4EB1A8C92C9A765800F43898 /* ActiveSessionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionsView.swift; sourceTree = "<group>"; };
 		4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestructiveServerTask.swift; sourceTree = "<group>"; };
 		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
 		4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
 		4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronAlertButton.swift; sourceTree = "<group>"; };
+		4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserView.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
 		4EBE064C2C7EB6D3004A6C03 /* VideoPlayerType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayerType.swift; sourceTree = "<group>"; };
 		4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceProfile.swift; sourceTree = "<group>"; };
@@ -1128,6 +1141,11 @@
 		4EC1C8572C80332500E2879E /* EditCustomDeviceProfileCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileCoordinator.swift; sourceTree = "<group>"; };
 		4EC1C8682C808FBB00E2879E /* CustomDeviceProfileSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileSettingsView.swift; sourceTree = "<group>"; };
 		4EC1C86C2C80903A00E2879E /* CustomProfileButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomProfileButton.swift; sourceTree = "<group>"; };
+		4EC2B19A2CC96E7000D866BE /* ServerUsersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUsersView.swift; sourceTree = "<group>"; };
+		4EC2B19D2CC96EA300D866BE /* ServerUsersRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUsersRow.swift; sourceTree = "<group>"; };
+		4EC2B1A12CC96F6000D866BE /* ServerUsersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUsersViewModel.swift; sourceTree = "<group>"; };
+		4EC2B1A42CC96F9F00D866BE /* ServerUserAdminViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserAdminViewModel.swift; sourceTree = "<group>"; };
+		4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserDetailsView.swift; sourceTree = "<group>"; };
 		4EC50D602C934B3A00FC3D0E /* ScheduledTasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledTasksViewModel.swift; sourceTree = "<group>"; };
 		4EC6C16A2C92999800FC904B /* TranscodeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeSection.swift; sourceTree = "<group>"; };
 		4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeReason.swift; sourceTree = "<group>"; };
@@ -1281,6 +1299,7 @@
 		C4E508172703E8190045C9AB /* MediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaView.swift; sourceTree = "<group>"; };
 		DFB7C3DE2C7AA42700CE7CDC /* UserSignInState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInState.swift; sourceTree = "<group>"; };
 		E1002B632793CEE700E47059 /* ChapterInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterInfo.swift; sourceTree = "<group>"; };
+		E101ECD42CD40489001EA89E /* DeviceDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailViewModel.swift; sourceTree = "<group>"; };
 		E10231292BCF8A08009D71FC /* iOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
 		E102312A2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tvOSLiveTVCoordinator.swift; sourceTree = "<group>"; };
 		E10231302BCF8A3C009D71FC /* ProgramButtonContent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgramButtonContent.swift; sourceTree = "<group>"; };
@@ -1994,6 +2013,7 @@
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
 				4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */,
+				4EB7C8D32CCED318000CC011 /* AddServerUserView */,
 				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
 				E1DE64902CC6F06C00E423B6 /* Components */,
 				4E10C80F2CC030B20012CC9F /* DeviceDetailsView */,
@@ -2001,6 +2021,8 @@
 				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
 				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
 				4E35CE622CBED3FF00DBD886 /* ServerLogsView */,
+				4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */,
+				4EC2B1992CC96E5E00D866BE /* ServerUsersView */,
 				4E63B9F42C8A5BEF00C25378 /* UserDashboardView.swift */,
 			);
 			path = UserDashboardView;
@@ -2158,6 +2180,14 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		4EB7C8D32CCED318000CC011 /* AddServerUserView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */,
+			);
+			path = AddServerUserView;
+			sourceTree = "<group>";
+		};
 		4EC1C86A2C80900B00E2879E /* CustomDeviceProfileSettingsView */ = {
 			isa = PBXGroup;
 			children = (
@@ -2174,6 +2204,31 @@
 				4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4EC2B1992CC96E5E00D866BE /* ServerUsersView */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B19C2CC96E9400D866BE /* Components */,
+				4EC2B19A2CC96E7000D866BE /* ServerUsersView.swift */,
+			);
+			path = ServerUsersView;
+			sourceTree = "<group>";
+		};
+		4EC2B19C2CC96E9400D866BE /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B19D2CC96EA300D866BE /* ServerUsersRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */,
+			);
+			path = ServerUserDetailsView;
 			sourceTree = "<group>";
 		};
 		4EED87472CBF824B002354D2 /* Components */ = {
@@ -2229,9 +2284,11 @@
 			isa = PBXGroup;
 			children = (
 				4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */,
+				4EA397452CD31CB900904C25 /* AddServerUserViewModel.swift */,
 				4E36395A2CC4DF0900110EBC /* APIKeysViewModel.swift */,
 				E10231462BCF8A6D009D71FC /* ChannelLibraryViewModel.swift */,
 				625CB5762678C34300530A6E /* ConnectToServerViewModel.swift */,
+				E101ECD42CD40489001EA89E /* DeviceDetailViewModel.swift */,
 				4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */,
 				E17AC96E2954EE4B003D2BC2 /* DownloadListViewModel.swift */,
 				E113133928BEB71D00930F75 /* FilterViewModel.swift */,
@@ -2250,6 +2307,8 @@
 				E173DA5326D050F500CC4EB7 /* ServerConnectionViewModel.swift */,
 				E1ED7FE12CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift */,
 				E1ED7FD72CA8AF7400ACB6E3 /* ServerTaskObserver.swift */,
+				4EC2B1A42CC96F9F00D866BE /* ServerUserAdminViewModel.swift */,
+				4EC2B1A12CC96F6000D866BE /* ServerUsersViewModel.swift */,
 				5321753A2671BCFC005491E6 /* SettingsViewModel.swift */,
 				E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */,
 				E14EA1682BF7330A00DE757A /* UserProfileImageViewModel.swift */,
@@ -4724,6 +4783,7 @@
 				E1575E66293E77B5001665B1 /* Poster.swift in Sources */,
 				E18E021F2887492B0022598C /* SystemImageContentView.swift in Sources */,
 				E19D41B42BF2C0020082B8B2 /* StoredValues+Temp.swift in Sources */,
+				4EC2B1A32CC96F6600D866BE /* ServerUsersViewModel.swift in Sources */,
 				4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */,
 				E11BDF7B2B85529D0045C54A /* SupportedCaseIterable.swift in Sources */,
 				4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */,
@@ -4735,6 +4795,8 @@
 				E1549678296CB22B00C4EF88 /* InlineEnumToggle.swift in Sources */,
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */,
+				E101ECD62CD40489001EA89E /* DeviceDetailViewModel.swift in Sources */,
+				4EA397462CD31CC000904C25 /* AddServerUserViewModel.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
 				4E2AC4CC2C6C494E00DD600D /* VideoCodec.swift in Sources */,
 				4EF18B262CB9934C00343666 /* LibraryRow.swift in Sources */,
@@ -4889,6 +4951,7 @@
 				E1CB75732C80E71800217C76 /* DirectPlayProfile.swift in Sources */,
 				E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
+				4EC2B1A22CC96F6600D866BE /* ServerUsersViewModel.swift in Sources */,
 				E1B90C6A2BBE68D5007027C8 /* OffsetScrollView.swift in Sources */,
 				E18E01DB288747230022598C /* iPadOSEpisodeItemView.swift in Sources */,
 				E13DD3F227179378009D4DAF /* UserSignInCoordinator.swift in Sources */,
@@ -4918,6 +4981,7 @@
 				4EB1404C2C8E45B1008691F3 /* StreamSection.swift in Sources */,
 				E1A3E4D12BB7F5BF005C59F8 /* ErrorCard.swift in Sources */,
 				E1AEFA372BE317E200CFAFD8 /* ListRowButton.swift in Sources */,
+				4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */,
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */,
@@ -4969,6 +5033,7 @@
 				C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */,
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
+				4EC2B1A52CC96FA400D866BE /* ServerUserAdminViewModel.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,
@@ -5090,6 +5155,7 @@
 				E13F05F128BC9016003499D2 /* LibraryRow.swift in Sources */,
 				4E36395C2CC4DF0E00110EBC /* APIKeysViewModel.swift in Sources */,
 				E168BD10289A4162001A6922 /* HomeView.swift in Sources */,
+				4EC2B1A92CC97C0700D866BE /* ServerUserDetailsView.swift in Sources */,
 				E11562952C818CB2001D5DE4 /* BindingBox.swift in Sources */,
 				4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */,
 				E1BE1CEA2BDB5AFE008176A9 /* UserGridButton.swift in Sources */,
@@ -5136,6 +5202,7 @@
 				4EE141692C8BABDF0045B661 /* ActiveSessionProgressSection.swift in Sources */,
 				E1A1528528FD191A00600579 /* TextPair.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift in Sources */,
+				4EA397472CD31CC000904C25 /* AddServerUserViewModel.swift in Sources */,
 				4EED874A2CBF824B002354D2 /* DeviceRow.swift in Sources */,
 				4EED874B2CBF824B002354D2 /* DevicesView.swift in Sources */,
 				E1DA656F28E78C9900592A73 /* EpisodeSelector.swift in Sources */,
@@ -5144,6 +5211,7 @@
 				E10231442BCF8A51009D71FC /* ChannelProgram.swift in Sources */,
 				E1937A3B288E54AD00CB80AA /* BaseItemDto+Images.swift in Sources */,
 				E1401CA5293813F400E8B599 /* InvertedDarkAppIcon.swift in Sources */,
+				4EC2B19E2CC96EAB00D866BE /* ServerUsersRow.swift in Sources */,
 				E1C8CE7C28FF015000DF5D7B /* TrailingTimestampType.swift in Sources */,
 				C46DD8E22A8DC7FB0046A504 /* LiveMainOverlay.swift in Sources */,
 				4E17498E2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */,
@@ -5178,6 +5246,7 @@
 				E1921B7628E63306003A5238 /* GestureView.swift in Sources */,
 				E18A8E8028D6083700333B9A /* MediaSourceInfo+ItemVideoPlayerViewModel.swift in Sources */,
 				E18E01DC288747230022598C /* iPadOSCinematicScrollView.swift in Sources */,
+				E101ECD52CD40489001EA89E /* DeviceDetailViewModel.swift in Sources */,
 				E18E01E2288747230022598C /* EpisodeItemView.swift in Sources */,
 				4E35CE5C2CBED3F300DBD886 /* TimeRow.swift in Sources */,
 				4E35CE5D2CBED3F300DBD886 /* TriggerTypeRow.swift in Sources */,
@@ -5314,6 +5383,7 @@
 				E1CAF65D2BA345830087D991 /* MediaType.swift in Sources */,
 				E1AD105F26D9ADDD003E4A08 /* NameGuidPair.swift in Sources */,
 				E18A8E7D28D606BE00333B9A /* BaseItemDto+VideoPlayerViewModel.swift in Sources */,
+				4EC2B19B2CC96E7400D866BE /* ServerUsersView.swift in Sources */,
 				E18E01F1288747230022598C /* PlayButton.swift in Sources */,
 				E129429028F0BDC300796AC6 /* TimeStampType.swift in Sources */,
 				E1F5CF092CB0A04500607465 /* Text.swift in Sources */,

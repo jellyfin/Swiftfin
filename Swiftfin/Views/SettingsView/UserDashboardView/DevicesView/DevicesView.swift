@@ -8,6 +8,7 @@
 
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 // TODO: Replace with CustomName when Available
@@ -29,13 +30,7 @@ struct DevicesView: View {
     private var isEditing: Bool = false
 
     @StateObject
-    private var viewModel: DevicesViewModel
-
-    // MARK: - Initializer
-
-    init(userID: String? = nil) {
-        _viewModel = StateObject(wrappedValue: DevicesViewModel(userID))
-    }
+    private var viewModel = DevicesViewModel()
 
     // MARK: - Body
 
@@ -43,11 +38,7 @@ struct DevicesView: View {
         ZStack {
             switch viewModel.state {
             case .content:
-                if viewModel.devices.isEmpty {
-                    Text(L10n.none)
-                } else {
-                    deviceListView
-                }
+                deviceListView
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {
@@ -68,7 +59,19 @@ struct DevicesView: View {
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
-                navigationBarEditView
+                if viewModel.devices.isNotEmpty {
+                    navigationBarEditView
+                }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                if isEditing {
+                    Button(L10n.delete) {
+                        isPresentingDeleteSelectionConfirmation = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedDevices.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
             }
         }
         .onFirstAppear {
@@ -103,76 +106,51 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var deviceListView: some View {
-        VStack {
-            List {
-                InsetGroupedListHeader(
-                    L10n.devices,
-                    description: L10n.allDevicesDescription
-                ) {
-                    UIApplication.shared.open(.jellyfinDocsDevices)
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .padding(.vertical, 24)
+        List {
+            InsetGroupedListHeader(
+                L10n.devices,
+                description: L10n.allDevicesDescription
+            ) {
+                UIApplication.shared.open(.jellyfinDocsDevices)
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .padding(.vertical, 24)
 
-                ForEach(viewModel.devices.keys, id: \.self) { id in
-                    if let deviceBox = viewModel.devices[id] {
-                        DeviceRow(box: deviceBox) {
-                            if isEditing {
-                                if selectedDevices.contains(id) {
-                                    selectedDevices.remove(id)
-                                } else {
-                                    selectedDevices.insert(id)
-                                }
-                            } else if let selectedDevice = deviceBox.value {
-                                router.route(to: \.deviceDetails, selectedDevice)
+            if viewModel.devices.isEmpty {
+                Text(L10n.none)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
+            } else {
+                ForEach(viewModel.devices, id: \.self) { device in
+                    DeviceRow(device: device) {
+                        guard let id = device.id else { return }
+
+                        if isEditing {
+                            if selectedDevices.contains(id) {
+                                selectedDevices.remove(id)
+                            } else {
+                                selectedDevices.insert(id)
                             }
-                        } onDelete: {
-                            selectedDevices.removeAll()
-                            selectedDevices.insert(id)
-                            isPresentingDeleteConfirmation = true
+                        } else {
+                            router.route(to: \.deviceDetails, device)
                         }
-                        .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedDevices.contains(id))
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.zero)
+                    } onDelete: {
+                        guard let id = device.id else { return }
+
+                        selectedDevices.removeAll()
+                        selectedDevices.insert(id)
+                        isPresentingDeleteConfirmation = true
                     }
+                    .environment(\.isEditing, isEditing)
+                    .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
                 }
             }
-            .listStyle(.plain)
-
-            if isEditing {
-                deleteDevicesButton
-                    .edgePadding([.bottom, .horizontal])
-            }
         }
-    }
-
-    // MARK: - Button to Delete Devices
-
-    @ViewBuilder
-    private var deleteDevicesButton: some View {
-        Button {
-            isPresentingDeleteSelectionConfirmation = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedDevices.isNotEmpty ? .primary : .secondary)
-
-                if selectedDevices.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedDevices.isEmpty)
-        .buttonStyle(.plain)
+        .listStyle(.plain)
     }
 
     // MARK: - Navigation Bar Edit Content
@@ -203,7 +181,7 @@ struct DevicesView: View {
             if isAllSelected {
                 selectedDevices = []
             } else {
-                selectedDevices = Set(viewModel.devices.keys)
+                selectedDevices = Set(viewModel.devices.compactMap(\.id))
             }
         }
         .buttonStyle(.toolbarPill)

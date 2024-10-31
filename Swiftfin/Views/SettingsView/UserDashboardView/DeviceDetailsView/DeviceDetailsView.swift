@@ -14,6 +14,9 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
+
     @CurrentDate
     private var currentDate: Date
 
@@ -27,28 +30,39 @@ struct DeviceDetailsView: View {
     private var isPresentingSuccess: Bool = false
 
     @StateObject
-    private var viewModel: DevicesViewModel
+    private var viewModel: DeviceDetailViewModel
 
-    private let device: DeviceInfo
+    private var device: DeviceInfo {
+        viewModel.device
+    }
 
     // MARK: - Initializer
 
     init(device: DeviceInfo) {
-        self.device = device
+        _viewModel = StateObject(wrappedValue: DeviceDetailViewModel(device: device))
+
         // TODO: Enable with SDK Change
         self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-        _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
+
+//        _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            if let lastUserID = device.lastUserID {
+            if let userID = device.lastUserID,
+               let userName = device.lastUserName
+            {
+
+                let user = UserDto(id: userID, name: userName)
+
                 UserDashboardView.UserSection(
-                    user: .init(id: lastUserID, name: device.lastUserName),
+                    user: user,
                     lastActivityDate: device.dateLastActivity
-                )
+                ) {
+                    router.route(to: \.userDetails, user)
+                }
             }
 
             // TODO: Enable with SDK Change
@@ -69,13 +83,13 @@ struct DeviceDetailsView: View {
                 UIDevice.feedback(.error)
                 error = eventError
                 isPresentingError = true
-            case .success:
+            case .setCustomName:
                 UIDevice.feedback(.success)
                 isPresentingSuccess = true
             }
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.settingCustomName) {
+            if viewModel.backgroundStates.contains(.updating) {
                 ProgressView()
 
                 // TODO: Enable with SDK Change
