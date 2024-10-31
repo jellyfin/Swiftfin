@@ -16,7 +16,12 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            HStack {
+            HStack(alignment: .center) {
+
+                // Spacer()
+
+                // MARK: - Toggle Played
+
                 ActionButton(
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill",
@@ -25,8 +30,12 @@ extension ItemView {
                     viewModel.send(.toggleIsPlayed)
                 }
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed == true)
+                .frame(height: 100)
+                .frame(maxWidth: .infinity)
 
-                Spacer()
+                // Spacer()
+
+                // MARK: - Toggle Favorite
 
                 ActionButton(
                     icon: "heart.circle",
@@ -36,6 +45,10 @@ extension ItemView {
                     viewModel.send(.toggleIsFavorite)
                 }
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite == true)
+                .frame(height: 100)
+                .frame(maxWidth: .infinity)
+
+                // Spacer()
             }
         }
     }

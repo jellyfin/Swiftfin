@@ -10,7 +10,6 @@ import Defaults
 import SwiftUI
 
 extension ItemView {
-
     struct ActionButton: View {
 
         @Default(.accentColor)
@@ -21,6 +20,7 @@ extension ItemView {
         @FocusState
         private var isFocused: Bool
 
+        let size: CGFloat = 50
         let icon: String
         let selectedIcon: String
         let color: Color
@@ -30,36 +30,20 @@ extension ItemView {
 
         var body: some View {
             Button(action: {
-                withAnimation(.easeInOut(duration: 0.2)) {
-                    onSelect()
-                }
+                onSelect()
             }) {
-                ZStack {
-                    backgroundShape
-                    foregroundIcon
-                        .padding(30)
-                }
-                .frame(width: 100, height: 100)
-                .scaleEffect(isFocused ? 1.1 : 1.0)
+                foregroundIcon
             }
-            .buttonStyle(.borderless)
+            .buttonStyle(BorderlessFocus(isFocused: $isFocused))
             .focused($isFocused)
-            .padding(12.5)
-        }
-
-        // MARK: - Background Shape
-
-        private var backgroundShape: some View {
-            RoundedRectangle(cornerRadius: 15)
-                .foregroundStyle(isFocused ? .primary : Color.clear)
-                .shadow(color: isFocused ? .black.opacity(0.2) : .clear, radius: isFocused ? 4 : 2, x: 0, y: 2)
+            .padding(.vertical)
         }
 
         // MARK: - Foreground Icon
 
         private var foregroundIcon: some View {
             Image(systemName: isSelected ? selectedIcon : icon)
-                .resizable()
+                .frame(width: size, height: size)
                 .foregroundStyle(
                     isFocused ? .black : .primary,
                     isFocused ? (isSelected ? color : .black) : (isSelected ? color : .primary)
