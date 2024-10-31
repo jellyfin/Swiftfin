@@ -113,6 +113,14 @@ struct ServerUsersView: View {
         } message: {
             Text(L10n.deleteUserSelfDeletion(viewModel.userSession.user.username))
         }
+        .onNotification(.didAddServerUser) { notification in
+            Task {
+                let newUser = notification.object as! UserDto
+                try await Task.sleep(nanoseconds: 100_000_000)
+                viewModel.send(.appendUser(newUser))
+                router.route(to: \.userDetails, newUser)
+            }
+        }
     }
 
     // MARK: - User List View

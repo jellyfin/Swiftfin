@@ -113,10 +113,8 @@ struct AddServerUserView: View {
                 isPresentingError = true
             case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
-
-                // TODO: somehow route to new user details
-
                 router.dismissCoordinator()
+                Notifications[.didAddServerUser].post(object: newUser)
             }
         }
         .topBarTrailing {

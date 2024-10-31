@@ -26,6 +26,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     enum Action: Equatable {
         case getUsers(isHidden: Bool = false, isDisabled: Bool = false)
         case deleteUsers([String])
+        case appendUser(UserDto)
     }
 
     // MARK: - BackgroundState
@@ -33,6 +34,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     enum BackgroundState: Hashable {
         case gettingUsers
         case deletingUsers
+        case appendingUsers
     }
 
     // MARK: - State
@@ -117,6 +119,28 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .asAnyCancellable()
 
             return state
+
+        case let .appendUser(user):
+            userTask?.cancel()
+            backgroundStates.append(.appendingUsers)
+
+            userTask = Task {
+                do {
+                    await self.appendUser(user: user)
+
+                    await MainActor.run {
+                        self.state = .content
+                        self.eventSubject.send(.deleted)
+                    }
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.appendingUsers)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
@@ -166,5 +190,14 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private func deleteUser(id: String) async throws {
         let request = Paths.deleteUser(userID: id)
         try await userSession.client.send(request)
+    }
+
+    // MARK: - Append User
+
+    private func appendUser(user: UserDto) async {
+        await MainActor.run {
+            users.append(user)
+            users = users.sorted(using: \.name)
+        }
     }
 }
