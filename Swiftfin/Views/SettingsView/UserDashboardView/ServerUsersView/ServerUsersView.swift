@@ -132,25 +132,28 @@ struct ServerUsersView: View {
 
             if viewModel.users.isEmpty {
                 Text(L10n.none)
-            }
-
-            ForEach(viewModel.users, id: \.self) { user in
-                if let userID = user.id {
-                    ServerUsersRow(user: user) {
-                        if isEditing {
-                            selectedUsers.toggle(value: userID)
-                        } else {
-                            router.route(to: \.userDetails, user)
-                        }
-                    } onDelete: {
-                        selectedUsers.removeAll()
-                        selectedUsers.insert(userID)
-                        isPresentingDeleteConfirmation = true
-                    }
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, selectedUsers.contains(userID))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                     .listRowSeparator(.hidden)
                     .listRowInsets(.zero)
+            } else {
+                ForEach(viewModel.users, id: \.self) { user in
+                    if let userID = user.id {
+                        ServerUsersRow(user: user) {
+                            if isEditing {
+                                selectedUsers.toggle(value: userID)
+                            } else {
+                                router.route(to: \.userDetails, user)
+                            }
+                        } onDelete: {
+                            selectedUsers.removeAll()
+                            selectedUsers.insert(userID)
+                            isPresentingDeleteConfirmation = true
+                        }
+                        .environment(\.isEditing, isEditing)
+                        .environment(\.isSelected, selectedUsers.contains(userID))
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.zero)
+                    }
                 }
             }
         }

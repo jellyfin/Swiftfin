@@ -93,14 +93,6 @@ struct AddServerUserView: View {
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
-
-//            ListRowButton(L10n.addUser) {
-//                focusedfield = nil
-//                viewModel.send(.createUser(username: username, password: newPassword))
-//            }
-//            .disabled(!isValid)
-//            .foregroundStyle(accentColor.overlayColor, accentColor)
-//            .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
         }
         .animation(.linear(duration: 0.2), value: isValid)
         .interactiveDismissDisabled(viewModel.state == .creatingUser)

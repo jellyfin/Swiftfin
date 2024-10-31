@@ -118,39 +118,36 @@ struct DevicesView: View {
             .padding(.vertical, 24)
 
             if viewModel.devices.isEmpty {
-                HStack {
-                    Spacer()
-                    Text(L10n.none)
-                    Spacer()
-                }
-                .listRowSeparator(.hidden)
-                .listRowInsets(.zero)
-            }
+                Text(L10n.none)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
+            } else {
+                ForEach(viewModel.devices, id: \.self) { device in
+                    DeviceRow(device: device) {
+                        guard let id = device.id else { return }
 
-            ForEach(viewModel.devices, id: \.self) { device in
-                DeviceRow(device: device) {
-                    guard let id = device.id else { return }
-
-                    if isEditing {
-                        if selectedDevices.contains(id) {
-                            selectedDevices.remove(id)
+                        if isEditing {
+                            if selectedDevices.contains(id) {
+                                selectedDevices.remove(id)
+                            } else {
+                                selectedDevices.insert(id)
+                            }
                         } else {
-                            selectedDevices.insert(id)
+                            router.route(to: \.deviceDetails, device)
                         }
-                    } else {
-                        router.route(to: \.deviceDetails, device)
-                    }
-                } onDelete: {
-                    guard let id = device.id else { return }
+                    } onDelete: {
+                        guard let id = device.id else { return }
 
-                    selectedDevices.removeAll()
-                    selectedDevices.insert(id)
-                    isPresentingDeleteConfirmation = true
+                        selectedDevices.removeAll()
+                        selectedDevices.insert(id)
+                        isPresentingDeleteConfirmation = true
+                    }
+                    .environment(\.isEditing, isEditing)
+                    .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(.zero)
                 }
-                .environment(\.isEditing, isEditing)
-                .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
-                .listRowSeparator(.hidden)
-                .listRowInsets(.zero)
             }
         }
         .listStyle(.plain)
