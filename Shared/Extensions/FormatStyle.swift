@@ -22,3 +22,110 @@ extension FormatStyle where Self == HourMinuteFormatStyle {
 
     static var hourMinute: HourMinuteFormatStyle { HourMinuteFormatStyle() }
 }
+
+struct RunTimeFormatStyle: FormatStyle {
+
+    private var negate: Bool = false
+
+    var negated: RunTimeFormatStyle {
+        mutating(\.negate, with: true)
+    }
+
+    func format(_ value: Int) -> String {
+        let hours = value / 3600
+        let minutes = (value % 3600) / 60
+        let seconds = value % 3600 % 60
+
+        let hourText = hours > 0 ? String(hours).appending(":") : ""
+        let minutesText = hours > 0 ? String(minutes).leftPad(maxWidth: 2, with: "0").appending(":") : String(minutes)
+            .appending(":")
+        let secondsText = String(seconds).leftPad(maxWidth: 2, with: "0")
+
+        return hourText
+            .appending(minutesText)
+            .appending(secondsText)
+            .prepending("-", if: negate)
+    }
+}
+
+extension FormatStyle where Self == RunTimeFormatStyle {
+
+    static var runtime: RunTimeFormatStyle { RunTimeFormatStyle() }
+}
+
+/// Represent intervals as 24 hour, 60 minute, 60 second days
+struct DayIntervalParseableFormatStyle: ParseableFormatStyle {
+
+    let range: ClosedRange<Int>
+    var parseStrategy: DayIntervalParseStrategy = .init()
+
+    func format(_ value: TimeInterval) -> String {
+        "\(clamp(Int(value / 86400), min: range.lowerBound, max: range.upperBound))"
+    }
+}
+
+struct DayIntervalParseStrategy: ParseStrategy {
+
+    func parse(_ value: String) throws -> TimeInterval {
+        (TimeInterval(value) ?? 0) * 86400
+    }
+}
+
+extension ParseableFormatStyle where Self == DayIntervalParseableFormatStyle {
+
+    static func dayInterval(range: ClosedRange<Int>) -> DayIntervalParseableFormatStyle {
+        .init(range: range)
+    }
+}
+
+extension FormatStyle where Self == TimeIntervalFormatStyle {
+
+    static func interval(
+        style: Date.ComponentsFormatStyle.Style,
+        fields: Set<Date.ComponentsFormatStyle.Field>
+    ) -> TimeIntervalFormatStyle {
+        TimeIntervalFormatStyle(style: style, fields: fields)
+    }
+}
+
+struct TimeIntervalFormatStyle: FormatStyle {
+
+    let style: Date.ComponentsFormatStyle.Style
+    let fields: Set<Date.ComponentsFormatStyle.Field>
+
+    func format(_ value: TimeInterval) -> String {
+        let value = abs(value)
+        let t = Date.now
+
+        return Date.ComponentsFormatStyle(
+            style: style,
+            locale: .current,
+            calendar: .current,
+            fields: fields
+        ).format(t ..< t.addingTimeInterval(value))
+    }
+}
+
+struct LastSeenFormatStyle: FormatStyle {
+
+    func format(_ value: Date?) -> String {
+
+        guard let value else {
+            return L10n.never
+        }
+
+        let timeInterval = Date.now.timeIntervalSince(value)
+        let twentyFourHours: TimeInterval = 24 * 60 * 60
+
+        if timeInterval <= twentyFourHours {
+            return value.formatted(.relative(presentation: .numeric, unitsStyle: .narrow))
+        } else {
+            return value.formatted(Date.FormatStyle.dateTime.year().month().day())
+        }
+    }
+}
+
+extension FormatStyle where Self == LastSeenFormatStyle {
+
+    static var lastSeen: LastSeenFormatStyle { LastSeenFormatStyle() }
+}

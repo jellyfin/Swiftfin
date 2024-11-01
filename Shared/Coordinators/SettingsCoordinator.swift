@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import JellyfinAPI
 import PulseUI
 import Stinsen
 import SwiftUI
@@ -43,16 +44,49 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var indicatorSettings = makeIndicatorSettings
     @Route(.push)
-    var serverDetail = makeServerDetail
+    var serverConnection = makeServerConnection
     @Route(.push)
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
+    @Route(.modal)
+    var itemOverviewView = makeItemOverviewView
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
     @Route(.modal)
     var createCustomDeviceProfile = makeCreateCustomDeviceProfile
+
+    // TODO: Move AdminDashboard items to its own coordinator ->
+    @Route(.push)
+    var userDashboard = makeUserDashboard
+    @Route(.push)
+    var activeSessions = makeActiveSessions
+    @Route(.push)
+    var activeDeviceDetails = makeActiveDeviceDetails
+    @Route(.push)
+    var tasks = makeTasks
+    @Route(.push)
+    var devices = makeDevices
+    @Route(.push)
+    var deviceDetails = makeDeviceDetails
+    @Route(.push)
+    var editServerTask = makeEditServerTask
+    @Route(.modal)
+    var addServerTaskTrigger = makeAddServerTaskTrigger
+    @Route(.push)
+    var serverLogs = makeServerLogs
+    @Route(.push)
+    var users = makeUsers
+    @Route(.push)
+    var userDetails = makeUserDetails
+    @Route(.push)
+    var userDevices = makeUserDevices
+    @Route(.modal)
+    var addServerUser = makeAddServerUser
+    @Route(.push)
+    var apiKeys = makeAPIKeys
+    // <- End of AdminDashboard Items
 
     #if DEBUG
     @Route(.push)
@@ -65,8 +99,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var customizeViewsSettings = makeCustomizeViewsSettings
     @Route(.modal)
     var experimentalSettings = makeExperimentalSettings
-    @Route(.modal)
-    var indicatorSettings = makeIndicatorSettings
     @Route(.modal)
     var log = makeLog
     @Route(.modal)
@@ -94,7 +126,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
-    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator>
+    {
         NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
     }
 
@@ -142,8 +175,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeServerDetail(server: ServerState) -> some View {
+    func makeServerConnection(server: ServerState) -> some View {
         EditServerView(server: server)
+    }
+
+    func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemOverviewView(item: item)
+        }
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
@@ -155,13 +194,87 @@ final class SettingsCoordinator: NavigationCoordinatable {
         VideoPlayerSettingsCoordinator()
     }
 
+    // TODO: Move AdminDashboard items to its own coordinator ->
+    @ViewBuilder
+    func makeUserDashboard() -> some View {
+        UserDashboardView()
+    }
+
+    @ViewBuilder
+    func makeActiveSessions() -> some View {
+        ActiveSessionsView()
+    }
+
+    @ViewBuilder
+    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
+        ActiveSessionDetailView(box: box)
+    }
+
+    @ViewBuilder
+    func makeTasks() -> some View {
+        ServerTasksView()
+    }
+
+    @ViewBuilder
+    func makeDevices() -> some View {
+        DevicesView()
+    }
+
+    @ViewBuilder
+    func makeDeviceDetails(device: DeviceInfo) -> some View {
+        DeviceDetailsView(device: device)
+    }
+
+    @ViewBuilder
+    func makeEditServerTask(observer: ServerTaskObserver) -> some View {
+        EditServerTaskView(observer: observer)
+    }
+
+    func makeAddServerTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddTaskTriggerView(observer: observer)
+        }
+    }
+
+    @ViewBuilder
+    func makeServerLogs() -> some View {
+        ServerLogsView()
+    }
+
+    @ViewBuilder
+    func makeUsers() -> some View {
+        ServerUsersView()
+    }
+
+    @ViewBuilder
+    func makeUserDetails(user: UserDto) -> some View {
+        ServerUserDetailsView(user: user)
+    }
+
+    func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddServerUserView()
+        }
+    }
+
+    @ViewBuilder
+    func makeUserDevices() -> some View {
+        DevicesView()
+    }
+
+    @ViewBuilder
+    func makeAPIKeys() -> some View {
+        APIKeysView()
+    }
+
+    // <- End of AdminDashboard Items
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
         DebugSettingsView()
     }
     #endif
-
     #endif
 
     #if os(tvOS)

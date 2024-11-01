@@ -28,6 +28,10 @@ protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
     func cinematicImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource]
+
+    func squareImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource]
 }
 
 extension Poster {
@@ -53,6 +57,12 @@ extension Poster {
     }
 
     func cinematicImageSources(
+        maxWidth: CGFloat?
+    ) -> [ImageSource] {
+        []
+    }
+
+    func squareImageSources(
         maxWidth: CGFloat?
     ) -> [ImageSource] {
         []
