@@ -51,3 +51,7 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
 </a>
+
+## 🎬 Player Differences
+
+Swiftfin offers both **Native (AVKit)** and **Swiftfin (VLCKit)** players to provide the best compatibility across Apple devices. To learn more about the capabilities and differences between these players, visit our [Player Differences documentation](https://github.com/jellyfin/Swiftfin/blob/main/players.md).
