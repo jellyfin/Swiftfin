@@ -1,7 +1,3 @@
-Here’s the **GitHub Markdown** for the "Player Differences" documentation, with each section formatted as requested.
-
----
-
 # Player Differences
 
 This document compares the differences between **Swiftfin (VLCKit)** and **Native (AVKit)** players, covering feature support, audio, video, and subtitle compatibility.
