@@ -11,17 +11,22 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **Framerate Matching**  | ❌                                                                                                             | ✅                                                                           |
 | **HDR Playback**        | ❌                                                                                                             | ✅ **                                                                        |
 | **HDR to SDR Tonemapping** | ✅ *                                                                                                         | 🟡 Limited (MP4 only) **                                                    |
-| **Player Controls**     | - Speed adjustment<br>- Aspect Fill<br>- Subtitle & Audio Track Selection<br>- Customizable UI                  | - Speed adjustment<br>- Aspect Fill                                          |
+| **Player Controls**     | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI                  | - Speed adjustment<br>- Aspect Fill                                          |
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
 | **TLS Support**         | 1.1, 1.2 ***                                                                                                   | 1.1, 1.2, **1.3**                                                            |
+| **[Home Theater Audio](https://support.apple.com/en-us/102357)**  | 🟡 ****                                          | ✅                                                            |
 
 ---
 
 ## Notes
 
-- **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
-- **\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
-- **\*\*\*** Swiftfin (VLCKit) does not support TLS 1.3.
+**\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
+
+**\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
+
+**\*\*\*** Swiftfin (VLCKit) does not support TLS 1.3.
+
+**\*\*\*\*** Swiftfin (VLCKit) has a [known bug that results in a significant audio delay](https://code.videolan.org/videolan/VLCKit/-/issues/544).
 
 ---
 
@@ -66,15 +71,15 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | Subtitle Format         | Swiftfin (VLCKit)                                                                                               | Native (AVKit)                                                               |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | **ASS**                 | ✅                                                                                                             | ❌                                                                           |
-| **CC_DEC**              | ✅                                                                                                             | ✅                                                                           |
+| **CC_DEC**              | ✅                                                                                                             | 🟡                                                                           |
 | **DVBSub**              | ✅                                                                                                             | ❌                                                                           |
 | **DVDSub**              | ✅                                                                                                             | ❌                                                                           |
 | **PGSSub**              | ✅                                                                                                             | ❌                                                                           |
 | **SRT**                 | ✅                                                                                                             | ❌                                                                           |
 | **SSA**                 | ✅                                                                                                             | ❌                                                                           |
 | **Teletext**            | ✅                                                                                                             | ❌                                                                           |
-| **TTML**                | ✅                                                                                                             | ✅                                                                           |
-| **VTT**                 | ✅                                                                                                             | ✅                                                                           |
+| **TTML**                | ✅                                                                                                             | 🟡                                                                           |
+| **VTT**                 | ✅                                                                                                             | 🟡                                                                           |
 | **XSub**                | ✅                                                                                                             | ❌                                                                           |
 
 --- 
