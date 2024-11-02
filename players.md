@@ -1,6 +1,6 @@
 # Player Differences
 
-This document compares the differences between **Swiftfin (VLCKit)** and **Native (AVKit)** players, covering feature support, audio, video, and subtitle compatibility.
+Swiftfin offers two player options: the default Swiftfin player and Native (AVKit). While the Swiftfin team recommends using the Swiftfin player for the best compatibility and feature set, the Native player is also available for specific use cases that may benefit from Apple's native features.
 
 ---
 
@@ -14,6 +14,11 @@ This document compares the differences between **Swiftfin (VLCKit)** and **Nativ
 | **Player Controls**     | ✅ Speed, subtitles, audio track selection, autoplay, customizable UI                                          | ✅ Speed, Aspect Fill                                                         |
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
 | **TLS Support**         | ✅ TLS 1.1, 1.2                                                                                               | ✅ TLS 1.1, 1.2, 1.3                                                         |
+
+## Notes
+
+- **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
+- **\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
 
 ---
 
@@ -70,8 +75,3 @@ This document compares the differences between **Swiftfin (VLCKit)** and **Nativ
 | **XSub**                | ✅                                                                                                             | ❌                                                                           |
 
 ---
-
-## Notes
-
-- **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
-- **\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
