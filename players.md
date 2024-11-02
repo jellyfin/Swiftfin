@@ -13,7 +13,7 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **HDR to SDR Tonemapping** | ✅ *                                                                                                         | 🟡 Limited (MP4 only) **                                                    |
 | **Player Controls**     | Speed, Aspect Fill, Subtitle & Audio Track Selection, Customizable UI                                          | Speed, Aspect Fill, No Customizations Available                               |
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
-| **TLS Support**         | 1.1, 1.2                                                                                                        | 1.1, 1.2, *1.3*                                                         |
+| **TLS Support**         | 1.1, 1.2                                                                                                        | 1.1, 1.2, **1.3**                                                         |
 
 ## Notes
 
@@ -74,4 +74,4 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **VTT**                 | ✅                                                                                                             | ✅                                                                           |
 | **XSub**                | ✅                                                                                                             | ❌                                                                           |
 
----
+--- 
