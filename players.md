@@ -11,14 +11,17 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **Framerate Matching**  | ❌                                                                                                             | ✅                                                                           |
 | **HDR Playback**        | ❌                                                                                                             | ✅ **                                                                        |
 | **HDR to SDR Tonemapping** | ✅ *                                                                                                         | 🟡 Limited (MP4 only) **                                                    |
-| **Player Controls**     | Speed, Aspect Fill, Subtitle & Audio Track Selection, Customizable UI                                          | Speed, Aspect Fill, No Customizations Available                               |
+| **Player Controls**     | - Speed adjustment<br>- Aspect Fill<br>- Subtitle & Audio Track Selection<br>- Customizable UI                  | - Speed adjustment<br>- Aspect Fill                                          |
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
-| **TLS Support**         | 1.1, 1.2                                                                                                        | 1.1, 1.2, **1.3**                                                         |
+| **TLS Support**         | 1.1, 1.2 ***                                                                                                   | 1.1, 1.2, **1.3**                                                            |
+
+---
 
 ## Notes
 
 - **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
 - **\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
+- **\*\*\*** Swiftfin (VLCKit) does not support TLS 1.3.
 
 ---
 
