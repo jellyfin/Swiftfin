@@ -75,7 +75,3 @@ This document compares the differences between **Swiftfin (VLCKit)** and **Nativ
 
 - **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
 - **\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
-
---- 
-
-This structured comparison provides insights into feature capabilities, codec compatibility, and player-specific strengths for Swiftfin (VLCKit) and Native (AVKit) within the Jellyfin ecosystem.
