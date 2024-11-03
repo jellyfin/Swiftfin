@@ -35,6 +35,8 @@ extension URL {
 
     static let jellyfinDocsDevices: URL = URL(string: "https://jellyfin.org/docs/general/server/devices")!
 
+    static let jellyfinDocsMetadata: URL = URL(string: "https://jellyfin.org/docs/general/server/metadata")!
+
     static let jellyfinDocsTasks: URL = URL(string: "https://jellyfin.org/docs/general/server/tasks")!
 
     static let jellyfinDocsUsers: URL = URL(string: "https://jellyfin.org/docs/general/server/users")!

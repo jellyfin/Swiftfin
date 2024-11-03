@@ -73,6 +73,19 @@ extension ItemView {
                     view.frame(maxWidth: .infinity)
                 }
 
+                if viewModel.userSession.user.isAdministrator {
+                    Button {
+                        UIDevice.impact(.light)
+                        router.route(to: \.editor, viewModel.item)
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
+                    .buttonStyle(.plain)
+                    .if(equalSpacing) { view in
+                        view.frame(maxWidth: .infinity)
+                    }
+                }
+
                 if let playButtonItem = viewModel.playButtonItem,
                    let mediaSources = playButtonItem.mediaSources,
                    mediaSources.count > 1

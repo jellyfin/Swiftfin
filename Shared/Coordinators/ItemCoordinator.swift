@@ -22,6 +22,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     @Route(.push)
     var library = makeLibrary
     @Route(.push)
+    var editor = makeEditor
+    @Route(.push)
     var castAndCrew = makeCastAndCrew
 
     #if os(iOS)
@@ -54,6 +56,10 @@ final class ItemCoordinator: NavigationCoordinatable {
 
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
         LibraryCoordinator(viewModel: viewModel)
+    }
+
+    func makeEditor(item: BaseItemDto) -> BaseItemEditorCoordinator {
+        BaseItemEditorCoordinator(baseItem: item)
     }
 
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {
