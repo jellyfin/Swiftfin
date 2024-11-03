@@ -1,6 +1,6 @@
 # Player Differences
 
-Swiftfin offers two player options: the default Swiftfin player and Native (AVKit). The Swiftfin team recommends using the Swiftfin player for optimal compatibility and features, though the Native player is also available for certain cases that benefit from Apple's native capabilities. All container, video, audio, and subtitle formats listed are supported for direct playback _(Native Player requiring MP4 & HLS)_. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
+Swiftfin offers two player options: the default Swiftfin player and Native (AVKit). The Swiftfin team recommends using the Swiftfin player for optimal compatibility and features, though the Native player is also available for certain cases that benefit from Apple's native capabilities. All video, audio, and subtitle formats listed are supported for direct playback but might be repackaged based on container support. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
 
 ---
 
