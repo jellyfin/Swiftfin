@@ -77,6 +77,14 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.push)
     var serverLogs = makeServerLogs
     @Route(.push)
+    var users = makeUsers
+    @Route(.push)
+    var userDetails = makeUserDetails
+    @Route(.push)
+    var userDevices = makeUserDevices
+    @Route(.modal)
+    var addServerUser = makeAddServerUser
+    @Route(.push)
     var apiKeys = makeAPIKeys
     // <- End of AdminDashboard Items
 
@@ -118,7 +126,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
-    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator>
+    {
         NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
     }
 
@@ -233,6 +242,27 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     @ViewBuilder
+    func makeUsers() -> some View {
+        ServerUsersView()
+    }
+
+    @ViewBuilder
+    func makeUserDetails(user: UserDto) -> some View {
+        ServerUserDetailsView(user: user)
+    }
+
+    func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddServerUserView()
+        }
+    }
+
+    @ViewBuilder
+    func makeUserDevices() -> some View {
+        DevicesView()
+    }
+
+    @ViewBuilder
     func makeAPIKeys() -> some View {
         APIKeysView()
     }
@@ -245,7 +275,6 @@ final class SettingsCoordinator: NavigationCoordinatable {
         DebugSettingsView()
     }
     #endif
-
     #endif
 
     #if os(tvOS)

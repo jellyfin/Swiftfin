@@ -44,8 +44,8 @@ extension VideoPlayer {
 
                     Spacer()
                 }
-                .padding2()
-                .padding2()
+                .padding()
+                .padding()
 
                 ScrollViewReader { proxy in
                     ScrollView(.horizontal) {
@@ -90,8 +90,8 @@ extension VideoPlayer {
                                 }
                             }
                         }
-                        .padding2()
-                        .padding2(.horizontal)
+                        .padding()
+                        .padding(.horizontal)
                     }
                     .onChange(of: currentOverlayType) { _, newValue in
                         guard newValue == .chapters else { return }

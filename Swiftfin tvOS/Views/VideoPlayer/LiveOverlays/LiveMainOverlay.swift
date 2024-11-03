@@ -34,8 +34,8 @@ extension LiveVideoPlayer {
                 Spacer()
 
                 Overlay.LiveBottomBarView()
-                    .padding2()
-                    .padding2()
+                    .padding()
+                    .padding()
                     .background {
                         LinearGradient(
                             stops: [

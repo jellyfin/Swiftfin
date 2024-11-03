@@ -29,7 +29,7 @@ extension EditServerTaskView {
 
                 TextPairView(
                     L10n.executed,
-                    value: Text("\(endTime, format: .relative(presentation: .numeric, unitsStyle: .narrow))")
+                    value: Text(endTime, format: .lastSeen)
                 )
                 .id(currentDate)
                 .monospacedDigit()

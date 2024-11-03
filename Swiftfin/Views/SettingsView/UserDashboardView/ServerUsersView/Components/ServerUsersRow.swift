@@ -11,9 +11,12 @@ import Factory
 import JellyfinAPI
 import SwiftUI
 
-extension DevicesView {
+extension ServerUsersView {
 
-    struct DeviceRow: View {
+    struct ServerUsersRow: View {
+
+        @Injected(\.currentUserSession)
+        private var userSession
 
         @Default(.accentColor)
         private var accentColor
@@ -30,38 +33,65 @@ extension DevicesView {
         @CurrentDate
         private var currentDate: Date
 
-        // MARK: - Observed Objects
+        private let user: UserDto
 
-        let device: DeviceInfo
-        let onSelect: () -> Void
-        let onDelete: () -> Void
+        // MARK: - Actions
+
+        private let onSelect: () -> Void
+        private let onDelete: () -> Void
+
+        // MARK: - User Status Mapping
+
+        private var userActive: Bool {
+            if let isDisabled = user.policy?.isDisabled {
+                return !isDisabled
+            } else {
+                return false
+            }
+        }
+
+        // MARK: - Initializer
+
+        init(
+            user: UserDto,
+            onSelect: @escaping () -> Void,
+            onDelete: @escaping () -> Void
+        ) {
+            self.user = user
+            self.onSelect = onSelect
+            self.onDelete = onDelete
+        }
 
         // MARK: - Label Styling
 
         private var labelForegroundStyle: some ShapeStyle {
-            guard isEditing else { return .primary }
+            guard isEditing else { return userActive ? .primary : .secondary }
 
             return isSelected ? .primary : .secondary
         }
 
-        // MARK: - Device Image View
+        // MARK: - User Image View
 
         @ViewBuilder
-        private var deviceImage: some View {
+        private var userImage: some View {
             ZStack {
-                device.type.clientColor
-
-                Image(device.type.image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 40)
+                ImageView(user.profileImageSource(client: userSession!.client))
+                    .pipeline(.Swiftfin.branding)
+                    .placeholder { _ in
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    }
+                    .failure {
+                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    }
+                    .grayscale(userActive ? 0.0 : 1.0)
 
                 if isEditing {
                     Color.black
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .squarePosterStyle()
+            .clipShape(.circle)
+            .aspectRatio(1, contentMode: .fill)
             .posterShadow()
             .frame(width: 60, height: 60)
         }
@@ -73,24 +103,27 @@ extension DevicesView {
             HStack {
                 VStack(alignment: .leading) {
 
-                    Text(device.name ?? L10n.unknown)
+                    Text(user.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
                         .multilineTextAlignment(.leading)
 
                     TextPairView(
-                        leading: L10n.user,
-                        trailing: device.lastUserName ?? L10n.unknown
-                    )
-
-                    TextPairView(
-                        leading: L10n.client,
-                        trailing: device.appName ?? L10n.unknown
+                        L10n.role,
+                        value: {
+                            if let isAdministrator = user.policy?.isAdministrator,
+                               isAdministrator
+                            {
+                                Text(L10n.administrator)
+                            } else {
+                                Text(L10n.user)
+                            }
+                        }()
                     )
 
                     TextPairView(
                         L10n.lastSeen,
-                        value: Text(device.dateLastActivity, format: .lastSeen)
+                        value: Text(user.lastActivityDate, format: .lastSeen)
                     )
                     .id(currentDate)
                     .monospacedDigit()
@@ -126,7 +159,7 @@ extension DevicesView {
 
         var body: some View {
             ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
-                deviceImage
+                userImage
             } content: {
                 rowContent
                     .padding(.vertical, 8)
