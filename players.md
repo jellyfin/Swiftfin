@@ -30,6 +30,24 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 
 ---
 
+## Container Support
+
+| Container             | Swiftfin (VLCKit)                                                                                               | Native (AVKit)                                                               |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| **AVI**                 | ✅                                                                                                             | 🟡 Limited support                                                                           |
+| **FLV**               | ✅                                                                                                             | ❌                                                                           |
+| **M4V**               | ✅                                                                                                             | ✅                                                                           |
+| **MKV**               | ✅                                                                                                             | ❌                                                                           |
+| **MOV**               | ✅                                                                                                             | ✅                                                                           |
+| **MP4**               | ✅                                                                                                             | ✅                                                                           |
+| **MPEG-TS**               | ✅                                                                                                             | 🟡 Limited support                                                                           |
+| **TS**               | ✅                                                                                                             | 🟡 Limited support                                                                           |
+| **3G2**        | ✅                                                                                                             | ✅                                                                           |
+| **3GP**               | ✅                                                                                                             | ✅                                                                           |
+| **WebM**           | ✅                                                                                                             | ❌                                                              |
+
+---
+
 ## Audio Support
 
 | Audio Codec             | Swiftfin (VLCKit)                                                                                               | Native (AVKit)                                                               |
@@ -37,17 +55,26 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **AAC**                 | ✅                                                                                                             | ✅                                                                           |
 | **AC3**                 | ✅                                                                                                             | ✅                                                                           |
 | **ALAC**                | ✅                                                                                                             | ✅                                                                           |
-| **AMR (NB & WB)**       | ✅                                                                                                             | ✅ (NB only)                                                                 |
+| **AMR NB**       | ✅                                                                                                             | ✅                                                                 |
+| **AMR WB**       | ✅                                                                                                             | ❌                                                                 |
 | **DTS**                 | ✅                                                                                                             | ❌                                                                           |
+| **DTS-HD**                 | ❌                                                                                                             | ❌                                                                           |
 | **EAC3**                | ✅                                                                                                             | ✅                                                                           |
 | **FLAC**                | ✅                                                                                                             | ✅                                                                           |
-| **MP1, MP2, MP3**       | ✅                                                                                                             | ✅ (MP3 only)                                                                |
+| **MP1**       | ✅                                                                                                             | ❌                                                                |
+| **MP2**       | ✅                                                                                                             | ❌                                                                |
+| **MP3**       | ✅                                                                                                             | ✅                                                                |
+| **MLP**       | ❌                                                                                                             | ❌                                                                |
+| **Nellymoser**       | ✅                                                                                                             | ❌                                                                |
 | **Opus**                | ✅                                                                                                             | ❌                                                                           |
 | **PCM**                 | ✅                                                                                                             | ✅ Limited support                                                           |
 | **Speex**               | ✅                                                                                                             | ❌                                                                           |
+| **TrueHD**               | ❌                                                                                                             | ❌                                                                           |
 | **Vorbis**              | ✅                                                                                                             | ❌                                                                           |
 | **WavPack**             | ✅                                                                                                             | ❌                                                                           |
-| **WMA (Lossless, Pro)** | ✅                                                                                                             | ❌                                                                           |
+| **WMA** | ✅                                                                                                             | ❌                                                                           |
+| **WMA Lossless** | ✅                                                                                                             | ❌                                                                           |
+| **WMA Pro** | ✅                                                                                                             | ❌                                                                           |
 
 ---
 
@@ -56,13 +83,28 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | Video Codec             | Swiftfin (VLCKit)                                                                                               | Native (AVKit)                                                               |
 |-------------------------|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | **AV1**                 | ✅                                                                                                             | ❌                                                                           |
+| **DV**               | ❌                                                                                                             | ❌                                                                           |
+| **Dirac**               | ✅                                                                                                             | ❌                                                                           |
+| **FFV1**               | ✅                                                                                                             | ❌                                                                           |
+| **FLV1**               | ✅                                                                                                             | ❌                                                                           |
+| **H.261**               | ✅                                                                                                             | ❌                                                                           |
 | **H.263**               | ✅                                                                                                             | ❌                                                                           |
 | **H.264**               | ✅                                                                                                             | ✅                                                                           |
 | **H.265 (HEVC)**        | ✅                                                                                                             | ✅                                                                           |
-| **MJPEG**               | ✅                                                                                                             | ❌                                                                           |
-| **MPEG1/2/4**           | ✅                                                                                                             | ✅ (MPEG4 only)                                                              |
+| **MJPEG**               | ✅                                                                                                             | ✅                                                                           |
+| **MPEG1**           | ✅                                                                                                             | ❌                                                              |
+| **MPEG2**           | ✅                                                                                                             | ❌                                                              |
+| **MPEG4**           | ✅                                                                                                             | ✅                                                              |
+| **MS MPEG-4 v1**           | ❌                                                                                                             | ❌                                                              |
+| **MS MPEG-4 v2**           | ❌                                                                                                             | ❌                                                              |
+| **MS MPEG-4 v3**           | ❌                                                                                                             | ❌                                                              |
+| **ProRes**           | ✅                                                                                                             | ✅                                                              |
+| **Theora**           | ✅                                                                                                             | ❌                                                              |
 | **VC1**                 | ✅                                                                                                             | ❌                                                                           |
 | **VP9**                 | ✅                                                                                                             | ❌                                                                           |
+| **WMV1**           | ✅                                                                                                             | ❌                                                              |
+| **WMV2**           | ✅                                                                                                             | ❌                                                              |
+| **WMV3**           | ✅                                                                                                             | ❌                                                              |
 
 ---
 
