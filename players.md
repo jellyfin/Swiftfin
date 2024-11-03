@@ -19,7 +19,7 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 
 **\*** HDR to SDR Tonemapping on Swiftfin (VLCKit) may have colorspace accuracy variations depending on content and device configuration.
 
-**\*\*** HDR Playback in Native (AVKit) is limited to DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
+**\*\*** In Native (AVKit), HDR playback works regardless of DirectPlay or MP4 container format. However, HDR to SDR Tonemapping requires DirectPlaying compatible MP4 files and may require Dolby Vision Profiles 5 & 8 for full support.
 
 **\*\*\*** Swiftfin (VLCKit) does not support TLS 1.3.
 
