@@ -49,7 +49,9 @@ extension ServerTicks {
 
     init(date: Date) {
         let components = Calendar.current.dateComponents([.hour, .minute], from: date)
-        let totalSeconds = TimeInterval((components.hour ?? 0) * 3600 + (components.minute ?? 0) * 60)
+        let hour = components.hour ?? 0
+        let minute = components.minute ?? 0
+        let totalSeconds = TimeInterval(hour * 3600 + minute * 60)
         self = Int(totalSeconds * 10_000_000)
     }
 

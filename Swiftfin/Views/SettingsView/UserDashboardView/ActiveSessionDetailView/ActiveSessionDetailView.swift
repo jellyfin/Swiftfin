@@ -25,10 +25,14 @@ struct ActiveSessionDetailView: View {
     private func idleContent(session: SessionInfo) -> some View {
         List {
             if let userID = session.userID {
+                let user = UserDto(id: userID, name: session.userName)
+
                 UserDashboardView.UserSection(
-                    user: .init(id: userID, name: session.userName),
+                    user: user,
                     lastActivityDate: session.lastActivityDate
-                )
+                ) {
+                    router.route(to: \.userDetails, user)
+                }
             }
 
             UserDashboardView.DeviceSection(
@@ -60,9 +64,14 @@ struct ActiveSessionDetailView: View {
             }
 
             if let userID = session.userID {
+                let user = UserDto(id: userID, name: session.userName)
+
                 UserDashboardView.UserSection(
-                    user: .init(id: userID, name: session.userName)
-                )
+                    user: user,
+                    lastActivityDate: session.lastPlaybackCheckIn
+                ) {
+                    router.route(to: \.userDetails, user)
+                }
             }
 
             UserDashboardView.DeviceSection(

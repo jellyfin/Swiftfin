@@ -88,4 +88,6 @@ extension Notifications.Key {
     static let didChangeUserProfileImage = NotificationKey("didChangeUserProfileImage")
 
     static let didStartPlayback = NotificationKey("didStartPlayback")
+
+    static let didAddServerUser = NotificationKey("didStartPlayback")
 }

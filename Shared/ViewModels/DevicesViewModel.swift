@@ -25,7 +25,6 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case getDevices
-        case setCustomName(id: String, newName: String)
         case deleteDevices(ids: [String])
     }
 
@@ -47,30 +46,21 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: Published Values
 
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
+    final var devices: [DeviceInfo] = []
+    @Published
+    final var state: State = .initial
+
     var events: AnyPublisher<Event, Never> {
         eventSubject
             .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 
-    @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    final var devices: OrderedDictionary<String, BindingBox<DeviceInfo?>> = [:]
-    @Published
-    final var state: State = .initial
-
-    @Published
-    private(set) var userID: String?
-
     private var deviceTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: - Initializer
-
-    init(_ userID: String? = nil) {
-        self.userID = userID
-    }
 
     // MARK: - Respond to Action
 
@@ -83,9 +73,8 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
             deviceTask = Task { [weak self] in
                 do {
-                    try await self?.loadDevices(
-                        userID: self?.userID
-                    )
+                    try await self?.loadDevices()
+
                     await MainActor.run {
                         self?.state = .content
                         self?.eventSubject.send(.success)
@@ -100,42 +89,12 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.gettingDevices)
+                    _ = self?.backgroundStates.remove(.gettingDevices)
                 }
             }
             .asAnyCancellable()
 
             return state
-
-        case let .setCustomName(id, newName):
-            deviceTask?.cancel()
-
-            backgroundStates.append(.settingCustomName)
-
-            deviceTask = Task { [weak self] in
-                do {
-                    try await self?.setCustomName(id: id, newName: newName)
-                    await MainActor.run {
-                        self?.state = .content
-                        self?.eventSubject.send(.success)
-                    }
-                } catch {
-                    guard let self else { return }
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                        self.eventSubject.send(.error(jellyfinError))
-                    }
-                }
-
-                await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.settingCustomName)
-                }
-            }
-            .asAnyCancellable()
-
-            return state
-
         case let .deleteDevices(ids):
             deviceTask?.cancel()
 
@@ -157,7 +116,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
                 }
 
                 await MainActor.run {
-                    let _ = self?.backgroundStates.remove(.deletingDevices)
+                    _ = self?.backgroundStates.remove(.deletingDevices)
                 }
             }
             .asAnyCancellable()
@@ -168,8 +127,8 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Load Devices
 
-    private func loadDevices(userID: String?) async throws {
-        let request = Paths.getDevices(userID: userID)
+    private func loadDevices() async throws {
+        let request = Paths.getDevices()
         let response = try await userSession.client.send(request)
 
         guard let devices = response.value.items else {
@@ -177,36 +136,8 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         }
 
         await MainActor.run {
-            for device in devices {
-                guard let id = device.id else { continue }
-
-                if let existingDevice = self.devices[id] {
-                    existingDevice.value = device
-                } else {
-                    self.devices[id] = BindingBox<DeviceInfo?>(
-                        source: .init(get: { device }, set: { _ in })
-                    )
-                }
-            }
-
-            self.devices.sort { x, y in
-                let device0 = x.value.value
-                let device1 = y.value.value
-                return (device0?.dateLastActivity ?? Date()) > (device1?.dateLastActivity ?? Date())
-            }
-        }
-    }
-
-    // MARK: - Set Custom Name
-
-    private func setCustomName(id: String, newName: String) async throws {
-        let request = Paths.updateDeviceOptions(id: id, DeviceOptionsDto(customName: newName))
-        try await userSession.client.send(request)
-
-        if let _ = devices[id]?.value {
-            await MainActor.run {
-                self.devices[id]?.value?.name = newName
-            }
+            self.devices = devices.sorted(using: \.dateLastActivity)
+                .reversed()
         }
     }
 
@@ -221,9 +152,7 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
         let request = Paths.deleteDevice(id: id)
         try await userSession.client.send(request)
 
-        await MainActor.run {
-            let _ = self.devices.removeValue(forKey: id)
-        }
+        try await loadDevices()
     }
 
     // MARK: - Delete Devices
@@ -246,10 +175,6 @@ final class DevicesViewModel: ViewModel, Eventful, Stateful {
             try await group.waitForAll()
         }
 
-        await MainActor.run {
-            self.devices = self.devices.filter {
-                !deviceIdsToDelete.contains($0.key)
-            }
-        }
+        try await loadDevices()
     }
 }
