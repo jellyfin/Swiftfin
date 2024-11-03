@@ -1,6 +1,6 @@
 # Player Differences
 
-Swiftfin offers two player options: the default Swiftfin player and Native (AVKit). The Swiftfin team recommends using the Swiftfin player for optimal compatibility and features, though the Native player is also available for certain cases that benefit from Apple's native capabilities. All video, audio, and subtitle formats listed are supported for direct playback. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
+Swiftfin offers two player options: the default Swiftfin player and Native (AVKit). The Swiftfin team recommends using the Swiftfin player for optimal compatibility and features, though the Native player is also available for certain cases that benefit from Apple's native capabilities. All container, video, audio, and subtitle formats listed are supported for direct playback _(Native Player requiring MP4 & HLS)_. If transcoding is enabled on your server, any unsupported formats will be converted automatically.
 
 ---
 
@@ -15,8 +15,6 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
 | **TLS Support**         | 1.1, 1.2 ***                                                                                                   | 1.1, 1.2, **1.3**                                                            |
 | **[Home Theater Audio](https://support.apple.com/en-us/102357)**  | 🟡 ****                                          | ✅                                                            |
-
----
 
 ## Notes
 
@@ -46,7 +44,11 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **3GP**               | ✅                                                                                                             | ✅                                                                           |
 | **WebM**           | ✅                                                                                                             | ❌                                                              |
 
----
+## Notes
+
+**Unsupported containers will require transcoding or remuxing to play.** 
+
+--- 
 
 ## Audio Support
 
@@ -67,7 +69,7 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **MLP**       | ❌                                                                                                             | ❌                                                                |
 | **Nellymoser**       | ✅                                                                                                             | ❌                                                                |
 | **Opus**                | ✅                                                                                                             | ❌                                                                           |
-| **PCM**                 | ✅                                                                                                             | ✅ Limited support                                                           |
+| **PCM**                 | ✅                                                                                                             | 🟡 Limited support                                                           |
 | **Speex**               | ✅                                                                                                             | ❌                                                                           |
 | **TrueHD**               | ❌                                                                                                             | ❌                                                                           |
 | **Vorbis**              | ✅                                                                                                             | ❌                                                                           |
@@ -123,5 +125,29 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **TTML**                | ✅                                                                                                             | 🟡                                                                           |
 | **VTT**                 | ✅                                                                                                             | 🟡                                                                           |
 | **XSub**                | ✅                                                                                                             | ❌                                                                           |
+
+## Notes
+
+**Subtitles are not currently supported in the Native Player.** 
+
+---
+
+## HDR Support
+
+| Subtitle Format         | Swiftfin (VLCKit)                                                                                               | Native (AVKit)                                                               |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| **Dolby Vision Profile 5**              | ❌                                                                                                             | ✅                                                                           |
+| **Dolby Vision Profile 8**              | ❌                                                                                                             | 🟡 Compatible devices only                                                                         |
+| **Dolby Vision Profile 10**              | ❌                                                                                                             | ✅                                                                           |
+| **HDR10**                 | ❌                                                                                                             | ✅                                                                           |
+| **HDR10+**              | ❌                                                                                                             | 🟡 Limited support                                                                           |
+| **HLG**                 | ❌                                                                                                             | ❌                                                                           |
+
+## Notes
+
+- HDR10+ support in Native (AVKit) is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware.
+- HLG (Hybrid Log-Gamma) support in Native (AVKit) is limited and may vary by device and OS version.
+- Dolby Vision Profile 10 (used in AV1) is currently not supported by Native (AVKit).
+- Swiftfin (VLCKit) does not support HDR playback natively. HDR content may play back without the intended high dynamic range effect.
 
 --- 
