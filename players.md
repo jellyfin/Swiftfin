@@ -13,7 +13,7 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 | **Player Controls**     | - Speed adjustment<br>- Aspect Fill<br>- Chapter Support<br>- Subtitle Support<br>- Audio Track Selection<br>- Customizable UI                  | - Speed adjustment<br>- Aspect Fill                                          |
 | **Picture-in-Picture**  | ❌                                                                                                             | ✅                                                                           |
 | **TLS Support**         | 1.1, 1.2 ***                                                                                                   | 1.1, 1.2, **1.3**                                                            |
-| **[Home Theater Audio](https://support.apple.com/en-us/102357)**  | 🟡 ****                                          | ✅                                                            |
+| **[Airplay Audio Output](https://support.apple.com/en-us/102357)**  | 🟡 ****                                          | ✅                                                            |
 
 ## Notes
 
