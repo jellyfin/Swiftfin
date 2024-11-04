@@ -11,6 +11,7 @@ import Stinsen
 import SwiftUI
 
 final class AdminDashboardCoordinator: NavigationCoordinatable {
+
     let stack = NavigationStack(initial: \AdminDashboardCoordinator.start)
 
     @Root

@@ -166,8 +166,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
         VideoPlayerSettingsCoordinator()
     }
 
-    func makeAdminDashboard() -> NavigationViewCoordinator<AdminDashboardCoordinator> {
-        NavigationViewCoordinator(AdminDashboardCoordinator())
+    @ViewBuilder
+    func makeAdminDashboard() -> some View {
+        AdminDashboardCoordinator().view()
     }
 
     #if DEBUG

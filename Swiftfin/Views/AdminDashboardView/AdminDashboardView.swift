@@ -59,8 +59,5 @@ struct AdminDashboardView: View {
         }
         .navigationTitle(L10n.dashboard)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
     }
 }
