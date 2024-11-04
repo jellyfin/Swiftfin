@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension UserDashboardView {
+extension AdminDashboardView {
 
     struct UserSection: View {
 

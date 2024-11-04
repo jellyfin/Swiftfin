@@ -17,7 +17,7 @@ struct ServerUsersView: View {
     private var accentColor
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
