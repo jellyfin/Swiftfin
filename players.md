@@ -45,7 +45,9 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 
 ## Notes
 
-**Unsupported containers will require transcoding or remuxing to play.** 
+**Unsupported containers will require transcoding or remuxing to play.**
+
+**AV1 is disabled by default but can be enabled for Native Player using Custom Device Profiles.** 
 
 --- 
 
