@@ -10,12 +10,12 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataEditorView {
+extension MetadataTextEditorView {
     struct BaseItemSection: View {
         @Binding
         var item: BaseItemDto
         let itemType: BaseItemKind
-        
+
         var body: some View {
             Section("File Path") {
                 Text(item.path ?? L10n.unknown)
@@ -67,7 +67,7 @@ extension MetadataEditorView {
                     item.premiereDate = $0
                 }), displayedComponents: .date)
 
-                if itemType == .series {
+                if itemType == .series || itemType == .person {
                     DatePicker("End Date", selection: Binding(get: {
                         item.endDate ?? Date()
                     }, set: {
@@ -85,13 +85,62 @@ extension MetadataEditorView {
                     .keyboardType(.numberPad)
             }
 
-            Section("Community Rating") {
-                TextField("Community Rating", value: Binding(get: {
-                    item.communityRating ?? 0.0
-                }, set: {
-                    item.communityRating = $0
-                }), formatter: NumberFormatter())
+            Section("Reviews") {
+                ChevronAlertButton(
+                    "Critics",
+                    subtitle: item.criticRating.map { "\($0)" } ?? .emptyDash,
+                    description: "Critics rating out of 10"
+                ) {
+                    TextField(
+                        "Rating",
+                        value: $item.criticRating,
+                        format: .number.precision(.fractionLength(1))
+                    )
                     .keyboardType(.decimalPad)
+                    .onChange(of: item.criticRating) { _ in
+                        if let rating = item.criticRating {
+                            item.criticRating = min(max(rating, 0), 10)
+                        }
+                    }
+                }
+
+                ChevronAlertButton(
+                    "Community",
+                    subtitle: item.communityRating.map { "\($0)" } ?? .emptyDash,
+                    description: "Community rating out of 10"
+                ) {
+                    TextField(
+                        "Rating",
+                        value: $item.communityRating,
+                        format: .number.precision(.fractionLength(1))
+                    )
+                    .keyboardType(.decimalPad)
+                    .onChange(of: item.communityRating) { _ in
+                        if let rating = item.communityRating {
+                            item.communityRating = min(max(rating, 0), 10)
+                        }
+                    }
+                }
+            }
+
+            Section(L10n.genres) {
+                EditableListView(
+                    title: "Genre",
+                    items: Binding(
+                        get: { item.genres ?? [] },
+                        set: { item.genres = $0 }
+                    )
+                )
+            }
+
+            Section(L10n.tags) {
+                EditableListView(
+                    title: "Tag",
+                    items: Binding(
+                        get: { item.tags ?? [] },
+                        set: { item.tags = $0 }
+                    )
+                )
             }
         }
     }

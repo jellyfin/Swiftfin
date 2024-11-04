@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-struct BaseItemOptionsView: View {
+struct MetadataEditorView: View {
 
     @EnvironmentObject
     private var router: BaseItemEditorCoordinator.Router
@@ -17,10 +17,12 @@ struct BaseItemOptionsView: View {
     @ObservedObject
     var viewModel: RefreshMetadataViewModel
 
+    // MARK: - Body
+
     var body: some View {
         List {
             ListTitleSection(
-                "Item Details",
+                "Metadata",
                 description: "Manage your metadata to organize and enrich your Jellyfin library’s information."
             ) {
                 UIApplication.shared.open(URL.jellyfinDocsMetadata)
@@ -39,6 +41,8 @@ struct BaseItemOptionsView: View {
         }
         .navigationTitle("Item Details")
     }
+
+    // MARK: - Refresh Menu
 
     private var refreshMenuView: some View {
         Menu {
@@ -123,13 +127,15 @@ struct BaseItemOptionsView: View {
             }
 
         } label: {
+            // TODO: Is there a way to show progress on a metadata refresh?
             HStack {
                 Text("Refresh metadata")
+                    .foregroundStyle(.primary)
                 Spacer()
-                // TODO: Is there a way to show progress on a metadata refresh
                 Image(systemName: "arrow.clockwise")
+                    .foregroundStyle(.secondary)
             }
         }
-        .foregroundStyle(.primary)
+        .foregroundStyle(.primary, .secondary)
     }
 }

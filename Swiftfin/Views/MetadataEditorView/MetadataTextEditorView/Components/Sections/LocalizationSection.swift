@@ -10,13 +10,13 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataEditorView {
+extension MetadataTextEditorView {
     struct LocalizationSection: View {
         @Binding
         var item: BaseItemDto
-        
+
         var body: some View {
-            Section("Preferred Metadata") {
+            Section("Metadata preferences") {
                 LanguagePicker(title: "Language", selectedLanguageCode: Binding(get: {
                     item.preferredMetadataLanguage
                 }, set: {

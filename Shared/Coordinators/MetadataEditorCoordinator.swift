@@ -29,14 +29,15 @@ final class BaseItemEditorCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    @ViewBuilder
-    func makeEditItemMetadata() -> some View {
-        MetadataEditorView(item: baseItem)
+    func makeEditItemMetadata() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator { [self] in
+            MetadataTextEditorView(item: baseItem)
+        }
     }
     #endif
 
     @ViewBuilder
     func makeStart() -> some View {
-        BaseItemOptionsView(viewModel: RefreshMetadataViewModel(item: baseItem))
+        MetadataEditorView(viewModel: RefreshMetadataViewModel(item: baseItem))
     }
 }

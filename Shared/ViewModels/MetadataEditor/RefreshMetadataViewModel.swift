@@ -46,22 +46,6 @@ class RefreshMetadataViewModel: ViewModel, Stateful {
     init(item: BaseItemDto) {
         self.item = item
         super.init()
-
-        Notifications[.itemMetadataDidChange].publisher
-            .sink { [weak self] notification in
-                guard let userInfo = notification.object as? [String: String] else { return }
-
-                if let itemID = userInfo["itemID"], itemID == item.id {
-                    Task { [weak self] in
-                        try await self?.refreshMetadata(metadataRefreshMode: .default, imageRefreshMode: .default)
-                    }
-                } else if let seriesID = userInfo["seriesID"], seriesID == item.id {
-                    Task { [weak self] in
-                        try await self?.refreshMetadata(metadataRefreshMode: .default, imageRefreshMode: .default)
-                    }
-                }
-            }
-            .store(in: &cancellables)
     }
 
     // MARK: Respond
@@ -122,10 +106,10 @@ class RefreshMetadataViewModel: ViewModel, Stateful {
             parameters: parameters
         )
 
-        do {
-            _ = try await userSession.client.send(request)
-        } catch {
-            throw JellyfinAPIError(error.localizedDescription)
+        _ = try await userSession.client.send(request)
+
+        await MainActor.run {
+            Notifications[.itemMetadataDidChange].post(object: item)
         }
     }
 }

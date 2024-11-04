@@ -10,22 +10,20 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataEditorView {
-    struct LockMetadataSection: View {
+extension MetadataTextEditorView {
+    struct EpisodeSection: View {
         @Binding
         var item: BaseItemDto
-        
+
         var body: some View {
-            Section("Lock Data") {
-                Toggle("Lock Data", isOn: Binding(get: {
+            Section("Locked fields") {
+                Toggle("Lock all fields", isOn: Binding(get: {
                     item.lockData ?? false
                 }, set: {
                     item.lockData = $0
                 }))
-            }
 
-            if item.lockData != true {
-                Section("Lock Fields") {
+                if item.lockData != true {
                     ForEach(MetadataField.allCases, id: \.self) { field in
                         Toggle(field.rawValue, isOn: Binding(
                             get: { item.lockedFields?.contains(field) ?? false },
