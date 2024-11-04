@@ -10,9 +10,9 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-final class BaseItemEditorCoordinator: NavigationCoordinatable {
+final class MetadataEditorCoordinator: NavigationCoordinatable {
 
-    let stack = NavigationStack(initial: \BaseItemEditorCoordinator.start)
+    let stack = NavigationStack(initial: \MetadataEditorCoordinator.start)
 
     @Root
     var start = makeStart

@@ -29,7 +29,7 @@ struct CountryPicker: View {
         .sorted { $0.name < $1.name }
 
         // Add None as an option at the top of the list
-        countryList.insert((code: nil, name: L10n.none), at: 0)
+        countryList.insert((code: "", name: L10n.none), at: 0)
         return countryList
     }
 

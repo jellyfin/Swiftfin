@@ -30,7 +30,7 @@ struct LanguagePicker: View {
         .sorted { $0.name < $1.name }
 
         // Add None as an option at the top of the list
-        languageList.insert((code: nil, name: L10n.none), at: 0)
+        languageList.insert((code: "", name: L10n.none), at: 0)
         return languageList
     }
 

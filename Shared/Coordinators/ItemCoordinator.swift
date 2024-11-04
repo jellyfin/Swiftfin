@@ -58,8 +58,8 @@ final class ItemCoordinator: NavigationCoordinatable {
         LibraryCoordinator(viewModel: viewModel)
     }
 
-    func makeEditor(item: BaseItemDto) -> BaseItemEditorCoordinator {
-        BaseItemEditorCoordinator(baseItem: item)
+    func makeEditor(item: BaseItemDto) -> MetadataEditorCoordinator {
+        MetadataEditorCoordinator(baseItem: item)
     }
 
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {

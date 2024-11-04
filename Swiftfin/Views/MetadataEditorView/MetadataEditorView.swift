@@ -12,7 +12,7 @@ import SwiftUI
 struct MetadataEditorView: View {
 
     @EnvironmentObject
-    private var router: BaseItemEditorCoordinator.Router
+    private var router: MetadataEditorCoordinator.Router
 
     @ObservedObject
     var viewModel: RefreshMetadataViewModel
