@@ -17,55 +17,27 @@ struct StudioEditorView: View {
 
     @State
     private var tempItem: BaseItemDto
+    @State
+    private var newNameText: String = ""
 
     @ObservedObject
     private var viewModel: UpdateMetadataViewModel
 
-    @State
-    var studios: [NameGuidPair]
-
-    @State
-    private var newNameText: String = ""
-
     init(item: BaseItemDto) {
         self.viewModel = UpdateMetadataViewModel(item: item)
         _tempItem = State(initialValue: item)
-        _studios = State(initialValue: item.studios ?? [])
     }
 
     // MARK: - Body
 
-    @ViewBuilder
     var body: some View {
-        contentView
-            .navigationBarTitle("Edit People", displayMode: .inline)
-            .topBarTrailing {
-                Button(L10n.save) {
-                    viewModel.send(.update(tempItem))
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.item == tempItem)
-            }
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
-            }
-    }
-
-    // MARK: - Content View
-
-    var contentView: some View {
         List {
-            ForEach(studios.indices, id: \.self) { index in
+            ForEach(tempItem.studios?.indices ?? [].indices, id: \.self) { index in
                 HStack {
-                    VStack(alignment: .leading) {
-                        TextField(L10n.studio, text: Binding(
-                            get: { studios[index].name ?? "" },
-                            set: { studios[index].name = $0 }
-                        ))
-                    }
-
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundColor(.secondary)
+                    TextField(L10n.studio, text: Binding(
+                        get: { tempItem.studios?[index].name ?? "" },
+                        set: { tempItem.studios?[index].name = $0 }
+                    ))
                 }
                 .swipeActions {
                     Button(role: .destructive) {
@@ -75,19 +47,33 @@ struct StudioEditorView: View {
                     }
                 }
             }
-            .onMove(perform: moveItems)
-
-            HStack {
-                TextField("New \(L10n.studio)", text: $newNameText)
-                    .onSubmit { addItem() }
-
-                Button(action: addItem) {
-                    Image(systemName: "plus.circle.fill")
-                }
-                .disabled(newNameText.isEmpty)
-            }
+            addNewItemRow
         }
-        .environment(\.editMode, .constant(.active))
+        .navigationTitle(L10n.editWithItem(L10n.studios))
+        .navigationBarTitleDisplayMode(.inline)
+        .topBarTrailing {
+            Button(L10n.save) {
+                viewModel.send(.update(tempItem))
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(viewModel.item == tempItem)
+        }
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+    }
+
+    // MARK: - Add New Item Row
+
+    private var addNewItemRow: some View {
+        HStack {
+            TextField(L10n.newWithItem(L10n.studio), text: $newNameText)
+                .onSubmit { addItem() }
+            Button(action: addItem) {
+                Image(systemName: "plus.circle.fill")
+            }
+            .disabled(newNameText.isEmpty)
+        }
     }
 
     // MARK: - Add a New Item
@@ -95,19 +81,16 @@ struct StudioEditorView: View {
     private func addItem() {
         guard !newNameText.isEmpty else { return }
         let newItem = NameGuidPair(name: newNameText)
-        studios.append(newItem)
+        if tempItem.studios == nil {
+            tempItem.studios = []
+        }
+        tempItem.studios?.append(newItem)
         newNameText = ""
     }
 
     // MARK: - Delete an Item
 
     private func deleteItem(at index: Int) {
-        studios.remove(at: index)
-    }
-
-    // MARK: - Move an Item
-
-    private func moveItems(from source: IndexSet, to destination: Int) {
-        studios.move(fromOffsets: source, toOffset: destination)
+        tempItem.studios?.remove(at: index)
     }
 }

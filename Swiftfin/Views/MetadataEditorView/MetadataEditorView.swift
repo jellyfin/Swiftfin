@@ -35,7 +35,11 @@ struct MetadataEditorView: View {
             Section(L10n.advanced) {
                 ChevronButton("Edit metadata")
                     .onSelect {
-                        router.route(to: \.editItemMetadata)
+                        router.route(to: \.editMetadata)
+                    }
+                ChevronButton("Edit studios")
+                    .onSelect {
+                        router.route(to: \.editStudios)
                     }
             }
         }

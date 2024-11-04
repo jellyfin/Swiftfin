@@ -18,7 +18,7 @@ struct BasePersonEditorView: View {
     @State
     private var newPersonName: String = ""
     @State
-    private var newPersonType: BaseItemPerson.DisplayedType = .actor
+    private var newPersonType: PersonKind = .unknown
     @State
     private var newPersonRole: String = ""
 
@@ -88,19 +88,20 @@ extension BasePersonEditorView {
                         get: { person.name ?? "" },
                         set: { person.name = $0 }
                     ))
+                    .font(.headline)
 
                     Picker(L10n.type, selection: Binding(
-                        get: { BaseItemPerson.DisplayedType(rawValue: person.type ?? "") ?? .actor },
+                        get: { PersonKind(type: person.type) },
                         set: { person.type = $0.rawValue }
                     )) {
-                        ForEach(BaseItemPerson.DisplayedType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
+                        ForEach(PersonKind.allCases, id: \.self) { type in
+                            Text(type.displayTitle).tag(type)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())
                     .foregroundStyle(.primary, .secondary)
 
-                    if person.type == BaseItemPerson.DisplayedType.actor.rawValue {
+                    if person.type == PersonKind.actor.rawValue {
                         TextField(L10n.role, text: Binding(
                             get: { person.role ?? "" },
                             set: { person.role = $0 }
@@ -108,19 +109,21 @@ extension BasePersonEditorView {
                         .foregroundColor(.secondary)
                     }
                 }
+                Image(systemName: "line.3.horizontal")
+                    .foregroundColor(.secondary)
             }
         }
     }
 }
 
-// MARK: - New Person Input View
+// MARK: - New Person Row View
 
 extension BasePersonEditorView {
     private struct NewPersonInputView: View {
         @Binding
         var newPersonName: String
         @Binding
-        var newPersonType: BaseItemPerson.DisplayedType
+        var newPersonType: PersonKind
         @Binding
         var newPersonRole: String
 
@@ -134,8 +137,8 @@ extension BasePersonEditorView {
                         .onSubmit { addAction() }
 
                     Picker("Type", selection: $newPersonType) {
-                        ForEach(BaseItemPerson.DisplayedType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
+                        ForEach(PersonKind.allCases, id: \.self) { type in
+                            Text(type.displayTitle).tag(type)
                         }
                     }
                     .pickerStyle(MenuPickerStyle())

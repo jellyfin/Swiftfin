@@ -19,7 +19,9 @@ final class MetadataEditorCoordinator: NavigationCoordinatable {
 
     #if os(iOS)
     @Route(.modal)
-    var editItemMetadata = makeEditItemMetadata
+    var editMetadata = makeEditMetadata
+    @Route(.modal)
+    var editStudios = makeEditStudios
     #endif
 
     private let baseItem: BaseItemDto
@@ -29,9 +31,15 @@ final class MetadataEditorCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    func makeEditItemMetadata() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeEditMetadata() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator { [self] in
             MetadataTextEditorView(item: baseItem)
+        }
+    }
+
+    func makeEditStudios() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator { [self] in
+            StudioEditorView(item: baseItem)
         }
     }
     #endif

@@ -24,6 +24,8 @@ internal enum L10n {
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
   /// Activity
   internal static let activity = L10n.tr("Localizable", "activity", fallback: "Activity")
+  /// Actor
+  internal static let actor = L10n.tr("Localizable", "actor", fallback: "Actor")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Add API key
@@ -46,6 +48,8 @@ internal enum L10n {
   internal static func airWithDate(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "airWithDate", p1, fallback: "Airs %s")
   }
+  /// Album Artist
+  internal static let albumArtist = L10n.tr("Localizable", "albumArtist", fallback: "Album Artist")
   /// View all past and present devices that have connected.
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All Genres
@@ -76,6 +80,10 @@ internal enum L10n {
   internal static let applicationName = L10n.tr("Localizable", "applicationName", fallback: "Application Name")
   /// Apply
   internal static let apply = L10n.tr("Localizable", "apply", fallback: "Apply")
+  /// Arranger
+  internal static let arranger = L10n.tr("Localizable", "arranger", fallback: "Arranger")
+  /// Artist
+  internal static let artist = L10n.tr("Localizable", "artist", fallback: "Artist")
   /// Aspect Fill
   internal static let aspectFill = L10n.tr("Localizable", "aspectFill", fallback: "Aspect Fill")
   /// Audio
@@ -100,6 +108,8 @@ internal enum L10n {
   internal static let audioSampleRateNotSupported = L10n.tr("Localizable", "audioSampleRateNotSupported", fallback: "The audio sample rate is not supported")
   /// Audio Track
   internal static let audioTrack = L10n.tr("Localizable", "audioTrack", fallback: "Audio Track")
+  /// Author
+  internal static let author = L10n.tr("Localizable", "author", fallback: "Author")
   /// Authorize
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
   /// PlaybackCompatibility Default Category
@@ -202,6 +212,8 @@ internal enum L10n {
   internal static let collections = L10n.tr("Localizable", "collections", fallback: "Collections")
   /// Color
   internal static let color = L10n.tr("Localizable", "color", fallback: "Color")
+  /// Colorist
+  internal static let colorist = L10n.tr("Localizable", "colorist", fallback: "Colorist")
   /// Section Title for Column Configuration
   internal static let columns = L10n.tr("Localizable", "columns", fallback: "Columns")
   /// Coming soon
@@ -216,6 +228,10 @@ internal enum L10n {
   internal static let compatibility = L10n.tr("Localizable", "compatibility", fallback: "Compatibility")
   /// PlaybackCompatibility Compatible Category
   internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most Compatible")
+  /// Composer
+  internal static let composer = L10n.tr("Localizable", "composer", fallback: "Composer")
+  /// Conductor
+  internal static let conductor = L10n.tr("Localizable", "conductor", fallback: "Conductor")
   /// Confirm Task Fuction
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
@@ -244,10 +260,14 @@ internal enum L10n {
   internal static let `continue` = L10n.tr("Localizable", "continue", fallback: "Continue")
   /// Continue Watching
   internal static let continueWatching = L10n.tr("Localizable", "continueWatching", fallback: "Continue Watching")
+  /// Cover Artist
+  internal static let coverArtist = L10n.tr("Localizable", "coverArtist", fallback: "Cover Artist")
   /// Create API Key
   internal static let createAPIKey = L10n.tr("Localizable", "createAPIKey", fallback: "Create API Key")
   /// Enter the application name for the new API key.
   internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
+  /// Creator
+  internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
   /// Current Position
@@ -336,8 +356,8 @@ internal enum L10n {
   internal static let devices = L10n.tr("Localizable", "devices", fallback: "Devices")
   /// PlaybackCompatibility DirectPlay Category
   internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct Play")
-  /// DIRECTOR
-  internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
+  /// Director
+  internal static let director = L10n.tr("Localizable", "director", fallback: "Director")
   /// PlayMethod - Direct Play
   internal static let directPlay = L10n.tr("Localizable", "directPlay", fallback: "Direct Play")
   /// TranscodeReason - Direct Play Error
@@ -362,14 +382,22 @@ internal enum L10n {
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
+  /// Editor
+  internal static let editor = L10n.tr("Localizable", "editor", fallback: "Editor")
   /// Select Server View - Edit an Existing Server
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
   /// Edit Users
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
+  /// Edit %@
+  internal static func editWithItem(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "editWithItem", String(describing: p1), fallback: "Edit %@")
+  }
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
   /// Enabled
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
+  /// Engineer
+  internal static let engineer = L10n.tr("Localizable", "engineer", fallback: "Engineer")
   /// Episode Landscape Poster
   internal static let episodeLandscapePoster = L10n.tr("Localizable", "episodeLandscapePoster", fallback: "Episode Landscape Poster")
   /// Episode %1$@
@@ -418,6 +446,8 @@ internal enum L10n {
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Grid
   internal static let grid = L10n.tr("Localizable", "grid", fallback: "Grid")
+  /// Guest Star
+  internal static let guestStar = L10n.tr("Localizable", "guestStar", fallback: "Guest Star")
   /// Haptic Feedback
   internal static let hapticFeedback = L10n.tr("Localizable", "hapticFeedback", fallback: "Haptic Feedback")
   /// Hidden
@@ -428,10 +458,14 @@ internal enum L10n {
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
   /// Idle
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
+  /// Illustrator
+  internal static let illustrator = L10n.tr("Localizable", "illustrator", fallback: "Illustrator")
   /// Customize Server View - Indicators
   internal static let indicators = L10n.tr("Localizable", "indicators", fallback: "Indicators")
   /// Information
   internal static let information = L10n.tr("Localizable", "information", fallback: "Information")
+  /// Inker
+  internal static let inker = L10n.tr("Localizable", "inker", fallback: "Inker")
   /// TranscodeReason - Interlaced Video Not Supported
   internal static let interlacedVideoNotSupported = L10n.tr("Localizable", "interlacedVideoNotSupported", fallback: "Interlaced video is not supported")
   /// Interval
@@ -488,6 +522,8 @@ internal enum L10n {
   }
   /// Left
   internal static let `left` = L10n.tr("Localizable", "left", fallback: "Left")
+  /// Letterer
+  internal static let letterer = L10n.tr("Localizable", "letterer", fallback: "Letterer")
   /// Letter Picker
   internal static let letterPicker = L10n.tr("Localizable", "letterPicker", fallback: "Letter Picker")
   /// Library
@@ -514,6 +550,8 @@ internal enum L10n {
   internal static let logs = L10n.tr("Localizable", "logs", fallback: "Logs")
   /// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
   internal static let logsDescription = L10n.tr("Localizable", "logsDescription", fallback: "Access the Jellyfin server logs for troubleshooting and monitoring purposes.")
+  /// Lyricist
+  internal static let lyricist = L10n.tr("Localizable", "lyricist", fallback: "Lyricist")
   /// Option to set the maximum bitrate for playback
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
   /// Playback May Fail
@@ -530,6 +568,8 @@ internal enum L10n {
   internal static let missing = L10n.tr("Localizable", "missing", fallback: "Missing")
   /// Missing Items
   internal static let missingItems = L10n.tr("Localizable", "missingItems", fallback: "Missing Items")
+  /// Mixer
+  internal static let mixer = L10n.tr("Localizable", "mixer", fallback: "Mixer")
   /// More Like This
   internal static let moreLikeThis = L10n.tr("Localizable", "moreLikeThis", fallback: "More Like This")
   /// Movies
@@ -554,6 +594,10 @@ internal enum L10n {
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New User
   internal static let newUser = L10n.tr("Localizable", "newUser", fallback: "New User")
+  /// New %@
+  internal static func newWithItem(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "newWithItem", String(describing: p1), fallback: "New %@")
+  }
   /// Next
   internal static let next = L10n.tr("Localizable", "next", fallback: "Next")
   /// Next Item
@@ -640,6 +684,8 @@ internal enum L10n {
   internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match")
   /// Video Player Settings View - Pause on Background
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
+  /// Penciller
+  internal static let penciller = L10n.tr("Localizable", "penciller", fallback: "Penciller")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
   /// Play
@@ -680,6 +726,8 @@ internal enum L10n {
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous Item")
   /// Primary
   internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
+  /// Producer
+  internal static let producer = L10n.tr("Localizable", "producer", fallback: "Producer")
   /// PlaybackCompatibility Profile Sections
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Programs
@@ -730,6 +778,8 @@ internal enum L10n {
   internal static let reload = L10n.tr("Localizable", "reload", fallback: "Reload")
   /// Remaining Time
   internal static let remainingTime = L10n.tr("Localizable", "remainingTime", fallback: "Remaining Time")
+  /// Remixer
+  internal static let remixer = L10n.tr("Localizable", "remixer", fallback: "Remixer")
   /// Remove
   internal static let remove = L10n.tr("Localizable", "remove", fallback: "Remove")
   /// Remove All
@@ -918,8 +968,8 @@ internal enum L10n {
   internal static let stop = L10n.tr("Localizable", "stop", fallback: "Stop")
   /// Session Streaming Clients
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
-  /// STUDIO
-  internal static let studio = L10n.tr("Localizable", "studio", fallback: "STUDIO")
+  /// Studio
+  internal static let studio = L10n.tr("Localizable", "studio", fallback: "Studio")
   /// Studios
   internal static let studios = L10n.tr("Localizable", "studios", fallback: "Studios")
   /// Subtitle
@@ -1004,6 +1054,8 @@ internal enum L10n {
   internal static let transcodeReasons = L10n.tr("Localizable", "transcodeReasons", fallback: "Transcode Reason(s)")
   /// Transition
   internal static let transition = L10n.tr("Localizable", "transition", fallback: "Transition")
+  /// Translator
+  internal static let translator = L10n.tr("Localizable", "translator", fallback: "Translator")
   /// Trigger already exists
   internal static let triggerAlreadyExists = L10n.tr("Localizable", "triggerAlreadyExists", fallback: "Trigger already exists")
   /// Triggers
@@ -1086,6 +1138,8 @@ internal enum L10n {
   internal static let whosWatching = L10n.tr("Localizable", "WhosWatching", fallback: "Who's watching?")
   /// WIP
   internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
+  /// Writer
+  internal static let writer = L10n.tr("Localizable", "writer", fallback: "Writer")
   /// Yellow
   internal static let yellow = L10n.tr("Localizable", "yellow", fallback: "Yellow")
   /// Yes

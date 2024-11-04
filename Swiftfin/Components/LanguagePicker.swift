@@ -13,6 +13,8 @@ struct LanguagePicker: View {
     @Binding
     var selectedLanguageCode: String?
 
+    // MARK: - Get all localized languages
+
     private var languages: [(code: String?, name: String)] {
         var uniqueLanguages = Set<String>()
 
@@ -33,6 +35,8 @@ struct LanguagePicker: View {
         languageList.insert((code: "", name: L10n.none), at: 0)
         return languageList
     }
+
+    // MARK: - Body
 
     var body: some View {
         Picker(title, selection: $selectedLanguageCode) {

@@ -33,109 +33,68 @@ struct MetadataTextEditorView: View {
 
     @ViewBuilder
     var body: some View {
+        contentView
+            .navigationBarTitle("Edit Metadata", displayMode: .inline)
+            .topBarTrailing {
+                Button(L10n.save) {
+                    viewModel.send(.update(tempItem))
+                }
+                .buttonStyle(.toolbarPill)
+                .disabled(viewModel.item == tempItem)
+            }
+            .navigationBarCloseButton {
+                router.dismissCoordinator()
+            }
+    }
+
+    @ViewBuilder
+    private var contentView: some View {
+        switch itemType {
+        case .movie:
+            movieView
+        case .series:
+            movieView
+        case .season:
+            movieView
+        case .episode:
+            movieView
+        default:
+            EmptyView()
+        }
+    }
+
+    @ViewBuilder
+    private var movieView: some View {
         Form {
-
-            // MARK: - Sections that should exist for all items
-
-            BaseItemSection(
+            TitleSection(
                 item: $tempItem,
                 itemType: itemType
             )
 
-            // MARK: - Sections for localization metadata
+            DatesSection(
+                item: $tempItem,
+                itemType: itemType
+            )
 
-            LocalizationSection(item: $tempItem)
+            ReviewsSection(item: $tempItem)
 
-            // MARK: - Sections for series items
-
-            if itemType == .series {
-                SeriesSection(item: $tempItem)
-            }
-
-            // MARK: - Sections for parential ratings
+            OverviewSection(
+                item: $tempItem,
+                itemType: itemType
+            )
 
             ParentalRatingSection(item: $tempItem)
 
-            if itemType == .audio {
-                albumArtistSection
-            }
+            MediaFormatSection(
+                item: $tempItem,
+                itemType: itemType
+            )
 
-            if itemType == .audio || itemType == .musicVideo {
-                artistAndAlbumSection
-            }
+            AssociationsSection(item: $tempItem)
 
-            if itemType == .boxSet {
-                displayOrderSectionBoxSet
-            } else if itemType == .series {
-                displayOrderSectionSeries
-            }
-
-            // MARK: - Sections for locking metadata sections
+            LocalizationSection(item: $tempItem)
 
             LockMetadataSection(item: $tempItem)
-        }
-        .navigationBarTitle("Edit Metadata", displayMode: .inline)
-        .topBarTrailing {
-            Button(L10n.save) {
-                viewModel.send(.update(tempItem))
-            }
-            .buttonStyle(.toolbarPill)
-            .disabled(viewModel.item == tempItem)
-        }
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
-    }
-
-    private var albumArtistSection: some View {
-        Section("Album Artists") {
-            // Add album artist-related fields here
-        }
-    }
-
-    private var artistAndAlbumSection: some View {
-        Section("Artist & Album") {
-            TextField("Album", text: Binding(get: {
-                tempItem.album ?? ""
-            }, set: {
-                tempItem.album = $0
-            }))
-        }
-    }
-
-    private var displayOrderSectionBoxSet: some View {
-        Section("Display Order (Box Set)") {
-            Picker("Display Order", selection: Binding(get: {
-                tempItem.displayOrder ?? ""
-            }, set: {
-                tempItem.displayOrder = $0
-            })) {
-                Text("Date Modified").tag("DateModified")
-                Text("Sort Name").tag("SortName")
-                Text("Premiere Date").tag("PremiereDate")
-            }
-        }
-    }
-
-    private var displayOrderSectionSeries: some View {
-        Section("Display Order (Series)") {
-            Picker("Display Order", selection: Binding(get: {
-                tempItem.displayOrder ?? ""
-            }, set: {
-                tempItem.displayOrder = $0
-            })) {
-                Text("Aired").tag("Aired")
-                Text("Original Air Date").tag("originalAirDate")
-                Text("Absolute").tag("absolute")
-                Text("DVD").tag("dvd")
-                Text("Digital").tag("digital")
-                Text("Story Arc").tag("storyArc")
-                Text("Production").tag("production")
-                Text("TV").tag("tv")
-                Text("Alternate").tag("alternate")
-                Text("Regional").tag("regional")
-                Text("Alternate DVD").tag("altdvd")
-            }
         }
     }
 }

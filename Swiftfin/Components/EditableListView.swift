@@ -42,7 +42,7 @@ struct EditableListView: View {
             .onMove(perform: moveItems)
 
             HStack {
-                TextField("New \(title)", text: $newItemText)
+                TextField(L10n.newWithItem(title), text: $newItemText)
                     .onSubmit {
                         addItem()
                     }

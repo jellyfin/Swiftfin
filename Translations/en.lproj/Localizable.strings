@@ -14,7 +14,7 @@
 "connectToJellyfin" = "Connect to Jellyfin";
 "connectToServer" = "Connect to Server";
 "continueWatching" = "Continue Watching";
-"director" = "DIRECTOR";
+"director" = "Director";
 "discoveredServers" = "Discovered Servers";
 "displayOrder" = "Display order";
 "emptyNextUp" = "Empty Next Up";
@@ -56,7 +56,7 @@
 "serverURL" = "Server URL";
 "signedInAsWithString" = "Signed in as %@";
 "sortBy" = "Sort by";
-"studio" = "STUDIO";
+"studio" = "Studio";
 "studios" = "Studios";
 "suggestions" = "Suggestions";
 "switchUser" = "Switch User";
@@ -1213,3 +1213,128 @@
 // Button title to edit existing users
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
+
+// Actor - Role
+// Represents a person whose profession is acting on stage, film, or television.
+// Used for describing the role of an actor in media information.
+"actor" = "Actor";
+
+// Composer - Role
+// Represents a person who writes music professionally.
+// Used for describing the role of a composer in media information.
+"composer" = "Composer";
+
+// Writer - Role
+// Represents a writer of a book, article, or document.
+// Used for describing the role of a writer in media information.
+"writer" = "Writer";
+
+// Guest Star - Role
+// Represents a well-known actor or performer with a special appearance.
+// Used for describing guest stars in media information.
+"guestStar" = "Guest Star";
+
+// Producer - Role
+// Represents a person responsible for the financial and managerial aspects of a production.
+// Used for describing producers in media information.
+"producer" = "Producer";
+
+// Conductor - Role
+// Represents a person who directs the performance of an orchestra or choir.
+// Used for describing conductors in media information.
+"conductor" = "Conductor";
+
+// Lyricist - Role
+// Represents a person who writes lyrics for songs or musicals.
+// Used for describing lyricists in media information.
+"lyricist" = "Lyricist";
+
+// Arranger - Role
+// Represents a person who adapts a composition for performance.
+// Used for describing arrangers in media information.
+"arranger" = "Arranger";
+
+// Engineer - Role
+// Represents an audio engineer performing a general engineering role.
+// Used for describing engineers in media information.
+"engineer" = "Engineer";
+
+// Mixer - Role
+// Represents an engineer responsible for mixing tracks.
+// Used for describing mixers in media information.
+"mixer" = "Mixer";
+
+// Remixer - Role
+// Represents a person who creates remixes by altering existing tracks.
+// Used for describing remixers in media information.
+"remixer" = "Remixer";
+
+// Creator - Role
+// Represents a person credited as the creator of material.
+// Used for describing creators in media information.
+"creator" = "Creator";
+
+// Artist - Role
+// Represents a person credited as the artist.
+// Used for describing artists in media information.
+"artist" = "Artist";
+
+// Album Artist - Role
+// Represents a person credited as the album artist.
+// Used for describing album artists in media information.
+"albumArtist" = "Album Artist";
+
+// Author - Role
+// Represents a person credited as the author.
+// Used for describing authors in media information.
+"author" = "Author";
+
+// Illustrator - Role
+// Represents a person credited as the illustrator.
+// Used for describing illustrators in media information.
+"illustrator" = "Illustrator";
+
+// Penciller - Role
+// Represents a person responsible for drawing art with pencils.
+// Used for describing pencillers in media information.
+"penciller" = "Penciller";
+
+// Inker - Role
+// Represents a person responsible for inking the pencil art.
+// Used for describing inkers in media information.
+"inker" = "Inker";
+
+// Colorist - Role
+// Represents a person responsible for coloring drawings.
+// Used for describing colorists in media information.
+"colorist" = "Colorist";
+
+// Letterer - Role
+// Represents a person responsible for lettering text and speech bubbles.
+// Used for describing letterers in media information.
+"letterer" = "Letterer";
+
+// Cover Artist - Role
+// Represents a person responsible for creating cover art.
+// Used for describing cover artists in media information.
+"coverArtist" = "Cover Artist";
+
+// Editor - Role
+// Represents a person contributing to content by revising or adding critical matter.
+// Used for describing editors in media information.
+"editor" = "Editor";
+
+// Translator - Role
+// Represents a person who translates text from one language to another.
+// Used for describing translators in media information.
+"translator" = "Translator";
+
+// New %@ - Filler Text
+// Represents adding a new item to a list or field.
+// Used for new item input fields.
+"newWithItem" = "New %@";
+
+// Edit %@ - Filler Text
+// Represents editing a item in a list or field.
+// Used for editing item input fields.
+"editWithItem" = "Edit %@";

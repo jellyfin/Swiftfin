@@ -13,11 +13,13 @@ struct CountryPicker: View {
     @Binding
     var selectedCountryCode: String?
 
+    // MARK: - Get all localized countries
+
     private var countries: [(code: String?, name: String)] {
         var uniqueCountries = Set<String>()
 
         var countryList: [(code: String?, name: String)] = Locale.isoRegionCodes.compactMap { code in
-            let locale = Locale(identifier: "en_US")
+            let locale = Locale.current
             if let name = locale.localizedString(forRegionCode: code),
                !uniqueCountries.contains(code)
             {
@@ -32,6 +34,8 @@ struct CountryPicker: View {
         countryList.insert((code: "", name: L10n.none), at: 0)
         return countryList
     }
+
+    // MARK: - Body
 
     var body: some View {
         Picker(title, selection: $selectedCountryCode) {

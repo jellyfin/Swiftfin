@@ -10,8 +10,6 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Resolve the error: 'Picker: the selection "Optional("")" is invalid and does not have an associated tag, this will give undefined results.'
-
 extension MetadataTextEditorView {
     struct ParentalRatingSection: View {
         @Binding
