@@ -147,8 +147,8 @@ Swiftfin offers two player options: the default Swiftfin player and Native (AVKi
 ## Notes
 
 - HDR10+ support in Native (AVKit) is limited to certain devices, such as the Apple TV 4K (3rd Generation) and recent iPhones and iPads with compatible hardware.
-- HLG (Hybrid Log-Gamma) support in Native (AVKit) is limited and may vary by device and OS version.
-- Dolby Vision Profile 10 (used in AV1) is currently not supported by Native (AVKit).
+- HLG (Hybrid Log-Gamma) support in Native (AVKit) is limited and not currently supported in Swiftin.
+- Dolby Vision Profile 10 requires AV1 to be enabled to work in the Native Player.
 - Swiftfin (VLCKit) does not support HDR playback natively. HDR content may play back without the intended high dynamic range effect.
 
 --- 
