@@ -23,17 +23,14 @@ struct QuickConnectView: View {
 
     private func pollingView(code: String) -> some View {
         VStack(alignment: .leading, spacing: 20) {
-
-            // TODO: change strings so that numbers are removed
-            //       and use `BulletedList`
-            //       - also probably rephrase/change steps
-
-            L10n.quickConnectStep1.text
-
-            L10n.quickConnectStep2.text
-
-            L10n.quickConnectStep3.text
-                .padding(.bottom)
+            BulletedList {
+                L10n.quickConnectStep1.text
+                    .padding(.bottom)
+                L10n.quickConnectStep2.text
+                    .padding(.bottom)
+                L10n.quickConnectStep3.text
+                    .padding(.bottom)
+            }
 
             Text(code)
                 .tracking(10)

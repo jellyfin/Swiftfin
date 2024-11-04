@@ -11,7 +11,7 @@ import JellyfinAPI
 
 extension DeviceInfo {
 
-    var device: DeviceType {
+    var type: DeviceType {
         DeviceType(
             client: appName,
             deviceName: name

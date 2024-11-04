@@ -8,19 +8,16 @@
 
 import SwiftUI
 
-// TODO: add all other missing colors from UIColor and fix usages
-//       - move row dividers to divider color
-
 extension Color {
 
-    static let jellyfinPurple = Color(uiColor: .jellyfinPurple)
+    static let jellyfinPurple = Color(red: 172 / 255, green: 92 / 255, blue: 195 / 255, opacity: 1)
 
     var uiColor: UIColor {
         UIColor(self)
     }
 
     var overlayColor: Color {
-        Color(uiColor: uiColor.overlayColor)
+        Color(uiColor: uiColor.overlayColor) // TODO: move from UIColor
     }
 
     // TODO: Correct and add colors
