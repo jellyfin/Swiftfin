@@ -17,6 +17,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         var didStartWithOverlay: Bool = false
         var startValue: Value = 0
         var startPoint: UnitPoint = .zero
+        var startTranslation: CGFloat = 0
         
         static var zero: Self {
             .init()
@@ -46,6 +47,8 @@ extension VideoPlayer.Overlay {
         
         @State
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .init()
+        @State
+        private var playbackRatePanGestureState: PanGestureState<Float> = .init()
         @State
         private var scrubPanGestureState: PanGestureState<TimeInterval> = .init()
         @State
@@ -87,18 +90,10 @@ extension VideoPlayer.Overlay.GestureLayer {
 //            return
 //        case .audioffset:
 //            audioOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
-//        case .brightness:
-//            brightnessAction(state: state, point: point, velocity: velocity, translation: translation)
 //        case .playbackSpeed:
 //            playbackSpeedAction(state: state, point: point, velocity: velocity, translation: translation)
-//        case .scrub:
-//            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 1)
-//        case .slowScrub:
-//            scrubAction(state: state, point: point, velocity: velocity, translation: translation, rate: 0.1)
 //        case .subtitleOffset:
 //            subtitleOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
-//        case .volume:
-//            volumeAction(state: state, point: point, velocity: velocity, translation: translation)
 //        }
         
         let action = Defaults[.VideoPlayer.Gesture.panAction]
@@ -139,24 +134,26 @@ extension VideoPlayer.Overlay.GestureLayer {
         }
     }
     
-//    private func playbackRateAction(
-//        state: UIGestureRecognizer.State,
-//        point: UnitPoint
-//    ) {
-        //        if state == .began {
-        //            gestureStateHandler.beginningPanProgress = currentProgressHandler.progress
-        //            gestureStateHandler.beginningHorizontalPanUnit = point
-        //            gestureStateHandler.beginningPlaybackSpeed = playbackSpeed
-        //        } else if state == .ended {
-        //            return
-        //        }
-        //
-        //        let newPlaybackSpeed = round(
-        //            gestureStateHandler.beginningPlaybackSpeed - Double(gestureStateHandler.beginningHorizontalPanUnit - point) * 2,
-        //            toNearest: 0.25
-        //        )
-        //        let clampedPlaybackSpeed = clamp(newPlaybackSpeed, min: 0.25, max: 5.0)
-//    }
+    private func playbackRateAction(
+        state: UIGestureRecognizer.State,
+        translation: CGFloat
+    ) {
+        if state == .began {
+            playbackRatePanGestureState = .zero
+            playbackRatePanGestureState.startValue = manager.rate
+            playbackRatePanGestureState.startTranslation = translation
+        } else if state == .ended {
+            return
+        }
+        
+        let newRate = round(
+            abs(playbackRatePanGestureState.startTranslation - translation) * 2,
+            toNearest: 0.25
+        )
+        let clampedRate = clamp(newRate, min: 0.25, max: 5.0)
+        
+        manager.set(rate: Float(clampedRate))
+    }
     
     private func scrubAction(
         state: UIGestureRecognizer.State,
