@@ -18,7 +18,7 @@ extension ServerTasksView {
         private var currentDate: Date
 
         @EnvironmentObject
-        private var router: SettingsCoordinator.Router
+        private var router: AdminDashboardCoordinator.Router
 
         @ObservedObject
         var observer: ServerTaskObserver

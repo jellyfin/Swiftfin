@@ -57,36 +57,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
-    // TODO: Move AdminDashboard items to its own coordinator ->
     @Route(.push)
-    var userDashboard = makeUserDashboard
-    @Route(.push)
-    var activeSessions = makeActiveSessions
-    @Route(.push)
-    var activeDeviceDetails = makeActiveDeviceDetails
-    @Route(.push)
-    var tasks = makeTasks
-    @Route(.push)
-    var devices = makeDevices
-    @Route(.push)
-    var deviceDetails = makeDeviceDetails
-    @Route(.push)
-    var editServerTask = makeEditServerTask
-    @Route(.modal)
-    var addServerTaskTrigger = makeAddServerTaskTrigger
-    @Route(.push)
-    var serverLogs = makeServerLogs
-    @Route(.push)
-    var users = makeUsers
-    @Route(.push)
-    var userDetails = makeUserDetails
-    @Route(.push)
-    var userDevices = makeUserDevices
-    @Route(.modal)
-    var addServerUser = makeAddServerUser
-    @Route(.push)
-    var apiKeys = makeAPIKeys
-    // <- End of AdminDashboard Items
+    var adminDashboard = makeAdminDashboard
 
     #if DEBUG
     @Route(.push)
@@ -194,80 +166,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         VideoPlayerSettingsCoordinator()
     }
 
-    // TODO: Move AdminDashboard items to its own coordinator ->
     @ViewBuilder
-    func makeUserDashboard() -> some View {
-        UserDashboardView()
+    func makeAdminDashboard() -> some View {
+        AdminDashboardCoordinator().view()
     }
-
-    @ViewBuilder
-    func makeActiveSessions() -> some View {
-        ActiveSessionsView()
-    }
-
-    @ViewBuilder
-    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
-        ActiveSessionDetailView(box: box)
-    }
-
-    @ViewBuilder
-    func makeTasks() -> some View {
-        ServerTasksView()
-    }
-
-    @ViewBuilder
-    func makeDevices() -> some View {
-        DevicesView()
-    }
-
-    @ViewBuilder
-    func makeDeviceDetails(device: DeviceInfo) -> some View {
-        DeviceDetailsView(device: device)
-    }
-
-    @ViewBuilder
-    func makeEditServerTask(observer: ServerTaskObserver) -> some View {
-        EditServerTaskView(observer: observer)
-    }
-
-    func makeAddServerTaskTrigger(observer: ServerTaskObserver) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            AddTaskTriggerView(observer: observer)
-        }
-    }
-
-    @ViewBuilder
-    func makeServerLogs() -> some View {
-        ServerLogsView()
-    }
-
-    @ViewBuilder
-    func makeUsers() -> some View {
-        ServerUsersView()
-    }
-
-    @ViewBuilder
-    func makeUserDetails(user: UserDto) -> some View {
-        ServerUserDetailsView(user: user)
-    }
-
-    func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            AddServerUserView()
-        }
-    }
-
-    @ViewBuilder
-    func makeUserDevices() -> some View {
-        DevicesView()
-    }
-
-    @ViewBuilder
-    func makeAPIKeys() -> some View {
-        APIKeysView()
-    }
-
-    // <- End of AdminDashboard Items
 
     #if DEBUG
     @ViewBuilder
