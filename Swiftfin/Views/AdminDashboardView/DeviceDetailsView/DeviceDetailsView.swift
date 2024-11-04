@@ -15,7 +15,7 @@ import SwiftUI
 struct DeviceDetailsView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @CurrentDate
     private var currentDate: Date
@@ -57,7 +57,7 @@ struct DeviceDetailsView: View {
 
                 let user = UserDto(id: userID, name: userName)
 
-                UserDashboardView.UserSection(
+                AdminDashboardView.UserSection(
                     user: user,
                     lastActivityDate: device.dateLastActivity
                 ) {
@@ -68,7 +68,7 @@ struct DeviceDetailsView: View {
             // TODO: Enable with SDK Change
             // CustomDeviceNameSection(customName: $temporaryCustomName)
 
-            UserDashboardView.DeviceSection(
+            AdminDashboardView.DeviceSection(
                 client: device.appName,
                 device: device.name,
                 version: device.appVersion

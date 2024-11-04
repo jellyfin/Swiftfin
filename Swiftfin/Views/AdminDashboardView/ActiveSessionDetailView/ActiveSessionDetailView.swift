@@ -14,7 +14,7 @@ import SwiftUIIntrospect
 struct ActiveSessionDetailView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @ObservedObject
     var box: BindingBox<SessionInfo?>
@@ -27,7 +27,7 @@ struct ActiveSessionDetailView: View {
             if let userID = session.userID {
                 let user = UserDto(id: userID, name: session.userName)
 
-                UserDashboardView.UserSection(
+                AdminDashboardView.UserSection(
                     user: user,
                     lastActivityDate: session.lastActivityDate
                 ) {
@@ -35,7 +35,7 @@ struct ActiveSessionDetailView: View {
                 }
             }
 
-            UserDashboardView.DeviceSection(
+            AdminDashboardView.DeviceSection(
                 client: session.client,
                 device: session.deviceName,
                 version: session.applicationVersion
@@ -66,7 +66,7 @@ struct ActiveSessionDetailView: View {
             if let userID = session.userID {
                 let user = UserDto(id: userID, name: session.userName)
 
-                UserDashboardView.UserSection(
+                AdminDashboardView.UserSection(
                     user: user,
                     lastActivityDate: session.lastPlaybackCheckIn
                 ) {
@@ -74,7 +74,7 @@ struct ActiveSessionDetailView: View {
                 }
             }
 
-            UserDashboardView.DeviceSection(
+            AdminDashboardView.DeviceSection(
                 client: session.client,
                 device: session.deviceName,
                 version: session.applicationVersion

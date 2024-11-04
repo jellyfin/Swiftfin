@@ -13,7 +13,7 @@ import SwiftUI
 struct EditServerTaskView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @ObservedObject
     var observer: ServerTaskObserver

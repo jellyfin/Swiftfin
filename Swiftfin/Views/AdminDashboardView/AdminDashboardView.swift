@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct UserDashboardView: View {
+struct AdminDashboardView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     // MARK: - Body
 
@@ -58,5 +58,6 @@ struct UserDashboardView: View {
             }
         }
         .navigationTitle(L10n.dashboard)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

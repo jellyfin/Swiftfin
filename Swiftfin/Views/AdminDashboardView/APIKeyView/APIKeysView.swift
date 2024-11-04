@@ -12,7 +12,7 @@ import SwiftUI
 struct APIKeysView: View {
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: AdminDashboardCoordinator.Router
 
     @State
     private var showCopiedAlert = false
