@@ -57,7 +57,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var createCustomDeviceProfile = makeCreateCustomDeviceProfile
 
-    @Route(.modal)
+    @Route(.push)
     var adminDashboard = makeAdminDashboard
 
     #if DEBUG

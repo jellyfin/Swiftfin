@@ -7,7 +7,6 @@
 //
 
 import JellyfinAPI
-import PulseUI
 import Stinsen
 import SwiftUI
 
