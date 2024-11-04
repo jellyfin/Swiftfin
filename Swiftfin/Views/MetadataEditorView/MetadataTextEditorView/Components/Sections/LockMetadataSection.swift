@@ -24,7 +24,6 @@ extension MetadataTextEditorView {
                 }))
 
                 if item.lockData != true {
-                    Divider()
                     ForEach(MetadataField.allCases, id: \.self) { field in
                         Toggle(field.rawValue, isOn: Binding(
                             get: { item.lockedFields?.contains(field) ?? false },

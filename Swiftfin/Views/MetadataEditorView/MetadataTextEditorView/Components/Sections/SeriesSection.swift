@@ -43,40 +43,77 @@ extension MetadataTextEditorView {
             }
 
             Section(L10n.episodes) {
-                DatePicker(
-                    "Air Time",
-                    selection: Binding<Date>(
-                        get: { parseAirTimeToDate(item.airTime) },
-                        set: { date in
-                            item.airTime = formatDateToString(date)
+                airTimeView
+
+                runTimeView
+            }
+
+            Section(L10n.dayOfWeek) {
+                airDaysView
+            }
+        }
+
+        // MARK: - Air Time View
+
+        @ViewBuilder
+        private var airTimeView: some View {
+            DatePicker(
+                "Air Time",
+                selection: Binding<Date>(
+                    get: { parseAirTimeToDate(item.airTime) },
+                    set: { date in
+                        item.airTime = formatDateToString(date)
+                    }
+                ),
+                displayedComponents: .hourAndMinute
+            )
+        }
+
+        // MARK: - Air Days View
+
+        @ViewBuilder
+        private var airDaysView: some View {
+            ForEach(DayOfWeek.allCases, id: \.self) { field in
+                Toggle(field.displayTitle ?? L10n.unknown, isOn: Binding(
+                    get: { item.airDays?.contains(field) ?? false },
+                    set: { isSelected in
+                        if isSelected {
+                            item.airDays?.append(field)
+                        } else {
+                            item.airDays?.removeAll { $0 == field }
                         }
-                    ),
-                    displayedComponents: .hourAndMinute
+                    }
+                ))
+            }
+        }
+
+        // MARK: - Run Time View
+
+        @ViewBuilder
+        private var runTimeView: some View {
+            ChevronAlertButton(
+                "Run Time",
+                subtitle: ServerTicks(item.runTimeTicks ?? 0)
+                    .seconds.formatted(.hourMinute),
+                description: "Episode runtime in minutes"
+            ) {
+                TextField(
+                    L10n.minutes,
+                    value: $tempRunTime,
+                    format: .number
                 )
-                ChevronAlertButton(
-                    "Run Time",
-                    subtitle: ServerTicks(item.runTimeTicks ?? 0)
-                        .seconds.formatted(.hourMinute),
-                    description: "Episode runtime in minutes"
-                ) {
-                    TextField(
-                        "Minutes",
-                        value: $tempRunTime,
-                        format: .number
-                    )
-                    .keyboardType(.numberPad)
-                } onSave: {
-                    if let tempRunTime = tempRunTime, tempRunTime != 0 {
-                        item.runTimeTicks = ServerTicks(minutes: tempRunTime).ticks
-                    } else {
-                        item.runTimeTicks = nil
-                    }
-                } onCancel: {
-                    if let originalRunTime = item.runTimeTicks {
-                        tempRunTime = Int(ServerTicks(originalRunTime).minutes)
-                    } else {
-                        tempRunTime = nil
-                    }
+                .keyboardType(.numberPad)
+            } onSave: {
+                if let tempRunTime = tempRunTime, tempRunTime != 0 {
+                    item.runTimeTicks = ServerTicks(minutes: tempRunTime).ticks
+                } else {
+                    item.runTimeTicks = nil
+                }
+            } onCancel: {
+                if let originalRunTime = item.runTimeTicks {
+                    tempRunTime = Int(ServerTicks(originalRunTime).minutes)
+                } else {
+                    tempRunTime = nil
                 }
             }
         }
