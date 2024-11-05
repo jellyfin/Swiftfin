@@ -27,12 +27,12 @@ extension EditMetadataView {
             if item.lockData != true {
                 ForEach(MetadataField.allCases, id: \.self) { field in
                     Toggle(field.displayTitle, isOn: Binding(
-                        get: { item.lockedFields?.contains(field) == nil },
+                        get: { !(item.lockedFields?.contains(field) ?? false) },
                         set: { isSelected in
-                            if isSelected {
-                                item.lockedFields?.removeAll { $0 == field }
-                            } else {
+                            if !isSelected {
                                 item.lockedFields?.append(field)
+                            } else {
+                                item.lockedFields?.removeAll { $0 == field }
                             }
                         }
                     ))
