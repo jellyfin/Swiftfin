@@ -114,6 +114,7 @@
 "overview" = "Overview";
 "noOverviewAvailable" = "No overview available";
 "castAndCrew" = "Cast & Crew";
+"item" = "Item";
 "items" = "Items";
 "series" = "Series";
 "information" = "Information";
@@ -1636,3 +1637,7 @@
 // Enter Episode Number - Description for episode input field
 // Description explaining the purpose of the episode input.
 "enterEpisodeNumber" = "Enter the episode number.";
+
+// Delete Trigger Confirmation - Message
+// Message for deleting a trigger confirmation dialog
+"deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";

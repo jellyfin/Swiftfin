@@ -10,17 +10,13 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataTextEditorView {
+extension EditMetadataView {
     struct TitleSection: View {
         @Binding
         var item: BaseItemDto
         let itemType: BaseItemKind
 
         var body: some View {
-            Section(L10n.filePath) {
-                Text(item.path ?? L10n.unknown)
-            }
-
             Section(L10n.title) {
                 TextField(L10n.title, text: Binding(get: {
                     item.name ?? ""

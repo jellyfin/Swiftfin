@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataTextEditorView {
+extension EditMetadataView {
     struct MediaFormatSection: View {
         @Binding
         var item: BaseItemDto

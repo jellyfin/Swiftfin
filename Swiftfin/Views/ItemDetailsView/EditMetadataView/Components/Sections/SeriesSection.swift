@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataTextEditorView {
+extension EditMetadataView {
     struct SeriesSection: View {
         @Binding
         var item: BaseItemDto

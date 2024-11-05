@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension MetadataTextEditorView {
+extension EditMetadataView {
     struct LockMetadataSection: View {
         @Binding
         var item: BaseItemDto
@@ -27,12 +27,12 @@ extension MetadataTextEditorView {
             if item.lockData != true {
                 ForEach(MetadataField.allCases, id: \.self) { field in
                     Toggle(field.displayTitle, isOn: Binding(
-                        get: { item.lockedFields?.contains(field) ?? false },
+                        get: { item.lockedFields?.contains(field) == nil },
                         set: { isSelected in
                             if isSelected {
-                                item.lockedFields?.append(field)
-                            } else {
                                 item.lockedFields?.removeAll { $0 == field }
+                            } else {
+                                item.lockedFields?.append(field)
                             }
                         }
                     ))

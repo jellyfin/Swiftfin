@@ -346,6 +346,8 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// Are you sure you want to delete this item? This action cannot be undone.
+  internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
   /// Delete Selected Users
@@ -532,6 +534,8 @@ internal enum L10n {
   internal static let invertedDark = L10n.tr("Localizable", "invertedDark", fallback: "Inverted Dark")
   /// Inverted Light
   internal static let invertedLight = L10n.tr("Localizable", "invertedLight", fallback: "Inverted Light")
+  /// Item
+  internal static let item = L10n.tr("Localizable", "item", fallback: "Item")
   /// %1$@ at %2$@
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
@@ -940,10 +944,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Status label for when a task is running
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Administration Dashboard Scan All Libraries Button

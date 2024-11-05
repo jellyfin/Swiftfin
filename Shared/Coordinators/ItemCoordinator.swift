@@ -22,7 +22,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     @Route(.push)
     var library = makeLibrary
     @Route(.push)
-    var editor = makeEditor
+    var details = makeDetails
     @Route(.push)
     var castAndCrew = makeCastAndCrew
 
@@ -58,8 +58,8 @@ final class ItemCoordinator: NavigationCoordinatable {
         LibraryCoordinator(viewModel: viewModel)
     }
 
-    func makeEditor(item: BaseItemDto) -> MetadataEditorCoordinator {
-        MetadataEditorCoordinator(baseItem: item)
+    func makeDetails(item: BaseItemDto) -> ItemDetailsCoordinator {
+        ItemDetailsCoordinator(item: item)
     }
 
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {

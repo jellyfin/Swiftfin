@@ -10,10 +10,10 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-struct MetadataTextEditorView: View {
+struct EditMetadataView: View {
 
     @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    private var router: ItemDetailsCoordinator.Router
 
     @State
     private var tempItem: BaseItemDto
@@ -88,8 +88,6 @@ struct MetadataTextEditorView: View {
                 itemType: itemType
             )
 
-            AssociationsSection(item: $tempItem)
-
             LocalizationSection(item: $tempItem)
 
             LockMetadataSection(item: $tempItem)
@@ -125,8 +123,6 @@ struct MetadataTextEditorView: View {
                 itemType: itemType
             )
 
-            AssociationsSection(item: $tempItem)
-
             LocalizationSection(item: $tempItem)
 
             LockMetadataSection(item: $tempItem)
@@ -161,8 +157,6 @@ struct MetadataTextEditorView: View {
                 item: $tempItem,
                 itemType: itemType
             )
-
-            AssociationsSection(item: $tempItem)
 
             LocalizationSection(item: $tempItem)
 

@@ -76,7 +76,7 @@ extension ItemView {
                 if viewModel.userSession.user.isAdministrator {
                     Button {
                         UIDevice.impact(.light)
-                        router.route(to: \.editor, viewModel.item)
+                        router.route(to: \.details, viewModel.item)
                     } label: {
                         Image(systemName: "pencil")
                     }

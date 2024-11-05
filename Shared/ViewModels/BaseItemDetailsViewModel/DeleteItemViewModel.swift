@@ -10,20 +10,20 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class UpdateMetadataViewModel: ViewModel, Stateful, Eventful {
+class DeleteItemViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: Events
 
     enum Event: Equatable {
         case error(JellyfinAPIError)
-        case updated
+        case deleted
     }
 
     // MARK: Action
 
     enum Action: Equatable {
         case error(JellyfinAPIError)
-        case update(BaseItemDto)
+        case delete
     }
 
     // MARK: State
@@ -36,12 +36,12 @@ class UpdateMetadataViewModel: ViewModel, Stateful, Eventful {
     }
 
     @Published
-    var item: BaseItemDto
+    var item: BaseItemDto?
 
     @Published
     final var state: State = .initial
 
-    private var itemTask: AnyCancellable?
+    private var deleteTask: AnyCancellable?
 
     // MARK: Event Variables
 
@@ -67,21 +67,23 @@ class UpdateMetadataViewModel: ViewModel, Stateful, Eventful {
         case let .error(error):
             return .error(error)
 
-        case let .update(item):
-            itemTask?.cancel()
+        case .delete:
+            deleteTask?.cancel()
 
-            itemTask = Task { [weak self] in
+            deleteTask = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    try await self.refreshMetadata(item)
+                    try await self.deleteItem()
                     await MainActor.run {
                         self.state = .content
+                        self.eventSubject.send(.deleted)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
                         self.state = .error(JellyfinAPIError(error.localizedDescription))
+                        self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
                     }
                 }
             }
@@ -93,18 +95,22 @@ class UpdateMetadataViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: Metadata Refresh Logic
 
-    private func refreshMetadata(_ newItem: BaseItemDto) async throws {
-        guard let itemId = item.id else { return }
+    private func deleteItem() async throws {
+        guard let itemID = item?.id else {
+            throw JellyfinAPIError(L10n.unknownError)
+        }
 
-        let request = Paths.updateItem(itemID: itemId, newItem)
+        guard item?.canDelete == true else {
+            // Realistically, this should be caught on the view but if they get to this stage this should provide some clarity.
+            throw JellyfinAPIError("You do not have permission to delete this item.")
+        }
 
+        let request = Paths.deleteItem(itemID: itemID)
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            if newItem != item {
-                Notifications[.itemMetadataDidChange].post(object: newItem)
-            }
-            item = newItem
+            self.item = nil
+            Notifications[.didDeleteItem].post(object: item)
         }
     }
 }

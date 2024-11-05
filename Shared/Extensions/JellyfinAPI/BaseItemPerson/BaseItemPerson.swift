@@ -46,7 +46,6 @@ extension BaseItemPerson {
         return final
     }
 
-    // TODO: Figure out why this results in 4x errors: 'Accessing StateObject's object without being installed on a View. This will create a new instance each time.' This was doing the same thing prior to using PersonKind. Error thrown by selecting 'See All' in Cast & Crew.
     var isDisplayed: Bool {
         guard let type = type, let kind = PersonKind(rawValue: type) else {
             return false
