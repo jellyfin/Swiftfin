@@ -29,7 +29,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
-                .environment(\.isSelected, viewModel.item.userData?.isPlayed == true)
+                .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
                 .frame(height: 100)
                 .frame(maxWidth: .infinity)
 
