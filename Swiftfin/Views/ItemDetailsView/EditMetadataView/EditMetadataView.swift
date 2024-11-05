@@ -34,16 +34,14 @@ struct EditMetadataView: View {
     @ViewBuilder
     var body: some View {
         contentView
-            .navigationBarTitle(L10n.editWithItem(L10n.metadata), displayMode: .inline)
+            .navigationBarTitle(L10n.editWithItem(L10n.metadata))
+            .navigationBarTitleDisplayMode(.inline)
             .topBarTrailing {
                 Button(L10n.save) {
                     viewModel.send(.update(tempItem))
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.item == tempItem)
-            }
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
             }
     }
 

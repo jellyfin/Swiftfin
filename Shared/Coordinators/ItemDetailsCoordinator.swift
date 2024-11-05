@@ -24,7 +24,7 @@ final class ItemDetailsCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    @Route(.modal)
+    @Route(.push)
     var editMetadata = makeEditMetadata
     #endif
 

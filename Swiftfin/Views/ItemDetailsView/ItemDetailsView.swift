@@ -25,7 +25,7 @@ struct ItemDetailsView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.item)
+            .navigationBarTitle(L10n.item)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -50,7 +50,7 @@ struct ItemDetailsView: View {
                     .foregroundStyle(.primary, .secondary)
             }
 
-            if item.canDelete ?? false {
+            if item.canDelete ?? false == false {
                 Section {
                     DeleteItemButton(item: item) {
                         router.dismissCoordinator()

@@ -21,6 +21,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+    // TODO: Why does Modal break this!?
     @Route(.push)
     var details = makeDetails
     @Route(.push)
