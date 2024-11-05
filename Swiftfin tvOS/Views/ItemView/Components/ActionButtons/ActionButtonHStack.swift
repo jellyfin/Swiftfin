@@ -44,7 +44,7 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
-                .environment(\.isSelected, viewModel.item.userData?.isFavorite == true)
+                .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
                 .frame(height: 100)
                 .frame(maxWidth: .infinity)
 
