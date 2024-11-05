@@ -10,10 +10,6 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-import Combine
-import JellyfinAPI
-import SwiftUI
-
 extension MetadataTextEditorView {
     struct ReviewsSection: View {
         @Binding
