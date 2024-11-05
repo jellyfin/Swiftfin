@@ -17,28 +17,28 @@ extension MetadataTextEditorView {
         let itemType: BaseItemKind
 
         var body: some View {
-            Section("File Path") {
+            Section(L10n.filePath) {
                 Text(item.path ?? L10n.unknown)
             }
 
-            Section("Title") {
-                TextField("Title", text: Binding(get: {
+            Section(L10n.title) {
+                TextField(L10n.title, text: Binding(get: {
                     item.name ?? ""
                 }, set: {
                     item.name = $0
                 }))
             }
 
-            Section("Original Title") {
-                TextField("Original Title", text: Binding(get: {
+            Section(L10n.originalTitle) {
+                TextField(L10n.originalTitle, text: Binding(get: {
                     item.originalTitle ?? ""
                 }, set: {
                     item.originalTitle = $0
                 }))
             }
 
-            Section("Sort Title") {
-                TextField("Title", text: Binding(get: {
+            Section(L10n.sortTitle) {
+                TextField(L10n.sortTitle, text: Binding(get: {
                     item.forcedSortName ?? ""
                 }, set: {
                     item.forcedSortName = $0

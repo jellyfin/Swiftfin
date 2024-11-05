@@ -19,9 +19,13 @@ struct StudioEditorView: View {
     private var tempItem: BaseItemDto
     @State
     private var newNameText: String = ""
+    @State
+    private var isEditing: Bool = false
 
     @ObservedObject
     private var viewModel: UpdateMetadataViewModel
+
+    // MARK: - Initializer
 
     init(item: BaseItemDto) {
         self.viewModel = UpdateMetadataViewModel(item: item)
@@ -31,35 +35,69 @@ struct StudioEditorView: View {
     // MARK: - Body
 
     var body: some View {
-        List {
-            ForEach(tempItem.studios?.indices ?? [].indices, id: \.self) { index in
-                HStack {
-                    TextField(L10n.studio, text: Binding(
-                        get: { tempItem.studios?[index].name ?? "" },
-                        set: { tempItem.studios?[index].name = $0 }
-                    ))
+        contentView
+            .navigationTitle(L10n.editWithItem(L10n.studios))
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                router.dismissCoordinator()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(isEditing ? L10n.cancel : L10n.edit) {
+                        if isEditing {
+                            tempItem = viewModel.item
+                            isEditing = false
+                        } else {
+                            isEditing = true
+                        }
+                    }
+                    .buttonStyle(.toolbarPill)
                 }
-                .swipeActions {
-                    Button(role: .destructive) {
-                        deleteItem(at: index)
-                    } label: {
-                        Label(L10n.delete, systemImage: "trash")
+                ToolbarItem(placement: .bottomBar) {
+                    if isEditing {
+                        Button(L10n.save) {
+                            viewModel.send(.update(tempItem))
+                            isEditing = false
+                        }
+                        .buttonStyle(.toolbarPill)
+                        .disabled(isEditing && viewModel.item == tempItem)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                 }
             }
-            addNewItemRow
-        }
-        .navigationTitle(L10n.editWithItem(L10n.studios))
-        .navigationBarTitleDisplayMode(.inline)
-        .topBarTrailing {
-            Button(L10n.save) {
-                viewModel.send(.update(tempItem))
+    }
+
+    // MARK: - Content View
+
+    @ViewBuilder
+    private var contentView: some View {
+        if isEditing || tempItem.studios?.isNotEmpty ?? false {
+            List {
+                ForEach(tempItem.studios?.indices ?? [].indices, id: \.self) { index in
+                    HStack {
+                        TextField(L10n.studio, text: Binding(
+                            get: { tempItem.studios?[index].name ?? "" },
+                            set: { tempItem.studios?[index].name = $0 }
+                        ))
+                    }
+                    .swipeActions {
+                        Button(role: .destructive) {
+                            deleteItem(at: index)
+                        } label: {
+                            Label(L10n.delete, systemImage: "trash")
+                        }
+                    }
+                }
+                if isEditing {
+                    addNewItemRow
+                }
             }
-            .buttonStyle(.toolbarPill)
-            .disabled(viewModel.item == tempItem)
-        }
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
+            .disabled(!isEditing)
+        } else {
+            Text(L10n.none)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                .listRowSeparator(.hidden)
+                .listRowInsets(.zero)
         }
     }
 

@@ -16,26 +16,36 @@ extension MetadataTextEditorView {
         var item: BaseItemDto
 
         var body: some View {
-            Section("Locked fields") {
-                Toggle("Lock all fields", isOn: Binding(get: {
-                    item.lockData ?? false
-                }, set: {
-                    item.lockData = $0
-                }))
+            Section(L10n.season) {
 
-                if item.lockData != true {
-                    ForEach(MetadataField.allCases, id: \.self) { field in
-                        Toggle(field.rawValue, isOn: Binding(
-                            get: { item.lockedFields?.contains(field) ?? false },
-                            set: { isSelected in
-                                if isSelected {
-                                    item.lockedFields?.append(field)
-                                } else {
-                                    item.lockedFields?.removeAll { $0 == field }
-                                }
-                            }
-                        ))
-                    }
+                // MARK: Season Number
+
+                ChevronAlertButton(
+                    L10n.season,
+                    subtitle: item.parentIndexNumber?.description,
+                    description: L10n.enterSeasonNumber
+                ) {
+                    TextField(
+                        L10n.season,
+                        value: $item.parentIndexNumber,
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
+                }
+
+                // MARK: Episode Number
+
+                ChevronAlertButton(
+                    L10n.episode,
+                    subtitle: item.indexNumber?.description,
+                    description: L10n.enterEpisodeNumber
+                ) {
+                    TextField(
+                        L10n.episode,
+                        value: $item.indexNumber,
+                        format: .number
+                    )
+                    .keyboardType(.numberPad)
                 }
             }
         }

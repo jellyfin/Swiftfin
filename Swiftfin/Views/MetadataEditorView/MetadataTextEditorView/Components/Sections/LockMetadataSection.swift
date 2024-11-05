@@ -16,26 +16,26 @@ extension MetadataTextEditorView {
         var item: BaseItemDto
 
         var body: some View {
-            Section("Locked fields") {
-                Toggle("Lock all fields", isOn: Binding(get: {
+            Section(L10n.lockedFields) {
+                Toggle(L10n.lockAllFields, isOn: Binding(get: {
                     item.lockData ?? false
                 }, set: {
                     item.lockData = $0
                 }))
+            }
 
-                if item.lockData != true {
-                    ForEach(MetadataField.allCases, id: \.self) { field in
-                        Toggle(field.rawValue, isOn: Binding(
-                            get: { item.lockedFields?.contains(field) ?? false },
-                            set: { isSelected in
-                                if isSelected {
-                                    item.lockedFields?.append(field)
-                                } else {
-                                    item.lockedFields?.removeAll { $0 == field }
-                                }
+            if item.lockData != true {
+                ForEach(MetadataField.allCases, id: \.self) { field in
+                    Toggle(field.displayTitle, isOn: Binding(
+                        get: { item.lockedFields?.contains(field) ?? false },
+                        set: { isSelected in
+                            if isSelected {
+                                item.lockedFields?.append(field)
+                            } else {
+                                item.lockedFields?.removeAll { $0 == field }
                             }
-                        ))
-                    }
+                        }
+                    ))
                 }
             }
         }

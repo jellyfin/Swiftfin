@@ -10,20 +10,27 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+import Combine
+import JellyfinAPI
+import SwiftUI
+
 extension MetadataTextEditorView {
     struct ReviewsSection: View {
         @Binding
         var item: BaseItemDto
 
         var body: some View {
-            Section("Reviews") {
+            Section(L10n.reviews) {
+
+                // MARK: Critics Rating
+
                 ChevronAlertButton(
-                    "Critics",
+                    L10n.critics,
                     subtitle: item.criticRating.map { "\($0)" } ?? .emptyDash,
-                    description: "Critics rating out of 10"
+                    description: L10n.ratingDescription(L10n.critics)
                 ) {
                     TextField(
-                        "Rating",
+                        L10n.rating,
                         value: $item.criticRating,
                         format: .number.precision(.fractionLength(1))
                     )
@@ -35,13 +42,15 @@ extension MetadataTextEditorView {
                     }
                 }
 
+                // MARK: Community Rating
+
                 ChevronAlertButton(
-                    "Community",
+                    L10n.community,
                     subtitle: item.communityRating.map { "\($0)" } ?? .emptyDash,
-                    description: "Community rating out of 10"
+                    description: L10n.ratingDescription(L10n.community)
                 ) {
                     TextField(
-                        "Rating",
+                        L10n.rating,
                         value: $item.communityRating,
                         format: .number.precision(.fractionLength(1))
                     )

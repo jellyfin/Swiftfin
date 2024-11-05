@@ -16,14 +16,14 @@ extension MetadataTextEditorView {
         var item: BaseItemDto
 
         var body: some View {
-            Section("Metadata preferences") {
-                LanguagePicker(title: "Language", selectedLanguageCode: Binding(get: {
+            Section(L10n.metadataPreferences) {
+                LanguagePicker(title: L10n.language, selectedLanguageCode: Binding(get: {
                     item.preferredMetadataLanguage
                 }, set: {
                     item.preferredMetadataLanguage = $0
                 }))
 
-                CountryPicker(title: "Country", selectedCountryCode: Binding(get: {
+                CountryPicker(title: L10n.country, selectedCountryCode: Binding(get: {
                     item.preferredMetadataCountryCode
                 }, set: {
                     item.preferredMetadataCountryCode = $0

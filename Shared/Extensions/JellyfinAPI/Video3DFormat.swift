@@ -13,15 +13,15 @@ extension Video3DFormat {
     var displayTitle: String {
         switch self {
         case .halfSideBySide:
-            return "Half Side-by-Side"
+            return L10n.halfSideBySide
         case .fullSideBySide:
-            return "Full Side-by-Side"
+            return L10n.fullSideBySide
         case .fullTopAndBottom:
-            return "Full Top and Bottom"
+            return L10n.fullTopAndBottom
         case .halfTopAndBottom:
-            return "Half Top and Bottom"
+            return L10n.halfTopAndBottom
         case .mvc:
-            return "MVC"
+            return L10n.mvc
         }
     }
 }

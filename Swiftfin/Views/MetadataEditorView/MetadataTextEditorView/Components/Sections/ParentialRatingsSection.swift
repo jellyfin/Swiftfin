@@ -25,11 +25,11 @@ extension MetadataTextEditorView {
         // MARK: - Body
 
         var body: some View {
-            Section("Parental Rating") {
+            Section(L10n.parentalRating) {
 
                 // MARK: Official Rating Picker
 
-                Picker("Official Rating", selection: Binding<ParentalRating?>(
+                Picker(L10n.officialRating, selection: Binding<ParentalRating?>(
                     get: {
                         if let ratingName = item.officialRating {
                             return officialRatings.first { $0.name == ratingName }
@@ -55,7 +55,7 @@ extension MetadataTextEditorView {
 
                 // MARK: Custom Rating Picker
 
-                Picker("Custom Rating", selection: Binding<ParentalRating?>(
+                Picker(L10n.customRating, selection: Binding<ParentalRating?>(
                     get: {
                         if let ratingName = item.customRating {
                             return customRatings.first { $0.name == ratingName }

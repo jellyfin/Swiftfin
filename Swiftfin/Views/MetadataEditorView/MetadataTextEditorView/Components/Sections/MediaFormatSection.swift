@@ -28,14 +28,14 @@ extension MetadataTextEditorView {
 
         @ViewBuilder
         private var videoFormatView: some View {
-            Section("Format") {
-                TextField("Original aspect ratio", text: Binding(get: {
+            Section(L10n.format) {
+                TextField(L10n.originalAspectRatio, text: Binding(get: {
                     item.aspectRatio ?? ""
                 }, set: {
                     item.aspectRatio = $0
                 }))
 
-                Video3DFormatPicker(title: "3D Format", selectedFormat: Binding(get: {
+                Video3DFormatPicker(title: L10n.format3D, selectedFormat: Binding(get: {
                     item.video3DFormat
                 }, set: {
                     item.video3DFormat = $0

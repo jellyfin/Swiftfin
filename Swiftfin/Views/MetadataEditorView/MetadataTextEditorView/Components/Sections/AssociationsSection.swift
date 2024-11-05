@@ -10,6 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
+// TODO: Move Genre & Tags to their own View
 extension MetadataTextEditorView {
     struct AssociationsSection: View {
         @Binding
@@ -22,16 +23,6 @@ extension MetadataTextEditorView {
                     items: Binding(
                         get: { item.genres ?? [] },
                         set: { item.genres = $0 }
-                    )
-                )
-            }
-
-            Section(L10n.people) {
-                BasePersonEditorView(
-                    title: "Person",
-                    items: Binding(
-                        get: { item.people ?? [] },
-                        set: { item.people = $0 }
                     )
                 )
             }

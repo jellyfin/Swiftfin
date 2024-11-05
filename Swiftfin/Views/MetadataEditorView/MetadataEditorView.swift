@@ -22,8 +22,8 @@ struct MetadataEditorView: View {
     var body: some View {
         List {
             ListTitleSection(
-                "Metadata",
-                description: "Manage your metadata to organize and enrich your Jellyfin library’s information."
+                L10n.metadata,
+                description: L10n.metadataDescription
             ) {
                 UIApplication.shared.open(URL.jellyfinDocsMetadata)
             }
@@ -33,17 +33,21 @@ struct MetadataEditorView: View {
             }
 
             Section(L10n.advanced) {
-                ChevronButton("Edit metadata")
+                ChevronButton(L10n.editWithItem(L10n.metadata))
                     .onSelect {
                         router.route(to: \.editMetadata)
                     }
-                ChevronButton("Edit studios")
+                ChevronButton(L10n.editWithItem(L10n.people))
+                    .onSelect {
+                        router.route(to: \.editPeople)
+                    }
+                ChevronButton(L10n.editWithItem(L10n.studios))
                     .onSelect {
                         router.route(to: \.editStudios)
                     }
             }
         }
-        .navigationTitle("Item Details")
+        .navigationTitle(L10n.metadata)
     }
 
     // MARK: - Refresh Menu
@@ -61,7 +65,7 @@ struct MetadataEditorView: View {
                 )
             } label: {
                 Label(
-                    "Refresh",
+                    L10n.refresh,
                     systemImage: "arrow.clockwise.circle"
                 )
             }
@@ -77,7 +81,7 @@ struct MetadataEditorView: View {
                 )
             } label: {
                 Label(
-                    "Find missing metadata",
+                    L10n.findMissingMetadata,
                     systemImage: "magnifyingglass.circle"
                 )
             }
@@ -93,7 +97,7 @@ struct MetadataEditorView: View {
                 )
             } label: {
                 Label(
-                    "Replace metadata",
+                    L10n.replaceMetadata,
                     systemImage: "document.circle"
                 )
             }
@@ -109,7 +113,7 @@ struct MetadataEditorView: View {
                 )
             } label: {
                 Label(
-                    "Replace images",
+                    L10n.replaceImages,
                     systemImage: "photo.circle"
                 )
             }
@@ -125,15 +129,13 @@ struct MetadataEditorView: View {
                 )
             } label: {
                 Label(
-                    "Replace all",
+                    L10n.replaceAll,
                     systemImage: "staroflife.circle"
                 )
             }
-
         } label: {
-            // TODO: Is there a way to show progress on a metadata refresh?
             HStack {
-                Text("Refresh metadata")
+                Text(L10n.refreshMetadata)
                     .foregroundStyle(.primary)
                 Spacer()
                 Image(systemName: "arrow.clockwise")

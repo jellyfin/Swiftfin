@@ -34,7 +34,7 @@ struct MetadataTextEditorView: View {
     @ViewBuilder
     var body: some View {
         contentView
-            .navigationBarTitle("Edit Metadata", displayMode: .inline)
+            .navigationBarTitle(L10n.editWithItem(L10n.metadata), displayMode: .inline)
             .topBarTrailing {
                 Button(L10n.save) {
                     viewModel.send(.update(tempItem))
@@ -53,11 +53,9 @@ struct MetadataTextEditorView: View {
         case .movie:
             movieView
         case .series:
-            movieView
-        case .season:
-            movieView
+            seriesView
         case .episode:
-            movieView
+            episodeView
         default:
             EmptyView()
         }
@@ -71,7 +69,7 @@ struct MetadataTextEditorView: View {
                 itemType: itemType
             )
 
-            DatesSection(
+            DateSection(
                 item: $tempItem,
                 itemType: itemType
             )
@@ -82,6 +80,80 @@ struct MetadataTextEditorView: View {
                 item: $tempItem,
                 itemType: itemType
             )
+
+            ParentalRatingSection(item: $tempItem)
+
+            MediaFormatSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            AssociationsSection(item: $tempItem)
+
+            LocalizationSection(item: $tempItem)
+
+            LockMetadataSection(item: $tempItem)
+        }
+    }
+
+    @ViewBuilder
+    private var seriesView: some View {
+        Form {
+            TitleSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            DateSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            SeriesSection(item: $tempItem)
+
+            OverviewSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            ReviewsSection(item: $tempItem)
+
+            ParentalRatingSection(item: $tempItem)
+
+            MediaFormatSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            AssociationsSection(item: $tempItem)
+
+            LocalizationSection(item: $tempItem)
+
+            LockMetadataSection(item: $tempItem)
+        }
+    }
+
+    @ViewBuilder
+    private var episodeView: some View {
+        Form {
+            TitleSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            DateSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            EpisodeSection(item: $tempItem)
+
+            OverviewSection(
+                item: $tempItem,
+                itemType: itemType
+            )
+
+            ReviewsSection(item: $tempItem)
 
             ParentalRatingSection(item: $tempItem)
 

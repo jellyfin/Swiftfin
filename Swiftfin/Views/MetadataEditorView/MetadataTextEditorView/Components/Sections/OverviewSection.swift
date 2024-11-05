@@ -24,25 +24,24 @@ extension MetadataTextEditorView {
                 itemType == .book ||
                 itemType == .audio
             {
-
-                Section("Taglines") {
-                    EditableListView(
-                        title: "Tagline",
-                        items: Binding(
-                            get: { item.taglines ?? [] },
-                            set: { item.taglines = $0 }
-                        )
-                    )
+                // There doesn't seem to be a usage anywhere of more than 1 tagline?
+                Section(L10n.taglines) {
+                    TextField(L10n.tagline, text: Binding(
+                        get: { item.taglines?.first ?? "" },
+                        set: { newValue in
+                            item.taglines = newValue.isEmpty ? nil : [newValue]
+                        }
+                    ))
                 }
             }
 
-            Section("Overview") {
-                TextEditor(text: Binding(get: {
-                    item.overview ?? ""
-                }, set: {
-                    item.overview = $0
-                }))
-                .frame(minHeight: 100)
+            // TODO: Size Up / Down with Text
+            Section(L10n.overview) {
+                TextEditor(text: Binding(
+                    get: { item.overview ?? "" },
+                    set: { item.overview = $0 }
+                ))
+                .frame(minHeight: 100, maxHeight: .infinity)
             }
         }
     }

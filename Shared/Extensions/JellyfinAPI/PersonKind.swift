@@ -9,6 +9,7 @@
 import Foundation
 import JellyfinAPI
 
+// The RawValue capitalization matters. Please don't change.
 enum PersonKind: String, Displayable, CaseIterable {
     case unknown = ""
     case actor = "Actor"

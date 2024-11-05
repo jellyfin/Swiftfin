@@ -30,16 +30,9 @@ extension MetadataTextEditorView {
         // MARK: - Body
 
         var body: some View {
+
             Section(L10n.series) {
-                Picker("Status", selection: Binding(get: {
-                    item.status ?? ""
-                }, set: {
-                    item.status = $0
-                })) {
-                    Text("Continuing").tag("Continuing")
-                    Text("Ended").tag("Ended")
-                    Text("Unreleased").tag("Unreleased")
-                }
+                seriesStatusView
             }
 
             Section(L10n.episodes) {
@@ -53,12 +46,27 @@ extension MetadataTextEditorView {
             }
         }
 
+        // MARK: - Series Status View
+
+        @ViewBuilder
+        private var seriesStatusView: some View {
+            Picker(L10n.status, selection: Binding(get: {
+                SeriesStatus(rawValue: item.status ?? "") ?? .continuing
+            }, set: {
+                item.status = $0.rawValue
+            })) {
+                ForEach(SeriesStatus.allCases, id: \.self) { status in
+                    Text(status.displayTitle).tag(status)
+                }
+            }
+        }
+
         // MARK: - Air Time View
 
         @ViewBuilder
         private var airTimeView: some View {
             DatePicker(
-                "Air Time",
+                L10n.airTime,
                 selection: Binding<Date>(
                     get: { parseAirTimeToDate(item.airTime) },
                     set: { date in
@@ -92,10 +100,10 @@ extension MetadataTextEditorView {
         @ViewBuilder
         private var runTimeView: some View {
             ChevronAlertButton(
-                "Run Time",
+                L10n.runTime,
                 subtitle: ServerTicks(item.runTimeTicks ?? 0)
                     .seconds.formatted(.hourMinute),
-                description: "Episode runtime in minutes"
+                description: L10n.episodeRuntimeDescription
             ) {
                 TextField(
                     L10n.minutes,

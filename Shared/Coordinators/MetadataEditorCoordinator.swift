@@ -22,6 +22,8 @@ final class MetadataEditorCoordinator: NavigationCoordinatable {
     var editMetadata = makeEditMetadata
     @Route(.modal)
     var editStudios = makeEditStudios
+    @Route(.modal)
+    var editPeople = makeEditPeople
     #endif
 
     private let baseItem: BaseItemDto
@@ -34,6 +36,12 @@ final class MetadataEditorCoordinator: NavigationCoordinatable {
     func makeEditMetadata() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator { [self] in
             MetadataTextEditorView(item: baseItem)
+        }
+    }
+
+    func makeEditPeople() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator { [self] in
+            PeopleEditorView(item: baseItem)
         }
     }
 

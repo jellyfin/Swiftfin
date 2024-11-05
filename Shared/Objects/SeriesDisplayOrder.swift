@@ -25,17 +25,28 @@ enum SeriesDisplayOrder: String, CaseIterable, Identifiable {
 
     var displayTitle: String {
         switch self {
-        case .aired: return "Aired"
-        case .originalAirDate: return "Original Air Date"
-        case .absolute: return "Absolute"
-        case .dvd: return "DVD"
-        case .digital: return "Digital"
-        case .storyArc: return "Story Arc"
-        case .production: return "Production"
-        case .tv: return "TV"
-        case .alternate: return "Alternate"
-        case .regional: return "Regional"
-        case .alternateDVD: return "Alternate DVD"
+        case .aired:
+            return L10n.aired
+        case .originalAirDate:
+            return L10n.originalAirDate
+        case .absolute:
+            return L10n.absolute
+        case .dvd:
+            return L10n.dvd
+        case .digital:
+            return L10n.digital
+        case .storyArc:
+            return L10n.storyArc
+        case .production:
+            return L10n.production
+        case .tv:
+            return L10n.tv
+        case .alternate:
+            return L10n.alternate
+        case .regional:
+            return L10n.regional
+        case .alternateDVD:
+            return L10n.alternateDVD
         }
     }
 }

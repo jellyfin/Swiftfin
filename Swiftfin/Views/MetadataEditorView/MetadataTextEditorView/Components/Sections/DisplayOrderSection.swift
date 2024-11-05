@@ -18,10 +18,10 @@ extension MetadataTextEditorView {
         let itemType: BaseItemKind
 
         var body: some View {
-            Section("Display Order") {
+            Section(L10n.displayOrder) {
                 switch itemType {
                 case .boxSet:
-                    Picker("Display Order", selection: Binding(get: {
+                    Picker(L10n.displayOrder, selection: Binding(get: {
                         BoxSetDisplayOrder(rawValue: item.displayOrder ?? "") ?? .dateModified
                     }, set: {
                         item.displayOrder = $0.rawValue
@@ -32,7 +32,7 @@ extension MetadataTextEditorView {
                     }
 
                 case .series:
-                    Picker("Display Order", selection: Binding(get: {
+                    Picker(L10n.displayOrder, selection: Binding(get: {
                         SeriesDisplayOrder(rawValue: item.displayOrder ?? "") ?? .aired
                     }, set: {
                         item.displayOrder = $0.rawValue
