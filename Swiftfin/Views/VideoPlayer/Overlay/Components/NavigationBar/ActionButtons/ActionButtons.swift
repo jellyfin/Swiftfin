@@ -37,7 +37,9 @@ extension VideoPlayer.Overlay.NavigationBar {
                     AutoPlay()
                 }
             case .playbackSpeed:
-                PlaybackRateMenu()
+                if !manager.item.isLiveStream {
+                    PlaybackRateMenu()
+                }
             case .playNextItem:
                 if manager.queue != nil {
                     PlayNextItem()

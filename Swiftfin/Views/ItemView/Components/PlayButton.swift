@@ -39,7 +39,7 @@ extension ItemView {
         var body: some View {
             Button {
                 if let playButtonItem = viewModel.playButtonItem, let selectedMediaSource = viewModel.selectedMediaSource {
-                    let manager = MediaPlayerManager(item: playButtonItem, queue: EpisodeMediaPlayerQueue()) {
+                    let manager = MediaPlayerManager(item: playButtonItem, queue: EpisodeMediaPlayerQueue(episode: playButtonItem)) {
                         try await MediaPlayerItem.build(for: playButtonItem, mediaSource: selectedMediaSource)
                     }
                     

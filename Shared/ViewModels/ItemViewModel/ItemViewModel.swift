@@ -106,6 +106,11 @@ class ItemViewModel: ViewModel, Stateful {
             }
             .store(in: &cancellables)
     }
+    
+    convenience init(episode: BaseItemDto) {
+        let shellSeriesItem = BaseItemDto(id: episode.seriesID, name: episode.seriesName)
+        self.init(item: shellSeriesItem)
+    }
 
     // MARK: respond
 

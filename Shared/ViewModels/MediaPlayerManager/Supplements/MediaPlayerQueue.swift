@@ -6,27 +6,11 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import CollectionHStack
+import Defaults
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
-
-//class MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
-//
-//    let title: String = "Queue"
-//
-//    weak var manager: MediaPlayerManager?
-//
-//    private(set) var items: OrderedSet<BaseItemDto> = []
-//
-//    init(manager: MediaPlayerManager? = nil) {
-//        self.manager = manager
-//    }
-//
-//    func videoPlayerBody() -> some View {
-//        Color.red
-//            .opacity(0.5)
-//    }
-//}
 
 protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
     
@@ -49,18 +33,139 @@ extension MediaPlayerQueue {
     }
 }
 
-class EpisodeMediaPlayerQueue: ObservableObject, MediaPlayerQueue {
+class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     
     weak var manager: MediaPlayerManager?
     
     var items: OrderedSet<BaseItemDto> = []
     let title: String = "Up Next"
     
+    private let seriesViewModel: SeriesItemViewModel
+    
     var id: String {
         "EpisodeMediaPlayerQueue"
     }
     
+    init(episode: BaseItemDto) {
+        self.seriesViewModel = SeriesItemViewModel(episode: episode)
+        super.init()
+        
+        seriesViewModel.$seasons.sink { seasons in
+            
+        }
+        .store(in: &cancellables)
+        
+        Task {
+            await seriesViewModel.send(.refresh)
+        }
+    }
+    
+    private func setup(with manager: MediaPlayerManager) {
+        cancellables = []
+
+//        Timer.publish(every: 5, on: .main, in: .common)
+//            .autoconnect()
+//            .sink { _ in
+//                self.sendReport()
+//            }
+//            .store(in: &cancellables)
+
+//        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
+//        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
+//        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
+    }
+    
+    @ViewBuilder
     func videoPlayerBody() -> some View {
-        PosterHStack(type: .portrait, items: items)
+        _View(viewModel: seriesViewModel)
+            .frame(height: 150)
+    }
+    
+    struct _View: View {
+        
+        @ObservedObject
+        var viewModel: SeriesItemViewModel
+        
+        @State
+        private var selection: SeasonItemViewModel?
+        
+        var body: some View {
+            CollectionHStack(selection?.elements ?? []) { item in
+                EpisodeButton(item: item)
+                    .frame(height: 150)
+            }
+            .insets(horizontal: .zero)
+            .frame(height: 150)
+            .onReceive(viewModel.playButtonItem.publisher) { newValue in
+                if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
+                    selection = season
+                } else {
+                    selection = viewModel.seasons.first
+                }
+            }
+            .onChange(of: selection) { newValue in
+                guard let newValue else { return }
+
+                if newValue.state == .initial {
+                    newValue.send(.refresh)
+                }
+            }
+        }
+    }
+    
+    struct EpisodeButton: View {
+        
+        @Default(.accentColor)
+        private var accentColor
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
+        
+        let item: BaseItemDto
+        
+        var body: some View {
+            Button {
+//                manager.set(seconds: chapter.secondsRange.lowerBound)
+//                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
+            } label: {
+                VStack(alignment: .leading, spacing: 5) {
+                    ZStack {
+                        Color.clear
+                        
+//                        ImageView(item.landscapeImageSources(maxWidth: 500))
+                        ImageView(item.imageSource(.primary, maxWidth: 500))
+                            .failure {
+                                SystemImageContentView(systemName: item.systemImage)
+                            }
+                    }
+                    .overlay {
+                        if manager.item.id == item.id {
+                            Rectangle()
+                                .stroke(accentColor, lineWidth: 8)
+                                .cornerRadius(ratio: 1 / 30, of: \.width)
+                        }
+                    }
+                    .aspectRatio(1.77, contentMode: .fill)
+                    .posterBorder(ratio: 1 / 30, of: \.width)
+                    .cornerRadius(ratio: 1 / 30, of: \.width)
+                    
+                    Text(item.displayTitle)
+                        .lineLimit(1)
+                        .foregroundStyle(.white)
+                        .frame(height: 15)
+                    
+//                    Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
+//                        .frame(height: 20)
+//                        .foregroundStyle(Color(UIColor.systemBlue))
+//                        .padding(.horizontal, 4)
+//                        .background {
+//                            Color(.darkGray)
+//                                .opacity(0.2)
+//                                .cornerRadius(4)
+//                        }
+                }
+                .font(.subheadline.weight(.semibold))
+            }
+        }
     }
 }
