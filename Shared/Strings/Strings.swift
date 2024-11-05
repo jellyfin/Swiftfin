@@ -22,10 +22,10 @@ internal enum L10n {
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// ActiveSessionsView Header
   internal static let activeDevices = L10n.tr("Localizable", "activeDevices", fallback: "Active Devices")
-  /// Activity Indicator naming / settings label
-  internal static let activityIndicator = L10n.tr("Localizable", "activityIndicator", fallback: "Activity Indicator")
   /// Activity
   internal static let activity = L10n.tr("Localizable", "activity", fallback: "Activity")
+  /// Activity Indicator
+  internal static let activityIndicator = L10n.tr("Localizable", "activityIndicator", fallback: "Activity Indicator")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Add API key

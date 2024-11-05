@@ -92,7 +92,7 @@ struct HomeView: View {
 
             if activeSessionIndicator {
                 ActiveSessionIndicator {
-                    // TODO: "This will take you to the Admin Dashboard once it's on its own coordinator
+                    router.route(to: \.adminDashboard)
                 }
                 .foregroundStyle(Color.accentColor, .secondary)
             }
