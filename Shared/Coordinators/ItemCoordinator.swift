@@ -21,8 +21,7 @@ final class ItemCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
-    // TODO: Why does Modal break this!?
-    @Route(.push)
+    @Route(.modal)
     var details = makeDetails
     @Route(.push)
     var castAndCrew = makeCastAndCrew
@@ -59,8 +58,8 @@ final class ItemCoordinator: NavigationCoordinatable {
         LibraryCoordinator(viewModel: viewModel)
     }
 
-    func makeDetails(item: BaseItemDto) -> ItemDetailsCoordinator {
-        ItemDetailsCoordinator(item: item)
+    func makeDetails(item: BaseItemDto) -> NavigationViewCoordinator<ItemDetailsCoordinator> {
+        NavigationViewCoordinator(ItemDetailsCoordinator(item: item))
     }
 
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {

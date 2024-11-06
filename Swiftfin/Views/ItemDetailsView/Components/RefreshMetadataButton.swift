@@ -136,7 +136,7 @@ extension ItemDetailsView {
                     error = eventError
                     isPresentingEventAlert = true
                 case let .refreshTriggered(triggerDate):
-                    // TODO: Do what can I do with this date?
+                    // TODO: Do what can I do with this date? Something track progress?
                     self.isLoading = true
                 case .refreshCompleted:
                     showFeedback()

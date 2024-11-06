@@ -50,7 +50,7 @@ struct ItemDetailsView: View {
                     .foregroundStyle(.primary, .secondary)
             }
 
-            if item.canDelete ?? false {
+            if item.canDelete ?? false == false {
                 Section {
                     DeleteItemButton(item: item) {
                         router.dismissCoordinator()

@@ -25,17 +25,19 @@ extension EditMetadataView {
             }
 
             if item.lockData != true {
-                ForEach(MetadataField.allCases, id: \.self) { field in
-                    Toggle(field.displayTitle, isOn: Binding(
-                        get: { !(item.lockedFields?.contains(field) ?? false) },
-                        set: { isSelected in
-                            if !isSelected {
-                                item.lockedFields?.append(field)
-                            } else {
-                                item.lockedFields?.removeAll { $0 == field }
+                Section(L10n.active) {
+                    ForEach(MetadataField.allCases, id: \.self) { field in
+                        Toggle(field.displayTitle, isOn: Binding(
+                            get: { !(item.lockedFields?.contains(field) ?? false) },
+                            set: { isSelected in
+                                if !isSelected {
+                                    item.lockedFields?.append(field)
+                                } else {
+                                    item.lockedFields?.removeAll { $0 == field }
+                                }
                             }
-                        }
-                    ))
+                        ))
+                    }
                 }
             }
         }
