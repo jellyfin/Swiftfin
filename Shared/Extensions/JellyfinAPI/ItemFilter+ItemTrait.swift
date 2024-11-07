@@ -26,17 +26,16 @@ extension ItemTrait: ItemFilter {
 }
 
 extension ItemTrait: Displayable {
-    // TODO: Localize
     var displayTitle: String {
         switch self {
         case .isUnplayed:
-            return "Unplayed"
+            return L10n.unplayed
         case .isPlayed:
-            return "Played"
+            return L10n.played
         case .isFavorite:
-            return "Favorites"
+            return L10n.favorites
         case .likes:
-            return "Liked Items"
+            return L10n.likedItems
         default:
             return ""
         }

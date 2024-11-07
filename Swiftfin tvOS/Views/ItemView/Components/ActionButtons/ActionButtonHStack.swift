@@ -29,7 +29,10 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsPlayed)
                 }
+<<<<<<< HEAD
                 .foregroundStyle(.purple)
+=======
+>>>>>>> tvOSItemView
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
                 .frame(height: 100)
                 .frame(maxWidth: .infinity)
@@ -43,7 +46,10 @@ extension ItemView {
                 ) {
                     viewModel.send(.toggleIsFavorite)
                 }
+<<<<<<< HEAD
                 .foregroundStyle(.pink)
+=======
+>>>>>>> tvOSItemView
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
                 .frame(height: 100)
                 .frame(maxWidth: .infinity)
