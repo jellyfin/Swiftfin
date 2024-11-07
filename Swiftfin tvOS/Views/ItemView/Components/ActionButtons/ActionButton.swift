@@ -10,46 +10,44 @@ import Defaults
 import SwiftUI
 
 extension ItemView {
-    struct ActionButton: View {
 
-        @Default(.accentColor)
-        private var accentColor
+    struct ActionButton: View {
 
         @Environment(\.isSelected)
         private var isSelected
         @FocusState
         private var isFocused: Bool
 
-        let size: CGFloat = 50
+        let title: String
         let icon: String
         let selectedIcon: String
-        let color: Color
         let onSelect: () -> Void
 
         // MARK: - Body
 
         var body: some View {
-            Button(action: {
-                onSelect()
-            }) {
-                foregroundIcon
+            Button(action: onSelect) {
+                ZStack {
+                    if isSelected {
+                        Rectangle()
+                            .fill(
+                                isFocused ? AnyShapeStyle(HierarchicalShapeStyle.primary) :
+                                    AnyShapeStyle(HierarchicalShapeStyle.primary.opacity(0.5))
+                            )
+                    } else {
+                        Rectangle()
+                            .fill(isFocused ? Color.white : Color.white.opacity(0.5))
+                    }
+
+                    Label(title, systemImage: isSelected ? selectedIcon : icon)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.black)
+                        .labelStyle(.iconOnly)
+                }
             }
-            .buttonStyle(BorderlessFocus(isFocused: $isFocused))
             .focused($isFocused)
-            .padding(.vertical)
-        }
-
-        // MARK: - Foreground Icon
-
-        private var foregroundIcon: some View {
-            Image(systemName: isSelected ? selectedIcon : icon)
-                .frame(width: size, height: size)
-                .foregroundStyle(
-                    isFocused ? .black : .primary,
-                    isFocused ? (isSelected ? color : .black) : (isSelected ? color : .primary)
-                )
-                .font(.title3)
-                .shadow(color: isFocused || isSelected ? .clear : .black.opacity(0.3), radius: 2, x: 0, y: 2)
+            .buttonStyle(.card)
         }
     }
 }
