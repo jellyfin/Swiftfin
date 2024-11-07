@@ -11,7 +11,7 @@ import JellyfinAPI
 
 // The RawValue capitalization matters. Please don't change.
 enum PersonKind: String, Displayable, CaseIterable {
-    case unknown = ""
+    case unknown = "Unknown"
     case actor = "Actor"
     case director = "Director"
     case composer = "Composer"
@@ -93,7 +93,7 @@ enum PersonKind: String, Displayable, CaseIterable {
     }
 
     init(type: String?) {
-        self = PersonKind(rawValue: type ?? "") ?? .unknown
+        self = PersonKind(rawValue: type ?? "Unknown") ?? .unknown
     }
 
     // Only displayed person types.

@@ -32,8 +32,14 @@ internal enum L10n {
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Add API key
   internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
+  /// Add Genre
+  internal static let addGenre = L10n.tr("Localizable", "addGenre", fallback: "Add Genre")
   /// Select Server View - Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
+  /// Add Studio
+  internal static let addStudio = L10n.tr("Localizable", "addStudio", fallback: "Add Studio")
+  /// Add Tag
+  internal static let addTag = L10n.tr("Localizable", "addTag", fallback: "Add Tag")
   /// Add trigger
   internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
@@ -346,10 +352,34 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// Delete Genre
+  internal static let deleteGenre = L10n.tr("Localizable", "deleteGenre", fallback: "Delete Genre")
+  /// Are you sure you want to delete this genre?
+  internal static let deleteGenreWarning = L10n.tr("Localizable", "deleteGenreWarning", fallback: "Are you sure you want to delete this genre?")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
+  /// Delete Person
+  internal static let deletePerson = L10n.tr("Localizable", "deletePerson", fallback: "Delete Person")
+  /// Are you sure you want to delete this person?
+  internal static let deletePersonWarning = L10n.tr("Localizable", "deletePersonWarning", fallback: "Are you sure you want to delete this person?")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
+  /// Delete Selected Genres
+  internal static let deleteSelectedGenres = L10n.tr("Localizable", "deleteSelectedGenres", fallback: "Delete Selected Genres")
+  /// Are you sure you want to delete the selected genres?
+  internal static let deleteSelectedGenresWarning = L10n.tr("Localizable", "deleteSelectedGenresWarning", fallback: "Are you sure you want to delete the selected genres?")
+  /// Delete Selected People
+  internal static let deleteSelectedPeople = L10n.tr("Localizable", "deleteSelectedPeople", fallback: "Delete Selected People")
+  /// Are you sure you want to delete the selected people?
+  internal static let deleteSelectedPeopleWarning = L10n.tr("Localizable", "deleteSelectedPeopleWarning", fallback: "Are you sure you want to delete the selected people?")
+  /// Delete Selected Studios
+  internal static let deleteSelectedStudios = L10n.tr("Localizable", "deleteSelectedStudios", fallback: "Delete Selected Studios")
+  /// Are you sure you want to delete the selected studios?
+  internal static let deleteSelectedStudiosWarning = L10n.tr("Localizable", "deleteSelectedStudiosWarning", fallback: "Are you sure you want to delete the selected studios?")
+  /// Delete Selected Tags
+  internal static let deleteSelectedTags = L10n.tr("Localizable", "deleteSelectedTags", fallback: "Delete Selected Tags")
+  /// Are you sure you want to delete the selected tags?
+  internal static let deleteSelectedTagsWarning = L10n.tr("Localizable", "deleteSelectedTagsWarning", fallback: "Are you sure you want to delete the selected tags?")
   /// Delete Selected Users
   internal static let deleteSelectedUsers = L10n.tr("Localizable", "deleteSelectedUsers", fallback: "Delete Selected Users")
   /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
@@ -358,6 +388,14 @@ internal enum L10n {
   internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Server Detail View - Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
+  /// Delete Studio
+  internal static let deleteStudio = L10n.tr("Localizable", "deleteStudio", fallback: "Delete Studio")
+  /// Are you sure you want to delete this studio?
+  internal static let deleteStudioWarning = L10n.tr("Localizable", "deleteStudioWarning", fallback: "Are you sure you want to delete this studio?")
+  /// Delete Tag
+  internal static let deleteTag = L10n.tr("Localizable", "deleteTag", fallback: "Delete Tag")
+  /// Are you sure you want to delete this tag?
+  internal static let deleteTagWarning = L10n.tr("Localizable", "deleteTagWarning", fallback: "Are you sure you want to delete this tag?")
   /// Delete Trigger
   internal static let deleteTrigger = L10n.tr("Localizable", "deleteTrigger", fallback: "Delete Trigger")
   /// Are you sure you want to delete this trigger? This action cannot be undone.
@@ -412,12 +450,18 @@ internal enum L10n {
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Button label to edit a task
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
+  /// Edit Genres
+  internal static let editGenres = L10n.tr("Localizable", "editGenres", fallback: "Edit Genres")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Editor
   internal static let editor = L10n.tr("Localizable", "editor", fallback: "Editor")
   /// Select Server View - Edit an Existing Server
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
+  /// Edit Studios
+  internal static let editStudios = L10n.tr("Localizable", "editStudios", fallback: "Edit Studios")
+  /// Edit Tags
+  internal static let editTags = L10n.tr("Localizable", "editTags", fallback: "Edit Tags")
   /// Edit Users
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Edit %@
@@ -496,6 +540,8 @@ internal enum L10n {
   internal static let fullTopAndBottom = L10n.tr("Localizable", "fullTopAndBottom", fallback: "Full Top and Bottom")
   /// Genres
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
+  /// A list of genres associated with this item.
+  internal static let genresDescription = L10n.tr("Localizable", "genresDescription", fallback: "A list of genres associated with this item.")
   /// Gestures
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
   /// Green
@@ -776,6 +822,8 @@ internal enum L10n {
   internal static let penciller = L10n.tr("Localizable", "penciller", fallback: "Penciller")
   /// People
   internal static let people = L10n.tr("Localizable", "people", fallback: "People")
+  /// Manage People associated with this item, including actors, directors, and other contributors.
+  internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "Manage People associated with this item, including actors, directors, and other contributors.")
   /// Play
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause
@@ -908,6 +956,8 @@ internal enum L10n {
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature
   internal static let requestFeature = L10n.tr("Localizable", "requestFeature", fallback: "Request a Feature")
+  /// Required
+  internal static let `required` = L10n.tr("Localizable", "required", fallback: "Required")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
@@ -944,10 +994,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Status label for when a task is running
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Administration Dashboard Scan All Libraries Button
@@ -1094,6 +1144,8 @@ internal enum L10n {
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "Studio")
   /// Studios
   internal static let studios = L10n.tr("Localizable", "studios", fallback: "Studios")
+  /// Manage Studios associated with this item
+  internal static let studiosDescription = L10n.tr("Localizable", "studiosDescription", fallback: "Manage Studios associated with this item")
   /// Subtitle
   internal static let subtitle = L10n.tr("Localizable", "subtitle", fallback: "Subtitle")
   /// TranscodeReason - Subtitle Codec Not Supported
@@ -1134,6 +1186,8 @@ internal enum L10n {
   internal static let taglines = L10n.tr("Localizable", "taglines", fallback: "Taglines")
   /// Tags
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
+  /// Tags associated with the item
+  internal static let tagsDescription = L10n.tr("Localizable", "tagsDescription", fallback: "Tags associated with the item")
   /// The navigation title for the task view
   internal static let task = L10n.tr("Localizable", "task", fallback: "Task")
   /// Status message for an aborted task

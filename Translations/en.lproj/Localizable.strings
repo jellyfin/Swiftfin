@@ -1641,3 +1641,111 @@
 // Delete Trigger Confirmation - Message
 // Message for deleting a trigger confirmation dialog
 "deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
+
+// Delete Selected People - Button
+// Button label for deleting multiple selected people.
+"deleteSelectedPeople" = "Delete Selected People";
+
+// Delete Selected People Warning - Confirmation Message
+// Confirmation message shown when deleting multiple selected people.
+"deleteSelectedPeopleWarning" = "Are you sure you want to delete the selected people?";
+
+// Delete Person - Button
+// Button label for deleting a single person.
+"deletePerson" = "Delete Person";
+
+// Delete Person Warning - Confirmation Message
+// Confirmation message shown when deleting a single person.
+"deletePersonWarning" = "Are you sure you want to delete this person?";
+
+// Manage Studios associated with this item - Description
+// Description for studios section
+"studiosDescription" = "Manage Studios associated with this item";
+
+// Add Studio - Button
+// Button to add a new studio to the item
+"addStudio" = "Add Studio";
+
+// Edit Studios - Button
+// Button to enter edit mode for studios
+"editStudios" = "Edit Studios";
+
+// Delete Selected Studios - Confirmation Title
+// Confirmation title when deleting multiple selected studios
+"deleteSelectedStudios" = "Delete Selected Studios";
+
+// Are you sure you want to delete the selected studios? - Confirmation Message
+// Confirmation message for deleting selected studios
+"deleteSelectedStudiosWarning" = "Are you sure you want to delete the selected studios?";
+
+// Delete Studio - Confirmation Title
+// Confirmation title when deleting a single studio
+"deleteStudio" = "Delete Studio";
+
+// Are you sure you want to delete this studio? - Confirmation Message
+// Confirmation message for deleting a single studio
+"deleteStudioWarning" = "Are you sure you want to delete this studio?";
+
+// Required Field - Label
+// Label indicating a required field
+"required" = "Required";
+
+// Manage People associated with this item - Description
+// Description for people section
+"peopleDescription" = "Manage People associated with this item, including actors, directors, and other contributors.";
+
+// Genres - Description
+// A list of genres associated with this item.
+"genresDescription" = "A list of genres associated with this item.";
+
+// Add Genre - Action
+// Button label to add a new genre to the item.
+"addGenre" = "Add Genre";
+
+// Delete Genre - Action
+// Button label to delete a genre from the item.
+"deleteGenre" = "Delete Genre";
+
+// Delete Selected Genres Warning - Confirmation
+// Warning message displayed when the user attempts to delete multiple selected genres.
+"deleteSelectedGenresWarning" = "Are you sure you want to delete the selected genres?";
+
+// Delete Selected Genres - Action
+// Button label to confirm deletion of selected genres.
+"deleteSelectedGenres" = "Delete Selected Genres";
+
+// Edit Genres - Action
+// Button label to edit the genres associated with the item.
+"editGenres" = "Edit Genres";
+
+// Delete Genre Warning - Confirmation
+// Warning message displayed when the user attempts to delete a genre.
+"deleteGenreWarning" = "Are you sure you want to delete this genre?";
+
+// Tags Description - Section Description
+// Describes the purpose or role of tags in the metadata editor.
+"tagsDescription" = "Tags associated with the item";
+
+// Add Tag - Action
+// Button label to add a new tag to the item.
+"addTag" = "Add Tag";
+
+// Delete Tag - Confirmation
+// Confirmation title for deleting a single tag.
+"deleteTag" = "Delete Tag";
+
+// Delete Selected Tags Warning - Confirmation
+// Warning message displayed when the user attempts to delete selected tags.
+"deleteSelectedTagsWarning" = "Are you sure you want to delete the selected tags?";
+
+// Delete Selected Tags - Confirmation
+// Confirmation title for deleting multiple selected tags.
+"deleteSelectedTags" = "Delete Selected Tags";
+
+// Edit Tags - Screen Title
+// Title for the screen that allows users to edit tags.
+"editTags" = "Edit Tags";
+
+// Delete Tag Warning - Confirmation Message
+// Warning message displayed when the user attempts to delete a tag.
+"deleteTagWarning" = "Are you sure you want to delete this tag?";

@@ -15,18 +15,24 @@ struct EditMetadataView: View {
     @EnvironmentObject
     private var router: ItemDetailsCoordinator.Router
 
+    @ObservedObject
+    private var viewModel: ItemDetailsViewModel
+
+    @Binding
+    var item: BaseItemDto
+
     @State
     private var tempItem: BaseItemDto
 
-    @ObservedObject
-    private var viewModel: UpdateMetadataViewModel
-
     private let itemType: BaseItemKind
 
-    init(item: BaseItemDto) {
-        self.itemType = item.type!
-        self.viewModel = UpdateMetadataViewModel(item: item)
-        _tempItem = State(initialValue: item)
+    // MARK: - Initializer
+
+    init(viewModel: ItemDetailsViewModel) {
+        self.viewModel = viewModel
+        self._item = Binding(get: { viewModel.item }, set: { viewModel.item = $0 })
+        self._tempItem = State(initialValue: viewModel.item)
+        self.itemType = viewModel.item.type!
     }
 
     // MARK: - Body
@@ -38,12 +44,15 @@ struct EditMetadataView: View {
             .navigationBarTitleDisplayMode(.inline)
             .topBarTrailing {
                 Button(L10n.save) {
-                    viewModel.send(.update(tempItem))
+                    item = tempItem
+                    viewModel.send(.updateItem(tempItem))
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.item == tempItem)
             }
     }
+
+    // MARK: - Content View
 
     @ViewBuilder
     private var contentView: some View {
@@ -58,6 +67,8 @@ struct EditMetadataView: View {
             EmptyView()
         }
     }
+
+    // MARK: - Movie View
 
     @ViewBuilder
     private var movieView: some View {
@@ -91,6 +102,8 @@ struct EditMetadataView: View {
             LockMetadataSection(item: $tempItem)
         }
     }
+
+    // MARK: - Series View
 
     @ViewBuilder
     private var seriesView: some View {
@@ -126,6 +139,8 @@ struct EditMetadataView: View {
             LockMetadataSection(item: $tempItem)
         }
     }
+
+    // MARK: - Episode View
 
     @ViewBuilder
     private var episodeView: some View {

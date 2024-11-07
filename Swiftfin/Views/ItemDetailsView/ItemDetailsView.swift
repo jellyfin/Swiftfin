@@ -17,10 +17,6 @@ struct ItemDetailsView: View {
     @State
     var item: BaseItemDto
 
-    init(item: BaseItemDto) {
-        self._item = State(initialValue: item)
-    }
-
     // MARK: - Body
 
     var body: some View {
@@ -31,8 +27,11 @@ struct ItemDetailsView: View {
                 router.dismissCoordinator()
             }
             .onNotification(.itemMetadataDidChange) { notification in
-                guard let updatedItem = notification.object as? BaseItemDto else { return }
-                item = updatedItem
+                guard let newItem = notification.object as? BaseItemDto else { return }
+                item = newItem
+            }
+            .onNotification(.didDeleteItem) { _ in
+                router.dismissCoordinator()
             }
     }
 
@@ -61,7 +60,23 @@ struct ItemDetailsView: View {
             Section(L10n.advanced) {
                 ChevronButton(L10n.metadata)
                     .onSelect {
-                        router.route(to: \.editMetadata)
+                        router.route(to: \.editMetadata, ItemDetailsViewModel(item: item))
+                    }
+                ChevronButton(L10n.genres)
+                    .onSelect {
+                        router.route(to: \.editGenres, ItemDetailsViewModel(item: item))
+                    }
+                ChevronButton(L10n.people)
+                    .onSelect {
+                        router.route(to: \.editPeople, ItemDetailsViewModel(item: item))
+                    }
+                ChevronButton(L10n.studios)
+                    .onSelect {
+                        router.route(to: \.editStudios, ItemDetailsViewModel(item: item))
+                    }
+                ChevronButton(L10n.tags)
+                    .onSelect {
+                        router.route(to: \.editTags, ItemDetailsViewModel(item: item))
                     }
             }
         }

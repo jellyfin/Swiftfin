@@ -140,7 +140,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         guard let itemID = item.id else { return }
 
         while true {
-            try await Task.sleep(nanoseconds: 2_000_000_000)
+            try await Task.sleep(nanoseconds: 5_000_000_000)
 
             let request = Paths.getItem(userID: userSession.user.id, itemID: itemID)
             let response = try await userSession.client.send(request)
