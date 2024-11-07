@@ -44,6 +44,7 @@ extension ItemView {
                         .fontWeight(.semibold)
                         .foregroundStyle(.black)
                         .labelStyle(.iconOnly)
+                        .rotationEffect(.degrees(90))
                 }
             }
             .focused($isFocused)
