@@ -16,7 +16,7 @@ extension ItemView {
         var viewModel: ItemViewModel
 
         var body: some View {
-            HStack(alignment: .center) {
+            HStack(alignment: .center, spacing: 24) {
 
                 // MARK: - Toggle Played
 
@@ -30,6 +30,7 @@ extension ItemView {
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
                 .frame(height: 100)
+                .frame(minWidth: 140)
                 .frame(maxWidth: .infinity)
 
                 // MARK: - Toggle Favorite
@@ -44,7 +45,13 @@ extension ItemView {
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
                 .frame(height: 100)
+                .frame(minWidth: 140)
                 .frame(maxWidth: .infinity)
+
+                // MARK: - Additional Menu Options
+
+                ActionMenu {}
+                    .frame(width: 70, height: 100)
             }
         }
     }
