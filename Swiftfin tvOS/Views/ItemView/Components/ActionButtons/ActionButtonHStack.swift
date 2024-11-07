@@ -18,12 +18,10 @@ extension ItemView {
         var body: some View {
             HStack(alignment: .center) {
 
-                // Spacer()
-
                 // MARK: - Toggle Played
 
                 ActionButton(
-                    title: "Played",
+                    title: L10n.played,
                     icon: "checkmark.circle",
                     selectedIcon: "checkmark.circle.fill"
                 ) {
@@ -37,7 +35,7 @@ extension ItemView {
                 // MARK: - Toggle Favorite
 
                 ActionButton(
-                    title: "Favorited",
+                    title: L10n.favorited,
                     icon: "heart.circle",
                     selectedIcon: "heart.circle.fill"
                 ) {
