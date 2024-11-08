@@ -51,7 +51,6 @@ extension ItemView {
                 // MARK: - Additional Menu Options
 
                 ActionMenu {}
-                    .frame(width: 70, height: 100)
             }
         }
     }
