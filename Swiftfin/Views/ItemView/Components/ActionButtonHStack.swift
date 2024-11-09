@@ -73,7 +73,7 @@ extension ItemView {
                     view.frame(maxWidth: .infinity)
                 }
 
-                if viewModel.userSession.user.isAdministrator {
+                if viewModel.userSession.user.isAdministrator && StoredValue(.User.enableItemDetails).wrappedValue {
                     Button {
                         UIDevice.impact(.light)
                         router.route(to: \.details, viewModel.item)

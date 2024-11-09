@@ -7,12 +7,18 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 // TODO: will be entirely re-organized
 
 struct CustomizeViewsSettings: View {
 
+    @Injected(\.currentUserSession)
+    private var userSession
+
+    @StoredValue(.User.enableItemDetails)
+    private var enableItemDetails
     @Default(.Customization.itemViewType)
     private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)
@@ -159,6 +165,14 @@ struct CustomizeViewsSettings: View {
             }
 
             HomeSection()
+
+            if userSession?.user.isAdministrator ?? false {
+                Section {
+                    Toggle("Enable item details", isOn: $enableItemDetails)
+                } footer: {
+                    Text("Allows editing or deleting media items")
+                }
+            }
 
             Section {
                 Toggle("Remember layout", isOn: $rememberLibraryLayout)

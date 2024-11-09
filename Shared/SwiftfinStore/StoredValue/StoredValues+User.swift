@@ -148,5 +148,13 @@ extension StoredValues.Keys {
                 default: []
             )
         }
+
+        static var enableItemDetails: Key<Bool> {
+            CurrentUserKey(
+                "enableItemDetails",
+                domain: "enableItemDetails",
+                default: false
+            )
+        }
     }
 }
