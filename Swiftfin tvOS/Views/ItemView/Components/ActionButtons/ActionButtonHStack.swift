@@ -29,9 +29,7 @@ extension ItemView {
                 }
                 .foregroundStyle(.purple)
                 .environment(\.isSelected, viewModel.item.userData?.isPlayed ?? false)
-                .frame(height: 100)
-                .frame(minWidth: 140)
-                .frame(maxWidth: .infinity)
+                .frame(minWidth: 140, maxWidth: .infinity)
 
                 // MARK: - Toggle Favorite
 
@@ -44,14 +42,14 @@ extension ItemView {
                 }
                 .foregroundStyle(.pink)
                 .environment(\.isSelected, viewModel.item.userData?.isFavorite ?? false)
-                .frame(height: 100)
-                .frame(minWidth: 140)
-                .frame(maxWidth: .infinity)
+                .frame(minWidth: 140, maxWidth: .infinity)
 
                 // MARK: - Additional Menu Options
 
                 ActionMenu {}
+                    .frame(width: 70)
             }
+            .frame(height: 100)
         }
     }
 }

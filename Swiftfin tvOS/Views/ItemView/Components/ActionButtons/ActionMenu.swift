@@ -13,16 +13,11 @@ extension ItemView {
 
     struct ActionMenu<Content: View>: View {
 
-        @Environment(\.isSelected)
-        private var isSelected
         @FocusState
         private var isFocused: Bool
 
         @ViewBuilder
         let menuItems: Content
-
-        @State
-        private var isShowingMenu = false
 
         // MARK: - Body
 
@@ -33,10 +28,9 @@ extension ItemView {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
                         .fill(isFocused ? Color.white : Color.white.opacity(0.5))
-                        .frame(width: 70, height: 100)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(isSelected ? Color.black : Color.clear, lineWidth: 2)
+                                .stroke(Color.clear, lineWidth: 2)
                         )
 
                     Label(L10n.menuButtons, systemImage: "ellipsis")
@@ -50,8 +44,7 @@ extension ItemView {
             .focused($isFocused)
             .scaleEffect(isFocused ? 1.20 : 1.0)
             .animation(.easeInOut(duration: 0.15), value: isFocused)
-            .frame(width: 70, height: 100)
-            .buttonStyle(.borderless)
+            .menuStyle(.borderlessButton)
         }
     }
 }
