@@ -17,7 +17,6 @@ final class ItemDetailsCoordinator: ObservableObject, NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    #if os(iOS)
     @Route(.push)
     var editMetadata = makeEditMetadata
     @Route(.push)
@@ -36,7 +35,6 @@ final class ItemDetailsCoordinator: ObservableObject, NavigationCoordinatable {
     var editTags = makeEditTags
     @Route(.modal)
     var addTag = makeAddTag
-    #endif
 
     private var item: BaseItemDto
 
@@ -44,7 +42,6 @@ final class ItemDetailsCoordinator: ObservableObject, NavigationCoordinatable {
         self.item = item
     }
 
-    #if os(iOS)
     @ViewBuilder
     func makeEditMetadata(viewModel: ItemDetailsViewModel) -> some View {
         EditMetadataView(viewModel: viewModel)
@@ -93,7 +90,6 @@ final class ItemDetailsCoordinator: ObservableObject, NavigationCoordinatable {
             AddTagView(viewModel: viewModel)
         }
     }
-    #endif
 
     @ViewBuilder
     func makeStart() -> some View {

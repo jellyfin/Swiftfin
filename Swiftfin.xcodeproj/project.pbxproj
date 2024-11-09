@@ -36,7 +36,6 @@
 		4E2182E62CAF67F50094806B /* PlayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2182E42CAF67EF0094806B /* PlayMethod.swift */; };
 		4E23180F2CD7F5E400774747 /* EditMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23180E2CD7F5C500774747 /* EditMetadataView.swift */; };
 		4E2318112CD7F62F00774747 /* ItemDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2318102CD7F62500774747 /* ItemDetailsView.swift */; };
-		4E2318172CD8119C00774747 /* ItemDetailsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2318162CD8119900774747 /* ItemDetailsCoordinator.swift */; };
 		4E2318182CD8119C00774747 /* ItemDetailsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2318162CD8119900774747 /* ItemDetailsCoordinator.swift */; };
 		4E23181B2CD81A9B00774747 /* RefreshMetadataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23181A2CD81A7F00774747 /* RefreshMetadataViewModel.swift */; };
 		4E23181C2CD81A9B00774747 /* RefreshMetadataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E23181A2CD81A7F00774747 /* RefreshMetadataViewModel.swift */; };
@@ -3551,8 +3550,8 @@
 				62C83B07288C6A630004ED0C /* FontPickerView.swift */,
 				E168BD07289A4162001A6922 /* HomeView */,
 				E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */,
-				E14F7D0A26DB3714007C3AE6 /* ItemView */,
 				4E23180D2CD7F58B00774747 /* ItemDetailsView */,
+				E14F7D0A26DB3714007C3AE6 /* ItemView */,
 				E170D104294D21FA0017224C /* MediaSourceInfoView.swift */,
 				E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */,
 				E103DF922BCF2F23000229B2 /* MediaView */,
@@ -5015,7 +5014,6 @@
 				E193D53927193F8E00900D82 /* SearchCoordinator.swift in Sources */,
 				E13316FF2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */,
 				E148128928C154BF003B8787 /* ItemFilter+ItemTrait.swift in Sources */,
-				4E2318172CD8119C00774747 /* ItemDetailsCoordinator.swift in Sources */,
 				E1F5CF082CB0A04500607465 /* Text.swift in Sources */,
 				E43918672AD5C8310045A18C /* OnScenePhaseChangedModifier.swift in Sources */,
 				E154966F296CA2EF00C4EF88 /* LogManager.swift in Sources */,

@@ -21,12 +21,12 @@ final class ItemCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
-    @Route(.modal)
-    var details = makeDetails
     @Route(.push)
     var castAndCrew = makeCastAndCrew
 
     #if os(iOS)
+    @Route(.modal)
+    var details = makeDetails
     @Route(.modal)
     var itemOverview = makeItemOverview
     @Route(.modal)
@@ -58,10 +58,6 @@ final class ItemCoordinator: NavigationCoordinatable {
         LibraryCoordinator(viewModel: viewModel)
     }
 
-    func makeDetails(item: BaseItemDto) -> NavigationViewCoordinator<ItemDetailsCoordinator> {
-        NavigationViewCoordinator(ItemDetailsCoordinator(item: item))
-    }
-
     func makeCastAndCrew(people: [BaseItemPerson]) -> LibraryCoordinator<BaseItemPerson> {
         let id: String? = itemDto.id == nil ? nil : "castAndCrew-\(itemDto.id!)"
 
@@ -86,6 +82,10 @@ final class ItemCoordinator: NavigationCoordinatable {
     #if os(iOS)
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
+    }
+
+    func makeDetails(item: BaseItemDto) -> NavigationViewCoordinator<ItemDetailsCoordinator> {
+        NavigationViewCoordinator(ItemDetailsCoordinator(item: item))
     }
     #endif
 
