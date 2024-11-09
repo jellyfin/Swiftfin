@@ -48,14 +48,6 @@ class ItemDetailsViewModel: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var people: [BaseItemPerson]
-    @Published
-    var studios: [NameGuidPair]
-    @Published
-    var genres: [String]
-    @Published
-    var tags: [String]
-    @Published
     final var state: State = .initial
 
     private var updateTask: AnyCancellable?
@@ -74,10 +66,6 @@ class ItemDetailsViewModel: ViewModel, Stateful, Eventful {
 
     init(item: BaseItemDto) {
         self.item = item
-        self.people = item.people ?? []
-        self.studios = item.studios ?? []
-        self.genres = item.genres ?? []
-        self.tags = item.tags ?? []
         super.init()
     }
 
@@ -168,11 +156,10 @@ class ItemDetailsViewModel: ViewModel, Stateful, Eventful {
         let refreshRequest = Paths.updateItem(itemID: itemId, newItem)
         _ = try await userSession.client.send(refreshRequest)
 
-        await MainActor.run {
-            item = newItem
-            updateProperties(with: newItem)
-            Notifications[.itemMetadataDidChange].post(object: newItem)
-        }
+        // TODO: Figure out why I need to call this from the Server instead of being able to just set item = newItem.
+        // This only impacts .studios & .people, I think because those records are kind of 'assembled' on the server because we only provide name.
+        // Then, the Server turns that into a complete Person / Studio record.
+        try await refreshItem()
     }
 
     // MARK: - Add People
@@ -245,12 +232,17 @@ class ItemDetailsViewModel: ViewModel, Stateful, Eventful {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Update Properties
+    // MARK: - Refresh Item
 
-    private func updateProperties(with newItem: BaseItemDto) {
-        self.people = newItem.people ?? []
-        self.studios = newItem.studios ?? []
-        self.genres = newItem.genres ?? []
-        self.tags = newItem.tags ?? []
+    private func refreshItem() async throws {
+        guard let itemId = item.id else { return }
+
+        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.item = response.value
+            Notifications[.itemMetadataDidChange].post(object: item)
+        }
     }
 }

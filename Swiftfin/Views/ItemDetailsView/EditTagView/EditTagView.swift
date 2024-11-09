@@ -83,9 +83,9 @@ struct EditTagView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedTags.count == viewModel.tags.count
+        let isAllSelected = selectedTags.count == (viewModel.item.tags?.count ?? 0)
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedTags = isAllSelected ? [] : Set(viewModel.tags)
+            selectedTags = isAllSelected ? [] : Set(viewModel.item.tags ?? [])
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -116,7 +116,7 @@ struct EditTagView: View {
                     router.route(to: \.addTag, viewModel)
                 }
 
-                if viewModel.tags.isNotEmpty {
+                if viewModel.item.tags?.isNotEmpty == true {
                     Button(L10n.editTags, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
@@ -140,8 +140,8 @@ struct EditTagView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            if viewModel.tags.isNotEmpty {
-                ForEach(viewModel.tags, id: \.self) { tag in
+            if let tags = viewModel.item.tags, !tags.isEmpty {
+                ForEach(viewModel.item.tags ?? [], id: \.self) { tag in
                     EditTagRow(tag: tag) {
                         if isEditing {
                             selectedTags.toggle(value: tag)
@@ -172,7 +172,7 @@ struct EditTagView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            let tagsToRemove = viewModel.tags.filter { selectedTags.contains($0) }
+            let tagsToRemove = viewModel.item.tags?.filter { selectedTags.contains($0) } ?? []
             viewModel.send(.removeTags(tagsToRemove))
             selectedTags.removeAll()
             isEditing = false

@@ -83,9 +83,9 @@ struct EditGenreView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedGenres.count == viewModel.genres.count
+        let isAllSelected = selectedGenres.count == (viewModel.item.genres?.count ?? 0)
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedGenres = isAllSelected ? [] : Set(viewModel.genres)
+            selectedGenres = isAllSelected ? [] : Set(viewModel.item.genres ?? [])
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -116,7 +116,7 @@ struct EditGenreView: View {
                     router.route(to: \.addGenre, viewModel)
                 }
 
-                if viewModel.genres.isNotEmpty {
+                if viewModel.item.genres?.isNotEmpty == true {
                     Button(L10n.editGenres, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
@@ -140,8 +140,8 @@ struct EditGenreView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            if viewModel.genres.isNotEmpty {
-                ForEach(viewModel.genres, id: \.self) { genre in
+            if let genres = viewModel.item.genres, !genres.isEmpty {
+                ForEach(viewModel.item.genres ?? [], id: \.self) { genre in
                     EditGenreRow(genre: genre) {
                         if isEditing {
                             selectedGenres.toggle(value: genre)
@@ -172,7 +172,7 @@ struct EditGenreView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            let genresToRemove = viewModel.genres.filter { selectedGenres.contains($0) }
+            let genresToRemove = viewModel.item.genres?.filter { selectedGenres.contains($0) } ?? []
             viewModel.send(.removeGenres(genresToRemove))
             selectedGenres.removeAll()
             isEditing = false

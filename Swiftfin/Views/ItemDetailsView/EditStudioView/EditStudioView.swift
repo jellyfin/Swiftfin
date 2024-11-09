@@ -83,9 +83,9 @@ struct EditStudioView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedStudios.count == (viewModel.studios.count)
+        let isAllSelected = selectedStudios.count == (viewModel.item.studios?.count ?? 0)
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedStudios = isAllSelected ? [] : Set(viewModel.studios.compactMap(\.id))
+            selectedStudios = isAllSelected ? [] : Set(viewModel.item.studios?.compactMap(\.id) ?? [])
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -113,7 +113,7 @@ struct EditStudioView: View {
                     router.route(to: \.addStudio, viewModel)
                 }
 
-                if viewModel.studios.isNotEmpty {
+                if viewModel.item.studios?.isNotEmpty == true {
                     Button(L10n.editStudios, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
@@ -137,8 +137,8 @@ struct EditStudioView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            if viewModel.studios.isNotEmpty {
-                ForEach(viewModel.studios, id: \.self) { studio in
+            if let studios = viewModel.item.studios, !studios.isEmpty {
+                ForEach(viewModel.item.studios ?? [], id: \.self) { studio in
                     if let studioID = studio.id {
                         EditStudioRow(studio: studio) {
                             if isEditing {
@@ -171,7 +171,7 @@ struct EditStudioView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            let studiosToRemove = viewModel.studios.filter { selectedStudios.contains($0.id ?? "") }
+            let studiosToRemove = viewModel.item.studios?.filter { selectedStudios.contains($0.id ?? "") } ?? []
             viewModel.send(.removeStudios(studiosToRemove))
             selectedStudios.removeAll()
             isEditing = false
@@ -186,8 +186,7 @@ struct EditStudioView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let studioToDelete = selectedStudios.first, selectedStudios.count == 1 {
-                let studio = viewModel.studios.first(where: { $0.id == studioToDelete })
-                if let studio {
+                if let studio = viewModel.item.studios?.first(where: { $0.id == studioToDelete }) {
                     viewModel.send(.removeStudios([studio]))
                 }
                 selectedStudios.removeAll()

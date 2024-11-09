@@ -83,9 +83,9 @@ struct EditPeopleView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedPeople.count == viewModel.people.count
+        let isAllSelected = selectedPeople.count == (viewModel.item.people?.count ?? 0)
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedPeople = isAllSelected ? [] : Set(viewModel.people.compactMap(\.id))
+            selectedPeople = isAllSelected ? [] : Set(viewModel.item.people?.compactMap(\.id) ?? [])
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -116,7 +116,7 @@ struct EditPeopleView: View {
                     router.route(to: \.addPerson, viewModel)
                 }
 
-                if viewModel.people.isNotEmpty {
+                if viewModel.item.people?.isNotEmpty == true {
                     Button(L10n.editUsers, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
@@ -140,8 +140,8 @@ struct EditPeopleView: View {
             .listRowSeparator(.hidden)
             .padding(.vertical, 24)
 
-            if viewModel.people.isNotEmpty {
-                ForEach(viewModel.people, id: \.self) { person in
+            if let people = viewModel.item.people, !people.isEmpty {
+                ForEach(viewModel.item.people ?? [], id: \.self) { person in
                     if let personID = person.id {
                         EditPeopleRow(person: person) {
                             if isEditing {
@@ -174,7 +174,7 @@ struct EditPeopleView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            let peopleToRemove = viewModel.people.filter { selectedPeople.contains($0.id ?? "") }
+            let peopleToRemove = viewModel.item.people?.filter { selectedPeople.contains($0.id ?? "") } ?? []
             viewModel.send(.removePeople(peopleToRemove))
             selectedPeople.removeAll()
             isEditing = false
@@ -189,8 +189,7 @@ struct EditPeopleView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let personToDelete = selectedPeople.first, selectedPeople.count == 1 {
-                let person = viewModel.people.first(where: { $0.id == personToDelete })
-                if let person {
+                if let person = viewModel.item.people?.first(where: { $0.id == personToDelete }) {
                     viewModel.send(.removePeople([person]))
                 }
                 selectedPeople.removeAll()
