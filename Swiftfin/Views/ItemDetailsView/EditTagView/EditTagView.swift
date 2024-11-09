@@ -20,7 +20,7 @@ struct EditTagView: View {
     private var router: ItemDetailsCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemTagsViewModel
 
     @State
     private var isPresentingDeleteConfirmation = false
@@ -173,7 +173,7 @@ struct EditTagView: View {
 
         Button(L10n.confirm, role: .destructive) {
             let tagsToRemove = viewModel.item.tags?.filter { selectedTags.contains($0) } ?? []
-            viewModel.send(.removeTags(tagsToRemove))
+            viewModel.send(.remove(tagsToRemove))
             selectedTags.removeAll()
             isEditing = false
         }
@@ -187,7 +187,7 @@ struct EditTagView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let tagToDelete = selectedTags.first, selectedTags.count == 1 {
-                viewModel.send(.removeTags([tagToDelete]))
+                viewModel.send(.remove([tagToDelete]))
                 selectedTags.removeAll()
                 isEditing = false
             }

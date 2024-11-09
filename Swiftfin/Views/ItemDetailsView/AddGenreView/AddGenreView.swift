@@ -22,7 +22,7 @@ struct AddGenreView: View {
     private var focusedField: Bool
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemGenreViewModel
 
     @State
     private var name: String = ""
@@ -52,7 +52,7 @@ struct AddGenreView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case .added:
+                case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 case let .error(eventError):
@@ -111,6 +111,6 @@ struct AddGenreView: View {
     // MARK: - Create Genre Action
 
     private func createGenre() {
-        viewModel.send(.addGenres([name]))
+        viewModel.send(.add([name]))
     }
 }

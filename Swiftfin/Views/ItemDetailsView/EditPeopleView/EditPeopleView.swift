@@ -20,7 +20,7 @@ struct EditPeopleView: View {
     private var router: ItemDetailsCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemPeopleViewModel
 
     @State
     private var isPresentingDeleteConfirmation = false
@@ -175,7 +175,7 @@ struct EditPeopleView: View {
 
         Button(L10n.confirm, role: .destructive) {
             let peopleToRemove = viewModel.item.people?.filter { selectedPeople.contains($0.id ?? "") } ?? []
-            viewModel.send(.removePeople(peopleToRemove))
+            viewModel.send(.remove(peopleToRemove))
             selectedPeople.removeAll()
             isEditing = false
         }
@@ -190,7 +190,7 @@ struct EditPeopleView: View {
         Button(L10n.delete, role: .destructive) {
             if let personToDelete = selectedPeople.first, selectedPeople.count == 1 {
                 if let person = viewModel.item.people?.first(where: { $0.id == personToDelete }) {
-                    viewModel.send(.removePeople([person]))
+                    viewModel.send(.remove([person]))
                 }
                 selectedPeople.removeAll()
                 isEditing = false

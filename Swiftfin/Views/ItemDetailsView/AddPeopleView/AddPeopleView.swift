@@ -23,7 +23,7 @@ struct AddPeopleView: View {
     private var focusedField: Bool
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemPeopleViewModel
 
     @State
     private var name: String = ""
@@ -57,15 +57,13 @@ struct AddPeopleView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case .added:
+                case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.pop()
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
                     isPresentingError = true
-                default:
-                    break
                 }
             }
             .topBarTrailing {
@@ -150,6 +148,6 @@ struct AddPeopleView: View {
             type: selectedType.rawValue
         )
 
-        viewModel.send(.addPeople([newPerson]))
+        viewModel.send(.add([newPerson]))
     }
 }

@@ -26,6 +26,12 @@ struct ItemDetailsView: View {
             .navigationBarCloseButton {
                 router.dismissCoordinator()
             }
+            .topBarTrailing {
+                DeleteItemButton(item: item) {
+                    router.dismissCoordinator()
+                }
+                .environment(\.isEnabled, item.canDelete ?? false == false)
+            }
             .onNotification(.itemMetadataDidChange) { notification in
                 guard let newItem = notification.object as? BaseItemDto else { return }
                 item = newItem
@@ -49,34 +55,26 @@ struct ItemDetailsView: View {
                     .foregroundStyle(.primary, .secondary)
             }
 
-            if item.canDelete ?? false == false {
-                Section {
-                    DeleteItemButton(item: item) {
-                        router.dismissCoordinator()
-                    }
-                }
-            }
-
             Section(L10n.advanced) {
                 ChevronButton(L10n.metadata)
                     .onSelect {
-                        router.route(to: \.editMetadata, ItemDetailsViewModel(item: item))
+                        router.route(to: \.editMetadata, ItemDetailsViewModel<BaseItemDto>(item: item))
                     }
                 ChevronButton(L10n.genres)
                     .onSelect {
-                        router.route(to: \.editGenres, ItemDetailsViewModel(item: item))
+                        router.route(to: \.editGenres, ItemGenreViewModel(item: item))
                     }
                 ChevronButton(L10n.people)
                     .onSelect {
-                        router.route(to: \.editPeople, ItemDetailsViewModel(item: item))
+                        router.route(to: \.editPeople, ItemPeopleViewModel(item: item))
                     }
                 ChevronButton(L10n.studios)
                     .onSelect {
-                        router.route(to: \.editStudios, ItemDetailsViewModel(item: item))
+                        router.route(to: \.editStudios, ItemStudiosViewModel(item: item))
                     }
                 ChevronButton(L10n.tags)
                     .onSelect {
-                        router.route(to: \.editTags, ItemDetailsViewModel(item: item))
+                        router.route(to: \.editTags, ItemTagsViewModel(item: item))
                     }
             }
         }

@@ -43,49 +43,49 @@ final class ItemDetailsCoordinator: ObservableObject, NavigationCoordinatable {
     }
 
     @ViewBuilder
-    func makeEditMetadata(viewModel: ItemDetailsViewModel) -> some View {
+    func makeEditMetadata(viewModel: ItemDetailsViewModel<BaseItemDto>) -> some View {
         EditMetadataView(viewModel: viewModel)
     }
 
     @ViewBuilder
-    func makeEditPeople(viewModel: ItemDetailsViewModel) -> some View {
+    func makeEditPeople(viewModel: ItemPeopleViewModel) -> some View {
         EditPeopleView(viewModel: viewModel)
     }
 
-    func makeAddPerson(viewModel: ItemDetailsViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeAddPerson(viewModel: ItemPeopleViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddPeopleView(viewModel: viewModel)
         }
     }
 
     @ViewBuilder
-    func makeEditStudios(viewModel: ItemDetailsViewModel) -> some View {
+    func makeEditStudios(viewModel: ItemStudiosViewModel) -> some View {
         EditStudioView(viewModel: viewModel)
     }
 
-    func makeAddStudio(viewModel: ItemDetailsViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeAddStudio(viewModel: ItemStudiosViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddStudioView(viewModel: viewModel)
         }
     }
 
     @ViewBuilder
-    func makeEditGenres(viewModel: ItemDetailsViewModel) -> some View {
+    func makeEditGenres(viewModel: ItemGenreViewModel) -> some View {
         EditGenreView(viewModel: viewModel)
     }
 
-    func makeAddGenre(viewModel: ItemDetailsViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeAddGenre(viewModel: ItemGenreViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddGenreView(viewModel: viewModel)
         }
     }
 
     @ViewBuilder
-    func makeEditTags(viewModel: ItemDetailsViewModel) -> some View {
+    func makeEditTags(viewModel: ItemTagsViewModel) -> some View {
         EditTagView(viewModel: viewModel)
     }
 
-    func makeAddTag(viewModel: ItemDetailsViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeAddTag(viewModel: ItemTagsViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddTagView(viewModel: viewModel)
         }

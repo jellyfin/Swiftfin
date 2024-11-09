@@ -22,7 +22,7 @@ struct AddTagView: View {
     private var focusedField: Bool
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemTagsViewModel
 
     @State
     private var name: String = ""
@@ -52,15 +52,13 @@ struct AddTagView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case .added:
+                case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
                     isPresentingError = true
-                default:
-                    break
                 }
             }
             .topBarTrailing {
@@ -111,6 +109,6 @@ struct AddTagView: View {
     // MARK: - Create Genre Action
 
     private func createTag() {
-        viewModel.send(.addTags([name]))
+        viewModel.send(.add([name]))
     }
 }

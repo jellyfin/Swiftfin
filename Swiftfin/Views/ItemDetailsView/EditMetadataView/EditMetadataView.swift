@@ -16,7 +16,7 @@ struct EditMetadataView: View {
     private var router: ItemDetailsCoordinator.Router
 
     @ObservedObject
-    private var viewModel: ItemDetailsViewModel
+    private var viewModel: ItemDetailsViewModel<BaseItemDto>
 
     @Binding
     var item: BaseItemDto
@@ -28,7 +28,7 @@ struct EditMetadataView: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemDetailsViewModel) {
+    init(viewModel: ItemDetailsViewModel<BaseItemDto>) {
         self.viewModel = viewModel
         self._item = Binding(get: { viewModel.item }, set: { viewModel.item = $0 })
         self._tempItem = State(initialValue: viewModel.item)
@@ -45,7 +45,7 @@ struct EditMetadataView: View {
             .topBarTrailing {
                 Button(L10n.save) {
                     item = tempItem
-                    viewModel.send(.updateItem(tempItem))
+                    viewModel.send(.update(tempItem))
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.item == tempItem)

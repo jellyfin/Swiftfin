@@ -20,7 +20,7 @@ struct EditGenreView: View {
     private var router: ItemDetailsCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemGenreViewModel
 
     @State
     private var isPresentingDeleteConfirmation = false
@@ -173,7 +173,7 @@ struct EditGenreView: View {
 
         Button(L10n.confirm, role: .destructive) {
             let genresToRemove = viewModel.item.genres?.filter { selectedGenres.contains($0) } ?? []
-            viewModel.send(.removeGenres(genresToRemove))
+            viewModel.send(.remove(genresToRemove))
             selectedGenres.removeAll()
             isEditing = false
         }
@@ -187,7 +187,7 @@ struct EditGenreView: View {
 
         Button(L10n.delete, role: .destructive) {
             if let genreToDelete = selectedGenres.first, selectedGenres.count == 1 {
-                viewModel.send(.removeGenres([genreToDelete]))
+                viewModel.send(.remove([genreToDelete]))
                 selectedGenres.removeAll()
                 isEditing = false
             }

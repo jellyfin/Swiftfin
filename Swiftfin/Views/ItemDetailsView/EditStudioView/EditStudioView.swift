@@ -20,7 +20,7 @@ struct EditStudioView: View {
     private var router: ItemDetailsCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemStudiosViewModel
 
     @State
     private var isPresentingDeleteConfirmation = false
@@ -172,7 +172,7 @@ struct EditStudioView: View {
 
         Button(L10n.confirm, role: .destructive) {
             let studiosToRemove = viewModel.item.studios?.filter { selectedStudios.contains($0.id ?? "") } ?? []
-            viewModel.send(.removeStudios(studiosToRemove))
+            viewModel.send(.remove(studiosToRemove))
             selectedStudios.removeAll()
             isEditing = false
         }
@@ -187,7 +187,7 @@ struct EditStudioView: View {
         Button(L10n.delete, role: .destructive) {
             if let studioToDelete = selectedStudios.first, selectedStudios.count == 1 {
                 if let studio = viewModel.item.studios?.first(where: { $0.id == studioToDelete }) {
-                    viewModel.send(.removeStudios([studio]))
+                    viewModel.send(.remove([studio]))
                 }
                 selectedStudios.removeAll()
                 isEditing = false

@@ -23,7 +23,7 @@ struct AddStudioView: View {
     private var focusedField: Bool
 
     @ObservedObject
-    var viewModel: ItemDetailsViewModel
+    var viewModel: ItemStudiosViewModel
 
     @State
     private var name: String = ""
@@ -53,15 +53,13 @@ struct AddStudioView: View {
             }
             .onReceive(viewModel.events) { event in
                 switch event {
-                case .added:
+                case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
                     isPresentingError = true
-                default:
-                    break
                 }
             }
             .topBarTrailing {
@@ -116,6 +114,6 @@ struct AddStudioView: View {
 
     private func createStudio() {
         let newStudio = NameGuidPair(name: name)
-        viewModel.send(.addStudios([newStudio]))
+        viewModel.send(.add([newStudio]))
     }
 }

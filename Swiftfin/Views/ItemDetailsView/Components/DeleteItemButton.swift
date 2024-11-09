@@ -11,6 +11,9 @@ import SwiftUI
 
 extension ItemDetailsView {
     struct DeleteItemButton: View {
+        @Environment(\.isEnabled)
+        private var isEnabled
+
         @StateObject
         private var viewModel: DeleteItemViewModel
 
@@ -41,9 +44,9 @@ extension ItemDetailsView {
                 Text(L10n.delete)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             }
-            // TODO: Get better coloring / formatting?
-            .foregroundStyle(.white)
-            .listRowBackground(Color.red)
+            .buttonStyle(.toolbarPill(.red))
+            .disabled(!isEnabled)
+            .frame(maxWidth: .infinity, alignment: .trailing)
             .confirmationDialog(
                 L10n.deleteItemConfirmationMessage,
                 isPresented: $showConfirmationDialog,
