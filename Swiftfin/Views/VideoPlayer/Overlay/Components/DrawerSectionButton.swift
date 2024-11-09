@@ -32,9 +32,13 @@ extension VideoPlayer.Overlay {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 3)
                 .background {
-                    if isActive {
-                        Rectangle()
-                            .foregroundStyle(.white)
+                    ZStack {
+                        EmptyHitTestView()
+                        
+                        if isActive {
+                            Rectangle()
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
                 .overlay {

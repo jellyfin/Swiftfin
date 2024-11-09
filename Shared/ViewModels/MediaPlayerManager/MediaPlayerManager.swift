@@ -21,7 +21,7 @@ protocol MediaPlayerListener {
     var manager: MediaPlayerManager? { get set }
 }
 
-typealias MediaPlayerItemProvider = () async throws -> MediaPlayerItem
+typealias MediaPlayerItemProvider = (BaseItemDto) async throws -> MediaPlayerItem
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
     
@@ -52,7 +52,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         case ended
         case stop
 
-        case playNew(item: BaseItemDto, mediaSource: MediaSourceInfo)
+        case playNew(item: BaseItemDto)
 //        case playNew(item: MediaPlayerItem)
     }
 
@@ -101,6 +101,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     /// - PlaybackItem provided supplements
     @Published
     private(set) var supplements: [any MediaPlayerSupplement] = []
+    
+    /// The playback item provider that should be used
+    /// during the lifetime of this manager
+    private let playbackItemProvider: MediaPlayerItemProvider?
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -116,6 +120,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     init(item: BaseItemDto, queue: (any MediaPlayerQueue)? = nil, playbackItemProvider: @escaping MediaPlayerItemProvider) {
         self.item = item
         self.queue = queue
+        self.playbackItemProvider = playbackItemProvider
         super.init()
         
         self.queue?.manager = self
@@ -131,9 +136,10 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         }
     }
 
-    init(playbackItem: MediaPlayerItem, queue: (any MediaPlayerQueue)? = nil) {
+    init(playbackItem: MediaPlayerItem, queue: (any MediaPlayerQueue)? = nil, playbackItemProvider: MediaPlayerItemProvider? = nil) {
         self.item = playbackItem.baseItem
         self.queue = queue
+        self.playbackItemProvider = playbackItemProvider
         super.init()
         
         self.queue?.manager = self
@@ -164,10 +170,19 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
                 eventSubject.send(.playbackStopped)
             }
             return .stopped
-//        case let .playNew(item: item, mediaSource: mediaSource):
-        case .playNew:
-
-            return .playback
+        case let .playNew(item: item):
+            guard let playbackItemProvider else {
+                return .error(.init("Attempted to play new item from base item, but no playback item provider was provided"))
+            }
+            
+            self.item = item
+            buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
+                self.state = .playback
+                self.playbackItem = newItem
+                self.eventSubject.send(.playNew(playbackItem: newItem))
+            }
+            
+            return .loadingItem
         }
     }
     
@@ -195,20 +210,20 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     private func buildMediaItem(from provider: @escaping MediaPlayerItemProvider, onComplete: @escaping (MediaPlayerItem) async -> Void) {
         itemBuildTask?.cancel()
 
-        itemBuildTask = Task { [weak self] in
+        itemBuildTask = Task {
             do {
 
-                await MainActor.run { [weak self] in
-                    self?.state = .loadingItem
+                await MainActor.run {
+                    self.state = .loadingItem
                 }
 
-                let playbackItem = try await provider()
+                let playbackItem = try await provider(self.item)
 
 //                try await Task.sleep(nanoseconds: 3_000_000_000)
 
                 await onComplete(playbackItem)
             } catch {
-                guard let self, !Task.isCancelled else { return }
+                guard !Task.isCancelled else { return }
 
                 await MainActor.run {
                     self.send(.error(.init(error.localizedDescription)))

@@ -76,7 +76,7 @@ struct ChannelLibraryView: View {
     private func onChannelSelected(_ channel: BaseItemDto) {
         guard let mediaSource = channel.mediaSources?.first else { return }
         
-        let manager = MediaPlayerManager(item: channel) {
+        let manager = MediaPlayerManager(item: channel) { _ in
             try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
         }
         

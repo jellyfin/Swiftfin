@@ -116,7 +116,8 @@ extension VideoPlayer {
                                 .videoPlayerBody()
                                 .eraseToAnyView()
                                 .frame(height: 150)
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                                .id(selectedSupplement.id)
+                                .transition(.opacity.animation(.linear(duration: 0.1)))
                                 .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
                         }
 

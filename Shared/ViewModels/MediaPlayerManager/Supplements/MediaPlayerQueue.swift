@@ -38,7 +38,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     weak var manager: MediaPlayerManager?
     
     var items: OrderedSet<BaseItemDto> = []
-    let title: String = "Up Next"
+    let title: String = "Episodes"
     
     private let seriesViewModel: SeriesItemViewModel
     
@@ -63,13 +63,6 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
-//        Timer.publish(every: 5, on: .main, in: .common)
-//            .autoconnect()
-//            .sink { _ in
-//                self.sendReport()
-//            }
-//            .store(in: &cancellables)
-
 //        manager.$playbackItem.sink(receiveValue: playbackItemDidChange).store(in: &cancellables)
 //        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
 //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
@@ -90,11 +83,26 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         private var selection: SeasonItemViewModel?
         
         var body: some View {
-            CollectionHStack(selection?.elements ?? []) { item in
-                EpisodeButton(item: item)
-                    .frame(height: 150)
+            ZStack {
+                if let selection {
+                    CollectionHStack(selection.elements) { item in
+                        EpisodeButton(item: item)
+                            .frame(height: 150)
+                    }
+                    .insets(horizontal: .zero)
+                    .debugBackground(.green.opacity(0.5))
+                    .frame(maxHeight: .infinity)
+                } else {
+                    CollectionHStack(0 ..< Int.random(in: 2 ..< 5)) { _ in
+                        Color.secondarySystemFill
+                            .opacity(0.75)
+                            .posterStyle(.landscape)
+                            .frame(height: 150)
+                    }
+                    .insets(horizontal: .zero)
+                    .debugBackground()
+                }
             }
-            .insets(horizontal: .zero)
             .frame(height: 150)
             .onReceive(viewModel.playButtonItem.publisher) { newValue in
                 if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
@@ -127,12 +135,13 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             Button {
 //                manager.set(seconds: chapter.secondsRange.lowerBound)
 //                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
+                
+                manager.send(.playNew(item: item))
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
                     ZStack {
                         Color.clear
                         
-//                        ImageView(item.landscapeImageSources(maxWidth: 500))
                         ImageView(item.imageSource(.primary, maxWidth: 500))
                             .failure {
                                 SystemImageContentView(systemName: item.systemImage)
@@ -154,15 +163,15 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                         .foregroundStyle(.white)
                         .frame(height: 15)
                     
-//                    Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
-//                        .frame(height: 20)
-//                        .foregroundStyle(Color(UIColor.systemBlue))
-//                        .padding(.horizontal, 4)
-//                        .background {
-//                            Color(.darkGray)
-//                                .opacity(0.2)
-//                                .cornerRadius(4)
-//                        }
+                    Text(item.seasonEpisodeLabel ?? .emptyDash)
+                        .frame(height: 20)
+                        .foregroundStyle(Color(UIColor.systemBlue))
+                        .padding(.horizontal, 4)
+                        .background {
+                            Color(.darkGray)
+                                .opacity(0.2)
+                                .cornerRadius(4)
+                        }
                 }
                 .font(.subheadline.weight(.semibold))
             }
