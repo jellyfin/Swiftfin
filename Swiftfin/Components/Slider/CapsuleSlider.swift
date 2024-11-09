@@ -60,6 +60,13 @@ struct CapsuleSlider<V: BinaryFloatingPoint>: View {
                     .highPriorityGesture(trackDrag)
             }
             .trackingSize($contentSize)
+            .onChange(of: value) { newValue in
+                guard isEditing else { return }
+                
+                if newValue == 0 || newValue == total {
+                    UIDevice.impact(.light)
+                }
+            }
     }
 }
 

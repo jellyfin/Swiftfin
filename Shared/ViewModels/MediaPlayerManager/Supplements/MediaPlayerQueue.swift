@@ -18,6 +18,12 @@ protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
     var hasPreviousItem: Bool { get }
     
     var items: OrderedSet<BaseItemDto> { get set }
+    
+    var nextItem: BaseItemDto? { get }
+    var previousItem: BaseItemDto? { get }
+    
+    func playNextItem()
+    func playPreviousItem()
 }
 
 extension MediaPlayerQueue {
@@ -30,6 +36,20 @@ extension MediaPlayerQueue {
     var hasPreviousItem: Bool {
         guard let currentItem = manager?.item else { return false }
         return items.first != currentItem
+    }
+    
+    var nextItem: BaseItemDto? {
+        guard let currentItem = manager?.item,
+              let i = items.firstIndex(where: { $0.id == currentItem.id }),
+              i != items.endIndex else { return items.first }
+        return items[items.index(after: i)]
+    }
+    
+    var previousItem: BaseItemDto? {
+        guard let currentItem = manager?.item,
+              let i = items.firstIndex(where: { $0.id == currentItem.id }),
+              i != items.startIndex else { return nil }
+        return items[items.index(before: i)]
     }
 }
 
@@ -68,6 +88,14 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
     
+    func playNextItem() {
+        
+    }
+    
+    func playPreviousItem() {
+        
+    }
+    
     @ViewBuilder
     func videoPlayerBody() -> some View {
         _View(viewModel: seriesViewModel)
@@ -75,6 +103,9 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
     }
     
     struct _View: View {
+        
+        @EnvironmentObject
+        private var manager: MediaPlayerManager
         
         @ObservedObject
         var viewModel: SeriesItemViewModel
@@ -112,11 +143,21 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                 }
             }
             .onChange(of: selection) { newValue in
-                guard let newValue else { return }
+                guard let newValue else {
+                    manager.queue?.items.removeAll()
+                    return
+                }
+                
+                manager.queue?.items = newValue.elements
 
                 if newValue.state == .initial {
                     newValue.send(.refresh)
                 }
+            }
+            .onChange(of: selection?.elements) { newValue in
+                guard let newValue else { return }
+                
+                manager.queue?.items = newValue
             }
         }
     }
@@ -142,7 +183,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     ZStack {
                         Color.clear
                         
-                        ImageView(item.imageSource(.primary, maxWidth: 500))
+                        ImageView(item.imageSource(.primary, maxWidth: 150))
                             .failure {
                                 SystemImageContentView(systemName: item.systemImage)
                             }

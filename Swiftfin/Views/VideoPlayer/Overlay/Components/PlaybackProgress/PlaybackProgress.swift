@@ -116,11 +116,6 @@ extension VideoPlayer.Overlay {
                         }
                     }
                     .trackingSize($sliderSize)
-                    .onChange(of: scrubbedSeconds) { newValue in
-                        if newValue == 0 || newValue == manager.item.runTimeSeconds {
-                            UIDevice.impact(.light)
-                        }
-                    }
                     
                     SplitTimeStamp()
                         .if(sliderType == .capsule) { view in

@@ -12,10 +12,14 @@ extension VideoPlayer.Overlay {
     
     struct OverlayButtonStyle: ButtonStyle {
         
+        @Environment(\.isEnabled)
+        private var isEnabled
+        
         let onPressed: (Bool) -> Void
         
         func makeBody(configuration: Configuration) -> some View {
             configuration.label
+                .foregroundStyle(isEnabled ? AnyShapeStyle(HierarchicalShapeStyle.primary) : AnyShapeStyle(Color.gray))
                 .labelStyle(.iconOnly)
                 .contentShape(Rectangle())
                 .padding(8)

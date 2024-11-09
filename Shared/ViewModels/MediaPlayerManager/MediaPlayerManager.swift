@@ -89,7 +89,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     final var state: State = .playback
     
     var proxy: MediaPlayerProxy?
-    private(set) var queue: (any MediaPlayerQueue)?
+    var queue: (any MediaPlayerQueue)?
 
     /// Listeners of the media player.
     var listeners: [any MediaPlayerListener] = []
