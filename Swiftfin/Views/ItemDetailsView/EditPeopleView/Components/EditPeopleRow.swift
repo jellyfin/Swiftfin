@@ -65,17 +65,15 @@ extension EditPeopleView {
                     .failure {
                         SystemImageContentView(systemName: "person.fill", ratio: 0.5)
                     }
-                    .squarePosterStyle()
+                    .posterStyle(.portrait)
 
                 if isEditing {
                     Color.black
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
             .posterShadow()
-            .frame(width: 60, height: 60)
+            .frame(width: 60, height: 90)
         }
 
         // MARK: - Row Content
@@ -83,7 +81,7 @@ extension EditPeopleView {
         @ViewBuilder
         private var rowContent: some View {
             let personType = PersonKind(rawValue: person.type ?? "")
-            HStack {
+            HStack(spacing: 16) {
                 VStack(alignment: .leading) {
                     Text(person.name ?? L10n.unknown)
                         .font(.headline)
@@ -99,7 +97,7 @@ extension EditPeopleView {
                         L10n.role,
                         value: Text(personType == .actor ? person.role ?? L10n.unknown : .emptyDash)
                     )
-                    .lineLimit(1)
+                    .lineLimit(2)
                 }
                 .font(.subheadline)
                 .foregroundStyle(labelForegroundStyle, .secondary)
@@ -130,7 +128,7 @@ extension EditPeopleView {
                 personImage
             } content: {
                 rowContent
-                    .padding(.vertical, 8)
+                    .padding(.vertical, 24)
             }
             .onSelect(perform: onSelect)
             .swipeActions {

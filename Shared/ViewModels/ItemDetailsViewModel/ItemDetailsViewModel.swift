@@ -157,7 +157,8 @@ class ItemDetailsViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(refreshRequest)
 
         // TODO: Figure out why I need to call this from the Server instead of being able to just set item = newItem.
-        // This only impacts .studios & .people, I think because those records are kind of 'assembled' on the server because we only provide name.
+        // This only impacts .studios & .people, I think because those records are kind of 'assembled' on the server because we only provide
+        // name.
         // Then, the Server turns that into a complete Person / Studio record.
         try await refreshItem()
     }
