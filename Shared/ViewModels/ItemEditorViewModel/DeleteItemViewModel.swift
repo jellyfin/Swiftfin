@@ -100,17 +100,12 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
             throw JellyfinAPIError(L10n.unknownError)
         }
 
-        // TODO: Sometimes canDelete is nil when it's true prior to coming into this viewModel
-        /* guard item?.canDelete == true else {
-             throw JellyfinAPIError("You do not have permission to delete this item.")
-         } */
-
         let request = Paths.deleteItem(itemID: itemID)
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.item = nil
             Notifications[.didDeleteItem].post(object: item)
+            self.item = nil
         }
     }
 }

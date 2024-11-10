@@ -32,6 +32,14 @@ struct ItemView: View {
     @State
     private var error: JellyfinAPIError?
 
+    private let canDelete: Bool
+    private let canEdit: Bool
+
+    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
+    private var enableMenu: Bool {
+        canDelete || canEdit
+    }
+
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
         case .boxSet:
@@ -51,6 +59,10 @@ struct ItemView: View {
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
         self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
+
+        // Check if it's false since some items can be deleted but just show as nil
+        self.canDelete = StoredValues[.User.enableItemDeletion] && item.canDelete != false
+        self.canEdit = StoredValues[.User.enableItemEditor]
     }
 
     @ViewBuilder
@@ -115,23 +127,9 @@ struct ItemView: View {
             if viewModel.backgroundStates.contains(.refresh) {
                 ProgressView()
             }
-
-            Menu(L10n.options, systemImage: "ellipsis.circle") {
-                if StoredValues[.User.enableItemEditor] {
-                    Button(L10n.editItem, systemImage: "pencil") {
-                        router.route(to: \.itemEditor, viewModel.item)
-                    }
-                }
-                if StoredValues[.User.enableItemDeletion] && viewModel.item.canDelete ?? false {
-                    Divider()
-                    Button(L10n.deleteItem, systemImage: "trash", role: .destructive) {
-                        showConfirmationDialog = true
-                    }
-                }
+            if enableMenu {
+                itemActionMenu
             }
-            .labelStyle(.iconOnly)
-            .backport
-            .fontWeight(.semibold)
         }
         .confirmationDialog(
             L10n.deleteItemConfirmationMessage,
@@ -170,5 +168,27 @@ struct ItemView: View {
         ) {
             Text(L10n.unknownError)
         }
+    }
+
+    private var itemActionMenu: some View {
+
+        Menu(L10n.options, systemImage: "ellipsis.circle") {
+
+            if canEdit {
+                Button(L10n.editItem, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel.item)
+                }
+            }
+
+            if canDelete {
+                Divider()
+                Button(L10n.deleteItem, systemImage: "trash", role: .destructive) {
+                    showConfirmationDialog = true
+                }
+            }
+        }
+        .labelStyle(.iconOnly)
+        .backport
+        .fontWeight(.semibold)
     }
 }

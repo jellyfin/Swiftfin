@@ -159,6 +159,8 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
+        observeDeletionNotifications()
+
         if let filterViewModel {
             filterViewModel.$currentFilters
                 .dropFirst()
@@ -334,5 +336,31 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     /// come from another source instead.
     func getRandomItem() async throws -> Element? {
         elements.randomElement()
+    }
+
+    // MARK: - Observe Deletion Notifications
+
+    private func observeDeletionNotifications() {
+        Notifications[.didDeleteItem]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { [weak self] notification in
+                self?.handleDeleteNotification(notification)
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Handle Delete Notification
+
+    private func handleDeleteNotification(_ notification: Notification) {
+        guard let deletedItem = notification.object as? BaseItemDto else { return }
+
+        Task { @MainActor in
+            if let deletedItemId = deletedItem.id {
+                if let index = elements.firstIndex(where: { $0.id as! String == deletedItemId }) {
+                    elements.remove(at: index)
+                }
+            }
+        }
     }
 }
