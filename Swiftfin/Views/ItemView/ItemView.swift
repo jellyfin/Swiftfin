@@ -32,12 +32,16 @@ struct ItemView: View {
     @State
     private var error: JellyfinAPIError?
 
-    private let canDelete: Bool
-    private let canEdit: Bool
+    private let permDelete = StoredValues[.User.enableItemDeletion]
+    private let permEdit = StoredValues[.User.enableItemEditor]
+
+    private var canDelete: Bool {
+        permDelete && viewModel.item.canDelete ?? false
+    }
 
     // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
     private var enableMenu: Bool {
-        canDelete || canEdit
+        canDelete || permEdit
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -59,10 +63,6 @@ struct ItemView: View {
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
         self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
-
-        // Check if it's false since some items can be deleted but just show as nil
-        self.canDelete = StoredValues[.User.enableItemDeletion] && item.canDelete != false
-        self.canEdit = StoredValues[.User.enableItemEditor]
     }
 
     @ViewBuilder
@@ -174,7 +174,7 @@ struct ItemView: View {
 
         Menu(L10n.options, systemImage: "ellipsis.circle") {
 
-            if canEdit {
+            if permEdit {
                 Button(L10n.editItem, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel.item)
                 }

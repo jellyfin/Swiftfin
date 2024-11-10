@@ -7,11 +7,15 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 extension CustomizeViewsSettings {
 
     struct ItemSection: View {
+
+        @Injected(\.currentUserSession)
+        private var userSession
 
         @StoredValue(.User.enableItemEditor)
         private var enableItemEditor
@@ -21,9 +25,13 @@ extension CustomizeViewsSettings {
         var body: some View {
             Section(L10n.items) {
 
-                Toggle(L10n.allowItemEditing, isOn: $enableItemEditor)
+                if userSession?.user.isAdministrator ?? false {
+                    Toggle(L10n.allowItemEditing, isOn: $enableItemEditor)
+                }
 
-                Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                if userSession?.user.hasDeletionPermissions ?? false {
+                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                }
             }
         }
     }
