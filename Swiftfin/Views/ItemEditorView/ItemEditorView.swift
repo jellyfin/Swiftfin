@@ -30,18 +30,9 @@ struct ItemEditorView: View {
             .navigationBarCloseButton {
                 router.dismissCoordinator()
             }
-            .topBarTrailing {
-                DeleteItemButton(item: item) {
-                    router.dismissCoordinator()
-                }
-                .environment(\.isEnabled, item.canDelete ?? false && StoredValues[.User.enableItemDeletion])
-            }
             .onNotification(.itemMetadataDidChange) { notification in
                 guard let newItem = notification.object as? BaseItemDto else { return }
                 item = newItem
-            }
-            .onNotification(.didDeleteItem) { _ in
-                router.dismissCoordinator()
             }
     }
 

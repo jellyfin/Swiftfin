@@ -304,6 +304,8 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// Delete Item
+  internal static let deleteItem = L10n.tr("Localizable", "deleteItem", fallback: "Delete Item")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
   /// Delete Selected Devices
@@ -454,6 +456,8 @@ internal enum L10n {
   internal static func itemAtItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
   }
+  /// You do not have permission to delete this item.
+  internal static let itemDeletionPermissionFailture = L10n.tr("Localizable", "itemDeletionPermissionFailture", fallback: "You do not have permission to delete this item.")
   /// SessionPlaybackMethod Remaining Time
   internal static func itemOverItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemOverItem", String(describing: p1), String(describing: p2), fallback: "%1$@ / %2$@")

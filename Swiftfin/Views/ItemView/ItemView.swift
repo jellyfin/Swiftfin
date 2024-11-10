@@ -20,6 +20,17 @@ struct ItemView: View {
 
     @StateObject
     private var viewModel: ItemViewModel
+    @StateObject
+    private var deleteViewModel: DeleteItemViewModel
+
+    @State
+    private var showConfirmationDialog = false
+    @State
+    private var isPresentingEventAlert = false
+    @State
+    private var isPresentingFailedAlert = false
+    @State
+    private var error: JellyfinAPIError?
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
@@ -39,6 +50,7 @@ struct ItemView: View {
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+        self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
     }
 
     @ViewBuilder
@@ -110,10 +122,53 @@ struct ItemView: View {
                         router.route(to: \.itemEditor, viewModel.item)
                     }
                 }
+                if StoredValues[.User.enableItemDeletion] && viewModel.item.canDelete ?? false {
+                    Divider()
+                    Button(L10n.deleteItem, systemImage: "trash", role: .destructive) {
+                        showConfirmationDialog = true
+                    }
+                }
             }
             .labelStyle(.iconOnly)
             .backport
             .fontWeight(.semibold)
+        }
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $showConfirmationDialog,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.confirm, role: .destructive) {
+                deleteViewModel.send(.delete)
+            }
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .onReceive(deleteViewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                error = eventError
+                isPresentingEventAlert = true
+            case .deleted:
+                if deleteViewModel.item == nil {
+                    router.dismissCoordinator()
+                } else {
+                    isPresentingFailedAlert = true
+                }
+            }
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingEventAlert,
+            presenting: error
+        ) { _ in
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+        .alert(
+            L10n.taskFailed,
+            isPresented: $isPresentingFailedAlert
+        ) {
+            Text(L10n.unknownError)
         }
     }
 }

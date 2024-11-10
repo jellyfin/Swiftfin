@@ -20,11 +20,10 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Section(L10n.items) {
+
                 Toggle(L10n.allowItemEditing, isOn: $enableItemEditor)
 
-                if enableItemEditor {
-                    Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
-                }
+                Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
             }
         }
     }

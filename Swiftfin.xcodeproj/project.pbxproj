@@ -75,7 +75,6 @@
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8F74A22CE03C9000CC8969 /* ItemEditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */; };
 		4E8F74A52CE03D3C00CC8969 /* ItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A42CE03D3800CC8969 /* ItemEditorView.swift */; };
-		4E8F74A82CE03D5800CC8969 /* DeleteItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A72CE03D5400CC8969 /* DeleteItemButton.swift */; };
 		4E8F74AB2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */; };
 		4E8F74AC2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */; };
 		4E8F74AF2CE03E2E00CC8969 /* RefreshMetadataButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AD2CE03E2E00CC8969 /* RefreshMetadataButton.swift */; };
@@ -1121,7 +1120,6 @@
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
 		4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorCoordinator.swift; sourceTree = "<group>"; };
 		4E8F74A42CE03D3800CC8969 /* ItemEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorView.swift; sourceTree = "<group>"; };
-		4E8F74A72CE03D5400CC8969 /* DeleteItemButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteItemButton.swift; sourceTree = "<group>"; };
 		4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteItemViewModel.swift; sourceTree = "<group>"; };
 		4E8F74AD2CE03E2E00CC8969 /* RefreshMetadataButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMetadataButton.swift; sourceTree = "<group>"; };
 		4E8F74B02CE03EAF00CC8969 /* RefreshMetadataViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshMetadataViewModel.swift; sourceTree = "<group>"; };
@@ -2128,7 +2126,6 @@
 		4E8F74A62CE03D4C00CC8969 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E8F74A72CE03D5400CC8969 /* DeleteItemButton.swift */,
 				4E8F74AD2CE03E2E00CC8969 /* RefreshMetadataButton.swift */,
 			);
 			path = Components;
@@ -5171,7 +5168,6 @@
 				E10B1E8F2BD7728400A92EAF /* QuickConnectView.swift in Sources */,
 				E1A8FDEC2C0574A800D0A51C /* ListRow.swift in Sources */,
 				4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */,
-				4E8F74A82CE03D5800CC8969 /* DeleteItemButton.swift in Sources */,
 				E1DD55372B6EE533007501C0 /* Task.swift in Sources */,
 				E1ED7FE02CAA685900ACB6E3 /* ServerLogsView.swift in Sources */,
 				4E35CE6C2CBEDB7600DBD886 /* TaskState.swift in Sources */,
