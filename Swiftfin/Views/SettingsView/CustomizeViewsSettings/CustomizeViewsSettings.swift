@@ -7,11 +7,15 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 // TODO: will be entirely re-organized
 
 struct CustomizeViewsSettings: View {
+
+    @Injected(\.currentUserSession)
+    private var userSession
 
     @Default(.Customization.itemViewType)
     private var itemViewType
@@ -159,6 +163,10 @@ struct CustomizeViewsSettings: View {
             }
 
             HomeSection()
+
+            if userSession?.user.isAdministrator ?? false {
+                ItemSection()
+            }
 
             Section {
                 Toggle("Remember layout", isOn: $rememberLibraryLayout)

@@ -52,6 +52,10 @@ internal enum L10n {
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
+  /// Allow media item deletion
+  internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow media item deletion")
+  /// Allow media item editing
+  internal static let allowItemEditing = L10n.tr("Localizable", "allowItemEditing", fallback: "Allow media item editing")
   /// Select Server View - Select All Servers
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// View and manage all registered users on the server, including their permissions and activity status.
@@ -300,6 +304,8 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
+  /// Are you sure you want to delete this item? This action cannot be undone.
+  internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
   /// Delete Selected Users
@@ -360,6 +366,8 @@ internal enum L10n {
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Button label to edit a task
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
+  /// Edit Item
+  internal static let editItem = L10n.tr("Localizable", "editItem", fallback: "Edit Item")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Select Server View - Edit an Existing Server
@@ -406,6 +414,8 @@ internal enum L10n {
   internal static let filterResults = L10n.tr("Localizable", "filterResults", fallback: "Filter Results")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
+  /// Find Missing
+  internal static let findMissing = L10n.tr("Localizable", "findMissing", fallback: "Find Missing")
   /// Transcode FPS
   internal static func fpsWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "fpsWithString", String(describing: p1), fallback: "%@fps")
@@ -722,6 +732,8 @@ internal enum L10n {
   internal static let refFramesNotSupported = L10n.tr("Localizable", "refFramesNotSupported", fallback: "The number of reference frames is not supported")
   /// Refresh
   internal static let refresh = L10n.tr("Localizable", "refresh", fallback: "Refresh")
+  /// Refresh Metadata
+  internal static let refreshMetadata = L10n.tr("Localizable", "refreshMetadata", fallback: "Refresh Metadata")
   /// Regular
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Released
@@ -742,6 +754,12 @@ internal enum L10n {
   internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume", fallback: "Remove From Resume")
   /// PlayMethod - Remux
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
+  /// Replace All
+  internal static let replaceAll = L10n.tr("Localizable", "replaceAll", fallback: "Replace All")
+  /// Replace Images
+  internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace Images")
+  /// Replace Metadata
+  internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace Metadata")
   /// Report an Issue
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature

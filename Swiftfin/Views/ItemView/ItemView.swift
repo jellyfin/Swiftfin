@@ -15,6 +15,9 @@ import SwiftUI
 
 struct ItemView: View {
 
+    @EnvironmentObject
+    private var router: ItemCoordinator.Router
+
     @StateObject
     private var viewModel: ItemViewModel
 
@@ -100,6 +103,17 @@ struct ItemView: View {
             if viewModel.backgroundStates.contains(.refresh) {
                 ProgressView()
             }
+
+            Menu(L10n.options, systemImage: "ellipsis.circle") {
+                if StoredValues[.User.enableItemDeletion] {
+                    Button(L10n.editItem, systemImage: "pencil") {
+                        router.route(to: \.itemEditor, viewModel.item)
+                    }
+                }
+            }
+            .labelStyle(.iconOnly)
+            .backport
+            .fontWeight(.semibold)
         }
     }
 }
