@@ -6,10 +6,14 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Factory
 import JellyfinAPI
 import SwiftUI
 
 struct ItemEditorView: View {
+
+    @Injected(\.currentUserSession)
+    private var userSession
 
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
@@ -53,6 +57,7 @@ struct ItemEditorView: View {
             Section {
                 RefreshMetadataButton(item: item)
                     .foregroundStyle(.primary, .secondary)
+                    .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
             }
         }
     }

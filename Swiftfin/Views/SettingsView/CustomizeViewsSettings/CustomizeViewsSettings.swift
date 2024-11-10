@@ -162,11 +162,9 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
-            HomeSection()
+            ItemSection()
 
-            if userSession?.user.isAdministrator ?? false {
-                ItemSection()
-            }
+            HomeSection()
 
             Section {
                 Toggle("Remember layout", isOn: $rememberLibraryLayout)

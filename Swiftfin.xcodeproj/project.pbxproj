@@ -73,13 +73,11 @@
 		4E762AAF2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
 		4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
 		4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */; };
-		4E8F74A12CE03C9000CC8969 /* ItemEditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */; };
 		4E8F74A22CE03C9000CC8969 /* ItemEditorCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A02CE03C8B00CC8969 /* ItemEditorCoordinator.swift */; };
 		4E8F74A52CE03D3C00CC8969 /* ItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A42CE03D3800CC8969 /* ItemEditorView.swift */; };
 		4E8F74A82CE03D5800CC8969 /* DeleteItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74A72CE03D5400CC8969 /* DeleteItemButton.swift */; };
 		4E8F74AB2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */; };
 		4E8F74AC2CE03DD300CC8969 /* DeleteItemViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */; };
-		4E8F74AE2CE03E2E00CC8969 /* RefreshMetadataButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AD2CE03E2E00CC8969 /* RefreshMetadataButton.swift */; };
 		4E8F74AF2CE03E2E00CC8969 /* RefreshMetadataButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74AD2CE03E2E00CC8969 /* RefreshMetadataButton.swift */; };
 		4E8F74B12CE03EB000CC8969 /* RefreshMetadataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74B02CE03EAF00CC8969 /* RefreshMetadataViewModel.swift */; };
 		4E8F74B22CE03EB000CC8969 /* RefreshMetadataViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F74B02CE03EAF00CC8969 /* RefreshMetadataViewModel.swift */; };
@@ -4697,7 +4695,6 @@
 				4E0A8FFC2CAF74D20014B047 /* TaskCompletionStatus.swift in Sources */,
 				E1FCD08926C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				C46DD8D32A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */,
-				4E8F74AE2CE03E2E00CC8969 /* RefreshMetadataButton.swift in Sources */,
 				E1549661296CA2EF00C4EF88 /* SwiftfinDefaults.swift in Sources */,
 				E158C8D12A31947500C527C5 /* MediaSourceInfoView.swift in Sources */,
 				E11BDF782B8513B40045C54A /* ItemGenre.swift in Sources */,
@@ -4964,7 +4961,6 @@
 				E1575E7C293E77B5001665B1 /* TimerProxy.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
-				4E8F74A12CE03C9000CC8969 /* ItemEditorCoordinator.swift in Sources */,
 				E1A16C9D2889AF1E00EA4679 /* AboutView.swift in Sources */,
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,

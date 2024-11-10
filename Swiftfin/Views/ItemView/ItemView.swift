@@ -105,7 +105,7 @@ struct ItemView: View {
             }
 
             Menu(L10n.options, systemImage: "ellipsis.circle") {
-                if StoredValues[.User.enableItemDeletion] {
+                if StoredValues[.User.enableItemEditor] {
                     Button(L10n.editItem, systemImage: "pencil") {
                         router.route(to: \.itemEditor, viewModel.item)
                     }
