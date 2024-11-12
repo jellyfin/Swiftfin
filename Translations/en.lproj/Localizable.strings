@@ -1213,3 +1213,28 @@
 // Button title to edit existing users
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
+
+// Bits Per Second - Unit
+// Represents a speed in bits per second
+// Used for bandwidth display
+"bitsPerSecond" = "bps";
+
+// Kilobits Per Second - Unit
+// Represents a speed in kilobits per second
+// Used for bandwidth display
+"kilobitsPerSecond" = "kbps";
+
+// Megabits Per Second - Unit
+// Represents a speed in megabits per second
+// Used for bandwidth display
+"megabitsPerSecond" = "Mbps";
+
+// Gigabits Per Second - Unit
+// Represents a speed in gigabits per second
+// Used for bandwidth display
+"gigabitsPerSecond" = "Gbps";
+
+// Terabits Per Second - Unit
+// Represents a speed in terabits per second
+// Used for bandwidth display
+"terabitsPerSecond" = "Tbps";

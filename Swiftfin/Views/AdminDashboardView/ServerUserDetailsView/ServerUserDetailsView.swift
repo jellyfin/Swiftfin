@@ -35,6 +35,15 @@ struct ServerUserDetailsView: View {
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
             )
+
+            Section(L10n.advanced) {
+                if let userId = viewModel.user.id {
+                    ChevronButton("Permissions")
+                        .onSelect {
+                            router.route(to: \.userPermissions, viewModel)
+                        }
+                }
+            }
         }
         .navigationTitle(L10n.user)
         .onAppear {

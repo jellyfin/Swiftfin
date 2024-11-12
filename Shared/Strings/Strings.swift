@@ -154,6 +154,8 @@ internal enum L10n {
   internal static let bitrateTestDescription = L10n.tr("Localizable", "bitrateTestDescription", fallback: "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth")
   /// Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback
   internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback")
+  /// bps
+  internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
   /// Blue
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
   /// Bugs and Features
@@ -414,6 +416,8 @@ internal enum L10n {
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
   /// Gestures
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
+  /// Gbps
+  internal static let gigabitsPerSecond = L10n.tr("Localizable", "gigabitsPerSecond", fallback: "Gbps")
   /// Green
   internal static let green = L10n.tr("Localizable", "green", fallback: "Green")
   /// Grid
@@ -470,6 +474,8 @@ internal enum L10n {
   }
   /// Kids
   internal static let kids = L10n.tr("Localizable", "kids", fallback: "Kids")
+  /// kbps
+  internal static let kilobitsPerSecond = L10n.tr("Localizable", "kilobitsPerSecond", fallback: "kbps")
   /// Larger
   internal static let larger = L10n.tr("Localizable", "larger", fallback: "Larger")
   /// Largest
@@ -520,6 +526,8 @@ internal enum L10n {
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
+  /// Mbps
+  internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu Buttons
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu Buttons")
   /// The play method (e.g., Direct Play, Transcoding)
@@ -976,6 +984,8 @@ internal enum L10n {
   internal static let taskTriggerInterval = L10n.tr("Localizable", "taskTriggerInterval", fallback: "Sets the duration (in minutes) in between task triggers.")
   /// Sets the maximum runtime (in hours) for this task trigger.
   internal static let taskTriggerTimeLimit = L10n.tr("Localizable", "taskTriggerTimeLimit", fallback: "Sets the maximum runtime (in hours) for this task trigger.")
+  /// Tbps
+  internal static let terabitsPerSecond = L10n.tr("Localizable", "terabitsPerSecond", fallback: "Tbps")
   /// Option to set the test size for bitrate testing
   internal static let testSize = L10n.tr("Localizable", "testSize", fallback: "Test Size")
   /// Time

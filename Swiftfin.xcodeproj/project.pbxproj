@@ -93,6 +93,13 @@
 		4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */; };
 		4EB4ECE32CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
 		4EB4ECE42CBEFC4D002FF2FC /* SessionInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */; };
+		4EB538B52CE3C77200EB72D5 /* ServerUserPermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */; };
+		4EB538BB2CE3CB3A00EB72D5 /* UsernameSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538BA2CE3CB3100EB72D5 /* UsernameSection.swift */; };
+		4EB538BD2CE3CCD100EB72D5 /* MediaPlaybackSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */; };
+		4EB538BF2CE3CE6200EB72D5 /* FeatureAccessSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538BE2CE3CE6100EB72D5 /* FeatureAccessSection.swift */; };
+		4EB538C12CE3CF0F00EB72D5 /* ManagementSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */; };
+		4EB538C32CE3E21800EB72D5 /* SyncPlaySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */; };
+		4EB538C52CE3E25700EB72D5 /* ExternalAccessSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */; };
 		4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */; };
 		4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
@@ -1130,6 +1137,13 @@
 		4EB1A8CB2C9B1B9700F43898 /* DestructiveServerTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestructiveServerTask.swift; sourceTree = "<group>"; };
 		4EB1A8CD2C9B2D0100F43898 /* ActiveSessionRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionRow.swift; sourceTree = "<group>"; };
 		4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
+		4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserPermissionsView.swift; sourceTree = "<group>"; };
+		4EB538BA2CE3CB3100EB72D5 /* UsernameSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsernameSection.swift; sourceTree = "<group>"; };
+		4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlaybackSection.swift; sourceTree = "<group>"; };
+		4EB538BE2CE3CE6100EB72D5 /* FeatureAccessSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureAccessSection.swift; sourceTree = "<group>"; };
+		4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementSection.swift; sourceTree = "<group>"; };
+		4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPlaySection.swift; sourceTree = "<group>"; };
+		4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalAccessSection.swift; sourceTree = "<group>"; };
 		4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronAlertButton.swift; sourceTree = "<group>"; };
 		4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserView.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
@@ -2037,17 +2051,18 @@
 			children = (
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
-				4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */,
-				4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */,
 				4EB7C8D32CCED318000CC011 /* AddServerUserView */,
 				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
+				4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */,
+				4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */,
 				E1DE64902CC6F06C00E423B6 /* Components */,
 				4E10C80F2CC030B20012CC9F /* DeviceDetailsView */,
 				4EED87492CBF824B002354D2 /* DevicesView */,
 				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
-				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
 				4E35CE622CBED3FF00DBD886 /* ServerLogsView */,
+				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
 				4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */,
+				4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */,
 				4EC2B1992CC96E5E00D866BE /* ServerUsersView */,
 			);
 			path = AdminDashboardView;
@@ -2203,6 +2218,36 @@
 				4EC6C16A2C92999800FC904B /* TranscodeSection.swift */,
 			);
 			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538B82CE3CB2400EB72D5 /* Components */,
+				4EB538B42CE3C76D00EB72D5 /* ServerUserPermissionsView.swift */,
+			);
+			path = ServerUserPermissionsView;
+			sourceTree = "<group>";
+		};
+		4EB538B82CE3CB2400EB72D5 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538B92CE3CB2900EB72D5 /* Sections */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4EB538B92CE3CB2900EB72D5 /* Sections */ = {
+			isa = PBXGroup;
+			children = (
+				4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */,
+				4EB538BE2CE3CE6100EB72D5 /* FeatureAccessSection.swift */,
+				4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */,
+				4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */,
+				4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */,
+				4EB538BA2CE3CB3100EB72D5 /* UsernameSection.swift */,
+			);
+			path = Sections;
 			sourceTree = "<group>";
 		};
 		4EB7C8D32CCED318000CC011 /* AddServerUserView */ = {
@@ -5006,6 +5051,7 @@
 				E18E01E7288747230022598C /* CollectionItemContentView.swift in Sources */,
 				E1E1643F28BB075C00323B0A /* SelectorView.swift in Sources */,
 				C46DD8D22A8DC1F60046A504 /* LiveVideoPlayerCoordinator.swift in Sources */,
+				4EB538C32CE3E21800EB72D5 /* SyncPlaySection.swift in Sources */,
 				E18ACA8B2A14301800BB4F35 /* ScalingButtonStyle.swift in Sources */,
 				E18E01DF288747230022598C /* iPadOSMovieItemView.swift in Sources */,
 				E168BD13289A4162001A6922 /* ContinueWatchingView.swift in Sources */,
@@ -5040,6 +5086,7 @@
 				E12CC1BE28D11F4500678D5D /* RecentlyAddedView.swift in Sources */,
 				E1ED7FD92CA8AF7400ACB6E3 /* ServerTaskObserver.swift in Sources */,
 				E17AC96A2954D00E003D2BC2 /* URLResponse.swift in Sources */,
+				4EB538C52CE3E25700EB72D5 /* ExternalAccessSection.swift in Sources */,
 				625CB5772678C34300530A6E /* ConnectToServerViewModel.swift in Sources */,
 				E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */,
 				E133328829538D8D00EE76AB /* Files.swift in Sources */,
@@ -5047,6 +5094,7 @@
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
 				4EC2B1A52CC96FA400D866BE /* ServerUserAdminViewModel.swift in Sources */,
+				4EB538BF2CE3CE6200EB72D5 /* FeatureAccessSection.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
 				E11BDF772B8513B40045C54A /* ItemGenre.swift in Sources */,
 				E16DEAC228EFCF590058F196 /* EnvironmentValue+Keys.swift in Sources */,
@@ -5110,6 +5158,7 @@
 				E15756322935642A00976E1F /* Double.swift in Sources */,
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
+				4EB538C12CE3CF0F00EB72D5 /* ManagementSection.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
 				E1E6C45029B104840064123F /* Button.swift in Sources */,
 				4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */,
@@ -5278,6 +5327,7 @@
 				E1DC9844296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				6220D0B126D5EC9900B8E046 /* SettingsCoordinator.swift in Sources */,
 				E10B1ECA2BD9AF8200A92EAF /* SwiftfinStore+V1.swift in Sources */,
+				4EB538BB2CE3CB3A00EB72D5 /* UsernameSection.swift in Sources */,
 				E1AA331D2782541500F6439C /* PrimaryButton.swift in Sources */,
 				4E2AC4D92C6C4D9400DD600D /* PlaybackQualitySettingsView.swift in Sources */,
 				4E35CE692CBED95F00DBD886 /* DayOfWeek.swift in Sources */,
@@ -5286,6 +5336,7 @@
 				531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */,
 				E18A8E8328D60BC400333B9A /* VideoPlayer.swift in Sources */,
 				4E10C8192CC045700012CC9F /* CustomDeviceNameSection.swift in Sources */,
+				4EB538BD2CE3CCD100EB72D5 /* MediaPlaybackSection.swift in Sources */,
 				4EBE064D2C7EB6D3004A6C03 /* VideoPlayerType.swift in Sources */,
 				E1366A222C826DA700A36DED /* EditCustomDeviceProfileCoordinator.swift in Sources */,
 				E1CCF12E28ABF989006CAC9E /* PosterDisplayType.swift in Sources */,
@@ -5430,6 +5481,7 @@
 				E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */,
 				E1E6C44029AECC6D0064123F /* ActionButtons.swift in Sources */,
 				E103DF902BCF2F1C000229B2 /* MediaItem.swift in Sources */,
+				4EB538B52CE3C77200EB72D5 /* ServerUserPermissionsView.swift in Sources */,
 				539B2DA5263BA5B8007FF1A4 /* SettingsView.swift in Sources */,
 				E1E2F83F2B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */,
 				E15D4F072B1B12C300442DB8 /* Backport.swift in Sources */,

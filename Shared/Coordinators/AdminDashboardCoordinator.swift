@@ -37,6 +37,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var users = makeUsers
     @Route(.push)
     var userDetails = makeUserDetails
+    @Route(.modal)
+    var userPermissions = makeUserPermissions
     @Route(.push)
     var userDevices = makeUserDevices
     @Route(.modal)
@@ -103,6 +105,12 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     func makeAddServerUser() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             AddServerUserView()
+        }
+    }
+
+    func makeUserPermissions(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerUserPermissionsView(viewModel: viewModel)
         }
     }
 
