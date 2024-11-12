@@ -17,7 +17,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    private var item: BaseItemDto
+    private let item: BaseItemDto
 
     init(item: BaseItemDto) {
         self.item = item
