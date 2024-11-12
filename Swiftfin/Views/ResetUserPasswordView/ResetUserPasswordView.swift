@@ -17,7 +17,7 @@ struct ResetUserPasswordView: View {
     private var accentColor
 
     @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    private var router: BasicNavigationViewCoordinator.Router
 
     @FocusState
     private var focusedPassword: Int?
@@ -37,23 +37,30 @@ struct ResetUserPasswordView: View {
     private var isPresentingSuccess: Bool = false
 
     @StateObject
-    private var viewModel = ResetUserPasswordViewModel()
+    private var viewModel: ResetUserPasswordViewModel
+
+    init(userId: String? = nil) {
+        self._viewModel = StateObject(wrappedValue: ResetUserPasswordViewModel(userId: userId))
+    }
 
     var body: some View {
         List {
-
-            Section("Current Password") {
-                UnmaskSecureField("Current Password", text: $currentPassword) {
-                    focusedPassword = 1
+            // If there is no userId, this means this is the Device User so we'll want to validate their password. Otherwise, this is a
+            // Server User, in which case this is a password reset and no current password is used.
+            if viewModel.userId == nil {
+                Section(L10n.currentPassword) {
+                    UnmaskSecureField(L10n.currentPassword, text: $currentPassword) {
+                        focusedPassword = 1
+                    }
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.none)
+                    .focused($focusedPassword, equals: 0)
+                    .disabled(viewModel.state == .resetting)
                 }
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.none)
-                .focused($focusedPassword, equals: 0)
-                .disabled(viewModel.state == .resetting)
             }
 
-            Section("New Password") {
-                UnmaskSecureField("New Password", text: $newPassword) {
+            Section(L10n.newPassword) {
+                UnmaskSecureField(L10n.newPassword, text: $newPassword) {
                     focusedPassword = 2
                 }
                 .autocorrectionDisabled()
@@ -63,7 +70,7 @@ struct ResetUserPasswordView: View {
             }
 
             Section {
-                UnmaskSecureField("Confirm New Password", text: $confirmNewPassword) {
+                UnmaskSecureField(L10n.confirmNewPassword, text: $confirmNewPassword) {
                     viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                 }
                 .autocorrectionDisabled()
@@ -71,10 +78,10 @@ struct ResetUserPasswordView: View {
                 .focused($focusedPassword, equals: 2)
                 .disabled(viewModel.state == .resetting)
             } header: {
-                Text("Confirm New Password")
+                Text(L10n.confirmNewPassword)
             } footer: {
                 if newPassword != confirmNewPassword {
-                    Label("New passwords to not match", systemImage: "exclamationmark.circle.fill")
+                    Label(L10n.passwordsDoNotMatch, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
@@ -83,7 +90,7 @@ struct ResetUserPasswordView: View {
                 if viewModel.state == .resetting {
                     ListRowButton(L10n.cancel) {
                         viewModel.send(.cancel)
-                        focusedPassword = 0
+                        focusedPassword = viewModel.userId == nil ? 0 : 1
                     }
                     .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
@@ -96,14 +103,18 @@ struct ResetUserPasswordView: View {
                     .opacity(newPassword != confirmNewPassword ? 0.5 : 1)
                 }
             } footer: {
-                Text("Changes the Jellyfin server user password. This does not change any Swiftfin settings.")
+                Text(L10n.passwordChangeWarning)
             }
         }
         .interactiveDismissDisabled(viewModel.state == .resetting)
         .navigationBarBackButtonHidden(viewModel.state == .resetting)
         .navigationTitle(L10n.password)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
         .onFirstAppear {
-            focusedPassword = 0
+            focusedPassword = viewModel.userId == nil ? 0 : 1
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -124,7 +135,7 @@ struct ResetUserPasswordView: View {
             }
         }
         .alert(
-            L10n.error.text,
+            L10n.error,
             isPresented: $isPresentingError,
             presenting: error
         ) { _ in
@@ -142,7 +153,7 @@ struct ResetUserPasswordView: View {
                 router.pop()
             }
         } message: {
-            Text("User password has been changed.")
+            Text(L10n.passwordChangedMessage)
         }
     }
 }
