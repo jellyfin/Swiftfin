@@ -21,11 +21,11 @@ struct LearnMore<Content: View>: View {
         }) {
             Text(L10n.learnMoreEllipsis)
                 .foregroundColor(.accentColor)
+                .font(.subheadline)
         }
         .sheet(isPresented: $isPresented) {
             NavigationView {
                 content()
-                    .padding()
                     .frame(maxWidth: .infinity, alignment: .topLeading)
                     .navigationTitle(title)
                     .navigationBarTitleDisplayMode(.inline)

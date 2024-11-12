@@ -120,8 +120,7 @@ extension ItemEditorView {
                 case let .error(eventError):
                     error = eventError
                     isPresentingEventAlert = true
-                case let .refreshTriggered(triggerDate):
-                    // TODO: Do something with this date if needed
+                case .refreshTriggered:
                     UIDevice.impact(.light)
                 }
             }
