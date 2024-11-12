@@ -13,6 +13,11 @@ extension ItemEditorView {
 
     struct RefreshMetadataButton: View {
 
+        // Bug in SwiftUI where Menu item icons will be black in dark mode
+        // when a HierarchicalShapeStyle is applied to the Buttons
+        @Environment(\.colorScheme)
+        private var colorScheme: ColorScheme
+
         @StateObject
         private var viewModel: RefreshMetadataViewModel
 
@@ -31,60 +36,63 @@ extension ItemEditorView {
 
         var body: some View {
             Menu {
-                Button(L10n.refresh, systemImage: "arrow.clockwise") {
-                    viewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .default,
-                            imageRefreshMode: .default,
-                            replaceMetadata: true,
-                            replaceImages: false
+                Group {
+                    Button(L10n.refresh, systemImage: "arrow.clockwise") {
+                        viewModel.send(
+                            .refreshMetadata(
+                                metadataRefreshMode: .default,
+                                imageRefreshMode: .default,
+                                replaceMetadata: true,
+                                replaceImages: false
+                            )
                         )
-                    )
-                }
+                    }
 
-                Button(L10n.findMissing, systemImage: "magnifyingglass") {
-                    viewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .fullRefresh,
-                            imageRefreshMode: .fullRefresh,
-                            replaceMetadata: false,
-                            replaceImages: false
+                    Button(L10n.findMissing, systemImage: "magnifyingglass") {
+                        viewModel.send(
+                            .refreshMetadata(
+                                metadataRefreshMode: .fullRefresh,
+                                imageRefreshMode: .fullRefresh,
+                                replaceMetadata: false,
+                                replaceImages: false
+                            )
                         )
-                    )
-                }
+                    }
 
-                Button(L10n.replaceMetadata, systemImage: "document") {
-                    viewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .fullRefresh,
-                            imageRefreshMode: .none,
-                            replaceMetadata: true,
-                            replaceImages: false
+                    Button(L10n.replaceMetadata, systemImage: "document") {
+                        viewModel.send(
+                            .refreshMetadata(
+                                metadataRefreshMode: .fullRefresh,
+                                imageRefreshMode: .none,
+                                replaceMetadata: true,
+                                replaceImages: false
+                            )
                         )
-                    )
-                }
+                    }
 
-                Button(L10n.replaceImages, systemImage: "photo") {
-                    viewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .none,
-                            imageRefreshMode: .fullRefresh,
-                            replaceMetadata: false,
-                            replaceImages: true
+                    Button(L10n.replaceImages, systemImage: "photo") {
+                        viewModel.send(
+                            .refreshMetadata(
+                                metadataRefreshMode: .none,
+                                imageRefreshMode: .fullRefresh,
+                                replaceMetadata: false,
+                                replaceImages: true
+                            )
                         )
-                    )
-                }
+                    }
 
-                Button(L10n.replaceAll, systemImage: "staroflife") {
-                    viewModel.send(
-                        .refreshMetadata(
-                            metadataRefreshMode: .fullRefresh,
-                            imageRefreshMode: .fullRefresh,
-                            replaceMetadata: true,
-                            replaceImages: true
+                    Button(L10n.replaceAll, systemImage: "staroflife") {
+                        viewModel.send(
+                            .refreshMetadata(
+                                metadataRefreshMode: .fullRefresh,
+                                imageRefreshMode: .fullRefresh,
+                                replaceMetadata: true,
+                                replaceImages: true
+                            )
                         )
-                    )
+                    }
                 }
+                .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
             } label: {
                 HStack {
                     Text(L10n.refreshMetadata)
