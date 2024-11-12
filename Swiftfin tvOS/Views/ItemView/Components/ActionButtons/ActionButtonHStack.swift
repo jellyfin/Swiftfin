@@ -15,6 +15,7 @@ extension ItemView {
         @ObservedObject
         var viewModel: ItemViewModel
 
+        // TODO: Shrink to minWWith 100 (button) / 50 (menu) and 16 spacing to get 4 buttons inline
         var body: some View {
             HStack(alignment: .center, spacing: 24) {
 
@@ -46,8 +47,9 @@ extension ItemView {
 
                 // MARK: - Additional Menu Options
 
-                ActionMenu {}
-                    .frame(width: 70)
+                // TODO: Enable if there are more items needed
+                /* ActionMenu {}
+                 .frame(width: 70)*/
             }
             .frame(height: 100)
         }
