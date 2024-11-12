@@ -36,11 +36,13 @@ struct ServerUserDetailsView: View {
                 lastActivityDate: viewModel.user.lastActivityDate
             )
 
-            if let userId = viewModel.user.id {
-                ChevronButton(L10n.password)
-                    .onSelect {
-                        router.route(to: \.resetUserPassword, userId)
-                    }
+            Section(L10n.advanced) {
+                if let userId = viewModel.user.id {
+                    ChevronButton(L10n.password)
+                        .onSelect {
+                            router.route(to: \.resetUserPassword, userId)
+                        }
+                }
             }
         }
         .navigationTitle(L10n.user)
