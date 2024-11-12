@@ -25,7 +25,7 @@ struct ItemEditorView: View {
 
     var body: some View {
         contentView
-            .navigationBarTitle(L10n.editItem)
+            .navigationBarTitle(L10n.metadata)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()

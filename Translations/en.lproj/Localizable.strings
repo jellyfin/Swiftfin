@@ -1214,16 +1214,6 @@
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
 
-// Edit Item - Button
-// Button title to edit a media item
-// Used as the button label in the options menu when there are items to edit
-"editItem" = "Edit Item";
-
-// Delete Item - Button
-// Button title to delete a media item
-// Used as the button label in the options menu to delete a baseitemdto
-"deleteItem" = "Delete Item";
-
 // Refresh - Button
 // Button title for the menu to refresh metadata
 // Used as the label for the refresh metadata button
@@ -1267,4 +1257,10 @@
 // Item Deletion Permission Failure - Error Message
 // Alert the user they should not be able to delete something
 // Used to inform the user a deletion failed and why it failed
-"itemDeletionPermissionFailture" = "You do not have permission to delete this item.";
+"itemDeletionPermissionFailure" = "You do not have permission to delete this item.";
+
+// Metadata - Section Title
+// Title for the ItemEditorView and Metadata related views
+// Used as a title for sections/views related to Metadata
+"metadata" = "Metadata";
+

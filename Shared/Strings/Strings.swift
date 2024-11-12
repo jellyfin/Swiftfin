@@ -304,8 +304,6 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
-  /// Delete Item
-  internal static let deleteItem = L10n.tr("Localizable", "deleteItem", fallback: "Delete Item")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
   /// Delete Selected Devices
@@ -368,8 +366,6 @@ internal enum L10n {
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
   /// Button label to edit a task
   internal static let edit = L10n.tr("Localizable", "edit", fallback: "Edit")
-  /// Edit Item
-  internal static let editItem = L10n.tr("Localizable", "editItem", fallback: "Edit Item")
   /// Edit Jump Lengths
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Select Server View - Edit an Existing Server
@@ -457,7 +453,7 @@ internal enum L10n {
     return L10n.tr("Localizable", "itemAtItem", String(describing: p1), String(describing: p2), fallback: "%1$@ at %2$@")
   }
   /// You do not have permission to delete this item.
-  internal static let itemDeletionPermissionFailture = L10n.tr("Localizable", "itemDeletionPermissionFailture", fallback: "You do not have permission to delete this item.")
+  internal static let itemDeletionPermissionFailure = L10n.tr("Localizable", "itemDeletionPermissionFailure", fallback: "You do not have permission to delete this item.")
   /// SessionPlaybackMethod Remaining Time
   internal static func itemOverItem(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "itemOverItem", String(describing: p1), String(describing: p2), fallback: "%1$@ / %2$@")
@@ -536,6 +532,8 @@ internal enum L10n {
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
   /// Menu Buttons
   internal static let menuButtons = L10n.tr("Localizable", "menuButtons", fallback: "Menu Buttons")
+  /// Metadata
+  internal static let metadata = L10n.tr("Localizable", "metadata", fallback: "Metadata")
   /// The play method (e.g., Direct Play, Transcoding)
   internal static let method = L10n.tr("Localizable", "method", fallback: "Method")
   /// Minutes

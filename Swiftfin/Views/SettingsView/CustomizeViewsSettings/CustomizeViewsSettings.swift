@@ -14,9 +14,6 @@ import SwiftUI
 
 struct CustomizeViewsSettings: View {
 
-    @Injected(\.currentUserSession)
-    private var userSession
-
     @Default(.Customization.itemViewType)
     private var itemViewType
     @Default(.Customization.CinematicItemViewType.usePrimaryImage)

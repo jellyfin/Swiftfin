@@ -20,10 +20,6 @@ extension ItemEditorView {
         private var isPresentingEventAlert = false
         @State
         private var error: JellyfinAPIError?
-        @State
-        private var isFinishing = false
-        @State
-        private var isLoading = false
 
         // MARK: - Initializer
 
@@ -35,7 +31,7 @@ extension ItemEditorView {
 
         var body: some View {
             Menu {
-                Button {
+                Button(L10n.refresh, systemImage: "arrow.clockwise") {
                     viewModel.send(
                         .refreshMetadata(
                             metadataRefreshMode: .default,
@@ -44,14 +40,10 @@ extension ItemEditorView {
                             replaceImages: false
                         )
                     )
-                } label: {
-                    Label(
-                        L10n.refresh,
-                        systemImage: "arrow.clockwise.circle"
-                    )
                 }
+                .foregroundStyle(.primary, .secondary)
 
-                Button {
+                Button(L10n.findMissing, systemImage: "magnifyingglass") {
                     viewModel.send(
                         .refreshMetadata(
                             metadataRefreshMode: .fullRefresh,
@@ -60,14 +52,10 @@ extension ItemEditorView {
                             replaceImages: false
                         )
                     )
-                } label: {
-                    Label(
-                        L10n.findMissing,
-                        systemImage: "magnifyingglass.circle"
-                    )
                 }
+                .foregroundStyle(.primary, .secondary)
 
-                Button {
+                Button(L10n.replaceMetadata, systemImage: "document") {
                     viewModel.send(
                         .refreshMetadata(
                             metadataRefreshMode: .fullRefresh,
@@ -76,14 +64,9 @@ extension ItemEditorView {
                             replaceImages: false
                         )
                     )
-                } label: {
-                    Label(
-                        L10n.replaceMetadata,
-                        systemImage: "document.circle"
-                    )
                 }
 
-                Button {
+                Button(L10n.replaceImages, systemImage: "photo") {
                     viewModel.send(
                         .refreshMetadata(
                             metadataRefreshMode: .none,
@@ -92,14 +75,10 @@ extension ItemEditorView {
                             replaceImages: true
                         )
                     )
-                } label: {
-                    Label(
-                        L10n.replaceImages,
-                        systemImage: "photo.circle"
-                    )
                 }
+                .foregroundStyle(.primary, .secondary)
 
-                Button {
+                Button(L10n.replaceAll, systemImage: "staroflife") {
                     viewModel.send(
                         .refreshMetadata(
                             metadataRefreshMode: .fullRefresh,
@@ -108,41 +87,35 @@ extension ItemEditorView {
                             replaceImages: true
                         )
                     )
-                } label: {
-                    Label(
-                        L10n.replaceAll,
-                        systemImage: "staroflife.circle"
-                    )
                 }
+                .foregroundStyle(.primary, .secondary)
+
             } label: {
                 HStack {
                     Text(L10n.refreshMetadata)
                         .foregroundStyle(.primary)
                     Spacer()
-                    if isLoading {
-                        ProgressView(value: 0.5)
+                    if viewModel.state == .refreshing {
+                        ProgressView(value: viewModel.progress)
                             .progressViewStyle(.gauge)
                             .transition(.opacity.combined(with: .scale).animation(.bouncy))
                             .frame(width: 25, height: 25)
                     } else {
-                        Image(systemName: isFinishing ? "checkmark" : "arrow.clockwise")
+                        Image(systemName: "arrow.clockwise")
                             .foregroundStyle(.secondary)
                     }
                 }
-                .foregroundStyle(.primary, .secondary)
             }
-            .disabled(isLoading || isPresentingEventAlert)
+            .foregroundStyle(.primary, .secondary)
+            .disabled(viewModel.state == .refreshing || isPresentingEventAlert)
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .error(eventError):
                     error = eventError
                     isPresentingEventAlert = true
                 case let .refreshTriggered(triggerDate):
-
-                    // TODO: Do what can I do with this date? Something track progress?
-                    self.isLoading = true
-                case .refreshCompleted:
-                    showFeedback()
+                    // TODO: Do something with this date if needed
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 }
             }
             .alert(
@@ -153,22 +126,6 @@ extension ItemEditorView {
 
             } message: { error in
                 Text(error.localizedDescription)
-            }
-        }
-
-        // MARK: - SuccessFeedback
-
-        private func showFeedback() {
-            withAnimation {
-                isLoading = false
-                isFinishing = true
-            }
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                withAnimation {
-                    isFinishing = false
-                }
             }
         }
     }

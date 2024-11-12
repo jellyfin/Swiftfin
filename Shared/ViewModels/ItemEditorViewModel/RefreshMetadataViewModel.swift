@@ -17,7 +17,6 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
     enum Event: Equatable {
         case error(JellyfinAPIError)
         case refreshTriggered(Date)
-        case refreshCompleted
     }
 
     // MARK: Action
@@ -40,6 +39,9 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         case initial
         case refreshing
     }
+
+    @Published
+    var progress: Double = 0.0
 
     @Published
     private var item: BaseItemDto
@@ -88,13 +90,17 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
                         replaceImages: replaceImages
                     )
 
-                    // Start polling for completion after triggering refresh
-                    try await self.pollRefreshCompletion()
+                    await MainActor.run {
+                        self.state = .refreshing
+                        self.eventSubject.send(.refreshTriggered(Date()))
+                    }
+
+                    try await self.refreshItem()
 
                     await MainActor.run {
                         self.state = .content
-                        self.eventSubject.send(.refreshCompleted)
                     }
+
                 } catch {
                     guard !Task.isCancelled else { return }
 
@@ -134,28 +140,32 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(request)
     }
 
-    // MARK: Poll Task Progress
+    // MARK: Refresh Item After Request Queued
 
-    private func pollRefreshCompletion() async throws {
-        guard let itemID = item.id else { return }
+    private func refreshItem() async throws {
+        guard let itemId = item.id else { return }
 
-        while true {
-            try await Task.sleep(nanoseconds: 5_000_000_000)
+        let totalDuration: Double = 5.0
+        let interval: Double = 0.05
+        let steps = Int(totalDuration / interval)
 
-            let request = Paths.getItem(userID: userSession.user.id, itemID: itemID)
-            let response = try await userSession.client.send(request)
+        // Update progress every 0.05 seconds. Ticks up "1%" at a time.
+        for i in 1 ... steps {
+            try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
 
+            let currentProgress = Double(i) / Double(steps)
             await MainActor.run {
-                self.item = response.value
+                self.progress = currentProgress
             }
+        }
 
-            // TODO: Figure out how to poll metadata refreshing
-            if true {
-                await MainActor.run {
-                    Notifications[.itemMetadataDidChange].post(object: item)
-                }
-                break
-            }
+        // After waiting for 5 seconds, fetch the updated item
+        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.item = response.value
+            self.progress = 0.0
         }
     }
 }

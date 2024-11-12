@@ -175,14 +175,14 @@ struct ItemView: View {
         Menu(L10n.options, systemImage: "ellipsis.circle") {
 
             if permEdit {
-                Button(L10n.editItem, systemImage: "pencil") {
+                Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel.item)
                 }
             }
 
             if canDelete {
                 Divider()
-                Button(L10n.deleteItem, systemImage: "trash", role: .destructive) {
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
                     showConfirmationDialog = true
                 }
             }
