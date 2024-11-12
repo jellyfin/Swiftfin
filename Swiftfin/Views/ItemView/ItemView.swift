@@ -28,20 +28,20 @@ struct ItemView: View {
     @State
     private var isPresentingEventAlert = false
     @State
-    private var isPresentingFailedAlert = false
-    @State
     private var error: JellyfinAPIError?
 
-    private let permDelete = StoredValues[.User.enableItemDeletion]
-    private let permEdit = StoredValues[.User.enableItemEditor]
+    @StoredValue(.User.enableItemDeletion)
+    private var enableItemDeletion: Bool
+    @StoredValue(.User.enableItemEditor)
+    private var enableItemEditor: Bool
 
     private var canDelete: Bool {
-        permDelete && viewModel.item.canDelete ?? false
+        enableItemDeletion && viewModel.item.canDelete ?? false
     }
 
     // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
     private var enableMenu: Bool {
-        canDelete || permEdit
+        canDelete || enableItemEditor
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -147,11 +147,7 @@ struct ItemView: View {
                 error = eventError
                 isPresentingEventAlert = true
             case .deleted:
-                if deleteViewModel.item == nil {
-                    router.dismissCoordinator()
-                } else {
-                    isPresentingFailedAlert = true
-                }
+                router.dismissCoordinator()
             }
         }
         .alert(
@@ -162,19 +158,13 @@ struct ItemView: View {
         } message: { error in
             Text(error.localizedDescription)
         }
-        .alert(
-            L10n.taskFailed,
-            isPresented: $isPresentingFailedAlert
-        ) {
-            Text(L10n.unknownError)
-        }
     }
 
     private var itemActionMenu: some View {
 
         Menu(L10n.options, systemImage: "ellipsis.circle") {
 
-            if permEdit {
+            if enableItemEditor {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel.item)
                 }
