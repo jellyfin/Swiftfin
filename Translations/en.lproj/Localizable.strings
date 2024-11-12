@@ -1264,3 +1264,7 @@
 // Used as a title for sections/views related to Metadata
 "metadata" = "Metadata";
 
+// Learn More - Button
+// Opens a modal with more information
+// Used as a button to show details
+"learnMoreEllipsis" = "Learn more...";
