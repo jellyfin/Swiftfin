@@ -34,15 +34,23 @@ struct ServerUserDetailsView: View {
             AdminDashboardView.UserSection(
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
-            )
+            ) {
+                // TODO: Update Profile Picture
+            }
 
             Section(L10n.advanced) {
-                if let userId = viewModel.user.id {
-                    ChevronButton("Permissions")
-                        .onSelect {
-                            router.route(to: \.userPermissions, viewModel)
-                        }
-                }
+                ChevronButton("Permissions")
+                    .onSelect {
+                        router.route(to: \.userPermissions, viewModel)
+                    }
+
+                // TODO: Access: enabledFolders & enableAllFolders
+                
+                // TODO: Deletion: enableContentDeletion & enableContentDeletionFromFolders
+                
+                // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
+                
+                // TODO: Live TV: enabledChannels & enableAllChannels
             }
         }
         .navigationTitle(L10n.user)

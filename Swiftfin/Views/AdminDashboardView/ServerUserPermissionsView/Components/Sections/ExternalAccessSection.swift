@@ -47,7 +47,6 @@ extension ServerUserPermissionsView {
                     ) {
                         MaxBitrateDescription()
                     }
-                    .disabled(!isEditing)
                 }
             }
             .disabled(!isEditing)

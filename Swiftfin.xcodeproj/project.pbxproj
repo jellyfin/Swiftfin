@@ -100,6 +100,7 @@
 		4EB538C12CE3CF0F00EB72D5 /* ManagementSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */; };
 		4EB538C32CE3E21800EB72D5 /* SyncPlaySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */; };
 		4EB538C52CE3E25700EB72D5 /* ExternalAccessSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */; };
+		4EB538C82CE3E8A600EB72D5 /* RemoteControlSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */; };
 		4EB7B33B2CBDE645004A342E /* ChevronAlertButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */; };
 		4EB7C8D52CCED6E7000CC011 /* AddServerUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */; };
 		4EBE06462C7E9509004A6C03 /* PlaybackCompatibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */; };
@@ -1144,6 +1145,7 @@
 		4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementSection.swift; sourceTree = "<group>"; };
 		4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncPlaySection.swift; sourceTree = "<group>"; };
 		4EB538C42CE3E25500EB72D5 /* ExternalAccessSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExternalAccessSection.swift; sourceTree = "<group>"; };
+		4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteControlSection.swift; sourceTree = "<group>"; };
 		4EB7B33A2CBDE63F004A342E /* ChevronAlertButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChevronAlertButton.swift; sourceTree = "<group>"; };
 		4EB7C8D42CCED6E1000CC011 /* AddServerUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserView.swift; sourceTree = "<group>"; };
 		4EBE06452C7E9509004A6C03 /* PlaybackCompatibility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackCompatibility.swift; sourceTree = "<group>"; };
@@ -2244,6 +2246,7 @@
 				4EB538BE2CE3CE6100EB72D5 /* FeatureAccessSection.swift */,
 				4EB538C02CE3CF0E00EB72D5 /* ManagementSection.swift */,
 				4EB538BC2CE3CCCF00EB72D5 /* MediaPlaybackSection.swift */,
+				4EB538C72CE3E8A100EB72D5 /* RemoteControlSection.swift */,
 				4EB538C22CE3E21500EB72D5 /* SyncPlaySection.swift */,
 				4EB538BA2CE3CB3100EB72D5 /* UsernameSection.swift */,
 			);
@@ -5510,6 +5513,7 @@
 				4E16FD572C01A32700110147 /* LetterPickerOrientation.swift in Sources */,
 				E1356E0329A730B200382563 /* SeparatorHStack.swift in Sources */,
 				5377CBF5263B596A003A4E83 /* SwiftfinApp.swift in Sources */,
+				4EB538C82CE3E8A600EB72D5 /* RemoteControlSection.swift in Sources */,
 				E13DD4022717EE79009D4DAF /* SelectUserCoordinator.swift in Sources */,
 				E11245B128D919CD00D8A977 /* Overlay.swift in Sources */,
 				E145EB4D2BE1688E003BF6F3 /* SwiftinStore+UserState.swift in Sources */,

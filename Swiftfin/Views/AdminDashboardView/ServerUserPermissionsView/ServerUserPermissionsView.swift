@@ -80,7 +80,7 @@ struct ServerUserPermissionsView: View {
                 }
                 ToolbarItem(placement: .bottomBar) {
                     if isEditing {
-                        toolBarSaveView
+                        toolbarSaveView
                     }
                 }
             }
@@ -92,8 +92,8 @@ struct ServerUserPermissionsView: View {
                     isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
-                    isPresentingSuccess = true
                     isEditing = false
+                    router.dismissCoordinator()
                 }
             }
             .alert(
@@ -104,14 +104,6 @@ struct ServerUserPermissionsView: View {
                 Button(L10n.dismiss, role: .cancel) {}
             } message: { error in
                 Text(error.localizedDescription)
-            }
-            .alert(
-                L10n.success.text,
-                isPresented: $isPresentingSuccess
-            ) {
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: {
-                Text("User Profile Updated") // L10n.profileUpdated
             }
     }
 
@@ -138,7 +130,7 @@ struct ServerUserPermissionsView: View {
                 username: $tempUsername,
                 policy: $tempPolicy
             )
-            .environment(\.isEditing, isEditing)
+                .environment(\.isEditing, isEditing)
 
             ManagementSection(policy: $tempPolicy)
                 .environment(\.isEditing, isEditing)
@@ -153,13 +145,14 @@ struct ServerUserPermissionsView: View {
                 maxBitratePolicy: $tempMaxBitratePolicy,
                 policy: $tempPolicy
             )
-            .environment(\.isEditing, isEditing)
+                .environment(\.isEditing, isEditing)
 
             SyncPlaySection(policy: $tempPolicy)
                 .environment(\.isEditing, isEditing)
 
-            MediaDeletionSection()
-            RemoteControlSection()
+            RemoteControlSection(policy: $tempPolicy)
+                .environment(\.isEditing, isEditing)
+
             PermissionsSection()
             SessionConfigurationSection()
         }
@@ -187,7 +180,7 @@ struct ServerUserPermissionsView: View {
     // MARK: - Toolbar Save Content
 
     @ViewBuilder
-    private var toolBarSaveView: some View {
+    private var toolbarSaveView: some View {
         Button(L10n.save) {
             if tempPolicy != viewModel.user.policy {
                 viewModel.send(.updatePolicy(tempPolicy))
@@ -199,36 +192,6 @@ struct ServerUserPermissionsView: View {
         .buttonStyle(.toolbarPill)
         .disabled(viewModel.user.policy == tempPolicy && viewModel.user.name == tempUsername)
         .frame(maxWidth: .infinity, alignment: .trailing)
-    }
-
-    @ViewBuilder
-    private func MediaDeletionSection() -> some View {
-        Section("Allow media deletion") {
-            Toggle("All libaries", isOn: Binding(
-                get: { tempPolicy.enableContentDeletion ?? false },
-                set: { tempPolicy.enableContentDeletion = $0 }
-            ))
-            .disabled(!isEditing)
-
-            // TODO: Get all of the folders for tempPolicy.enableContentDeletionFromFolders
-        }
-    }
-
-    @ViewBuilder
-    private func RemoteControlSection() -> some View {
-        Section("Remote control") {
-            Toggle("Control other users", isOn: Binding(
-                get: { tempPolicy.enableRemoteControlOfOtherUsers ?? false },
-                set: { tempPolicy.enableRemoteControlOfOtherUsers = $0 }
-            ))
-            .disabled(!isEditing)
-
-            Toggle("Control shared devices", isOn: Binding(
-                get: { tempPolicy.enableSharedDeviceControl ?? false },
-                set: { tempPolicy.enableSharedDeviceControl = $0 }
-            ))
-            .disabled(!isEditing)
-        }
     }
 
     @ViewBuilder
@@ -315,7 +278,7 @@ struct ServerUserPermissionsView: View {
         }
     }
 
-    // MARK: - Helper Methods
+    // MARK: - Reset Temporary Variables
 
     private func resetTempValues() {
         tempMaxSessionsPolicy = ActiveSessionsPolicy.from(rawValue: tempPolicy.maxActiveSessions ?? 0)
