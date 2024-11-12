@@ -41,7 +41,6 @@ extension ItemEditorView {
                         )
                     )
                 }
-                .foregroundStyle(.primary, .secondary)
 
                 Button(L10n.findMissing, systemImage: "magnifyingglass") {
                     viewModel.send(
@@ -53,7 +52,6 @@ extension ItemEditorView {
                         )
                     )
                 }
-                .foregroundStyle(.primary, .secondary)
 
                 Button(L10n.replaceMetadata, systemImage: "document") {
                     viewModel.send(
@@ -76,7 +74,6 @@ extension ItemEditorView {
                         )
                     )
                 }
-                .foregroundStyle(.primary, .secondary)
 
                 Button(L10n.replaceAll, systemImage: "staroflife") {
                     viewModel.send(
@@ -88,13 +85,13 @@ extension ItemEditorView {
                         )
                     )
                 }
-                .foregroundStyle(.primary, .secondary)
-
             } label: {
                 HStack {
                     Text(L10n.refreshMetadata)
                         .foregroundStyle(.primary)
+
                     Spacer()
+
                     if viewModel.state == .refreshing {
                         ProgressView(value: viewModel.progress)
                             .progressViewStyle(.gauge)
@@ -103,6 +100,8 @@ extension ItemEditorView {
                     } else {
                         Image(systemName: "arrow.clockwise")
                             .foregroundStyle(.secondary)
+                            .backport
+                            .fontWeight(.semibold)
                     }
                 }
             }
@@ -115,7 +114,7 @@ extension ItemEditorView {
                     isPresentingEventAlert = true
                 case let .refreshTriggered(triggerDate):
                     // TODO: Do something with this date if needed
-                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    UIDevice.impact(.light)
                 }
             }
             .alert(

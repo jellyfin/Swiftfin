@@ -127,12 +127,12 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
     ) async throws {
         guard let itemId = item.id else { return }
 
-        let parameters = Paths.RefreshItemParameters(
-            metadataRefreshMode: metadataRefreshMode,
-            imageRefreshMode: imageRefreshMode,
-            isReplaceAllMetadata: replaceMetadata,
-            isReplaceAllImages: replaceImages
-        )
+        var parameters = Paths.RefreshItemParameters()
+        parameters.metadataRefreshMode = metadataRefreshMode
+        parameters.imageRefreshMode = imageRefreshMode
+        parameters.isReplaceAllMetadata = replaceMetadata
+        parameters.isReplaceAllImages = replaceImages
+
         let request = Paths.refreshItem(
             itemID: itemId,
             parameters: parameters

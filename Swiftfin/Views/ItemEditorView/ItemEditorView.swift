@@ -47,7 +47,6 @@ struct ItemEditorView: View {
 
             Section {
                 RefreshMetadataButton(item: item)
-                    .foregroundStyle(.primary, .secondary)
                     .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
             }
         }
