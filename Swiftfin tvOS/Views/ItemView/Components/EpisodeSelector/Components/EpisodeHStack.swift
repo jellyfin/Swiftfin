@@ -41,6 +41,7 @@ extension SeriesEpisodeSelector {
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
                     .focused($focusedEpisodeID, equals: episode.id)
+                    .padding(.horizontal, 4)
             }
             .scrollBehavior(.continuousLeadingEdge)
             .insets(horizontal: EdgeInsets.edgePadding)
