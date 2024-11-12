@@ -150,7 +150,7 @@ struct ResetUserPasswordView: View {
             isPresented: $isPresentingSuccess
         ) {
             Button(L10n.dismiss, role: .cancel) {
-                router.pop()
+                router.dismissCoordinator()
             }
         } message: {
             Text(L10n.passwordChangedMessage)
