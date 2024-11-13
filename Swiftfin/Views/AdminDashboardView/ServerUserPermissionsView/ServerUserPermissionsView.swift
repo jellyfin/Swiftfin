@@ -28,7 +28,7 @@ struct ServerUserPermissionsView: View {
     @State
     private var tempPolicy: UserPolicy
     @State
-    private var error: Error? = nil
+    private var error: Error?
     @State
     private var isPresentingError: Bool = false
     @State
