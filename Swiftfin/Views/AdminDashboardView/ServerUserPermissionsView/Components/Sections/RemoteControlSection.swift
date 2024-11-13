@@ -13,25 +13,21 @@ extension ServerUserPermissionsView {
 
     struct RemoteControlSection: View {
 
-        @Environment(\.isEditing)
-        var isEditing
-
         @Binding
         var policy: UserPolicy
 
         var body: some View {
-            Section("Remote control") {
-                Toggle("Control other users", isOn: Binding(
+            Section(L10n.remoteControl) {
+                Toggle(L10n.controlOtherUsers, isOn: Binding(
                     get: { policy.enableRemoteControlOfOtherUsers ?? false },
                     set: { policy.enableRemoteControlOfOtherUsers = $0 }
                 ))
 
-                Toggle("Control shared devices", isOn: Binding(
+                Toggle(L10n.controlSharedDevices, isOn: Binding(
                     get: { policy.enableSharedDeviceControl ?? false },
                     set: { policy.enableSharedDeviceControl = $0 }
                 ))
             }
-            .disabled(!isEditing)
         }
     }
 }

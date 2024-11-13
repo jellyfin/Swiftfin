@@ -551,9 +551,6 @@
 /* Restart Warning Label */
 "restartWarning" = "Are you sure you want to restart the server?";
 
-/* ActiveSessionsView Header */
-"activeDevices" = "Active Devices";
-
 /* UserDashboardView Header */
 "dashboard" = "Dashboard";
 
@@ -1238,3 +1235,183 @@
 // Represents a speed in terabits per second
 // Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Default - Setting
+// Represents the default policy or limit
+// Used for setting user policies to default values
+"default" = "Default";
+
+// Unlimited - Setting
+// Represents no restriction or unlimited policy
+// Used for setting user policies with no limits
+"unlimited" = "Unlimited";
+
+// Create & Join Groups - Action
+// Allows the user to create and join groups
+// Used for setting user permissions related to groups
+"createAndJoinGroups" = "Create & Join Groups";
+
+// Join Groups - Action
+// Allows the user to join existing groups
+// Used for setting user permissions related to group joining
+"joinGroups" = "Join Groups";
+
+// Permissions - Section
+// Represents access control settings for users
+// Used for managing user permissions in various sections
+"permissions" = "Permissions";
+
+// SyncPlay - Feature
+// Represents the synchronized playback feature across multiple devices
+// Used for enabling or managing synchronized streaming sessions
+"syncPlay" = "SyncPlay";
+
+// Remote connections - Section
+// Represents settings related to remote access
+// Used in the external access section of user permissions
+"remoteConnections" = "Remote connections";
+
+// Allow remote connections - Toggle
+// Toggles the user's ability to connect remotely
+// Used in the external access section
+"allowRemoteConnections" = "Allow remote connections";
+
+// Maximum remote bitrate - Picker
+// Represents the maximum bitrate allowed for remote connections
+// Used in the external access section
+"maximumRemoteBitrate" = "Maximum remote bitrate";
+
+// Custom bitrate - Button
+// Opens an alert to enter a custom bitrate value
+// Used in the external access section
+"customBitrate" = "Custom bitrate";
+
+// Enter custom bitrate in Mbps - Description
+// Describes the purpose of the custom bitrate entry
+// Used in the custom bitrate alert
+"enterCustomBitrate" = "Enter custom bitrate in Mbps";
+
+// Feature access - Section
+// Represents settings related to feature access for users
+// Used in the feature access section of user permissions
+"featureAccess" = "Feature access";
+
+// Live TV access - Toggle
+// Toggles access to live TV content
+// Used in the feature access section
+"liveTvAccess" = "Live TV access";
+
+// Live TV recording management - Toggle
+// Toggles management of live TV recordings
+// Used in the feature access section
+"liveTvRecordingManagement" = "Live TV recording management";
+
+// Management - Section
+// Represents settings related to management permissions
+// Used in the management section of user permissions
+"management" = "Management";
+
+// Lyrics - Toggle
+// Toggles permission to manage lyrics
+// Used in the management section
+"lyrics" = "Lyrics";
+
+// Media playback - Section
+// Represents settings related to media playback permissions
+// Used in the media playback section of user permissions
+"mediaPlayback" = "Media playback";
+
+// Allow media playback - Toggle
+// Toggles permission for media playback
+// Used in the media playback section
+"allowMediaPlayback" = "Allow media playback";
+
+// Allow audio transcoding - Toggle
+// Toggles permission for audio transcoding
+// Used in the media playback section
+"allowAudioTranscoding" = "Allow audio transcoding";
+
+// Allow video transcoding - Toggle
+// Toggles permission for video transcoding
+// Used in the media playback section
+"allowVideoTranscoding" = "Allow video transcoding";
+
+// Allow video remuxing - Toggle
+// Toggles permission for video remuxing
+// Used in the media playback section
+"allowVideoRemuxing" = "Allow video remuxing";
+
+// Force remote media transcoding - Toggle
+// Toggles whether remote media transcoding is forced
+// Used in the media playback section
+"forceRemoteTranscoding" = "Force remote media transcoding";
+
+// Allow media downloads - Toggle
+// Toggles permission to download media content
+// Used in the permission section
+"allowMediaDownloads" = "Allow media downloads";
+
+// Hide user from login screen - Toggle
+// Toggles whether the user is hidden from the login screen
+// Used in the permission section
+"hideUserFromLoginScreen" = "Hide user from login screen";
+
+// Remote control - Section
+// Represents settings related to remote control permissions
+// Used in the remote control section of user permissions
+"remoteControl" = "Remote control";
+
+// Control other users - Toggle
+// Toggles permission to control other users' sessions
+// Used in the remote control section
+"controlOtherUsers" = "Control other users";
+
+// Control shared devices - Toggle
+// Toggles permission to control shared devices
+// Used in the remote control section
+"controlSharedDevices" = "Control shared devices";
+
+// Sessions - Section
+// Represents settings related to session control
+// Used in the sessions section of user permissions
+"sessions" = "Sessions";
+
+// Maximum failed login policy - Picker
+// Represents the policy for maximum failed login attempts
+// Used in the sessions section
+"maximumFailedLoginPolicy" = "Maximum failed login policy";
+
+// Maximum sessions policy - Picker
+// Represents the policy for maximum active sessions
+// Used in the sessions section
+"maximumSessionsPolicy" = "Maximum sessions policy";
+
+// Custom failed logins - Button
+// Opens an alert to enter a custom failed login limit
+// Used in the sessions section
+"customFailedLogins" = "Custom failed logins";
+
+// Enter custom failed logins limit - Description
+// Describes the purpose of the custom failed logins entry
+// Used in the custom failed logins alert
+"enterCustomFailedLogins" = "Enter custom failed logins limit";
+
+// Failed logins - Text Field
+// Represents the input field for custom failed logins
+// Used in the custom failed logins section
+"failedLogins" = "Failed logins";
+
+// Custom sessions - Button
+// Opens an alert to enter a custom maximum session limit
+// Used in the sessions section
+"customSessions" = "Custom sessions";
+
+// Enter custom max sessions - Description
+// Describes the purpose of the custom max sessions entry
+// Used in the custom sessions alert
+"enterCustomMaxSessions" = "Enter custom max sessions";
+
+// Maximum sessions - Text Field
+// Represents the input field for custom maximum sessions
+// Used in the custom sessions section
+"maximumSessions" = "Maximum sessions";

@@ -35,21 +35,21 @@ struct ServerUserDetailsView: View {
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
             ) {
-                // TODO: Update Profile Picture
+                // TODO: Update Profile Picture & Username
             }
 
             Section(L10n.advanced) {
-                ChevronButton("Permissions")
+                ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
                     }
 
                 // TODO: Access: enabledFolders & enableAllFolders
-                
+
                 // TODO: Deletion: enableContentDeletion & enableContentDeletionFromFolders
-                
+
                 // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
-                
+
                 // TODO: Live TV: enabledChannels & enableAllChannels
             }
         }

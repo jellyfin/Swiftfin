@@ -11,21 +11,21 @@ import SwiftUI
 
 extension ServerUserPermissionsView {
 
-    struct FeatureAccessSection: View {
+    struct PermissionSection: View {
 
         @Binding
         var policy: UserPolicy
 
         var body: some View {
-            Section(L10n.featureAccess) {
-                Toggle(L10n.liveTvAccess, isOn: Binding(
-                    get: { policy.enableLiveTvAccess ?? false },
-                    set: { policy.enableLiveTvAccess = $0 }
+            Section(L10n.permissions) {
+                Toggle(L10n.allowMediaDownloads, isOn: Binding(
+                    get: { policy.enableContentDownloading ?? false },
+                    set: { policy.enableContentDownloading = $0 }
                 ))
 
-                Toggle(L10n.liveTvRecordingManagement, isOn: Binding(
-                    get: { policy.enableLiveTvManagement ?? false },
-                    set: { policy.enableLiveTvManagement = $0 }
+                Toggle(L10n.hideUserFromLoginScreen, isOn: Binding(
+                    get: { policy.isHidden ?? false },
+                    set: { policy.isHidden = $0 }
                 ))
             }
         }

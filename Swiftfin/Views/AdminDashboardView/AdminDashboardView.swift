@@ -23,7 +23,7 @@ struct AdminDashboardView: View {
                 description: L10n.dashboardDescription
             )
 
-            ChevronButton(L10n.activeDevices)
+            ChevronButton(L10n.sessions)
                 .onSelect {
                     router.route(to: \.activeSessions)
                 }

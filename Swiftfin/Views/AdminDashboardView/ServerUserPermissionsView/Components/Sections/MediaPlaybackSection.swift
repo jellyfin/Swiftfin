@@ -13,40 +13,36 @@ extension ServerUserPermissionsView {
 
     struct MediaPlaybackSection: View {
 
-        @Environment(\.isEditing)
-        var isEditing
-
         @Binding
         var policy: UserPolicy
 
         var body: some View {
-            Section("Media playback") {
-                Toggle("Allow media playback", isOn: Binding(
+            Section(L10n.mediaPlayback) {
+                Toggle(L10n.allowMediaPlayback, isOn: Binding(
                     get: { policy.enableMediaPlayback ?? false },
                     set: { policy.enableMediaPlayback = $0 }
                 ))
 
-                Toggle("Allow audio transcoding", isOn: Binding(
+                Toggle(L10n.allowAudioTranscoding, isOn: Binding(
                     get: { policy.enableAudioPlaybackTranscoding ?? false },
                     set: { policy.enableAudioPlaybackTranscoding = $0 }
                 ))
 
-                Toggle("Allow video transcoding", isOn: Binding(
+                Toggle(L10n.allowVideoTranscoding, isOn: Binding(
                     get: { policy.enableVideoPlaybackTranscoding ?? false },
                     set: { policy.enableVideoPlaybackTranscoding = $0 }
                 ))
 
-                Toggle("Allow video remuxing", isOn: Binding(
+                Toggle(L10n.allowVideoRemuxing, isOn: Binding(
                     get: { policy.enablePlaybackRemuxing ?? false },
                     set: { policy.enablePlaybackRemuxing = $0 }
                 ))
 
-                Toggle("Force remote media transcoding", isOn: Binding(
+                Toggle(L10n.forceRemoteTranscoding, isOn: Binding(
                     get: { policy.isForceRemoteSourceTranscoding ?? false },
                     set: { policy.isForceRemoteSourceTranscoding = $0 }
                 ))
             }
-            .disabled(!isEditing)
         }
     }
 }

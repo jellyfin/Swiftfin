@@ -13,26 +13,22 @@ extension ServerUserPermissionsView {
 
     struct SyncPlaySection: View {
 
-        @Environment(\.isEditing)
-        var isEditing
-
         @Binding
         var policy: UserPolicy
 
         var body: some View {
-            Section("SyncPlay access") {
+            Section(L10n.syncPlay) {
                 Picker(
-                    "SyncPlay policy",
+                    L10n.permissions,
                     selection: Binding(
                         get: { policy.syncPlayAccess ?? SyncPlayUserAccessType.none },
                         set: { policy.syncPlayAccess = $0 }
                     )
                 ) {
                     ForEach(SyncPlayUserAccessType.allCases, id: \.self) { type in
-                        Text(type.rawValue).tag(type)
+                        Text(type.displayTitle).tag(type)
                     }
                 }
-                .disabled(!isEditing)
             }
         }
     }

@@ -13,37 +13,33 @@ extension ServerUserPermissionsView {
 
     struct ManagementSection: View {
 
-        @Environment(\.isEditing)
-        var isEditing
-
         @Binding
         var policy: UserPolicy
 
         var body: some View {
-            Section("Management") {
-                Toggle("Adminstrator", isOn: Binding(
+            Section(L10n.management) {
+                Toggle(L10n.administrator, isOn: Binding(
                     get: { policy.isAdministrator ?? false },
                     set: { policy.isAdministrator = $0 }
                 ))
 
                 // TODO: Enable for 10.9
-                /* Toggle("Manage collections", isOn: Binding(
+                /* Toggle(L10n.collections, isOn: Binding(
                      get: { policy.enableCollectionManagement ?? false },
                      set: { policy.enableCollectionManagement = $0 }
                  ))
 
-                 Toggle("Manage subtitles", isOn: Binding(
+                 Toggle(L10n.subtitles, isOn: Binding(
                      get: { policy.enableSubtitleManagement ?? false },
                      set: { policy.enableSubtitleManagement = $0 }
-                 )) */
+                  )) */
 
                 // TODO: Enable for 10.10
-                /* Toggle("Manage lyrics", isOn: Binding(
+                /* Toggle(L10n.lyrics, isOn: Binding(
                      get: { policy.enableLyricManagement ?? false },
                      set: { policy.enableLyricManagement = $0 }
                  )) */
             }
-            .disabled(!isEditing)
         }
     }
 }

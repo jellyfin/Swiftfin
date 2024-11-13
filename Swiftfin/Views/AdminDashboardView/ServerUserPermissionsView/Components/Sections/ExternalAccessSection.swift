@@ -13,9 +13,6 @@ extension ServerUserPermissionsView {
 
     struct ExternalAccessSection: View {
 
-        @Environment(\.isEditing)
-        var isEditing
-
         @Binding
         var maxBitratePolicy: MaxBitratePolicy
         @Binding
@@ -24,13 +21,13 @@ extension ServerUserPermissionsView {
         // MARK: - Body
 
         var body: some View {
-            Section("Remote connections") {
-                Toggle("Allow remote connections", isOn: Binding(
+            Section(L10n.remoteConnections) {
+                Toggle(L10n.allowRemoteConnections, isOn: Binding(
                     get: { policy.enableRemoteAccess ?? false },
                     set: { policy.enableRemoteAccess = $0 }
                 ))
 
-                Picker("Maximum remote bitrate", selection: $maxBitratePolicy) {
+                Picker(L10n.maximumRemoteBitrate, selection: $maxBitratePolicy) {
                     ForEach(MaxBitratePolicy.allCases, id: \.self) { policy in
                         Text(policy.displayTitle).tag(policy)
                     }
@@ -41,15 +38,14 @@ extension ServerUserPermissionsView {
 
                 if maxBitratePolicy == .custom {
                     ChevronAlertButton(
-                        "Custom bitrate",
+                        L10n.customBitrate,
                         subtitle: policy.remoteClientBitrateLimit?.formatted(.bitRate),
-                        description: "Enter custom bitrate in Mbps"
+                        description: L10n.enterCustomBitrate
                     ) {
                         MaxBitrateDescription()
                     }
                 }
             }
-            .disabled(!isEditing)
         }
 
         // MARK: - Create Bitrate Text
