@@ -8,12 +8,21 @@
 
 import SwiftUI
 
-struct LearnMore<Content: View>: View {
+struct LearnMore: View {
     @State
     private var isPresented: Bool = false
 
     let title: String
-    let content: () -> Content
+    let itemDescriptions: [ItemDescription]
+
+    // MARK: - Body
+
+    init(_ title: String, items: [ItemDescription]) {
+        self.title = title
+        self.itemDescriptions = items
+    }
+
+    // MARK: - Body
 
     var body: some View {
         Button(action: {
@@ -25,21 +34,32 @@ struct LearnMore<Content: View>: View {
         }
         .sheet(isPresented: $isPresented) {
             NavigationView {
-                content()
-                    .frame(maxWidth: .infinity, alignment: .topLeading)
-                    .navigationTitle(title)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .navigationBarCloseButton {
-                        isPresented = false
+                ScrollView {
+                    ForEach(itemDescriptions) { content in
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(content.item)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+
+                            Text(content.description)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .padding(.leading, 12)
+
+                            Divider()
+                        }
+                        .padding(.bottom, 8)
+                        .frame(maxWidth: .infinity, alignment: .top)
                     }
+                    .padding()
+                }
+                .padding(.horizontal, 16)
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarCloseButton {
+                    isPresented = false
+                }
             }
         }
-    }
-}
-
-extension LearnMore where Content == Text {
-    init(_ title: String, text: String) {
-        self.title = title
-        self.content = { Text(text) }
     }
 }

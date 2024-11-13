@@ -49,25 +49,31 @@ struct ItemEditorView: View {
                 RefreshMetadataButton(item: item)
                     .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
             } footer: {
-                LearnMore(title: L10n.metadata) {
-                    List {
-                        Section(L10n.refresh) {
-                            Text("Default refresh with the ability to override metadata without affecting existing images.")
-                        }
-                        Section(L10n.findMissing) {
-                            Text("Attempts to find any metadata or images that are missing.")
-                        }
-                        Section(L10n.replaceMetadata) {
-                            Text("Removes all unlocked metadata and replaces it with new information.")
-                        }
-                        Section(L10n.replaceImages) {
-                            Text("Removes all images and replacing them with new ones.")
-                        }
-                        Section(L10n.replaceAll) {
-                            Text("Removes all unlocked metadata and images, replacing them with new ones.")
-                        }
-                    }
-                }
+                LearnMore(
+                    L10n.metadata,
+                    items: [
+                        ItemDescription(
+                            L10n.refresh,
+                            description: "Default refresh with the ability to override metadata without affecting existing images."
+                        ),
+                        ItemDescription(
+                            L10n.findMissing,
+                            description: "Attempts to find any metadata or images that are missing."
+                        ),
+                        ItemDescription(
+                            L10n.replaceMetadata,
+                            description: "Removes all unlocked metadata and replaces it with new information."
+                        ),
+                        ItemDescription(
+                            L10n.replaceImages,
+                            description: "Removes all images and replaces them with new ones."
+                        ),
+                        ItemDescription(
+                            L10n.replaceAll,
+                            description: "Removes all unlocked metadata and images, replacing them with new ones."
+                        ),
+                    ]
+                )
             }
         }
     }
