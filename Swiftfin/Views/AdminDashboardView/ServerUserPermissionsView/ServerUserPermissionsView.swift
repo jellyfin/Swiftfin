@@ -114,8 +114,6 @@ struct ServerUserPermissionsView: View {
 
             ManagementSection(policy: $tempPolicy)
 
-            FeatureAccessSection(policy: $tempPolicy)
-
             MediaPlaybackSection(policy: $tempPolicy)
 
             ExternalAccessSection(
