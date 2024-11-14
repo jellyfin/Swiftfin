@@ -45,8 +45,8 @@ struct ResetUserPasswordView: View {
 
     var body: some View {
         List {
-            // If there is no userId, this means this is the Device User so we'll want to validate their password. Otherwise, this is a
-            // Server User, in which case this is a password reset and no current password is used.
+            /// UserID: Server User, who is being accessed as an administrator so no current password is required.
+            /// Nil UserID: Device User, who should have the current password and may not have administrator permissions.
             if viewModel.userId == nil {
                 Section(L10n.currentPassword) {
                     UnmaskSecureField(L10n.currentPassword, text: $currentPassword) {
