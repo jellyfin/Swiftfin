@@ -54,7 +54,7 @@ struct ResetUserPasswordView: View {
     var body: some View {
         List {
             /// UserID: Server User, who is being accessed as an administrator so no current password is required.
-            /// Nil UserID: Device User, who should have the current password and may not have administrator permissions.
+            /// Nil: Device User, who should have the current password and may not have administrator permissions.
             if viewModel.userId == nil {
                 Section(L10n.currentPassword) {
                     UnmaskSecureField(L10n.currentPassword, text: $currentPassword) {
