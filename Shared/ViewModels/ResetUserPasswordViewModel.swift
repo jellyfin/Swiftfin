@@ -33,6 +33,8 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
         case resetting
     }
 
+    // MARK: - Published Variables
+
     @Published
     var userId: String?
     @Published
