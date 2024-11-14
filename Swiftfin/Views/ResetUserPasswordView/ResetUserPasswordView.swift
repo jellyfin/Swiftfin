@@ -22,12 +22,19 @@ struct ResetUserPasswordView: View {
     @FocusState
     private var focusedPassword: Int?
 
+    @StateObject
+    private var viewModel: ResetUserPasswordViewModel
+
+    // MARK: - Password Variables
+
     @State
     private var currentPassword: String = ""
     @State
     private var newPassword: String = ""
     @State
     private var confirmNewPassword: String = ""
+
+    // MARK: - State Variables
 
     @State
     private var error: Error? = nil
@@ -36,12 +43,13 @@ struct ResetUserPasswordView: View {
     @State
     private var isPresentingSuccess: Bool = false
 
-    @StateObject
-    private var viewModel: ResetUserPasswordViewModel
+    // MARK: - Initializer
 
     init(userId: String? = nil) {
         self._viewModel = StateObject(wrappedValue: ResetUserPasswordViewModel(userId: userId))
     }
+
+    // MARK: - Body
 
     var body: some View {
         List {
