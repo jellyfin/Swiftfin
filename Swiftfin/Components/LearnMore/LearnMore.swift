@@ -15,7 +15,7 @@ struct LearnMore: View {
     let title: String
     let itemDescriptions: [ItemDescription]
 
-    // MARK: - Body
+    // MARK: - Initializer
 
     init(_ title: String, items: [ItemDescription]) {
         self.title = title

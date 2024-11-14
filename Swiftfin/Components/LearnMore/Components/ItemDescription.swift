@@ -13,6 +13,8 @@ struct ItemDescription: Identifiable {
     let item: String
     let description: String
 
+    // MARK: - Initializer
+
     init(_ item: String, description: String) {
         self.item = item
         self.description = description
