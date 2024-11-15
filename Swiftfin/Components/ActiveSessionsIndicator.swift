@@ -64,8 +64,9 @@ struct ActiveSessionIndicator: View {
         HStack(alignment: .bottom) {
             imageView
                 .overlay {
-                    if !activeSessions.isEmpty {
+                    if activeSessions.isNotEmpty {
                         ActivityBadge(value: activeSessions.count)
+                            .foregroundStyle(.primary)
                     }
                 }
         }
@@ -82,7 +83,11 @@ struct ActiveSessionIndicator: View {
             .foregroundColor(.primary)
             .background(
                 Circle()
-                    .fill(.secondary)
+                    .fill(
+                        activeSessions.isNotEmpty
+                            ? Color.accentColor.opacity(0.5)
+                            : Color.secondary
+                    )
             )
     }
 

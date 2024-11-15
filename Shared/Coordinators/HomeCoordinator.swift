@@ -28,7 +28,7 @@ final class HomeCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
-    @Route(.push)
+    @Route(.modal)
     var adminDashboard = makeAdminDashboard
     #endif
 

@@ -94,7 +94,7 @@ struct HomeView: View {
                 ActiveSessionIndicator {
                     router.route(to: \.adminDashboard)
                 }
-                .foregroundStyle(Color.accentColor, .secondary)
+                .foregroundStyle(.primary, .secondary, Color.accentColor)
             }
 
             SettingsBarButton(
