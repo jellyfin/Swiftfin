@@ -13,13 +13,13 @@ struct LearnMore: View {
     private var isPresented: Bool = false
 
     let title: String
-    let itemDescriptions: [ItemDescription]
+    let itemDescriptions: [TextPair]
 
     // MARK: - Initializer
 
-    init(_ title: String, items: [ItemDescription]) {
+    init(_ title: String, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
         self.title = title
-        self.itemDescriptions = items
+        self.itemDescriptions = items()
     }
 
     // MARK: - Body
@@ -35,25 +35,23 @@ struct LearnMore: View {
         .sheet(isPresented: $isPresented) {
             NavigationView {
                 ScrollView {
-                    ForEach(itemDescriptions) { content in
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(content.item)
-                                .font(.headline)
-                                .foregroundStyle(.primary)
+                    VStack(alignment: .leading, spacing: 16) {
+                        ForEach(itemDescriptions) { content in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(content.title)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
 
-                            Text(content.description)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .padding(.leading, 12)
-
+                                Text(content.subtitle)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.leading, 12)
+                            }
                             Divider()
                         }
-                        .padding(.bottom, 8)
-                        .frame(maxWidth: .infinity, alignment: .top)
                     }
                     .padding()
                 }
-                .padding(.horizontal, 16)
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationBarCloseButton {
