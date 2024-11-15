@@ -42,6 +42,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDevices = makeUserDevices
     @Route(.modal)
+    var resetUserPassword = makeResetUserPassword
+    @Route(.modal)
     var addServerUser = makeAddServerUser
     @Route(.push)
     var apiKeys = makeAPIKeys
@@ -114,9 +116,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
-    @ViewBuilder
-    func makeUserDevices() -> some View {
-        DevicesView()
+    func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
+        }
     }
 
     @ViewBuilder

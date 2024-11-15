@@ -232,6 +232,8 @@ internal enum L10n {
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
   internal static let confirmClose = L10n.tr("Localizable", "confirmClose", fallback: "Confirm Close")
+  /// Confirm New Password
+  internal static let confirmNewPassword = L10n.tr("Localizable", "confirmNewPassword", fallback: "Confirm New Password")
   /// Confirm Password
   internal static let confirmPassword = L10n.tr("Localizable", "confirmPassword", fallback: "Confirm Password")
   /// Connect
@@ -268,6 +270,8 @@ internal enum L10n {
   internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
   /// Current
   internal static let current = L10n.tr("Localizable", "current", fallback: "Current")
+  /// Current Password
+  internal static let currentPassword = L10n.tr("Localizable", "currentPassword", fallback: "Current Password")
   /// Current Position
   internal static let currentPosition = L10n.tr("Localizable", "currentPosition", fallback: "Current Position")
   /// PlaybackCompatibility Custom Category
@@ -616,6 +620,8 @@ internal enum L10n {
   internal static let never = L10n.tr("Localizable", "never", fallback: "Never")
   /// Message shown when a task has never run
   internal static let neverRun = L10n.tr("Localizable", "neverRun", fallback: "Never run")
+  /// New Password
+  internal static let newPassword = L10n.tr("Localizable", "newPassword", fallback: "New Password")
   /// News
   internal static let news = L10n.tr("Localizable", "news", fallback: "News")
   /// New User
@@ -702,8 +708,12 @@ internal enum L10n {
   }
   /// Password
   internal static let password = L10n.tr("Localizable", "password", fallback: "Password")
-  /// New passwords do not match
-  internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match")
+  /// User password has been changed.
+  internal static let passwordChangedMessage = L10n.tr("Localizable", "passwordChangedMessage", fallback: "User password has been changed.")
+  /// Changes the Jellyfin server user password. This does not change any Swiftfin settings.
+  internal static let passwordChangeWarning = L10n.tr("Localizable", "passwordChangeWarning", fallback: "Changes the Jellyfin server user password. This does not change any Swiftfin settings.")
+  /// New passwords do not match.
+  internal static let passwordsDoNotMatch = L10n.tr("Localizable", "passwordsDoNotMatch", fallback: "New passwords do not match.")
   /// Video Player Settings View - Pause on Background
   internal static let pauseOnBackground = L10n.tr("Localizable", "pauseOnBackground", fallback: "Pause on background")
   /// People

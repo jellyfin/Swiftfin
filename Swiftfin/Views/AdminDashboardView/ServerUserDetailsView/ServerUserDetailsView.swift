@@ -39,6 +39,13 @@ struct ServerUserDetailsView: View {
             }
 
             Section(L10n.advanced) {
+                if let userId = viewModel.user.id {
+                    ChevronButton(L10n.password)
+                        .onSelect {
+                            router.route(to: \.resetUserPassword, userId)
+                        }
+                }
+
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
