@@ -36,9 +36,8 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
     // MARK: - Published Variables
 
     @Published
-    var userId: String?
-    @Published
     var state: State = .initial
+    let userID: String
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -51,8 +50,8 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     // MARK: - Initializer
 
-    init(userId: String? = nil) {
-        self.userId = userId
+    init(userID: String) {
+        self.userID = userID
     }
 
     func respond(to action: Action) -> State {
@@ -89,7 +88,7 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     private func reset(current: String, new: String) async throws {
         let body = UpdateUserPassword(currentPw: current, newPw: new)
-        let request = Paths.updateUserPassword(userID: userId ?? userSession.user.id, body)
+        let request = Paths.updateUserPassword(userID: userID, body)
 
         try await userSession.client.send(request)
     }

@@ -106,9 +106,9 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
-    func makeResetUserPassword(userId: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ResetUserPasswordView(userId: userId)
+            ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
     }
 

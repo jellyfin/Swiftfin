@@ -112,9 +112,9 @@ final class SettingsCoordinator: NavigationCoordinatable {
         QuickConnectAuthorizeView()
     }
 
-    func makeResetUserPassword() -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+    func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            ResetUserPasswordView()
+            ResetUserPasswordView(userID: userID, requiresCurrentPassword: true)
         }
     }
 

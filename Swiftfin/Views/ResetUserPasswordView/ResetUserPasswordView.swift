@@ -13,6 +13,12 @@ import SwiftUI
 
 struct ResetUserPasswordView: View {
 
+    private enum Field: Hashable {
+        case currentPassword
+        case newPassword
+        case confirmNewPassword
+    }
+
     @Default(.accentColor)
     private var accentColor
 
@@ -20,7 +26,7 @@ struct ResetUserPasswordView: View {
     private var router: BasicNavigationViewCoordinator.Router
 
     @FocusState
-    private var focusedPassword: Int?
+    private var focusedField: Field?
 
     @StateObject
     private var viewModel: ResetUserPasswordViewModel
@@ -43,37 +49,38 @@ struct ResetUserPasswordView: View {
     @State
     private var isPresentingSuccess: Bool = false
 
+    private let requiresCurrentPassword: Bool
+
     // MARK: - Initializer
 
-    init(userId: String? = nil) {
-        self._viewModel = StateObject(wrappedValue: ResetUserPasswordViewModel(userId: userId))
+    init(userID: String, requiresCurrentPassword: Bool) {
+        self._viewModel = StateObject(wrappedValue: ResetUserPasswordViewModel(userID: userID))
+        self.requiresCurrentPassword = requiresCurrentPassword
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            /// UserID: Server User, who is being accessed as an administrator so no current password is required.
-            /// Nil: Device User, who should have the current password and may not have administrator permissions.
-            if viewModel.userId == nil {
+            if requiresCurrentPassword {
                 Section(L10n.currentPassword) {
                     UnmaskSecureField(L10n.currentPassword, text: $currentPassword) {
-                        focusedPassword = 1
+                        focusedField = .newPassword
                     }
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.none)
-                    .focused($focusedPassword, equals: 0)
+                    .focused($focusedField, equals: .currentPassword)
                     .disabled(viewModel.state == .resetting)
                 }
             }
 
             Section(L10n.newPassword) {
                 UnmaskSecureField(L10n.newPassword, text: $newPassword) {
-                    focusedPassword = 2
+                    focusedField = .confirmNewPassword
                 }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
-                .focused($focusedPassword, equals: 1)
+                .focused($focusedField, equals: .newPassword)
                 .disabled(viewModel.state == .resetting)
             }
 
@@ -83,7 +90,7 @@ struct ResetUserPasswordView: View {
                 }
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.none)
-                .focused($focusedPassword, equals: 2)
+                .focused($focusedField, equals: .confirmNewPassword)
                 .disabled(viewModel.state == .resetting)
             } header: {
                 Text(L10n.confirmNewPassword)
@@ -98,12 +105,17 @@ struct ResetUserPasswordView: View {
                 if viewModel.state == .resetting {
                     ListRowButton(L10n.cancel) {
                         viewModel.send(.cancel)
-                        focusedPassword = viewModel.userId == nil ? 0 : 1
+
+                        if requiresCurrentPassword {
+                            focusedField = .currentPassword
+                        } else {
+                            focusedField = .newPassword
+                        }
                     }
                     .foregroundStyle(.red, .red.opacity(0.2))
                 } else {
                     ListRowButton(L10n.save) {
-                        focusedPassword = nil
+                        focusedField = nil
                         viewModel.send(.reset(current: currentPassword, new: confirmNewPassword))
                     }
                     .disabled(newPassword != confirmNewPassword || viewModel.state == .resetting)
@@ -122,7 +134,11 @@ struct ResetUserPasswordView: View {
             router.dismissCoordinator()
         }
         .onFirstAppear {
-            focusedPassword = viewModel.userId == nil ? 0 : 1
+            if requiresCurrentPassword {
+                focusedField = .currentPassword
+            } else {
+                focusedField = .newPassword
+            }
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -148,7 +164,7 @@ struct ResetUserPasswordView: View {
             presenting: error
         ) { _ in
             Button(L10n.dismiss, role: .cancel) {
-                focusedPassword = 1
+                focusedField = .newPassword
             }
         } message: { error in
             Text(error.localizedDescription)
