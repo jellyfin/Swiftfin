@@ -8,35 +8,36 @@
 
 import SwiftUI
 
-struct LearnMore: View {
+struct LearnMoreButton: View {
+
     @State
     private var isPresented: Bool = false
 
-    let title: String
-    let itemDescriptions: [TextPair]
+    private let title: String
+    private let items: [TextPair]
 
     // MARK: - Initializer
 
     init(_ title: String, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
         self.title = title
-        self.itemDescriptions = items()
+        self.items = items()
     }
 
     // MARK: - Body
 
     var body: some View {
-        Button(action: {
+        Button {
             isPresented = true
-        }) {
+        } label: {
             Text(L10n.learnMoreEllipsis)
-                .foregroundColor(.accentColor)
+                .foregroundStyle(Color.accentColor)
                 .font(.subheadline)
         }
         .sheet(isPresented: $isPresented) {
             NavigationView {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        ForEach(itemDescriptions) { content in
+                        ForEach(items) { content in
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(content.title)
                                     .font(.headline)
@@ -45,12 +46,12 @@ struct LearnMore: View {
                                 Text(content.subtitle)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-                                    .padding(.leading, 12)
                             }
+
                             Divider()
                         }
                     }
-                    .padding()
+                    .edgePadding()
                 }
                 .navigationTitle(title)
                 .navigationBarTitleDisplayMode(.inline)

@@ -49,26 +49,26 @@ struct ItemEditorView: View {
                 RefreshMetadataButton(item: item)
                     .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
             } footer: {
-                LearnMore(L10n.metadata) {
+                LearnMoreButton(L10n.metadata) {
                     TextPair(
                         title: L10n.refresh,
                         subtitle: "Default refresh with the ability to override metadata without affecting existing images."
                     )
                     TextPair(
                         title: L10n.findMissing,
-                        subtitle: "Attempts to find any metadata or images that are missing."
+                        subtitle: "Find missing metadata and images."
                     )
                     TextPair(
                         title: L10n.replaceMetadata,
-                        subtitle: "Removes all unlocked metadata and replaces it with new information."
+                        subtitle: "Replace unlocked metadata with new information."
                     )
                     TextPair(
                         title: L10n.replaceImages,
-                        subtitle: "Removes all images and replaces them with new ones."
+                        subtitle: "Replace all images with new images."
                     )
                     TextPair(
                         title: L10n.replaceAll,
-                        subtitle: "Removes all unlocked metadata and images, replacing them with new ones."
+                        subtitle: "Replace all unlocked metadata and images with new information"
                     )
                 }
             }

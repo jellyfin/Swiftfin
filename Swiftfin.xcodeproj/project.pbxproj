@@ -131,7 +131,7 @@
 		4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */; };
 		4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B292CB993AD00343666 /* ListRow.swift */; };
 		4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */; };
-		4EFD172E2CE4182200A4BAC5 /* LearnMore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD172D2CE4181F00A4BAC5 /* LearnMore.swift */; };
+		4EFD172E2CE4182200A4BAC5 /* LearnMoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */; };
 		531690E7267ABD79005D8AB9 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531690E6267ABD79005D8AB9 /* HomeView.swift */; };
 		531AC8BF26750DE20091C7EB /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531AC8BE26750DE20091C7EB /* ImageView.swift */; };
 		5321753B2671BCFC005491E6 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5321753A2671BCFC005491E6 /* SettingsViewModel.swift */; };
@@ -1171,7 +1171,7 @@
 		4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListColumnsPickerView.swift; sourceTree = "<group>"; };
 		4EF18B292CB993AD00343666 /* ListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRow.swift; sourceTree = "<group>"; };
 		4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenu.swift; sourceTree = "<group>"; };
-		4EFD172D2CE4181F00A4BAC5 /* LearnMore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMore.swift; sourceTree = "<group>"; };
+		4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreButton.swift; sourceTree = "<group>"; };
 		531690E6267ABD79005D8AB9 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		531AC8BE26750DE20091C7EB /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		5321753A2671BCFC005491E6 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
@@ -2755,7 +2755,7 @@
 				E178B0752BE435D70023651B /* HourMinutePicker.swift */,
 				E1DC7AC92C63337C00AEE368 /* iOS15View.swift */,
 				E1FE69A928C29CC20021BC93 /* LandscapePosterProgressBar.swift */,
-				4EFD172D2CE4181F00A4BAC5 /* LearnMore.swift */,
+				4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */,
 				4E16FD4E2C0183B500110147 /* LetterPickerBar */,
 				E1A8FDEB2C0574A800D0A51C /* ListRow.swift */,
 				E1AEFA362BE317E200CFAFD8 /* ListRowButton.swift */,
@@ -5158,7 +5158,7 @@
 				E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */,
 				E1C812BC277A8E5D00918266 /* PlaybackSpeed.swift in Sources */,
 				E15756322935642A00976E1F /* Double.swift in Sources */,
-				4EFD172E2CE4182200A4BAC5 /* LearnMore.swift in Sources */,
+				4EFD172E2CE4182200A4BAC5 /* LearnMoreButton.swift in Sources */,
 				E139CC1D28EC836F00688DE2 /* ChapterOverlay.swift in Sources */,
 				E168BD14289A4162001A6922 /* LatestInLibraryView.swift in Sources */,
 				E10B1EB42BD9803100A92EAF /* UserRow.swift in Sources */,
