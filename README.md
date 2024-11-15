@@ -40,7 +40,7 @@ Use the TestFlight version to test new features and bug fixes before being publi
 
 ## ⚙️ Development
 
-Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/contributing.md) to get started.
+Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/contributing.md) to get started.
 
 ## 📚 Translations
 
@@ -51,3 +51,7 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
 </a>
+
+## 🎬 Player Differences
+
+Swiftfin offers both **Native (AVKit)** and **Swiftfin (VLCKit)** players to provide the best compatibility across Apple devices. To learn more about the capabilities and differences between these players, visit our [Player Differences documentation](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/players.md).
