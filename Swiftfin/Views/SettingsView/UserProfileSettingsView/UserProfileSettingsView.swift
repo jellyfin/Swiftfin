@@ -91,7 +91,7 @@ struct UserProfileSettingsView: View {
 
                 ChevronButton("Password")
                     .onSelect {
-                        router.route(to: \.resetUserPassword)
+                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
                     }
             }
 
