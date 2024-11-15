@@ -2273,6 +2273,14 @@
 			path = DevicesView;
 			sourceTree = "<group>";
 		};
+		4EF10D4C2CE2EC5A000ED5F5 /* ResetUserPasswordView */ = {
+			isa = PBXGroup;
+			children = (
+				E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */,
+			);
+			path = ResetUserPasswordView;
+			sourceTree = "<group>";
+		};
 		4EF18B232CB9932F00343666 /* PagingLibraryView */ = {
 			isa = PBXGroup;
 			children = (
@@ -3295,6 +3303,7 @@
 				E1EDA8D62B92C9D700F9A57E /* PagingLibraryView */,
 				E10231342BCF8A3C009D71FC /* ProgramsView */,
 				E1171A1828A2212600FA1AF5 /* QuickConnectView.swift */,
+				4EF10D4C2CE2EC5A000ED5F5 /* ResetUserPasswordView */,
 				53EE24E5265060780068F029 /* SearchView.swift */,
 				E10B1EAF2BD9769500A92EAF /* SelectUserView */,
 				E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */,
@@ -3387,7 +3396,6 @@
 			isa = PBXGroup;
 			children = (
 				6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */,
-				E1545BD72BDC55C300D9578F /* ResetUserPasswordView.swift */,
 				E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */,
 				E14EA1612BF6FF8D00DE757A /* UserProfileImagePicker */,
 				E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */,

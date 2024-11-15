@@ -37,7 +37,6 @@
 "ok" = "Ok";
 "otherUser" = "Other User";
 "pageOfWithNumbers" = "Page %1$@ of %2$@";
-"password" = "Password";
 "playNext" = "Play Next";
 "play" = "Play";
 "playback" = "Playback";
@@ -1213,3 +1212,38 @@
 // Button title to edit existing users
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
+
+/// Current Password - Placeholder
+/// Placeholder text for the current password input field
+/// Used in the ResetUserPasswordView
+"currentPassword" = "Current Password";
+
+/// New Password - Placeholder
+/// Placeholder text for the new password input field
+/// Used in the ResetUserPasswordView
+"newPassword" = "New Password";
+
+/// Confirm New Password - Placeholder
+/// Placeholder text for confirming the new password input field
+/// Used in the ResetUserPasswordView
+"confirmNewPassword" = "Confirm New Password";
+
+/// Password - Navigation Title
+/// Title for the password reset view
+/// Used in the navigation bar
+"password" = "Password";
+
+/// Password Changed - Alert Message
+/// Message displayed in the success alert after changing the password
+/// Used in the ResetUserPasswordView
+"passwordChangedMessage" = "User password has been changed.";
+
+/// Passwords Do Not Match - Footer
+/// Error message displayed when new passwords do not match
+/// Used in the ResetUserPasswordView
+"passwordsDoNotMatch" = "New passwords do not match.";
+
+/// Password Change Warning - Message
+/// Message displayed to alert the user what the password change does and does not do
+/// Used in the ResetUserPasswordView
+"passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
