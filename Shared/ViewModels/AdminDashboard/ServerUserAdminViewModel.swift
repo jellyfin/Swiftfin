@@ -65,6 +65,17 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     init(user: UserDto) {
         self.user = user
+        super.init()
+        Notifications[.didChangeUserProfileImage].publisher
+            .sink(receiveCompletion: { _ in }) { [weak self] notification in
+                guard let self = self,
+                      let newUser = notification.object as? UserDto,
+                      newUser.id == self.user.id else { return }
+
+                self.user = UserDto()
+                self.user = newUser
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: Respond
@@ -227,6 +238,29 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
         await MainActor.run {
             self.user.configuration = configuration
+        }
+    }
+
+    // MARK: - Delete User's Profile Image
+
+    func deleteCurrentUserProfileImage() {
+        guard let userID = user.id else { return }
+
+        Task {
+            let request = Paths.deleteUserImage(
+                userID: userID,
+                imageType: "Primary"
+            )
+            let _ = try await userSession.client.send(request)
+
+            let currentUserRequest = Paths.getCurrentUser
+            let response = try await userSession.client.send(currentUserRequest)
+
+            await MainActor.run {
+                userSession.user.data = response.value
+
+                Notifications[.didChangeUserProfileImage].post()
+            }
         }
     }
 

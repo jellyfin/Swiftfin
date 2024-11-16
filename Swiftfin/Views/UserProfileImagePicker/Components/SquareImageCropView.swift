@@ -30,10 +30,11 @@ extension UserProfileImagePicker {
         private var viewModel = UserProfileImageViewModel()
 
         let image: UIImage
+        let userID: String
 
         var body: some View {
             _SquareImageCropView(initialImage: image, proxy: proxy) {
-                viewModel.send(.upload($0))
+                viewModel.send(.upload($0, userID))
             }
             .animation(.linear(duration: 0.1), value: viewModel.state)
             .interactiveDismissDisabled(viewModel.state == .uploading)
@@ -56,7 +57,7 @@ extension UserProfileImagePicker {
                     Button {
                         proxy.crop()
                     } label: {
-                        Text("Save")
+                        Text(L10n.save)
                             .foregroundStyle(accentColor.overlayColor)
                             .font(.headline)
                             .padding(.vertical, 5)
@@ -73,7 +74,7 @@ extension UserProfileImagePicker {
                     if viewModel.state == .uploading {
                         ProgressView()
                     } else {
-                        Button("Reset") {
+                        Button(L10n.reset) {
                             proxy.reset()
                         }
                         .foregroundStyle(.yellow)

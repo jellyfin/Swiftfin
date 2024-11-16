@@ -26,61 +26,16 @@ struct UserProfileSettingsView: View {
     @State
     private var isPresentingProfileImageOptions: Bool = false
 
-    @ViewBuilder
-    private var imageView: some View {
-        RedrawOnNotificationView(name: .init("didChangeUserProfileImage")) {
-            ImageView(
-                viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 120
-                )
-            )
-            .pipeline(.Swiftfin.branding)
-            .image { image in
-                image.posterBorder(ratio: 1 / 2, of: \.width)
-            }
-            .placeholder { _ in
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-            .failure {
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-        }
-    }
-
     var body: some View {
         List {
-            Section {
-                VStack(alignment: .center) {
-                    Button {
-                        isPresentingProfileImageOptions = true
-                    } label: {
-                        ZStack(alignment: .bottomTrailing) {
-                            // `.aspectRatio(contentMode: .fill)` on `imageView` alone
-                            // causes a crash on some iOS versions
-                            ZStack {
-                                imageView
-                            }
-                            .aspectRatio(1, contentMode: .fill)
-                            .clipShape(.circle)
-                            .frame(width: 150, height: 150)
-                            .shadow(radius: 5)
-
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .shadow(radius: 10)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
-                    }
-
-                    Text(viewModel.userSession.user.username)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
+            UserProfileImagePicker.ProfileImageSection(
+                imageSource: viewModel.userSession.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 120
+                ),
+                username: viewModel.userSession.user.username
+            ) {
+                isPresentingProfileImageOptions = true
             }
 
             Section {
@@ -89,7 +44,7 @@ struct UserProfileSettingsView: View {
                         router.route(to: \.quickConnect)
                     }
 
-                ChevronButton("Password")
+                ChevronButton(L10n.password)
                     .onSelect {
                         router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
                     }
@@ -114,7 +69,7 @@ struct UserProfileSettingsView: View {
             }
         }
         .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
-            Button("Reset", role: .destructive) {
+            Button(L10n.reset, role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
                 } catch {
@@ -131,10 +86,10 @@ struct UserProfileSettingsView: View {
         ) {
 
             Button("Select Image") {
-                router.route(to: \.photoPicker, viewModel)
+                router.route(to: \.photoPicker, viewModel.userSession.user.id)
             }
 
-            Button("Delete", role: .destructive) {
+            Button(L10n.delete, role: .destructive) {
                 viewModel.deleteCurrentUserProfileImage()
             }
         }
