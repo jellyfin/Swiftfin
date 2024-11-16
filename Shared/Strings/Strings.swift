@@ -418,6 +418,8 @@ internal enum L10n {
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
   /// Find Missing
   internal static let findMissing = L10n.tr("Localizable", "findMissing", fallback: "Find Missing")
+  /// Find missing metadata and images.
+  internal static let findMissingDescription = L10n.tr("Localizable", "findMissingDescription", fallback: "Find missing metadata and images.")
   /// Transcode FPS
   internal static func fpsWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "fpsWithString", String(describing: p1), fallback: "%@fps")
@@ -770,10 +772,16 @@ internal enum L10n {
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
   /// Replace All
   internal static let replaceAll = L10n.tr("Localizable", "replaceAll", fallback: "Replace All")
+  /// Replace all unlocked metadata and images with new information.
+  internal static let replaceAllDescription = L10n.tr("Localizable", "replaceAllDescription", fallback: "Replace all unlocked metadata and images with new information.")
   /// Replace Images
   internal static let replaceImages = L10n.tr("Localizable", "replaceImages", fallback: "Replace Images")
+  /// Replace all images with new images.
+  internal static let replaceImagesDescription = L10n.tr("Localizable", "replaceImagesDescription", fallback: "Replace all images with new images.")
   /// Replace Metadata
   internal static let replaceMetadata = L10n.tr("Localizable", "replaceMetadata", fallback: "Replace Metadata")
+  /// Replace unlocked metadata with new information.
+  internal static let replaceMetadataDescription = L10n.tr("Localizable", "replaceMetadataDescription", fallback: "Replace unlocked metadata with new information.")
   /// Report an Issue
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature

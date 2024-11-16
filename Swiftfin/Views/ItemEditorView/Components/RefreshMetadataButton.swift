@@ -37,17 +37,6 @@ extension ItemEditorView {
         var body: some View {
             Menu {
                 Group {
-                    Button(L10n.refresh, systemImage: "arrow.clockwise") {
-                        viewModel.send(
-                            .refreshMetadata(
-                                metadataRefreshMode: .default,
-                                imageRefreshMode: .default,
-                                replaceMetadata: true,
-                                replaceImages: false
-                            )
-                        )
-                    }
-
                     Button(L10n.findMissing, systemImage: "magnifyingglass") {
                         viewModel.send(
                             .refreshMetadata(
@@ -59,7 +48,7 @@ extension ItemEditorView {
                         )
                     }
 
-                    Button(L10n.replaceMetadata, systemImage: "document") {
+                    Button(L10n.replaceMetadata, systemImage: "arrow.clockwise") {
                         viewModel.send(
                             .refreshMetadata(
                                 metadataRefreshMode: .fullRefresh,

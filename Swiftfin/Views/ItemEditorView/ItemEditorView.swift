@@ -51,24 +51,20 @@ struct ItemEditorView: View {
             } footer: {
                 LearnMoreButton(L10n.metadata) {
                     TextPair(
-                        title: L10n.refresh,
-                        subtitle: "Default refresh with the ability to override metadata without affecting existing images."
-                    )
-                    TextPair(
                         title: L10n.findMissing,
-                        subtitle: "Find missing metadata and images."
+                        subtitle: L10n.findMissingDescription
                     )
                     TextPair(
                         title: L10n.replaceMetadata,
-                        subtitle: "Replace unlocked metadata with new information."
+                        subtitle: L10n.replaceMetadataDescription
                     )
                     TextPair(
                         title: L10n.replaceImages,
-                        subtitle: "Replace all images with new images."
+                        subtitle: L10n.replaceImagesDescription
                     )
                     TextPair(
                         title: L10n.replaceAll,
-                        subtitle: "Replace all unlocked metadata and images with new information"
+                        subtitle: L10n.replaceAllDescription
                     )
                 }
             }

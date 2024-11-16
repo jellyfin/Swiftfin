@@ -1303,3 +1303,22 @@
 /// Used in the ResetUserPasswordView
 "passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
 
+/// Find Missing - Button
+/// Search for missing metadata and images
+/// Used to locate media files missing information or images
+"findMissingDescription" = "Find missing metadata and images.";
+
+/// Replace Metadata - Button
+/// Overwrite metadata without affecting images
+/// Used when updating only metadata information
+"replaceMetadataDescription" = "Replace unlocked metadata with new information.";
+
+/// Replace Images - Button
+/// Overwrite existing images with new ones
+/// Used to refresh media artwork
+"replaceImagesDescription" = "Replace all images with new images.";
+
+/// Replace All - Button
+/// Replace all metadata and images
+/// Full refresh that replaces all unlocked metadata and images
+"replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
