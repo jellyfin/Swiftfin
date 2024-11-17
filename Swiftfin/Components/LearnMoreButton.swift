@@ -26,13 +26,11 @@ struct LearnMoreButton: View {
     // MARK: - Body
 
     var body: some View {
-        Button {
+        Button(L10n.learnMoreEllipsis) {
             isPresented = true
-        } label: {
-            Text(L10n.learnMoreEllipsis)
-                .foregroundStyle(Color.accentColor)
-                .font(.subheadline)
         }
+        .foregroundStyle(Color.accentColor)
+        .font(.subheadline)
         .sheet(isPresented: $isPresented) {
             NavigationView {
                 ScrollView {

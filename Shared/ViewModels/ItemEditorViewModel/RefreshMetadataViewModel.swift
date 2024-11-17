@@ -16,7 +16,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case error(JellyfinAPIError)
-        case refreshTriggered(Date)
+        case refreshTriggered
     }
 
     // MARK: Action
@@ -26,8 +26,8 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         case refreshMetadata(
             metadataRefreshMode: MetadataRefreshMode,
             imageRefreshMode: MetadataRefreshMode,
-            replaceMetadata: Bool = false,
-            replaceImages: Bool = false
+            replaceMetadata: Bool,
+            replaceImages: Bool
         )
     }
 
@@ -40,6 +40,8 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         case refreshing
     }
 
+    // A spoof progress, since there isn't a
+    // single item metadata refresh task
     @Published
     private(set) var progress: Double = 0.0
 
@@ -76,11 +78,11 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             itemTask?.cancel()
 
             itemTask = Task { [weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 do {
                     await MainActor.run {
                         self.state = .content
-                        self.eventSubject.send(.refreshTriggered(Date()))
+                        self.eventSubject.send(.refreshTriggered)
                     }
 
                     try await self.refreshMetadata(
@@ -92,7 +94,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.state = .refreshing
-                        self.eventSubject.send(.refreshTriggered(Date()))
+                        self.eventSubject.send(.refreshTriggered)
                     }
 
                     try await self.refreshItem()

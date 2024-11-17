@@ -160,6 +160,7 @@ struct ItemView: View {
         }
     }
 
+    @ViewBuilder
     private var itemActionMenu: some View {
 
         Menu(L10n.options, systemImage: "ellipsis.circle") {
