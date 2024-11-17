@@ -15,8 +15,34 @@ import SwiftUI
 
 struct ItemView: View {
 
+    @EnvironmentObject
+    private var router: ItemCoordinator.Router
+
     @StateObject
     private var viewModel: ItemViewModel
+    @StateObject
+    private var deleteViewModel: DeleteItemViewModel
+
+    @State
+    private var showConfirmationDialog = false
+    @State
+    private var isPresentingEventAlert = false
+    @State
+    private var error: JellyfinAPIError?
+
+    @StoredValue(.User.enableItemDeletion)
+    private var enableItemDeletion: Bool
+    @StoredValue(.User.enableItemEditor)
+    private var enableItemEditor: Bool
+
+    private var canDelete: Bool {
+        enableItemDeletion && viewModel.item.canDelete ?? false
+    }
+
+    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
+    private var enableMenu: Bool {
+        canDelete || enableItemEditor
+    }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
@@ -36,6 +62,7 @@ struct ItemView: View {
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+        self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
     }
 
     @ViewBuilder
@@ -100,6 +127,59 @@ struct ItemView: View {
             if viewModel.backgroundStates.contains(.refresh) {
                 ProgressView()
             }
+            if enableMenu {
+                itemActionMenu
+            }
         }
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $showConfirmationDialog,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.confirm, role: .destructive) {
+                deleteViewModel.send(.delete)
+            }
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .onReceive(deleteViewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                error = eventError
+                isPresentingEventAlert = true
+            case .deleted:
+                router.dismissCoordinator()
+            }
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingEventAlert,
+            presenting: error
+        ) { _ in
+        } message: { error in
+            Text(error.localizedDescription)
+        }
+    }
+
+    @ViewBuilder
+    private var itemActionMenu: some View {
+
+        Menu(L10n.options, systemImage: "ellipsis.circle") {
+
+            if enableItemEditor {
+                Button(L10n.edit, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel.item)
+                }
+            }
+
+            if canDelete {
+                Divider()
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    showConfirmationDialog = true
+                }
+            }
+        }
+        .labelStyle(.iconOnly)
+        .backport
+        .fontWeight(.semibold)
     }
 }

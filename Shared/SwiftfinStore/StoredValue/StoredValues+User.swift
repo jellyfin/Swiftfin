@@ -148,5 +148,21 @@ extension StoredValues.Keys {
                 default: []
             )
         }
+
+        static var enableItemEditor: Key<Bool> {
+            CurrentUserKey(
+                "enableItemEditor",
+                domain: "enableItemEditor",
+                default: false
+            )
+        }
+
+        static var enableItemDeletion: Key<Bool> {
+            CurrentUserKey(
+                "enableItemDeletion",
+                domain: "enableItemDeletion",
+                default: false
+            )
+        }
     }
 }

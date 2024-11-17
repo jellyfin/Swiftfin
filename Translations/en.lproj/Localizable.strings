@@ -1213,6 +1213,61 @@
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
 
+// Refresh - Button
+// Button title for the menu to refresh metadata
+// Used as the label for the refresh metadata button
+"refreshMetadata" = "Refresh Metadata";
+
+// Find Missing - Menu Option
+// Menu option for finding missing metadata
+// Used to trigger a full metadata refresh
+"findMissing" = "Find Missing";
+
+// Replace Metadata - Menu Option
+// Menu option for replacing existing metadata
+// Used to trigger replacing metadata only
+"replaceMetadata" = "Replace Metadata";
+
+// Replace Images - Menu Option
+// Menu option for replacing existing images
+// Used to trigger replacing images only
+"replaceImages" = "Replace Images";
+
+// Replace All - Menu Option
+// Menu option for replacing both metadata and images
+// Used to trigger a full replacement of metadata and images
+"replaceAll" = "Replace All";
+
+// Delete Item Confirmation Message - Warning message
+// Warning message to confirm deleting a media item
+// Used in a confirmation for item deletion
+"deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
+
+// Allow Media Item Editing - Toggle
+// Toggle option for enabling media item editing
+// Used to allow users to edit metadata of media items
+"allowItemEditing" = "Allow media item editing";
+
+// Allow Media Item Deletion - Toggle
+// Toggle option for enabling media item deletion
+// Used to allow users to delete media items
+"allowItemDeletion" = "Allow media item deletion";
+
+// Item Deletion Permission Failure - Error Message
+// Alert the user they should not be able to delete something
+// Used to inform the user a deletion failed and why it failed
+"itemDeletionPermissionFailure" = "You do not have permission to delete this item.";
+
+// Metadata - Section Title
+// Title for the ItemEditorView and Metadata related views
+// Used as a title for sections/views related to Metadata
+"metadata" = "Metadata";
+
+// Learn More - Button
+// Opens a modal with more information
+// Used as a button to show details
+"learnMoreEllipsis" = "Learn more...";
+
 /// Current Password - Placeholder
 /// Placeholder text for the current password input field
 /// Used in the ResetUserPasswordView
@@ -1247,3 +1302,23 @@
 /// Message displayed to alert the user what the password change does and does not do
 /// Used in the ResetUserPasswordView
 "passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
+
+/// Find Missing - Button
+/// Search for missing metadata and images
+/// Used to locate media files missing information or images
+"findMissingDescription" = "Find missing metadata and images.";
+
+/// Replace Metadata - Button
+/// Overwrite metadata without affecting images
+/// Used when updating only metadata information
+"replaceMetadataDescription" = "Replace unlocked metadata with new information.";
+
+/// Replace Images - Button
+/// Overwrite existing images with new ones
+/// Used to refresh media artwork
+"replaceImagesDescription" = "Replace all images with new images.";
+
+/// Replace All - Button
+/// Replace all metadata and images
+/// Full refresh that replaces all unlocked metadata and images
+"replaceAllDescription" = "Replace all unlocked metadata and images with new information.";

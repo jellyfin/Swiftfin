@@ -158,6 +158,8 @@ struct CustomizeViewsSettings: View {
                 }
             }
 
+            ItemSection()
+
             HomeSection()
 
             Section {
