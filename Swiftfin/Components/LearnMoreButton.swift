@@ -14,48 +14,63 @@ struct LearnMoreButton: View {
     private var isPresented: Bool = false
 
     private let title: String
+    private let footer: String?
     private let items: [TextPair]
 
     // MARK: - Initializer
 
-    init(_ title: String, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
+    init(_ title: String, footer: String? = nil, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
         self.title = title
+        self.footer = footer
         self.items = items()
     }
 
     // MARK: - Body
 
     var body: some View {
-        Button(L10n.learnMoreEllipsis) {
-            isPresented = true
+        VStack(alignment: .leading, spacing: 8) {
+
+            if let footerText = footer {
+                Text(footerText)
+                    .foregroundStyle(.primary)
+            }
+
+            Button(L10n.learnMoreEllipsis) {
+                isPresented = true
+            }
+            .foregroundStyle(Color.accentColor)
+            .font(.subheadline)
+            .sheet(isPresented: $isPresented) {
+                learnMoreView
+            }
         }
-        .foregroundStyle(Color.accentColor)
-        .font(.subheadline)
-        .sheet(isPresented: $isPresented) {
-            NavigationView {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(items) { content in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(content.title)
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
+    }
 
-                                Text(content.subtitle)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+    // MARK: - Learn More View
 
-                            Divider()
+    private var learnMoreView: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(items) { content in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(content.title)
+                                .font(.headline)
+                                .foregroundStyle(.foreground)
+
+                            Text(content.subtitle)
+                                .font(.subheadline)
+                                .foregroundStyle(.primary)
                         }
+                        Divider()
                     }
-                    .edgePadding()
                 }
-                .navigationTitle(title)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    isPresented = false
-                }
+                .edgePadding()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                isPresented = false
             }
         }
     }

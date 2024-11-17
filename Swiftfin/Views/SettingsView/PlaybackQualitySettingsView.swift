@@ -31,7 +31,19 @@ struct PlaybackQualitySettingsView: View {
             } header: {
                 L10n.bitrateDefault.text
             } footer: {
-                L10n.bitrateDefaultDescription.text
+                LearnMoreButton(
+                    L10n.bitrateDefault,
+                    footer: L10n.bitrateTestDisclaimer
+                ) {
+                    TextPair(
+                        title: L10n.auto,
+                        subtitle: L10n.birateAutoDescription
+                    )
+                    TextPair(
+                        title: L10n.bitrateMax,
+                        subtitle: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
+                    )
+                }
             }
             .animation(.none, value: appMaximumBitrate)
 
@@ -44,17 +56,17 @@ struct PlaybackQualitySettingsView: View {
                 } header: {
                     L10n.bitrateTest.text
                 } footer: {
-                    VStack(alignment: .leading, spacing: 8) {
-                        L10n.bitrateTestDescription.text
-                        L10n.bitrateTestDisclaimer.text
+                    LearnMoreButton(
+                        L10n.bitrateTest,
+                        footer: L10n.bitrateTestDisclaimer
+                    ) {
+                        TextPair(
+                            title: L10n.testSize,
+                            subtitle: L10n.bitrateTestDescription
+                        )
                     }
                 }
             }
-
-            // TODO: Have a small description and a "Learn More..."
-            //       button that will open a page for longer descriptions
-            //       of each option. See: iOS Settings/Accessibility/VoiceOver
-            //       for reference
 
             Section {
                 CaseIterablePicker(
@@ -70,7 +82,29 @@ struct PlaybackQualitySettingsView: View {
                         }
                 }
             } header: {
-                L10n.deviceProfile.text
+                Text(L10n.deviceProfile)
+            } footer: {
+                LearnMoreButton(
+                    L10n.deviceProfile,
+                    footer: L10n.deviceProfileDescription
+                ) {
+                    TextPair(
+                        title: L10n.auto,
+                        subtitle: L10n.autoDescription
+                    )
+                    TextPair(
+                        title: L10n.compatible,
+                        subtitle: L10n.compatibleDescription
+                    )
+                    TextPair(
+                        title: L10n.direct,
+                        subtitle: L10n.directDescription
+                    )
+                    TextPair(
+                        title: L10n.custom,
+                        subtitle: L10n.customDescription
+                    )
+                }
             }
         }
         .animation(.linear, value: appMaximumBitrate)
