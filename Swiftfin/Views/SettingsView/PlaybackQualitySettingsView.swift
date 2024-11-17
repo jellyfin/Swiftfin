@@ -33,7 +33,7 @@ struct PlaybackQualitySettingsView: View {
             } footer: {
                 LearnMoreButton(
                     L10n.bitrateDefault,
-                    footer: L10n.bitrateTestDisclaimer
+                    footer: L10n.bitrateDefaultDescription
                 ) {
                     TextPair(
                         title: L10n.auto,

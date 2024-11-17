@@ -10,6 +10,9 @@ import SwiftUI
 
 struct LearnMoreButton: View {
 
+    @Environment(\.layoutDirection)
+    var layoutDirection
+
     @State
     private var isPresented: Bool = false
 
@@ -28,21 +31,24 @@ struct LearnMoreButton: View {
     // MARK: - Body
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-
-            if let footerText = footer {
-                Text(footerText)
-                    .foregroundStyle(.primary)
+        Button {
+            isPresented = true
+        } label: {
+            Group {
+                if let footerText = footer {
+                    Text("\(footerText) ")
+                        .foregroundColor(.secondary)
+                        + Text(L10n.learnMoreEllipsis)
+                } else {
+                    Text(L10n.learnMoreEllipsis)
+                }
             }
-
-            Button(L10n.learnMoreEllipsis) {
-                isPresented = true
-            }
-            .foregroundStyle(Color.accentColor)
-            .font(.subheadline)
-            .sheet(isPresented: $isPresented) {
-                learnMoreView
-            }
+            .font(.footnote)
+            .foregroundColor(Color.accentColor)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .sheet(isPresented: $isPresented) {
+            learnMoreView
         }
     }
 
@@ -56,11 +62,11 @@ struct LearnMoreButton: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(content.title)
                                 .font(.headline)
-                                .foregroundStyle(.foreground)
+                                .foregroundStyle(.primary)
 
                             Text(content.subtitle)
                                 .font(.subheadline)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(.secondary)
                         }
                         Divider()
                     }

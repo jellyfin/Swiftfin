@@ -108,8 +108,8 @@ internal enum L10n {
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
   /// PlaybackCompatibility Default Category
   internal static let auto = L10n.tr("Localizable", "auto", fallback: "Auto")
-  /// Optimizes playback using default settings for most devices. Some formats may require server transcoding.
-  internal static let autoDescription = L10n.tr("Localizable", "autoDescription", fallback: "Optimizes playback using default settings for most devices. Some formats may require server transcoding.")
+  /// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
+  internal static let autoDescription = L10n.tr("Localizable", "autoDescription", fallback: "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.")
   /// Auto Play
   internal static let autoPlay = L10n.tr("Localizable", "autoPlay", fallback: "Auto Play")
   /// Back
@@ -165,7 +165,7 @@ internal enum L10n {
   /// Description for bitrate test duration description
   internal static let bitrateTestDescription = L10n.tr("Localizable", "bitrateTestDescription", fallback: "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth. Tests range from 1 to 10 seconds.")
   /// Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback
-  internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback")
+  internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps
   internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
   /// Blue
@@ -230,8 +230,8 @@ internal enum L10n {
   internal static let compatibility = L10n.tr("Localizable", "compatibility", fallback: "Compatibility")
   /// PlaybackCompatibility Compatible Category
   internal static let compatible = L10n.tr("Localizable", "compatible", fallback: "Most Compatible")
-  /// Converts all media to H.264 video and AAC audio for maximum compatibility. Requires server transcoding.
-  internal static let compatibleDescription = L10n.tr("Localizable", "compatibleDescription", fallback: "Converts all media to H.264 video and AAC audio for maximum compatibility. Requires server transcoding.")
+  /// Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.
+  internal static let compatibleDescription = L10n.tr("Localizable", "compatibleDescription", fallback: "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.")
   /// Confirm Task Fuction
   internal static let confirm = L10n.tr("Localizable", "confirm", fallback: "Confirm")
   /// Confirm Close
@@ -283,11 +283,11 @@ internal enum L10n {
     return L10n.tr("Localizable", "customDeviceNameSaved", String(describing: p1), fallback: "Your custom device name '%1$@' has been saved.")
   }
   /// Custom profile is Added to the Existing Profiles
-  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles")
+  internal static let customDeviceProfileAdd = L10n.tr("Localizable", "customDeviceProfileAdd", fallback: "The custom device profiles will be added to the default Swiftfin device profiles.")
   /// Device Profile Section Description
   internal static let customDeviceProfileDescription = L10n.tr("Localizable", "customDeviceProfileDescription", fallback: "Dictates back to the Jellyfin Server what this device hardware is capable of playing.")
   /// Custom profile will replace the Existing Profiles
-  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles")
+  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles.")
   /// Settings View - Customize
   internal static let customize = L10n.tr("Localizable", "customize", fallback: "Customize")
   /// Section Header for a Custom Device Profile
@@ -362,8 +362,8 @@ internal enum L10n {
   internal static let devices = L10n.tr("Localizable", "devices", fallback: "Devices")
   /// PlaybackCompatibility DirectPlay Category
   internal static let direct = L10n.tr("Localizable", "direct", fallback: "Direct Play")
-  /// Plays content in its original format. May cause playback issues on unsupported devices.
-  internal static let directDescription = L10n.tr("Localizable", "directDescription", fallback: "Plays content in its original format. May cause playback issues on unsupported devices.")
+  /// Plays content in its original format. May cause playback issues on unsupported media types.
+  internal static let directDescription = L10n.tr("Localizable", "directDescription", fallback: "Plays content in its original format. May cause playback issues on unsupported media types.")
   /// DIRECTOR
   internal static let director = L10n.tr("Localizable", "director", fallback: "DIRECTOR")
   /// PlayMethod - Direct Play

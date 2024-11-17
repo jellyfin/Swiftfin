@@ -368,7 +368,7 @@
 "bitrateTestDescription" = "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth. Tests range from 1 to 10 seconds.";
 
 /* Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback */
-"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback";
+"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
 
 /* Select Server View */
 "servers" = "Servers";
@@ -464,10 +464,10 @@
 "deviceProfile" = "Device Profile";
 
 /* Custom profile is Added to the Existing Profiles */
-"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles";
+"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
 
 /* Custom profile will replace the Existing Profiles */
-"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles";
+"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
 
 /* Section for Playback Quality Settings */
 "playbackQuality" = "Playback Quality";
@@ -1331,17 +1331,17 @@
 /// Auto - Description
 /// Optimizes playback using default settings for most devices
 /// Some formats may require server transcoding
-"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding.";
+"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
 
 /// Compatible - Description
 /// Converts media to H.264 video and AAC audio for compatibility
 /// Requires server transcoding for all content
-"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. Requires server transcoding.";
+"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
 
 /// Direct - Description
 /// Plays content in its original format without transcoding
 /// May cause playback issues on unsupported devices
-"directDescription" = "Plays content in its original format. May cause playback issues on unsupported devices.";
+"directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
 
 /// Custom - Description
 /// Allows customization of device profiles for native playback
