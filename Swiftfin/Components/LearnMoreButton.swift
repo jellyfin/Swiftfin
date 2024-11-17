@@ -10,9 +10,6 @@ import SwiftUI
 
 struct LearnMoreButton: View {
 
-    @Environment(\.layoutDirection)
-    var layoutDirection
-
     @State
     private var isPresented: Bool = false
 
