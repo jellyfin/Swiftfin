@@ -68,7 +68,6 @@
 		4E699BC02CB3477D007CBD5D /* HomeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E699BBF2CB34775007CBD5D /* HomeSection.swift */; };
 		4E6C27082C8BD0AD00FD2185 /* ActiveSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */; };
 		4E71D6892C80910900A0174D /* EditCustomDeviceProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */; };
-		4E7388622CEAC34400A25457 /* LearnMoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E7388612CEAC34400A25457 /* LearnMoreButton.swift */; };
 		4E73E2A62C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E73E2A72C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */; };
 		4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */; };
@@ -1120,7 +1119,6 @@
 		4E699BBF2CB34775007CBD5D /* HomeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeSection.swift; sourceTree = "<group>"; };
 		4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionDetailView.swift; sourceTree = "<group>"; };
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
-		4E7388612CEAC34400A25457 /* LearnMoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreButton.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
@@ -2530,7 +2528,6 @@
 				E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
-				4E7388612CEAC34400A25457 /* LearnMoreButton.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
 				E10E842B29A589860064EA49 /* NonePosterButton.swift */,
 				4E2AC4D32C6C4C1200DD600D /* OrderedSectionSelectorView.swift */,
@@ -4949,7 +4946,6 @@
 				C4E5081B2703F82A0045C9AB /* MediaView.swift in Sources */,
 				E193D53B27193F9200900D82 /* SettingsCoordinator.swift in Sources */,
 				E113133B28BEB71D00930F75 /* FilterViewModel.swift in Sources */,
-				4E7388622CEAC34400A25457 /* LearnMoreButton.swift in Sources */,
 				4E16FD582C01A32700110147 /* LetterPickerOrientation.swift in Sources */,
 				E19070502C8592B40004600E /* PlaybackCompatibility+Video.swift in Sources */,
 				E1575E70293E77B5001665B1 /* TextPair.swift in Sources */,

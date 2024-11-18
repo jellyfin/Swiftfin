@@ -14,40 +14,28 @@ struct LearnMoreButton: View {
     private var isPresented: Bool = false
 
     private let title: String
-    private let footer: String?
     private let items: [TextPair]
 
     // MARK: - Initializer
 
-    init(_ title: String, footer: String? = nil, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
+    init(_ title: String, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
         self.title = title
-        self.footer = footer
         self.items = items()
     }
 
     // MARK: - Body
 
     var body: some View {
-        Button {
+        Button(L10n.learnMoreEllipsis) {
             isPresented = true
-        } label: {
-            Group {
-                if let footerText = footer {
-                    Text("\(footerText) ")
-                        .foregroundColor(.secondary)
-                        + Text(L10n.learnMoreEllipsis)
-                } else {
-                    Text(L10n.learnMoreEllipsis)
-                }
-            }
-            .font(.footnote)
-            .foregroundColor(Color.accentColor)
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .font(.footnote)
+        .foregroundColor(Color.accentColor)
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(isPresented: $isPresented) {
             learnMoreView
         }
-        .buttonStyle(.plain)
     }
 
     // MARK: - Learn More View
