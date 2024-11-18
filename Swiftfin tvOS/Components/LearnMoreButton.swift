@@ -41,7 +41,7 @@ struct LearnMoreButton: View {
                 }
             }
             .font(.footnote)
-            .foregroundColor(Color.accentColor)
+            .foregroundColor(Color.jellyfinPurple)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .sheet(isPresented: $isPresented) {
@@ -55,9 +55,9 @@ struct LearnMoreButton: View {
     private var learnMoreView: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 24) {
                     ForEach(items) { content in
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 12) {
                             Text(content.title)
                                 .font(.headline)
                                 .foregroundStyle(.primary)
@@ -72,10 +72,6 @@ struct LearnMoreButton: View {
                 .edgePadding()
             }
             .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                isPresented = false
-            }
         }
     }
 }
