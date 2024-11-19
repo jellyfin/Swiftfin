@@ -20,10 +20,16 @@ struct PlaybackQualitySettingsView: View {
     @EnvironmentObject
     private var router: PlaybackQualitySettingsCoordinator.Router
 
-    // MARK: - Focus and State Management
+    // MARK: - Focus Management
 
     @FocusState
     private var focusedItem: FocusableItem?
+
+    private enum FocusableItem: Hashable {
+        case maximumBitrate
+        case testSize
+        case compatibility
+    }
 
     // MARK: - Body
 
@@ -81,21 +87,22 @@ struct PlaybackQualitySettingsView: View {
             .navigationTitle(L10n.playbackQuality)
     }
 
-    // MARK: - Focusable Buttons
+    // MARK: - Description View Icon
 
-    private enum FocusableItem: Hashable {
-        case maximumBitrate
-        case testSize
-        case compatibility
+    private var descriptionIcon: some View {
+        Image(systemName: "play.rectangle.on.rectangle")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(maxWidth: 400)
     }
 
-    // MARK: - Update Description Based on Focus
+    // MARK: - Description View on Focus
 
     @ViewBuilder
     private var focusedDescription: some View {
         switch focusedItem {
         case .maximumBitrate:
-            LearnMoreView(L10n.bitrateDefault) {
+            LearnMoreView(descriptionIcon) {
                 TextPair(
                     title: L10n.auto,
                     subtitle: L10n.birateAutoDescription
@@ -107,7 +114,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
         case .testSize:
-            LearnMoreView(L10n.bitrateTest) {
+            LearnMoreView(descriptionIcon) {
                 TextPair(
                     title: L10n.testSize,
                     subtitle: L10n.bitrateTestDescription
@@ -115,7 +122,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
         case .compatibility:
-            LearnMoreView(L10n.deviceProfile) {
+            LearnMoreView(descriptionIcon) {
                 TextPair(
                     title: L10n.auto,
                     subtitle: L10n.autoDescription
@@ -135,10 +142,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
         default:
-            Image(systemName: "play.rectangle.on.rectangle")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: 400)
+            LearnMoreView(descriptionIcon) {}
         }
     }
 }
