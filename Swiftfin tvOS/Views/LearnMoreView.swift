@@ -8,58 +8,39 @@
 
 import SwiftUI
 
-struct LearnMoreView<Background: View>: View {
+struct LearnMoreModal: View {
 
-    private let background: Background
     private let items: [TextPair]
 
     // MARK: - Initializer
 
-    init(_ background: Background, @ArrayBuilder<TextPair> items: () -> [TextPair]) {
-        self.background = background
+    init(@ArrayBuilder<TextPair> items: () -> [TextPair]) {
         self.items = items()
     }
 
     // MARK: - Body
 
     var body: some View {
-        Group {
-            if items.isNotEmpty {
-                learnMoreView
-            } else {
-                background
-            }
-        }
-        .transition(.opacity)
-        .animation(.easeInOut, value: items.isNotEmpty)
-    }
+        VStack(alignment: .leading, spacing: 16) {
+            ForEach(items) { content in
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(content.title)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
 
-    // MARK: - Learn More View
-
-    private var learnMoreView: some View {
-        ZStack {
-            background
-
-            VStack(alignment: .leading, spacing: 16) {
-                ForEach(items) { content in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(content.title)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-
-                        Text(content.subtitle)
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(8)
+                    Text(content.subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
+                .padding(8)
             }
-            .padding(24)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.black.opacity(0.8))
-            )
-            .padding()
         }
+        .padding(24)
+        .background {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Material.regular)
+//                .fill(Color.black.opacity(0.8))
+        }
+        .padding()
     }
 }

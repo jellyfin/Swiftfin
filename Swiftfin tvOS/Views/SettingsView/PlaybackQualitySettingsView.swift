@@ -36,8 +36,7 @@ struct PlaybackQualitySettingsView: View {
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                focusedDescription
-                    .padding()
+                descriptionView
             }
             .contentView {
                 Section {
@@ -89,11 +88,16 @@ struct PlaybackQualitySettingsView: View {
 
     // MARK: - Description View Icon
 
-    private var descriptionIcon: some View {
-        Image(systemName: "play.rectangle.on.rectangle")
-            .resizable()
-            .aspectRatio(contentMode: .fit)
-            .frame(maxWidth: 400)
+    private var descriptionView: some View {
+        ZStack {
+            Image(systemName: "play.rectangle.on.rectangle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 400)
+
+            focusedDescription
+                .transition(.opacity.animation(.linear(duration: 0.2)))
+        }
     }
 
     // MARK: - Description View on Focus
@@ -102,7 +106,7 @@ struct PlaybackQualitySettingsView: View {
     private var focusedDescription: some View {
         switch focusedItem {
         case .maximumBitrate:
-            LearnMoreView(descriptionIcon) {
+            LearnMoreModal {
                 TextPair(
                     title: L10n.auto,
                     subtitle: L10n.birateAutoDescription
@@ -114,7 +118,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
         case .testSize:
-            LearnMoreView(descriptionIcon) {
+            LearnMoreModal {
                 TextPair(
                     title: L10n.testSize,
                     subtitle: L10n.bitrateTestDescription
@@ -122,7 +126,7 @@ struct PlaybackQualitySettingsView: View {
             }
 
         case .compatibility:
-            LearnMoreView(descriptionIcon) {
+            LearnMoreModal {
                 TextPair(
                     title: L10n.auto,
                     subtitle: L10n.autoDescription
@@ -141,8 +145,8 @@ struct PlaybackQualitySettingsView: View {
                 )
             }
 
-        default:
-            LearnMoreView(descriptionIcon) {}
+        case nil:
+            EmptyView()
         }
     }
 }
