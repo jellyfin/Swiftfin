@@ -364,11 +364,8 @@
 /* Option to set the bitrate to 360p quality at 420 Kbps */
 "bitrateKbps420" = "360p - 420 Kbps";
 
-/* Description for bitrate test duration description */
-"bitrateTestDescription" = "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth";
-
 /* Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback */
-"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback";
+"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
 
 /* Select Server View */
 "servers" = "Servers";
@@ -464,10 +461,10 @@
 "deviceProfile" = "Device Profile";
 
 /* Custom profile is Added to the Existing Profiles */
-"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles";
+"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
 
 /* Custom profile will replace the Existing Profiles */
-"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles";
+"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
 
 /* Section for Playback Quality Settings */
 "playbackQuality" = "Playback Quality";
@@ -503,13 +500,13 @@
 "bitrateDefault" = "Default Bitrate";
 
 /* Default Bitrate Description */
-"bitrateDefaultDescription" = "Limits the internet bandwidth used during video playback";
+"bitrateDefaultDescription" = "Limits the internet bandwidth used during playback.";
 
 /* Playback May Fail */
-"mayResultInPlaybackFailure" = "This setting may result in media failing to start playback";
+"mayResultInPlaybackFailure" = "This setting may result in media failing to start playback.";
 
 /* Device Profile Section Description */
-"customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing";
+"customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing.";
 
 /* Session Device Section Label */
 "device" = "Device";
@@ -1403,6 +1400,61 @@
 // Represents the input field for custom maximum sessions
 // Used in the custom sessions section
 "maximumSessions" = "Maximum sessions";
+=======
+// Refresh - Button
+// Button title for the menu to refresh metadata
+// Used as the label for the refresh metadata button
+"refreshMetadata" = "Refresh Metadata";
+
+// Find Missing - Menu Option
+// Menu option for finding missing metadata
+// Used to trigger a full metadata refresh
+"findMissing" = "Find Missing";
+
+// Replace Metadata - Menu Option
+// Menu option for replacing existing metadata
+// Used to trigger replacing metadata only
+"replaceMetadata" = "Replace Metadata";
+
+// Replace Images - Menu Option
+// Menu option for replacing existing images
+// Used to trigger replacing images only
+"replaceImages" = "Replace Images";
+
+// Replace All - Menu Option
+// Menu option for replacing both metadata and images
+// Used to trigger a full replacement of metadata and images
+"replaceAll" = "Replace All";
+
+// Delete Item Confirmation Message - Warning message
+// Warning message to confirm deleting a media item
+// Used in a confirmation for item deletion
+"deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
+
+// Allow Media Item Editing - Toggle
+// Toggle option for enabling media item editing
+// Used to allow users to edit metadata of media items
+"allowItemEditing" = "Allow media item editing";
+
+// Allow Media Item Deletion - Toggle
+// Toggle option for enabling media item deletion
+// Used to allow users to delete media items
+"allowItemDeletion" = "Allow media item deletion";
+
+// Item Deletion Permission Failure - Error Message
+// Alert the user they should not be able to delete something
+// Used to inform the user a deletion failed and why it failed
+"itemDeletionPermissionFailure" = "You do not have permission to delete this item.";
+
+// Metadata - Section Title
+// Title for the ItemEditorView and Metadata related views
+// Used as a title for sections/views related to Metadata
+"metadata" = "Metadata";
+
+// Learn More - Button
+// Opens a modal with more information
+// Used as a button to show details
+"learnMoreEllipsis" = "Learn more...";
 
 /// Current Password - Placeholder
 /// Placeholder text for the current password input field
@@ -1438,3 +1490,83 @@
 /// Message displayed to alert the user what the password change does and does not do
 /// Used in the ResetUserPasswordView
 "passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
+
+/// Find Missing - Button
+/// Search for missing metadata and images
+/// Used to locate media files missing information or images
+"findMissingDescription" = "Find missing metadata and images.";
+
+/// Replace Metadata - Button
+/// Overwrite metadata without affecting images
+/// Used when updating only metadata information
+"replaceMetadataDescription" = "Replace unlocked metadata with new information.";
+
+/// Replace Images - Button
+/// Overwrite existing images with new ones
+/// Used to refresh media artwork
+"replaceImagesDescription" = "Replace all images with new images.";
+
+/// Replace All - Button
+/// Replace all metadata and images
+/// Full refresh that replaces all unlocked metadata and images
+"replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
+
+/// Device Profile - Description
+/// Explains how device profiles control playback and transcoding behavior
+/// Used in the device profile settings section
+"deviceProfileDescription" = "Decide which media plays natively or requires server transcoding for compatibility.";
+
+/// Auto - Description
+/// Optimizes playback using default settings for most devices
+/// Some formats may require server transcoding
+"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
+
+/// Compatible - Description
+/// Converts media to H.264 video and AAC audio for compatibility
+/// Requires server transcoding for all content
+"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
+
+/// Direct - Description
+/// Plays content in its original format without transcoding
+/// May cause playback issues on unsupported devices
+"directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
+
+/// Custom - Description
+/// Allows customization of device profiles for native playback
+/// Incorrect settings may result in playback issues
+"customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
+
+/// Server Connection Test - Description
+/// Tests the connection to the server to assess internet speed
+/// Used to adjust bandwidth settings automatically
+"birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
+
+/// Bandwidth Usage - Description
+/// Indicates the maximum bandwidth used per playback stream
+/// Helps to manage data usage during streaming
+"bitrateMaxDescription" = "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.";
+
+// Bits Per Second - Unit
+// Represents a speed in bits per second
+// Used for bandwidth display
+"bitsPerSecond" = "bps";
+
+// Kilobits Per Second - Unit
+// Represents a speed in kilobits per second
+// Used for bandwidth display
+"kilobitsPerSecond" = "kbps";
+
+// Megabits Per Second - Unit
+// Represents a speed in megabits per second
+// Used for bandwidth display
+"megabitsPerSecond" = "Mbps";
+
+// Gigabits Per Second - Unit
+// Represents a speed in gigabits per second
+// Used for bandwidth display
+"gigabitsPerSecond" = "Gbps";
+
+// Terabits Per Second - Unit
+// Represents a speed in terabits per second
+// Used for bandwidth display
+"terabitsPerSecond" = "Tbps";

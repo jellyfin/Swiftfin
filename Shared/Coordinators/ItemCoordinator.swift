@@ -28,6 +28,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var itemOverview = makeItemOverview
     @Route(.modal)
+    var itemEditor = makeItemEditor
+    @Route(.modal)
     var mediaSourceInfo = makeMediaSourceInfo
     @Route(.modal)
     var downloadTask = makeDownloadTask
@@ -78,6 +80,10 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
+    func makeItemEditor(item: BaseItemDto) -> NavigationViewCoordinator<ItemEditorCoordinator> {
+        NavigationViewCoordinator(ItemEditorCoordinator(item: item))
+    }
+
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
         NavigationViewCoordinator(DownloadTaskCoordinator(downloadTask: downloadTask))
     }
