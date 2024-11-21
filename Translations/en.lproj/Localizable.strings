@@ -364,9 +364,6 @@
 /* Option to set the bitrate to 360p quality at 420 Kbps */
 "bitrateKbps420" = "360p - 420 Kbps";
 
-/* Description for bitrate test duration description */
-"bitrateTestDescription" = "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth. Tests range from 1 to 10 seconds.";
-
 /* Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback */
 "bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
 

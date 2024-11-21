@@ -29,8 +29,7 @@ struct LearnMoreButton: View {
         Button(L10n.learnMoreEllipsis) {
             isPresented = true
         }
-        .font(.footnote)
-        .foregroundColor(Color.accentColor)
+        .foregroundStyle(Color.accentColor)
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(isPresented: $isPresented) {

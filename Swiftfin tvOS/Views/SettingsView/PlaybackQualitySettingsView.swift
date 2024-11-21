@@ -27,7 +27,6 @@ struct PlaybackQualitySettingsView: View {
 
     private enum FocusableItem: Hashable {
         case maximumBitrate
-        case testSize
         case compatibility
     }
 
@@ -58,7 +57,6 @@ struct PlaybackQualitySettingsView: View {
                             title: L10n.testSize,
                             selection: $appMaximumBitrateTest
                         )
-                        .focused($focusedItem, equals: .testSize)
                     } footer: {
                         L10n.bitrateTestDisclaimer.text
                     }
@@ -117,16 +115,24 @@ struct PlaybackQualitySettingsView: View {
                 )
             }
 
-        case .testSize:
-            LearnMoreModal {
-                TextPair(
-                    title: L10n.testSize,
-                    subtitle: L10n.bitrateTestDescription
-                )
-            }
-
         case .compatibility:
             LearnMoreModal {
+                TextPair(
+                    title: L10n.auto,
+                    subtitle: L10n.autoDescription
+                )
+                TextPair(
+                    title: L10n.compatible,
+                    subtitle: L10n.compatibleDescription
+                )
+                TextPair(
+                    title: L10n.direct,
+                    subtitle: L10n.directDescription
+                )
+                TextPair(
+                    title: L10n.custom,
+                    subtitle: L10n.customDescription
+                )
                 TextPair(
                     title: L10n.auto,
                     subtitle: L10n.autoDescription

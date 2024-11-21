@@ -58,14 +58,7 @@ struct PlaybackQualitySettingsView: View {
                     L10n.bitrateTest.text
                 } footer: {
                     VStack(alignment: .leading) {
-                        Text(L10n.bitrateTestDisclaimer)
-                        LearnMoreButton(L10n.bitrateTest) {
-                            TextPair(
-                                title: L10n.testSize,
-                                subtitle: L10n.bitrateTestDescription
-                            )
-                        }
-                        .foregroundStyle(.foreground, .primary)
+                        L10n.bitrateTestDisclaimer.text
                     }
                 }
             }

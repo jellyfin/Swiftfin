@@ -162,8 +162,6 @@ internal enum L10n {
   internal static let bitrateMbps80 = L10n.tr("Localizable", "bitrateMbps80", fallback: "4K - 80 Mbps")
   /// Bitrate Automatic Section Header
   internal static let bitrateTest = L10n.tr("Localizable", "bitrateTest", fallback: "Bitrate Test")
-  /// Description for bitrate test duration description
-  internal static let bitrateTestDescription = L10n.tr("Localizable", "bitrateTestDescription", fallback: "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth. Tests range from 1 to 10 seconds.")
   /// Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback
   internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps

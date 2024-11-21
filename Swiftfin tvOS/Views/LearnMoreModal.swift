@@ -39,8 +39,8 @@ struct LearnMoreModal: View {
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Material.regular)
-//                .fill(Color.black.opacity(0.8))
         }
         .padding()
+        .scrollIfLargerThanContainer(autoScroll: true)
     }
 }
