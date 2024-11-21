@@ -41,6 +41,5 @@ struct LearnMoreModal: View {
                 .fill(Material.regular)
         }
         .padding()
-        .scrollIfLargerThanContainer(autoScroll: true)
     }
 }
