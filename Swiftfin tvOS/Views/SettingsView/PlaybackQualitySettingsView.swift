@@ -133,22 +133,6 @@ struct PlaybackQualitySettingsView: View {
                     title: L10n.custom,
                     subtitle: L10n.customDescription
                 )
-                TextPair(
-                    title: L10n.auto,
-                    subtitle: L10n.autoDescription
-                )
-                TextPair(
-                    title: L10n.compatible,
-                    subtitle: L10n.compatibleDescription
-                )
-                TextPair(
-                    title: L10n.direct,
-                    subtitle: L10n.directDescription
-                )
-                TextPair(
-                    title: L10n.custom,
-                    subtitle: L10n.customDescription
-                )
             }
 
         case nil:
