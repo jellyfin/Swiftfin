@@ -1400,7 +1400,7 @@
 // Represents the input field for custom maximum sessions
 // Used in the custom sessions section
 "maximumSessions" = "Maximum sessions";
-=======
+
 // Refresh - Button
 // Button title for the menu to refresh metadata
 // Used as the label for the refresh metadata button

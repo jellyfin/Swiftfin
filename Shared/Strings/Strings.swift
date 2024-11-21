@@ -163,7 +163,7 @@ internal enum L10n {
   /// Bitrate Automatic Section Header
   internal static let bitrateTest = L10n.tr("Localizable", "bitrateTest", fallback: "Bitrate Test")
   /// Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback
-  internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback")
+  internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps
   internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
   /// Blue
@@ -293,7 +293,7 @@ internal enum L10n {
   /// Device Profile Section Description
   internal static let customDeviceProfileDescription = L10n.tr("Localizable", "customDeviceProfileDescription", fallback: "Dictates back to the Jellyfin Server what this device hardware is capable of playing.")
   /// Custom profile will replace the Existing Profiles
-  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles")
+  internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles.")
   /// Custom failed logins
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Settings View - Customize
@@ -456,12 +456,12 @@ internal enum L10n {
   internal static let filterResults = L10n.tr("Localizable", "filterResults", fallback: "Filter Results")
   /// Filters
   internal static let filters = L10n.tr("Localizable", "filters", fallback: "Filters")
-  /// Force remote media transcoding
-  internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
   /// Find Missing
   internal static let findMissing = L10n.tr("Localizable", "findMissing", fallback: "Find Missing")
   /// Find missing metadata and images.
   internal static let findMissingDescription = L10n.tr("Localizable", "findMissingDescription", fallback: "Find missing metadata and images.")
+  /// Force remote media transcoding
+  internal static let forceRemoteTranscoding = L10n.tr("Localizable", "forceRemoteTranscoding", fallback: "Force remote media transcoding")
   /// Transcode FPS
   internal static func fpsWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "fpsWithString", String(describing: p1), fallback: "%@fps")
