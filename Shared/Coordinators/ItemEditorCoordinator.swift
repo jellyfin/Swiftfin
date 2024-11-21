@@ -19,8 +19,17 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     private let item: BaseItemDto
 
+    @Route(.modal)
+    var editMetadata = makeEditMetadata
+
     init(item: BaseItemDto) {
         self.item = item
+    }
+
+    func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            EditMetadataView(viewModel: ItemEditorViewModel(item: item))
+        }
     }
 
     @ViewBuilder

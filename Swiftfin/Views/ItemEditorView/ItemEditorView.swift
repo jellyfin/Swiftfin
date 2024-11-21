@@ -45,29 +45,46 @@ struct ItemEditorView: View {
                 description: item.path
             )
 
-            Section {
-                RefreshMetadataButton(item: item)
-                    .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
-            } footer: {
-                LearnMoreButton(L10n.metadata) {
-                    TextPair(
-                        title: L10n.findMissing,
-                        subtitle: L10n.findMissingDescription
-                    )
-                    TextPair(
-                        title: L10n.replaceMetadata,
-                        subtitle: L10n.replaceMetadataDescription
-                    )
-                    TextPair(
-                        title: L10n.replaceImages,
-                        subtitle: L10n.replaceImagesDescription
-                    )
-                    TextPair(
-                        title: L10n.replaceAll,
-                        subtitle: L10n.replaceAllDescription
-                    )
-                }
+            refreshButtonView
+
+            advancedView
+        }
+    }
+
+    @ViewBuilder
+    private var refreshButtonView: some View {
+        Section {
+            RefreshMetadataButton(item: item)
+                .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
+        } footer: {
+            LearnMoreButton(L10n.metadata) {
+                TextPair(
+                    title: L10n.findMissing,
+                    subtitle: L10n.findMissingDescription
+                )
+                TextPair(
+                    title: L10n.replaceMetadata,
+                    subtitle: L10n.replaceMetadataDescription
+                )
+                TextPair(
+                    title: L10n.replaceImages,
+                    subtitle: L10n.replaceImagesDescription
+                )
+                TextPair(
+                    title: L10n.replaceAll,
+                    subtitle: L10n.replaceAllDescription
+                )
             }
+        }
+    }
+
+    @ViewBuilder
+    private var advancedView: some View {
+        Section(L10n.advanced) {
+            ChevronButton(L10n.metadata)
+                .onSelect {
+                    router.route(to: \.editMetadata, item)
+                }
         }
     }
 }

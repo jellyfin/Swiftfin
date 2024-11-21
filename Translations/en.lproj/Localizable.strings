@@ -1379,3 +1379,291 @@
 // Represents a speed in terabits per second
 // Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Display Order - Section
+// Label for the display order section in metadata settings.
+// Used as the section title for display order preferences.
+"displayOrder" = "Display Order";
+
+// Dates - Section
+// Label for the dates section in metadata settings.
+// Used as the section title for date-related fields in metadata.
+"dates" = "Dates";
+
+// Date Added - Label
+// Label for the date added field.
+// Used as the label for the date an item was added to the library.
+"dateAdded" = "Date Added";
+
+// Release Date - Label
+// Label for the release date field.
+// Used as the label for the release date of the item.
+"releaseDate" = "Release Date";
+
+// End Date - Label
+// Label for the end date field.
+// Used as the label for the end date of a series or person.
+"endDate" = "End Date";
+
+// Year - Section
+// Label for the year section in metadata settings.
+// Used as the section title for the year of production field.
+"year" = "Year";
+
+// Refresh - Button
+// Standard button title to refresh content.
+// Used as a label in the metadata refresh menu.
+"refresh" = "Refresh";
+
+// Find Missing Metadata - Button
+// Button title to trigger a search for missing metadata.
+// Used as a label in the metadata refresh menu.
+"findMissingMetadata" = "Find Missing Metadata";
+
+// Replace Metadata - Button
+// Button title to replace existing metadata with new data.
+// Used as a label in the metadata refresh menu.
+"replaceMetadata" = "Replace Metadata";
+
+// Replace Images - Button
+// Button title to replace existing images with new images.
+// Used as a label in the metadata refresh menu.
+"replaceImages" = "Replace Images";
+
+// Replace All - Button
+// Button title to replace all metadata and images.
+// Used as a label in the metadata refresh menu.
+"replaceAll" = "Replace All";
+
+// Refresh Metadata - Menu Title
+// Title for the metadata refresh menu.
+// Used as a label to trigger the refresh metadata options.
+"refreshMetadata" = "Refresh Metadata";
+
+// Official Rating - Label
+// Label for the official rating field in media metadata
+// Used in metadata fields to display age ratings or classifications
+"officialRating" = "Official Rating";
+
+// Production Locations - Label
+// Label for production locations in media metadata
+// Used in metadata fields for locations where the media was produced
+"productionLocations" = "Production Locations";
+
+// Locked Fields - Section Title
+// Section title for locked metadata fields
+// Used as the heading for a section in the metadata editor that shows locked fields options
+"lockedFields" = "Locked Fields";
+
+// Lock All Fields - Toggle
+// Toggle label to lock all metadata fields at once
+// Used to allow users to lock or unlock all metadata fields in the editor
+"lockAllFields" = "Lock All Fields";
+
+// Metadata preferences - Section title
+// Title for the section displaying metadata localization options
+"metadataPreferences" = "Metadata preferences";
+
+// Language - Picker title
+// Label for the language picker for metadata
+"language" = "Language";
+
+// Country - Picker title
+// Label for the country picker for metadata
+"country" = "Country";
+
+// Format - Section title
+// Title for the video format section in metadata editing
+"format" = "Format";
+
+// Original aspect ratio - Text field label
+// Label for entering the original aspect ratio of the video
+"originalAspectRatio" = "Original aspect ratio";
+
+// 3D Format - Picker title
+// Title for the 3D format picker in video metadata
+"format3D" = "3D Format";
+
+// Parental Rating - Section title
+// Title for the parental rating section in metadata editing
+"parentalRating" = "Parental Rating";
+
+// Official Rating - Picker title
+// Title for the picker to select an official rating
+"officialRating" = "Official Rating";
+
+// Custom Rating - Picker title
+// Title for the picker to select a custom rating
+"customRating" = "Custom Rating";
+
+// None - Option label
+// Label to represent a lack of selection or no value chosen
+"none" = "None";
+
+// Letter - Label
+// Label for the letter category in metadata options
+"letter" = "Letter";
+
+// Years - Label
+// Label for the years category in metadata options
+"years" = "Years";
+
+// Taglines - Section
+// Title for the section displaying or editing taglines
+"taglines" = "Taglines";
+
+// Tagline - Label
+// Label for individual tagline entries
+"tagline" = "Tagline";
+
+// Reviews - Section
+// Title for the reviews section in metadata editing.
+"reviews" = "Reviews";
+
+// Critics - Label
+// Label for critic rating field in metadata editing.
+"critics" = "Critics";
+
+// Community - Label
+// Label for community rating field in metadata editing.
+"community" = "Community";
+
+// Rating - Placeholder
+// Placeholder text for the rating input field.
+"rating" = "Rating";
+
+// Rating - Description
+// Description for any rating field (1 to 10 scale).
+"ratingDescription" = "%@ rating on a scale from 1 to 10.";
+
+// Half Side-by-Side - Format
+// Display title for half side-by-side 3D format.
+"halfSideBySide" = "Half Side-by-Side";
+
+// Full Side-by-Side - Format
+// Display title for full side-by-side 3D format.
+"fullSideBySide" = "Full Side-by-Side";
+
+// Full Top and Bottom - Format
+// Display title for full top and bottom 3D format.
+"fullTopAndBottom" = "Full Top and Bottom";
+
+// Half Top and Bottom - Format
+// Display title for half top and bottom 3D format.
+"halfTopAndBottom" = "Half Top and Bottom";
+
+// MVC - Format
+// Display title for MVC 3D format.
+"mvc" = "MVC";
+
+// Continuing - Series Status
+// Display title for series status when a series is ongoing.
+"continuing" = "Continuing";
+
+// Ended - Series Status
+// Display title for series status when a series has ended.
+"ended" = "Ended";
+
+// Unreleased - Series Status
+// Display title for series status when a series has not yet been released.
+"unreleased" = "Unreleased";
+
+// Aired - Series Display Order
+// Display title for series display order "Aired".
+"aired" = "Aired";
+
+// Original Air Date - Series Display Order
+// Display title for series display order "Original Air Date".
+"originalAirDate" = "Original Air Date";
+
+// Absolute - Series Display Order
+// Display title for series display order "Absolute".
+"absolute" = "Absolute";
+
+// DVD - Series Display Order
+// Display title for series display order "DVD".
+"dvd" = "DVD";
+
+// Digital - Series Display Order
+// Display title for series display order "Digital".
+"digital" = "Digital";
+
+// Story Arc - Series Display Order
+// Display title for series display order "Story Arc".
+"storyArc" = "Story Arc";
+
+// Production - Series Display Order
+// Display title for series display order "Production".
+"production" = "Production";
+
+// TV - Series Display Order
+// Display title for series display order "TV".
+"tv" = "TV";
+
+// Alternate - Series Display Order
+// Display title for series display order "Alternate".
+"alternate" = "Alternate";
+
+// Regional - Series Display Order
+// Display title for series display order "Regional".
+"regional" = "Regional";
+
+// Alternate DVD - Series Display Order
+// Display title for series display order "Alternate DVD".
+"alternateDVD" = "Alternate DVD";
+
+// Date Modified - Box Set Display Order
+// Display title for box set display order "Date Modified".
+"dateModified" = "Date Modified";
+
+// Sort Name - Box Set Display Order
+// Display title for box set display order "Sort Name".
+"sortName" = "Sort Name";
+
+// Premiere Date - Box Set Display Order
+// Display title for box set display order "Premiere Date".
+"premiereDate" = "Premiere Date";
+
+// File Path - Section Title
+// Section title for displaying the file path of the item.
+"filePath" = "File Path";
+
+// Title - Section Title
+// Section title for displaying or editing the main title of the item.
+"title" = "Title";
+
+// Original Title - Section Title
+// Section title for displaying or editing the original title of the item.
+"originalTitle" = "Original Title";
+
+// Sort Title - Section Title
+// Section title for displaying or editing the title used for sorting the item.
+"sortTitle" = "Sort Title";
+
+// Unknown - Placeholder
+// Placeholder text for unknown file paths or values.
+"unknown" = "Unknown";
+
+// Air Time - Label for air time date picker
+// Label for selecting the air time of an episode.
+"airTime" = "Air Time";
+
+// Run Time - Label for runtime input field
+// Label for specifying episode runtime.
+"runTime" = "Run Time";
+
+// Episode Runtime Description - Description for runtime input
+// Description displayed below runtime input for episodes.
+"episodeRuntimeDescription" = "Episode runtime in minutes.";
+
+// Episode - Label for episode input
+// Title for the episode input field.
+"episode" = "Episode";
+
+// Enter Season Number - Description for season input field
+// Description explaining the purpose of the season input.
+"enterSeasonNumber" = "Enter the season number.";
+
+// Enter Episode Number - Description for episode input field
+// Description explaining the purpose of the episode input.
+"enterEpisodeNumber" = "Enter the episode number.";
