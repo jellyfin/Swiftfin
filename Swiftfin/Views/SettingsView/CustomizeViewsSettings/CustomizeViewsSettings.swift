@@ -150,7 +150,7 @@ struct CustomizeViewsSettings: View {
 
                 if libraryDisplayType == .list, UIDevice.isPad {
                     BasicStepper(
-                        title: "Columns",
+                        title: L10n.columns,
                         value: $listColumnCount,
                         range: 1 ... 4,
                         step: 1

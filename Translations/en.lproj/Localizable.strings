@@ -364,11 +364,8 @@
 /* Option to set the bitrate to 360p quality at 420 Kbps */
 "bitrateKbps420" = "360p - 420 Kbps";
 
-/* Description for bitrate test duration description */
-"bitrateTestDescription" = "Determines the length of the 'Auto' bitrate test used to find the available internet bandwidth";
-
 /* Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback */
-"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback";
+"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
 
 /* Select Server View */
 "servers" = "Servers";
@@ -464,10 +461,10 @@
 "deviceProfile" = "Device Profile";
 
 /* Custom profile is Added to the Existing Profiles */
-"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles";
+"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
 
 /* Custom profile will replace the Existing Profiles */
-"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles";
+"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
 
 /* Section for Playback Quality Settings */
 "playbackQuality" = "Playback Quality";
@@ -503,13 +500,13 @@
 "bitrateDefault" = "Default Bitrate";
 
 /* Default Bitrate Description */
-"bitrateDefaultDescription" = "Limits the internet bandwidth used during video playback";
+"bitrateDefaultDescription" = "Limits the internet bandwidth used during playback.";
 
 /* Playback May Fail */
-"mayResultInPlaybackFailure" = "This setting may result in media failing to start playback";
+"mayResultInPlaybackFailure" = "This setting may result in media failing to start playback.";
 
 /* Device Profile Section Description */
-"customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing";
+"customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing.";
 
 /* Session Device Section Label */
 "device" = "Device";
@@ -1322,3 +1319,63 @@
 /// Replace all metadata and images
 /// Full refresh that replaces all unlocked metadata and images
 "replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
+
+/// Device Profile - Description
+/// Explains how device profiles control playback and transcoding behavior
+/// Used in the device profile settings section
+"deviceProfileDescription" = "Decide which media plays natively or requires server transcoding for compatibility.";
+
+/// Auto - Description
+/// Optimizes playback using default settings for most devices
+/// Some formats may require server transcoding
+"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
+
+/// Compatible - Description
+/// Converts media to H.264 video and AAC audio for compatibility
+/// Requires server transcoding for all content
+"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
+
+/// Direct - Description
+/// Plays content in its original format without transcoding
+/// May cause playback issues on unsupported devices
+"directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
+
+/// Custom - Description
+/// Allows customization of device profiles for native playback
+/// Incorrect settings may result in playback issues
+"customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
+
+/// Server Connection Test - Description
+/// Tests the connection to the server to assess internet speed
+/// Used to adjust bandwidth settings automatically
+"birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
+
+/// Bandwidth Usage - Description
+/// Indicates the maximum bandwidth used per playback stream
+/// Helps to manage data usage during streaming
+"bitrateMaxDescription" = "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.";
+
+// Bits Per Second - Unit
+// Represents a speed in bits per second
+// Used for bandwidth display
+"bitsPerSecond" = "bps";
+
+// Kilobits Per Second - Unit
+// Represents a speed in kilobits per second
+// Used for bandwidth display
+"kilobitsPerSecond" = "kbps";
+
+// Megabits Per Second - Unit
+// Represents a speed in megabits per second
+// Used for bandwidth display
+"megabitsPerSecond" = "Mbps";
+
+// Gigabits Per Second - Unit
+// Represents a speed in gigabits per second
+// Used for bandwidth display
+"gigabitsPerSecond" = "Gbps";
+
+// Terabits Per Second - Unit
+// Represents a speed in terabits per second
+// Used for bandwidth display
+"terabitsPerSecond" = "Tbps";

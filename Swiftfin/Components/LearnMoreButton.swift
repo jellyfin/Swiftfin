@@ -30,32 +30,38 @@ struct LearnMoreButton: View {
             isPresented = true
         }
         .foregroundStyle(Color.accentColor)
-        .font(.subheadline)
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .sheet(isPresented: $isPresented) {
-            NavigationView {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 16) {
-                        ForEach(items) { content in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(content.title)
-                                    .font(.headline)
-                                    .foregroundStyle(.primary)
+            learnMoreView
+        }
+    }
 
-                                Text(content.subtitle)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+    // MARK: - Learn More View
 
-                            Divider()
+    private var learnMoreView: some View {
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(items) { content in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(content.title)
+                                .font(.headline)
+                                .foregroundStyle(.primary)
+
+                            Text(content.subtitle)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
+                        Divider()
                     }
-                    .edgePadding()
                 }
-                .navigationTitle(title)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarCloseButton {
-                    isPresented = false
-                }
+                .edgePadding()
+            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                isPresented = false
             }
         }
     }
