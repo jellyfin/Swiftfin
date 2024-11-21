@@ -18,7 +18,7 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.permissions) {
-                Toggle(L10n.allowMediaDownloads, isOn: Binding(
+                Toggle(L10n.mediaDownloads, isOn: Binding(
                     get: { policy.enableContentDownloading ?? false },
                     set: { policy.enableContentDownloading = $0 }
                 ))

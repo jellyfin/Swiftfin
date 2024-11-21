@@ -50,18 +50,6 @@ internal enum L10n {
   internal static let allGenres = L10n.tr("Localizable", "allGenres", fallback: "All Genres")
   /// All Media
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
-  /// Allow audio transcoding
-  internal static let allowAudioTranscoding = L10n.tr("Localizable", "allowAudioTranscoding", fallback: "Allow audio transcoding")
-  /// Allow media downloads
-  internal static let allowMediaDownloads = L10n.tr("Localizable", "allowMediaDownloads", fallback: "Allow media downloads")
-  /// Allow media playback
-  internal static let allowMediaPlayback = L10n.tr("Localizable", "allowMediaPlayback", fallback: "Allow media playback")
-  /// Allow remote connections
-  internal static let allowRemoteConnections = L10n.tr("Localizable", "allowRemoteConnections", fallback: "Allow remote connections")
-  /// Allow video remuxing
-  internal static let allowVideoRemuxing = L10n.tr("Localizable", "allowVideoRemuxing", fallback: "Allow video remuxing")
-  /// Allow video transcoding
-  internal static let allowVideoTranscoding = L10n.tr("Localizable", "allowVideoTranscoding", fallback: "Allow video transcoding")
   /// Select Server View - Select All Servers
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// View and manage all registered users on the server, including their permissions and activity status.
@@ -110,6 +98,8 @@ internal enum L10n {
   internal static let audioSampleRateNotSupported = L10n.tr("Localizable", "audioSampleRateNotSupported", fallback: "The audio sample rate is not supported")
   /// Audio Track
   internal static let audioTrack = L10n.tr("Localizable", "audioTrack", fallback: "Audio Track")
+  /// Audio transcoding
+  internal static let audioTranscoding = L10n.tr("Localizable", "audioTranscoding", fallback: "Audio transcoding")
   /// Authorize
   internal static let authorize = L10n.tr("Localizable", "authorize", fallback: "Authorize")
   /// PlaybackCompatibility Default Category
@@ -586,6 +576,8 @@ internal enum L10n {
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
+  /// Media downloads
+  internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
   internal static let mediaPlayback = L10n.tr("Localizable", "mediaPlayback", fallback: "Media playback")
   /// Mbps
@@ -1168,8 +1160,12 @@ internal enum L10n {
   internal static let videoProfileNotSupported = L10n.tr("Localizable", "videoProfileNotSupported", fallback: "The video profile is not supported")
   /// TranscodeReason - Video Range Type Not Supported
   internal static let videoRangeTypeNotSupported = L10n.tr("Localizable", "videoRangeTypeNotSupported", fallback: "The video range type is not supported")
+  /// Video remuxing
+  internal static let videoRemuxing = L10n.tr("Localizable", "videoRemuxing", fallback: "Video remuxing")
   /// TranscodeReason - Video Resolution Not Supported
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
+  /// Video transcoding
+  internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
   /// Weekly
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
   /// Who's watching?

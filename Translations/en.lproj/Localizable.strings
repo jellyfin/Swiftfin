@@ -1264,15 +1264,10 @@
 // Used for enabling or managing synchronized streaming sessions
 "syncPlay" = "SyncPlay";
 
-// Remote connections - Section
+// Remote connections - Section & Toggle
 // Represents settings related to remote access
 // Used in the external access section of user permissions
 "remoteConnections" = "Remote connections";
-
-// Allow remote connections - Toggle
-// Toggles the user's ability to connect remotely
-// Used in the external access section
-"allowRemoteConnections" = "Allow remote connections";
 
 // Maximum remote bitrate - Picker
 // Represents the maximum bitrate allowed for remote connections
@@ -1314,40 +1309,35 @@
 // Used in the management section
 "lyrics" = "Lyrics";
 
-// Media playback - Section
+// Media playback - Section & Toggle
 // Represents settings related to media playback permissions
 // Used in the media playback section of user permissions
 "mediaPlayback" = "Media playback";
 
-// Allow media playback - Toggle
-// Toggles permission for media playback
-// Used in the media playback section
-"allowMediaPlayback" = "Allow media playback";
-
-// Allow audio transcoding - Toggle
+// Audio transcoding - Toggle
 // Toggles permission for audio transcoding
 // Used in the media playback section
-"allowAudioTranscoding" = "Allow audio transcoding";
+"audioTranscoding" = "Audio transcoding";
 
-// Allow video transcoding - Toggle
+// Video transcoding - Toggle
 // Toggles permission for video transcoding
 // Used in the media playback section
-"allowVideoTranscoding" = "Allow video transcoding";
+"videoTranscoding" = "Video transcoding";
 
-// Allow video remuxing - Toggle
+// Video remuxing - Toggle
 // Toggles permission for video remuxing
 // Used in the media playback section
-"allowVideoRemuxing" = "Allow video remuxing";
+"videoRemuxing" = "Video remuxing";
 
 // Force remote media transcoding - Toggle
 // Toggles whether remote media transcoding is forced
 // Used in the media playback section
 "forceRemoteTranscoding" = "Force remote media transcoding";
 
-// Allow media downloads - Toggle
+// Media downloads - Toggle
 // Toggles permission to download media content
 // Used in the permission section
-"allowMediaDownloads" = "Allow media downloads";
+"mediaDownloads" = "Media downloads";
 
 // Hide user from login screen - Toggle
 // Toggles whether the user is hidden from the login screen

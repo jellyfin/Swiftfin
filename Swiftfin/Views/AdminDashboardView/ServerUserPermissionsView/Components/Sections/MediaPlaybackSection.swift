@@ -18,22 +18,22 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.mediaPlayback) {
-                Toggle(L10n.allowMediaPlayback, isOn: Binding(
+                Toggle(L10n.mediaPlayback, isOn: Binding(
                     get: { policy.enableMediaPlayback ?? false },
                     set: { policy.enableMediaPlayback = $0 }
                 ))
 
-                Toggle(L10n.allowAudioTranscoding, isOn: Binding(
+                Toggle(L10n.audioTranscoding, isOn: Binding(
                     get: { policy.enableAudioPlaybackTranscoding ?? false },
                     set: { policy.enableAudioPlaybackTranscoding = $0 }
                 ))
 
-                Toggle(L10n.allowVideoTranscoding, isOn: Binding(
+                Toggle(L10n.videoTranscoding, isOn: Binding(
                     get: { policy.enableVideoPlaybackTranscoding ?? false },
                     set: { policy.enableVideoPlaybackTranscoding = $0 }
                 ))
 
-                Toggle(L10n.allowVideoRemuxing, isOn: Binding(
+                Toggle(L10n.videoRemuxing, isOn: Binding(
                     get: { policy.enablePlaybackRemuxing ?? false },
                     set: { policy.enablePlaybackRemuxing = $0 }
                 ))

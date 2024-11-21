@@ -22,7 +22,7 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.remoteConnections) {
-                Toggle(L10n.allowRemoteConnections, isOn: Binding(
+                Toggle(L10n.remoteConnections, isOn: Binding(
                     get: { policy.enableRemoteAccess ?? false },
                     set: { policy.enableRemoteAccess = $0 }
                 ))
