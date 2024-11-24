@@ -47,7 +47,7 @@ struct ItemEditorView: View {
 
             refreshButtonView
 
-            advancedView
+            editView
         }
     }
 
@@ -79,8 +79,8 @@ struct ItemEditorView: View {
     }
 
     @ViewBuilder
-    private var advancedView: some View {
-        Section(L10n.advanced) {
+    private var editView: some View {
+        Section(L10n.edit) {
             ChevronButton(L10n.metadata)
                 .onSelect {
                     router.route(to: \.editMetadata, item)

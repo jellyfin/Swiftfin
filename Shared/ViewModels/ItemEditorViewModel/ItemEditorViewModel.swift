@@ -61,15 +61,15 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     func respond(to action: Action) -> State {
         switch action {
         case let .add(items):
-            return updateStateAndPerform(.updated) {
+            return perform(.updated) {
                 try await self.addItems(items)
             }
         case let .remove(items):
-            return updateStateAndPerform(.updated) {
+            return perform(.updated) {
                 try await self.removeItems(items)
             }
         case let .update(item):
-            return updateStateAndPerform(.updated) {
+            return perform(.updated) {
                 _ = self.updateItem(item)
             }
         }
@@ -77,57 +77,46 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Update State and Perform Operation
 
-    private func updateStateAndPerform(_ event: Event, operation: @escaping () async throws -> Void) -> State {
-        cancelCurrentTask()
+    private func perform(_ event: Event, operation: @escaping () async throws -> Void) -> State {
+        updateTask?.cancel()
 
         updateTask = Task { [weak self] in
             guard let self = self else { return }
-            await self.setState(.updating)
+
+            await MainActor.run {
+                self.state = .updating
+            }
 
             do {
                 try await operation()
-                await self.completeWithSuccess(event)
+
+                await MainActor.run {
+                    self.state = .initial
+                    self.eventSubject.send(event)
+                }
             } catch {
-                await self.handleTaskError(error)
+                await MainActor.run {
+                    self.state = .initial
+                    self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+                }
             }
         }.asAnyCancellable()
 
         return .refreshing
     }
 
-    // MARK: - Cancel Current Task
-
-    private func cancelCurrentTask() {
-        updateTask?.cancel()
-    }
-
-    // MARK: - Complete with Success
-
-    private func completeWithSuccess(_ event: Event) async {
-        await setState(.initial)
-        eventSubject.send(event)
-    }
-
-    // MARK: - Handle Task Error
-
-    private func handleTaskError(_ error: Error) async {
-        guard !Task.isCancelled else { return }
-        let apiError = JellyfinAPIError(error.localizedDescription)
-        await setState(.error(apiError))
-        eventSubject.send(.error(apiError))
-    }
-
     // MARK: - Update Item on Server
 
     func updateItem(_ newItem: BaseItemDto, refresh: Bool = false) -> State {
-        updateStateAndPerform(.updated) {
+        perform(.updated) {
             try await self.saveUpdatedItem(newItem)
             if refresh {
                 try await self.refreshItemFromServer()
             } else {
-                await self.updateItemLocally(newItem)
+                await MainActor.run {
+                    self.item = newItem
+                }
             }
-            Notifications[.itemMetadataDidChange].post(object: newItem)
         }
     }
 
@@ -135,32 +124,25 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     private func saveUpdatedItem(_ newItem: BaseItemDto) async throws {
         guard let itemId = item.id else { return }
+
         let request = Paths.updateItem(itemID: itemId, newItem)
         _ = try await userSession.client.send(request)
+
+        await MainActor.run {
+            Notifications[.itemMetadataDidChange].post(object: newItem)
+        }
     }
 
     // MARK: - Refresh Item from Server
 
     private func refreshItemFromServer() async throws {
         guard let itemId = item.id else { return }
+
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
         let response = try await userSession.client.send(request)
-        await updateItemLocally(response.value)
-    }
 
-    // MARK: - Update Item Locally
-
-    private func updateItemLocally(_ newItem: BaseItemDto) async {
         await MainActor.run {
-            self.item = newItem
-        }
-    }
-
-    // MARK: - Set State
-
-    private func setState(_ newState: State) async {
-        await MainActor.run {
-            self.state = newState
+            self.item = response.value
         }
     }
 
