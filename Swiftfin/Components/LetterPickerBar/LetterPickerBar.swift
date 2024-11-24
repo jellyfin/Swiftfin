@@ -24,7 +24,7 @@ struct LetterPickerBar: View {
             ForEach(ItemLetter.allCases, id: \.hashValue) { filterLetter in
                 LetterPickerButton(
                     letter: filterLetter,
-                    size: size,
+                    size: LetterPickerBar.size,
                     viewModel: viewModel
                 )
                 .environment(\.isSelected, viewModel.currentFilters.letter.contains(filterLetter))
@@ -33,12 +33,12 @@ struct LetterPickerBar: View {
             Spacer()
         }
         .scrollIfLargerThanContainer()
-        .frame(width: size, alignment: .center)
+        .frame(width: LetterPickerBar.size, alignment: .center)
     }
 
     // MARK: - Letter Button Size
 
-    private var size: CGFloat {
+    static var size: CGFloat {
         String().height(
             withConstrainedWidth: CGFloat.greatestFiniteMagnitude,
             font: UIFont.preferredFont(
