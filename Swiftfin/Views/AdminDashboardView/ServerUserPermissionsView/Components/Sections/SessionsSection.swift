@@ -15,44 +15,48 @@ extension ServerUserPermissionsView {
 
         @Binding
         var policy: UserPolicy
-        @Binding
-        var loginFailurePolicy: LoginFailurePolicy
-        @Binding
-        var maxSessionsPolicy: ActiveSessionsPolicy
+
+        private var filteredLoginFailurePolicies: [LoginFailurePolicy] {
+            LoginFailurePolicy.allCases.filter {
+                if policy.isAdministrator ?? false {
+                    return $0 != .userDefault
+                } else {
+                    return $0 != .adminDefault
+                }
+            }
+        }
 
         var body: some View {
             Section(L10n.sessions) {
-                Picker(L10n.maximumFailedLoginPolicy, selection: $loginFailurePolicy) {
-                    ForEach(
-                        LoginFailurePolicy.allCases.filter {
-                            if policy.isAdministrator ?? false {
-                                return $0 != .userDefault
-                            } else {
-                                return $0 != .adminDefault
-                            }
-                        }, id: \.self
-                    ) { policy in
+
+                Picker(
+                    L10n.maximumFailedLoginPolicy,
+                    selection: $policy.loginAttemptsBeforeLockout.map(
+                        getter: { LoginFailurePolicy.from(
+                            rawValue: $0 ?? 0,
+                            isAdministrator: policy.isAdministrator ?? false
+                        ) },
+                        setter: { $0.rawValue }
+                    )
+                ) {
+                    ForEach(filteredLoginFailurePolicies, id: \.self) { policy in
                         Text(policy.displayTitle).tag(policy)
                     }
                 }
-                .onChange(of: loginFailurePolicy) { newPolicy in
-                    policy.loginAttemptsBeforeLockout = newPolicy.rawValue
-                }
 
-                if loginFailurePolicy == .custom {
+                if policy.loginAttemptsBeforeLockout == LoginFailurePolicy.custom.rawValue {
                     MaxFailedLoginsButtonView()
                 }
 
-                Picker(L10n.maximumSessionsPolicy, selection: $maxSessionsPolicy) {
-                    ForEach(ActiveSessionsPolicy.allCases, id: \.self) { policies in
-                        Text(policies.displayTitle).tag(policies)
-                    }
-                }
-                .onChange(of: maxSessionsPolicy) { newPolicy in
-                    policy.maxActiveSessions = newPolicy.rawValue
-                }
+                CaseIterablePicker(
+                    L10n.maximumSessionsPolicy,
+                    selection: $policy.maxActiveSessions.map(
+                        getter: { ActiveSessionsPolicy(rawValue: $0) ?? .custom },
+                        setter: { $0.rawValue }
+                    )
+                )
 
-                if maxSessionsPolicy == .custom {
+                if policy.maxActiveSessions == ActiveSessionsPolicy.custom.rawValue {
                     MaxSessionsButtonView()
                 }
             }

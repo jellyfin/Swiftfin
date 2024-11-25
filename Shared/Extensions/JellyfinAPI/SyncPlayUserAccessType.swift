@@ -9,7 +9,7 @@
 import Foundation
 import JellyfinAPI
 
-extension SyncPlayUserAccessType {
+extension SyncPlayUserAccessType: Displayable {
 
     var displayTitle: String {
         switch self {

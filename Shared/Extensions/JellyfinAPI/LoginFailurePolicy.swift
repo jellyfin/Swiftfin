@@ -9,6 +9,7 @@
 import Foundation
 
 enum LoginFailurePolicy: Int, Displayable, CaseIterable {
+
     case unlimited = -1
     case userDefault = 3
     case adminDefault = 5
@@ -30,7 +31,7 @@ enum LoginFailurePolicy: Int, Displayable, CaseIterable {
     // MARK: - Get Policy from a Bitrate (Int)
 
     static func from(rawValue: Int, isAdministrator: Bool) -> LoginFailurePolicy {
-        var policy = LoginFailurePolicy(rawValue: rawValue)
+        let policy = LoginFailurePolicy(rawValue: rawValue)
 
         if isAdministrator && policy == .userDefault {
             return .custom

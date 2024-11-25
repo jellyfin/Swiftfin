@@ -18,17 +18,13 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.syncPlay) {
-                Picker(
+                CaseIterablePicker(
                     L10n.permissions,
                     selection: Binding(
                         get: { policy.syncPlayAccess ?? SyncPlayUserAccessType.none },
                         set: { policy.syncPlayAccess = $0 }
                     )
-                ) {
-                    ForEach(SyncPlayUserAccessType.allCases, id: \.self) { type in
-                        Text(type.displayTitle).tag(type)
-                    }
-                }
+                )
             }
         }
     }

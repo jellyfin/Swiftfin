@@ -31,24 +31,12 @@ struct ServerUserPermissionsView: View {
     private var error: Error?
     @State
     private var isPresentingError: Bool = false
-    @State
-    private var tempMaxSessionsPolicy: ActiveSessionsPolicy
-    @State
-    private var tempLoginFailurePolicy: LoginFailurePolicy
-    @State
-    private var tempMaxBitratePolicy: MaxBitratePolicy
 
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = ObservedObject(wrappedValue: viewModel)
         self.tempPolicy = viewModel.user.policy ?? UserPolicy()
-        self.tempMaxSessionsPolicy = ActiveSessionsPolicy.from(rawValue: viewModel.user.policy?.maxActiveSessions ?? 0)
-        self.tempLoginFailurePolicy = LoginFailurePolicy.from(
-            rawValue: viewModel.user.policy?.loginAttemptsBeforeLockout ?? 0,
-            isAdministrator: viewModel.user.policy?.isAdministrator ?? false
-        )
-        self.tempMaxBitratePolicy = MaxBitratePolicy.from(rawValue: viewModel.user.policy?.remoteClientBitrateLimit ?? 0)
     }
 
     // MARK: - Body
@@ -116,10 +104,7 @@ struct ServerUserPermissionsView: View {
 
             MediaPlaybackSection(policy: $tempPolicy)
 
-            ExternalAccessSection(
-                maxBitratePolicy: $tempMaxBitratePolicy,
-                policy: $tempPolicy
-            )
+            ExternalAccessSection(policy: $tempPolicy)
 
             SyncPlaySection(policy: $tempPolicy)
 
@@ -127,11 +112,7 @@ struct ServerUserPermissionsView: View {
 
             PermissionSection(policy: $tempPolicy)
 
-            SessionsSection(
-                policy: $tempPolicy,
-                loginFailurePolicy: $tempLoginFailurePolicy,
-                maxSessionsPolicy: $tempMaxSessionsPolicy
-            )
+            SessionsSection(policy: $tempPolicy)
         }
     }
 }

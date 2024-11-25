@@ -9,6 +9,7 @@
 import Foundation
 
 enum MaxBitratePolicy: Int, Displayable, CaseIterable {
+
     case unlimited = 0
     case custom = 10_000_000 // Default to 10mbps
 
@@ -23,9 +24,8 @@ enum MaxBitratePolicy: Int, Displayable, CaseIterable {
         }
     }
 
-    // MARK: - Get Policy from a Bitrate (Int)
-
-    static func from(rawValue: Int) -> MaxBitratePolicy {
-        MaxBitratePolicy(rawValue: rawValue) ?? .custom
+    init?(rawValue: Int?) {
+        guard let rawValue else { return nil }
+        self.init(rawValue: rawValue)
     }
 }

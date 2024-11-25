@@ -14,8 +14,6 @@ extension ServerUserPermissionsView {
     struct ExternalAccessSection: View {
 
         @Binding
-        var maxBitratePolicy: MaxBitratePolicy
-        @Binding
         var policy: UserPolicy
 
         // MARK: - Body
@@ -27,16 +25,15 @@ extension ServerUserPermissionsView {
                     set: { policy.enableRemoteAccess = $0 }
                 ))
 
-                Picker(L10n.maximumRemoteBitrate, selection: $maxBitratePolicy) {
-                    ForEach(MaxBitratePolicy.allCases, id: \.self) { policy in
-                        Text(policy.displayTitle).tag(policy)
-                    }
-                    .onChange(of: maxBitratePolicy) { newPolicy in
-                        policy.remoteClientBitrateLimit = newPolicy.rawValue
-                    }
-                }
+                CaseIterablePicker(
+                    L10n.maximumRemoteBitrate,
+                    selection: $policy.remoteClientBitrateLimit.map(
+                        getter: { MaxBitratePolicy(rawValue: $0) ?? .custom },
+                        setter: { $0.rawValue }
+                    )
+                )
 
-                if maxBitratePolicy == .custom {
+                if policy.remoteClientBitrateLimit == MaxBitratePolicy.custom.rawValue {
                     ChevronAlertButton(
                         L10n.customBitrate,
                         subtitle: policy.remoteClientBitrateLimit?.formatted(.bitRate),

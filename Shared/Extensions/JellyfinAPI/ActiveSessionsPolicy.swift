@@ -9,6 +9,7 @@
 import Foundation
 
 enum ActiveSessionsPolicy: Int, Displayable, CaseIterable {
+
     case unlimited = 0
     case custom = 1 // Default to 1 Active Session
 
@@ -23,9 +24,8 @@ enum ActiveSessionsPolicy: Int, Displayable, CaseIterable {
         }
     }
 
-    // MARK: - Get Policy from a Bitrate (Int)
-
-    static func from(rawValue: Int) -> ActiveSessionsPolicy {
-        ActiveSessionsPolicy(rawValue: rawValue) ?? .custom
+    init?(rawValue: Int?) {
+        guard let rawValue else { return nil }
+        self.init(rawValue: rawValue)
     }
 }

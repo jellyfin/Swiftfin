@@ -371,6 +371,8 @@
 		E10B1ECE2BD9AFD800A92EAF /* SwiftfinStore+V2.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1ECC2BD9AFD800A92EAF /* SwiftfinStore+V2.swift */; };
 		E10B1ED02BD9AFF200A92EAF /* V2UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1ECF2BD9AFF200A92EAF /* V2UserModel.swift */; };
 		E10B1ED12BD9AFF200A92EAF /* V2UserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10B1ECF2BD9AFF200A92EAF /* V2UserModel.swift */; };
+		E10E67B62CF515130095365B /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E67B52CF515130095365B /* Binding.swift */; };
+		E10E67B72CF515130095365B /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E67B52CF515130095365B /* Binding.swift */; };
 		E10E842A29A587110064EA49 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842929A587110064EA49 /* LoadingView.swift */; };
 		E10E842C29A589860064EA49 /* NonePosterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E842B29A589860064EA49 /* NonePosterButton.swift */; };
 		E10EAA4F277BBCC4000269ED /* CGSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10EAA4E277BBCC4000269ED /* CGSize.swift */; };
@@ -1093,8 +1095,8 @@
 
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
-		4E026A8A2CE804E7005471B5 /* ResetUserPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetUserPasswordView.swift; sourceTree = "<group>"; };
 		4E0195E32CE04678007844F4 /* ItemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSection.swift; sourceTree = "<group>"; };
+		4E026A8A2CE804E7005471B5 /* ResetUserPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetUserPasswordView.swift; sourceTree = "<group>"; };
 		4E0A8FFA2CAF74CD0014B047 /* TaskCompletionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskCompletionStatus.swift; sourceTree = "<group>"; };
 		4E10C8102CC030C90012CC9F /* DeviceDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailsView.swift; sourceTree = "<group>"; };
 		4E10C8162CC045530012CC9F /* CompatibilitiesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompatibilitiesSection.swift; sourceTree = "<group>"; };
@@ -1386,6 +1388,7 @@
 		E10B1EC92BD9AF8200A92EAF /* SwiftfinStore+V1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+V1.swift"; sourceTree = "<group>"; };
 		E10B1ECC2BD9AFD800A92EAF /* SwiftfinStore+V2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+V2.swift"; sourceTree = "<group>"; };
 		E10B1ECF2BD9AFF200A92EAF /* V2UserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = V2UserModel.swift; sourceTree = "<group>"; };
+		E10E67B52CF515130095365B /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		E10E842929A587110064EA49 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		E10E842B29A589860064EA49 /* NonePosterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NonePosterButton.swift; sourceTree = "<group>"; };
 		E10EAA4E277BBCC4000269ED /* CGSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGSize.swift; sourceTree = "<group>"; };
@@ -2871,6 +2874,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E1644028BB301900323B0A /* Array.swift */,
+				E10E67B52CF515130095365B /* Binding.swift */,
 				E1E6C44F29B104840064123F /* Button.swift */,
 				E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */,
 				E10EAA4E277BBCC4000269ED /* CGSize.swift */,
@@ -4993,6 +4997,7 @@
 				6220D0AE26D5EABB00B8E046 /* ViewExtensions.swift in Sources */,
 				E1575E86293E7A00001665B1 /* AppIcons.swift in Sources */,
 				E1AEFA382BE36C4900CFAFD8 /* SwiftinStore+UserState.swift in Sources */,
+				E10E67B62CF515130095365B /* Binding.swift in Sources */,
 				E11895B42893844A0042947B /* BackgroundParallaxHeaderModifier.swift in Sources */,
 				4E8F74B12CE03EB000CC8969 /* RefreshMetadataViewModel.swift in Sources */,
 				E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */,
@@ -5271,6 +5276,7 @@
 				E1BDF31729525F0400CC0294 /* AdvancedActionButton.swift in Sources */,
 				E1ED91152B95897500802036 /* LatestInLibraryViewModel.swift in Sources */,
 				62ECA01826FA685A00E8EBB7 /* DeepLink.swift in Sources */,
+				E10E67B72CF515130095365B /* Binding.swift in Sources */,
 				E119696A2CC99EA9001A58BE /* ServerTaskProgressSection.swift in Sources */,
 				E1BAFE102BE921270069C4D7 /* SwiftfinApp+ValueObservation.swift in Sources */,
 				E1ED7FDE2CAA641F00ACB6E3 /* ListTitleSection.swift in Sources */,
