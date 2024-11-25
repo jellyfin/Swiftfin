@@ -49,6 +49,9 @@ struct ServerUserPermissionsView: View {
                 router.dismissCoordinator()
             }
             .topBarTrailing {
+                if viewModel.backgroundStates.contains(.updating) {
+                    ProgressView()
+                }
                 Button(L10n.save) {
                     if tempPolicy != viewModel.user.policy {
                         viewModel.send(.updatePolicy(tempPolicy))

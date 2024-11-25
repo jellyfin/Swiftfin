@@ -30,6 +30,12 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case updateUsername(String)
     }
 
+    // MARK: Background State
+
+    enum BackgroundState: Hashable {
+        case updating
+    }
+
     // MARK: State
 
     enum State: Hashable {
@@ -43,6 +49,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     @Published
     final var state: State = .initial
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
     private(set) var user: UserDto
 
@@ -95,19 +103,28 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     private func performAction(action: @escaping () async throws -> Void) -> State {
         userTask?.cancel()
-        state = .updating
 
         userTask = Task {
             do {
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.updating)
+                }
+
                 try await action()
+
                 await MainActor.run {
                     self.state = .content
                     self.eventSubject.send(.updated)
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
                 }
             } catch {
                 let jellyfinError = JellyfinAPIError(error.localizedDescription)
                 await MainActor.run {
                     self.state = .error(jellyfinError)
+                    self.backgroundStates.remove(.updating)
                     self.eventSubject.send(.error(jellyfinError))
                 }
             }
