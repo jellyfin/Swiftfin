@@ -51,7 +51,7 @@ struct UserProfileSettingsView: View {
             }
 
             Section {
-                ChevronButton("Security")
+                ChevronButton(L10n.security)
                     .onSelect {
                         router.route(to: \.localSecurity)
                     }
@@ -60,15 +60,15 @@ struct UserProfileSettingsView: View {
             Section {
                 // TODO: move under future "Storage" tab
                 //       when downloads implemented
-                Button("Reset Settings") {
+                Button(L10n.resetSettings) {
                     isPresentingConfirmReset = true
                 }
                 .foregroundStyle(.red)
             } footer: {
-                Text("Reset Swiftfin user settings")
+                Text(L10n.resetSettingsFooter)
             }
         }
-        .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
+        .alert(L10n.resetSettings, isPresented: $isPresentingConfirmReset) {
             Button(L10n.reset, role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
@@ -77,15 +77,15 @@ struct UserProfileSettingsView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to reset all user settings?")
+            Text(L10n.resetSettingsMessage)
         }
         .confirmationDialog(
-            "Profile Image",
+            L10n.profileImage,
             isPresented: $isPresentingProfileImageOptions,
             titleVisibility: .visible
         ) {
 
-            Button("Select Image") {
+            Button(L10n.selectImage) {
                 router.route(to: \.photoPicker, viewModel.userSession.user.id)
             }
 

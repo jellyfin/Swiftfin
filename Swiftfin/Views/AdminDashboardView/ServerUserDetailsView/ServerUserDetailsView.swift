@@ -21,28 +21,77 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
+    @State
+    private var isPresentingUsernameEditor: Bool = false
+    @State
+    private var isPresentingProfileImageOptions: Bool = false
+
+    @State
+    private var tempUsername: String
+
     // MARK: - Initializer
 
     init(user: UserDto) {
         _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        tempUsername = user.name ?? ""
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            AdminDashboardView.UserSection(
-                user: viewModel.user,
-                lastActivityDate: viewModel.user.lastActivityDate
+            UserProfileImagePicker.ProfileImageSection(
+                imageSource: viewModel.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 120
+                ),
+                username: viewModel.user.name ?? L10n.unknown
             ) {
-                router.route(to: \.userProfile, viewModel)
+                isPresentingProfileImageOptions = true
             }
 
-            Section(L10n.advanced) {}
+            Section {
+                ChevronButton(L10n.password)
+                    .onSelect {
+                        router.route(to: \.resetUserPassword, viewModel.user.id!)
+                    }
+            }
         }
         .navigationTitle(L10n.user)
         .onAppear {
             viewModel.send(.loadDetails)
+        }
+        .confirmationDialog(
+            L10n.profileImage,
+            isPresented: $isPresentingProfileImageOptions,
+            titleVisibility: .visible
+        ) {
+
+            Button(L10n.editUsername) {
+                isPresentingUsernameEditor = true
+            }
+
+            Button(L10n.selectImage) {
+                router.route(to: \.photoPicker, viewModel.user.id!)
+            }
+
+            Button(L10n.delete, role: .destructive) {
+                viewModel.deleteCurrentUserProfileImage()
+            }
+        }
+        .alert(L10n.username, isPresented: $isPresentingUsernameEditor) {
+            TextField(L10n.username, text: $tempUsername)
+            Button(L10n.cancel, role: .cancel) {
+                tempUsername = viewModel.user.name ?? ""
+                isPresentingUsernameEditor = false
+            }
+            Button(L10n.save) {
+                viewModel.send(.updateUsername(username: tempUsername))
+                tempUsername = ""
+                isPresentingUsernameEditor = false
+            }
+        } message: {
+            Text(L10n.editUsernameMessage)
         }
     }
 }

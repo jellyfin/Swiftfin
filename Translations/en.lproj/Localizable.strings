@@ -250,7 +250,6 @@
 "appIcon" = "App Icon";
 "accentColor" = "Accent Color";
 "accentColorDescription" = "Some views may need an app restart to update.";
-"dismiss" = "Dismiss";
 "played" = "Played";
 "unplayed" = "Unplayed";
 "video" = "Video";
@@ -1379,3 +1378,53 @@
 // Represents a speed in terabits per second
 // Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Profile Image - Dialog Title
+// Title for the profile image options dialog
+// Used when presenting profile image actions
+"profileImage" = "Profile Image";
+
+// Edit Username - Button
+// Button text to edit a username
+// Used in the profile image actions dialog
+"editUsername" = "Edit Username";
+
+// Edit Username Message - Alert
+// Message prompting the user to input a new username
+// Used in the username edit alert dialog
+"editUsernameMessage" = "Input a new username for this user.";
+
+// Select Image - Button
+// Button text to select a profile image
+// Used in the profile image actions dialog
+"selectImage" = "Select Image";
+
+// Security - Section Header, Section Title
+// Represents security settings
+// Used in the user profile settings view
+"security" = "Security";
+
+// Reset Settings - Button
+// Button text to reset user settings
+// Used in the user profile settings view
+"resetSettings" = "Reset Settings";
+
+// Reset Settings Message - Alert
+// Message confirming the reset of user settings
+// Used in the reset settings alert
+"resetSettingsMessage" = "Are you sure you want to reset all user settings?";
+
+// Reset Swiftfin User Settings - Footer
+// Footer text explaining reset action
+// Used in the reset settings section footer
+"resetSettingsFooter" = "Reset Swiftfin user settings";
+
+// Quick Connect Instructions - Dialog Message
+// Message instructing the user to enter a 6-digit code
+// Used in quick connect authentication flow
+"quickConnectInstructions" = "Enter the 6 digit code from your other device.";
+
+// Dismiss - Button
+// Button text to dismiss alerts
+// Used in error dialogs
+"dismiss" = "Dismiss";

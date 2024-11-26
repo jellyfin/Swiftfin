@@ -390,6 +390,10 @@ internal enum L10n {
   internal static let editJumpLengths = L10n.tr("Localizable", "editJumpLengths", fallback: "Edit Jump Lengths")
   /// Select Server View - Edit an Existing Server
   internal static let editServer = L10n.tr("Localizable", "editServer", fallback: "Edit Server")
+  /// Edit Username
+  internal static let editUsername = L10n.tr("Localizable", "editUsername", fallback: "Edit Username")
+  /// Input a new username for this user.
+  internal static let editUsernameMessage = L10n.tr("Localizable", "editUsernameMessage", fallback: "Input a new username for this user.")
   /// Edit Users
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Empty Next Up
@@ -728,6 +732,8 @@ internal enum L10n {
   internal static let previousItem = L10n.tr("Localizable", "previousItem", fallback: "Previous Item")
   /// Primary
   internal static let primary = L10n.tr("Localizable", "primary", fallback: "Primary")
+  /// Profile Image
+  internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// PlaybackCompatibility Profile Sections
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Programs
@@ -740,6 +746,8 @@ internal enum L10n {
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
   internal static let quickConnectCode = L10n.tr("Localizable", "quickConnectCode", fallback: "Quick Connect code")
+  /// Enter the 6 digit code from your other device.
+  internal static let quickConnectInstructions = L10n.tr("Localizable", "quickConnectInstructions", fallback: "Enter the 6 digit code from your other device.")
   /// Invalid Quick Connect code
   internal static let quickConnectInvalidError = L10n.tr("Localizable", "quickConnectInvalidError", fallback: "Invalid Quick Connect code")
   /// Note: Quick Connect not enabled
@@ -814,6 +822,12 @@ internal enum L10n {
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
   /// Reset App Settings
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
+  /// Reset Settings
+  internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
+  /// Reset Swiftfin user settings
+  internal static let resetSettingsFooter = L10n.tr("Localizable", "resetSettingsFooter", fallback: "Reset Swiftfin user settings")
+  /// Are you sure you want to reset all user settings?
+  internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Reset User Settings
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
   /// Restart Server Label
@@ -868,6 +882,8 @@ internal enum L10n {
   internal static let seasons = L10n.tr("Localizable", "seasons", fallback: "Seasons")
   /// TranscodeReason - Secondary Audio Not Supported
   internal static let secondaryAudioNotSupported = L10n.tr("Localizable", "secondaryAudioNotSupported", fallback: "Secondary audio is not supported")
+  /// Security
+  internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
   /// See All
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
   /// Seek Slide Gesture Enabled
@@ -878,6 +894,8 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
+  /// Select Image
+  internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop

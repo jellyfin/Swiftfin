@@ -30,10 +30,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     enum Action: Equatable {
         case cancel
         case loadDetails
-        case resetPassword
-        case updatePassword(password: String)
-        case updatePolicy(policy: UserPolicy)
-        case updateConfiguration(configuration: UserConfiguration)
+        case updateUsername(username: String)
     }
 
     // MARK: State
@@ -86,33 +83,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             resetTask?.cancel()
             return .initial
 
-        case .resetPassword:
-            resetTask = Task {
-                await MainActor.run {
-                    _ = self.backgroundStates.append(.updating)
-                }
-
-                do {
-                    try await resetPassword()
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
-
         case .loadDetails:
             resetTask = Task {
                 do {
@@ -132,48 +102,10 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
             return .initial
 
-        case let .updatePassword(password):
+        case let .updateUsername(username):
             resetTask = Task {
                 do {
-                    try await updatePassword(password: password)
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
-
-        case let .updatePolicy(policy):
-            resetTask = Task {
-                do {
-                    try await updatePolicy(policy: policy)
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
-            }
-            .asAnyCancellable()
-
-            return .initial
-
-        case let .updateConfiguration(configuration):
-            resetTask = Task {
-                do {
-                    try await updateConfiguration(configuration: configuration)
+                    try await updateUsername(username: username)
                     await MainActor.run {
                         self.state = .initial
                         self.eventSubject.send(.success)
@@ -191,53 +123,18 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
     }
 
-    // MARK: - Reset Password
+    // MARK: - Update Username
 
-    private func resetPassword() async throws {
-        guard let userId = user.id else { return }
-        let parameters = UpdateUserPassword(isResetPassword: true)
-        let request = Paths.updateUserPassword(userID: userId, parameters)
-        try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.user.hasPassword = false
-        }
-    }
-
-    // MARK: - Update Password
-
-    private func updatePassword(password: String) async throws {
+    private func updateUsername(username: String) async throws {
         guard let userID = user.id else { return }
-        let parameters = UpdateUserPassword(newPw: password)
-        let request = Paths.updateUserPassword(userID: userID, parameters)
+        var updatedUser = user
+        updatedUser.name = username
+
+        let request = Paths.updateUser(userID: userID, updatedUser)
         try await userSession.client.send(request)
 
         await MainActor.run {
-            self.user.hasPassword = (password != "")
-        }
-    }
-
-    // MARK: - Update User Policy
-
-    private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userID = user.id else { return }
-        let request = Paths.updateUserPolicy(userID: userID, policy)
-        try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.user.policy = policy
-        }
-    }
-
-    // MARK: - Update User Configuration
-
-    private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userID = user.id else { return }
-        let request = Paths.updateUserConfiguration(userID: userID, configuration)
-        try await userSession.client.send(request)
-
-        await MainActor.run {
-            self.user.configuration = configuration
+            self.user.name = username
         }
     }
 
@@ -258,7 +155,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
             await MainActor.run {
                 userSession.user.data = response.value
-
                 Notifications[.didChangeUserProfileImage].post()
             }
         }

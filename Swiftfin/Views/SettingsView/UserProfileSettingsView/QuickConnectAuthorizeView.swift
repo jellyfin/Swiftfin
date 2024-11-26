@@ -41,7 +41,7 @@ struct QuickConnectAuthorizeView: View {
                     .disabled(viewModel.state == .authorizing)
                     .focused($isCodeFocused)
             } footer: {
-                Text("Enter the 6 digit code from your other device.")
+                Text(L10n.quickConnectInstructions)
             }
 
             if viewModel.state == .authorizing {
