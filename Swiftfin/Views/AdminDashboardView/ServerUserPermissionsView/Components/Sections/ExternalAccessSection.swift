@@ -35,6 +35,9 @@ extension ServerUserPermissionsView {
                         setter: { $0.rawValue }
                     )
                 )
+                .onChange(of: policy.remoteClientBitrateLimit) { _ in
+                    tempBitrateLimit = policy.remoteClientBitrateLimit
+                }
 
                 if policy.remoteClientBitrateLimit != MaxBitratePolicy.unlimited.rawValue {
                     ChevronAlertButton(
@@ -44,7 +47,7 @@ extension ServerUserPermissionsView {
                     ) {
                         MaxBitrateInput()
                     } onSave: {
-                        if let tempValue = tempBitrateLimit {
+                        if let tempValue = tempBitrateLimit, tempValue != 0 {
                             policy.remoteClientBitrateLimit = tempValue
                         }
                     } onCancel: {
@@ -58,12 +61,16 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxBitrateInput() -> some View {
-            let displayBitrate = Double(tempBitrateLimit ?? policy.remoteClientBitrateLimit ?? 0) / 1_000_000
+            let displayBitrate =
+                max(
+                    Double(tempBitrateLimit ?? policy.remoteClientBitrateLimit ?? 0) / 1_000_000,
+                    0.001 // Minimum bitrate of 1 Kbps
+                )
 
             let bitrateBinding = Binding<Double>(
                 get: { displayBitrate },
                 set: { newValue in
-                    tempBitrateLimit = Int(newValue * 1_000_000)
+                    tempBitrateLimit = max(Int(newValue * 1_000_000), 1000) // Minimum bitrate of 1 Kbps
                 }
             )
 

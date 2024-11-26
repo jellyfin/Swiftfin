@@ -68,6 +68,9 @@ extension ServerUserPermissionsView {
                         Text(policy.displayTitle).tag(policy)
                     }
                 }
+                .onChange(of: policy.loginAttemptsBeforeLockout) { _ in
+                    tempLoginAttempts = policy.loginAttemptsBeforeLockout
+                }
 
                 if isCustomLoginFailurePolicy {
                     MaxFailedLoginsButton()
@@ -106,14 +109,17 @@ extension ServerUserPermissionsView {
                 description: L10n.enterCustomFailedLogins
             ) {
                 let loginAttemptsBinding = Binding<Int>(
-                    get: { tempLoginAttempts ?? policy.loginAttemptsBeforeLockout ?? 0 },
-                    set: { newValue in tempLoginAttempts = newValue }
+                    get: { max(tempLoginAttempts ?? policy.loginAttemptsBeforeLockout ?? 1, 1) },
+                    set: { newValue in
+                        tempLoginAttempts = max(newValue, 1)
+                    }
                 )
 
                 TextField(L10n.failedLogins, value: loginAttemptsBinding, format: .number)
                     .keyboardType(.numberPad)
+
             } onSave: {
-                if let tempValue = tempLoginAttempts {
+                if let tempValue = tempLoginAttempts, tempValue > 0 {
                     policy.loginAttemptsBeforeLockout = tempValue
                 }
             } onCancel: {
@@ -133,9 +139,14 @@ extension ServerUserPermissionsView {
                         setter: { $0.rawValue }
                     )
                 )
+                .onChange(of: policy.maxActiveSessions) { _ in
+                    tempMaxSessions = policy.maxActiveSessions
+                }
+
                 if policy.maxActiveSessions != ActiveSessionsPolicy.unlimited.rawValue {
                     MaxSessionsButton()
                 }
+
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.maximumConnectionsDescription)
@@ -165,14 +176,17 @@ extension ServerUserPermissionsView {
                 description: L10n.enterCustomMaxSessions
             ) {
                 let maxSessionsBinding = Binding<Int>(
-                    get: { tempMaxSessions ?? policy.maxActiveSessions ?? 0 },
-                    set: { newValue in tempMaxSessions = newValue }
+                    get: { max(tempMaxSessions ?? policy.maxActiveSessions ?? 1, 1) },
+                    set: { newValue in
+                        tempMaxSessions = max(newValue, 1)
+                    }
                 )
 
                 TextField(L10n.maximumSessions, value: maxSessionsBinding, format: .number)
                     .keyboardType(.numberPad)
+
             } onSave: {
-                if let tempValue = tempMaxSessions {
+                if let tempValue = tempMaxSessions, tempValue > 0 {
                     policy.maxActiveSessions = tempValue
                 }
             } onCancel: {

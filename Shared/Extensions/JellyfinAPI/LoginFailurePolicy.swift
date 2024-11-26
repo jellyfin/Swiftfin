@@ -13,7 +13,7 @@ enum LoginFailurePolicy: Int, Displayable, CaseIterable {
     case unlimited = -1
     case userDefault = 3
     case adminDefault = 5
-    case custom = 0 // Default to 0
+    case custom = 1 // Default to 1
 
     // MARK: - Display Title
 
