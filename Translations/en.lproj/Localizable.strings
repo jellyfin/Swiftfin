@@ -1570,3 +1570,48 @@
 // Represents a speed in terabits per second
 // Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Maximum Failed Login Policy - Description
+// Explanation of the maximum failed login attempts policy
+// Used in the user settings view
+"maximumFailedLoginPolicyDescription" = "Sets the maximum failed login attempts before a user is locked out.";
+
+// Maximum Failed Login Policy Re-enable - Description
+// Explanation of the resetting locked users
+// Used in the user settings view
+"maximumFailedLoginPolicyReenable" = "Locked users must be re-enabled by an Administrator.";
+
+// Locked Users - Title
+// Section title for description on Locked Users
+// Used in the user settings view
+"lockedUsers" = "Locked users";
+
+// Unlimited - Description
+// Explanation of the unlimited login attempts policy
+// Used in the user settings view
+"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.";
+
+// Default - Description
+// Explanation of the default login attempts policy
+// Used in the user settings view
+"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.";
+
+// Custom - Description
+// Explanation of the custom login attempts policy
+// Used in the user settings view
+"customFailedLoginDescription" = "Manually set the number of failed login attempts allowed before locking the user.";
+
+// Maximum Connections Policy - Description
+// Explanation of the maximum connections policy
+// Used in the user settings view
+"maximumConnectionsDescription" = "Limits the total number of connections a user can have to the server.";
+
+// Unlimited Connections - Description
+// Explanation of unlimited connections policy
+// Used in the user settings view
+"unlimitedConnectionsDescription" = "The user can connect to the server without any limits. On the server, this is represented by 0.";
+
+// Custom Connections - Description
+// Explanation of custom connections policy
+// Used in the user settings view
+"customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";

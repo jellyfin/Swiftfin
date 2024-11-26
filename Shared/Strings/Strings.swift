@@ -280,6 +280,8 @@ internal enum L10n {
   internal static let custom = L10n.tr("Localizable", "custom", fallback: "Custom")
   /// Custom bitrate
   internal static let customBitrate = L10n.tr("Localizable", "customBitrate", fallback: "Custom bitrate")
+  /// Manually set the maximum number of connections a user can have to the server.
+  internal static let customConnectionsDescription = L10n.tr("Localizable", "customConnectionsDescription", fallback: "Manually set the maximum number of connections a user can have to the server.")
   /// Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.
   internal static let customDescription = L10n.tr("Localizable", "customDescription", fallback: "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.")
   /// Custom Device Name
@@ -294,6 +296,8 @@ internal enum L10n {
   internal static let customDeviceProfileDescription = L10n.tr("Localizable", "customDeviceProfileDescription", fallback: "Dictates back to the Jellyfin Server what this device hardware is capable of playing.")
   /// Custom profile will replace the Existing Profiles
   internal static let customDeviceProfileReplace = L10n.tr("Localizable", "customDeviceProfileReplace", fallback: "The custom device profiles will replace the default Swiftfin device profiles.")
+  /// Manually set the number of failed login attempts allowed before locking the user.
+  internal static let customFailedLoginDescription = L10n.tr("Localizable", "customFailedLoginDescription", fallback: "Manually set the number of failed login attempts allowed before locking the user.")
   /// Custom failed logins
   internal static let customFailedLogins = L10n.tr("Localizable", "customFailedLogins", fallback: "Custom failed logins")
   /// Settings View - Customize
@@ -318,6 +322,8 @@ internal enum L10n {
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
+  /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.
+  internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -576,6 +582,8 @@ internal enum L10n {
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
   /// Local Servers
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local Servers")
+  /// Locked users
+  internal static let lockedUsers = L10n.tr("Localizable", "lockedUsers", fallback: "Locked users")
   /// Login
   internal static let login = L10n.tr("Localizable", "login", fallback: "Login")
   /// Login to %@
@@ -592,8 +600,14 @@ internal enum L10n {
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
   /// Option to set the maximum bitrate for playback
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
+  /// Limits the total number of connections a user can have to the server.
+  internal static let maximumConnectionsDescription = L10n.tr("Localizable", "maximumConnectionsDescription", fallback: "Limits the total number of connections a user can have to the server.")
   /// Maximum failed login policy
   internal static let maximumFailedLoginPolicy = L10n.tr("Localizable", "maximumFailedLoginPolicy", fallback: "Maximum failed login policy")
+  /// Sets the maximum failed login attempts before a user is locked out.
+  internal static let maximumFailedLoginPolicyDescription = L10n.tr("Localizable", "maximumFailedLoginPolicyDescription", fallback: "Sets the maximum failed login attempts before a user is locked out.")
+  /// Locked users must be re-enabled by an Administrator.
+  internal static let maximumFailedLoginPolicyReenable = L10n.tr("Localizable", "maximumFailedLoginPolicyReenable", fallback: "Locked users must be re-enabled by an Administrator.")
   /// Maximum remote bitrate
   internal static let maximumRemoteBitrate = L10n.tr("Localizable", "maximumRemoteBitrate", fallback: "Maximum remote bitrate")
   /// Maximum sessions
@@ -1158,6 +1172,10 @@ internal enum L10n {
   internal static let unknownVideoStreamInfo = L10n.tr("Localizable", "unknownVideoStreamInfo", fallback: "The video stream information is unknown")
   /// Unlimited
   internal static let unlimited = L10n.tr("Localizable", "unlimited", fallback: "Unlimited")
+  /// The user can connect to the server without any limits. On the server, this is represented by 0.
+  internal static let unlimitedConnectionsDescription = L10n.tr("Localizable", "unlimitedConnectionsDescription", fallback: "The user can connect to the server without any limits. On the server, this is represented by 0.")
+  /// Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.
+  internal static let unlimitedFailedLoginDescription = L10n.tr("Localizable", "unlimitedFailedLoginDescription", fallback: "Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.")
   /// Unplayed
   internal static let unplayed = L10n.tr("Localizable", "unplayed", fallback: "Unplayed")
   /// You have unsaved changes. Are you sure you want to discard them?

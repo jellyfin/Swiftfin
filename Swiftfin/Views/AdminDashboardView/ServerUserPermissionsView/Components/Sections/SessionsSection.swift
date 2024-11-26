@@ -16,10 +16,14 @@ extension ServerUserPermissionsView {
         @Binding
         var policy: UserPolicy
 
+        // MARK: - State Variables
+
         @State
         private var tempLoginAttempts: Int?
         @State
         private var tempMaxSessions: Int?
+
+        // MARK: - Failed Login Validation
 
         private var filteredLoginFailurePolicies: [LoginFailurePolicy] {
             LoginFailurePolicy.allCases.filter {
@@ -41,8 +45,15 @@ extension ServerUserPermissionsView {
         }
 
         var body: some View {
-            Section(L10n.sessions) {
+            FailedLoginsView
+            MaxSessionsView
+        }
 
+        // MARK: - Failed Login Selection View
+
+        @ViewBuilder
+        private var FailedLoginsView: some View {
+            Section {
                 Picker(
                     L10n.maximumFailedLoginPolicy,
                     selection: $policy.loginAttemptsBeforeLockout.map(
@@ -59,25 +70,36 @@ extension ServerUserPermissionsView {
                 }
 
                 if isCustomLoginFailurePolicy {
-                    MaxFailedLoginsButtonView()
+                    MaxFailedLoginsButton()
                 }
 
-                CaseIterablePicker(
-                    L10n.maximumSessionsPolicy,
-                    selection: $policy.maxActiveSessions.map(
-                        getter: { ActiveSessionsPolicy(rawValue: $0) ?? .custom },
-                        setter: { $0.rawValue }
-                    )
-                )
-
-                if policy.maxActiveSessions != ActiveSessionsPolicy.unlimited.rawValue {
-                    MaxSessionsButtonView()
+            } header: {
+                Text(L10n.sessions)
+            } footer: {
+                VStack(alignment: .leading) {
+                    Text(L10n.maximumFailedLoginPolicyDescription)
+                    LearnMoreButton(L10n.maximumFailedLoginPolicy) {
+                        TextPair(
+                            title: L10n.unlimited,
+                            subtitle: L10n.unlimitedFailedLoginDescription
+                        )
+                        TextPair(
+                            title: L10n.default,
+                            subtitle: L10n.defaultFailedLoginDescription
+                        )
+                        TextPair(
+                            title: L10n.custom,
+                            subtitle: L10n.customFailedLoginDescription
+                        )
+                    }
                 }
             }
         }
 
+        // MARK: - Failed Login Selection Button
+
         @ViewBuilder
-        private func MaxFailedLoginsButtonView() -> some View {
+        private func MaxFailedLoginsButton() -> some View {
             ChevronAlertButton(
                 L10n.customFailedLogins,
                 subtitle: Text(tempLoginAttempts ?? policy.loginAttemptsBeforeLockout ?? 0, format: .number),
@@ -99,8 +121,44 @@ extension ServerUserPermissionsView {
             }
         }
 
+        // MARK: - Failed Login Validation
+
         @ViewBuilder
-        private func MaxSessionsButtonView() -> some View {
+        private var MaxSessionsView: some View {
+            Section {
+                CaseIterablePicker(
+                    L10n.maximumSessionsPolicy,
+                    selection: $policy.maxActiveSessions.map(
+                        getter: { ActiveSessionsPolicy(rawValue: $0) ?? .custom },
+                        setter: { $0.rawValue }
+                    )
+                )
+                if policy.maxActiveSessions != ActiveSessionsPolicy.unlimited.rawValue {
+                    MaxSessionsButton()
+                }
+            } footer: {
+                VStack(alignment: .leading) {
+                    Text(L10n.maximumConnectionsDescription)
+                    LearnMoreButton(L10n.maximumSessionsPolicy) {
+                        TextPair(
+                            title: L10n.lockedUsers,
+                            subtitle: L10n.maximumFailedLoginPolicyReenable
+                        )
+                        TextPair(
+                            title: L10n.unlimited,
+                            subtitle: L10n.unlimitedConnectionsDescription
+                        )
+                        TextPair(
+                            title: L10n.custom,
+                            subtitle: L10n.customConnectionsDescription
+                        )
+                    }
+                }
+            }
+        }
+
+        @ViewBuilder
+        private func MaxSessionsButton() -> some View {
             ChevronAlertButton(
                 L10n.customSessions,
                 subtitle: Text(tempMaxSessions ?? policy.maxActiveSessions ?? 0, format: .number),
