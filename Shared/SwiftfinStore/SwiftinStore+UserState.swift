@@ -68,6 +68,11 @@ extension UserState {
         data.policy?.isAdministrator ?? false
     }
 
+    // Validate that the use has permission to delete something whether from a folder or all folders
+    var hasDeletionPermissions: Bool {
+        data.policy?.enableContentDeletion ?? false || data.policy?.enableContentDeletionFromFolders != []
+    }
+
     var pinHint: String {
         get {
             StoredValues[.User.pinHint(id: id)]

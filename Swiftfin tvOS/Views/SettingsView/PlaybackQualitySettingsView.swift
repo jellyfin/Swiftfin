@@ -20,13 +20,22 @@ struct PlaybackQualitySettingsView: View {
     @EnvironmentObject
     private var router: PlaybackQualitySettingsCoordinator.Router
 
+    // MARK: - Focus Management
+
+    @FocusState
+    private var focusedItem: FocusableItem?
+
+    private enum FocusableItem: Hashable {
+        case maximumBitrate
+        case compatibility
+    }
+
+    // MARK: - Body
+
     var body: some View {
         SplitFormWindowView()
             .descriptionView {
-                Image(systemName: "play.rectangle.on.rectangle")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(maxWidth: 400)
+                descriptionView
             }
             .contentView {
                 Section {
@@ -34,12 +43,11 @@ struct PlaybackQualitySettingsView: View {
                         title: L10n.maximumBitrate,
                         selection: $appMaximumBitrate
                     )
+                    .focused($focusedItem, equals: .maximumBitrate)
                 } header: {
                     L10n.bitrateDefault.text
                 } footer: {
-                    VStack(alignment: .leading) {
-                        L10n.bitrateDefaultDescription.text
-                    }
+                    L10n.bitrateDefaultDescription.text
                 }
                 .animation(.none, value: appMaximumBitrate)
 
@@ -49,13 +57,8 @@ struct PlaybackQualitySettingsView: View {
                             title: L10n.testSize,
                             selection: $appMaximumBitrateTest
                         )
-                    } header: {
-                        L10n.bitrateTest.text
                     } footer: {
-                        VStack(alignment: .leading, spacing: 8) {
-                            L10n.bitrateTestDescription.text
-                            L10n.bitrateTestDisclaimer.text
-                        }
+                        L10n.bitrateTestDisclaimer.text
                     }
                 }
 
@@ -64,7 +67,7 @@ struct PlaybackQualitySettingsView: View {
                         title: L10n.compatibility,
                         selection: $compatibilityMode
                     )
-                    .animation(.none, value: compatibilityMode)
+                    .focused($focusedItem, equals: .compatibility)
 
                     if compatibilityMode == .custom {
                         ChevronButton(L10n.profiles)
@@ -74,8 +77,66 @@ struct PlaybackQualitySettingsView: View {
                     }
                 } header: {
                     L10n.deviceProfile.text
+                } footer: {
+                    L10n.deviceProfileDescription.text
                 }
             }
             .navigationTitle(L10n.playbackQuality)
+    }
+
+    // MARK: - Description View Icon
+
+    private var descriptionView: some View {
+        ZStack {
+            Image(systemName: "play.rectangle.on.rectangle")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(maxWidth: 400)
+
+            focusedDescription
+                .transition(.opacity.animation(.linear(duration: 0.2)))
+        }
+    }
+
+    // MARK: - Description View on Focus
+
+    @ViewBuilder
+    private var focusedDescription: some View {
+        switch focusedItem {
+        case .maximumBitrate:
+            LearnMoreModal {
+                TextPair(
+                    title: L10n.auto,
+                    subtitle: L10n.birateAutoDescription
+                )
+                TextPair(
+                    title: L10n.bitrateMax,
+                    subtitle: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
+                )
+            }
+
+        case .compatibility:
+            LearnMoreModal {
+                TextPair(
+                    title: L10n.auto,
+                    subtitle: L10n.autoDescription
+                )
+                TextPair(
+                    title: L10n.compatible,
+                    subtitle: L10n.compatibleDescription
+                )
+                TextPair(
+                    title: L10n.direct,
+                    subtitle: L10n.directDescription
+                )
+                TextPair(
+                    title: L10n.custom,
+                    subtitle: L10n.customDescription
+                )
+            }
+
+        case nil:
+            EmptyView()
+        }
     }
 }

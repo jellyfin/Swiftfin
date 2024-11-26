@@ -72,7 +72,7 @@ struct CustomDeviceProfileSettingsView: View {
         .navigationTitle(L10n.profiles)
         .topBarTrailing {
             if customProfiles.isNotEmpty {
-                Button("Add") {
+                Button(L10n.add) {
                     UIDevice.impact(.light)
                     router.route(to: \.createCustomDeviceProfile)
                 }

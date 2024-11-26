@@ -20,10 +20,12 @@ extension LetterPickerBar {
         private var isSelected
 
         private let letter: ItemLetter
+        private let size: CGFloat
         private let viewModel: FilterViewModel
 
-        init(letter: ItemLetter, viewModel: FilterViewModel) {
+        init(letter: ItemLetter, size: CGFloat, viewModel: FilterViewModel) {
             self.letter = letter
+            self.size = size
             self.viewModel = viewModel
         }
 
@@ -37,15 +39,15 @@ extension LetterPickerBar {
             } label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 5)
+                        .frame(width: size, height: size)
                         .foregroundStyle(isSelected ? accentColor : Color.clear)
 
                     Text(letter.value)
                         .font(.headline)
                         .foregroundStyle(isSelected ? accentColor.overlayColor : accentColor)
+                        .frame(width: size, height: size, alignment: .center)
                 }
-                .frame(width: 20, height: 20)
             }
-            .frame(width: 50, height: 20)
         }
     }
 }
