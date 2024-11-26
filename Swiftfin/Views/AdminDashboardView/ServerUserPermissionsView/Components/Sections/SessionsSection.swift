@@ -31,6 +31,15 @@ extension ServerUserPermissionsView {
             }
         }
 
+        private var isCustomLoginFailurePolicy: Bool {
+            ![
+                LoginFailurePolicy.unlimited.rawValue,
+                LoginFailurePolicy.adminDefault.rawValue,
+                LoginFailurePolicy.userDefault.rawValue
+            ]
+                .contains(policy.loginAttemptsBeforeLockout)
+        }
+
         var body: some View {
             Section(L10n.sessions) {
 
@@ -49,13 +58,7 @@ extension ServerUserPermissionsView {
                     }
                 }
 
-                if ![
-                    LoginFailurePolicy.unlimited.rawValue,
-                    LoginFailurePolicy.adminDefault.rawValue,
-                    LoginFailurePolicy.userDefault.rawValue
-                ]
-                    .contains(policy.loginAttemptsBeforeLockout)
-                {
+                if isCustomLoginFailurePolicy {
                     MaxFailedLoginsButtonView()
                 }
 
@@ -77,7 +80,7 @@ extension ServerUserPermissionsView {
         private func MaxFailedLoginsButtonView() -> some View {
             ChevronAlertButton(
                 L10n.customFailedLogins,
-                subtitle: (tempLoginAttempts ?? policy.loginAttemptsBeforeLockout ?? 0).description,
+                subtitle: Text(tempLoginAttempts ?? policy.loginAttemptsBeforeLockout ?? 0, format: .number),
                 description: L10n.enterCustomFailedLogins
             ) {
                 let loginAttemptsBinding = Binding<Int>(
@@ -100,7 +103,7 @@ extension ServerUserPermissionsView {
         private func MaxSessionsButtonView() -> some View {
             ChevronAlertButton(
                 L10n.customSessions,
-                subtitle: (tempMaxSessions ?? policy.maxActiveSessions ?? 0).description,
+                subtitle: Text(tempMaxSessions ?? policy.maxActiveSessions ?? 0, format: .number),
                 description: L10n.enterCustomMaxSessions
             ) {
                 let maxSessionsBinding = Binding<Int>(
