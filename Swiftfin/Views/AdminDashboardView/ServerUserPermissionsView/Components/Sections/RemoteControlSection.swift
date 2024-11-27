@@ -18,15 +18,16 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.remoteControl) {
-                Toggle(L10n.controlOtherUsers, isOn: Binding(
-                    get: { policy.enableRemoteControlOfOtherUsers ?? false },
-                    set: { policy.enableRemoteControlOfOtherUsers = $0 }
-                ))
 
-                Toggle(L10n.controlSharedDevices, isOn: Binding(
-                    get: { policy.enableSharedDeviceControl ?? false },
-                    set: { policy.enableSharedDeviceControl = $0 }
-                ))
+                Toggle(
+                    L10n.controlOtherUsers,
+                    isOn: $policy.enableRemoteControlOfOtherUsers.coalesce(false)
+                )
+
+                Toggle(
+                    L10n.controlSharedDevices,
+                    isOn: $policy.enableSharedDeviceControl.coalesce(false)
+                )
             }
         }
     }

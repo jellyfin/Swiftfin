@@ -18,15 +18,16 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.permissions) {
-                Toggle(L10n.mediaDownloads, isOn: Binding(
-                    get: { policy.enableContentDownloading ?? false },
-                    set: { policy.enableContentDownloading = $0 }
-                ))
 
-                Toggle(L10n.hideUserFromLoginScreen, isOn: Binding(
-                    get: { policy.isHidden ?? false },
-                    set: { policy.isHidden = $0 }
-                ))
+                Toggle(
+                    L10n.mediaDownloads,
+                    isOn: $policy.enableContentDownloading.coalesce(false)
+                )
+
+                Toggle(
+                    L10n.hideUserFromLoginScreen,
+                    isOn: $policy.isHidden.coalesce(false)
+                )
             }
         }
     }

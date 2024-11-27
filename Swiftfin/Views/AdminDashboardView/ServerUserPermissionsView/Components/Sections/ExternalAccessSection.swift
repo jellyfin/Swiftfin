@@ -14,19 +14,24 @@ extension ServerUserPermissionsView {
     struct ExternalAccessSection: View {
 
         @Binding
-        var policy: UserPolicy
+        private var policy: UserPolicy
 
         @State
         private var tempBitrateLimit: Int?
+
+        init(policy: Binding<UserPolicy>) {
+            self._policy = policy
+            _tempBitrateLimit = State(initialValue: policy.wrappedValue.remoteClientBitrateLimit)
+        }
 
         // MARK: - Body
 
         var body: some View {
             Section(L10n.remoteConnections) {
-                Toggle(L10n.remoteConnections, isOn: Binding(
-                    get: { policy.enableRemoteAccess ?? false },
-                    set: { policy.enableRemoteAccess = $0 }
-                ))
+                Toggle(
+                    L10n.remoteConnections,
+                    isOn: $policy.enableRemoteAccess.coalesce(false)
+                )
 
                 CaseIterablePicker(
                     L10n.maximumRemoteBitrate,
@@ -47,9 +52,7 @@ extension ServerUserPermissionsView {
                     ) {
                         MaxBitrateInput()
                     } onSave: {
-                        if let tempValue = tempBitrateLimit, tempValue != 0 {
-                            policy.remoteClientBitrateLimit = tempValue
-                        }
+                        policy.remoteClientBitrateLimit = tempBitrateLimit
                     } onCancel: {
                         tempBitrateLimit = policy.remoteClientBitrateLimit
                     }
@@ -61,18 +64,14 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxBitrateInput() -> some View {
-            let displayBitrate =
-                max(
-                    Double(tempBitrateLimit ?? policy.remoteClientBitrateLimit ?? 0) / 1_000_000,
-                    0.001 // Minimum bitrate of 1 Kbps
+            let bitrateBinding = $tempBitrateLimit
+                .coalesce(0)
+                .map(
+                    // Convert to Mbps
+                    getter: { Double($0) / 1_000_000 },
+                    setter: { Int($0 * 1_000_000) }
                 )
-
-            let bitrateBinding = Binding<Double>(
-                get: { displayBitrate },
-                set: { newValue in
-                    tempBitrateLimit = max(Int(newValue * 1_000_000), 1000) // Minimum bitrate of 1 Kbps
-                }
-            )
+                .min(0.001) // Minimum bitrate of 1 Kbps
 
             TextField(L10n.maximumBitrate, value: bitrateBinding, format: .number)
                 .keyboardType(.numbersAndPunctuation)

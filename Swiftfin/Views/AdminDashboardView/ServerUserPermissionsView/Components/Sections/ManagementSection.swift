@@ -18,10 +18,10 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.management) {
-                Toggle(L10n.administrator, isOn: Binding(
-                    get: { policy.isAdministrator ?? false },
-                    set: { policy.isAdministrator = $0 }
-                ))
+                Toggle(
+                    L10n.administrator,
+                    isOn: $policy.isAdministrator.coalesce(false)
+                )
 
                 // TODO: Enable for 10.9
                 /* Toggle(L10n.collections, isOn: Binding(

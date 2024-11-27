@@ -18,30 +18,31 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.mediaPlayback) {
-                Toggle(L10n.mediaPlayback, isOn: Binding(
-                    get: { policy.enableMediaPlayback ?? false },
-                    set: { policy.enableMediaPlayback = $0 }
-                ))
 
-                Toggle(L10n.audioTranscoding, isOn: Binding(
-                    get: { policy.enableAudioPlaybackTranscoding ?? false },
-                    set: { policy.enableAudioPlaybackTranscoding = $0 }
-                ))
+                Toggle(
+                    L10n.mediaPlayback,
+                    isOn: $policy.enableMediaPlayback.coalesce(false)
+                )
 
-                Toggle(L10n.videoTranscoding, isOn: Binding(
-                    get: { policy.enableVideoPlaybackTranscoding ?? false },
-                    set: { policy.enableVideoPlaybackTranscoding = $0 }
-                ))
+                Toggle(
+                    L10n.audioTranscoding,
+                    isOn: $policy.enableAudioPlaybackTranscoding.coalesce(false)
+                )
 
-                Toggle(L10n.videoRemuxing, isOn: Binding(
-                    get: { policy.enablePlaybackRemuxing ?? false },
-                    set: { policy.enablePlaybackRemuxing = $0 }
-                ))
+                Toggle(
+                    L10n.videoTranscoding,
+                    isOn: $policy.enableVideoPlaybackTranscoding.coalesce(false)
+                )
 
-                Toggle(L10n.forceRemoteTranscoding, isOn: Binding(
-                    get: { policy.isForceRemoteSourceTranscoding ?? false },
-                    set: { policy.isForceRemoteSourceTranscoding = $0 }
-                ))
+                Toggle(
+                    L10n.videoRemuxing,
+                    isOn: $policy.enablePlaybackRemuxing.coalesce(false)
+                )
+
+                Toggle(
+                    L10n.forceRemoteTranscoding,
+                    isOn: $policy.isForceRemoteSourceTranscoding.coalesce(false)
+                )
             }
         }
     }
