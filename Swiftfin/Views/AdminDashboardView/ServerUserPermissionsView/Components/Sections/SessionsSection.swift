@@ -42,12 +42,12 @@ extension ServerUserPermissionsView {
         }
 
         private var isCustomLoginFailurePolicy: Bool {
-            ![
-                LoginFailurePolicy.unlimited.rawValue,
-                LoginFailurePolicy.adminDefault.rawValue,
-                LoginFailurePolicy.userDefault.rawValue
-            ]
-                .contains(policy.loginAttemptsBeforeLockout)
+            let defaultAttempts = (policy.isAdministrator ?? false)
+                ? LoginFailurePolicy.adminDefault.rawValue
+                : LoginFailurePolicy.userDefault.rawValue
+
+            return policy.loginAttemptsBeforeLockout != LoginFailurePolicy.unlimited.rawValue &&
+                   policy.loginAttemptsBeforeLockout != defaultAttempts
         }
 
         var body: some View {
