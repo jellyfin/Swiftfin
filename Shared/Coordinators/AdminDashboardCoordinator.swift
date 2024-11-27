@@ -17,37 +17,53 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    // MARK: - Route: Active Sessions
+
     @Route(.push)
     var activeSessions = makeActiveSessions
     @Route(.push)
     var activeDeviceDetails = makeActiveDeviceDetails
-    @Route(.push)
-    var tasks = makeTasks
+
+    // MARK: - Route: Devices
+
     @Route(.push)
     var devices = makeDevices
     @Route(.push)
     var deviceDetails = makeDeviceDetails
+
+    // MARK: - Route: Server Tasks
+
     @Route(.push)
     var editServerTask = makeEditServerTask
+    @Route(.push)
+    var tasks = makeTasks
     @Route(.modal)
     var addServerTaskTrigger = makeAddServerTaskTrigger
+
+    // MARK: - Route: Server Logs
+
     @Route(.push)
     var serverLogs = makeServerLogs
+
+    // MARK: - Route: Users
+
     @Route(.push)
     var users = makeUsers
     @Route(.push)
     var userDetails = makeUserDetails
     @Route(.modal)
+    var userPermissions = makeUserPermissions
+    @Route(.modal)
     var resetUserPassword = makeResetUserPassword
     @Route(.modal)
     var addServerUser = makeAddServerUser
+
+    // MARK: - Route: API Keys
+
     @Route(.push)
     var apiKeys = makeAPIKeys
 
-    @ViewBuilder
-    func makeAdminDashboard() -> some View {
-        AdminDashboardView()
-    }
+    // MARK: - Views: Active Sessions
 
     @ViewBuilder
     func makeActiveSessions() -> some View {
@@ -59,19 +75,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         ActiveSessionDetailView(box: box)
     }
 
+    // MARK: - Views: Server Tasks
+
     @ViewBuilder
     func makeTasks() -> some View {
         ServerTasksView()
-    }
-
-    @ViewBuilder
-    func makeDevices() -> some View {
-        DevicesView()
-    }
-
-    @ViewBuilder
-    func makeDeviceDetails(device: DeviceInfo) -> some View {
-        DeviceDetailsView(device: device)
     }
 
     @ViewBuilder
@@ -85,10 +93,26 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
+    // MARK: - Views: Devices
+
+    @ViewBuilder
+    func makeDevices() -> some View {
+        DevicesView()
+    }
+
+    @ViewBuilder
+    func makeDeviceDetails(device: DeviceInfo) -> some View {
+        DeviceDetailsView(device: device)
+    }
+
+    // MARK: - Views: Server Logs
+
     @ViewBuilder
     func makeServerLogs() -> some View {
         ServerLogsView()
     }
+
+    // MARK: - Views: Users
 
     @ViewBuilder
     func makeUsers() -> some View {
@@ -106,16 +130,26 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
+    func makeUserPermissions(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerUserPermissionsView(viewModel: viewModel)
+        }
+    }
+
     func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
     }
 
+    // MARK: - Views: API Keys
+
     @ViewBuilder
     func makeAPIKeys() -> some View {
         APIKeysView()
     }
+
+    // MARK: - Views: Dashboard
 
     @ViewBuilder
     func makeStart() -> some View {

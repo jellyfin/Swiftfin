@@ -547,9 +547,6 @@
 /* Restart Warning Label */
 "restartWarning" = "Are you sure you want to restart the server?";
 
-/* ActiveSessionsView Header */
-"activeDevices" = "Active Devices";
-
 /* UserDashboardView Header */
 "dashboard" = "Dashboard";
 
@@ -1129,7 +1126,6 @@
 // Appears in the views with eventful to indicate a task did not fail
 "success" = "Success";
 
-
 // Trigger Already Exists - 
 // Message to indicate that a Task Trigger already exists
 // Appears in AddServerTask when there is an existing task with the same configuration
@@ -1209,6 +1205,201 @@
 // Button title to edit existing users
 // Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
+
+// Bits Per Second - Unit
+// Represents a speed in bits per second
+// Used for bandwidth display
+"bitsPerSecond" = "bps";
+
+// Kilobits Per Second - Unit
+// Represents a speed in kilobits per second
+// Used for bandwidth display
+"kilobitsPerSecond" = "kbps";
+
+// Megabits Per Second - Unit
+// Represents a speed in megabits per second
+// Used for bandwidth display
+"megabitsPerSecond" = "Mbps";
+
+// Gigabits Per Second - Unit
+// Represents a speed in gigabits per second
+// Used for bandwidth display
+"gigabitsPerSecond" = "Gbps";
+
+// Terabits Per Second - Unit
+// Represents a speed in terabits per second
+// Used for bandwidth display
+"terabitsPerSecond" = "Tbps";
+
+// Default - Setting
+// Represents the default policy or limit
+// Used for setting user policies to default values
+"default" = "Default";
+
+// Unlimited - Setting
+// Represents no restriction or unlimited policy
+// Used for setting user policies with no limits
+"unlimited" = "Unlimited";
+
+// Create & Join Groups - Action
+// Allows the user to create and join groups
+// Used for setting user permissions related to groups
+"createAndJoinGroups" = "Create & Join Groups";
+
+// Join Groups - Action
+// Allows the user to join existing groups
+// Used for setting user permissions related to group joining
+"joinGroups" = "Join Groups";
+
+// Permissions - Section
+// Represents access control settings for users
+// Used for managing user permissions in various sections
+"permissions" = "Permissions";
+
+// SyncPlay - Feature
+// Represents the synchronized playback feature across multiple devices
+// Used for enabling or managing synchronized streaming sessions
+"syncPlay" = "SyncPlay";
+
+// Remote connections - Section & Toggle
+// Represents settings related to remote access
+// Used in the external access section of user permissions
+"remoteConnections" = "Remote connections";
+
+// Maximum remote bitrate - Picker
+// Represents the maximum bitrate allowed for remote connections
+// Used in the external access section
+"maximumRemoteBitrate" = "Maximum remote bitrate";
+
+// Custom bitrate - Button
+// Opens an alert to enter a custom bitrate value
+// Used in the external access section
+"customBitrate" = "Custom bitrate";
+
+// Enter custom bitrate in Mbps - Description
+// Describes the purpose of the custom bitrate entry
+// Used in the custom bitrate alert
+"enterCustomBitrate" = "Enter custom bitrate in Mbps";
+
+// Feature access - Section
+// Represents settings related to feature access for users
+// Used in the feature access section of user permissions
+"featureAccess" = "Feature access";
+
+// Live TV access - Toggle
+// Toggles access to live TV content
+// Used in the feature access section
+"liveTvAccess" = "Live TV access";
+
+// Live TV recording management - Toggle
+// Toggles management of live TV recordings
+// Used in the feature access section
+"liveTvRecordingManagement" = "Live TV recording management";
+
+// Management - Section
+// Represents settings related to management permissions
+// Used in the management section of user permissions
+"management" = "Management";
+
+// Lyrics - Toggle
+// Toggles permission to manage lyrics
+// Used in the management section
+"lyrics" = "Lyrics";
+
+// Media playback - Section & Toggle
+// Represents settings related to media playback permissions
+// Used in the media playback section of user permissions
+"mediaPlayback" = "Media playback";
+
+// Audio transcoding - Toggle
+// Toggles permission for audio transcoding
+// Used in the media playback section
+"audioTranscoding" = "Audio transcoding";
+
+// Video transcoding - Toggle
+// Toggles permission for video transcoding
+// Used in the media playback section
+"videoTranscoding" = "Video transcoding";
+
+// Video remuxing - Toggle
+// Toggles permission for video remuxing
+// Used in the media playback section
+"videoRemuxing" = "Video remuxing";
+
+// Force remote media transcoding - Toggle
+// Toggles whether remote media transcoding is forced
+// Used in the media playback section
+"forceRemoteTranscoding" = "Force remote media transcoding";
+
+// Media downloads - Toggle
+// Toggles permission to download media content
+// Used in the permission section
+"mediaDownloads" = "Media downloads";
+
+// Hide user from login screen - Toggle
+// Toggles whether the user is hidden from the login screen
+// Used in the permission section
+"hideUserFromLoginScreen" = "Hide user from login screen";
+
+// Remote control - Section
+// Represents settings related to remote control permissions
+// Used in the remote control section of user permissions
+"remoteControl" = "Remote control";
+
+// Control other users - Toggle
+// Toggles permission to control other users' sessions
+// Used in the remote control section
+"controlOtherUsers" = "Control other users";
+
+// Control shared devices - Toggle
+// Toggles permission to control shared devices
+// Used in the remote control section
+"controlSharedDevices" = "Control shared devices";
+
+// Sessions - Section
+// Represents settings related to session control
+// Used in the sessions section of user permissions
+"sessions" = "Sessions";
+
+// Maximum failed login policy - Picker
+// Represents the policy for maximum failed login attempts
+// Used in the sessions section
+"maximumFailedLoginPolicy" = "Maximum failed login policy";
+
+// Maximum sessions policy - Picker
+// Represents the policy for maximum active sessions
+// Used in the sessions section
+"maximumSessionsPolicy" = "Maximum sessions policy";
+
+// Custom failed logins - Button
+// Opens an alert to enter a custom failed login limit
+// Used in the sessions section
+"customFailedLogins" = "Custom failed logins";
+
+// Enter custom failed logins limit - Description
+// Describes the purpose of the custom failed logins entry
+// Used in the custom failed logins alert
+"enterCustomFailedLogins" = "Enter custom failed logins limit";
+
+// Failed logins - Text Field
+// Represents the input field for custom failed logins
+// Used in the custom failed logins section
+"failedLogins" = "Failed logins";
+
+// Custom sessions - Button
+// Opens an alert to enter a custom maximum session limit
+// Used in the sessions section
+"customSessions" = "Custom sessions";
+
+// Enter custom max sessions - Description
+// Describes the purpose of the custom max sessions entry
+// Used in the custom sessions alert
+"enterCustomMaxSessions" = "Enter custom max sessions";
+
+// Maximum sessions - Text Field
+// Represents the input field for custom maximum sessions
+// Used in the custom sessions section
+"maximumSessions" = "Maximum sessions";
 
 // Refresh - Button
 // Button title for the menu to refresh metadata
@@ -1379,3 +1570,48 @@
 // Represents a speed in terabits per second
 // Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Maximum Failed Login Policy - Description
+// Explanation of the maximum failed login attempts policy
+// Used in the user settings view
+"maximumFailedLoginPolicyDescription" = "Sets the maximum failed login attempts before a user is locked out.";
+
+// Maximum Failed Login Policy Re-enable - Description
+// Explanation of the resetting locked users
+// Used in the user settings view
+"maximumFailedLoginPolicyReenable" = "Locked users must be re-enabled by an Administrator.";
+
+// Locked Users - Title
+// Section title for description on Locked Users
+// Used in the user settings view
+"lockedUsers" = "Locked users";
+
+// Unlimited - Description
+// Explanation of the unlimited login attempts policy
+// Used in the user settings view
+"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user.";
+
+// Default - Description
+// Explanation of the default login attempts policy
+// Used in the user settings view
+"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.";
+
+// Custom - Description
+// Explanation of the custom login attempts policy
+// Used in the user settings view
+"customFailedLoginDescription" = "Manually set the number of failed login attempts allowed before locking the user.";
+
+// Maximum Connections Policy - Description
+// Explanation of the maximum connections policy
+// Used in the user settings view
+"maximumConnectionsDescription" = "Limits the total number of connections a user can have to the server.";
+
+// Unlimited Connections - Description
+// Explanation of unlimited connections policy
+// Used in the user settings view
+"unlimitedConnectionsDescription" = "The user can connect to the server without any limits.";
+
+// Custom Connections - Description
+// Explanation of custom connections policy
+// Used in the user settings view
+"customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
