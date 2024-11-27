@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+// TODO: break into separate files
+
 struct HourMinuteFormatStyle: FormatStyle {
 
     func format(_ value: TimeInterval) -> String {
@@ -75,6 +77,29 @@ extension ParseableFormatStyle where Self == DayIntervalParseableFormatStyle {
 
     static func dayInterval(range: ClosedRange<Int>) -> DayIntervalParseableFormatStyle {
         .init(range: range)
+    }
+}
+
+struct NilIfEmptyStringFormatStyle: ParseableFormatStyle {
+
+    var parseStrategy: NilIfEmptyStringParseStrategy = .init()
+
+    func format(_ value: String?) -> String {
+        value ?? ""
+    }
+}
+
+struct NilIfEmptyStringParseStrategy: ParseStrategy {
+
+    func parse(_ value: String) -> String? {
+        value.isEmpty ? nil : value
+    }
+}
+
+extension ParseableFormatStyle where Self == NilIfEmptyStringFormatStyle {
+
+    static var nilIfEmptyString: NilIfEmptyStringFormatStyle {
+        .init()
     }
 }
 

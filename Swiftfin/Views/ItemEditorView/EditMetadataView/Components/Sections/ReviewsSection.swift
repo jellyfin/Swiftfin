@@ -11,7 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct ReviewsSection: View {
+
         @Binding
         var item: BaseItemDto
 

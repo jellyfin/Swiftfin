@@ -11,34 +11,37 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct TitleSection: View {
+
         @Binding
         var item: BaseItemDto
+
         let itemType: BaseItemKind
 
         var body: some View {
             Section(L10n.title) {
-                TextField(L10n.title, text: Binding(get: {
-                    item.name ?? ""
-                }, set: {
-                    item.name = $0
-                }))
+                TextField(
+                    L10n.title,
+                    value: $item.name,
+                    format: .nilIfEmptyString
+                )
             }
 
             Section(L10n.originalTitle) {
-                TextField(L10n.originalTitle, text: Binding(get: {
-                    item.originalTitle ?? ""
-                }, set: {
-                    item.originalTitle = $0
-                }))
+                TextField(
+                    L10n.originalTitle,
+                    value: $item.originalTitle,
+                    format: .nilIfEmptyString
+                )
             }
 
             Section(L10n.sortTitle) {
-                TextField(L10n.sortTitle, text: Binding(get: {
-                    item.forcedSortName ?? ""
-                }, set: {
-                    item.forcedSortName = $0
-                }))
+                TextField(
+                    L10n.sortTitle,
+                    value: $item.forcedSortName,
+                    format: .nilIfEmptyString
+                )
             }
         }
     }

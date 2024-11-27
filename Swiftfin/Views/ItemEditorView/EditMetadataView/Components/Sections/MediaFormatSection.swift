@@ -11,7 +11,9 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct MediaFormatSection: View {
+
         @Binding
         var item: BaseItemDto
 
@@ -29,17 +31,16 @@ extension EditMetadataView {
         @ViewBuilder
         private var videoFormatView: some View {
             Section(L10n.format) {
-                TextField(L10n.originalAspectRatio, text: Binding(get: {
-                    item.aspectRatio ?? ""
-                }, set: {
-                    item.aspectRatio = $0
-                }))
+                TextField(
+                    L10n.originalAspectRatio,
+                    value: $item.aspectRatio,
+                    format: .nilIfEmptyString
+                )
 
-                Video3DFormatPicker(title: L10n.format3D, selectedFormat: Binding(get: {
-                    item.video3DFormat
-                }, set: {
-                    item.video3DFormat = $0
-                }))
+                Video3DFormatPicker(
+                    title: L10n.format3D,
+                    selectedFormat: $item.video3DFormat
+                )
             }
         }
     }

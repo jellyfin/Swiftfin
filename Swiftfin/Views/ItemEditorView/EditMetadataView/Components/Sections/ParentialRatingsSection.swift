@@ -11,9 +11,12 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct ParentalRatingSection: View {
+
         @Binding
         var item: BaseItemDto
+
         @ObservedObject
         private var viewModel = ParentalRatingsViewModel()
 
@@ -29,18 +32,14 @@ extension EditMetadataView {
 
                 // MARK: Official Rating Picker
 
-                Picker(L10n.officialRating, selection: Binding<ParentalRating?>(
-                    get: {
-                        if let ratingName = item.officialRating {
-                            return officialRatings.first { $0.name == ratingName }
-                        } else {
-                            return nil
-                        }
-                    },
-                    set: { newValue in
-                        item.officialRating = newValue?.name
-                    }
-                )) {
+                Picker(
+                    L10n.officialRating,
+                    selection: $item.officialRating
+                        .map(
+                            getter: { value in officialRatings.first { $0.name == value } },
+                            setter: { $0?.name }
+                        )
+                ) {
                     Text(L10n.none).tag(nil as ParentalRating?)
                     ForEach(officialRatings, id: \.self) { rating in
                         Text(rating.name ?? "").tag(rating as ParentalRating?)
@@ -55,18 +54,14 @@ extension EditMetadataView {
 
                 // MARK: Custom Rating Picker
 
-                Picker(L10n.customRating, selection: Binding<ParentalRating?>(
-                    get: {
-                        if let ratingName = item.customRating {
-                            return customRatings.first { $0.name == ratingName }
-                        } else {
-                            return nil
-                        }
-                    },
-                    set: { newValue in
-                        item.customRating = newValue?.name
-                    }
-                )) {
+                Picker(
+                    L10n.customRating,
+                    selection: $item.officialRating
+                        .map(
+                            getter: { value in customRatings.first { $0.name == value } },
+                            setter: { $0?.name }
+                        )
+                ) {
                     Text(L10n.none).tag(nil as ParentalRating?)
                     ForEach(customRatings, id: \.self) { rating in
                         Text(rating.name ?? "").tag(rating as ParentalRating?)

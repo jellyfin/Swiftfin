@@ -11,23 +11,23 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct LocalizationSection: View {
+
         @Binding
         var item: BaseItemDto
 
         var body: some View {
             Section(L10n.metadataPreferences) {
-                LanguagePicker(title: L10n.language, selectedLanguageCode: Binding(get: {
-                    item.preferredMetadataLanguage
-                }, set: {
-                    item.preferredMetadataLanguage = $0
-                }))
+                LanguagePicker(
+                    title: L10n.language,
+                    selectedLanguageCode: $item.preferredMetadataLanguage
+                )
 
-                CountryPicker(title: L10n.country, selectedCountryCode: Binding(get: {
-                    item.preferredMetadataCountryCode
-                }, set: {
-                    item.preferredMetadataCountryCode = $0
-                }))
+                CountryPicker(
+                    title: L10n.country,
+                    selectedCountryCode: $item.preferredMetadataCountryCode
+                )
             }
         }
     }
