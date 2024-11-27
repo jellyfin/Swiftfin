@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Reimagine this whole thing to be much leaner. 
+// TODO: Reimagine this whole thing to be much leaner.
 extension EditMetadataView {
 
     struct ParentalRatingSection: View {

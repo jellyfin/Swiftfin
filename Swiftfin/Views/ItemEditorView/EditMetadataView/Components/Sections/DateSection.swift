@@ -11,6 +11,7 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct DateSection: View {
 
         @Binding
@@ -27,14 +28,14 @@ extension EditMetadataView {
                 )
 
                 DatePicker(
-                    L10n.releaseDate,
+                    itemType == .person ? L10n.birthday : L10n.releaseDate,
                     selection: $item.premiereDate.coalesce(.now),
                     displayedComponents: .date
                 )
 
                 if itemType == .series || itemType == .person {
                     DatePicker(
-                        L10n.endDate,
+                        itemType == .person ? L10n.dateOfDeath : L10n.endDate,
                         selection: $item.endDate.coalesce(.now),
                         displayedComponents: .date
                     )
@@ -43,7 +44,7 @@ extension EditMetadataView {
 
             Section(L10n.year) {
                 TextField(
-                    L10n.year,
+                    itemType == .person ? L10n.birthYear : L10n.year,
                     value: $item.productionYear,
                     format: .number.grouping(.never)
                 )

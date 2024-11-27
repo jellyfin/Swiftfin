@@ -47,7 +47,6 @@ extension EditMetadataView {
 
             Section(L10n.overview) {
                 TextEditor(text: $item.overview.coalesce(""))
-                    .frame(minHeight: 100, maxHeight: .infinity)
             }
         }
     }
