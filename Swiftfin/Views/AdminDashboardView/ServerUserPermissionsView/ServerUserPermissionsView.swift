@@ -96,7 +96,7 @@ struct ServerUserPermissionsView: View {
         }
     }
 
-    // MARK: - Content View
+    // MARK: - Permissions List View
 
     @ViewBuilder
     var permissionsListView: some View {

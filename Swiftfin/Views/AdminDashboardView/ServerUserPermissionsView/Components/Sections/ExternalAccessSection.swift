@@ -20,6 +20,7 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.remoteConnections) {
+                
                 Toggle(
                     L10n.remoteConnections,
                     isOn: $policy.enableRemoteAccess.coalesce(false)
@@ -36,7 +37,7 @@ extension ServerUserPermissionsView {
                 if policy.remoteClientBitrateLimit != MaxBitratePolicy.unlimited.rawValue {
                     ChevronAlertButton(
                         L10n.customBitrate,
-                        subtitle: policy.remoteClientBitrateLimit?.formatted(.bitRate),
+                        subtitle: Text(policy.remoteClientBitrateLimit ?? 0, format: .bitRate),
                         description: L10n.enterCustomBitrate
                     ) {
                         MaxBitrateInput()

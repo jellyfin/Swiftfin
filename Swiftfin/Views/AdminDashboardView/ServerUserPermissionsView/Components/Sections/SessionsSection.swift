@@ -30,10 +30,12 @@ extension ServerUserPermissionsView {
             Section {
                 CaseIterablePicker(
                     L10n.maximumFailedLoginPolicy,
-                    selection: $policy.loginAttemptsBeforeLockout.map(
-                        getter: { LoginFailurePolicy(rawValue: $0 ?? 0) ?? .custom },
-                        setter: { $0.rawValue }
-                    )
+                    selection: $policy.loginAttemptsBeforeLockout
+                        .coalesce(0)
+                        .map(
+                            getter: { LoginFailurePolicy(rawValue: $0) ?? .custom },
+                            setter: { $0.rawValue }
+                        )
                 )
 
                 if let loginAttempts = policy.loginAttemptsBeforeLockout, loginAttempts > 0 {
@@ -45,6 +47,7 @@ extension ServerUserPermissionsView {
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.maximumFailedLoginPolicyDescription)
+                    
                     LearnMoreButton(L10n.maximumFailedLoginPolicy) {
                         TextPair(
                             title: L10n.lockedUsers,
@@ -76,12 +79,14 @@ extension ServerUserPermissionsView {
                 subtitle: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number),
                 description: L10n.enterCustomFailedLogins
             ) {
-                let loginAttemptsBinding = $policy.loginAttemptsBeforeLockout
-                    .coalesce(1)
-                    .clamp(min: 1, max: 1000)
-
-                TextField(L10n.failedLogins, value: loginAttemptsBinding, format: .number)
-                    .keyboardType(.numberPad)
+                TextField(
+                    L10n.failedLogins,
+                    value: $policy.loginAttemptsBeforeLockout
+                        .coalesce(1)
+                        .clamp(min: 1, max: 1000),
+                    format: .number
+                )
+                .keyboardType(.numberPad)
             }
         }
 
@@ -105,6 +110,7 @@ extension ServerUserPermissionsView {
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.maximumConnectionsDescription)
+
                     LearnMoreButton(L10n.maximumSessionsPolicy) {
                         TextPair(
                             title: L10n.unlimited,
@@ -126,12 +132,14 @@ extension ServerUserPermissionsView {
                 subtitle: Text(policy.maxActiveSessions ?? 1, format: .number),
                 description: L10n.enterCustomMaxSessions
             ) {
-                let maxSessionsBinding = $policy.maxActiveSessions
-                    .coalesce(1)
-                    .clamp(min: 1, max: 1000)
-
-                TextField(L10n.maximumSessions, value: maxSessionsBinding, format: .number)
-                    .keyboardType(.numberPad)
+                TextField(
+                    L10n.maximumSessions,
+                    value: $policy.maxActiveSessions
+                        .coalesce(1)
+                        .clamp(min: 1, max: 1000),
+                    format: .number
+                )
+                .keyboardType(.numberPad)
             }
         }
     }
