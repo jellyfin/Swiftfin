@@ -47,7 +47,7 @@ extension ServerUserPermissionsView {
             } footer: {
                 VStack(alignment: .leading) {
                     Text(L10n.maximumFailedLoginPolicyDescription)
-                    
+
                     LearnMoreButton(L10n.maximumFailedLoginPolicy) {
                         TextPair(
                             title: L10n.lockedUsers,

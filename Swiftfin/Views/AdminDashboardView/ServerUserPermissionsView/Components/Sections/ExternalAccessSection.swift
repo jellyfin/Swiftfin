@@ -20,7 +20,7 @@ extension ServerUserPermissionsView {
 
         var body: some View {
             Section(L10n.remoteConnections) {
-                
+
                 Toggle(
                     L10n.remoteConnections,
                     isOn: $policy.enableRemoteAccess.coalesce(false)
