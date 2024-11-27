@@ -47,7 +47,7 @@ struct ChevronAlertButton<Content>: View where Content: View {
                     }
                 }
             } message: {
-                if let description = description {
+                if let description {
                     Text(description)
                 }
             }

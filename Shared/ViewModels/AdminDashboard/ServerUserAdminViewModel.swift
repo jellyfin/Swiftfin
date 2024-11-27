@@ -82,7 +82,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             return performAction {
                 try await self.loadDetails()
             }
-
         case .deleteProfileImage:
             return performAction {
                 try await self.deleteProfileImage()
@@ -137,7 +136,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
         .asAnyCancellable()
 
-        return .updating
+        return state
     }
 
     // MARK: - Load Full UserDto
@@ -165,8 +164,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
         await MainActor.run {
             self.user.name = username
-        }
-    }
 
     // MARK: - Update User Policy
 

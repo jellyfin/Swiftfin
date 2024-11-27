@@ -55,10 +55,18 @@ struct ServerUserDetailsView: View {
                     .onSelect {
                         router.route(to: \.resetUserPassword, viewModel.user.id!)
                     }
-                /*ChevronButton(L10n.permissions)
+                ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
-                    }*/
+                    }
+
+                // TODO: Access: enabledFolders & enableAllFolders
+
+                // TODO: Deletion: enableContentDeletion & enableContentDeletionFromFolders
+
+                // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
+
+                // TODO: Live TV: enabledChannels & enableAllChannels
             }
         }
         .navigationTitle(L10n.user)

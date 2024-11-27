@@ -68,7 +68,7 @@ struct ActiveSessionsView: View {
             }
         }
         .animation(.linear(duration: 0.2), value: viewModel.state)
-        .navigationTitle(L10n.activeDevices)
+        .navigationTitle(L10n.sessions)
         .onFirstAppear {
             viewModel.send(.refreshSessions)
         }
