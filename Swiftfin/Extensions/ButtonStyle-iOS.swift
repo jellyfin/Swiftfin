@@ -12,41 +12,29 @@ import SwiftUI
 extension ButtonStyle where Self == ToolbarPillButtonStyle {
 
     static var toolbarPill: ToolbarPillButtonStyle {
-        ToolbarPillButtonStyle()
+        ToolbarPillButtonStyle(primary: Defaults[.accentColor], secondary: .secondary)
+    }
+
+    static func toolbarPill(_ primary: Color, _ secondary: Color = Color.secondary) -> ToolbarPillButtonStyle {
+        ToolbarPillButtonStyle(primary: primary, secondary: secondary)
     }
 }
 
 struct ToolbarPillButtonStyle: ButtonStyle {
 
-    @Default(.accentColor)
-    private var accentColor
-
     @Environment(\.isEnabled)
     private var isEnabled
 
-    private var foregroundStyle: some ShapeStyle {
-        if isEnabled {
-            accentColor.overlayColor
-        } else {
-            Color.secondary.overlayColor
-        }
-    }
-
-    private var background: some ShapeStyle {
-        if isEnabled {
-            accentColor
-        } else {
-            Color.secondary
-        }
-    }
+    let primary: Color
+    let secondary: Color
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(foregroundStyle)
+            .foregroundStyle(isEnabled ? primary.overlayColor : secondary)
             .font(.headline)
             .padding(.vertical, 5)
             .padding(.horizontal, 10)
-            .background(background)
+            .background(isEnabled ? primary : secondary)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .opacity(isEnabled && !configuration.isPressed ? 1 : 0.5)
     }

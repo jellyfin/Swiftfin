@@ -106,7 +106,7 @@ struct MediaSourceInfoView: View {
                         }
                     }
                 }
-                .padding2(.horizontal)
+                .padding(.horizontal)
             }
             .frame(maxWidth: .infinity)
         }

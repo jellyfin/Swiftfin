@@ -26,7 +26,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
-    @Route(.push)
+    @Route(.modal)
     var resetUserPassword = makeResetUserPassword
     @Route(.push)
     var localSecurity = makeLocalSecurity
@@ -49,26 +49,16 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var videoPlayerSettings = makeVideoPlayerSettings
     @Route(.push)
     var customDeviceProfileSettings = makeCustomDeviceProfileSettings
-
-    @Route(.push)
-    var userDashboard = makeUserDashboard
-    @Route(.push)
-    var activeSessions = makeActiveSessions
-    @Route(.push)
-    var activeDeviceDetails = makeActiveDeviceDetails
     @Route(.modal)
     var itemOverviewView = makeItemOverviewView
-    @Route(.push)
-    var tasks = makeTasks
-    @Route(.push)
-    var editScheduledTask = makeEditScheduledTask
-    @Route(.push)
-    var serverLogs = makeServerLogs
 
     @Route(.modal)
     var editCustomDeviceProfile = makeEditCustomDeviceProfile
     @Route(.modal)
     var createCustomDeviceProfile = makeCreateCustomDeviceProfile
+
+    @Route(.push)
+    var adminDashboard = makeAdminDashboard
 
     #if DEBUG
     @Route(.push)
@@ -108,7 +98,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
     }
 
     func makeEditCustomDeviceProfile(profile: Binding<CustomDeviceProfile>)
-    -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator> {
+        -> NavigationViewCoordinator<EditCustomDeviceProfileCoordinator>
+    {
         NavigationViewCoordinator(EditCustomDeviceProfileCoordinator(profile: profile))
     }
 
@@ -121,9 +112,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         QuickConnectAuthorizeView()
     }
 
-    @ViewBuilder
-    func makeResetUserPassword() -> some View {
-        ResetUserPasswordView()
+    func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ResetUserPasswordView(userID: userID, requiresCurrentPassword: true)
+        }
     }
 
     @ViewBuilder
@@ -160,40 +152,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         EditServerView(server: server)
     }
 
-    @ViewBuilder
-    func makeUserDashboard() -> some View {
-        UserDashboardView()
-    }
-
-    @ViewBuilder
-    func makeActiveSessions() -> some View {
-        ActiveSessionsView()
-    }
-
-    @ViewBuilder
-    func makeActiveDeviceDetails(box: BindingBox<SessionInfo?>) -> some View {
-        ActiveSessionDetailView(box: box)
-    }
-
     func makeItemOverviewView(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ItemOverviewView(item: item)
         }
-    }
-
-    @ViewBuilder
-    func makeTasks() -> some View {
-        ScheduledTasksView()
-    }
-
-    @ViewBuilder
-    func makeEditScheduledTask(observer: ServerTaskObserver) -> some View {
-        EditScheduledTaskView(observer: observer)
-    }
-
-    @ViewBuilder
-    func makeServerLogs() -> some View {
-        ServerLogsView()
     }
 
     func makeItemFilterDrawerSelector(selection: Binding<[ItemFilterType]>) -> some View {
@@ -205,13 +167,17 @@ final class SettingsCoordinator: NavigationCoordinatable {
         VideoPlayerSettingsCoordinator()
     }
 
+    @ViewBuilder
+    func makeAdminDashboard() -> some View {
+        AdminDashboardCoordinator().view()
+    }
+
     #if DEBUG
     @ViewBuilder
     func makeDebugSettings() -> some View {
         DebugSettingsView()
     }
     #endif
-
     #endif
 
     #if os(tvOS)

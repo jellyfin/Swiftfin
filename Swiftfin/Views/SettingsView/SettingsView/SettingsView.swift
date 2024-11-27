@@ -49,7 +49,7 @@ struct SettingsView: View {
                 if viewModel.userSession.user.isAdministrator {
                     ChevronButton(L10n.dashboard)
                         .onSelect {
-                            router.route(to: \.userDashboard)
+                            router.route(to: \.adminDashboard)
                         }
                 }
             }

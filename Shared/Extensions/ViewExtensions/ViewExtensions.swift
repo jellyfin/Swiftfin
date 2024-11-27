@@ -131,12 +131,6 @@ extension View {
         })
     }
 
-    // TODO: remove
-    @inlinable
-    func padding2(_ edges: Edge.Set = .all) -> some View {
-        padding(edges).padding(edges)
-    }
-
     func scrollViewOffset(_ scrollViewOffset: Binding<CGFloat>) -> some View {
         modifier(ScrollViewOffsetModifier(scrollViewOffset: scrollViewOffset))
     }
