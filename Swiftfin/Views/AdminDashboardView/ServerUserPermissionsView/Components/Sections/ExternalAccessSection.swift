@@ -14,15 +14,7 @@ extension ServerUserPermissionsView {
     struct ExternalAccessSection: View {
 
         @Binding
-        private var policy: UserPolicy
-
-        @State
-        private var tempBitrateLimit: Int?
-
-        init(policy: Binding<UserPolicy>) {
-            self._policy = policy
-            _tempBitrateLimit = State(initialValue: policy.wrappedValue.remoteClientBitrateLimit)
-        }
+        var policy: UserPolicy
 
         // MARK: - Body
 
@@ -40,9 +32,6 @@ extension ServerUserPermissionsView {
                         setter: { $0.rawValue }
                     )
                 )
-                .onChange(of: policy.remoteClientBitrateLimit) { _ in
-                    tempBitrateLimit = policy.remoteClientBitrateLimit
-                }
 
                 if policy.remoteClientBitrateLimit != MaxBitratePolicy.unlimited.rawValue {
                     ChevronAlertButton(
@@ -51,10 +40,6 @@ extension ServerUserPermissionsView {
                         description: L10n.enterCustomBitrate
                     ) {
                         MaxBitrateInput()
-                    } onSave: {
-                        policy.remoteClientBitrateLimit = tempBitrateLimit
-                    } onCancel: {
-                        tempBitrateLimit = policy.remoteClientBitrateLimit
                     }
                 }
             }
@@ -64,7 +49,7 @@ extension ServerUserPermissionsView {
 
         @ViewBuilder
         private func MaxBitrateInput() -> some View {
-            let bitrateBinding = $tempBitrateLimit
+            let bitrateBinding = $policy.remoteClientBitrateLimit
                 .coalesce(0)
                 .map(
                     // Convert to Mbps

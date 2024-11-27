@@ -14,41 +14,9 @@ extension ServerUserPermissionsView {
     struct SessionsSection: View {
 
         @Binding
-        private var policy: UserPolicy
+        var policy: UserPolicy
 
-        // MARK: - State Variables
-
-        @State
-        private var tempLoginAttempts: Int?
-        @State
-        private var tempMaxSessions: Int?
-
-        init(policy: Binding<UserPolicy>) {
-            _policy = policy
-            _tempLoginAttempts = State(initialValue: policy.wrappedValue.loginAttemptsBeforeLockout)
-            _tempMaxSessions = State(initialValue: policy.wrappedValue.maxActiveSessions)
-        }
-
-        // MARK: - Failed Login Validation
-
-        private var filteredLoginFailurePolicies: [LoginFailurePolicy] {
-            LoginFailurePolicy.allCases.filter {
-                if policy.isAdministrator ?? false {
-                    return $0 != .userDefault
-                } else {
-                    return $0 != .adminDefault
-                }
-            }
-        }
-
-        private var isCustomLoginFailurePolicy: Bool {
-            let defaultAttempts = (policy.isAdministrator ?? false)
-                ? LoginFailurePolicy.adminDefault.rawValue
-                : LoginFailurePolicy.userDefault.rawValue
-
-            return policy.loginAttemptsBeforeLockout != LoginFailurePolicy.unlimited.rawValue &&
-                policy.loginAttemptsBeforeLockout != defaultAttempts
-        }
+        // MARK: - Body
 
         var body: some View {
             FailedLoginsView
@@ -60,25 +28,15 @@ extension ServerUserPermissionsView {
         @ViewBuilder
         private var FailedLoginsView: some View {
             Section {
-                Picker(
+                CaseIterablePicker(
                     L10n.maximumFailedLoginPolicy,
                     selection: $policy.loginAttemptsBeforeLockout.map(
-                        getter: { LoginFailurePolicy.from(
-                            rawValue: $0 ?? 0,
-                            isAdministrator: policy.isAdministrator ?? false
-                        ) },
+                        getter: { LoginFailurePolicy(rawValue: $0 ?? 0) ?? .custom },
                         setter: { $0.rawValue }
                     )
-                ) {
-                    ForEach(filteredLoginFailurePolicies, id: \.self) { policy in
-                        Text(policy.displayTitle).tag(policy)
-                    }
-                }
-                .onChange(of: policy.loginAttemptsBeforeLockout) { _ in
-                    tempLoginAttempts = policy.loginAttemptsBeforeLockout
-                }
+                )
 
-                if isCustomLoginFailurePolicy {
+                if let loginAttempts = policy.loginAttemptsBeforeLockout, loginAttempts > 0 {
                     MaxFailedLoginsButton()
                 }
 
@@ -115,20 +73,15 @@ extension ServerUserPermissionsView {
         private func MaxFailedLoginsButton() -> some View {
             ChevronAlertButton(
                 L10n.customFailedLogins,
-                subtitle: Text(tempLoginAttempts ?? 1, format: .number),
+                subtitle: Text(policy.loginAttemptsBeforeLockout ?? 1, format: .number),
                 description: L10n.enterCustomFailedLogins
             ) {
-                let loginAttemptsBinding = $tempLoginAttempts
+                let loginAttemptsBinding = $policy.loginAttemptsBeforeLockout
                     .coalesce(1)
                     .clamp(min: 1, max: 1000)
 
                 TextField(L10n.failedLogins, value: loginAttemptsBinding, format: .number)
                     .keyboardType(.numberPad)
-
-            } onSave: {
-                policy.loginAttemptsBeforeLockout = tempLoginAttempts
-            } onCancel: {
-                tempLoginAttempts = policy.loginAttemptsBeforeLockout
             }
         }
 
@@ -144,9 +97,6 @@ extension ServerUserPermissionsView {
                         setter: { $0.rawValue }
                     )
                 )
-                .onChange(of: policy.maxActiveSessions) { _ in
-                    tempMaxSessions = policy.maxActiveSessions
-                }
 
                 if policy.maxActiveSessions != ActiveSessionsPolicy.unlimited.rawValue {
                     MaxSessionsButton()
@@ -173,20 +123,15 @@ extension ServerUserPermissionsView {
         private func MaxSessionsButton() -> some View {
             ChevronAlertButton(
                 L10n.customSessions,
-                subtitle: Text(tempMaxSessions ?? 1, format: .number),
+                subtitle: Text(policy.maxActiveSessions ?? 1, format: .number),
                 description: L10n.enterCustomMaxSessions
             ) {
-                let maxSessionsBinding = $tempMaxSessions
+                let maxSessionsBinding = $policy.maxActiveSessions
                     .coalesce(1)
                     .clamp(min: 1, max: 1000)
 
                 TextField(L10n.maximumSessions, value: maxSessionsBinding, format: .number)
                     .keyboardType(.numberPad)
-
-            } onSave: {
-                policy.maxActiveSessions = tempMaxSessions
-            } onCancel: {
-                tempMaxSessions = policy.maxActiveSessions
             }
         }
     }
