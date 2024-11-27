@@ -1615,3 +1615,19 @@
 // Explanation of custom connections policy
 // Used in the user settings view
 "customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
+
+// Enable All Libraries - Toggle
+// Toggle to enable a setting for all Libraries
+"enableAllLibraries" = "Enable all libraries";
+
+// Media Access - Section Title
+// Section Title for Server User Media Access Editing
+"mediaAccess" = "Media Access";
+
+// Deletion - Section Description
+// Section Title for Media Deletion
+"deletion" = "Deletion";
+
+// Access - Section Description
+// Section Title for Media Access
+"access" = "Access";

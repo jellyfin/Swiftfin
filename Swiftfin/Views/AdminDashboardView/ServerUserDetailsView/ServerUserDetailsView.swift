@@ -31,20 +31,27 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
+
+            // TODO: Replace with Update Profile Picture & Username
             AdminDashboardView.UserSection(
                 user: viewModel.user,
                 lastActivityDate: viewModel.user.lastActivityDate
-            ) {
-                // TODO: Update Profile Picture & Username
-            }
+            )
 
-            Section(L10n.advanced) {
+            Section {
                 if let userId = viewModel.user.id {
                     ChevronButton(L10n.password)
                         .onSelect {
                             router.route(to: \.resetUserPassword, userId)
                         }
                 }
+            }
+
+            Section {
+                ChevronButton(L10n.mediaAccess)
+                    .onSelect {
+                        router.route(to: \.userMediaAccess, viewModel)
+                    }
 
                 ChevronButton(L10n.permissions)
                     .onSelect {
