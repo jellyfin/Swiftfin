@@ -55,11 +55,15 @@ struct ServerUserDetailsView: View {
                     .onSelect {
                         router.route(to: \.resetUserPassword, viewModel.user.id!)
                     }
+                /*ChevronButton(L10n.permissions)
+                    .onSelect {
+                        router.route(to: \.userPermissions, viewModel)
+                    }*/
             }
         }
         .navigationTitle(L10n.user)
         .onAppear {
-            viewModel.send(.loadDetails) // Get full UserDto
+            viewModel.send(.loadDetails)
         }
         .onChange(of: viewModel.user.name!) { name in
             tempUsername = name
@@ -69,7 +73,7 @@ struct ServerUserDetailsView: View {
             isPresented: $isPresentingProfileImageOptions,
             titleVisibility: .visible
         ) {
-            Button(L10n.editUsername) {
+            Button(L10n.username) {
                 isPresentingUsernameEditor = true
             }
             Button(L10n.selectImage) {

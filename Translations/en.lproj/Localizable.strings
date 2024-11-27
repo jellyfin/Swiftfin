@@ -1384,11 +1384,6 @@
 // Used when presenting profile image actions
 "profileImage" = "Profile Image";
 
-// Edit Username - Button
-// Button text to edit a username
-// Used in the profile image actions dialog
-"editUsername" = "Edit Username";
-
 // Edit Username Message - Alert
 // Message prompting the user to input a new username
 // Used in the username edit alert dialog
