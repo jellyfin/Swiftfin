@@ -63,6 +63,22 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
+    // MARK: Initialize from UserDto
+
+    override init() {
+        super.init()
+        Notifications[.didChangeUserProfileImage].publisher
+            .sink(receiveCompletion: { _ in }) { [weak self] notification in
+                guard let self = self,
+                      let newUser = notification.object as? UserDto else { return }
+
+                if let index = self.users.firstIndex(where: { $0.id == newUser.id }) {
+                    self.users[index] = newUser
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Respond to Action
 
     func respond(to action: Action) -> State {

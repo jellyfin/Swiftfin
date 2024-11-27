@@ -123,8 +123,8 @@ final class SettingsCoordinator: NavigationCoordinatable {
         UserLocalSecurityView()
     }
 
-    func makePhotoPicker(viewModel: SettingsViewModel) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
-        NavigationViewCoordinator(UserProfileImageCoordinator())
+    func makePhotoPicker(userID: String) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
+        NavigationViewCoordinator(UserProfileImageCoordinator(userID: userID))
     }
 
     @ViewBuilder

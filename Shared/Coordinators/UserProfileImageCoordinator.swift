@@ -16,13 +16,20 @@ final class UserProfileImageCoordinator: NavigationCoordinatable {
     @Root
     var start = makeStart
 
+    let userID: String
+
+    init(userID: String) {
+        self.userID = userID
+    }
+
     @Route(.push)
     var cropImage = makeCropImage
 
     func makeCropImage(image: UIImage) -> some View {
         #if os(iOS)
         UserProfileImagePicker.SquareImageCropView(
-            image: image
+            image: image,
+            userID: userID
         )
         #else
         AssertionFailureView("not implemented")

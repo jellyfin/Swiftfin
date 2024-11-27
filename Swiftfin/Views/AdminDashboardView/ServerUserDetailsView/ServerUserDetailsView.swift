@@ -21,31 +21,40 @@ struct ServerUserDetailsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
+    @State
+    private var isPresentingUsernameEditor: Bool = false
+    @State
+    private var isPresentingProfileImageOptions: Bool = false
+
+    @State
+    private var tempUsername: String
+
     // MARK: - Initializer
 
     init(user: UserDto) {
         _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        tempUsername = user.name ?? ""
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            AdminDashboardView.UserSection(
-                user: viewModel.user,
-                lastActivityDate: viewModel.user.lastActivityDate
+            UserProfileImagePicker.ProfileImageSection(
+                imageSource: viewModel.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 120
+                ),
+                username: viewModel.user.name ?? L10n.unknown
             ) {
-                // TODO: Update Profile Picture & Username
+                isPresentingProfileImageOptions = true
             }
 
-            Section(L10n.advanced) {
-                if let userId = viewModel.user.id {
-                    ChevronButton(L10n.password)
-                        .onSelect {
-                            router.route(to: \.resetUserPassword, userId)
-                        }
-                }
-
+            Section {
+                ChevronButton(L10n.password)
+                    .onSelect {
+                        router.route(to: \.resetUserPassword, viewModel.user.id!)
+                    }
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
@@ -63,6 +72,38 @@ struct ServerUserDetailsView: View {
         .navigationTitle(L10n.user)
         .onAppear {
             viewModel.send(.loadDetails)
+        }
+        .onChange(of: viewModel.user.name!) { name in
+            tempUsername = name
+        }
+        .confirmationDialog(
+            L10n.user,
+            isPresented: $isPresentingProfileImageOptions,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.username) {
+                isPresentingUsernameEditor = true
+            }
+            Button(L10n.selectImage) {
+                router.route(to: \.photoPicker, viewModel.user.id!)
+            }
+            Button(L10n.delete, role: .destructive) {
+                viewModel.send(.deleteProfileImage)
+            }
+        }
+        .alert(L10n.username, isPresented: $isPresentingUsernameEditor) {
+            TextField(L10n.username, text: $tempUsername)
+            Button(L10n.cancel, role: .cancel) {
+                tempUsername = viewModel.user.name ?? ""
+                isPresentingUsernameEditor = false
+            }
+            Button(L10n.save) {
+                viewModel.send(.updateUsername(tempUsername))
+                tempUsername = ""
+                isPresentingUsernameEditor = false
+            }
+        } message: {
+            Text(L10n.editUsernameMessage)
         }
     }
 }

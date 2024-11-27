@@ -25,9 +25,10 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     enum Action: Equatable {
         case cancel
         case loadDetails
+        case deleteProfileImage
+        case updateUsername(String)
         case updatePolicy(UserPolicy)
         case updateConfiguration(UserConfiguration)
-        case updateUsername(String)
     }
 
     // MARK: Background State
@@ -81,6 +82,15 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             return performAction {
                 try await self.loadDetails()
             }
+        case .deleteProfileImage:
+            return performAction {
+                try await self.deleteProfileImage()
+            }
+
+        case let .updateUsername(username):
+            return performAction {
+                try await self.updateUsername(username: username)
+            }
 
         case let .updatePolicy(policy):
             return performAction {
@@ -90,11 +100,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case let .updateConfiguration(configuration):
             return performAction {
                 try await self.updateConfiguration(configuration: configuration)
-            }
-
-        case let .updateUsername(username):
-            return performAction {
-                try await self.updateUsername(username: username)
             }
         }
     }
@@ -131,10 +136,10 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
         .asAnyCancellable()
 
-        return .updating
+        return state
     }
 
-    // MARK: - Load User
+    // MARK: - Load Full UserDto
 
     private func loadDetails() async throws {
         guard let userID = user.id else { return }
@@ -146,6 +151,19 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             self.state = .content
         }
     }
+
+    // MARK: - Update Username
+
+    private func updateUsername(username: String) async throws {
+        guard let userID = user.id else { return }
+        var updatedUser = user
+        updatedUser.name = username
+
+        let request = Paths.updateUser(userID: userID, updatedUser)
+        try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.user.name = username
 
     // MARK: - Update User Policy
 
@@ -171,18 +189,23 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
     }
 
-    // MARK: - Update User Name
+    // MARK: - Delete User's Profile Image
 
-    private func updateUsername(username: String) async throws {
+    private func deleteProfileImage() async throws {
         guard let userID = user.id else { return }
-        var updatedUser = user
-        updatedUser.name = username
 
-        let request = Paths.updateUser(userID: userID, updatedUser)
-        try await userSession.client.send(request)
+        let request = Paths.deleteUserImage(
+            userID: userID,
+            imageType: "Primary"
+        )
+        let _ = try await userSession.client.send(request)
+
+        let userRequest = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(userRequest)
 
         await MainActor.run {
-            self.user.name = username
+            self.user = response.value
+            Notifications[.didChangeUserProfileImage].post(object: response.value)
         }
     }
 }

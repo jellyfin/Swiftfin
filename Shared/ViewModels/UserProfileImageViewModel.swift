@@ -16,7 +16,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case cancel
-        case upload(UIImage)
+        case upload(UIImage, String)
     }
 
     enum Event: Hashable {
@@ -47,11 +47,11 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             uploadCancellable?.cancel()
 
             return .initial
-        case let .upload(image):
+        case let .upload(image, userID):
 
             uploadCancellable = Task {
                 do {
-                    try await upload(image: image)
+                    try await upload(image: image, userID: userID)
 
                     await MainActor.run {
                         self.eventSubject.send(.uploaded)
@@ -72,7 +72,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func upload(image: UIImage) async throws {
+    private func upload(image: UIImage, userID: String) async throws {
 
         let contentType: String
         let imageData: Data
@@ -89,7 +89,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         }
 
         var request = Paths.postUserImage(
-            userID: userSession.user.id,
+            userID: userID,
             imageType: "Primary",
             imageData
         )
@@ -97,13 +97,21 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         let _ = try await userSession.client.send(request)
 
-        let currentUserRequest = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserRequest)
+        if userID == userSession.user.id {
+            let currentUserRequest = Paths.getCurrentUser
+            let response = try await userSession.client.send(currentUserRequest)
 
-        await MainActor.run {
-            userSession.user.data = response.value
+            await MainActor.run {
+                userSession.user.data = response.value
+                Notifications[.didChangeUserProfileImage].post(object: response.value)
+            }
+        } else {
+            let currentUserRequest = Paths.getUserByID(userID: userID)
+            let response = try await userSession.client.send(currentUserRequest)
 
-            Notifications[.didChangeUserProfileImage].post()
+            await MainActor.run {
+                Notifications[.didChangeUserProfileImage].post(object: response.value)
+            }
         }
     }
 }

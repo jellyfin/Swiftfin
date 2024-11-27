@@ -63,6 +63,18 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var apiKeys = makeAPIKeys
 
+    // MARK: - Route: Photo Picker
+
+    @Route(.modal)
+    var photoPicker = makePhotoPicker
+
+    // MARK: - Views: Admin Dashboard
+
+    @ViewBuilder
+    func makeAdminDashboard() -> some View {
+        AdminDashboardView()
+    }
+
     // MARK: - Views: Active Sessions
 
     @ViewBuilder
@@ -140,6 +152,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator {
             ResetUserPasswordView(userID: userID, requiresCurrentPassword: false)
         }
+    }
+
+    func makePhotoPicker(userID: String) -> NavigationViewCoordinator<UserProfileImageCoordinator> {
+        NavigationViewCoordinator(UserProfileImageCoordinator(userID: userID))
     }
 
     // MARK: - Views: API Keys
