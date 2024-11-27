@@ -322,8 +322,8 @@ internal enum L10n {
   internal static let days = L10n.tr("Localizable", "days", fallback: "Days")
   /// Default
   internal static let `default` = L10n.tr("Localizable", "default", fallback: "Default")
-  /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.
-  internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.")
+  /// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
+  internal static let defaultFailedLoginDescription = L10n.tr("Localizable", "defaultFailedLoginDescription", fallback: "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.")
   /// Default Scheme
   internal static let defaultScheme = L10n.tr("Localizable", "defaultScheme", fallback: "Default Scheme")
   /// Delete
@@ -1172,10 +1172,10 @@ internal enum L10n {
   internal static let unknownVideoStreamInfo = L10n.tr("Localizable", "unknownVideoStreamInfo", fallback: "The video stream information is unknown")
   /// Unlimited
   internal static let unlimited = L10n.tr("Localizable", "unlimited", fallback: "Unlimited")
-  /// The user can connect to the server without any limits. On the server, this is represented by 0.
-  internal static let unlimitedConnectionsDescription = L10n.tr("Localizable", "unlimitedConnectionsDescription", fallback: "The user can connect to the server without any limits. On the server, this is represented by 0.")
-  /// Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.
-  internal static let unlimitedFailedLoginDescription = L10n.tr("Localizable", "unlimitedFailedLoginDescription", fallback: "Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.")
+  /// The user can connect to the server without any limits.
+  internal static let unlimitedConnectionsDescription = L10n.tr("Localizable", "unlimitedConnectionsDescription", fallback: "The user can connect to the server without any limits.")
+  /// Allows unlimited failed login attempts without locking the user.
+  internal static let unlimitedFailedLoginDescription = L10n.tr("Localizable", "unlimitedFailedLoginDescription", fallback: "Allows unlimited failed login attempts without locking the user.")
   /// Unplayed
   internal static let unplayed = L10n.tr("Localizable", "unplayed", fallback: "Unplayed")
   /// You have unsaved changes. Are you sure you want to discard them?

@@ -1589,12 +1589,12 @@
 // Unlimited - Description
 // Explanation of the unlimited login attempts policy
 // Used in the user settings view
-"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user. On the server, this is represented by -1.";
+"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user.";
 
 // Default - Description
 // Explanation of the default login attempts policy
 // Used in the user settings view
-"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts. This is the default setting.";
+"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.";
 
 // Custom - Description
 // Explanation of the custom login attempts policy
@@ -1609,7 +1609,7 @@
 // Unlimited Connections - Description
 // Explanation of unlimited connections policy
 // Used in the user settings view
-"unlimitedConnectionsDescription" = "The user can connect to the server without any limits. On the server, this is represented by 0.";
+"unlimitedConnectionsDescription" = "The user can connect to the server without any limits.";
 
 // Custom Connections - Description
 // Explanation of custom connections policy

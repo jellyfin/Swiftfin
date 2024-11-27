@@ -89,6 +89,10 @@ extension ServerUserPermissionsView {
                     Text(L10n.maximumFailedLoginPolicyDescription)
                     LearnMoreButton(L10n.maximumFailedLoginPolicy) {
                         TextPair(
+                            title: L10n.lockedUsers,
+                            subtitle: L10n.maximumFailedLoginPolicyReenable
+                        )
+                        TextPair(
                             title: L10n.unlimited,
                             subtitle: L10n.unlimitedFailedLoginDescription
                         )
@@ -152,10 +156,6 @@ extension ServerUserPermissionsView {
                 VStack(alignment: .leading) {
                     Text(L10n.maximumConnectionsDescription)
                     LearnMoreButton(L10n.maximumSessionsPolicy) {
-                        TextPair(
-                            title: L10n.lockedUsers,
-                            subtitle: L10n.maximumFailedLoginPolicyReenable
-                        )
                         TextPair(
                             title: L10n.unlimited,
                             subtitle: L10n.unlimitedConnectionsDescription
