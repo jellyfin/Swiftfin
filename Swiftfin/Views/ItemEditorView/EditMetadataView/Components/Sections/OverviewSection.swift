@@ -11,35 +11,43 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct OverviewSection: View {
+
         @Binding
         var item: BaseItemDto
 
         let itemType: BaseItemKind
 
+        private var showTaglines: Bool {
+            [
+                BaseItemKind.movie,
+                .series,
+                .audioBook,
+                .book,
+                .audio,
+            ].contains(itemType)
+        }
+
         var body: some View {
-            if itemType == .movie ||
-                itemType == .series ||
-                itemType == .audioBook ||
-                itemType == .book ||
-                itemType == .audio
-            {
+            if showTaglines {
                 // There doesn't seem to be a usage anywhere of more than 1 tagline?
                 Section(L10n.taglines) {
-                    TextField(L10n.tagline, text: Binding(
-                        get: { item.taglines?.first ?? "" },
-                        set: { newValue in
-                            item.taglines = newValue.isEmpty ? nil : [newValue]
-                        }
-                    ))
+                    TextField(
+                        L10n.tagline,
+                        value: $item.taglines
+                            .map(
+                                getter: { $0 == nil ? "" : $0!.first },
+                                setter: { $0 == nil ? [] : [$0!] }
+                            ),
+                        format: .nilIfEmptyString
+                    )
                 }
             }
 
             Section(L10n.overview) {
-                TextEditor(text: Binding(
-                    get: { item.overview ?? "" },
-                    set: { item.overview = $0 }
-                ))
+                TextEditor(text: $item.overview.coalesce(""))
+                    .frame(minHeight: 100, maxHeight: .infinity)
             }
         }
     }

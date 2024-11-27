@@ -20,26 +20,21 @@ extension EditMetadataView {
         // TODO: Animation when lockAllFields is selected
         var body: some View {
             Section(L10n.lockedFields) {
-                Toggle(L10n.lockAllFields, isOn: Binding(get: {
-                    item.lockData ?? false
-                }, set: {
-                    item.lockData = $0
-                }))
+                Toggle(
+                    L10n.lockAllFields,
+                    isOn: $item.lockData.coalesce(false)
+                )
             }
 
             if item.lockData != true {
                 Section {
                     ForEach(MetadataField.allCases, id: \.self) { field in
-                        Toggle(field.displayTitle, isOn: Binding(
-                            get: { item.lockedFields?.contains(field) ?? true },
-                            set: { isSelected in
-                                if isSelected {
-                                    item.lockedFields?.append(field)
-                                } else {
-                                    item.lockedFields?.removeAll { $0 == field }
-                                }
-                            }
-                        ))
+                        Toggle(
+                            field.displayTitle,
+                            isOn: $item.lockedFields
+                                .coalesce([])
+                                .contains(field)
+                        )
                     }
                 }
             }

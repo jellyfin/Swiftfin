@@ -729,6 +729,8 @@
 		E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1803EA02BFBD6CF0039F90E /* Hashable.swift */; };
 		E1803EA22BFBD6CF0039F90E /* Hashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1803EA02BFBD6CF0039F90E /* Hashable.swift */; };
 		E18121062CBE428000682985 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528728FD229500600579 /* ChevronButton.swift */; };
+		E1821EA82CF6D43B0055EAB0 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1821EA72CF6D43B0055EAB0 /* Binding.swift */; };
+		E1821EA92CF6D43B0055EAB0 /* Binding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1821EA72CF6D43B0055EAB0 /* Binding.swift */; };
 		E18295E429CAC6F100F91ED0 /* BasicNavigationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154967D296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift */; };
 		E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */ = {isa = PBXBuildFile; productRef = E18443CA2A037773002DDDC8 /* UDPBroadcast */; };
 		E185920628CDAA6400326F80 /* CastAndCrewHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */; };
@@ -1600,6 +1602,7 @@
 		E17FB55828C125E900311DFE /* StudiosHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudiosHStack.swift; sourceTree = "<group>"; };
 		E17FB55A28C1266400311DFE /* GenresHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresHStack.swift; sourceTree = "<group>"; };
 		E1803EA02BFBD6CF0039F90E /* Hashable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hashable.swift; sourceTree = "<group>"; };
+		E1821EA72CF6D43B0055EAB0 /* Binding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Binding.swift; sourceTree = "<group>"; };
 		E185920528CDAA6400326F80 /* CastAndCrewHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastAndCrewHStack.swift; sourceTree = "<group>"; };
 		E185920728CDAAA200326F80 /* SimilarItemsHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimilarItemsHStack.swift; sourceTree = "<group>"; };
 		E185920928CEF23A00326F80 /* FocusGuide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FocusGuide.swift; sourceTree = "<group>"; };
@@ -2893,6 +2896,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E1644028BB301900323B0A /* Array.swift */,
+				E1821EA72CF6D43B0055EAB0 /* Binding.swift */,
 				E1E6C44F29B104840064123F /* Button.swift */,
 				E1C8CE5A28FE512400DF5D7B /* CGPoint.swift */,
 				E10EAA4E277BBCC4000269ED /* CGSize.swift */,
@@ -5076,6 +5080,7 @@
 				535870632669D21600D05A09 /* SwiftfinApp.swift in Sources */,
 				E1D90D772C051D44000EA787 /* BackPort+ScrollIndicatorVisibility.swift in Sources */,
 				E10231582BCF8AF8009D71FC /* WideChannelGridItem.swift in Sources */,
+				E1821EA82CF6D43B0055EAB0 /* Binding.swift in Sources */,
 				E15D4F082B1B12C300442DB8 /* Backport.swift in Sources */,
 				E1D4BF8F271A079A00A11E64 /* BasicAppSettingsView.swift in Sources */,
 				E1575E9A293E7B1E001665B1 /* Array.swift in Sources */,
@@ -5542,6 +5547,7 @@
 				E1DC7ACA2C63337C00AEE368 /* iOS15View.swift in Sources */,
 				E1CFE28028FA606800B7D34C /* ChapterTrack.swift in Sources */,
 				E1401CA22938122C00E8B599 /* AppIcons.swift in Sources */,
+				E1821EA92CF6D43B0055EAB0 /* Binding.swift in Sources */,
 				E1BDF2FB2952502300CC0294 /* SubtitleActionButton.swift in Sources */,
 				E17FB55728C1256400311DFE /* CastAndCrewHStack.swift in Sources */,
 				4EC50D612C934B3A00FC3D0E /* ServerTasksViewModel.swift in Sources */,

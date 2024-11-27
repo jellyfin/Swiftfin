@@ -12,6 +12,7 @@ import SwiftUI
 
 extension EditMetadataView {
     struct DateSection: View {
+
         @Binding
         var item: BaseItemDto
 
@@ -19,34 +20,34 @@ extension EditMetadataView {
 
         var body: some View {
             Section(L10n.dates) {
-                DatePicker(L10n.dateAdded, selection: Binding(get: {
-                    item.dateCreated ?? Date()
-                }, set: {
-                    item.dateCreated = $0
-                }), displayedComponents: .date)
+                DatePicker(
+                    L10n.dateAdded,
+                    selection: $item.dateCreated.coalesce(.now),
+                    displayedComponents: .date
+                )
 
-                DatePicker(itemType == .person ? L10n.birthday : L10n.releaseDate, selection: Binding(get: {
-                    item.premiereDate ?? Date()
-                }, set: {
-                    item.premiereDate = $0
-                }), displayedComponents: .date)
+                DatePicker(
+                    L10n.releaseDate,
+                    selection: $item.premiereDate.coalesce(.now),
+                    displayedComponents: .date
+                )
 
                 if itemType == .series || itemType == .person {
-                    DatePicker(itemType == .person ? L10n.dateOfDeath : L10n.endDate, selection: Binding(get: {
-                        item.endDate ?? Date()
-                    }, set: {
-                        item.endDate = $0
-                    }), displayedComponents: .date)
+                    DatePicker(
+                        L10n.endDate,
+                        selection: $item.endDate.coalesce(.now),
+                        displayedComponents: .date
+                    )
                 }
             }
 
             Section(L10n.year) {
-                TextField(itemType == .person ? L10n.birthYear : L10n.year, value: Binding(get: {
-                    item.productionYear ?? 0
-                }, set: {
-                    item.productionYear = $0
-                }), formatter: NumberFormatter())
-                    .keyboardType(.numberPad)
+                TextField(
+                    L10n.year,
+                    value: $item.productionYear,
+                    format: .number.grouping(.never)
+                )
+                .keyboardType(.numberPad)
             }
         }
     }
