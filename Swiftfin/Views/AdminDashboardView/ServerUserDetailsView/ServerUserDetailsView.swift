@@ -59,24 +59,24 @@ struct ServerUserDetailsView: View {
         }
         .navigationTitle(L10n.user)
         .onAppear {
-            viewModel.send(.loadDetails)
+            viewModel.send(.loadDetails) // Get full UserDto
+        }
+        .onChange(of: viewModel.user.name!) { name in
+            tempUsername = name
         }
         .confirmationDialog(
-            L10n.profileImage,
+            L10n.user,
             isPresented: $isPresentingProfileImageOptions,
             titleVisibility: .visible
         ) {
-
             Button(L10n.editUsername) {
                 isPresentingUsernameEditor = true
             }
-
             Button(L10n.selectImage) {
                 router.route(to: \.photoPicker, viewModel.user.id!)
             }
-
             Button(L10n.delete, role: .destructive) {
-                viewModel.deleteCurrentUserProfileImage()
+                viewModel.send(.deleteProfileImage)
             }
         }
         .alert(L10n.username, isPresented: $isPresentingUsernameEditor) {
@@ -86,7 +86,7 @@ struct ServerUserDetailsView: View {
                 isPresentingUsernameEditor = false
             }
             Button(L10n.save) {
-                viewModel.send(.updateUsername(username: tempUsername))
+                viewModel.send(.updateUsername(tempUsername))
                 tempUsername = ""
                 isPresentingUsernameEditor = false
             }

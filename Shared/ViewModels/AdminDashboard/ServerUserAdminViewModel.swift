@@ -16,13 +16,8 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: Event
 
     enum Event {
-        case success
-    }
-
-    // MARK: BackgroundState
-
-    enum BackgroundState {
-        case updating
+        case error(JellyfinAPIError)
+        case updated
     }
 
     // MARK: Action
@@ -30,17 +25,35 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     enum Action: Equatable {
         case cancel
         case loadDetails
-        case updateUsername(username: String)
+        case deleteProfileImage
+        case updatePolicy(UserPolicy)
+        case updateConfiguration(UserConfiguration)
+        case updateUsername(String)
+    }
+
+    // MARK: Background State
+
+    enum BackgroundState: Hashable {
+        case updating
     }
 
     // MARK: State
 
     enum State: Hashable {
-        case error(JellyfinAPIError)
         case initial
+        case content
+        case updating
+        case error(JellyfinAPIError)
     }
 
     // MARK: Published Values
+
+    @Published
+    final var state: State = .initial
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
+    @Published
+    private(set) var user: UserDto
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -48,31 +61,13 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .eraseToAnyPublisher()
     }
 
-    @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    final var state: State = .initial
-    @Published
-    private(set) var user: UserDto
-
-    private var resetTask: AnyCancellable?
+    private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     // MARK: Initialize from UserDto
 
     init(user: UserDto) {
         self.user = user
-        super.init()
-        Notifications[.didChangeUserProfileImage].publisher
-            .sink(receiveCompletion: { _ in }) { [weak self] notification in
-                guard let self = self,
-                      let newUser = notification.object as? UserDto,
-                      newUser.id == self.user.id else { return }
-
-                self.user = UserDto()
-                self.user = newUser
-            }
-            .store(in: &cancellables)
     }
 
     // MARK: Respond
@@ -80,50 +75,109 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     func respond(to action: Action) -> State {
         switch action {
         case .cancel:
-            resetTask?.cancel()
+            userTask?.cancel()
             return .initial
 
         case .loadDetails:
-            resetTask = Task {
-                do {
-                    try await loadDetails()
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
+            return performAction {
+                try await self.loadDetails()
             }
-            .asAnyCancellable()
 
-            return .initial
+        case .deleteProfileImage:
+            return performAction {
+                try await self.deleteProfileImage()
+            }
+
+        case let .updatePolicy(policy):
+            return performAction {
+                try await self.updatePolicy(policy: policy)
+            }
+
+        case let .updateConfiguration(configuration):
+            return performAction {
+                try await self.updateConfiguration(configuration: configuration)
+            }
 
         case let .updateUsername(username):
-            resetTask = Task {
-                do {
-                    try await updateUsername(username: username)
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
+            return performAction {
+                try await self.updateUsername(username: username)
             }
-            .asAnyCancellable()
-
-            return .initial
         }
     }
 
-    // MARK: - Update Username
+    // MARK: - Perform Action
+
+    private func performAction(action: @escaping () async throws -> Void) -> State {
+        userTask?.cancel()
+
+        userTask = Task {
+            do {
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.updating)
+                }
+
+                try await action()
+
+                await MainActor.run {
+                    self.state = .content
+                    self.eventSubject.send(.updated)
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.updating)
+                }
+            } catch {
+                let jellyfinError = JellyfinAPIError(error.localizedDescription)
+                await MainActor.run {
+                    self.state = .error(jellyfinError)
+                    self.backgroundStates.remove(.updating)
+                    self.eventSubject.send(.error(jellyfinError))
+                }
+            }
+        }
+        .asAnyCancellable()
+
+        return .updating
+    }
+
+    // MARK: - Load User
+
+    private func loadDetails() async throws {
+        guard let userID = user.id else { return }
+        let request = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.user = response.value
+            self.state = .content
+        }
+    }
+
+    // MARK: - Update User Policy
+
+    private func updatePolicy(policy: UserPolicy) async throws {
+        guard let userID = user.id else { return }
+        let request = Paths.updateUserPolicy(userID: userID, policy)
+        try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.user.policy = policy
+        }
+    }
+
+    // MARK: - Update User Configuration
+
+    private func updateConfiguration(configuration: UserConfiguration) async throws {
+        guard let userID = user.id else { return }
+        let request = Paths.updateUserConfiguration(userID: userID, configuration)
+        try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.user.configuration = configuration
+        }
+    }
+
+    // MARK: - Update User Name
 
     private func updateUsername(username: String) async throws {
         guard let userID = user.id else { return }
@@ -140,35 +194,21 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     // MARK: - Delete User's Profile Image
 
-    func deleteCurrentUserProfileImage() {
+    private func deleteProfileImage() async throws {
         guard let userID = user.id else { return }
 
-        Task {
-            let request = Paths.deleteUserImage(
-                userID: userID,
-                imageType: "Primary"
-            )
-            let _ = try await userSession.client.send(request)
+        let request = Paths.deleteUserImage(
+            userID: userID,
+            imageType: "Primary"
+        )
+        let _ = try await userSession.client.send(request)
 
-            let currentUserRequest = Paths.getCurrentUser
-            let response = try await userSession.client.send(currentUserRequest)
-
-            await MainActor.run {
-                userSession.user.data = response.value
-                Notifications[.didChangeUserProfileImage].post()
-            }
-        }
-    }
-
-    // MARK: - Load User
-
-    private func loadDetails() async throws {
-        guard let userID = user.id else { return }
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await userSession.client.send(request)
+        let userRequest = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(userRequest)
 
         await MainActor.run {
             self.user = response.value
+            Notifications[.didChangeUserProfileImage].post(object: user)
         }
     }
 }

@@ -76,7 +76,7 @@ final class SettingsViewModel: ViewModel {
             await MainActor.run {
                 userSession.user.data = response.value
 
-                Notifications[.didChangeUserProfileImage].post()
+                Notifications[.didChangeUserProfileImage].post(object: response.value)
             }
         }
     }
