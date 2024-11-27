@@ -47,7 +47,7 @@ extension ServerUserPermissionsView {
                 : LoginFailurePolicy.userDefault.rawValue
 
             return policy.loginAttemptsBeforeLockout != LoginFailurePolicy.unlimited.rawValue &&
-                   policy.loginAttemptsBeforeLockout != defaultAttempts
+                policy.loginAttemptsBeforeLockout != defaultAttempts
         }
 
         var body: some View {
