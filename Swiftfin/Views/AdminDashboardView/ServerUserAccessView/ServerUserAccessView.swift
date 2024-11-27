@@ -105,7 +105,7 @@ struct ServerUserAccessView: View {
             )
         }
 
-        if !(tempPolicy.enableAllFolders ?? false) {
+        if !Binding(projectedValue: $tempPolicy.enableAllFolders).coalesce(false).wrappedValue {
             Section {
                 ForEach(viewModel.libraries, id: \.id) { library in
                     Toggle(library.displayTitle, isOn: Binding(
@@ -140,7 +140,7 @@ struct ServerUserAccessView: View {
             )
         }
 
-        if !(tempPolicy.enableContentDeletion ?? false) {
+        if !Binding(projectedValue: $tempPolicy.enableContentDeletion).coalesce(false).wrappedValue {
             Section {
                 ForEach(viewModel.libraries, id: \.id) { library in
                     Toggle(library.displayTitle, isOn: Binding(
