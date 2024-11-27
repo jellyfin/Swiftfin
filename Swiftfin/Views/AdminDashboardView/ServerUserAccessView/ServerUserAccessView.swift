@@ -99,10 +99,10 @@ struct ServerUserAccessView: View {
     @ViewBuilder
     var accessView: some View {
         Section(L10n.access) {
-            Toggle(L10n.enableAllLibraries, isOn: Binding(
-                get: { tempPolicy.enableAllFolders ?? false },
-                set: { tempPolicy.enableAllFolders = $0 }
-            ))
+            Toggle(
+                L10n.enableAllLibraries,
+                isOn: $tempPolicy.enableAllFolders.coalesce(false)
+            )
         }
 
         if !(tempPolicy.enableAllFolders ?? false) {
@@ -134,10 +134,10 @@ struct ServerUserAccessView: View {
     @ViewBuilder
     var deletionView: some View {
         Section(L10n.deletion) {
-            Toggle(L10n.enableAllLibraries, isOn: Binding(
-                get: { tempPolicy.enableContentDeletion ?? false },
-                set: { tempPolicy.enableContentDeletion = $0 }
-            ))
+            Toggle(
+                L10n.enableAllLibraries,
+                isOn: $tempPolicy.enableContentDeletion.coalesce(false)
+            )
         }
 
         if !(tempPolicy.enableContentDeletion ?? false) {
