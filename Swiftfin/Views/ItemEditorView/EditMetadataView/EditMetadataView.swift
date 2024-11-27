@@ -46,6 +46,7 @@ struct EditMetadataView: View {
                 Button(L10n.save) {
                     item = tempItem
                     viewModel.send(.update(tempItem))
+                    router.dismissCoordinator()
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.item == tempItem)
@@ -59,22 +60,6 @@ struct EditMetadataView: View {
 
     @ViewBuilder
     private var contentView: some View {
-        switch itemType {
-        case .movie:
-            movieView
-        case .series:
-            seriesView
-        case .episode:
-            episodeView
-        default:
-            EmptyView()
-        }
-    }
-
-    // MARK: - Movie View
-
-    @ViewBuilder
-    private var movieView: some View {
         Form {
             TitleSection(
                 item: $tempItem,
@@ -86,79 +71,11 @@ struct EditMetadataView: View {
                 itemType: itemType
             )
 
-            ReviewsSection(item: $tempItem)
-
-            OverviewSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            ParentalRatingSection(item: $tempItem)
-
-            MediaFormatSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            LocalizationSection(item: $tempItem)
-
-            LockMetadataSection(item: $tempItem)
-        }
-    }
-
-    // MARK: - Series View
-
-    @ViewBuilder
-    private var seriesView: some View {
-        Form {
-            TitleSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            DateSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            SeriesSection(item: $tempItem)
-
-            OverviewSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            ReviewsSection(item: $tempItem)
-
-            ParentalRatingSection(item: $tempItem)
-
-            MediaFormatSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            LocalizationSection(item: $tempItem)
-
-            LockMetadataSection(item: $tempItem)
-        }
-    }
-
-    // MARK: - Episode View
-
-    @ViewBuilder
-    private var episodeView: some View {
-        Form {
-            TitleSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            DateSection(
-                item: $tempItem,
-                itemType: itemType
-            )
-
-            EpisodeSection(item: $tempItem)
+            if itemType == .series {
+                SeriesSection(item: $tempItem)
+            } else if itemType == .episode {
+                EpisodeSection(item: $tempItem)
+            }
 
             OverviewSection(
                 item: $tempItem,

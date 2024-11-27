@@ -35,13 +35,11 @@ extension EditMetadataView {
                 }
             }
 
-            // TODO: Size Up / Down with Text
             Section(L10n.overview) {
                 TextEditor(text: Binding(
                     get: { item.overview ?? "" },
                     set: { item.overview = $0 }
                 ))
-                .frame(minHeight: 100, maxHeight: .infinity)
             }
         }
     }

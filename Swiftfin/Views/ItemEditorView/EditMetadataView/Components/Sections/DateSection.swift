@@ -25,14 +25,14 @@ extension EditMetadataView {
                     item.dateCreated = $0
                 }), displayedComponents: .date)
 
-                DatePicker(L10n.releaseDate, selection: Binding(get: {
+                DatePicker(itemType == .person ? L10n.birthday : L10n.releaseDate, selection: Binding(get: {
                     item.premiereDate ?? Date()
                 }, set: {
                     item.premiereDate = $0
                 }), displayedComponents: .date)
 
                 if itemType == .series || itemType == .person {
-                    DatePicker(L10n.endDate, selection: Binding(get: {
+                    DatePicker(itemType == .person ? L10n.dateOfDeath : L10n.endDate, selection: Binding(get: {
                         item.endDate ?? Date()
                     }, set: {
                         item.endDate = $0
@@ -41,7 +41,7 @@ extension EditMetadataView {
             }
 
             Section(L10n.year) {
-                TextField(L10n.year, value: Binding(get: {
+                TextField(itemType == .person ? L10n.birthYear : L10n.year, value: Binding(get: {
                     item.productionYear ?? 0
                 }, set: {
                     item.productionYear = $0

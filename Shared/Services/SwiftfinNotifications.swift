@@ -81,6 +81,8 @@ extension Notifications.Key {
     static let didFailMigration = NotificationKey("didFailMigration")
 
     static let itemMetadataDidChange = NotificationKey("itemMetadataDidChange")
+    static let itemMetadataWasEdited = NotificationKey("itemMetadataWasEdited")
+
     static let didDeleteItem = NotificationKey("didDeleteItem")
 
     static let didConnectToServer = NotificationKey("didConnectToServer")

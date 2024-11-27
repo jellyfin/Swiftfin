@@ -167,7 +167,7 @@ struct ItemView: View {
 
             if enableItemEditor {
                 Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel.item)
+                    router.route(to: \.itemEditor, viewModel)
                 }
             }
 

@@ -18,8 +18,8 @@ struct ItemEditorView: View {
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
-    @State
-    var item: BaseItemDto
+    @ObservedObject
+    var viewModel: ItemViewModel
 
     // MARK: - Body
 
@@ -30,10 +30,6 @@ struct ItemEditorView: View {
             .navigationBarCloseButton {
                 router.dismissCoordinator()
             }
-            .onNotification(.itemMetadataDidChange) { notification in
-                guard let newItem = notification.object as? BaseItemDto else { return }
-                item = newItem
-            }
     }
 
     // MARK: - Content View
@@ -41,8 +37,8 @@ struct ItemEditorView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                item.name ?? L10n.unknown,
-                description: item.path
+                viewModel.item.name ?? L10n.unknown,
+                description: viewModel.item.path
             )
 
             refreshButtonView
@@ -54,7 +50,7 @@ struct ItemEditorView: View {
     @ViewBuilder
     private var refreshButtonView: some View {
         Section {
-            RefreshMetadataButton(item: item)
+            RefreshMetadataButton(item: viewModel.item)
                 .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
         } footer: {
             LearnMoreButton(L10n.metadata) {
@@ -83,7 +79,7 @@ struct ItemEditorView: View {
         Section(L10n.edit) {
             ChevronButton(L10n.metadata)
                 .onSelect {
-                    router.route(to: \.editMetadata, item)
+                    router.route(to: \.editMetadata, viewModel.item)
                 }
         }
     }

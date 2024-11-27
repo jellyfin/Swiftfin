@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import JellyfinAPI
+import OrderedCollections
 
 class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
@@ -27,14 +28,22 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
         case update(BaseItemDto)
     }
 
+    // MARK: BackgroundState
+
+    enum BackgroundState: Hashable {
+        case refreshing
+    }
+
     // MARK: - State
 
     enum State: Hashable {
         case initial
         case error(JellyfinAPIError)
         case updating
-        case refreshing
     }
+
+    @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
 
     @Published
     var item: BaseItemDto
@@ -42,7 +51,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var state: State = .initial
 
-    private var updateTask: AnyCancellable?
+    private var task: AnyCancellable?
     private let eventSubject = PassthroughSubject<Event, Never>()
 
     var events: AnyPublisher<Event, Never> {
@@ -61,100 +70,126 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     func respond(to action: Action) -> State {
         switch action {
         case let .add(items):
-            return perform(.updated) {
-                try await self.addItems(items)
-            }
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run { self.state = .updating }
+
+                    try await self.addComponents(items)
+
+                    await MainActor.run {
+                        self.state = .initial
+                        self.eventSubject.send(.updated)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
         case let .remove(items):
-            return perform(.updated) {
-                try await self.removeItems(items)
-            }
-        case let .update(item):
-            return perform(.updated) {
-                _ = self.updateItem(item)
-            }
-        }
-    }
+            task?.cancel()
 
-    // MARK: - Update State and Perform Operation
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run { self.state = .updating }
 
-    private func perform(_ event: Event, operation: @escaping () async throws -> Void) -> State {
-        updateTask?.cancel()
+                    try await self.removeComponents(items)
 
-        updateTask = Task { [weak self] in
-            guard let self = self else { return }
-
-            await MainActor.run {
-                self.state = .updating
-            }
-
-            do {
-                try await operation()
-
-                await MainActor.run {
-                    self.state = .initial
-                    self.eventSubject.send(event)
+                    await MainActor.run {
+                        self.state = .initial
+                        self.eventSubject.send(.updated)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
                 }
-            } catch {
-                await MainActor.run {
-                    self.state = .initial
-                    self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
+            }.asAnyCancellable()
+
+            return state
+
+        case let .update(newItem):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run { self.state = .updating }
+
+                    try await self.updateItem(newItem)
+
+                    await MainActor.run {
+                        self.state = .initial
+                        self.eventSubject.send(.updated)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
                 }
-            }
-        }.asAnyCancellable()
+            }.asAnyCancellable()
 
-        return .refreshing
-    }
-
-    // MARK: - Update Item on Server
-
-    func updateItem(_ newItem: BaseItemDto, refresh: Bool = false) -> State {
-        perform(.updated) {
-            try await self.saveUpdatedItem(newItem)
-            if refresh {
-                try await self.refreshItemFromServer()
-            } else {
-                await MainActor.run {
-                    self.item = newItem
-                }
-            }
+            return state
         }
     }
 
     // MARK: - Save Updated Item to Server
 
-    private func saveUpdatedItem(_ newItem: BaseItemDto) async throws {
+    func updateItem(_ newItem: BaseItemDto, refresh: Bool = false) async throws {
         guard let itemId = item.id else { return }
 
         let request = Paths.updateItem(itemID: itemId, newItem)
         _ = try await userSession.client.send(request)
 
+        if refresh {
+            try await refreshItem()
+        }
+
         await MainActor.run {
-            Notifications[.itemMetadataDidChange].post(object: newItem)
+            Notifications[.itemMetadataWasEdited].post(object: itemId)
         }
     }
 
-    // MARK: - Refresh Item from Server
+    // MARK: - Refresh Item
 
-    private func refreshItemFromServer() async throws {
+    private func refreshItem() async throws {
         guard let itemId = item.id else { return }
+
+        await MainActor.run {
+            _ = backgroundStates.append(.refreshing)
+        }
 
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
             self.item = response.value
+            _ = backgroundStates.remove(.refreshing)
         }
     }
 
     // MARK: - Add Items (To be overridden)
 
-    func addItems(_ items: [ItemType]) async throws {
+    func addComponents(_ items: [ItemType]) async throws {
         fatalError("This method should be overridden in subclasses")
     }
 
     // MARK: - Remove Items (To be overridden)
 
-    func removeItems(_ items: [ItemType]) async throws {
+    func removeComponents(_ items: [ItemType]) async throws {
         fatalError("This method should be overridden in subclasses")
     }
 }

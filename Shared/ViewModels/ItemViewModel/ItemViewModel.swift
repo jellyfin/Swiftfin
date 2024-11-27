@@ -105,6 +105,19 @@ class ItemViewModel: ViewModel, Stateful {
                 }
             }
             .store(in: &cancellables)
+
+        Notifications[.itemMetadataWasEdited].publisher
+            .sink { [weak self] notification in
+
+                guard let itemId = notification.object as? String else { return }
+
+                if itemId == self?.item.id {
+                    Task { [weak self] in
+                        await self?.send(.backgroundRefresh)
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: respond

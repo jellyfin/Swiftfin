@@ -11,10 +11,13 @@ import JellyfinAPI
 import SwiftUI
 
 extension EditMetadataView {
+
     struct LockMetadataSection: View {
+
         @Binding
         var item: BaseItemDto
 
+        // TODO: Animation when lockAllFields is selected
         var body: some View {
             Section(L10n.lockedFields) {
                 Toggle(L10n.lockAllFields, isOn: Binding(get: {
@@ -25,12 +28,12 @@ extension EditMetadataView {
             }
 
             if item.lockData != true {
-                Section(L10n.active) {
+                Section {
                     ForEach(MetadataField.allCases, id: \.self) { field in
                         Toggle(field.displayTitle, isOn: Binding(
-                            get: { !(item.lockedFields?.contains(field) ?? false) },
+                            get: { item.lockedFields?.contains(field) ?? true },
                             set: { isSelected in
-                                if !isSelected {
+                                if isSelected {
                                     item.lockedFields?.append(field)
                                 } else {
                                     item.lockedFields?.removeAll { $0 == field }

@@ -15,7 +15,6 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
     // MARK: Action
 
     enum Action: Equatable {
-        case error(JellyfinAPIError)
         case refresh
     }
 
@@ -42,8 +41,6 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .error(error):
-            return .error(error)
         case .refresh:
             currentRefreshTask?.cancel()
 
@@ -63,13 +60,13 @@ final class ParentalRatingsViewModel: ViewModel, Stateful {
                     guard !Task.isCancelled else { return }
 
                     await MainActor.run {
-                        self.send(.error(.init(error.localizedDescription)))
+                        self.state = .error(.init(error.localizedDescription))
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .refreshing
+            return state
         }
     }
 

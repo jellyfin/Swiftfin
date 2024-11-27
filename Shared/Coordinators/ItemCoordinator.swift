@@ -80,8 +80,8 @@ final class ItemCoordinator: NavigationCoordinatable {
     }
 
     #if os(iOS)
-    func makeItemEditor(item: BaseItemDto) -> NavigationViewCoordinator<ItemEditorCoordinator> {
-        NavigationViewCoordinator(ItemEditorCoordinator(item: item))
+    func makeItemEditor(viewModel: ItemViewModel) -> NavigationViewCoordinator<ItemEditorCoordinator> {
+        NavigationViewCoordinator(ItemEditorCoordinator(viewModel: viewModel))
     }
 
     func makeDownloadTask(downloadTask: DownloadTask) -> NavigationViewCoordinator<DownloadTaskCoordinator> {
