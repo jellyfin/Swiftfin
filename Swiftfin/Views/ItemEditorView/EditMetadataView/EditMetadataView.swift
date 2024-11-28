@@ -61,10 +61,7 @@ struct EditMetadataView: View {
     @ViewBuilder
     private var contentView: some View {
         Form {
-            TitleSection(
-                item: $tempItem,
-                itemType: itemType
-            )
+            TitleSection(item: $tempItem)
 
             DateSection(
                 item: $tempItem,
@@ -86,10 +83,9 @@ struct EditMetadataView: View {
 
             ParentalRatingSection(item: $tempItem)
 
-            MediaFormatSection(
-                item: $tempItem,
-                itemType: itemType
-            )
+            if [BaseItemKind.movie, .episode].contains(itemType) {
+                MediaFormatSection(item: $tempItem)
+            }
 
             LocalizationSection(item: $tempItem)
 

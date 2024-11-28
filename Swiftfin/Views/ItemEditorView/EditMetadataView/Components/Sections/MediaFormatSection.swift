@@ -17,19 +17,7 @@ extension EditMetadataView {
         @Binding
         var item: BaseItemDto
 
-        let itemType: BaseItemKind
-
         var body: some View {
-            switch itemType {
-            case .movie, .episode:
-                videoFormatView
-            default:
-                EmptyView()
-            }
-        }
-
-        @ViewBuilder
-        private var videoFormatView: some View {
             Section(L10n.format) {
                 TextField(
                     L10n.originalAspectRatio,

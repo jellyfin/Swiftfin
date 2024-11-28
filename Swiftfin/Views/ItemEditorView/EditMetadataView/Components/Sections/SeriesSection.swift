@@ -18,8 +18,6 @@ extension EditMetadataView {
         private var item: BaseItemDto
 
         @State
-        private var tempTimeInterval: TimeInterval = 0
-        @State
         private var tempRunTime: Int?
 
         // MARK: - Initializer
