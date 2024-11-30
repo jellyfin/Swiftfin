@@ -39,9 +39,13 @@ struct ItemView: View {
         enableItemDeletion && viewModel.item.canDelete ?? false
     }
 
-    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
+    private var canDownload: Bool {
+        viewModel.item.canDownload ?? false
+    }
+
+    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items. For example, canDownload.
     private var enableMenu: Bool {
-        canDelete || enableItemEditor
+        canDelete || enableItemEditor// || canDownload
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -123,8 +127,10 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.refresh)) {
-
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.refresh),
+            isHidden: !enableMenu
+        ) {
             if enableItemEditor {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel)

@@ -471,8 +471,9 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel.send(.refresh)
             }
         }
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.gettingNextPage)) {
-
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
+        ) {
             if Defaults[.Customization.Library.rememberLayout] {
                 LibraryViewTypeToggle(
                     posterType: $posterType,

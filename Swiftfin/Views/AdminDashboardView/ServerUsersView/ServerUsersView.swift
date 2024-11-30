@@ -87,8 +87,10 @@ struct ServerUsersView: View {
                 }
             }
         }
-        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.gettingUsers), isHidden: isEditing) {
-
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.gettingUsers),
+            isHidden: isEditing
+        ) {
             Button(L10n.addUser, systemImage: "plus") {
                 router.route(to: \.addServerUser)
             }
