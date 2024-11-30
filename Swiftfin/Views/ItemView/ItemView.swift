@@ -123,12 +123,19 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refresh) {
-                ProgressView()
+        .navigationBarMenuButton(isLoading: viewModel.backgroundStates.contains(.refresh)) {
+
+            if enableItemEditor {
+                Button(L10n.edit, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel)
+                }
             }
-            if enableMenu {
-                itemActionMenu
+
+            if canDelete {
+                Divider()
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    showConfirmationDialog = true
+                }
             }
         }
         .confirmationDialog(
@@ -158,28 +165,5 @@ struct ItemView: View {
         } message: { error in
             Text(error.localizedDescription)
         }
-    }
-
-    @ViewBuilder
-    private var itemActionMenu: some View {
-
-        Menu(L10n.options, systemImage: "ellipsis.circle") {
-
-            if enableItemEditor {
-                Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel)
-                }
-            }
-
-            if canDelete {
-                Divider()
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    showConfirmationDialog = true
-                }
-            }
-        }
-        .labelStyle(.iconOnly)
-        .backport
-        .fontWeight(.semibold)
     }
 }

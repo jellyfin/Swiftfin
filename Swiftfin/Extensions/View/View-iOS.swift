@@ -80,6 +80,22 @@ extension View {
     }
 
     @ViewBuilder
+    func navigationBarMenuButton<Content: View>(
+        isLoading: Bool = false,
+        isHidden: Bool = false,
+        @ViewBuilder
+        _ items: @escaping () -> Content
+    ) -> some View {
+        modifier(
+            NavigationBarMenuButtonModifier(
+                isLoading: isLoading,
+                isHidden: isHidden,
+                items: items
+            )
+        )
+    }
+
+    @ViewBuilder
     func listRowCornerRadius(_ radius: CGFloat) -> some View {
         if #unavailable(iOS 16) {
             introspect(.listCell, on: .iOS(.v15)) { cell in
