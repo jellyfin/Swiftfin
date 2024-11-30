@@ -57,7 +57,7 @@ extension EditMetadataView {
 
                 Picker(
                     L10n.customRating,
-                    selection: $item.officialRating
+                    selection: $item.customRating
                         .map(
                             getter: { value in customRatings.first { $0.name == value } },
                             setter: { $0?.name }

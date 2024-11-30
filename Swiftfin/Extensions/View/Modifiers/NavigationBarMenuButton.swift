@@ -27,10 +27,8 @@ struct NavigationBarMenuButtonModifier<Content: View>: ViewModifier {
                 }
 
                 if !isHidden {
-                    Menu {
+                    Menu(L10n.options, systemImage: "ellipsis.circle") {
                         items()
-                    } label: {
-                        Label(L10n.options, systemImage: "ellipsis.circle")
                     }
                     .labelStyle(.iconOnly)
                     .backport
