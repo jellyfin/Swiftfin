@@ -43,9 +43,10 @@ struct ItemView: View {
         viewModel.item.canDownload ?? false
     }
 
-    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items. For example, canDownload.
+    // Use to hide the menu button when not needed.
+    // Add more checks as needed. For example, canDownload.
     private var enableMenu: Bool {
-        canDelete || enableItemEditor// || canDownload
+        canDelete || enableItemEditor
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
