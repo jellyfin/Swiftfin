@@ -42,3 +42,21 @@ extension Binding {
         map(getter: { !$0 }, setter: { $0 })
     }
 }
+
+extension Binding where Value: RangeReplaceableCollection, Value.Element: Equatable {
+
+    func contains(_ element: Value.Element) -> Binding<Bool> {
+        Binding<Bool>(
+            get: { wrappedValue.contains(element) },
+            set: { newValue in
+                if newValue {
+                    if !wrappedValue.contains(element) {
+                        wrappedValue.append(element)
+                    }
+                } else {
+                    wrappedValue.removeAll { $0 == element }
+                }
+            }
+        )
+    }
+}

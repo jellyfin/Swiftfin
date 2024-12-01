@@ -301,1099 +301,1124 @@
 "pauseOnBackground" = "Pause on background";
 "playOnActive" = "Play on active";
 
+// Retrieving Media Information - Loading Message
+// Text displayed to indicate that media information is being loaded.
 "retrievingMediaInformation" = "Retrieving media information";
 
+// Right - Direction
+// Label for the right side or direction.
 "right" = "Right";
+
+// Left - Direction
+// Label for the left side or direction.
 "left" = "Left";
+
+// Letter Picker - Option
+// Picker used to select a letter for jumping to a specific section in a list.
 "letterPicker" = "Letter Picker";
+
+// Orientation - Setting
+// Setting to define how an item is oriented (e.g., portrait or landscape).
 "orientation" = "Orientation";
 
-/* MARK: Bitrate Options */
-
-/* Option to set the test size for bitrate testing */
+// Test Size - Option
+// Option to set the test size for bitrate testing.
 "testSize" = "Test Size";
 
-/* Option to set the maximum bitrate for playback */
+// Maximum Bitrate - Option
+// Option to set the maximum bitrate for playback.
 "maximumBitrate" = "Maximum Bitrate";
 
-/* Option for automatic bitrate selection */
+// Auto - Option
+// Option for automatic bitrate selection.
 "bitrateAuto" = "Auto";
 
-/* Option for the maximum bitrate */
+// Maximum - Option
+// Option for the maximum bitrate.
 "bitrateMax" = "Maximum";
 
-/* Option to set the bitrate to 4K quality at 120 Mbps */
+// 4K - 120 Mbps - Option
+// Option to set the bitrate to 4K quality at 120 Mbps.
 "bitrateMbps120" = "4K - 120 Mbps";
 
-/* Option to set the bitrate to 4K quality at 80 Mbps */
+// 4K - 80 Mbps - Option
+// Option to set the bitrate to 4K quality at 80 Mbps.
 "bitrateMbps80" = "4K - 80 Mbps";
 
-/* Option to set the bitrate to 1080p quality at 60 Mbps */
+// 1080p - 60 Mbps - Option
+// Option to set the bitrate to 1080p quality at 60 Mbps.
 "bitrateMbps60" = "1080p - 60 Mbps";
 
-/* Option to set the bitrate to 1080p quality at 40 Mbps */
+// 1080p - 40 Mbps - Option
+// Option to set the bitrate to 1080p quality at 40 Mbps.
 "bitrateMbps40" = "1080p - 40 Mbps";
 
-/* Option to set the bitrate to 1080p quality at 20 Mbps */
+// 1080p - 20 Mbps - Option
+// Option to set the bitrate to 1080p quality at 20 Mbps.
 "bitrateMbps20" = "1080p - 20 Mbps";
 
-/* Option to set the bitrate to 1080p quality at 15 Mbps */
+// 1080p - 15 Mbps - Option
+// Option to set the bitrate to 1080p quality at 15 Mbps.
 "bitrateMbps15" = "1080p - 15 Mbps";
 
-/* Option to set the bitrate to 1080p quality at 10 Mbps */
+// 1080p - 10 Mbps - Option
+// Option to set the bitrate to 1080p quality at 10 Mbps.
 "bitrateMbps10" = "1080p - 10 Mbps";
 
-/* Option to set the bitrate to 720p quality at 8 Mbps */
+// 720p - 8 Mbps - Option
+// Option to set the bitrate to 720p quality at 8 Mbps.
 "bitrateMbps8" = "720p - 8 Mbps";
 
-/* Option to set the bitrate to 720p quality at 6 Mbps */
+// 720p - 6 Mbps - Option
+// Option to set the bitrate to 720p quality at 6 Mbps.
 "bitrateMbps6" = "720p - 6 Mbps";
 
-/* Option to set the bitrate to 720p quality at 4 Mbps */
+// 720p - 4 Mbps - Option
+// Option to set the bitrate to 720p quality at 4 Mbps.
 "bitrateMbps4" = "720p - 4 Mbps";
 
-/* Option to set the bitrate to 480p quality at 3 Mbps */
+// 480p - 3 Mbps - Option
+// Option to set the bitrate to 480p quality at 3 Mbps.
 "bitrateMbps3" = "480p - 3 Mbps";
 
-/* Option to set the bitrate to 480p quality at 1.5 Mbps */
+// 480p - 1.5 Mbps - Option
+// Option to set the bitrate to 480p quality at 1.5 Mbps.
 "bitrateKbps1500" = "480p - 1.5 Mbps";
 
-/* Option to set the bitrate to 480p quality at 720 Kbps */
+// 480p - 720 Kbps - Option
+// Option to set the bitrate to 480p quality at 720 Kbps.
 "bitrateKbps720" = "480p - 720 Kbps";
 
-/* Option to set the bitrate to 360p quality at 420 Kbps */
+// 360p - 420 Kbps - Option
+// Option to set the bitrate to 360p quality at 420 Kbps.
 "bitrateKbps420" = "360p - 420 Kbps";
 
-/* Description for bitrate test duration indicating longer tests provide more accurate bitrates but may delay playback */
+// Bitrate Test Disclaimer - Description
+// Description for bitrate test duration indicating longer tests provide more accurate bitrates.
 "bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
 
-/* Select Server View */
+// Servers - Navigation Title
+// Select Server View.
 "servers" = "Servers";
 
-/* Select Server View - Add Server */
+// Add Server - Button
+// Select Server View - Add Server.
 "addServer" = "Add Server";
 
-/* Select Server View - Select All Servers */
+// All Servers - Button
+// Select Server View - Select All Servers.
 "allServers" = "All Servers";
 
-/* Select Server View - Edit an Existing Server */
+// Edit Server - Button
+// Select Server View - Edit an Existing Server.
 "editServer" = "Edit Server";
 
-/* Server Detail View - Delete */
+// Delete - Button
+// Server Detail View - Delete.
 "delete" = "Delete";
 
-/* Server Detail View - Delete Server */
+// Delete Server - Button
+// Server Detail View - Delete Server.
 "deleteServer" = "Delete Server";
 
-/* Customize Server View - Indicators */
+// Indicators - Button
+// Customize Server View - Indicators.
 "indicators" = "Indicators";
 
-/* Customize Server View - Posters */
+// Posters - Button
+// Customize Server View - Posters.
 "posters" = "Posters";
 
-/* Customize Server View - Cinematic Background */
+// Cinematic Background - Button
+// Customize Server View - Cinematic Background.
 "cinematicBackground" = "Cinematic Background";
 
-/* Customize Server View - Random Image */
+// Random Image - Button
+// Customize Server View - Random Image.
 "randomImage" = "Random Image";
 
-/* Customize Server View - Show Favorites */
+// Show Favorites - Button
+// Customize Server View - Show Favorites.
 "showFavorites" = "Show Favorites";
 
-/* Customize Server View - Show Recently Added */
+// Show Recently Added - Button
+// Customize Server View - Show Recently Added.
 "showRecentlyAdded" = "Show Recently Added";
 
-/* Indicators View - Show Favorited */
+// Show Favorited - Indicators View
+// Option to show favorited items.
 "showFavorited" = "Show Favorited";
 
-/* Indicators View - Show Progress */
+// Show Progress - Indicators View
+// Option to show progress indicators.
 "showProgress" = "Show Progress";
 
-/* Indicators View - Show Unwatched */
+// Show Unwatched - Indicators View
+// Option to show unwatched items.
 "showUnwatched" = "Show Unwatched";
 
-/* Indicators View - Show Watched */
+// Show Watched - Indicators View
+// Option to show watched items.
 "showWatched" = "Show Watched";
 
-/* Maximum Bitrate View - Playback Quality */
+// Playback Quality - Maximum Bitrate View
+// Label for the playback quality setting.
 "playbackQuality" = "Playback Quality";
 
-/* Settings View - Video Player */
+// Video Player - Settings View
+// Label for the video player settings.
 "videoPlayer" = "Video Player";
 
-/* Settings View - Customize */
+// Customize - Settings View
+// Label for customization settings.
 "customize" = "Customize";
 
-/* Settings View - Logs */
+// Logs - Settings View
+// Label for viewing logs.
 "logs" = "Logs";
 
-/* General */
+// Jellyfin - General
+// Label for Jellyfin branding.
 "jellyfin" = "Jellyfin";
 
-/* Video Player Settings View - Offset */
+// Offset - Video Player Settings View
+// Label for setting playback offset.
 "offset" = "Offset";
 
-/* Video Player Settings View - Resume */
+// Resume - Video Player Settings View
+// Label for resuming playback.
 "resume" = "Resume";
 
-/* Video Player Settings View - Disclaimer */
+// Subtitles Disclaimer - Video Player Settings View
+// Disclaimer about subtitle compatibility.
 "subtitlesDisclaimer" = "Settings only affect some subtitle types";
 
-/* Video Player Settings View - Pause on Background */
+// Pause on Background - Video Player Settings View
+// Option to pause playback when app goes to the background.
 "pauseOnBackground" = "Pause on background";
 
-/* Video Player Settings View - Play on Active */
+// Play on Active - Video Player Settings View
+// Option to resume playback when app becomes active.
 "playOnActive" = "Play on active";
 
-/* Video Player Settings View - Playback Header */
+// Playback - Video Player Settings View
+// Header label for playback settings.
 "playback" = "Playback";
 
-/* Video Player Settings View - Resume Offset Title */
+// Resume Offset Title - Video Player Settings View
+// Title for the resume offset setting.
 "resumeOffsetTitle" = "Resume Offset";
 
-/* Video Player Settings View - Resume Offset Description */
+// Resume Offset Description - Video Player Settings View
+// Description for the resume offset setting.
 "resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
 
-/* Section Header for a Custom Device Profile */
+// Custom Profile - Section Header
+// Header label for custom device profiles.
 "customProfile" = "Custom Profile";
 
-/* Section Header for Device Profiles */
+// Device Profile - Section Header
+// Header label for device profiles.
 "deviceProfile" = "Device Profile";
 
-/* Custom profile is Added to the Existing Profiles */
+// Add Custom Device Profiles - Description
+// Description for adding custom profiles to default profiles.
 "customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
 
-/* Custom profile will replace the Existing Profiles */
+// Replace Custom Device Profiles - Description
+// Description for replacing default profiles with custom profiles.
 "customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
 
-/* Section for Playback Quality Settings */
+// Playback Quality - Section
+// Label for the playback quality section.
 "playbackQuality" = "Playback Quality";
 
-/* Override Transcoding Profile */
+// Use as Transcoding Profile - Option
+// Option to use a profile for transcoding.
 "useAsTranscodingProfile" = "Use as Transcoding Profile";
 
-/* PlaybackCompatibility Default Category */
+// Auto - PlaybackCompatibility Default Category
+// Label for the default playback compatibility setting.
 "auto" = "Auto";
 
-/* PlaybackCompatibility Compatible Category */
+// Most Compatible - PlaybackCompatibility Compatible Category
+// Label for the most compatible playback compatibility setting.
 "compatible" = "Most Compatible";
 
-/* PlaybackCompatibility DirectPlay Category */
+// Direct Play - PlaybackCompatibility DirectPlay Category
+// Label for the direct play compatibility setting.
 "direct" = "Direct Play";
 
-/* PlaybackCompatibility Custom Category */
+// Custom - PlaybackCompatibility Custom Category
+// Label for the custom playback compatibility setting.
 "custom" = "Custom";
 
-/* PlaybackCompatibility Section Title */
+// Compatibility - PlaybackCompatibility Section Title
+// Label for the compatibility section.
 "compatibility" = "Compatibility";
 
-/* PlaybackCompatibility Profile Sections */
+// Profiles - PlaybackCompatibility Profile Sections
+// Label for playback compatibility profiles.
 "profiles" = "Profiles";
 
-/* Behavior */
+// Behavior - General
+// Label for behavior settings.
 "behavior" = "Behavior";
 
-/* Bitrate Automatic Section Header */
+// Bitrate Test - Bitrate Automatic Section Header
+// Header label for bitrate testing settings.
 "bitrateTest" = "Bitrate Test";
 
-/* Default Bitrate */
+// Default Bitrate - General
+// Label for the default bitrate setting.
 "bitrateDefault" = "Default Bitrate";
 
-/* Default Bitrate Description */
+// Default Bitrate Description - General
+// Description for the default bitrate setting.
 "bitrateDefaultDescription" = "Limits the internet bandwidth used during playback.";
 
-/* Playback May Fail */
+// Playback May Fail - Warning
+// Warning message for potential playback failure.
 "mayResultInPlaybackFailure" = "This setting may result in media failing to start playback.";
 
-/* Device Profile Section Description */
+// Custom Device Profile Description - General
+// Description for custom device profiles.
 "customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing.";
 
-/* Session Device Section Label */
+// Device - Session Device Section Label
+// Label for the device in session details.
 "device" = "Device";
 
-/* Session Client Last Seen Section Label */
+// Last Seen - Session Client Last Seen Section Label
+// Label for the last seen time in session details.
 "lastSeen" = "Last Seen";
 
-/* Transcode Reason(s) Section Label */
+// Transcode Reasons - Section Label
+// Label for reasons why transcoding is required.
 "transcodeReasons" = "Transcode Reason(s)";
 
-/* Administration Dashboard Section */
+// Administration - Dashboard Section
+// Label for the administration dashboard.
 "administration" = "Administration";
 
-/* Administration Dashboard Scan All Libraries Button */
+// Scan All Libraries - Button
+// Button to trigger a scan for all libraries.
 "scanAllLibraries" = "Scan All Libraries";
 
-/* Administration Dashboard Scheduled Tasks */
+// Scheduled Tasks - Administration Dashboard
+// Label for scheduled tasks in the administration dashboard.
 "scheduledTasks" = "Scheduled Tasks";
 
-/* Transcode FPS */
+// FPS with String - Transcode FPS
+// Label for frames per second, formatted with a string.
 "fpsWithString" = "%@fps";
 
-/* Session Streaming Clients */
+// Streams - Session Streaming Clients
+// Label for active streaming clients.
 "streams" = "Streams";
 
-/* Indicates that something is Online */
+// Online - General
+// Label to indicate that something is online.
 "online" = "Online";
 
-/* Shutdown Server Label */
+// Shutdown Server - Button
+// Button to shutdown the server.
 "shutdownServer" = "Shutdown Server";
 
-/* Shutdown Warning Label */
+// Shutdown Warning - Confirmation
+// Warning message displayed when shutting down the server.
 "shutdownWarning" = "Are you sure you want to shutdown the server?";
 
-/* Restart Server Label */
+// Restart Server - Button
+// Button to restart the server.
 "restartServer" = "Restart Server";
 
-/* Restart Warning Label */
+// Restart Warning - Confirmation
+// Warning message displayed when restarting the server.
 "restartWarning" = "Are you sure you want to restart the server?";
 
-/* UserDashboardView Header */
+// Active Devices - ActiveSessionsView Header
+// Header label for the active devices view.
+"activeDevices" = "Active Devices";
+
+// Dashboard - UserDashboardView Header
+// Header label for the user dashboard view.
 "dashboard" = "Dashboard";
 
-/* SessionPlaybackMethod Remaining Time */
+// Remaining Time - SessionPlaybackMethod
+// Label for displaying remaining playback time.
 "itemOverItem" = "%1$@ / %2$@";
 
-/* Task was Canceled */
+// Canceled - Task Status
+// Label for a canceled task.
 "canceled" = "Cancelled";
 
-/* Confirm Task Fuction */
+// Confirm - Button
+// Button to confirm an action.
 "confirm" = "Confirm";
 
-/* PlayMethod - Transcode */
+// Transcode - Play Method
+// Label for the transcode play method.
 "transcode" = "Transcode";
 
-/* PlayMethod - Remux */
+// Remux - Play Method
+// Label for the remux play method.
 "remux" = "Remux";
 
-/* PlayMethod - Direct Play */
+// Direct Play - Play Method
+// Label for the direct play method.
 "directPlay" = "Direct Play";
 
-/* PlayMethod - Direct Stream */
+// Direct Stream - Play Method
+// Label for the direct stream method.
 "directStream" = "Direct Stream";
 
-/* TranscodeReason - Container Not Supported */
+// Container Not Supported - TranscodeReason
+// Error message for unsupported container format.
 "containerNotSupported" = "The container format is not supported";
 
-/* TranscodeReason - Video Codec Not Supported */
+// Video Codec Not Supported - TranscodeReason
+// Error message for unsupported video codec.
 "videoCodecNotSupported" = "The video codec is not supported";
 
-/* TranscodeReason - Audio Codec Not Supported */
+// Audio Codec Not Supported - TranscodeReason
+// Error message for unsupported audio codec.
 "audioCodecNotSupported" = "The audio codec is not supported";
 
-/* TranscodeReason - Subtitle Codec Not Supported */
+// Subtitle Codec Not Supported - TranscodeReason
+// Error message for unsupported subtitle codec.
 "subtitleCodecNotSupported" = "The subtitle codec is not supported";
 
-/* TranscodeReason - Audio Is External */
+// Audio Is External - TranscodeReason
+// Error message when audio track is external and requires transcoding.
 "audioIsExternal" = "The audio track is external and requires transcoding";
 
-/* TranscodeReason - Secondary Audio Not Supported */
+// Secondary Audio Not Supported - TranscodeReason
+// Error message for unsupported secondary audio.
 "secondaryAudioNotSupported" = "Secondary audio is not supported";
 
-/* TranscodeReason - Video Profile Not Supported */
+// Video Profile Not Supported - TranscodeReason
+// Error message for unsupported video profile.
 "videoProfileNotSupported" = "The video profile is not supported";
 
-/* TranscodeReason - Video Level Not Supported */
+// Video Level Not Supported - TranscodeReason
+// Error message for unsupported video level.
 "videoLevelNotSupported" = "The video level is not supported";
 
-/* TranscodeReason - Video Resolution Not Supported */
+// Video Resolution Not Supported - TranscodeReason
+// Error message for unsupported video resolution.
 "videoResolutionNotSupported" = "The video resolution is not supported";
 
-/* TranscodeReason - Video Bit Depth Not Supported */
+// Video Bit Depth Not Supported - TranscodeReason
+// Error message for unsupported video bit depth.
 "videoBitDepthNotSupported" = "The video bit depth is not supported";
 
-/* TranscodeReason - Video Framerate Not Supported */
+// Video Framerate Not Supported - TranscodeReason
+// Error message for unsupported video framerate.
 "videoFramerateNotSupported" = "The video framerate is not supported";
 
-/* TranscodeReason - Reference Frames Not Supported */
+// Reference Frames Not Supported - TranscodeReason
+// Error message for unsupported number of reference frames.
 "refFramesNotSupported" = "The number of reference frames is not supported";
 
-/* TranscodeReason - Anamorphic Video Not Supported */
+// Anamorphic Video Not Supported - TranscodeReason
+// Error message for unsupported anamorphic video.
 "anamorphicVideoNotSupported" = "Anamorphic video is not supported";
 
-/* TranscodeReason - Interlaced Video Not Supported */
+// Interlaced Video Not Supported - TranscodeReason
+// Error message for unsupported interlaced video.
 "interlacedVideoNotSupported" = "Interlaced video is not supported";
 
-/* TranscodeReason - Audio Channels Not Supported */
+// Audio Channels Not Supported - TranscodeReason
+// Error message for unsupported number of audio channels.
 "audioChannelsNotSupported" = "The number of audio channels is not supported";
 
-/* TranscodeReason - Audio Profile Not Supported */
+// Audio Profile Not Supported - TranscodeReason
+// Error message for unsupported audio profile.
 "audioProfileNotSupported" = "The audio profile is not supported";
 
-/* TranscodeReason - Audio Sample Rate Not Supported */
+// Audio Sample Rate Not Supported - TranscodeReason
+// Error message for unsupported audio sample rate.
 "audioSampleRateNotSupported" = "The audio sample rate is not supported";
 
-/* TranscodeReason - Audio Bit Depth Not Supported */
+// Audio Bit Depth Not Supported - TranscodeReason
+// Error message for unsupported audio bit depth.
 "audioBitDepthNotSupported" = "The audio bit depth is not supported";
 
-/* TranscodeReason - Container Bitrate Exceeds Limit */
+// Container Bitrate Exceeds Limit - TranscodeReason
+// Error message when container bitrate exceeds the allowed limit.
 "containerBitrateExceedsLimit" = "The container bitrate exceeds the allowed limit";
 
-/* TranscodeReason - Video Bitrate Not Supported */
+// Video Bitrate Not Supported - TranscodeReason
+// Error message for unsupported video bitrate.
 "videoBitrateNotSupported" = "The video bitrate is not supported";
 
-/* TranscodeReason - Audio Bitrate Not Supported */
+// Audio Bitrate Not Supported - TranscodeReason
+// Error message for unsupported audio bitrate.
 "audioBitrateNotSupported" = "The audio bitrate is not supported";
 
-/* TranscodeReason - Unknown Video Stream Info */
+// Unknown Video Stream Info - TranscodeReason
+// Error message for unknown video stream information.
 "unknownVideoStreamInfo" = "The video stream information is unknown";
 
-/* TranscodeReason - Unknown Audio Stream Info */
+// Unknown Audio Stream Info - TranscodeReason
+// Error message for unknown audio stream information.
 "unknownAudioStreamInfo" = "The audio stream information is unknown";
 
-/* TranscodeReason - Direct Play Error */
+// Direct Play Error - TranscodeReason
+// Error message for a direct play failure.
 "directPlayError" = "An error occurred during direct play";
 
-/* TranscodeReason - Video Range Type Not Supported */
+// Video Range Type Not Supported - TranscodeReason
+// Error message for unsupported video range type.
 "videoRangeTypeNotSupported" = "The video range type is not supported";
 
-/* No active session available */
+// No Session - General
+// Message displayed when no active session is available.
 "noSession" = "No session";
 
-/* The title for the session view */
+// Session - General
+// Title for the session view.
 "session" = "Session";
 
-/* The client used for the session */
+// Client - General
+// Label for the client used in a session.
 "client" = "Client";
 
-/* The play method (e.g., Direct Play, Transcoding) */
+// Method - General
+// Label for the playback method (e.g., Direct Play, Transcoding).
 "method" = "Method";
 
-/* The category label for tasks */
+// Category - General
+// Label for the category of a task.
 "category" = "Category";
 
-/* The navigation title for the task view */
+// Task - Navigation Title
+// Navigation title for the task view.
 "task" = "Task";
 
-/* The label for the last run time of a task */
+// Last Run - General
+// Label for the last run time of a task.
 "lastRun" = "Last run";
 
-/* Description for the dashboard section */
+// Dashboard Description - General
+// Description for the administration dashboard section.
 "dashboardDescription" = "Perform administrative tasks for your Jellyfin server.";
 
-/* Title for the tasks section */
+// Tasks - Section Title
+// Title for the tasks section.
 "tasks" = "Tasks";
 
-/* Title for the server logs section */
+// Server Logs - Section Title
+// Title for the server logs section.
 "serverLogs" = "Server Logs";
 
-/* Description for the tasks section */
+// Tasks Description - General
+// Description for the tasks section.
 "tasksDescription" = "Tasks are operations that are scheduled to run periodically or can be triggered manually.";
 
-/* Status label for when a task is running */
+// Running - Status
+// Label for a task that is currently running.
 "running" = "Running...";
 
-/* Button label to run a task */
+// Run - Button
+// Label for the button to run a task.
 "run" = "Run";
 
-/* Button label to stop a task */
+// Stop - Button
+// Label for the button to stop a task.
 "stop" = "Stop";
 
-/* Status label for when a task is cancelling */
+// Cancelling - Status
+// Label for a task that is in the process of being canceled.
 "cancelling" = "Cancelling...";
 
-/* Last run message with time */
+// Last Run Time - General
+// Message showing the last run time of a task.
 "lastRunTime" = "Last ran %@";
 
-/* Message shown when a task has never run */
+// Never Run - General
+// Message displayed when a task has never run.
 "neverRun" = "Never run";
 
-/* Button label to edit a task */
+// Edit - Button
+// Label for the button to edit a task.
 "edit" = "Edit";
 
-/* Status message for a completed task */
+// Task Completed - Status
+// Message displayed when a task has completed successfully.
 "taskCompleted" = "Completed";
 
-/* Status message for a failed task */
+// Task Failed - Status
+// Message displayed when a task has failed.
 "taskFailed" = "Failed";
 
-/* Status message for a cancelled task */
+// Task Cancelled - Status
+// Message displayed when a task has been canceled.
 "taskCancelled" = "Cancelled";
 
-/* Status message for an aborted task */
+// Task Aborted - Status
+// Message displayed when a task has been aborted.
 "taskAborted" = "Aborted";
 
-/* Settings Description for enabling rewatching in Next Up */
+// Rewatching in Next Up - Settings Description
+// Description for enabling rewatching in the Next Up section.
 "nextUpRewatch" = "Rewatching in Next Up";
 
-/* Settings Description for the day limit in Next Up */
+// Days in Next Up - Settings Description
+// Description for the day limit in the Next Up section.
 "nextUpDays" = "Days in Next Up";
 
-/* Description for how the nextUpDays setting works */
+// Next Up Days Description - General
+// Description for the Next Up days setting.
 "nextUpDaysDescription" = "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.";
 
-/* Done - Completed, end, or save */
+// Done - General
+// Label for completing an action.
 "done" = "Done";
 
-/* Save - Completed, end, or save */
+// Save - General
+// Label for saving changes.
 "save" = "Save";
 
-/* Time Interval Help Text - Days */
+// Days - General
+// Label for days as a time interval.
 "days" = "Days";
 
-/* Section Title for Column Configuration */
+// Columns - Section Title
+// Title for the column configuration section.
 "columns" = "Columns";
 
 // Date Created - Label
 // Label for displaying the date an API key was created
-// Appears in the API key details
 "dateCreated" = "Date Created";
 
 // API Keys - Title
 // Section Title for displaying API keys in the list
-// Displays the title of the API key section
 "apiKeysTitle" = "API Keys";
 
 // API Keys - Description
 // Explains the usage of API keys in external applications
-// Displays below the title in the API key section
 "apiKeysDescription" = "External applications require an API key to communicate with your server.";
 
 // Add - Button
 // Adds a new record
-// Appears in the toolbar
 "add" = "Add";
 
 // API Key Copied - Alert
 // Informs the user that the API key was copied to the clipboard
-// Displays an alert after the user copies the key
 "apiKeyCopied" = "API Key Copied";
 
 // API Key Copied - Alert Message
 // Informs the user that the key was copied successfully
-// Appears as a message in the alert
 "apiKeyCopiedMessage" = "Your API Key was copied to your clipboard!";
 
 // OK - Button
 // Acknowledges an action
-// Used to dismiss the alert
 "ok" = "OK";
 
 // Delete API Key - Confirmation Message
-// Warns the user that deletion is permanent
-// Displays a warning message before deletion
+// Warns the user that API Key deletion is permanent
 "deleteAPIKeyMessage" = "Are you sure you want to permanently delete this key?";
 
 // Cancel - Button
 // Cancels the current action
-// Appears in dialogs and alerts
 "cancel" = "Cancel";
 
 // Delete - Button
-// Confirms the deletion of an API key
-// Appears in the delete confirmation dialog
+// Confirms the deletion of an item
 "delete" = "Delete";
 
 // Create API Key - Alert
 // Prompts the user to enter an app name to create an API key
-// Appears when creating a new API key
 "createAPIKey" = "Create API Key";
 
 // Create API Key - Message
 // Asks the user to enter the name of the application for the new API key
-// Displays in the create API key dialog
 "createAPIKeyMessage" = "Enter the application name for the new API key.";
 
 // Application Name - Text Field
 // Placeholder text for entering the name of the application
-// Appears in the create API key dialog
 "applicationName" = "Application Name";
 
 // Save - Button
 // Confirms the creation of the new API key
-// Appears in the create API key dialog
 "save" = "Save";
 
 // API Keys - Screen Title
 // Title for the API keys management screen
-// Appears in the navigation bar
 "apiKeys" = "API Keys";
 
 // Devices - Section Header
 // Title for the devices section in the Admin Dashboard
-// Used as the header for the devices section
 "devices" = "Devices";
 
 // All Devices Description - Section Description
 // Description for the all devices section in the Admin Dashboard
-// Provides information about the devices connected to the server, including past and current connections
 "allDevicesDescription" = "View all past and present devices that have connected.";
 
 // Delete Selected Devices - Button
 // Button label for deleting all selected devices
-// Used in the all devices section to delete all selected devices
 "deleteSelectedDevices" = "Delete Selected Devices";
 
 // Never - Filler Text
 // Text displayed when something has never or will never occur
-// Used as placeholder text for events that never happen
 "never" = "Never";
 
 // Delete Selected Devices Warning - Warning Message
 // Warning message displayed when deleting all devices
-// Informs the user about the consequences of deleting all devices
 "deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.";
 
 // Delete Device Warning - Warning Message
 // Warning message displayed when deleting a single device
-// Informs the user about the consequences of deleting the device
 "deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
 
 // Delete Device - Action
 // Message for deleting a single device in the all devices section
-// Used in the confirmation dialog to delete a single device
 "deleteDevice" = "Delete Device";
 
 // Delete Device Self-Deletion - Error Message
 // Error message when attempting to delete the current session's device
-// Used to inform the user that they cannot delete their own session
 "deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
 
 // Delete Device Failed - Error Title
 // Title for the alert when device deletion fails
-// Displayed when the system fails to delete a device
 "deleteDeviceFailed" = "Failed to Delete Device";
 
 // Custom Device Name - Title
 // Title for setting a custom device name
-// Used in the custom device name section
 "customDeviceName" = "Custom Device Name";
 
 // Capabilities - Section Header
 // Title for the section showing the device capabilities
-// Displayed as the header for the device capabilities section
 "capabilities" = "Capabilities";
 
 // Supports Content Uploading - Label
 // Indicates whether the device supports uploading content
-// Used in the capabilities section to display if content uploading is supported
 "supportsContentUploading" = "Content Uploading";
 
 // Supports Media Control - Label
 // Indicates whether the device supports media control (e.g., play, pause, stop)
-// Used in the capabilities section to display media control capability
 "supportsMediaControl" = "Media Control";
 
 // Supports Persistent Identifier - Label
 // Indicates whether the device supports a persistent identifier
-// Used in the capabilities section to display persistent identifier support
 "supportsPersistentIdentifier" = "Persistent Identifier";
 
 // Supports Sync - Label
 // Indicates whether the device suppoTestrts syncing content (e.g., media sync across devices)
-// Used in the capabilities section to display sync capability
 "supportsSync" = "Sync";
 
 // Yes - Label
 // Indicates that a capability is supported
-// Used in the capabilities section as a positive response
 "yes" = "Yes";
 
 // No - Label
 // Indicates that a capability is not supported
-// Used in the capabilities section as a negative response
 "no" = "No";
 
 // Custom Device Name Saved - Label
 // Confirms that the custom device name was saved successfully
-// Used after successfully saving a custom device name
 "customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
 
 // Success - Label
 // Indicates that an operation was successful
-// Used as a confirmation for successful actions
 "success" = "Success";
 
 // Remove All - Button
 // Deselects all currently selected devices
-// Used to clear all selections in selection mode
 "removeAll" = "Remove All";
 
 // Select All - Button
 // Selects all available devices
-// Used to select all items in selection mode
 "selectAll" = "Select All";
 
 // Users - Section
 // Admin Dashboard Section with all Server Users
-// Used as a header and a button for All Users
 "users" = "Users";
 
 // Active - Label
 // Indication whether an item is active or inactive
-// Used as a User describer and a button for All Users
 "active" = "Active";
 
 // All Users Description - Section Description
 // Description for the all users section in the Admin Dashboard
-// Provides information about the users on the server
 "allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
 
 // Role - Label
 // Represents the role of the user
-// Shown in user information
 "role" = "Role";
 
 // Administrator - Title
 // Label for administrator role
-// Indicates the user is an admin
 "administrator" = "Administrator";
 
 // User - Title
 // Label for non-administrator users
-// Indicates the user is a standard user
 "user" = "User";
 
 // Activity - Label
 // Represents user activity status
-// Shown in user information
 "activity" = "Activity";
 
 // Logs Description - View
 // Access the Jellyfin server logs for troubleshooting and monitoring purposes
-// Describes the logs view in settings
 "logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
 
-/* Indicate a type */
+// Type - Label
+// Indicate a type
 "type" = "Type";
 
 // Day of Week - Section Label
 // Specifies the day of the week for the trigger
-// Label for the day of week section
 "dayOfWeek" = "Day of Week";
 
 // Time - Section Label
 // Specifies the time for the trigger
-// Label for the time section
 "time" = "Time";
 
 // Daily - Description
 // Recurring trigger that runs daily
-// Describes the daily trigger type
 "daily" = "Daily";
 
 // Interval - Description
 // Recurring trigger based on time intervals
-// Describes the interval trigger type
 "interval" = "Interval";
 
 // Weekly - Description
 // Recurring trigger that runs weekly
-// Describes the weekly trigger type
 "weekly" = "Weekly";
 
 // On Application Startup - Description
 // Trigger that runs when the application starts
-// Describes the startup trigger type
 "onApplicationStartup" = "On application startup";
 
 // Task Trigger Time Limit - Section Description
 // Sets the maximum runtime (in hours) for this task trigger
-// Description for the task trigger time limit section
 "taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
 
 // Task Trigger Interval - Section Description
 // Sets the duration (in minutes) in between task triggers
-// Description for the task trigger interval section
 "taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
 
 // Every - Label
 // Used to select interval frequency
-// Label for selecting interval frequency
 "every" = "Every";
 
 // Time Limit with Unit - Label
 // Specifies time limit along with the unit
-// Time limit label with descriptive unit
 "timeLimitWithUnit" = "Time Limit (%@)";
 
 // Time Limit - Section Label
 // Specifies the time limit for the task
-// Label for the time limit section
 "timeLimit" = "Time Limit";
 
 // Hours - Input Field Placeholder
 // Placeholder for inputting hours
-// Input field placeholder for hours
 "hours" = "Hours";
 
 // Minutes - Input Field Placeholder
 // Placeholder for inputting minutes
-// Input field placeholder for minutes
 "minutes" = "Minutes";
 
 // Add Trigger - Title
-// Title for adding a new task trigger
 // Title for adding a new task trigger
 "addTrigger" = "Add trigger";
 
 // Save - Button Label
 // Button to save the current task trigger
-// Save button label
 "save" = "Save";
 
 // Changes Not Saved - Alert Title
 // Title for unsaved changes alert
-// Title for the unsaved changes alert
 "changesNotSaved" = "Changes not saved";
 
 // Discard Changes - Button Label
 // Button to discard unsaved changes
-// Button label for discarding unsaved changes
 "discardChanges" = "Discard Changes";
 
 // Unsaved Changes Message - Alert
 // Message for unsaved changes alert
-// Alert message for unsaved changes
 "unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
 
 // Delete Trigger - Confirmation Dialog Title
 // Title for the delete trigger confirmation dialog
-// Confirmation dialog title for deleting a trigger
 "deleteTrigger" = "Delete Trigger";
 
 // Delete Trigger Confirmation - Message
 // Message for deleting a trigger confirmation dialog
-// Confirmation dialog message for deleting a trigger
 "deleteTriggerConfirmationMessage" = "Are you sure you want to delete this trigger? This action cannot be undone.";
 
 // Item At Item - Label
 // Used to describe an item at another item
-// Label for something at something else
 "itemAtItem" = "%1$@ at %2$@";
 
 // Every Interval - Label
 // Describes an interval trigger with recurring time
-// Label for interval trigger with recurring time
 "everyInterval" = "Every %1$@";
 
 // Time Limit Label with Value - Label
 // Describes time limit with a value
-// Label for time limit with value
 "timeLimitLabelWithValue" = "Time limit: %1$@";
 
 // Add - Button Label
 // Button to add a new item
-// Button label for adding a new item
 "add" = "Add";
 
 // Idle - Task State
 // Describes the task state as idle
-// Localized text for task state 'Idle'
 "idle" = "Idle";
 
 // Status - Section Title
 // Title for the status section
-// Section title for a status section
 "status" = "Status";
 
 // Error Details - Section Title
 // Title for the error details section
-// Section title for a task error details
 "errorDetails" = "Error Details";
 
 // Details - Section Title
 // Title for the details section
-// Section title for any details section
 "details" = "Details";
 
 // Triggers - Section Header
 // Header for the scheduled task triggers section
-// Section header for scheduled task triggers
 "triggers" = "Triggers";
 
 // Executed - Section Title
 // Title for the task execution date section
-// Section title for a task execution date
 "executed" = "Executed";
 
 // No Runtime Limit - Label
 // Describes a task with no runtime limit
-// No task trigger runtime limit set
 "noRuntimeLimit" = "No runtime limit";
 
 // API Key Created - Success Message
 // A new Access Token was successfully created for the specified application
-// Appears in success alert when a new API key is created
 "serverTriggerCreated" = "A new trigger was created for '%1$@'.";
 
 // API Key Deleted - Success Message
 // The Access Token was successfully deleted for the specified application
-// Appears in success alert when an API key is deleted
 "serverTriggerDeleted" = "The selected trigger was deleted from '%1$@'.";
 
 // Save - Button
 // Confirms that something completed successfully or without error
-// Appears in the views with eventful to indicate a task did not fail
 "success" = "Success";
 
 // Trigger Already Exists - 
 // Message to indicate that a Task Trigger already exists
-// Appears in AddServerTask when there is an existing task with the same configuration
 "triggerAlreadyExists" = "Trigger already exists";
 
 // Add API Key - Button
 // Creates an API Key if there are no keys available
-// Appears in place of the API Key list if there are no API Keys
 "addAPIKey" = "Add API key";
 
 // Hidden - Filter
 // Users with a policy of isHidden == True
-// Appears on the ServerUsersView to filter Hidden vs Non-Hidden Users
 "hidden" = "Hidden";
 
 // Delete Selected Users Warning - Warning Message
 // Warning message displayed when deleting all users
-// Informs the user about the consequences of deleting all users
 "deleteSelectionUsersWarning" = "Are you sure you wish to delete all selected users?";
 
 // Delete User Warning - Warning Message
 // Warning message displayed when deleting a single user
-// Informs the user about the consequences of deleting the user
 "deleteUserWarning" = "Are you sure you wish to delete this user?";
 
 // Delete User - Action
 // Message for deleting a single device in the all users section
-// Used in the confirmation dialog to delete a single user
 "deleteUser" = "Delete User";
 
 // Delete User Self-Deletion - Error Message
 // Error message when attempting to delete the current session's user
-// Used to inform the user that they cannot delete their own user
 "deleteUserSelfDeletion" = "Cannot delete a user from the same user (%1$@).";
 
 // Delete Selected Users - Button
 // Button label for deleting all selected users
-// Used in the all devices section to delete all selected users
 "deleteSelectedUsers" = "Delete Selected Users";
 
 // Delete User Failed - Error Title
 // Title for the alert when users deletion fails
-// Displayed when the system fails to delete a user
 "deleteUserFailed" = "Failed to Delete User";
 
 // Confirm Password - TextField
 // Placeholder and label for confirming the password
-// Used in the New User creation form
 "confirmPassword" = "Confirm Password";
 
 // A username is required - Footer
 // Validation message shown when the username field is empty
-// Used in the New User creation form
 "usernameRequired" = "A username is required";
 
 // New passwords do not match - Footer
 // Validation message shown when the new password and confirm password fields do not match
-// Used in the New User creation form
 "passwordsDoNotMatch" = "New passwords do not match";
 
 // New User - Title
 // Title for the new user creation view
-// Used as the navigation title when creating a new user
 "newUser" = "New User";
 
 // Options - Menu
 // Menu title for additional actions
-// Used as the label for the options menu in the navigation bar
 "options" = "Options";
 
 // Add User - Button
 // Button title to add a new user
-// Used as the button label in the options menu
 "addUser" = "Add User";
 
 // Edit Users - Button
 // Button title to edit existing users
-// Used as the button label in the options menu when there are users to edit
 "editUsers" = "Edit Users";
 
 // Bits Per Second - Unit
 // Represents a speed in bits per second
-// Used for bandwidth display
 "bitsPerSecond" = "bps";
 
 // Kilobits Per Second - Unit
 // Represents a speed in kilobits per second
-// Used for bandwidth display
 "kilobitsPerSecond" = "kbps";
 
 // Megabits Per Second - Unit
 // Represents a speed in megabits per second
-// Used for bandwidth display
 "megabitsPerSecond" = "Mbps";
 
 // Gigabits Per Second - Unit
 // Represents a speed in gigabits per second
-// Used for bandwidth display
 "gigabitsPerSecond" = "Gbps";
 
 // Terabits Per Second - Unit
 // Represents a speed in terabits per second
-// Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
 
 // Default - Setting
 // Represents the default policy or limit
-// Used for setting user policies to default values
 "default" = "Default";
 
 // Unlimited - Setting
 // Represents no restriction or unlimited policy
-// Used for setting user policies with no limits
 "unlimited" = "Unlimited";
 
 // Create & Join Groups - Action
 // Allows the user to create and join groups
-// Used for setting user permissions related to groups
 "createAndJoinGroups" = "Create & Join Groups";
 
 // Join Groups - Action
 // Allows the user to join existing groups
-// Used for setting user permissions related to group joining
 "joinGroups" = "Join Groups";
 
 // Permissions - Section
 // Represents access control settings for users
-// Used for managing user permissions in various sections
 "permissions" = "Permissions";
 
 // SyncPlay - Feature
 // Represents the synchronized playback feature across multiple devices
-// Used for enabling or managing synchronized streaming sessions
 "syncPlay" = "SyncPlay";
 
 // Remote connections - Section & Toggle
 // Represents settings related to remote access
-// Used in the external access section of user permissions
 "remoteConnections" = "Remote connections";
 
 // Maximum remote bitrate - Picker
 // Represents the maximum bitrate allowed for remote connections
-// Used in the external access section
 "maximumRemoteBitrate" = "Maximum remote bitrate";
 
 // Custom bitrate - Button
 // Opens an alert to enter a custom bitrate value
-// Used in the external access section
 "customBitrate" = "Custom bitrate";
 
 // Enter custom bitrate in Mbps - Description
 // Describes the purpose of the custom bitrate entry
-// Used in the custom bitrate alert
 "enterCustomBitrate" = "Enter custom bitrate in Mbps";
 
 // Feature access - Section
 // Represents settings related to feature access for users
-// Used in the feature access section of user permissions
 "featureAccess" = "Feature access";
 
 // Live TV access - Toggle
 // Toggles access to live TV content
-// Used in the feature access section
 "liveTvAccess" = "Live TV access";
 
 // Live TV recording management - Toggle
 // Toggles management of live TV recordings
-// Used in the feature access section
 "liveTvRecordingManagement" = "Live TV recording management";
 
 // Management - Section
 // Represents settings related to management permissions
-// Used in the management section of user permissions
 "management" = "Management";
 
 // Lyrics - Toggle
 // Toggles permission to manage lyrics
-// Used in the management section
 "lyrics" = "Lyrics";
 
 // Media playback - Section & Toggle
 // Represents settings related to media playback permissions
-// Used in the media playback section of user permissions
 "mediaPlayback" = "Media playback";
 
 // Audio transcoding - Toggle
 // Toggles permission for audio transcoding
-// Used in the media playback section
 "audioTranscoding" = "Audio transcoding";
 
 // Video transcoding - Toggle
 // Toggles permission for video transcoding
-// Used in the media playback section
 "videoTranscoding" = "Video transcoding";
 
 // Video remuxing - Toggle
 // Toggles permission for video remuxing
-// Used in the media playback section
 "videoRemuxing" = "Video remuxing";
 
 // Force remote media transcoding - Toggle
 // Toggles whether remote media transcoding is forced
-// Used in the media playback section
 "forceRemoteTranscoding" = "Force remote media transcoding";
 
 // Media downloads - Toggle
 // Toggles permission to download media content
-// Used in the permission section
 "mediaDownloads" = "Media downloads";
 
 // Hide user from login screen - Toggle
 // Toggles whether the user is hidden from the login screen
-// Used in the permission section
 "hideUserFromLoginScreen" = "Hide user from login screen";
 
 // Remote control - Section
 // Represents settings related to remote control permissions
-// Used in the remote control section of user permissions
 "remoteControl" = "Remote control";
 
 // Control other users - Toggle
 // Toggles permission to control other users' sessions
-// Used in the remote control section
 "controlOtherUsers" = "Control other users";
 
 // Control shared devices - Toggle
 // Toggles permission to control shared devices
-// Used in the remote control section
 "controlSharedDevices" = "Control shared devices";
 
 // Sessions - Section
 // Represents settings related to session control
-// Used in the sessions section of user permissions
 "sessions" = "Sessions";
 
 // Maximum failed login policy - Picker
 // Represents the policy for maximum failed login attempts
-// Used in the sessions section
 "maximumFailedLoginPolicy" = "Maximum failed login policy";
 
 // Maximum sessions policy - Picker
 // Represents the policy for maximum active sessions
-// Used in the sessions section
 "maximumSessionsPolicy" = "Maximum sessions policy";
 
 // Custom failed logins - Button
 // Opens an alert to enter a custom failed login limit
-// Used in the sessions section
 "customFailedLogins" = "Custom failed logins";
 
 // Enter custom failed logins limit - Description
 // Describes the purpose of the custom failed logins entry
-// Used in the custom failed logins alert
 "enterCustomFailedLogins" = "Enter custom failed logins limit";
 
 // Failed logins - Text Field
 // Represents the input field for custom failed logins
-// Used in the custom failed logins section
 "failedLogins" = "Failed logins";
 
 // Custom sessions - Button
 // Opens an alert to enter a custom maximum session limit
-// Used in the sessions section
 "customSessions" = "Custom sessions";
 
 // Enter custom max sessions - Description
 // Describes the purpose of the custom max sessions entry
-// Used in the custom sessions alert
 "enterCustomMaxSessions" = "Enter custom max sessions";
 
 // Maximum sessions - Text Field
@@ -1403,215 +1428,456 @@
 
 // Refresh - Button
 // Button title for the menu to refresh metadata
-// Used as the label for the refresh metadata button
 "refreshMetadata" = "Refresh Metadata";
 
 // Find Missing - Menu Option
 // Menu option for finding missing metadata
-// Used to trigger a full metadata refresh
 "findMissing" = "Find Missing";
 
 // Replace Metadata - Menu Option
 // Menu option for replacing existing metadata
-// Used to trigger replacing metadata only
 "replaceMetadata" = "Replace Metadata";
 
 // Replace Images - Menu Option
 // Menu option for replacing existing images
-// Used to trigger replacing images only
 "replaceImages" = "Replace Images";
 
 // Replace All - Menu Option
 // Menu option for replacing both metadata and images
-// Used to trigger a full replacement of metadata and images
 "replaceAll" = "Replace All";
 
 // Delete Item Confirmation Message - Warning message
 // Warning message to confirm deleting a media item
-// Used in a confirmation for item deletion
 "deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
 
 // Allow Media Item Editing - Toggle
 // Toggle option for enabling media item editing
-// Used to allow users to edit metadata of media items
 "allowItemEditing" = "Allow media item editing";
 
 // Allow Media Item Deletion - Toggle
 // Toggle option for enabling media item deletion
-// Used to allow users to delete media items
 "allowItemDeletion" = "Allow media item deletion";
 
 // Item Deletion Permission Failure - Error Message
 // Alert the user they should not be able to delete something
-// Used to inform the user a deletion failed and why it failed
 "itemDeletionPermissionFailure" = "You do not have permission to delete this item.";
 
 // Metadata - Section Title
 // Title for the ItemEditorView and Metadata related views
-// Used as a title for sections/views related to Metadata
 "metadata" = "Metadata";
 
 // Learn More - Button
 // Opens a modal with more information
-// Used as a button to show details
 "learnMoreEllipsis" = "Learn more...";
 
-/// Current Password - Placeholder
-/// Placeholder text for the current password input field
-/// Used in the ResetUserPasswordView
+// Current Password - Placeholder
+// Placeholder text for the current password input field
 "currentPassword" = "Current Password";
 
-/// New Password - Placeholder
-/// Placeholder text for the new password input field
-/// Used in the ResetUserPasswordView
+// New Password - Placeholder
+// Placeholder text for the new password input field
 "newPassword" = "New Password";
 
-/// Confirm New Password - Placeholder
-/// Placeholder text for confirming the new password input field
-/// Used in the ResetUserPasswordView
+// Confirm New Password - Placeholder
+// Placeholder text for confirming the new password input field
 "confirmNewPassword" = "Confirm New Password";
 
-/// Password - Navigation Title
-/// Title for the password reset view
-/// Used in the navigation bar
+// Password - Navigation Title
+// Title for the password reset view.
 "password" = "Password";
 
-/// Password Changed - Alert Message
-/// Message displayed in the success alert after changing the password
-/// Used in the ResetUserPasswordView
+// Password Changed - Alert Message
+// Message displayed in the success alert after changing the password.
 "passwordChangedMessage" = "User password has been changed.";
 
-/// Passwords Do Not Match - Footer
-/// Error message displayed when new passwords do not match
-/// Used in the ResetUserPasswordView
+// Passwords Do Not Match - Footer
+// Error message displayed when new passwords do not match.
 "passwordsDoNotMatch" = "New passwords do not match.";
 
-/// Password Change Warning - Message
-/// Message displayed to alert the user what the password change does and does not do
-/// Used in the ResetUserPasswordView
+// Password Change Warning - Message
+// Message displayed to alert the user what the password change does and does not do.
 "passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
 
-/// Find Missing - Button
-/// Search for missing metadata and images
-/// Used to locate media files missing information or images
+// Find Missing - Button
+// Search for missing metadata and images.
 "findMissingDescription" = "Find missing metadata and images.";
 
-/// Replace Metadata - Button
-/// Overwrite metadata without affecting images
-/// Used when updating only metadata information
+// Replace Metadata - Button
+// Overwrite metadata without affecting images.
 "replaceMetadataDescription" = "Replace unlocked metadata with new information.";
 
-/// Replace Images - Button
-/// Overwrite existing images with new ones
-/// Used to refresh media artwork
+// Replace Images - Button
+// Overwrite existing images with new ones.
 "replaceImagesDescription" = "Replace all images with new images.";
 
-/// Replace All - Button
-/// Replace all metadata and images
-/// Full refresh that replaces all unlocked metadata and images
+// Replace All - Button
+// Replace all metadata and images.
 "replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
 
-/// Device Profile - Description
-/// Explains how device profiles control playback and transcoding behavior
-/// Used in the device profile settings section
+// Device Profile - Description
+// Explains how device profiles control playback and transcoding behavior.
 "deviceProfileDescription" = "Decide which media plays natively or requires server transcoding for compatibility.";
 
-/// Auto - Description
-/// Optimizes playback using default settings for most devices
-/// Some formats may require server transcoding
+// Auto - Description
+// Optimizes playback using default settings for most devices.
 "autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
 
-/// Compatible - Description
-/// Converts media to H.264 video and AAC audio for compatibility
-/// Requires server transcoding for all content
+// Compatible - Description
+// Converts media to H.264 video and AAC audio for compatibility.
 "compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
 
-/// Direct - Description
-/// Plays content in its original format without transcoding
-/// May cause playback issues on unsupported devices
+// Direct - Description
+// Plays content in its original format without transcoding.
 "directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
 
-/// Custom - Description
-/// Allows customization of device profiles for native playback
-/// Incorrect settings may result in playback issues
+// Custom - Description
+// Allows customization of device profiles for native playback.
 "customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
 
-/// Server Connection Test - Description
-/// Tests the connection to the server to assess internet speed
-/// Used to adjust bandwidth settings automatically
+// Server Connection Test - Description
+// Tests the connection to the server to assess internet speed.
 "birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
 
-/// Bandwidth Usage - Description
-/// Indicates the maximum bandwidth used per playback stream
-/// Helps to manage data usage during streaming
+// Bandwidth Usage - Description
+// Indicates the maximum bandwidth used per playback stream.
 "bitrateMaxDescription" = "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.";
 
 // Bits Per Second - Unit
 // Represents a speed in bits per second
-// Used for bandwidth display
 "bitsPerSecond" = "bps";
 
 // Kilobits Per Second - Unit
 // Represents a speed in kilobits per second
-// Used for bandwidth display
 "kilobitsPerSecond" = "kbps";
 
 // Megabits Per Second - Unit
 // Represents a speed in megabits per second
-// Used for bandwidth display
 "megabitsPerSecond" = "Mbps";
 
 // Gigabits Per Second - Unit
 // Represents a speed in gigabits per second
-// Used for bandwidth display
 "gigabitsPerSecond" = "Gbps";
 
 // Terabits Per Second - Unit
 // Represents a speed in terabits per second
-// Used for bandwidth display
 "terabitsPerSecond" = "Tbps";
+
+// Display Order - Section
+// Label for the display order section in metadata settings.
+"displayOrder" = "Display Order";
+
+// Dates - Section
+// Label for the dates section in metadata settings.
+"dates" = "Dates";
+
+// Date Added - Label
+// Label for the date added field.
+"dateAdded" = "Date Added";
+
+// Release Date - Label
+// Label for the release date field.
+"releaseDate" = "Release Date";
+
+// End Date - Label
+// Label for the end date field.
+"endDate" = "End Date";
+
+// Year - Section
+// Label for the year section in metadata settings.
+"year" = "Year";
+
+// Refresh - Button
+// Standard button title to refresh content.
+"refresh" = "Refresh";
+
+// Find Missing Metadata - Button
+// Button title to trigger a search for missing metadata.
+"findMissingMetadata" = "Find Missing Metadata";
+
+// Replace Metadata - Button
+// Button title to replace existing metadata with new data.
+"replaceMetadata" = "Replace Metadata";
+
+// Replace Images - Button
+// Button title to replace existing images with new images.
+"replaceImages" = "Replace Images";
+
+// Replace All - Button
+// Button title to replace all metadata and images.
+"replaceAll" = "Replace All";
+
+// Refresh Metadata - Menu Title
+// Title for the metadata refresh menu.
+"refreshMetadata" = "Refresh Metadata";
+
+// Official Rating - Label
+// Label for the official rating field in media metadata
+"officialRating" = "Official Rating";
+
+// Production Locations - Label
+// Label for production locations in media metadata
+"productionLocations" = "Production Locations";
+
+// Locked Fields - Section Title
+// Section title for locked metadata fields
+"lockedFields" = "Locked Fields";
+
+// Lock All Fields - Toggle
+// Toggle label to lock all metadata fields at once
+"lockAllFields" = "Lock All Fields";
+
+// Metadata preferences - Section title
+// Title for the section displaying metadata localization options
+"metadataPreferences" = "Metadata preferences";
+
+// Language - Picker title
+// Label for the language picker for metadata
+"language" = "Language";
+
+// Country - Picker title
+// Label for the country picker for metadata
+"country" = "Country";
+
+// Format - Section title
+// Title for the video format section in metadata editing
+"format" = "Format";
+
+// Original aspect ratio - Text field label
+// Label for entering the original aspect ratio of the video
+"originalAspectRatio" = "Original aspect ratio";
+
+// 3D Format - Picker title
+// Title for the 3D format picker in video metadata
+"format3D" = "3D Format";
+
+// Parental Rating - Section title
+// Title for the parental rating section in metadata editing
+"parentalRating" = "Parental Rating";
+
+// Official Rating - Picker title
+// Title for the picker to select an official rating
+"officialRating" = "Official Rating";
+
+// Custom Rating - Picker title
+// Title for the picker to select a custom rating
+"customRating" = "Custom Rating";
+
+// None - Option label
+// Label to represent a lack of selection or no value chosen
+"none" = "None";
+
+// Letter - Label
+// Label for the letter category in metadata options
+"letter" = "Letter";
+
+// Years - Label
+// Label for the years category in metadata options
+"years" = "Years";
+
+// Taglines - Section
+// Title for the section displaying or editing taglines
+"taglines" = "Taglines";
+
+// Tagline - Label
+// Label for individual tagline entries
+"tagline" = "Tagline";
+
+// Reviews - Section
+// Title for the reviews section in metadata editing.
+"reviews" = "Reviews";
+
+// Critics - Label
+// Label for critic rating field in metadata editing.
+"critics" = "Critics";
+
+// Community - Label
+// Label for community rating field in metadata editing.
+"community" = "Community";
+
+// Rating - Placeholder
+// Placeholder text for the rating input field.
+"rating" = "Rating";
+
+// Rating - Description
+// Description for any rating field (1 to 10 scale).
+"ratingDescription" = "%@ rating on a scale from 1 to 10.";
+
+// Half Side-by-Side - Format
+// Display title for half side-by-side 3D format.
+"halfSideBySide" = "Half Side-by-Side";
+
+// Full Side-by-Side - Format
+// Display title for full side-by-side 3D format.
+"fullSideBySide" = "Full Side-by-Side";
+
+// Full Top and Bottom - Format
+// Display title for full top and bottom 3D format.
+"fullTopAndBottom" = "Full Top and Bottom";
+
+// Half Top and Bottom - Format
+// Display title for half top and bottom 3D format.
+"halfTopAndBottom" = "Half Top and Bottom";
+
+// MVC - Format
+// Display title for MVC 3D format.
+"mvc" = "MVC";
+
+// Continuing - Series Status
+// Display title for series status when a series is ongoing.
+"continuing" = "Continuing";
+
+// Ended - Series Status
+// Display title for series status when a series has ended.
+"ended" = "Ended";
+
+// Unreleased - Series Status
+// Display title for series status when a series has not yet been released.
+"unreleased" = "Unreleased";
+
+// Aired - Series Display Order
+// Display title for series display order "Aired".
+"aired" = "Aired";
+
+// Original Air Date - Series Display Order
+// Display title for series display order "Original Air Date".
+"originalAirDate" = "Original Air Date";
+
+// Absolute - Series Display Order
+// Display title for series display order "Absolute".
+"absolute" = "Absolute";
+
+// DVD - Series Display Order
+// Display title for series display order "DVD".
+"dvd" = "DVD";
+
+// Digital - Series Display Order
+// Display title for series display order "Digital".
+"digital" = "Digital";
+
+// Story Arc - Series Display Order
+// Display title for series display order "Story Arc".
+"storyArc" = "Story Arc";
+
+// Production - Series Display Order
+// Display title for series display order "Production".
+"production" = "Production";
+
+// TV - Series Display Order
+// Display title for series display order "TV".
+"tv" = "TV";
+
+// Alternate - Series Display Order
+// Display title for series display order "Alternate".
+"alternate" = "Alternate";
+
+// Regional - Series Display Order
+// Display title for series display order "Regional".
+"regional" = "Regional";
+
+// Alternate DVD - Series Display Order
+// Display title for series display order "Alternate DVD".
+"alternateDVD" = "Alternate DVD";
+
+// Date Modified - Box Set Display Order
+// Display title for box set display order "Date Modified".
+"dateModified" = "Date Modified";
+
+// Sort Name - Box Set Display Order
+// Display title for box set display order "Sort Name".
+"sortName" = "Sort Name";
+
+// Premiere Date - Box Set Display Order
+// Display title for box set display order "Premiere Date".
+"premiereDate" = "Premiere Date";
+
+// File Path - Section Title
+// Section title for displaying the file path of the item.
+"filePath" = "File Path";
+
+// Title - Section Title
+// Section title for displaying or editing the main title of the item.
+"title" = "Title";
+
+// Original Title - Section Title
+// Section title for displaying or editing the original title of the item.
+"originalTitle" = "Original Title";
+
+// Sort Title - Section Title
+// Section title for displaying or editing the title used for sorting the item.
+"sortTitle" = "Sort Title";
+
+// Unknown - Placeholder
+// Placeholder text for unknown file paths or values.
+"unknown" = "Unknown";
+
+// Air Time - Label for air time date picker
+// Label for selecting the air time of an episode.
+"airTime" = "Air Time";
+
+// Run Time - Label for runtime input field
+// Label for specifying episode runtime.
+"runTime" = "Run Time";
+
+// Episode Runtime Description - Description for runtime input
+// Description displayed below runtime input for episodes.
+"episodeRuntimeDescription" = "Episode runtime in minutes.";
+
+// Episode - Label for episode input
+// Title for the episode input field.
+"episode" = "Episode";
+
+// Enter Season Number - Description for season input field
+// Description explaining the purpose of the season input.
+"enterSeasonNumber" = "Enter the season number.";
+
+// Enter Episode Number - Description for episode input field
+// Description explaining the purpose of the episode input.
+"enterEpisodeNumber" = "Enter the episode number.";
+
+// Birthday - Label for birthday input
+// Title for the birthday input field.
+"birthday" = "Birthday";
+
+// Birth Year - Label for birth year input
+// Title for the birth year input field.
+"birthYear" = "Birth year";
+
+// Date of Death - Label for date of death input
+// Title for the date of death input field.
+"dateOfDeath" = "Date of death";
 
 // Maximum Failed Login Policy - Description
 // Explanation of the maximum failed login attempts policy
-// Used in the user settings view
 "maximumFailedLoginPolicyDescription" = "Sets the maximum failed login attempts before a user is locked out.";
 
 // Maximum Failed Login Policy Re-enable - Description
 // Explanation of the resetting locked users
-// Used in the user settings view
 "maximumFailedLoginPolicyReenable" = "Locked users must be re-enabled by an Administrator.";
 
 // Locked Users - Title
 // Section title for description on Locked Users
-// Used in the user settings view
 "lockedUsers" = "Locked users";
 
 // Unlimited - Description
 // Explanation of the unlimited login attempts policy
-// Used in the user settings view
 "unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user.";
 
 // Default - Description
 // Explanation of the default login attempts policy
-// Used in the user settings view
 "defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.";
 
 // Custom - Description
 // Explanation of the custom login attempts policy
-// Used in the user settings view
 "customFailedLoginDescription" = "Manually set the number of failed login attempts allowed before locking the user.";
 
 // Maximum Connections Policy - Description
 // Explanation of the maximum connections policy
-// Used in the user settings view
 "maximumConnectionsDescription" = "Limits the total number of connections a user can have to the server.";
 
 // Unlimited Connections - Description
 // Explanation of unlimited connections policy
-// Used in the user settings view
 "unlimitedConnectionsDescription" = "The user can connect to the server without any limits.";
 
 // Custom Connections - Description
 // Explanation of custom connections policy
-// Used in the user settings view
 "customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";

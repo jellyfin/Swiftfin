@@ -17,14 +17,23 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Root
     var start = makeStart
 
-    private let item: BaseItemDto
+    private let viewModel: ItemViewModel
 
-    init(item: BaseItemDto) {
-        self.item = item
+    @Route(.modal)
+    var editMetadata = makeEditMetadata
+
+    init(viewModel: ItemViewModel) {
+        self.viewModel = viewModel
+    }
+
+    func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            EditMetadataView(viewModel: ItemEditorViewModel(item: item))
+        }
     }
 
     @ViewBuilder
     func makeStart() -> some View {
-        ItemEditorView(item: item)
+        ItemEditorView(viewModel: viewModel)
     }
 }

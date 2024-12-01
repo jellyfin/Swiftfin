@@ -39,7 +39,12 @@ struct ItemView: View {
         enableItemDeletion && viewModel.item.canDelete ?? false
     }
 
-    // As more menu items exist, this can either be expanded to include more validation or removed if there are permanent menu items.
+    private var canDownload: Bool {
+        viewModel.item.canDownload ?? false
+    }
+
+    // Use to hide the menu button when not needed.
+    // Add more checks as needed. For example, canDownload.
     private var enableMenu: Bool {
         canDelete || enableItemEditor
     }
@@ -123,12 +128,21 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refresh) {
-                ProgressView()
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.refresh),
+            isHidden: !enableMenu
+        ) {
+            if enableItemEditor {
+                Button(L10n.edit, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel)
+                }
             }
-            if enableMenu {
-                itemActionMenu
+
+            if canDelete {
+                Divider()
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    showConfirmationDialog = true
+                }
             }
         }
         .confirmationDialog(
@@ -158,28 +172,5 @@ struct ItemView: View {
         } message: { error in
             Text(error.localizedDescription)
         }
-    }
-
-    @ViewBuilder
-    private var itemActionMenu: some View {
-
-        Menu(L10n.options, systemImage: "ellipsis.circle") {
-
-            if enableItemEditor {
-                Button(L10n.edit, systemImage: "pencil") {
-                    router.route(to: \.itemEditor, viewModel.item)
-                }
-            }
-
-            if canDelete {
-                Divider()
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    showConfirmationDialog = true
-                }
-            }
-        }
-        .labelStyle(.iconOnly)
-        .backport
-        .fontWeight(.semibold)
     }
 }

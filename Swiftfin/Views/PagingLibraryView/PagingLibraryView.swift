@@ -471,35 +471,27 @@ struct PagingLibraryView<Element: Poster>: View {
                 viewModel.send(.refresh)
             }
         }
-        .topBarTrailing {
-
-            if viewModel.backgroundStates.contains(.gettingNextPage) {
-                ProgressView()
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.gettingNextPage)
+        ) {
+            if Defaults[.Customization.Library.rememberLayout] {
+                LibraryViewTypeToggle(
+                    posterType: $posterType,
+                    viewType: $displayType,
+                    listColumnCount: $listColumnCount
+                )
+            } else {
+                LibraryViewTypeToggle(
+                    posterType: $defaultPosterType,
+                    viewType: $defaultDisplayType,
+                    listColumnCount: $defaultListColumnCount
+                )
             }
 
-            Menu {
-
-                if Defaults[.Customization.Library.rememberLayout] {
-                    LibraryViewTypeToggle(
-                        posterType: $posterType,
-                        viewType: $displayType,
-                        listColumnCount: $listColumnCount
-                    )
-                } else {
-                    LibraryViewTypeToggle(
-                        posterType: $defaultPosterType,
-                        viewType: $defaultDisplayType,
-                        listColumnCount: $defaultListColumnCount
-                    )
-                }
-
-                Button(L10n.random, systemImage: "dice.fill") {
-                    viewModel.send(.getRandomItem)
-                }
-                .disabled(viewModel.elements.isEmpty)
-            } label: {
-                Image(systemName: "ellipsis.circle")
+            Button(L10n.random, systemImage: "dice.fill") {
+                viewModel.send(.getRandomItem)
             }
+            .disabled(viewModel.elements.isEmpty)
         }
     }
 }

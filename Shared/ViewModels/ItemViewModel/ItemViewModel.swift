@@ -22,6 +22,7 @@ class ItemViewModel: ViewModel, Stateful {
         case backgroundRefresh
         case error(JellyfinAPIError)
         case refresh
+        case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
     }
@@ -91,16 +92,19 @@ class ItemViewModel: ViewModel, Stateful {
         // TODO: should replace with a more robust "PlaybackManager"
         Notifications[.itemMetadataDidChange].publisher
             .sink { [weak self] notification in
-
-                guard let userInfo = notification.object as? [String: String] else { return }
-
-                if let itemID = userInfo["itemID"], itemID == item.id {
-                    Task { [weak self] in
-                        await self?.send(.backgroundRefresh)
+                if let userInfo = notification.object as? [String: String] {
+                    if let itemID = userInfo["itemID"], itemID == item.id {
+                        Task { [weak self] in
+                            await self?.send(.backgroundRefresh)
+                        }
+                    } else if let seriesID = userInfo["seriesID"], seriesID == item.id {
+                        Task { [weak self] in
+                            await self?.send(.backgroundRefresh)
+                        }
                     }
-                } else if let seriesID = userInfo["seriesID"], seriesID == item.id {
+                } else if let newItem = notification.object as? BaseItemDto, newItem.id == self?.item.id {
                     Task { [weak self] in
-                        await self?.send(.backgroundRefresh)
+                        await self?.send(.replace(newItem))
                     }
                 }
             }
@@ -195,6 +199,22 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return .refreshing
+        case let .replace(newItem):
+
+            backgroundStates.append(.refresh)
+
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    await MainActor.run {
+                        self.backgroundStates.remove(.refresh)
+                        self.item = newItem
+                    }
+                }
+            }
+            .store(in: &cancellables)
+
+            return state
         case .toggleIsFavorite:
 
             toggleIsFavoriteTask?.cancel()
