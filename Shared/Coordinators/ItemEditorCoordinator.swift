@@ -19,18 +19,66 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     private let viewModel: ItemViewModel
 
+    // MARK: - Route to Metadata
+
     @Route(.modal)
     var editMetadata = makeEditMetadata
+
+    // MARK: - Route to Genres
+
+    @Route(.modal)
+    var addGenre = makeAddGenre
+    @Route(.push)
+    var editGenres = makeEditGenres
+
+    // MARK: - Route to Tags
+
+    @Route(.modal)
+    var addTag = makeAddTag
+    @Route(.push)
+    var editTags = makeEditTags
+
+    // MARK: - Initializer
 
     init(viewModel: ItemViewModel) {
         self.viewModel = viewModel
     }
+
+    // MARK: - Item Metadata
 
     func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditMetadataView(viewModel: ItemEditorViewModel(item: item))
         }
     }
+
+    // MARK: - Item Genres
+
+    @ViewBuilder
+    func makeEditGenres(item: BaseItemDto) -> some View {
+        EditGenreView(viewModel: GenreEditorViewModel(item: item))
+    }
+
+    func makeAddGenre(viewModel: GenreEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddGenreView(viewModel: viewModel)
+        }
+    }
+
+    // MARK: - Item Tags
+
+    @ViewBuilder
+    func makeEditTags(item: BaseItemDto) -> some View {
+        EditTagView(viewModel: TagEditorViewModel(item: item))
+    }
+
+    func makeAddTag(viewModel: TagEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddTagView(viewModel: viewModel)
+        }
+    }
+
+    // MARK: - Start
 
     @ViewBuilder
     func makeStart() -> some View {

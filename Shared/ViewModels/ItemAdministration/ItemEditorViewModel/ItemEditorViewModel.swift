@@ -17,6 +17,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
+        case searchResults([ItemType])
         case error(JellyfinAPIError)
     }
 
@@ -25,6 +26,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     enum Action: Equatable {
         case add([ItemType])
         case remove([ItemType])
+        case search(String)
         case update(BaseItemDto)
     }
 
@@ -40,6 +42,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
         case initial
         case error(JellyfinAPIError)
         case updating
+        case searching
     }
 
     @Published
@@ -69,7 +72,36 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .add(items):
+        case let .search(searchItem):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        self.state = .searching
+                        _ = self.backgroundStates.append(.refreshing)
+                    }
+
+                    let matches = try await self.searchComponent(searchItem)
+
+                    await MainActor.run {
+                        self.state = .initial
+                        _ = self.backgroundStates.remove(.refreshing)
+                        self.eventSubject.send(.searchResults(matches))
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .add(addItems):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -77,7 +109,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run { self.state = .updating }
 
-                    try await self.addComponents(items)
+                    try await self.addComponents(addItems)
 
                     await MainActor.run {
                         self.state = .initial
@@ -94,7 +126,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .remove(items):
+        case let .remove(removeItems):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -102,7 +134,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run { self.state = .updating }
 
-                    try await self.removeComponents(items)
+                    try await self.removeComponents(removeItems)
 
                     await MainActor.run {
                         self.state = .initial
@@ -119,7 +151,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .update(newItem):
+        case let .update(updateItem):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -127,7 +159,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run { self.state = .updating }
 
-                    try await self.updateItem(newItem)
+                    try await self.updateItem(updateItem)
 
                     await MainActor.run {
                         self.state = .initial
@@ -148,15 +180,13 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Save Updated Item to Server
 
-    func updateItem(_ newItem: BaseItemDto, refresh: Bool = false) async throws {
+    func updateItem(_ newItem: BaseItemDto) async throws {
         guard let itemId = item.id else { return }
 
         let request = Paths.updateItem(itemID: itemId, newItem)
         _ = try await userSession.client.send(request)
 
-        if refresh {
-            try await refreshItem()
-        }
+        try await refreshItem()
 
         await MainActor.run {
             Notifications[.itemMetadataDidChange].post(object: newItem)
@@ -190,6 +220,12 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: - Remove Items (To be overridden)
 
     func removeComponents(_ items: [ItemType]) async throws {
+        fatalError("This method should be overridden in subclasses")
+    }
+
+    // MARK: - Validate Items (To be overridden)
+
+    func searchComponent(_ item: String) async throws -> [ItemType] {
         fatalError("This method should be overridden in subclasses")
     }
 }

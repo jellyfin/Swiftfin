@@ -496,6 +496,8 @@ internal enum L10n {
   internal static let existingServer = L10n.tr("Localizable", "existingServer", fallback: "Existing Server")
   /// Existing User
   internal static let existingUser = L10n.tr("Localizable", "existingUser", fallback: "Existing User")
+  /// This item exists on your Jellyfin Server.
+  internal static let existsOnServer = L10n.tr("Localizable", "existsOnServer", fallback: "This item exists on your Jellyfin Server.")
   /// Experimental
   internal static let experimental = L10n.tr("Localizable", "experimental", fallback: "Experimental")
   /// Failed logins
@@ -536,6 +538,8 @@ internal enum L10n {
   internal static let fullTopAndBottom = L10n.tr("Localizable", "fullTopAndBottom", fallback: "Full Top and Bottom")
   /// Genres
   internal static let genres = L10n.tr("Localizable", "genres", fallback: "Genres")
+  /// Categories that describe the themes or styles of media.
+  internal static let genresDescription = L10n.tr("Localizable", "genresDescription", fallback: "Categories that describe the themes or styles of media.")
   /// Gestures
   internal static let gestures = L10n.tr("Localizable", "gestures", fallback: "Gestures")
   /// Gbps
@@ -982,6 +986,8 @@ internal enum L10n {
   internal static let reportIssue = L10n.tr("Localizable", "reportIssue", fallback: "Report an Issue")
   /// Request a Feature
   internal static let requestFeature = L10n.tr("Localizable", "requestFeature", fallback: "Request a Feature")
+  /// Required
+  internal static let `required` = L10n.tr("Localizable", "required", fallback: "Required")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
@@ -1018,10 +1024,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
@@ -1212,6 +1218,8 @@ internal enum L10n {
   internal static let taglines = L10n.tr("Localizable", "taglines", fallback: "Taglines")
   /// Tags
   internal static let tags = L10n.tr("Localizable", "tags", fallback: "Tags")
+  /// Labels used to organize or highlight specific attributes of media.
+  internal static let tagsDescription = L10n.tr("Localizable", "tagsDescription", fallback: "Labels used to organize or highlight specific attributes of media.")
   /// Task
   internal static let task = L10n.tr("Localizable", "task", fallback: "Task")
   /// Aborted
@@ -1356,6 +1364,8 @@ internal enum L10n {
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
   /// Who's watching?
   internal static let whosWatching = L10n.tr("Localizable", "WhosWatching", fallback: "Who's watching?")
+  /// This will be created as a new item on your Jellyfin Server.
+  internal static let willBeCreatedOnServer = L10n.tr("Localizable", "willBeCreatedOnServer", fallback: "This will be created as a new item on your Jellyfin Server.")
   /// WIP
   internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
   /// Year

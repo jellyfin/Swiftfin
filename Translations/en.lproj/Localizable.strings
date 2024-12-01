@@ -1881,3 +1881,23 @@
 // Custom Connections - Description
 // Explanation of custom connections policy
 "customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
+
+// Required - Validation
+// Indicates a field is required
+"required" = "Required";
+
+// Exists on Server - Validation
+// Indicates a specific item exists on your Jellyfin Server
+"existsOnServer" = "This item exists on your Jellyfin Server.";
+
+// Will Be Created on Server - Notification
+// Indicates a specific item will be created as new on your Jellyfin Server
+"willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
+
+// Genres - Description
+// A brief explanation of genres in the context of media items
+"genresDescription" = "Categories that describe the themes or styles of media.";
+
+// Tags - Description
+// A brief explanation of tags in the context of media items
+"tagsDescription" = "Labels used to organize or highlight specific attributes of media.";
