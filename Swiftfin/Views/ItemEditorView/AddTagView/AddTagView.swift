@@ -26,7 +26,6 @@ struct AddTagView: View {
 
     @State
     private var name: String = ""
-
     @State
     private var error: Error?
     @State
@@ -36,18 +35,6 @@ struct AddTagView: View {
 
     private var isValid: Bool {
         name.isNotEmpty
-    }
-
-    // MARK: - Name Already Exists
-
-    private var isServerTag: Bool {
-        viewModel.searchResults.isNotEmpty
-    }
-
-    // MARK: - Data is Loading
-
-    private var isLoading: Bool {
-        !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching])
     }
 
     // MARK: - Body
@@ -60,24 +47,8 @@ struct AddTagView: View {
             .navigationBarCloseButton {
                 router.dismissCoordinator()
             }
-            .onFirstAppear {
-                focusedField = true
-            }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismissCoordinator()
-                case let .error(eventError):
-                    if eventError != JellyfinAPIError("cancelled") {
-                        UIDevice.feedback(.error)
-                        error = eventError
-                        isPresentingError = true
-                    }
-                }
-            }
             .topBarTrailing {
-                if isLoading {
+                if viewModel.backgroundStates.contains(.refreshing) {
                     ProgressView()
                 }
 
@@ -86,6 +57,25 @@ struct AddTagView: View {
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
+            }
+            .onFirstAppear {
+                viewModel.send(.refresh)
+            }
+            .onChange(of: name) { _ in
+                if isValid {
+                    viewModel.send(.getSuggestions(name))
+                }
+            }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismissCoordinator()
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                    isPresentingError = true
+                }
             }
             .alert(
                 L10n.error,
@@ -98,42 +88,20 @@ struct AddTagView: View {
             } message: { error in
                 Text(error.localizedDescription)
             }
-            .onChange(of: name) { _ in
-                if isValid {
-                    viewModel.send(.search(name))
-                }
-            }
     }
 
     // MARK: - Content View
 
     private var contentView: some View {
         List {
-            Section {
-                TextField(L10n.name, text: $name)
-                    .autocorrectionDisabled()
-                    .focused($focusedField)
-                    .disabled(viewModel.state == .updating)
-            } header: {
-                Text(L10n.name)
-            } footer: {
-                if name.isEmpty {
-                    Label(L10n.required, systemImage: "exclamationmark.circle.fill")
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                } else if isServerTag {
-                    Label(
-                        L10n.existsOnServer,
-                        systemImage: "checkmark.circle.fill"
-                    )
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .green))
-                } else {
-                    Label(
-                        L10n.willBeCreatedOnServer,
-                        systemImage: "checkmark.seal.fill"
-                    )
-                    .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
-                }
-            }
+            ItemEditorView.NameInput(
+                name: $name,
+                suggestions: viewModel.suggestions
+            )
+            ItemEditorView.SuggestionsSection(
+                name: $name,
+                suggestions: viewModel.suggestions
+            )
         }
     }
 }

@@ -12,7 +12,7 @@ import JellyfinAPI
 
 class GenreEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Add Details
+    // MARK: - Add Genre(s)
 
     override func addComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -23,7 +23,7 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Details
+    // MARK: - Remove Genre(s)
 
     override func removeComponents(_ genres: [String]) async throws {
         var updatedItem = item
@@ -31,18 +31,25 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Validate Details
+    // MARK: - Fetch All Possible Genres
 
-    override func searchComponent(_ genre: String) async throws -> [String] {
-        let parameters = Paths.GetGenresParameters(searchTerm: genre)
+    override func fetchElements() async throws -> [String] {
+        let parameters = Paths.GetGenresParameters(parentID: self.item.parentID)
         let request = Paths.getGenres(parameters: parameters)
         let response = try await userSession.client.send(request)
 
-        // Return a full list of Genres from the searchTerm
         if let genres = response.value.items {
             return genres.compactMap(\.name).compactMap { $0 }
         } else {
             return []
         }
+    }
+
+    // MARK: - Get Tag Suggestions
+
+    override func fetchSuggestions(_ searchTerm: String) async throws -> [String] {
+        self.elements.filter(
+            { $0.lowercased().contains(searchTerm.lowercased()) }
+        )
     }
 }

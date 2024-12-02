@@ -11,7 +11,7 @@ import Foundation
 import JellyfinAPI
 import OrderedCollections
 
-class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
+class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -23,17 +23,17 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: - Actions
 
     enum Action: Equatable {
-        case add([ItemType])
-        case remove([ItemType])
-        case search(String)
+        case refresh
+        case add([Element])
+        case remove([Element])
         case update(BaseItemDto)
+        case getSuggestions(String)
     }
 
     // MARK: BackgroundState
 
     enum BackgroundState: Hashable {
         case refreshing
-        case searching
     }
 
     // MARK: - State
@@ -50,7 +50,9 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var searchResults: [ItemType] = []
+    var elements: [Element] = []
+    @Published
+    var suggestions: [Element] = []
 
     @Published
     var state: State = .initial
@@ -73,22 +75,50 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .search(searchItem):
+        case .refresh:
             task?.cancel()
 
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.searching)
+                        _ = self.backgroundStates.append(.refreshing)
                     }
 
-                    let matches = try await self.searchComponent(searchItem)
+                    let allElements = try await self.fetchElements()
 
                     await MainActor.run {
-                        self.searchResults = matches
+                        self.elements = allElements
                         self.state = .initial
-                        _ = self.backgroundStates.remove(.searching)
+                        _ = self.backgroundStates.remove(.refreshing)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .getSuggestions(searchTerm):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        _ = self.backgroundStates.append(.refreshing)
+                    }
+
+                    let matches = try await self.fetchSuggestions(searchTerm)
+
+                    await MainActor.run {
+                        self.suggestions = matches
+                        self.state = .initial
+                        _ = self.backgroundStates.remove(.refreshing)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
@@ -211,21 +241,27 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
         }
     }
 
-    // MARK: - Add Items (To be overridden)
+    // MARK: - Add Element Component to Item (To Be Overridden)
 
-    func addComponents(_ items: [ItemType]) async throws {
+    func addComponents(_ components: [Element]) async throws {
         fatalError("This method should be overridden in subclasses")
     }
 
-    // MARK: - Remove Items (To be overridden)
+    // MARK: - Remove Element Component from Item (To Be Overridden)
 
-    func removeComponents(_ items: [ItemType]) async throws {
+    func removeComponents(_ components: [Element]) async throws {
         fatalError("This method should be overridden in subclasses")
     }
 
-    // MARK: - Validate Items (To be overridden)
+    // MARK: - Fetch All Possible Elements (To Be Overridden)
 
-    func searchComponent(_ item: String) async throws -> [ItemType] {
+    func fetchElements() async throws -> [Element] {
+        fatalError("This method should be overridden in subclasses")
+    }
+
+    // MARK: - Get Item Suggestions (To Be Overridden)
+
+    func fetchSuggestions(_ searchTerm: String) async throws -> [Element] {
         fatalError("This method should be overridden in subclasses")
     }
 }

@@ -12,7 +12,7 @@ import JellyfinAPI
 
 class TagEditorViewModel: ItemEditorViewModel<String> {
 
-    // MARK: - Add Details
+    // MARK: - Add Tag(s)
 
     override func addComponents(_ tags: [String]) async throws {
         var updatedItem = item
@@ -23,7 +23,7 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Remove Details
+    // MARK: - Remove Tag(s)
 
     override func removeComponents(_ tags: [String]) async throws {
         var updatedItem = item
@@ -31,24 +31,25 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
-    // MARK: - Validate Details
+    // MARK: - Fetch All Possible Tags
 
-    override func searchComponent(_ tag: String) async throws -> [String] {
-        let parameters = Paths.GetItemsParameters(
+    override func fetchElements() async throws -> [String] {
+        let parameters = Paths.GetQueryFiltersLegacyParameters(
             userID: userSession.user.id,
-            limit: 1,
-            isRecursive: true,
-            tags: [tag]
+            parentID: item.parentID
         )
-        let request = Paths.getItems(parameters: parameters)
-        let response = try await userSession.client.send(request)
 
-        // TODO: Replace with a getTags search (If it exists)
-        // See if there are any items with this Tag
-        if response.value.items?.isEmpty ?? false {
-            return []
-        } else {
-            return [tag]
-        }
+        let request = Paths.getQueryFiltersLegacy(parameters: parameters)
+        guard let response = try? await userSession.client.send(request) else { return [] }
+
+        return response.value.tags ?? []
+    }
+
+    // MARK: - Get Tag Suggestions
+
+    override func fetchSuggestions(_ searchTerm: String) async throws -> [String] {
+        self.elements.filter(
+            { $0.lowercased().contains(searchTerm.lowercased()) }
+        )
     }
 }
