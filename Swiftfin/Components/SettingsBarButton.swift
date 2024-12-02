@@ -31,7 +31,7 @@ struct SettingsBarButton: View {
                     ZStack {
                         Color.clear
 
-                        RedrawOnNotificationView(.didChangeUserProfileImage) {
+                        RedrawOnNotificationView(Notifications.didChangeUserProfileImage) {
                             ImageView(user.profileImageSource(
                                 client: server.client,
                                 maxWidth: 120

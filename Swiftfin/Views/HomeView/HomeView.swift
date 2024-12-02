@@ -95,7 +95,7 @@ struct HomeView: View {
             }
         }
         .sinceLastDisappear { interval in
-            if interval > 60 || viewModel.notificationsReceived.contains(.itemMetadataDidChange) {
+            if interval > 60 || viewModel.notificationsReceived.contains(Notifications.itemMetadataDidChange.asAny) {
                 viewModel.send(.backgroundRefresh)
                 viewModel.notificationsReceived.remove(.itemMetadataDidChange)
             }

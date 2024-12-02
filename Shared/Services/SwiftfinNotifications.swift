@@ -6,89 +6,168 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Factory
 import Foundation
+import JellyfinAPI
+import UIKit
 
-class SwiftfinNotification {
-
-    @Injected(\.notificationCenter)
-    private var notificationService
-
-    let name: Notification.Name
-
-    fileprivate init(_ notificationName: Notification.Name) {
-        self.name = notificationName
-    }
-
-    func post(object: Any? = nil) {
-        notificationService.post(name: name, object: object)
-    }
-
-    func subscribe(_ observer: Any, selector: Selector) {
-        notificationService.addObserver(observer, selector: selector, name: name, object: nil)
-    }
-
-    func unsubscribe(_ observer: Any) {
-        notificationService.removeObserver(self, name: name, object: nil)
-    }
-
-    var publisher: NotificationCenter.Publisher {
-        notificationService.publisher(for: name)
-    }
-}
+typealias NotificationKey<Payload> = Notifications.Key<Payload>
 
 extension Container {
-    var notificationCenter: Factory<NotificationCenter> { self { NotificationCenter.default }.singleton }
+    var notificationCenter: Factory<NotificationCenter> {
+        self { NotificationCenter.default }.singleton
+    }
 }
 
 enum Notifications {
 
-    struct Key: Hashable {
+    struct Key<Payload>: Hashable {
 
-        static func == (lhs: Notifications.Key, rhs: Notifications.Key) -> Bool {
-            lhs.key == rhs.key
+        @Injected(\.notificationCenter)
+        private var notificationService
+
+        let name: Notification.Name
+
+        init(_ name: String) {
+            self.name = Notification.Name(name)
+        }
+
+        init(_ name: Notification.Name) {
+            self.name = name
         }
 
         func hash(into hasher: inout Hasher) {
-            hasher.combine(key)
+            hasher.combine(name)
         }
 
-        typealias NotificationKey = Notifications.Key
-
-        let key: String
-        let underlyingNotification: SwiftfinNotification
-
-        init(_ key: String) {
-            self.key = key
-            self.underlyingNotification = SwiftfinNotification(Notification.Name(key))
+        static func == (lhs: Key<Payload>, rhs: Key<Payload>) -> Bool {
+            lhs.name == rhs.name
         }
-    }
 
-    static subscript(key: Key) -> SwiftfinNotification {
-        key.underlyingNotification
+        func post(_ payload: Payload) {
+            notificationService.post(
+                name: name,
+                object: nil,
+                userInfo: ["payload": payload]
+            )
+        }
+
+        func subscribe(_ handler: @escaping (Payload) -> Void) -> AnyCancellable {
+            notificationService.publisher(for: name)
+                .compactMap { notification -> Payload? in
+                    return notification.userInfo?["payload"] as? Payload
+                }
+                .sink { payload in
+                    handler(payload)
+                }
+        }
+
+        func unsubscribe(_ observer: Any) {
+            notificationService.removeObserver(observer, name: name, object: nil)
+        }
+
+        var publisher: AnyPublisher<Payload, Never> {
+            notificationService.publisher(for: name)
+                .compactMap { notification -> Payload? in
+                    return notification.userInfo?["payload"] as? Payload
+                }
+                .eraseToAnyPublisher()
+        }
     }
 }
 
-extension Notifications.Key {
+// MARK: - Keys
 
-    static let didSignIn = NotificationKey("didSignIn")
-    static let didSignOut = NotificationKey("didSignOut")
-    static let processDeepLink = NotificationKey("processDeepLink")
-    static let didPurge = NotificationKey("didPurge")
-    static let didChangeCurrentServerURL = NotificationKey("didChangeCurrentServerURL")
-    static let didSendStopReport = NotificationKey("didSendStopReport")
-    static let didRequestGlobalRefresh = NotificationKey("didRequestGlobalRefresh")
-    static let didFailMigration = NotificationKey("didFailMigration")
+extension Notifications {
 
-    static let itemMetadataDidChange = NotificationKey("itemMetadataDidChange")
-    static let didDeleteItem = NotificationKey("didDeleteItem")
+    // MARK: - Authentication
 
-    static let didConnectToServer = NotificationKey("didConnectToServer")
-    static let didDeleteServer = NotificationKey("didDeleteServer")
+    static var didSignIn: Key<Void> {
+        Key("didSignIn")
+    }
 
-    static let didChangeUserProfileImage = NotificationKey("didChangeUserProfileImage")
+    static var didSignOut: Key<Void> {
+        Key("didSignOut")
+    }
 
-    static let didStartPlayback = NotificationKey("didStartPlayback")
+    // MARK: - App Flow
 
-    static let didAddServerUser = NotificationKey("didStartPlayback")
+    static var processDeepLink: Key<Void> {
+        Key("processDeepLink")
+    }
+
+    static var didPurge: Key<Void> {
+        Key("didPurge")
+    }
+
+    static var didChangeCurrentServerURL: Key<Void> {
+        Key("didChangeCurrentServerURL")
+    }
+
+    static var didSendStopReport: Key<Void> {
+        Key("didSendStopReport")
+    }
+
+    static var didRequestGlobalRefresh: Key<Void> {
+        Key("didRequestGlobalRefresh")
+    }
+
+    static var didFailMigration: Key<Void> {
+        Key("didFailMigration")
+    }
+
+    // MARK: - Media Items
+
+    static var itemMetadataDidChange: Key<BaseItemDto> {
+        Key("itemMetadataDidChange")
+    }
+
+    static var itemShouldRefresh: Key<(itemID: String, parentID: String?)> {
+        Key("itemShouldRefresh")
+    }
+
+    static var didDeleteItem: Key<String> {
+        Key("didDeleteItem")
+    }
+
+    // MARK: - Server
+
+    static var didConnectToServer: Key<Void> {
+        Key("didConnectToServer")
+    }
+
+    static var didDeleteServer: Key<Void> {
+        Key("didDeleteServer")
+    }
+
+    // MARK: - User
+
+    static var didChangeUserProfileImage: Key<Void> {
+        Key("didChangeUserProfileImage")
+    }
+
+    // MARK: - Playback
+
+    static var didStartPlayback: Key<Void> {
+        Key("didStartPlayback")
+    }
+
+    static var didAddServerUser: Key<Void> {
+        Key("didAddServerUser")
+    }
+
+    // MARK: - UIApplication
+
+    static var applicationDidEnterBackground: Key<Void> {
+        Key(UIApplication.didEnterBackgroundNotification)
+    }
+
+    static var applicationWillResignActive: Key<Void> {
+        Key(UIApplication.willResignActiveNotification)
+    }
+
+    static var applicationWillTerminate: Key<Void> {
+        Key(UIApplication.willTerminateNotification)
+    }
 }
