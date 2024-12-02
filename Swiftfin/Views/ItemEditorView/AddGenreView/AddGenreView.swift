@@ -28,9 +28,6 @@ struct AddGenreView: View {
     private var name: String = ""
 
     @State
-    private var serverGenres: [String] = []
-
-    @State
     private var error: Error?
     @State
     private var isPresentingError: Bool = false
@@ -65,8 +62,6 @@ struct AddGenreView: View {
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
-                case let .searchResults(eventTags):
-                    serverGenres = eventTags
                 case let .error(eventError):
                     if eventError != JellyfinAPIError("cancelled") {
                         UIDevice.feedback(.error)
@@ -120,7 +115,7 @@ struct AddGenreView: View {
                 if name.isEmpty {
                     Label(L10n.required, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                } else if serverGenres.contains(name) {
+                } else if viewModel.searchResults.contains(name) {
                     Label(
                         L10n.existsOnServer,
                         systemImage: "checkmark.circle.fill"
@@ -135,7 +130,7 @@ struct AddGenreView: View {
                 }
             }
 
-            if serverGenres.isNotEmpty && isValid {
+            if viewModel.searchResults.isNotEmpty && isValid {
                 Section(L10n.suggestions) {
                     searchView
                 }
@@ -144,7 +139,7 @@ struct AddGenreView: View {
     }
 
     private var searchView: some View {
-        ForEach(serverGenres, id: \.self) { genre in
+        ForEach(viewModel.searchResults, id: \.self) { genre in
             Button(genre) {
                 name = genre
             }

@@ -17,7 +17,6 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
-        case searchResults([ItemType])
         case error(JellyfinAPIError)
     }
 
@@ -50,6 +49,8 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     @Published
     var item: BaseItemDto
+    @Published
+    var searchResults: [ItemType] = []
 
     @Published
     var state: State = .initial
@@ -85,9 +86,9 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
                     let matches = try await self.searchComponent(searchItem)
 
                     await MainActor.run {
+                        self.searchResults = matches
                         self.state = .initial
                         _ = self.backgroundStates.remove(.searching)
-                        self.eventSubject.send(.searchResults(matches))
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)

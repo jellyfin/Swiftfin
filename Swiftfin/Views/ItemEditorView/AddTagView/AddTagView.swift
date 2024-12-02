@@ -28,9 +28,6 @@ struct AddTagView: View {
     private var name: String = ""
 
     @State
-    private var isServerTag: Bool?
-
-    @State
     private var error: Error?
     @State
     private var isPresentingError: Bool = false
@@ -39,6 +36,12 @@ struct AddTagView: View {
 
     private var isValid: Bool {
         name.isNotEmpty
+    }
+
+    // MARK: - Name Already Exists
+
+    private var isServerTag: Bool {
+        viewModel.searchResults.isNotEmpty
     }
 
     // MARK: - Data is Loading
@@ -65,8 +68,6 @@ struct AddTagView: View {
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
-                case let .searchResults(eventTags):
-                    isServerTag = eventTags.isNotEmpty
                 case let .error(eventError):
                     if eventError != JellyfinAPIError("cancelled") {
                         UIDevice.feedback(.error)
@@ -119,20 +120,18 @@ struct AddTagView: View {
                 if name.isEmpty {
                     Label(L10n.required, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
-                } else if let tagOnServer = isServerTag {
-                    if tagOnServer {
-                        Label(
-                            L10n.existsOnServer,
-                            systemImage: "checkmark.circle.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .green))
-                    } else {
-                        Label(
-                            L10n.willBeCreatedOnServer,
-                            systemImage: "checkmark.seal.fill"
-                        )
-                        .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
-                    }
+                } else if isServerTag {
+                    Label(
+                        L10n.existsOnServer,
+                        systemImage: "checkmark.circle.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .green))
+                } else {
+                    Label(
+                        L10n.willBeCreatedOnServer,
+                        systemImage: "checkmark.seal.fill"
+                    )
+                    .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
                 }
             }
         }
