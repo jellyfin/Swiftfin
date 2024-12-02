@@ -90,7 +90,7 @@ struct EditGenreView: View {
             ) {
                 deleteSelectedGenresConfirmationActions
             } message: {
-                Text(L10n.delete)
+                Text(L10n.deleteSelectedGenresConfirmation)
             }
             .confirmationDialog(
                 L10n.delete,
@@ -99,7 +99,7 @@ struct EditGenreView: View {
             ) {
                 deleteTagConfirmationActions
             } message: {
-                Text(L10n.delete)
+                Text(L10n.deleteGenreConfirmation)
             }
     }
 
@@ -138,7 +138,6 @@ struct EditGenreView: View {
                         selectedGenres = [genre]
                         isPresentingDeleteConfirmation = true
                     }
-                    .foregroundStyle(.primary, .secondary)
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedGenres.contains(genre))
                     .listRowSeparator(.hidden)
@@ -168,7 +167,7 @@ struct EditGenreView: View {
         }
     }
 
-    // MARK: - Delete Single Tag Confirmation Actions
+    // MARK: - Delete Single Genre Confirmation Actions
 
     @ViewBuilder
     private var deleteTagConfirmationActions: some View {

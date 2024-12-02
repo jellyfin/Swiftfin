@@ -77,7 +77,7 @@ extension EditGenreView {
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(8)
         }
 
         // MARK: - Body

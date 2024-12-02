@@ -90,7 +90,7 @@ struct EditTagView: View {
             ) {
                 deleteSelectedTagsConfirmationActions
             } message: {
-                Text(L10n.delete)
+                Text(L10n.deleteSelectedTagsConfirmation)
             }
             .confirmationDialog(
                 L10n.delete,
@@ -99,7 +99,7 @@ struct EditTagView: View {
             ) {
                 deleteTagConfirmationActions
             } message: {
-                Text(L10n.delete)
+                Text(L10n.deleteTagConfirmation)
             }
     }
 
@@ -138,7 +138,6 @@ struct EditTagView: View {
                         selectedTags = [tag]
                         isPresentingDeleteConfirmation = true
                     }
-                    .foregroundStyle(.primary, .secondary)
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedTags.contains(tag))
                     .listRowSeparator(.hidden)

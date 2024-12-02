@@ -1901,3 +1901,19 @@
 // Tags - Description
 // A brief explanation of tags in the context of media items
 "tagsDescription" = "Labels used to organize or highlight specific attributes of media.";
+
+// Delete Tag - Confirmation
+// Asks the user to confirm the deletion of a single tag
+"deleteTagConfirmation" = "Are you sure you want to delete this tag?";
+
+// Delete Tags - Confirmation
+// Asks the user to confirm the deletion of selected tags
+"deleteSelectedTagsConfirmation" = "Are you sure you want to delete the selected tags?";
+
+// Delete Genre - Confirmation
+// Asks the user to confirm the deletion of a single genre
+"deleteGenreConfirmation" = "Are you sure you want to delete this genre?";
+
+// Delete Genres - Confirmation
+// Asks the user to confirm the deletion of selected genres
+"deleteSelectedGenresConfirmation" = "Are you sure you want to delete the selected genres?";

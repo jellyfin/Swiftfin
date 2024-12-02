@@ -35,8 +35,16 @@ struct AddTagView: View {
     @State
     private var isPresentingError: Bool = false
 
+    // MARK: - Name is Valid
+
     private var isValid: Bool {
-        !name.isEmpty
+        name.isNotEmpty
+    }
+
+    // MARK: - Data is Loading
+
+    private var isLoading: Bool {
+        !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching])
     }
 
     // MARK: - Body
@@ -44,7 +52,6 @@ struct AddTagView: View {
     var body: some View {
         contentView
             .animation(.linear(duration: 0.2), value: isValid)
-            .interactiveDismissDisabled(viewModel.backgroundStates.contains(.refreshing))
             .navigationTitle(L10n.tags)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
@@ -69,7 +76,7 @@ struct AddTagView: View {
                 }
             }
             .topBarTrailing {
-                if !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching]) {
+                if isLoading {
                     ProgressView()
                 }
 
@@ -91,7 +98,7 @@ struct AddTagView: View {
                 Text(error.localizedDescription)
             }
             .onChange(of: name) { _ in
-                if name.isNotEmpty && !viewModel.backgroundStates.contains(.refreshing) {
+                if isValid && !isLoading {
                     viewModel.send(.search(name))
                 }
             }

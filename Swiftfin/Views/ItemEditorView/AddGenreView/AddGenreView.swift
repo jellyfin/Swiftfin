@@ -35,8 +35,16 @@ struct AddGenreView: View {
     @State
     private var isPresentingError: Bool = false
 
+    // MARK: - Name is Valid
+
     private var isValid: Bool {
-        !name.isEmpty
+        name.isNotEmpty
+    }
+
+    // MARK: - Data is Loading
+
+    private var isLoading: Bool {
+        !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching])
     }
 
     // MARK: - Body
@@ -44,7 +52,6 @@ struct AddGenreView: View {
     var body: some View {
         contentView
             .animation(.linear(duration: 0.2), value: isValid)
-            .interactiveDismissDisabled(viewModel.backgroundStates.contains(.refreshing))
             .navigationTitle(L10n.genres)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
@@ -69,7 +76,7 @@ struct AddGenreView: View {
                 }
             }
             .topBarTrailing {
-                if !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching]) {
+                if isLoading {
                     ProgressView()
                 }
 
@@ -91,7 +98,7 @@ struct AddGenreView: View {
                 Text(error.localizedDescription)
             }
             .onChange(of: name) { _ in
-                if name.isNotEmpty && !viewModel.backgroundStates.contains(.refreshing) {
+                if isValid && !isLoading {
                     viewModel.send(.search(name))
                 }
             }
@@ -128,7 +135,7 @@ struct AddGenreView: View {
                 }
             }
 
-            if serverGenres.isNotEmpty && name.isNotEmpty {
+            if serverGenres.isNotEmpty && isValid {
                 Section(L10n.suggestions) {
                     searchView
                 }
