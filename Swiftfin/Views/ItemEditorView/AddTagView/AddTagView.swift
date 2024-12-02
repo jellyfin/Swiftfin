@@ -98,7 +98,7 @@ struct AddTagView: View {
                 Text(error.localizedDescription)
             }
             .onChange(of: name) { _ in
-                if isValid && !isLoading {
+                if isValid {
                     viewModel.send(.search(name))
                 }
             }
