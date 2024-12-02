@@ -138,6 +138,7 @@ struct EditTagView: View {
                         selectedTags = [tag]
                         isPresentingDeleteConfirmation = true
                     }
+                    .foregroundStyle(.primary, .secondary)
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedTags.contains(tag))
                     .listRowSeparator(.hidden)

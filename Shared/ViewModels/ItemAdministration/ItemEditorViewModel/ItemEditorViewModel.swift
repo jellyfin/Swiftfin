@@ -34,6 +34,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
 
     enum BackgroundState: Hashable {
         case refreshing
+        case searching
     }
 
     // MARK: - State
@@ -42,7 +43,6 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
         case initial
         case error(JellyfinAPIError)
         case updating
-        case searching
     }
 
     @Published
@@ -79,15 +79,14 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .searching
-                        _ = self.backgroundStates.append(.refreshing)
+                        _ = self.backgroundStates.append(.searching)
                     }
 
                     let matches = try await self.searchComponent(searchItem)
 
                     await MainActor.run {
                         self.state = .initial
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.searching)
                         self.eventSubject.send(.searchResults(matches))
                     }
                 } catch {

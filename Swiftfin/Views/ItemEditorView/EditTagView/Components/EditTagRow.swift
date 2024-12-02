@@ -20,8 +20,6 @@ extension EditTagView {
 
         // MARK: - Environment Variables
 
-        @Environment(\.colorScheme)
-        private var colorScheme
         @Environment(\.isEditing)
         private var isEditing
         @Environment(\.isSelected)
@@ -46,12 +44,6 @@ extension EditTagView {
             self.onDelete = onDelete
         }
 
-        // MARK: - Label Styling
-
-        private var labelForegroundStyle: some ShapeStyle {
-            isEditing ? (isSelected ? .primary : .secondary) : .primary
-        }
-
         // MARK: - Row Content
 
         @ViewBuilder
@@ -61,7 +53,9 @@ extension EditTagView {
                     Text(tag)
                         .font(.headline)
                         .lineLimit(1)
-                        .foregroundColor(labelForegroundStyle as? Color)
+                        .foregroundColor(
+                            isEditing ? (isSelected ? .primary : .secondary) : .primary
+                        )
                 }
 
                 Spacer()

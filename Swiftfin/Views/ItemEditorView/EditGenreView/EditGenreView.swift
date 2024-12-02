@@ -138,6 +138,7 @@ struct EditGenreView: View {
                         selectedGenres = [genre]
                         isPresentingDeleteConfirmation = true
                     }
+                    .foregroundStyle(.primary, .secondary)
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedGenres.contains(genre))
                     .listRowSeparator(.hidden)

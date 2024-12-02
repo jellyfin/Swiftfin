@@ -69,7 +69,7 @@ struct AddGenreView: View {
                 }
             }
             .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
+                if !viewModel.backgroundStates.isDisjoint(with: [.refreshing, .searching]) {
                     ProgressView()
                 }
 
