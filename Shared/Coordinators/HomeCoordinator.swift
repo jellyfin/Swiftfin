@@ -28,6 +28,8 @@ final class HomeCoordinator: NavigationCoordinatable {
     var item = makeItem
     @Route(.push)
     var library = makeLibrary
+    @Route(.modal)
+    var adminDashboard = makeAdminDashboard
     #endif
 
     #if os(tvOS)
@@ -45,6 +47,10 @@ final class HomeCoordinator: NavigationCoordinatable {
 
     func makeLibrary(viewModel: PagingLibraryViewModel<BaseItemDto>) -> LibraryCoordinator<BaseItemDto> {
         LibraryCoordinator(viewModel: viewModel)
+    }
+
+    func makeAdminDashboard() -> NavigationViewCoordinator<AdminDashboardCoordinator> {
+        NavigationViewCoordinator(AdminDashboardCoordinator())
     }
     #endif
 

@@ -7,11 +7,15 @@
 //
 
 import Defaults
+import Factory
 import SwiftUI
 
 // TODO: will be entirely re-organized
 
 struct CustomizeViewsSettings: View {
+
+    @Injected(\.currentUserSession)
+    private var userSesssion
 
     @Default(.Customization.itemViewType)
     private var itemViewType

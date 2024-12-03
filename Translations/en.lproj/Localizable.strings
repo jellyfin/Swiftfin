@@ -889,6 +889,11 @@
 // Title for the column configuration section.
 "columns" = "Columns";
 
+// Activity Indicator - Setting
+// Setting to enable/disable the HomeView Activity Indicator
+// Appears in CustomizeSettingView
+"activityIndicator" = "Activity Indicator";
+
 // Date Created - Label
 // Label for displaying the date an API key was created
 "dateCreated" = "Date Created";
