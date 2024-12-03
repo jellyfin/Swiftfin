@@ -59,6 +59,8 @@ extension VideoPlayer.Overlay {
         
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var toastProxy: ToastProxy
         
         @State
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .zero
@@ -159,11 +161,21 @@ extension VideoPlayer.Overlay.GestureLayer {
         }
         
         let newOffset = round(
-            abs(mediaOffsetPanGestureState.startTranslation - translation),
+            (mediaOffsetPanGestureState.startTranslation - translation) * 0.1,
             toNearest: 0.1
         )
         
         source.wrappedValue = clamp(newOffset, min: -30, max: 30)
+        
+        print(source.wrappedValue)
+        
+//        toastProxy.present(
+//            Text(
+//                source.wrappedValue,
+//                format: .interval(style: .abbreviated, fields: [.second])
+//            ),
+//            systemName: "heart.fill"
+//        )
     }
     
     private func brightnessAction(

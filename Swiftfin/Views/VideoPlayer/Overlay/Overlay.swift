@@ -42,6 +42,8 @@ extension VideoPlayer {
 
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
+        @StateObject
+        private var toastProxy: ToastProxy = .init()
 
         private var isPresentingDrawer: Bool {
             selectedSupplement != nil
@@ -94,6 +96,7 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
                 GestureLayer()
+                    .environmentObject(toastProxy)
 
                 VStack {
                     navigationBar
@@ -137,6 +140,9 @@ extension VideoPlayer {
                         .isVisible(!isScrubbing && isPresentingOverlay)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
+            }
+            .overlay(alignment: .top) {
+                ToastView(proxy: toastProxy)
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)

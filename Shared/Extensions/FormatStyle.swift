@@ -80,8 +80,13 @@ extension FormatStyle where Self == RateStyle {
 
 struct RateStyle: FormatStyle {
 
+    // TODO: shouldn't use just an "x", should
+    // probably use some square unicode character
+    // that's small and centered
     func format(_ value: Float) -> String {
-        String(format: "%.2f", value)
+        FloatingPointFormatStyle<Float>()
+            .precision(.significantDigits(1...3))
+            .format(value)
             .appending("x")
     }
 }
