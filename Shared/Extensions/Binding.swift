@@ -24,6 +24,19 @@ extension Binding {
         )
     }
 
+    func contains<E: Equatable>(_ value: E) -> Binding<Bool> where Value == [E] {
+        Binding<Bool>(
+            get: { wrappedValue.contains(value) },
+            set: { shouldBeContained in
+                if shouldBeContained {
+                    wrappedValue.append(value)
+                } else {
+                    wrappedValue.removeAll { $0 == value }
+                }
+            }
+        )
+    }
+
     func map<V>(getter: @escaping (Value) -> V, setter: @escaping (V) -> Value) -> Binding<V> {
         Binding<V>(
             get: { getter(wrappedValue) },

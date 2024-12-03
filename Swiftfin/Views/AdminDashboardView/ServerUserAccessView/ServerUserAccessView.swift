@@ -20,7 +20,7 @@ struct ServerUserAccessView: View {
     // MARK: - ViewModel
 
     @ObservedObject
-    var viewModel: ServerUserAdminViewModel
+    private var viewModel: ServerUserAdminViewModel
 
     // MARK: - State Variables
 
@@ -34,7 +34,7 @@ struct ServerUserAccessView: View {
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
-        self._viewModel = ObservedObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
@@ -105,25 +105,15 @@ struct ServerUserAccessView: View {
             )
         }
 
-        if !Binding(projectedValue: $tempPolicy.enableAllFolders).coalesce(false).wrappedValue {
+        if tempPolicy.enableAllFolders == false {
             Section {
                 ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(library.displayTitle, isOn: Binding(
-                        get: {
-                            tempPolicy.enabledFolders?.contains(library.id!) ?? false
-                        },
-                        set: { isEnabled in
-                            if isEnabled {
-                                if tempPolicy.enabledFolders == nil {
-                                    tempPolicy.enabledFolders = [library.id!]
-                                } else {
-                                    tempPolicy.enabledFolders?.append(library.id!)
-                                }
-                            } else {
-                                tempPolicy.enabledFolders?.removeAll { $0 == library.id }
-                            }
-                        }
-                    ))
+                    Toggle(
+                        library.displayTitle,
+                        isOn: $tempPolicy.enabledFolders
+                            .coalesce([])
+                            .contains(library.id!)
+                    )
                 }
             }
         }
@@ -140,25 +130,15 @@ struct ServerUserAccessView: View {
             )
         }
 
-        if !Binding(projectedValue: $tempPolicy.enableContentDeletion).coalesce(false).wrappedValue {
+        if tempPolicy.enableContentDeletion == false {
             Section {
                 ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(library.displayTitle, isOn: Binding(
-                        get: {
-                            tempPolicy.enableContentDeletionFromFolders?.contains(library.id!) ?? false
-                        },
-                        set: { isEnabled in
-                            if isEnabled {
-                                if tempPolicy.enableContentDeletionFromFolders == nil {
-                                    tempPolicy.enableContentDeletionFromFolders = [library.id!]
-                                } else {
-                                    tempPolicy.enableContentDeletionFromFolders?.append(library.id!)
-                                }
-                            } else {
-                                tempPolicy.enableContentDeletionFromFolders?.removeAll { $0 == library.id }
-                            }
-                        }
-                    ))
+                    Toggle(
+                        library.displayTitle,
+                        isOn: $tempPolicy.enableContentDeletionFromFolders
+                            .coalesce([])
+                            .contains(library.id!)
+                    )
                 }
             }
         }
