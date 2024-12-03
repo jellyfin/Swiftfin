@@ -27,7 +27,7 @@ struct VideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @State
-    private var audioOffset: Int = 0
+    private var audioOffset: TimeInterval = 0
     @State
     private var isAspectFilled: Bool = false
     @State
@@ -37,7 +37,7 @@ struct VideoPlayer: View {
     @State
     private var scrubbedSeconds: TimeInterval = 0.0
     @State
-    private var subtitleOffset: Int = 0
+    private var subtitleOffset: TimeInterval = 0
 
     @StateObject
     private var manager: MediaPlayerManager
@@ -103,6 +103,7 @@ struct VideoPlayer: View {
             }
 
             Overlay()
+                .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isScrubbing, $isScrubbing)
                 .environment(\.safeAreaInsets, $safeAreaInsets)
@@ -123,7 +124,7 @@ struct VideoPlayer: View {
             .statusBarHidden()
             .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) { newValue in
-                vlcUIProxy.setAudioDelay(.ticks(newValue))
+                vlcUIProxy.setAudioDelay(.seconds(newValue))
             }
             .onChange(of: isAspectFilled) { newValue in
                 UIView.animate(withDuration: 0.2) {
@@ -143,7 +144,7 @@ struct VideoPlayer: View {
                 vlcUIProxy.setSubtitleFont(newValue)
             }
             .onChange(of: subtitleOffset) { newValue in
-                vlcUIProxy.setSubtitleDelay(.ticks(newValue))
+                vlcUIProxy.setSubtitleDelay(.seconds(newValue))
             }
             .onChange(of: subtitleSize) { newValue in
                 vlcUIProxy.setSubtitleSize(.absolute(24 - newValue))

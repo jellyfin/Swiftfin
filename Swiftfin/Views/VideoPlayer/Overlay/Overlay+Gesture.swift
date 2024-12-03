@@ -29,30 +29,47 @@ extension VideoPlayer.Overlay {
     
     struct GestureLayer: View {
         
-        @Environment(\.isScrubbing)
+        @Environment(\.audioOffset)
         @Binding
-        private var isScrubbing: Bool
-        @Environment(\.selectedMediaPlayerSupplement)
+        private var audioOffset: TimeInterval
+        
+        @Environment(\.isAspectFilled)
         @Binding
-        private var selectedSupplement: AnyMediaPlayerSupplement?
-        @Environment(\.scrubbedSeconds)
-        @Binding
-        private var scrubbedSeconds: TimeInterval
+        private var isAspectFilled
+        
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay
+        
+        @Environment(\.isScrubbing)
+        @Binding
+        private var isScrubbing: Bool
+        
+        @Environment(\.selectedMediaPlayerSupplement)
+        @Binding
+        private var selectedSupplement: AnyMediaPlayerSupplement?
+        
+        @Environment(\.scrubbedSeconds)
+        @Binding
+        private var scrubbedSeconds: TimeInterval
+        
+        @Environment(\.subtitleOffset)
+        @Binding
+        private var subtitleOffset: TimeInterval
         
         @EnvironmentObject
         private var manager: MediaPlayerManager
         
         @State
-        private var brightnessPanGestureState: PanGestureState<CGFloat> = .init()
+        private var brightnessPanGestureState: PanGestureState<CGFloat> = .zero
         @State
-        private var playbackRatePanGestureState: PanGestureState<Float> = .init()
+        private var mediaOffsetPanGestureState: PanGestureState<Double> = .zero
         @State
-        private var scrubPanGestureState: PanGestureState<TimeInterval> = .init()
+        private var playbackRatePanGestureState: PanGestureState<Float> = .zero
         @State
-        private var volumePanGestureState: PanGestureState<Float> = .init()
+        private var scrubPanGestureState: PanGestureState<TimeInterval> = .zero
+        @State
+        private var volumePanGestureState: PanGestureState<Float> = .zero
 
         @StateObject
         private var overlayTimer: PokeIntervalTimer = .init()
@@ -64,6 +81,7 @@ extension VideoPlayer.Overlay {
         var body: some View {
             GestureView()
                 .onHorizontalPan(handlePan)
+                .onPinch(handlePinch)
                 .onTap(samePointPadding: 10, samePointTimeout: 0.7) { _, _ in
                     if isPresentingDrawer {
                         selectedSupplement = nil
@@ -84,35 +102,69 @@ extension VideoPlayer.Overlay.GestureLayer {
         translation: CGFloat
     ) {
 //        guard !isGestureLocked else { return }
-//
-//        switch action {
-//        case .none:
-//            return
-//        case .audioffset:
-//            audioOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
-//        case .playbackSpeed:
-//            playbackSpeedAction(state: state, point: point, velocity: velocity, translation: translation)
-//        case .subtitleOffset:
-//            subtitleOffsetAction(state: state, point: point, velocity: velocity, translation: translation)
-//        }
         
         let action = Defaults[.VideoPlayer.Gesture.panAction]
         
         switch action {
+        case .audioffset:
+            mediaOffsetAction(state: state, translation: translation, source: _audioOffset.wrappedValue)
         case .brightness:
             brightnessAction(state: state, point: point)
+        case .playbackSpeed:
+            playbackRateAction(state: state, translation: translation)
         case .scrub:
             scrubAction(state: state, point: point, rate: 1)
         case .slowScrub:
             scrubAction(state: state, point: point, rate: 0.1)
+        case .subtitleOffset:
+            mediaOffsetAction(state: state, translation: translation, source: _subtitleOffset.wrappedValue)
         case .volume:
             volumeAction(state: state, point: point)
-        default: ()
+        case .none: ()
+        }
+    }
+    
+    private func handlePinch(
+        state: UIGestureRecognizer.State,
+        unitPoint: UnitPoint,
+        scale: CGFloat
+    ) {
+//        guard !isGestureLocked else { return }
+        
+        let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
+        
+        switch action {
+        case .aspectFill:
+            aspectFillAction(state: state, scale: scale)
+        case .none: ()
         }
     }
 }
 
+// MARK: - Pan
+
 extension VideoPlayer.Overlay.GestureLayer {
+    
+    private func mediaOffsetAction(
+        state: UIGestureRecognizer.State,
+        translation: CGFloat,
+        source: Binding<TimeInterval>
+    ) {
+        if state == .began {
+            mediaOffsetPanGestureState = .zero
+            mediaOffsetPanGestureState.startValue = source.wrappedValue
+            mediaOffsetPanGestureState.startTranslation = translation
+        } else if state == .ended {
+            return
+        }
+        
+        let newOffset = round(
+            abs(mediaOffsetPanGestureState.startTranslation - translation),
+            toNearest: 0.1
+        )
+        
+        source.wrappedValue = clamp(newOffset, min: -30, max: 30)
+    }
     
     private func brightnessAction(
         state: UIGestureRecognizer.State,
@@ -195,6 +247,24 @@ extension VideoPlayer.Overlay.GestureLayer {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
             slider.value = clamp(newVolume, min: 0, max: 1)
+        }
+    }
+}
+
+// MARK: - Pinch
+
+extension VideoPlayer.Overlay.GestureLayer {
+    
+    private func aspectFillAction(
+        state: UIGestureRecognizer.State,
+        scale: CGFloat
+    ) {
+        guard state == .began || state == .ended else { return }
+        
+        if scale > 1, !isAspectFilled {
+            isAspectFilled = true
+        } else if scale < 1, isAspectFilled {
+            isAspectFilled = false
         }
     }
 }

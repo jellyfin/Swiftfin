@@ -17,7 +17,7 @@ enum PlaybackRate: Storable {
     case oneQuarter
     case oneHalf
     case two
-    case custom(rate: Double)
+    case custom(Double)
 
     var rate: Double {
         switch self {

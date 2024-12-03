@@ -10,11 +10,6 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-//    var isPresentingDrawer: Binding<Bool> {
-//        get { self[IsPresentingDrawerKey.self] }
-//        set { self[IsPresentingDrawerKey.self] = newValue }
-//    }
-
     var selectedMediaPlayerSupplement: Binding<AnyMediaPlayerSupplement?> {
         get { self[SelectedMediaPlayerSupplementKey.self] }
         set { self[SelectedMediaPlayerSupplementKey.self] = newValue }
@@ -25,12 +20,7 @@ extension EnvironmentValues {
         set { self[ScrubbedSecondsKey.self] = newValue }
     }
 
-    var accentColor: Binding<Color> {
-        get { self[AccentColor.self] }
-        set { self[AccentColor.self] = newValue }
-    }
-
-    var audioOffset: Binding<Int> {
+    var audioOffset: Binding<TimeInterval> {
         get { self[AudioOffsetKey.self] }
         set { self[AudioOffsetKey.self] = newValue }
     }
@@ -39,11 +29,6 @@ extension EnvironmentValues {
         get { self[AspectFilledKey.self] }
         set { self[AspectFilledKey.self] = newValue }
     }
-
-//    var currentOverlayType: Binding<VideoPlayer.OverlayType> {
-//        get { self[CurrentOverlayTypeKey.self] }
-//        set { self[CurrentOverlayTypeKey.self] = newValue }
-//    }
 
     var isEditing: Bool {
         get { self[IsEditingKey.self] }
@@ -66,8 +51,8 @@ extension EnvironmentValues {
     }
 
     var playbackSpeed: Binding<Double> {
-        get { self[PlaybackSpeedKey.self] }
-        set { self[PlaybackSpeedKey.self] = newValue }
+        get { self[PlaybackRateKey.self] }
+        set { self[PlaybackRateKey.self] = newValue }
     }
 
     var safeAreaInsets: Binding<EdgeInsets> {
@@ -75,12 +60,7 @@ extension EnvironmentValues {
         set { self[SafeAreaInsetsKey.self] = newValue }
     }
 
-//    var scrubbingProgress: Binding<ProgressBox> {
-//        get { self[ScrubbingProgressKey.self] }
-//        set { self[ScrubbingProgressKey.self] = newValue }
-//    }
-
-    var subtitleOffset: Binding<Int> {
+    var subtitleOffset: Binding<TimeInterval> {
         get { self[SubtitleOffsetKey.self] }
         set { self[SubtitleOffsetKey.self] = newValue }
     }

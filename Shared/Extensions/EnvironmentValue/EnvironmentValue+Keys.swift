@@ -11,21 +11,13 @@ import SwiftUI
 
 extension EnvironmentValues {
 
-    struct AccentColor: EnvironmentKey {
-        static let defaultValue: Binding<Color> = .constant(Color.jellyfinPurple)
-    }
-
     struct AudioOffsetKey: EnvironmentKey {
-        static let defaultValue: Binding<Int> = .constant(0)
+        static let defaultValue: Binding<TimeInterval> = .constant(0)
     }
 
     struct AspectFilledKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
     }
-
-//    struct CurrentOverlayTypeKey: EnvironmentKey {
-//        static let defaultValue: Binding<VideoPlayer.OverlayType> = .constant(.main)
-//    }
 
     struct IsEditingKey: EnvironmentKey {
         static let defaultValue: Bool = false
@@ -39,8 +31,7 @@ extension EnvironmentValues {
         static let defaultValue: Bool = false
     }
 
-    // TODO: change to use `PlaybackRate` and rename
-    struct PlaybackSpeedKey: EnvironmentKey {
+    struct PlaybackRateKey: EnvironmentKey {
         static let defaultValue: Binding<Double> = .constant(1)
     }
 
@@ -48,12 +39,8 @@ extension EnvironmentValues {
         static var defaultValue: Binding<EdgeInsets> = .constant(.zero)
     }
 
-//    struct ScrubbingProgressKey: EnvironmentKey {
-//        static var defaultValue: Binding<ProgressBox> = .constant(.init())
-//    }
-
     struct SubtitleOffsetKey: EnvironmentKey {
-        static let defaultValue: Binding<Int> = .constant(0)
+        static let defaultValue: Binding<TimeInterval> = .constant(0)
     }
 
     struct IsPresentingOverlayKey: EnvironmentKey {
