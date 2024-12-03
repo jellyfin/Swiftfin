@@ -18,6 +18,8 @@ internal enum L10n {
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
   /// Some views may need an app restart to update.
   internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
+  /// Access
+  internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
   /// Active
@@ -400,6 +402,8 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this user?
   internal static let deleteUserWarning = L10n.tr("Localizable", "deleteUserWarning", fallback: "Are you sure you wish to delete this user?")
+  /// Deletion
+  internal static let deletion = L10n.tr("Localizable", "deletion", fallback: "Deletion")
   /// Delivery
   internal static let delivery = L10n.tr("Localizable", "delivery", fallback: "Delivery")
   /// Details
@@ -452,6 +456,8 @@ internal enum L10n {
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
+  /// Enable all libraries
+  internal static let enableAllLibraries = L10n.tr("Localizable", "enableAllLibraries", fallback: "Enable all libraries")
   /// Enabled
   internal static let enabled = L10n.tr("Localizable", "enabled", fallback: "Enabled")
   /// End Date
@@ -692,6 +698,8 @@ internal enum L10n {
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback.")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
+  /// Media Access
+  internal static let mediaAccess = L10n.tr("Localizable", "mediaAccess", fallback: "Media Access")
   /// Media downloads
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
