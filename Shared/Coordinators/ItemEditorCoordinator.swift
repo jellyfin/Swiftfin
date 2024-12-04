@@ -26,17 +26,31 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     // MARK: - Route to Genres
 
-    @Route(.modal)
-    var addGenre = makeAddGenre
     @Route(.push)
     var editGenres = makeEditGenres
+    @Route(.modal)
+    var addGenre = makeAddGenre
 
     // MARK: - Route to Tags
 
-    @Route(.modal)
-    var addTag = makeAddTag
     @Route(.push)
     var editTags = makeEditTags
+    @Route(.modal)
+    var addTag = makeAddTag
+
+    // MARK: - Route to Studios
+
+    @Route(.push)
+    var editStudios = makeEditStudios
+    @Route(.modal)
+    var addStudio = makeAddStudio
+
+    // MARK: - Route to People
+
+    @Route(.push)
+    var editPeople = makeEditPeople
+    @Route(.modal)
+    var addPeople = makeAddPeople
 
     // MARK: - Initializer
 
@@ -56,12 +70,19 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     @ViewBuilder
     func makeEditGenres(item: BaseItemDto) -> some View {
-        EditGenreView(viewModel: GenreEditorViewModel(item: item))
+        EditItemElementView<String>(
+            viewModel: GenreEditorViewModel(item: item),
+            type: .genres,
+            route: { router, viewModel in
+                router.route(to: \.addGenre, viewModel as! GenreEditorViewModel)
+            },
+            displayName: { $0 }
+        )
     }
 
     func makeAddGenre(viewModel: GenreEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddGenreView(viewModel: viewModel)
+            AddItemComponentView(viewModel: viewModel, title: L10n.genres)
         }
     }
 
@@ -69,12 +90,59 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     @ViewBuilder
     func makeEditTags(item: BaseItemDto) -> some View {
-        EditTagView(viewModel: TagEditorViewModel(item: item))
+        EditItemElementView<String>(
+            viewModel: TagEditorViewModel(item: item),
+            type: .tags,
+            route: { router, viewModel in
+                router.route(to: \.addTag, viewModel as! TagEditorViewModel)
+            },
+            displayName: { $0 }
+        )
     }
 
     func makeAddTag(viewModel: TagEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddTagView(viewModel: viewModel)
+            AddItemComponentView(viewModel: viewModel, title: L10n.tags)
+        }
+    }
+
+    // MARK: - Item Studios
+
+    @ViewBuilder
+    func makeEditStudios(item: BaseItemDto) -> some View {
+        EditItemElementView<NameGuidPair>(
+            viewModel: StudioEditorViewModel(item: item),
+            type: .studios,
+            route: { router, viewModel in
+                router.route(to: \.addStudio, viewModel as! StudioEditorViewModel)
+            },
+            displayName: { $0.name ?? L10n.unknown }
+        )
+    }
+
+    func makeAddStudio(viewModel: StudioEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddItemComponentView(viewModel: viewModel, title: L10n.studios)
+        }
+    }
+
+    // MARK: - Item People
+
+    @ViewBuilder
+    func makeEditPeople(item: BaseItemDto) -> some View {
+        EditItemElementView<BaseItemPerson>(
+            viewModel: PeopleEditorViewModel(item: item),
+            type: .people,
+            route: { router, viewModel in
+                router.route(to: \.addPeople, viewModel as! PeopleEditorViewModel)
+            },
+            displayName: { $0.name ?? L10n.unknown }
+        )
+    }
+
+    func makeAddPeople(viewModel: PeopleEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddItemComponentView(viewModel: viewModel, title: L10n.people)
         }
     }
 

@@ -27,7 +27,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         case add([Element])
         case remove([Element])
         case update(BaseItemDto)
-        case getSuggestions(String)
+        case getMatches(String)
     }
 
     // MARK: BackgroundState
@@ -52,7 +52,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var elements: [Element] = []
     @Published
-    var suggestions: [Element] = []
+    var matches: [Element] = []
 
     @Published
     var state: State = .initial
@@ -103,7 +103,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .getSuggestions(searchTerm):
+        case let .getMatches(searchTerm):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -113,10 +113,10 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.refreshing)
                     }
 
-                    let matches = try await self.fetchSuggestions(searchTerm)
+                    let results = try await self.fetchMatches(searchTerm)
 
                     await MainActor.run {
-                        self.suggestions = matches
+                        self.matches = results
                         self.state = .initial
                         _ = self.backgroundStates.remove(.refreshing)
                     }
@@ -259,9 +259,9 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         fatalError("This method should be overridden in subclasses")
     }
 
-    // MARK: - Get Item Suggestions (To Be Overridden)
+    // MARK: - Get Item Matches (To Be Overridden)
 
-    func fetchSuggestions(_ searchTerm: String) async throws -> [Element] {
+    func fetchMatches(_ searchTerm: String) async throws -> [Element] {
         fatalError("This method should be overridden in subclasses")
     }
 }

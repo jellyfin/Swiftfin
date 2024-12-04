@@ -45,9 +45,9 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         return response.value.tags ?? []
     }
 
-    // MARK: - Get Tag Suggestions
+    // MARK: - Get Tag Matches
 
-    override func fetchSuggestions(_ searchTerm: String) async throws -> [String] {
+    override func fetchMatches(_ searchTerm: String) async throws -> [String] {
         self.elements.filter(
             { $0.lowercased().contains(searchTerm.lowercased()) }
         )

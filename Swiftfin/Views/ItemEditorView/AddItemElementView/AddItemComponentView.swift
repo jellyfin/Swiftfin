@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct AddGenreView: View {
+struct AddItemComponentView<Element: Hashable>: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -18,18 +18,27 @@ struct AddGenreView: View {
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
-    @FocusState
-    private var focusedField: Bool
-
     @ObservedObject
-    var viewModel: GenreEditorViewModel
+    var viewModel: ItemEditorViewModel<Element>
 
     @State
+    private var id: String?
+    @State
     private var name: String = ""
+
+    private let title: String
+
     @State
     private var error: Error?
     @State
     private var isPresentingError: Bool = false
+
+    // MARK: - Initializer
+
+    init(viewModel: ItemEditorViewModel<Element>, title: String) {
+        self.viewModel = viewModel
+        self.title = title
+    }
 
     // MARK: - Name is Valid
 
@@ -37,18 +46,12 @@ struct AddGenreView: View {
         name.isNotEmpty
     }
 
-    // MARK: - Data is Updating
-
-    private var isUpdating: Bool {
-        viewModel.state == .updating
-    }
-
     // MARK: - Body
 
     var body: some View {
         contentView
             .animation(.linear(duration: 0.2), value: isValid)
-            .navigationTitle(L10n.genres)
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -59,7 +62,16 @@ struct AddGenreView: View {
                 }
 
                 Button(L10n.save) {
-                    viewModel.send(.add([name]))
+                    switch Element.self {
+                    case is String.Type:
+                        viewModel.send(.add([name as! Element]))
+                    case is NameGuidPair.Type:
+                        viewModel.send(.add([NameGuidPair(id: id, name: name) as! Element]))
+                    case is String.Type:
+                        viewModel.send(.add([BaseItemPerson(id: id, name: name) as! Element]))
+                    default:
+                        break
+                    }
                 }
                 .buttonStyle(.toolbarPill)
                 .disabled(!isValid)
@@ -68,9 +80,7 @@ struct AddGenreView: View {
                 viewModel.send(.refresh)
             }
             .onChange(of: name) { _ in
-                if isValid {
-                    viewModel.send(.getSuggestions(name))
-                }
+                viewModel.send(.getMatches(name))
             }
             .onReceive(viewModel.events) { event in
                 switch event {
@@ -87,11 +97,7 @@ struct AddGenreView: View {
                 L10n.error,
                 isPresented: $isPresentingError,
                 presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {
-                    focusedField = true
-                }
-            } message: { error in
+            ) { error in
                 Text(error.localizedDescription)
             }
     }
@@ -100,13 +106,14 @@ struct AddGenreView: View {
 
     private var contentView: some View {
         List {
-            ItemEditorView.NameInput(
+            NameInput(
                 name: $name,
-                suggestions: viewModel.suggestions
+                matches: viewModel.matches
             )
-            ItemEditorView.SuggestionsSection(
+            MatchesSection(
+                id: $id,
                 name: $name,
-                suggestions: viewModel.suggestions
+                matches: viewModel.matches
             )
         }
     }

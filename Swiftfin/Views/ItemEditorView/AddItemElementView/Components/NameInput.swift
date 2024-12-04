@@ -9,14 +9,16 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ItemEditorView {
+extension AddItemComponentView {
 
     struct NameInput: View {
 
         @Binding
         var name: String
 
-        let suggestions: [String]
+        let matches: [Element]
+
+        // MARK: - Body
 
         var body: some View {
             Section {
@@ -32,7 +34,7 @@ extension ItemEditorView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if suggestions.contains(name) {
+                    if matches.contains(where: { elementToName($0) == name }) {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"
@@ -47,6 +49,19 @@ extension ItemEditorView {
                     }
                 }
             }
+        }
+
+        // MARK: - Format the Element into its Name
+
+        private func elementToName(_ element: Element) -> String? {
+            if let stringElement = element as? String {
+                return stringElement
+            } else if let nameGuidPair = element as? NameGuidPair {
+                return nameGuidPair.name
+            } else if let baseItemPerson = element as? BaseItemPerson {
+                return baseItemPerson.name
+            }
+            return nil
         }
     }
 }

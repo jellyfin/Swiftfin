@@ -374,16 +374,14 @@ internal enum L10n {
   }
   /// Are you sure you wish to delete this device? This session will be logged out.
   internal static let deleteDeviceWarning = L10n.tr("Localizable", "deleteDeviceWarning", fallback: "Are you sure you wish to delete this device? This session will be logged out.")
-  /// Are you sure you want to delete this genre?
-  internal static let deleteGenreConfirmation = L10n.tr("Localizable", "deleteGenreConfirmation", fallback: "Are you sure you want to delete this genre?")
+  /// Are you sure you want to delete this item?
+  internal static let deleteItemConfirmation = L10n.tr("Localizable", "deleteItemConfirmation", fallback: "Are you sure you want to delete this item?")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
+  /// Are you sure you want to delete the selected items?
+  internal static let deleteSelectedConfirmation = L10n.tr("Localizable", "deleteSelectedConfirmation", fallback: "Are you sure you want to delete the selected items?")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
-  /// Are you sure you want to delete the selected genres?
-  internal static let deleteSelectedGenresConfirmation = L10n.tr("Localizable", "deleteSelectedGenresConfirmation", fallback: "Are you sure you want to delete the selected genres?")
-  /// Are you sure you want to delete the selected tags?
-  internal static let deleteSelectedTagsConfirmation = L10n.tr("Localizable", "deleteSelectedTagsConfirmation", fallback: "Are you sure you want to delete the selected tags?")
   /// Delete Selected Users
   internal static let deleteSelectedUsers = L10n.tr("Localizable", "deleteSelectedUsers", fallback: "Delete Selected Users")
   /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
@@ -392,8 +390,6 @@ internal enum L10n {
   internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Delete Server
   internal static let deleteServer = L10n.tr("Localizable", "deleteServer", fallback: "Delete Server")
-  /// Are you sure you want to delete this tag?
-  internal static let deleteTagConfirmation = L10n.tr("Localizable", "deleteTagConfirmation", fallback: "Are you sure you want to delete this tag?")
   /// Delete Trigger
   internal static let deleteTrigger = L10n.tr("Localizable", "deleteTrigger", fallback: "Delete Trigger")
   /// Are you sure you want to delete this trigger? This action cannot be undone.
@@ -684,6 +680,8 @@ internal enum L10n {
   internal static let lyrics = L10n.tr("Localizable", "lyrics", fallback: "Lyrics")
   /// Management
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
+  /// Matches
+  internal static let matches = L10n.tr("Localizable", "matches", fallback: "Matches")
   /// Maximum Bitrate
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
   /// Limits the total number of connections a user can have to the server.
@@ -1032,10 +1030,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
