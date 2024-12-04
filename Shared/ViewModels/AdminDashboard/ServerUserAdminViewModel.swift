@@ -13,30 +13,32 @@ import OrderedCollections
 
 final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
-    // MARK: Event
+    // MARK: - Event
 
     enum Event {
         case error(JellyfinAPIError)
         case updated
     }
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case cancel
         case loadDetails
+        case loadLibraries(isHidden: Bool? = false)
         case updatePolicy(UserPolicy)
         case updateConfiguration(UserConfiguration)
         case updateUsername(String)
     }
 
-    // MARK: Background State
+    // MARK: - Background State
 
     enum BackgroundState: Hashable {
         case updating
+        case refreshing
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case initial
@@ -45,14 +47,21 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case error(JellyfinAPIError)
     }
 
-    // MARK: Published Values
+    // MARK: - Published Values
 
     @Published
     final var state: State = .initial
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
+
     @Published
     private(set) var user: UserDto
+
+    @Published
+    var libraries: [BaseItemDto] = []
+
+    private var userTaskCancellable: AnyCancellable?
+    private var eventSubject = PassthroughSubject<Event, Never>()
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -60,97 +69,186 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .eraseToAnyPublisher()
     }
 
-    private var userTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: Initialize from UserDto
+    // MARK: - Initialize
 
     init(user: UserDto) {
         self.user = user
     }
 
-    // MARK: Respond
+    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         switch action {
         case .cancel:
-            userTask?.cancel()
             return .initial
 
         case .loadDetails:
-            return performAction {
-                try await self.loadDetails()
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.refreshing)
+                    }
+
+                    try await loadDetails()
+
+                    await MainActor.run {
+                        state = .content
+                        _ = backgroundStates.remove(.refreshing)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.refreshing)
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
+
+        case let .loadLibraries(isHidden):
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.refreshing)
+                    }
+
+                    try await loadLibraries(isHidden: isHidden)
+
+                    await MainActor.run {
+                        state = .content
+                        _ = backgroundStates.remove(.refreshing)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.refreshing)
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
 
         case let .updatePolicy(policy):
-            return performAction {
-                try await self.updatePolicy(policy: policy)
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updatePolicy(policy: policy)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
 
         case let .updateConfiguration(configuration):
-            return performAction {
-                try await self.updateConfiguration(configuration: configuration)
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updateConfiguration(configuration: configuration)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
 
         case let .updateUsername(username):
-            return performAction {
-                try await self.updateUsername(username: username)
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updateUsername(username: username)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
+                    }
+                }
             }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
-    // MARK: - Perform Action
-
-    private func performAction(action: @escaping () async throws -> Void) -> State {
-        userTask?.cancel()
-
-        userTask = Task {
-            do {
-                await MainActor.run {
-                    _ = self.backgroundStates.append(.updating)
-                }
-
-                try await action()
-
-                await MainActor.run {
-                    self.state = .content
-                    self.eventSubject.send(.updated)
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            } catch {
-                let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                await MainActor.run {
-                    self.state = .error(jellyfinError)
-                    self.backgroundStates.remove(.updating)
-                    self.eventSubject.send(.error(jellyfinError))
-                }
-            }
-        }
-        .asAnyCancellable()
-
-        return .updating
-    }
-
-    // MARK: - Load User
+    // MARK: - Load User Details
 
     private func loadDetails() async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         let request = Paths.getUserByID(userID: userID)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
             self.user = response.value
-            self.state = .content
+        }
+    }
+
+    // MARK: - Load Libraries
+
+    private func loadLibraries(isHidden: Bool?) async throws {
+        let request = Paths.getMediaFolders(isHidden: isHidden)
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.libraries = response.value.items ?? []
         }
     }
 
     // MARK: - Update User Policy
 
     private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         let request = Paths.updateUserPolicy(userID: userID, policy)
         try await userSession.client.send(request)
 
@@ -162,7 +260,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update User Configuration
 
     private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
         try await userSession.client.send(request)
 
@@ -171,10 +269,10 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
     }
 
-    // MARK: - Update User Name
+    // MARK: - Update Username
 
     private func updateUsername(username: String) async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         var updatedUser = user
         updatedUser.name = username
 
