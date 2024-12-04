@@ -64,13 +64,42 @@ extension UserState {
         }
     }
 
+    /// User has administrator permissions
     var isAdministrator: Bool {
         data.policy?.isAdministrator ?? false
     }
 
-    // Validate that the use has permission to delete something whether from a folder or all folders
-    var hasDeletionPermissions: Bool {
+    /// User has permission to delete something whether from a folder or all folders
+    var hasItemDeletionPermissions: Bool {
         data.policy?.enableContentDeletion ?? false || data.policy?.enableContentDeletionFromFolders != []
+    }
+
+    /// User has permission to download items
+    var hasItemDownloadPermissions: Bool {
+        data.policy?.enableContentDownloading ?? false
+    }
+
+    /// User has permission to edit items
+    var hasMetadataEditingPermissions: Bool {
+        isAdministrator
+    }
+
+    /// User has permission to edit item subtitles
+    var hasSubtitleManagementPermissions: Bool {
+        // TODO: SDK 10.9, enable enableSubtitleManagement
+        isAdministrator // || data.policy?.enableSubtitleManagement ?? false
+    }
+
+    /// User has permission to edit collections
+    var hasCollectionManagementPermissions: Bool {
+        // TODO: SDK 10.9, enable enableCollectionManagement
+        isAdministrator // || data.policy?.enableCollectionManagement ?? false
+    }
+
+    /// User has permission to edit item lyrics
+    var hasLyricManagementPermissions: Bool {
+        // TODO: SDK 10.10, enable enableSubtitleManagement
+        isAdministrator // || data.policy?.enableSubtitleManagement ?? false
     }
 
     var pinHint: String {

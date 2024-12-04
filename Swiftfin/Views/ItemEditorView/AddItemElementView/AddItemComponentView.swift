@@ -26,7 +26,7 @@ struct AddItemComponentView<Element: Hashable>: View {
     @State
     private var name: String = ""
 
-    private let title: String
+    private let type: ItemElementType
 
     @State
     private var error: Error?
@@ -37,20 +37,7 @@ struct AddItemComponentView<Element: Hashable>: View {
 
     init(viewModel: ItemEditorViewModel<Element>, type: ItemElementType) {
         self.viewModel = viewModel
-
-        switch type {
-        case .studios:
-            self.title = L10n.studios
-
-        case .genres:
-            self.title = L10n.genres
-
-        case .tags:
-            self.title = L10n.tags
-
-        case .people:
-            self.title = L10n.people
-        }
+        self.type = type
     }
 
     // MARK: - Name is Valid
@@ -121,13 +108,41 @@ struct AddItemComponentView<Element: Hashable>: View {
         List {
             NameInput(
                 name: $name,
-                matches: viewModel.matches
+                validation: validation
             )
             MatchesSection(
                 id: $id,
                 name: $name,
                 matches: viewModel.matches
             )
+        }
+    }
+
+    // MARK: - Item Validation
+
+    private var validation: (String) -> Bool {
+        switch type {
+        case .genres, .tags:
+            { (viewModel.matches as! [String]).contains($0) }
+        case .people:
+            { (viewModel.matches as! [BaseItemPerson]).compactMap(\.name).contains($0) }
+        case .studios:
+            { (viewModel.matches as! [NameGuidPair]).compactMap(\.name).contains($0) }
+        }
+    }
+
+    // MARK: - Item Navigation Title
+
+    private var title: String {
+        switch type {
+        case .genres:
+            L10n.genres
+        case .people:
+            L10n.people
+        case .studios:
+            L10n.studios
+        case .tags:
+            L10n.tags
         }
     }
 }

@@ -191,7 +191,7 @@ struct EditItemElementView<Element: Hashable>: View {
                             }
                         },
                         onDelete: {
-                            selectedElements = [element]
+                            selectedElements.toggle(value: element)
                             isPresentingDeleteConfirmation = true
                         }
                     )

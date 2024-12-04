@@ -16,7 +16,7 @@ extension AddItemComponentView {
         @Binding
         var name: String
 
-        let matches: [Element]
+        let validation: (String) -> Bool
 
         // MARK: - Body
 
@@ -34,7 +34,7 @@ extension AddItemComponentView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if matches.contains(where: { elementToName($0) == name }) {
+                    if validation(name) {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"
@@ -49,19 +49,6 @@ extension AddItemComponentView {
                     }
                 }
             }
-        }
-
-        // MARK: - Format the Element into its Name
-
-        private func elementToName(_ element: Element) -> String? {
-            if let stringElement = element as? String {
-                return stringElement
-            } else if let nameGuidPair = element as? NameGuidPair {
-                return nameGuidPair.name
-            } else if let baseItemPerson = element as? BaseItemPerson {
-                return baseItemPerson.name
-            }
-            return nil
         }
     }
 }

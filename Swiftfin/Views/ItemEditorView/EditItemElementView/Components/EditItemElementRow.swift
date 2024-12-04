@@ -20,19 +20,27 @@ extension EditItemElementView {
         var isSelected
 
         private let item: Element
+        private let type: ItemElementType
 
         private let displayName: String
 
         private let onSelect: () -> Void
         private let onDelete: () -> Void
 
-        init(item: Element, type: ItemElementType, onSelect: @escaping () -> Void, onDelete: @escaping () -> Void) {
+        init(
+            item: Element,
+            type: ItemElementType,
+            onSelect: @escaping () -> Void,
+            onDelete: @escaping () -> Void
+        ) {
+
             self.item = item
+            self.type = type
             self.onSelect = onSelect
             self.onDelete = onDelete
 
             switch type {
-            case .tags, .genres:
+            case .genres, .tags:
                 self.displayName = item as! String
             case .studios:
                 self.displayName = (item as! NameGuidPair).name ?? L10n.unknown
@@ -42,12 +50,43 @@ extension EditItemElementView {
         }
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {} content: {
+            ListRow(insets: .init()) {
+                if type == .people {
+                    let person = (item as! BaseItemPerson)
+
+                    ZStack {
+                        Color.clear
+
+                        ImageView(person.portraitImageSources(maxWidth: 30))
+                            .failure {
+                                Image(systemName: "person.fill")
+                                    .foregroundStyle(.primary)
+                            }
+                    }
+                    .posterStyle(.portrait)
+                    .frame(width: 30, height: 90)
+                    .padding(.horizontal)
+                }
+            } content: {
                 HStack {
-                    Text(displayName)
-                        .font(.headline)
-                        .lineLimit(1)
-                        .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
+                    VStack(alignment: .leading) {
+                        Text(displayName)
+                            .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
+                            .font(.headline)
+                            .lineLimit(1)
+
+                        if type == .people {
+                            let person = (item as! BaseItemPerson)
+
+                            TextPairView(
+                                leading: person.type ?? .emptyDash,
+                                trailing: person.role ?? .emptyDash
+                            )
+                            .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
+                            .font(.subheadline)
+                            .lineLimit(1)
+                        }
+                    }
 
                     Spacer()
 

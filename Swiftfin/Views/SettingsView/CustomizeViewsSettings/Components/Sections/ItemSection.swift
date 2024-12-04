@@ -24,14 +24,29 @@ extension CustomizeViewsSettings {
 
         var body: some View {
             Section(L10n.items) {
+                /* if userSession?.user.hasItemDownloadPermissions ?? false {
+                     Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                 } */
 
-                if userSession?.user.isAdministrator ?? false {
+                if userSession?.user.hasMetadataEditingPermissions ?? false {
                     Toggle(L10n.allowItemEditing, isOn: $enableItemEditor)
                 }
 
-                if userSession?.user.hasDeletionPermissions ?? false {
+                /* if userSession?.user.hasCollectionManagementPermissions ?? false {
+                     Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                 }*/
+
+                if userSession?.user.hasItemDeletionPermissions ?? false {
                     Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
                 }
+
+                /* if userSession?.user.hasLyricManagementPermissions ?? false {
+                     Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                 }
+
+                 if userSession?.user.hasSubtitleManagementPermissions ?? false {
+                     Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
+                 }*/
             }
         }
     }
