@@ -82,7 +82,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeAddGenre(viewModel: GenreEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddItemComponentView(viewModel: viewModel, title: L10n.genres)
+            AddItemComponentView(viewModel: viewModel, type: .genres)
         }
     }
 
@@ -102,7 +102,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeAddTag(viewModel: TagEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddItemComponentView(viewModel: viewModel, title: L10n.tags)
+            AddItemComponentView(viewModel: viewModel, type: .tags)
         }
     }
 
@@ -122,7 +122,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeAddStudio(viewModel: StudioEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddItemComponentView(viewModel: viewModel, title: L10n.studios)
+            AddItemComponentView(viewModel: viewModel, type: .studios)
         }
     }
 
@@ -142,7 +142,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     func makeAddPeople(viewModel: PeopleEditorViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
-            AddItemComponentView(viewModel: viewModel, title: L10n.people)
+            AddItemComponentView(viewModel: viewModel, type: .people)
         }
     }
 

@@ -81,9 +81,16 @@ struct ItemEditorView: View {
                 .onSelect {
                     router.route(to: \.editMetadata, viewModel.item)
                 }
+        }
+
+        Section {
             ChevronButton(L10n.genres)
                 .onSelect {
                     router.route(to: \.editGenres, viewModel.item)
+                }
+            ChevronButton(L10n.people)
+                .onSelect {
+                    router.route(to: \.editPeople, viewModel.item)
                 }
             ChevronButton(L10n.tags)
                 .onSelect {
@@ -92,10 +99,6 @@ struct ItemEditorView: View {
             ChevronButton(L10n.studios)
                 .onSelect {
                     router.route(to: \.editStudios, viewModel.item)
-                }
-            ChevronButton(L10n.people)
-                .onSelect {
-                    router.route(to: \.editPeople, viewModel.item)
                 }
         }
     }

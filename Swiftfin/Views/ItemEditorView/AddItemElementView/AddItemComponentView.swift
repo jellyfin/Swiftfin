@@ -35,9 +35,22 @@ struct AddItemComponentView<Element: Hashable>: View {
 
     // MARK: - Initializer
 
-    init(viewModel: ItemEditorViewModel<Element>, title: String) {
+    init(viewModel: ItemEditorViewModel<Element>, type: ItemElementType) {
         self.viewModel = viewModel
-        self.title = title
+
+        switch type {
+        case .studios:
+            self.title = L10n.studios
+
+        case .genres:
+            self.title = L10n.genres
+
+        case .tags:
+            self.title = L10n.tags
+
+        case .people:
+            self.title = L10n.people
+        }
     }
 
     // MARK: - Name is Valid
@@ -67,8 +80,8 @@ struct AddItemComponentView<Element: Hashable>: View {
                         viewModel.send(.add([name as! Element]))
                     case is NameGuidPair.Type:
                         viewModel.send(.add([NameGuidPair(id: id, name: name) as! Element]))
-                    case is String.Type:
-                        viewModel.send(.add([BaseItemPerson(id: id, name: name) as! Element]))
+                    case is BaseItemPerson.Type:
+                        viewModel.send(.add([BaseItemPerson(name: name) as! Element]))
                     default:
                         break
                     }
