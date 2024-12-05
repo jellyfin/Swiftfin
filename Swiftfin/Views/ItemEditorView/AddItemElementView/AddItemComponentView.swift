@@ -66,7 +66,7 @@ struct AddItemComponentView<Element: Hashable>: View {
             router.dismissCoordinator()
         }
         .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refreshing) {
+            if viewModel.backgroundStates.contains(.loading) {
                 ProgressView()
             }
 
@@ -74,7 +74,7 @@ struct AddItemComponentView<Element: Hashable>: View {
                 viewModel.send(.add([type.createElement(
                     name: name,
                     id: id,
-                    personRole: personRole,
+                    personRole: personRole.isEmpty ? (personKind == .unknown ? nil : personKind.rawValue) : personRole,
                     personKind: personKind.rawValue
                 )]))
             }
@@ -82,10 +82,10 @@ struct AddItemComponentView<Element: Hashable>: View {
             .disabled(!isValid)
         }
         .onFirstAppear {
-            viewModel.send(.refresh)
+            viewModel.send(.load)
         }
         .onChange(of: name) { _ in
-            if loaded && !viewModel.backgroundStates.contains(.refreshing) {
+            if !viewModel.backgroundStates.contains(.loading) {
                 viewModel.send(.search(name))
             }
         }
@@ -126,9 +126,9 @@ struct AddItemComponentView<Element: Hashable>: View {
             SearchResultsSection(
                 id: $id,
                 name: $name,
+                isSearching: viewModel.backgroundStates.contains(.searching),
                 type: type,
-                population: viewModel.matches,
-                isSearching: viewModel.backgroundStates.isNotEmpty
+                population: viewModel.matches
             )
         }
     }

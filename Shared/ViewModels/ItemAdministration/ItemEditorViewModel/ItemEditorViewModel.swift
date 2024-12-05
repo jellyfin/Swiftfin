@@ -24,7 +24,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: - Actions
 
     enum Action: Equatable {
-        case refresh
+        case load
         case search(String)
         case add([Element])
         case remove([Element])
@@ -35,6 +35,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: BackgroundState
 
     enum BackgroundState: Hashable {
+        case loading
         case searching
         case refreshing
     }
@@ -61,7 +62,11 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var state: State = .initial
 
-    private var task: AnyCancellable?
+    private var loadTask: AnyCancellable?
+    private var updateTask: AnyCancellable?
+    private var searchTask: AnyCancellable?
+    private var searchQuery = CurrentValueSubject<String, Never>("")
+
     private let eventSubject = PassthroughSubject<Event, Never>()
 
     var events: AnyPublisher<Event, Never> {
@@ -73,19 +78,40 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     init(item: BaseItemDto) {
         self.item = item
         super.init()
+
+        setupSearchDebounce()
+    }
+
+    // MARK: - Setup Debouncing
+
+    private func setupSearchDebounce() {
+        searchQuery
+            .debounce(for: .seconds(0.5), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] searchTerm in
+                guard let self else { return }
+                guard searchTerm.isNotEmpty else { return }
+
+                self.executeSearch(for: searchTerm)
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Respond to Actions
 
     func respond(to action: Action) -> State {
         switch action {
-        case .refresh:
-            Task { [weak self] in
-                guard let self = self else { return }
+        case .load:
+            loadTask?.cancel()
+
+            loadTask = Task { [weak self] in
+                guard let self else { return }
+
                 do {
                     await MainActor.run {
+                        self.matches = []
                         self.state = .initial
-                        _ = self.backgroundStates.append(.refreshing)
+                        _ = self.backgroundStates.append(.loading)
                     }
 
                     let allElements = try await self.fetchElements()
@@ -95,154 +121,105 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                         self.state = .content
                         self.eventSubject.send(.loaded)
 
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.loading)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.loading)
                     }
                 }
-            }
+            }.asAnyCancellable()
 
             return state
 
         case let .search(searchTerm):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.append(.searching)
-                    }
-
-                    let results = try await self.searchElements(searchTerm)
-
-                    await MainActor.run {
-                        self.matches = results
-                        _ = self.backgroundStates.remove(.searching)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .error(apiError)
-                        _ = self.backgroundStates.remove(.searching)
-                    }
-                }
-            }.asAnyCancellable()
-
+            searchQuery.send(searchTerm)
             return state
 
         case let .add(addItems):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        self.state = .updating
-                    }
-
-                    try await self.addComponents(addItems)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-
+            executeAction {
+                try await self.addComponents(addItems)
+            }
             return state
 
         case let .remove(removeItems):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        self.state = .updating
-                    }
-
-                    try await self.removeComponents(removeItems)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-
+            executeAction {
+                try await self.removeComponents(removeItems)
+            }
             return state
 
         case let .reorder(orderedItems):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        self.state = .updating
-                    }
-
-                    try await self.reorderComponents(orderedItems)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-
+            executeAction {
+                try await self.reorderComponents(orderedItems)
+            }
             return state
 
         case let .update(updateItem):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        self.state = .updating
-                    }
-
-                    try await self.updateItem(updateItem)
-
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.updated)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.error(apiError))
-                    }
-                }
-            }.asAnyCancellable()
-
+            executeAction {
+                try await self.updateItem(updateItem)
+            }
             return state
         }
+    }
+
+    // MARK: - Execute Debounced Search
+
+    private func executeSearch(for searchTerm: String) {
+        searchTask?.cancel()
+
+        searchTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                await MainActor.run {
+                    _ = self.backgroundStates.append(.searching)
+                }
+
+                let results = try await self.searchElements(searchTerm)
+
+                await MainActor.run {
+                    self.matches = results
+                    _ = self.backgroundStates.remove(.searching)
+                }
+            } catch {
+                let apiError = JellyfinAPIError(error.localizedDescription)
+                await MainActor.run {
+                    self.state = .error(apiError)
+                    _ = self.backgroundStates.remove(.searching)
+                }
+            }
+        }.asAnyCancellable()
+    }
+
+    // MARK: - Helper: Execute Task for Add/Remove/Reorder/Update
+
+    private func executeAction(action: @escaping () async throws -> Void) {
+        updateTask?.cancel()
+
+        updateTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                await MainActor.run {
+                    self.state = .updating
+                }
+
+                try await action()
+
+                await MainActor.run {
+                    self.state = .content
+                    self.eventSubject.send(.updated)
+                }
+            } catch {
+                let apiError = JellyfinAPIError(error.localizedDescription)
+                await MainActor.run {
+                    self.state = .content
+                    self.eventSubject.send(.error(apiError))
+                }
+            }
+        }.asAnyCancellable()
     }
 
     // MARK: - Save Updated Item to Server
@@ -265,11 +242,16 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     private func refreshItem() async throws {
         guard let itemId = item.id else { return }
 
+        await MainActor.run {
+            _ = self.backgroundStates.append(.refreshing)
+        }
+
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
             self.item = response.value
+            _ = self.backgroundStates.remove(.refreshing)
         }
     }
 

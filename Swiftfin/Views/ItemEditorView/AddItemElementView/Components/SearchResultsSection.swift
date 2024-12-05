@@ -17,10 +17,11 @@ extension AddItemComponentView {
         var id: String?
         @Binding
         var name: String
+        @State
+        var isSearching: Bool
 
         let type: ItemArrayElements
         let population: [Element]
-        let isSearching: Bool
 
         // MARK: - Body
 
@@ -29,14 +30,20 @@ extension AddItemComponentView {
                 Section {
                     if population.isNotEmpty {
                         resultsView
+                            .animation(.easeInOut, value: population.count)
                     } else if !isSearching {
                         noResultsView
+                            .transition(.opacity)
+                            .animation(.easeInOut, value: population.count)
                     }
                 } header: {
                     HStack {
                         Text(L10n.existingItems)
                         if isSearching {
                             DelayedProgressView()
+                        } else {
+                            Text("-")
+                            Text(population.count.description)
                         }
                     }
                 }
@@ -63,6 +70,8 @@ extension AddItemComponentView {
                 }
                 .foregroundStyle(.primary)
                 .disabled(name == type.getName(for: result))
+                .transition(.opacity.combined(with: .move(edge: .top)))
+                .animation(.easeInOut, value: population.count)
             }
         }
 
