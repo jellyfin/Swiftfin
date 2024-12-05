@@ -526,6 +526,8 @@ internal enum L10n {
   }
   /// Executed
   internal static let executed = L10n.tr("Localizable", "executed", fallback: "Executed")
+  /// Existing items
+  internal static let existingItems = L10n.tr("Localizable", "existingItems", fallback: "Existing items")
   /// Existing Server
   internal static let existingServer = L10n.tr("Localizable", "existingServer", fallback: "Existing Server")
   /// Existing User
@@ -720,8 +722,6 @@ internal enum L10n {
   internal static let lyrics = L10n.tr("Localizable", "lyrics", fallback: "Lyrics")
   /// Management
   internal static let management = L10n.tr("Localizable", "management", fallback: "Management")
-  /// Matches
-  internal static let matches = L10n.tr("Localizable", "matches", fallback: "Matches")
   /// Maximum Bitrate
   internal static let maximumBitrate = L10n.tr("Localizable", "maximumBitrate", fallback: "Maximum Bitrate")
   /// Limits the total number of connections a user can have to the server.
@@ -1028,6 +1028,8 @@ internal enum L10n {
   internal static let removeFromResume = L10n.tr("Localizable", "removeFromResume", fallback: "Remove From Resume")
   /// Remux
   internal static let remux = L10n.tr("Localizable", "remux", fallback: "Remux")
+  /// Reorder
+  internal static let reorder = L10n.tr("Localizable", "reorder", fallback: "Reorder")
   /// Replace All
   internal static let replaceAll = L10n.tr("Localizable", "replaceAll", fallback: "Replace All")
   /// Replace all unlocked metadata and images with new information.
@@ -1082,10 +1084,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Runtime
-  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Run Time
   internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
+  /// Runtime
+  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries

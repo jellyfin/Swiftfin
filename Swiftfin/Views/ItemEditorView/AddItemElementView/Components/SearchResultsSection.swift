@@ -11,7 +11,7 @@ import SwiftUI
 
 extension AddItemComponentView {
 
-    struct MatchesSection: View {
+    struct SearchResultsSection: View {
 
         @Binding
         var id: String?
@@ -19,7 +19,7 @@ extension AddItemComponentView {
         var name: String
 
         let type: ItemArrayElements
-        let matches: [Element]
+        let population: [Element]
         let isSearching: Bool
 
         // MARK: - Body
@@ -27,14 +27,14 @@ extension AddItemComponentView {
         var body: some View {
             if name.isNotEmpty {
                 Section {
-                    if matches.isEmpty {
-                        noMatchesView
-                    } else {
-                        matchesView
+                    if population.isNotEmpty {
+                        resultsView
+                    } else if !isSearching {
+                        noResultsView
                     }
                 } header: {
                     HStack {
-                        Text(L10n.matches)
+                        Text(L10n.existingItems)
                         if isSearching {
                             DelayedProgressView()
                         }
@@ -45,24 +45,24 @@ extension AddItemComponentView {
 
         // MARK: - Empty Matches Results
 
-        private var noMatchesView: some View {
-            Text(isSearching ? L10n.searchingDots : L10n.none)
+        private var noResultsView: some View {
+            Text(L10n.none)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
 
         // MARK: - Formatted Matches Results
 
-        private var matchesView: some View {
-            ForEach(matches, id: \.self) { match in
+        private var resultsView: some View {
+            ForEach(population, id: \.self) { result in
                 Button {
-                    name = type.getName(for: match)
-                    id = type.getId(for: match)
+                    name = type.getName(for: result)
+                    id = type.getId(for: result)
                 } label: {
-                    labelView(match)
+                    labelView(result)
                 }
                 .foregroundStyle(.primary)
-                .disabled(name == type.getName(for: match))
+                .disabled(name == type.getName(for: result))
             }
         }
 

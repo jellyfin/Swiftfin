@@ -31,6 +31,14 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         try await updateItem(updatedItem)
     }
 
+    // MARK: - Reorder Tag(s)
+
+    override func reorderComponents(_ studios: [NameGuidPair]) async throws {
+        var updatedItem = item
+        updatedItem.studios = studios
+        try await updateItem(updatedItem)
+    }
+
     // MARK: - Fetch All Possible Studios
 
     override func fetchElements() async throws -> [NameGuidPair] {
@@ -46,9 +54,9 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         }
     }
 
-    // MARK: - Get Studio Matches
+    // MARK: - Get Studio Matches from Population
 
-    override func fetchMatches(_ searchTerm: String) async throws -> [NameGuidPair] {
+    override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
         guard !searchTerm.isEmpty else {
             return []
         }

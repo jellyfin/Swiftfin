@@ -36,6 +36,8 @@ struct EditItemElementView<Element: Hashable>: View {
     private var selectedElements: Set<Element> = []
     @State
     private var isEditing: Bool = false
+    @State
+    private var isReordering: Bool = false
 
     // MARK: - Initializer
 
@@ -56,7 +58,7 @@ struct EditItemElementView<Element: Hashable>: View {
         contentView
             .navigationBarTitle(type.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarBackButtonHidden(isEditing)
+            .navigationBarBackButtonHidden(isEditing || isReordering)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     if isEditing {
@@ -64,9 +66,15 @@ struct EditItemElementView<Element: Hashable>: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    if isEditing {
+                    if isEditing || isReordering {
                         Button(L10n.cancel) {
-                            isEditing.toggle()
+                            if isEditing {
+                                isEditing.toggle()
+                            }
+                            if isReordering {
+                                elements = type.getElement(for: viewModel.item)
+                                isReordering.toggle()
+                            }
                             UIDevice.impact(.light)
                             selectedElements.removeAll()
                         }
@@ -83,11 +91,20 @@ struct EditItemElementView<Element: Hashable>: View {
                         .disabled(selectedElements.isEmpty)
                         .frame(maxWidth: .infinity, alignment: .trailing)
                     }
+                    if isReordering {
+                        Button(L10n.save) {
+                            viewModel.send(.reorder(elements))
+                            isReordering = false
+                        }
+                        .buttonStyle(.toolbarPill)
+                        .disabled(type.getElement(for: viewModel.item) == elements)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
                 }
             }
             .navigationBarMenuButton(
                 isLoading: viewModel.backgroundStates.contains(.refreshing),
-                isHidden: isEditing
+                isHidden: isEditing || isReordering
             ) {
                 Button(L10n.add, systemImage: "plus") {
                     route(router, viewModel)
@@ -96,6 +113,10 @@ struct EditItemElementView<Element: Hashable>: View {
                 if elements.isNotEmpty == true {
                     Button(L10n.edit, systemImage: "checkmark.circle") {
                         isEditing = true
+                    }
+
+                    Button(L10n.reorder, systemImage: "arrow.up.arrow.down") {
+                        isReordering = true
                     }
                 }
             }
@@ -162,6 +183,10 @@ struct EditItemElementView<Element: Hashable>: View {
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedElements.contains(element))
                 }
+                .onMove { source, destination in
+                    guard isReordering else { return }
+                    elements.move(fromOffsets: source, toOffset: destination)
+                }
             } else {
                 Text(L10n.none)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
@@ -170,6 +195,7 @@ struct EditItemElementView<Element: Hashable>: View {
             }
         }
         .listStyle(.plain)
+        .environment(\.editMode, isReordering ? .constant(.active) : .constant(.inactive))
     }
 
     // MARK: - Delete Selected Confirmation Actions

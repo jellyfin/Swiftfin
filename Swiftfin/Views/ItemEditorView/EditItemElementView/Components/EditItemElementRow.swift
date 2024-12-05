@@ -24,61 +24,83 @@ extension EditItemElementView {
         let onSelect: () -> Void
         let onDelete: () -> Void
 
-        var body: some View {
-            ListRow(insets: .init()) {
-                if type == .people {
-                    let person = (item as! BaseItemPerson)
+        // MARK: - Body
 
-                    ZStack {
-                        Color.clear
-                        ImageView(person.portraitImageSources(maxWidth: 30))
-                            .failure {
-                                Image(systemName: "person.fill")
-                                    .foregroundStyle(.primary)
-                            }
-                    }
-                    .posterStyle(.portrait)
-                    .frame(width: 30, height: 90)
-                    .padding(.horizontal)
+        var body: some View {
+            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+                if type == .people {
+                    personImage
                 }
             } content: {
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text(type.getName(for: item))
-                            .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
-                            .font(.headline)
-                            .lineLimit(1)
-
-                        if type == .people {
-                            let person = (item as! BaseItemPerson)
-
-                            TextPairView(
-                                leading: person.type ?? .emptyDash,
-                                trailing: person.role ?? .emptyDash
-                            )
-                            .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
-                            .font(.subheadline)
-                            .lineLimit(1)
-                        }
-                    }
-
-                    Spacer()
-
-                    if isEditing {
-                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                            .resizable()
-                            .aspectRatio(1, contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                    }
-                }
+                rowContent
             }
+            .isSeparatorVisible(false)
             .onSelect(perform: onSelect)
             .swipeActions {
                 Button(L10n.delete, systemImage: "trash", action: onDelete)
                     .tint(.red)
             }
-            .listRowSeparator(.hidden)
+        }
+
+        // MARK: - Row Content
+
+        @ViewBuilder
+        private var rowContent: some View {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(type.getName(for: item))
+                        .foregroundStyle(
+                            isEditing ? (isSelected ? .primary : .secondary) : .primary
+                        )
+                        .font(.headline)
+                        .lineLimit(1)
+
+                    if type == .people {
+                        let person = (item as! BaseItemPerson)
+
+                        TextPairView(
+                            leading: person.type ?? .emptyDash,
+                            trailing: person.role ?? .emptyDash
+                        )
+                        .foregroundStyle(
+                            isEditing ? (isSelected ? .primary : .secondary) : .primary,
+                            .secondary
+                        )
+                        .font(.subheadline)
+                        .lineLimit(1)
+                    }
+                }
+
+                if isEditing {
+                    Spacer()
+
+                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                        .resizable()
+                        .aspectRatio(1, contentMode: .fit)
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
+                }
+            }
+        }
+
+        // MARK: - Person Image
+
+        @ViewBuilder
+        private var personImage: some View {
+            let person = (item as! BaseItemPerson)
+
+            ZStack {
+                Color.clear
+                ImageView(person.portraitImageSources(maxWidth: 30))
+                    .failure {
+                        Image(systemName: "person.fill")
+                            .foregroundStyle(.secondary)
+                    }
+            }
+            .posterStyle(.portrait)
+            .posterShadow()
+            .frame(width: 30, height: 90)
+            .padding(.trailing)
         }
     }
 }

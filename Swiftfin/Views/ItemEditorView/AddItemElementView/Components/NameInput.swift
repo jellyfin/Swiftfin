@@ -22,7 +22,7 @@ extension AddItemComponentView {
         @Binding
         var personRole: String
 
-        let matches: [Element]
+        let population: [Element]
 
         // MARK: - Body
 
@@ -50,7 +50,7 @@ extension AddItemComponentView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if type.validateElement(name: name, list: matches) {
+                    if type.validateElement(name: name, list: population) {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"

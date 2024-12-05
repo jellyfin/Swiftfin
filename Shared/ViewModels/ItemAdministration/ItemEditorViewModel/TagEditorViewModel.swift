@@ -31,6 +31,14 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
+    // MARK: - Reorder Tag(s)
+
+    override func reorderComponents(_ tags: [String]) async throws {
+        var updatedItem = item
+        updatedItem.tags = tags
+        try await updateItem(updatedItem)
+    }
+
     // MARK: - Fetch All Possible Tags
 
     override func fetchElements() async throws -> [String] {
@@ -41,9 +49,9 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         return response.value.tags ?? []
     }
 
-    // MARK: - Get Tag Matches
+    // MARK: - Get Tag Matches from Population
 
-    override func fetchMatches(_ searchTerm: String) async throws -> [String] {
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
         guard !searchTerm.isEmpty else {
             return []
         }

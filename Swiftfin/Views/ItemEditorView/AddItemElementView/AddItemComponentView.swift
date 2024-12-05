@@ -34,6 +34,9 @@ struct AddItemComponentView<Element: Hashable>: View {
     private var personRole: String = ""
 
     @State
+    private var loaded: Bool = false
+
+    @State
     private var isPresentingError: Bool = false
     @State
     private var error: Error?
@@ -82,8 +85,8 @@ struct AddItemComponentView<Element: Hashable>: View {
             viewModel.send(.refresh)
         }
         .onChange(of: name) { _ in
-            if !viewModel.backgroundStates.contains(.refreshing) {
-                viewModel.send(.getMatches(name))
+            if loaded && !viewModel.backgroundStates.contains(.refreshing) {
+                viewModel.send(.search(name))
             }
         }
         .onReceive(viewModel.events) { event in
@@ -92,7 +95,8 @@ struct AddItemComponentView<Element: Hashable>: View {
                 UIDevice.feedback(.success)
                 router.dismissCoordinator()
             case .loaded:
-                viewModel.send(.getMatches(name))
+                loaded = true
+                viewModel.send(.search(name))
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
@@ -117,13 +121,13 @@ struct AddItemComponentView<Element: Hashable>: View {
                 type: type,
                 personKind: $personKind,
                 personRole: $personRole,
-                matches: viewModel.matches
+                population: viewModel.matches
             )
-            MatchesSection(
+            SearchResultsSection(
                 id: $id,
                 name: $name,
                 type: type,
-                matches: viewModel.matches,
+                population: viewModel.matches,
                 isSearching: viewModel.backgroundStates.isNotEmpty
             )
         }

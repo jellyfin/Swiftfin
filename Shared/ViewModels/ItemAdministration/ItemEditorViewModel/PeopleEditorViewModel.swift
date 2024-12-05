@@ -31,6 +31,14 @@ class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         try await updateItem(updatedItem)
     }
 
+    // MARK: - Reorder Tag(s)
+
+    override func reorderComponents(_ people: [BaseItemPerson]) async throws {
+        var updatedItem = item
+        updatedItem.people = people
+        try await updateItem(updatedItem)
+    }
+
     // MARK: - Fetch All Possible People
 
     override func fetchElements() async throws -> [BaseItemPerson] {
@@ -46,9 +54,9 @@ class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         }
     }
 
-    // MARK: - Get People Matches
+    // MARK: - Get People Matches from Population
 
-    override func fetchMatches(_ searchTerm: String) async throws -> [BaseItemPerson] {
+    override func searchElements(_ searchTerm: String) async throws -> [BaseItemPerson] {
         guard !searchTerm.isEmpty else {
             return []
         }

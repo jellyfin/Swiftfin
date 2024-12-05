@@ -25,16 +25,17 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Action: Equatable {
         case refresh
+        case search(String)
         case add([Element])
         case remove([Element])
+        case reorder([Element])
         case update(BaseItemDto)
-        case getMatches(String)
     }
 
     // MARK: BackgroundState
 
     enum BackgroundState: Hashable {
-        case matching
+        case searching
         case refreshing
     }
 
@@ -107,27 +108,27 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .getMatches(searchTerm):
+        case let .search(searchTerm):
             task?.cancel()
 
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.matching)
+                        _ = self.backgroundStates.append(.searching)
                     }
 
-                    let results = try await self.fetchMatches(searchTerm)
+                    let results = try await self.searchElements(searchTerm)
 
                     await MainActor.run {
                         self.matches = results
-                        _ = self.backgroundStates.remove(.matching)
+                        _ = self.backgroundStates.remove(.searching)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
-                        _ = self.backgroundStates.remove(.matching)
+                        _ = self.backgroundStates.remove(.searching)
                     }
                 }
             }.asAnyCancellable()
@@ -172,6 +173,33 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                     }
 
                     try await self.removeComponents(removeItems)
+
+                    await MainActor.run {
+                        self.state = .content
+                        self.eventSubject.send(.updated)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .content
+                        self.eventSubject.send(.error(apiError))
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .reorder(orderedItems):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        self.state = .updating
+                    }
+
+                    try await self.reorderComponents(orderedItems)
 
                     await MainActor.run {
                         self.state = .content
@@ -257,15 +285,21 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         fatalError("This method should be overridden in subclasses")
     }
 
+    // MARK: - Reorder Elements (To Be Overridden)
+
+    func reorderComponents(_ tags: [Element]) async throws {
+        fatalError("This method should be overridden in subclasses")
+    }
+
     // MARK: - Fetch All Possible Elements (To Be Overridden)
 
     func fetchElements() async throws -> [Element] {
         fatalError("This method should be overridden in subclasses")
     }
 
-    // MARK: - Get Item Matches (To Be Overridden)
+    // MARK: - Search for Matches in the Element Population (To Be Overridden)
 
-    func fetchMatches(_ searchTerm: String) async throws -> [Element] {
+    func searchElements(_ searchTerm: String) async throws -> [Element] {
         fatalError("This method should be overridden in subclasses")
     }
 }

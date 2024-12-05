@@ -31,6 +31,14 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         try await updateItem(updatedItem)
     }
 
+    // MARK: - Reorder Tag(s)
+
+    override func reorderComponents(_ genres: [String]) async throws {
+        var updatedItem = item
+        updatedItem.genres = genres
+        try await updateItem(updatedItem)
+    }
+
     // MARK: - Fetch All Possible Genres
 
     override func fetchElements() async throws -> [String] {
@@ -44,9 +52,9 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         }
     }
 
-    // MARK: - Get Tag Matches
+    // MARK: - Get Genres Matches from Population
 
-    override func fetchMatches(_ searchTerm: String) async throws -> [String] {
+    override func searchElements(_ searchTerm: String) async throws -> [String] {
         guard !searchTerm.isEmpty else {
             return []
         }

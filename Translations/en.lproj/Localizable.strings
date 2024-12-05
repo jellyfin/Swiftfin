@@ -1885,6 +1885,10 @@
 // Indicates a field is required
 "required" = "Required";
 
+// Reorder - Menu Option
+// Menu option to allow for reorder items in a set or array
+"reorder" = "Reorder";
+
 // Exists on Server - Validation
 // Indicates a specific item exists on your Jellyfin Server
 "existsOnServer" = "This item exists on your Jellyfin Server.";
@@ -1917,9 +1921,9 @@
 // Asks the user to confirm the deletion of selected item
 "deleteSelectedConfirmation" = "Are you sure you want to delete the selected items?";
 
-// Matches - Description
-// Items that have a matching item from another location
-"matches" = "Matches";
+// Existing items - Section Title
+// Section for Items that already exist on the Jellyfin Server
+"existingItems" = "Existing items";
 
 // Enable All Libraries - Toggle
 // Toggle to enable a setting for all Libraries
