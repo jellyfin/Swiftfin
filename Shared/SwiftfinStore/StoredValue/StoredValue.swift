@@ -94,8 +94,12 @@ extension StoredValue {
 
             let domain = key.domain ?? "none"
 
+            let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == key.ownerID)
+            let keyFilter: Where<AnyStoredData> = Where(\.$key == key.name)
+            let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
+
             let clause = From<AnyStoredData>()
-                .where(\.$ownerID == key.ownerID && \.$key == key.name && \.$domain == domain)
+                .where(ownerFilter && keyFilter && domainFilter)
 
             if let values = try? SwiftfinStore.dataStack.fetchAll(clause), let first = values.first {
                 let publisher = first.asPublisher(in: SwiftfinStore.dataStack)
