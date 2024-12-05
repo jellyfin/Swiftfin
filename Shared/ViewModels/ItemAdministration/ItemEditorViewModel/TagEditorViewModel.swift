@@ -34,11 +34,7 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
     // MARK: - Fetch All Possible Tags
 
     override func fetchElements() async throws -> [String] {
-        let parameters = Paths.GetQueryFiltersLegacyParameters(
-            userID: userSession.user.id,
-            parentID: item.parentID
-        )
-
+        let parameters = Paths.GetQueryFiltersLegacyParameters(userID: userSession.user.id)
         let request = Paths.getQueryFiltersLegacy(parameters: parameters)
         guard let response = try? await userSession.client.send(request) else { return [] }
 

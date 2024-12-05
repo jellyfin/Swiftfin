@@ -58,7 +58,7 @@ struct EditItemElementView<Element: Hashable>: View {
         case .studios:
             self.elements = viewModel.item.studios as! [Element]
             self.title = L10n.studios
-            self.description = "WIP - Description for Studios"
+            self.description = L10n.studiosDescription
 
         case .genres:
             self.elements = viewModel.item.genres as! [Element]
@@ -73,7 +73,7 @@ struct EditItemElementView<Element: Hashable>: View {
         case .people:
             self.elements = viewModel.item.people as! [Element]
             self.title = L10n.people
-            self.description = "WIP - Description for People"
+            self.description = L10n.peopleDescription
         }
     }
 

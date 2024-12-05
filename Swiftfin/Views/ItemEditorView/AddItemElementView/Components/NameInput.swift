@@ -15,12 +15,21 @@ extension AddItemComponentView {
 
         @Binding
         var name: String
+        var type: ItemElementType
+
+        @Binding
+        var personKind: PersonKind
+        @Binding
+        var personRole: String
 
         let validation: (String) -> Bool
 
         // MARK: - Body
 
         var body: some View {
+
+            // MARK: Generic Inputs
+
             Section {
                 TextField(L10n.name, text: $name)
                     .autocorrectionDisabled()
@@ -46,6 +55,22 @@ extension AddItemComponentView {
                             systemImage: "checkmark.seal.fill"
                         )
                         .labelStyle(.sectionFooterWithImage(imageStyle: .blue))
+                    }
+                }
+            }
+
+            // MARK: People Inputs
+
+            if type == .people {
+                Section {
+                    Picker(L10n.type, selection: $personKind) {
+                        ForEach(PersonKind.allCases, id: \.self) { kind in
+                            Text(kind.displayTitle).tag(kind)
+                        }
+                    }
+                    if personKind == PersonKind.actor {
+                        TextField(L10n.role, text: $personRole)
+                            .autocorrectionDisabled()
                     }
                 }
             }

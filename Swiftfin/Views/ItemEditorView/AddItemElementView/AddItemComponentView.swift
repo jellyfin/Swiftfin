@@ -21,24 +21,21 @@ struct AddItemComponentView<Element: Hashable>: View {
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
 
+    let type: ItemElementType
+
     @State
     private var id: String?
     @State
     private var name: String = ""
-
-    private let type: ItemElementType
-
     @State
-    private var error: Error?
+    private var personKind: PersonKind = .unknown
+    @State
+    private var personRole: String = ""
+
     @State
     private var isPresentingError: Bool = false
-
-    // MARK: - Initializer
-
-    init(viewModel: ItemEditorViewModel<Element>, type: ItemElementType) {
-        self.viewModel = viewModel
-        self.type = type
-    }
+    @State
+    private var error: Error?
 
     // MARK: - Name is Valid
 
@@ -49,57 +46,72 @@ struct AddItemComponentView<Element: Hashable>: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .animation(.linear(duration: 0.2), value: isValid)
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
+        ZStack {
+            switch viewModel.state {
+            case let .error(error):
+                ErrorView(error: error)
+            case .updating:
+                DelayedProgressView()
+            case .initial, .content:
+                contentView
             }
-            .topBarTrailing {
-                if viewModel.backgroundStates.contains(.refreshing) {
-                    ProgressView()
-                }
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+        .topBarTrailing {
+            if viewModel.backgroundStates.contains(.refreshing) {
+                ProgressView()
+            }
 
-                Button(L10n.save) {
-                    switch Element.self {
-                    case is String.Type:
-                        viewModel.send(.add([name as! Element]))
-                    case is NameGuidPair.Type:
-                        viewModel.send(.add([NameGuidPair(id: id, name: name) as! Element]))
-                    case is BaseItemPerson.Type:
-                        viewModel.send(.add([BaseItemPerson(name: name) as! Element]))
-                    default:
-                        break
-                    }
+            Button(L10n.save) {
+                switch Element.self {
+                case is String.Type:
+                    viewModel.send(.add([name as! Element]))
+                case is NameGuidPair.Type:
+                    viewModel.send(.add([NameGuidPair(id: id, name: name) as! Element]))
+                case is BaseItemPerson.Type:
+                    viewModel.send(.add([BaseItemPerson(
+                        id: id,
+                        name: name,
+                        role: personRole,
+                        type: personKind.rawValue
+                    ) as! Element]))
+                default:
+                    break
                 }
-                .buttonStyle(.toolbarPill)
-                .disabled(!isValid)
             }
-            .onFirstAppear {
-                viewModel.send(.refresh)
-            }
-            .onChange(of: name) { _ in
+            .buttonStyle(.toolbarPill)
+            .disabled(!isValid)
+        }
+        .onFirstAppear {
+            viewModel.send(.refresh)
+        }
+        .onChange(of: name) { _ in
+            viewModel.send(.getMatches(name))
+        }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case .updated:
+                UIDevice.feedback(.success)
+                router.dismissCoordinator()
+            case .loaded:
                 viewModel.send(.getMatches(name))
+            case let .error(eventError):
+                UIDevice.feedback(.error)
+                error = eventError
+                isPresentingError = true
             }
-            .onReceive(viewModel.events) { event in
-                switch event {
-                case .updated:
-                    UIDevice.feedback(.success)
-                    router.dismissCoordinator()
-                case let .error(eventError):
-                    UIDevice.feedback(.error)
-                    error = eventError
-                    isPresentingError = true
-                }
-            }
-            .alert(
-                L10n.error,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { error in
-                Text(error.localizedDescription)
-            }
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingError,
+            presenting: error
+        ) { error in
+            Text(error.localizedDescription)
+        }
     }
 
     // MARK: - Content View
@@ -108,13 +120,27 @@ struct AddItemComponentView<Element: Hashable>: View {
         List {
             NameInput(
                 name: $name,
+                type: type,
+                personKind: $personKind,
+                personRole: $personRole,
                 validation: validation
             )
-            MatchesSection(
-                id: $id,
-                name: $name,
-                matches: viewModel.matches
-            )
+
+            if viewModel.backgroundStates.contains(.refreshing) {
+                if name.isNotEmpty {
+                    Section(L10n.matches) {
+                        DelayedProgressView()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+            } else {
+                MatchesSection(
+                    id: $id,
+                    name: $name,
+                    type: type,
+                    matches: viewModel.matches
+                )
+            }
         }
     }
 

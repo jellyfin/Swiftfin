@@ -18,6 +18,8 @@ extension AddItemComponentView {
         @Binding
         var name: String
 
+        let type: ItemElementType
+
         let matches: [Element]
 
         // MARK: - Body
@@ -25,42 +27,67 @@ extension AddItemComponentView {
         var body: some View {
             if name.isNotEmpty && matches.isNotEmpty {
                 Section(L10n.matches) {
-                    ForEach(matches, id: \.self) { suggestion in
-                        if let newName = elementToName(suggestion) {
-                            Button(newName) {
-                                name = newName
-                                id = elementToId(suggestion)
+                    ForEach(matches, id: \.self) { match in
+                        Button {
+                            switch type {
+                            case .genres, .tags:
+                                name = match as! String
+                                id = nil
+                            case .studios:
+                                let item = match as! NameGuidPair
+
+                                name = item.name ?? L10n.unknown
+                                id = item.id ?? L10n.unknown
+                            case .people:
+                                let person = match as! BaseItemPerson
+
+                                name = person.name ?? L10n.unknown
+                                id = person.id ?? L10n.unknown
                             }
-                            .foregroundStyle(.primary)
-                            .disabled(name == newName)
+                        } label: {
+                            switch type {
+                            case .genres, .tags:
+                                Text(match as! String)
+                            case .studios:
+                                Text((match as! NameGuidPair).name ?? L10n.unknown)
+                            case .people:
+                                HStack {
+                                    let person = (match as! BaseItemPerson)
+                                    ZStack {
+                                        Color.clear
+
+                                        ImageView(person.portraitImageSources(maxWidth: 30))
+                                            .failure {
+                                                Image(systemName: "person.fill")
+                                                    .foregroundStyle(.primary)
+                                            }
+                                    }
+                                    .posterStyle(.portrait)
+                                    .frame(width: 30, height: 90)
+                                    .padding(.horizontal)
+
+                                    Text((match as! BaseItemPerson).name ?? L10n.unknown)
+                                }
+                            }
                         }
+                        .foregroundStyle(.primary)
+                        .disabled(isSelected(match))
                     }
                 }
             }
         }
 
-        // MARK: - Format the Element into its Name
+        // MARK: - Is the Name the Current Element
 
-        private func elementToName(_ element: Element) -> String? {
-            if let stringElement = element as? String {
-                return stringElement
-            } else if let nameGuidPair = element as? NameGuidPair {
-                return nameGuidPair.name
-            } else if let baseItemPerson = element as? BaseItemPerson {
-                return baseItemPerson.name
+        private func isSelected(_ element: Element) -> Bool {
+            switch type {
+            case .genres, .tags:
+                return name == (element as! String)
+            case .studios:
+                return name == (element as! NameGuidPair).name ?? nil
+            case .people:
+                return name == (element as! BaseItemPerson).name ?? nil
             }
-            return nil
-        }
-
-        // MARK: - Format the Element into its Id
-
-        private func elementToId(_ element: Element) -> String? {
-            if let nameGuidPair = element as? NameGuidPair {
-                return nameGuidPair.id
-            } else if let baseItemPerson = element as? BaseItemPerson {
-                return baseItemPerson.id
-            }
-            return nil
         }
     }
 }

@@ -34,8 +34,7 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
     // MARK: - Fetch All Possible Genres
 
     override func fetchElements() async throws -> [String] {
-        let parameters = Paths.GetGenresParameters(parentID: self.item.parentID)
-        let request = Paths.getGenres(parameters: parameters)
+        let request = Paths.getGenres()
         let response = try await userSession.client.send(request)
 
         if let genres = response.value.items {

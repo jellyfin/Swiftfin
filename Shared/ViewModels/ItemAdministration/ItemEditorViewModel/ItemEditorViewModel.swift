@@ -17,6 +17,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
+        case loaded
         case error(JellyfinAPIError)
     }
 
@@ -40,8 +41,9 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     enum State: Hashable {
         case initial
-        case error(JellyfinAPIError)
+        case content
         case updating
+        case error(JellyfinAPIError)
     }
 
     @Published
@@ -76,12 +78,11 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     func respond(to action: Action) -> State {
         switch action {
         case .refresh:
-            task?.cancel()
-
-            task = Task { [weak self] in
+            Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
+                        self.state = .initial
                         _ = self.backgroundStates.append(.refreshing)
                     }
 
@@ -89,17 +90,18 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.elements = allElements
-                        self.state = .initial
+                        self.state = .content
+                        self.eventSubject.send(.loaded)
                         _ = self.backgroundStates.remove(.refreshing)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
-                        self.eventSubject.send(.error(apiError))
+                        _ = self.backgroundStates.remove(.refreshing)
                     }
                 }
-            }.asAnyCancellable()
+            }
 
             return state
 
@@ -117,14 +119,13 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.matches = results
-                        self.state = .initial
                         _ = self.backgroundStates.remove(.refreshing)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
-                        self.eventSubject.send(.error(apiError))
+                        _ = self.backgroundStates.remove(.refreshing)
                     }
                 }
             }.asAnyCancellable()
@@ -137,18 +138,20 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    await MainActor.run { self.state = .updating }
+                    await MainActor.run {
+                        self.state = .updating
+                    }
 
                     try await self.addComponents(addItems)
 
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
@@ -162,18 +165,20 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    await MainActor.run { self.state = .updating }
+                    await MainActor.run {
+                        self.state = .updating
+                    }
 
                     try await self.removeComponents(removeItems)
 
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
@@ -187,18 +192,20 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
-                    await MainActor.run { self.state = .updating }
+                    await MainActor.run {
+                        self.state = .updating
+                    }
 
                     try await self.updateItem(updateItem)
 
                     await MainActor.run {
-                        self.state = .initial
+                        self.state = .content
                         self.eventSubject.send(.updated)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
+                        self.state = .content
                         self.eventSubject.send(.error(apiError))
                     }
                 }
