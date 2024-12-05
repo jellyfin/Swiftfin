@@ -76,7 +76,12 @@ extension MediaChaptersSupplement {
                         
                         ImageView(chapter.landscapeImageSources(maxWidth: 500))
                             .failure {
-                                SystemImageContentView(systemName: chapter.systemImage)
+                                ZStack {
+                                    BlurView()
+                                    
+                                    SystemImageContentView(systemName: chapter.systemImage)
+                                        .background(color: Color.clear)
+                                }
                             }
                     }
                     .overlay {

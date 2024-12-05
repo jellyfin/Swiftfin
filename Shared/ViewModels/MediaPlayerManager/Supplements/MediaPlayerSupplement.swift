@@ -35,6 +35,13 @@ protocol MediaPlayerSupplement: Identifiable<String> {
     func videoPlayerBody() -> Self.VideoPlayerBody
 }
 
+extension MediaPlayerSupplement {
+    
+    var asAny: AnyMediaPlayerSupplement {
+        AnyMediaPlayerSupplement(supplement: self)
+    }
+}
+
 extension MediaPlayerSupplement where VideoPlayerBody == EmptyView {
 
     func makeBody() -> EmptyView {

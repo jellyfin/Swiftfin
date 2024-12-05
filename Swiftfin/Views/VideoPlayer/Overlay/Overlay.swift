@@ -65,7 +65,7 @@ extension VideoPlayer {
             }
 
             HStack(spacing: 10) {
-                ForEach(manager.supplements.map { AnyMediaPlayerSupplement(supplement: $0) }) { supplement in
+                ForEach(manager.supplements.map(\.asAny)) { supplement in
                     DrawerSectionButton(
                         supplement: supplement
                     )

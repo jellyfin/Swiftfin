@@ -131,7 +131,6 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                             .frame(height: 150)
                     }
                     .insets(horizontal: .zero)
-                    .debugBackground()
                 }
             }
             .frame(height: 150)
@@ -167,6 +166,10 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         @Default(.accentColor)
         private var accentColor
         
+        @Environment(\.isPresentingOverlay)
+        @Binding
+        private var isPresentingOverlay: Bool
+        
         @EnvironmentObject
         private var manager: MediaPlayerManager
         
@@ -174,9 +177,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         
         var body: some View {
             Button {
-//                manager.set(seconds: chapter.secondsRange.lowerBound)
-//                manager.proxy?.setTime(chapter.secondsRange.lowerBound)
-                
+                isPresentingOverlay = false
                 manager.send(.playNew(item: item))
             } label: {
                 VStack(alignment: .leading, spacing: 5) {
@@ -185,7 +186,12 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                         
                         ImageView(item.imageSource(.primary, maxWidth: 150))
                             .failure {
-                                SystemImageContentView(systemName: item.systemImage)
+                                ZStack {
+                                    BlurView()
+                                    
+                                    SystemImageContentView(systemName: item.systemImage)
+                                        .background(color: Color.clear)
+                                }
                             }
                     }
                     .overlay {
