@@ -49,10 +49,17 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
     // MARK: - Get Studio Matches
 
     override func fetchMatches(_ searchTerm: String) async throws -> [NameGuidPair] {
-        let filteredResults = self.elements
-            .filter { $0.name?.lowercased().contains(searchTerm.lowercased()) ?? false }
-            .map { NameGuidPair(id: $0.id, name: $0.name) }
+        guard !searchTerm.isEmpty else {
+            return []
+        }
 
-        return filteredResults
+        return self.elements.compactMap {
+            guard let name = $0.name,
+                  name.range(of: searchTerm, options: .caseInsensitive) != nil
+            else {
+                return nil
+            }
+            return NameGuidPair(id: $0.id, name: name)
+        }
     }
 }

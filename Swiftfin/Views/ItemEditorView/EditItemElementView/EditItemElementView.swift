@@ -25,11 +25,8 @@ struct EditItemElementView<Element: Hashable>: View {
     @State
     private var elements: [Element]
 
-    private let type: ItemElementType
-    private let title: String
-    private let description: String
+    private let type: ItemArrayElements
     private let route: (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
-    private let displayName: (Element) -> String
 
     @State
     private var isPresentingDeleteConfirmation = false
@@ -44,44 +41,20 @@ struct EditItemElementView<Element: Hashable>: View {
 
     init(
         viewModel: ItemEditorViewModel<Element>,
-        type: ItemElementType,
-        route: @escaping (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void,
-        displayName: @escaping (Element) -> String
+        type: ItemArrayElements,
+        route: @escaping (ItemEditorCoordinator.Router, ItemEditorViewModel<Element>) -> Void
     ) {
-
-        self.type = type
         self.viewModel = viewModel
+        self.type = type
         self.route = route
-        self.displayName = displayName
-
-        switch type {
-        case .studios:
-            self.elements = viewModel.item.studios as! [Element]
-            self.title = L10n.studios
-            self.description = L10n.studiosDescription
-
-        case .genres:
-            self.elements = viewModel.item.genres as! [Element]
-            self.title = L10n.genres
-            self.description = L10n.genresDescription
-
-        case .tags:
-            self.elements = viewModel.item.tags as! [Element]
-            self.title = L10n.tags
-            self.description = L10n.tagsDescription
-
-        case .people:
-            self.elements = viewModel.item.people as! [Element]
-            self.title = L10n.people
-            self.description = L10n.peopleDescription
-        }
+        self.elements = type.getElement(for: viewModel.item)
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationBarTitle(title)
+            .navigationBarTitle(type.displayTitle)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing)
             .toolbar {
@@ -145,16 +118,7 @@ struct EditItemElementView<Element: Hashable>: View {
                 Text(L10n.deleteItemConfirmation)
             }
             .onNotification(.itemMetadataDidChange) { _ in
-                switch type {
-                case .studios:
-                    self.elements = self.viewModel.item.studios as! [Element]
-                case .genres:
-                    self.elements = self.viewModel.item.genres as! [Element]
-                case .tags:
-                    self.elements = self.viewModel.item.tags as! [Element]
-                case .people:
-                    self.elements = self.viewModel.item.people as! [Element]
-                }
+                self.elements = type.getElement(for: self.viewModel.item)
             }
     }
 
@@ -175,7 +139,7 @@ struct EditItemElementView<Element: Hashable>: View {
 
     private var contentView: some View {
         List {
-            InsetGroupedListHeader(title, description: description)
+            InsetGroupedListHeader(type.displayTitle, description: type.description)
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .padding(.vertical, 24)
@@ -236,11 +200,4 @@ struct EditItemElementView<Element: Hashable>: View {
             }
         }
     }
-}
-
-enum ItemElementType {
-    case studios
-    case genres
-    case tags
-    case people
 }

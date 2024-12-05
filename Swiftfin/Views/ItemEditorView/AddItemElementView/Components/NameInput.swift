@@ -15,21 +15,28 @@ extension AddItemComponentView {
 
         @Binding
         var name: String
-        var type: ItemElementType
+        var type: ItemArrayElements
 
         @Binding
         var personKind: PersonKind
         @Binding
         var personRole: String
 
-        let validation: (String) -> Bool
+        let matches: [Element]
 
         // MARK: - Body
 
         var body: some View {
+            nameView
 
-            // MARK: Generic Inputs
+            if type == .people {
+                personView
+            }
+        }
 
+        // MARK: - Name Input Field
+
+        private var nameView: some View {
             Section {
                 TextField(L10n.name, text: $name)
                     .autocorrectionDisabled()
@@ -43,7 +50,7 @@ extension AddItemComponentView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if validation(name) {
+                    if type.validateElement(name: name, list: matches) {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"
@@ -58,20 +65,20 @@ extension AddItemComponentView {
                     }
                 }
             }
+        }
 
-            // MARK: People Inputs
+        // MARK: - Person Input Fields
 
-            if type == .people {
-                Section {
-                    Picker(L10n.type, selection: $personKind) {
-                        ForEach(PersonKind.allCases, id: \.self) { kind in
-                            Text(kind.displayTitle).tag(kind)
-                        }
+        var personView: some View {
+            Section {
+                Picker(L10n.type, selection: $personKind) {
+                    ForEach(PersonKind.allCases, id: \.self) { kind in
+                        Text(kind.displayTitle).tag(kind)
                     }
-                    if personKind == PersonKind.actor {
-                        TextField(L10n.role, text: $personRole)
-                            .autocorrectionDisabled()
-                    }
+                }
+                if personKind == PersonKind.actor {
+                    TextField(L10n.role, text: $personRole)
+                        .autocorrectionDisabled()
                 }
             }
         }

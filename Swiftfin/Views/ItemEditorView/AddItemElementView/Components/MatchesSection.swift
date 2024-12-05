@@ -18,75 +18,80 @@ extension AddItemComponentView {
         @Binding
         var name: String
 
-        let type: ItemElementType
-
+        let type: ItemArrayElements
         let matches: [Element]
+        let isSearching: Bool
 
         // MARK: - Body
 
         var body: some View {
-            if name.isNotEmpty && matches.isNotEmpty {
-                Section(L10n.matches) {
-                    ForEach(matches, id: \.self) { match in
-                        Button {
-                            switch type {
-                            case .genres, .tags:
-                                name = match as! String
-                                id = nil
-                            case .studios:
-                                let item = match as! NameGuidPair
-
-                                name = item.name ?? L10n.unknown
-                                id = item.id ?? L10n.unknown
-                            case .people:
-                                let person = match as! BaseItemPerson
-
-                                name = person.name ?? L10n.unknown
-                                id = person.id ?? L10n.unknown
-                            }
-                        } label: {
-                            switch type {
-                            case .genres, .tags:
-                                Text(match as! String)
-                            case .studios:
-                                Text((match as! NameGuidPair).name ?? L10n.unknown)
-                            case .people:
-                                HStack {
-                                    let person = (match as! BaseItemPerson)
-                                    ZStack {
-                                        Color.clear
-
-                                        ImageView(person.portraitImageSources(maxWidth: 30))
-                                            .failure {
-                                                Image(systemName: "person.fill")
-                                                    .foregroundStyle(.primary)
-                                            }
-                                    }
-                                    .posterStyle(.portrait)
-                                    .frame(width: 30, height: 90)
-                                    .padding(.horizontal)
-
-                                    Text((match as! BaseItemPerson).name ?? L10n.unknown)
-                                }
-                            }
+            if name.isNotEmpty {
+                Section {
+                    if matches.isEmpty {
+                        noMatchesView
+                    } else {
+                        matchesView
+                    }
+                } header: {
+                    HStack {
+                        Text(L10n.matches)
+                        if isSearching {
+                            DelayedProgressView()
                         }
-                        .foregroundStyle(.primary)
-                        .disabled(isSelected(match))
                     }
                 }
             }
         }
 
-        // MARK: - Is the Name the Current Element
+        // MARK: - Empty Matches Results
 
-        private func isSelected(_ element: Element) -> Bool {
+        private var noMatchesView: some View {
+            Text(isSearching ? L10n.searchingDots : L10n.none)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .center)
+        }
+
+        // MARK: - Formatted Matches Results
+
+        private var matchesView: some View {
+            ForEach(matches, id: \.self) { match in
+                Button {
+                    name = type.getName(for: match)
+                    id = type.getId(for: match)
+                } label: {
+                    labelView(match)
+                }
+                .foregroundStyle(.primary)
+                .disabled(name == type.getName(for: match))
+            }
+        }
+
+        // MARK: - Element Matches Button Label by Type
+
+        @ViewBuilder
+        private func labelView(_ match: Element) -> some View {
             switch type {
-            case .genres, .tags:
-                return name == (element as! String)
-            case .studios:
-                return name == (element as! NameGuidPair).name
             case .people:
-                return name == (element as! BaseItemPerson).name
+                let person = match as! BaseItemPerson
+                HStack {
+                    ZStack {
+                        Color.clear
+                        ImageView(person.portraitImageSources(maxWidth: 30))
+                            .failure {
+                                Image(systemName: "person.fill")
+                                    .foregroundStyle(.primary)
+                            }
+                    }
+                    .posterStyle(.portrait)
+                    .frame(width: 30, height: 90)
+                    .padding(.horizontal)
+
+                    Text(type.getName(for: match))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            default:
+                Text(type.getName(for: match))
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

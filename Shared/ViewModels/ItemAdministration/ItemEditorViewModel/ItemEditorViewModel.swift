@@ -34,6 +34,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: BackgroundState
 
     enum BackgroundState: Hashable {
+        case matching
         case refreshing
     }
 
@@ -92,6 +93,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                         self.elements = allElements
                         self.state = .content
                         self.eventSubject.send(.loaded)
+
                         _ = self.backgroundStates.remove(.refreshing)
                     }
                 } catch {
@@ -112,20 +114,20 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.refreshing)
+                        _ = self.backgroundStates.append(.matching)
                     }
 
                     let results = try await self.fetchMatches(searchTerm)
 
                     await MainActor.run {
                         self.matches = results
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.matching)
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.state = .error(apiError)
-                        _ = self.backgroundStates.remove(.refreshing)
+                        _ = self.backgroundStates.remove(.matching)
                     }
                 }
             }.asAnyCancellable()
@@ -235,16 +237,11 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     private func refreshItem() async throws {
         guard let itemId = item.id else { return }
 
-        await MainActor.run {
-            _ = backgroundStates.append(.refreshing)
-        }
-
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
             self.item = response.value
-            _ = backgroundStates.remove(.refreshing)
         }
     }
 

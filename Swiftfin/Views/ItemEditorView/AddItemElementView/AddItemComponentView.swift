@@ -6,6 +6,7 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
+import Combine
 import Defaults
 import JellyfinAPI
 import SwiftUI
@@ -21,7 +22,7 @@ struct AddItemComponentView<Element: Hashable>: View {
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
 
-    let type: ItemElementType
+    let type: ItemArrayElements
 
     @State
     private var id: String?
@@ -56,7 +57,7 @@ struct AddItemComponentView<Element: Hashable>: View {
                 contentView
             }
         }
-        .navigationTitle(title)
+        .navigationTitle(type.displayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarCloseButton {
             router.dismissCoordinator()
@@ -67,21 +68,12 @@ struct AddItemComponentView<Element: Hashable>: View {
             }
 
             Button(L10n.save) {
-                switch Element.self {
-                case is String.Type:
-                    viewModel.send(.add([name as! Element]))
-                case is NameGuidPair.Type:
-                    viewModel.send(.add([NameGuidPair(id: id, name: name) as! Element]))
-                case is BaseItemPerson.Type:
-                    viewModel.send(.add([BaseItemPerson(
-                        id: id,
-                        name: name,
-                        role: personRole,
-                        type: personKind.rawValue
-                    ) as! Element]))
-                default:
-                    break
-                }
+                viewModel.send(.add([type.createElement(
+                    name: name,
+                    id: id,
+                    personRole: personRole,
+                    personKind: personKind.rawValue
+                )]))
             }
             .buttonStyle(.toolbarPill)
             .disabled(!isValid)
@@ -90,7 +82,9 @@ struct AddItemComponentView<Element: Hashable>: View {
             viewModel.send(.refresh)
         }
         .onChange(of: name) { _ in
-            viewModel.send(.getMatches(name))
+            if !viewModel.backgroundStates.contains(.refreshing) {
+                viewModel.send(.getMatches(name))
+            }
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -123,52 +117,15 @@ struct AddItemComponentView<Element: Hashable>: View {
                 type: type,
                 personKind: $personKind,
                 personRole: $personRole,
-                validation: validation
+                matches: viewModel.matches
             )
-
-            if viewModel.backgroundStates.contains(.refreshing) {
-                if name.isNotEmpty {
-                    Section(L10n.matches) {
-                        DelayedProgressView()
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                }
-            } else {
-                MatchesSection(
-                    id: $id,
-                    name: $name,
-                    type: type,
-                    matches: viewModel.matches
-                )
-            }
-        }
-    }
-
-    // MARK: - Item Validation
-
-    private var validation: (String) -> Bool {
-        switch type {
-        case .genres, .tags:
-            { (viewModel.matches as! [String]).contains($0) }
-        case .people:
-            { (viewModel.matches as! [BaseItemPerson]).compactMap(\.name).contains($0) }
-        case .studios:
-            { (viewModel.matches as! [NameGuidPair]).compactMap(\.name).contains($0) }
-        }
-    }
-
-    // MARK: - Item Navigation Title
-
-    private var title: String {
-        switch type {
-        case .genres:
-            L10n.genres
-        case .people:
-            L10n.people
-        case .studios:
-            L10n.studios
-        case .tags:
-            L10n.tags
+            MatchesSection(
+                id: $id,
+                name: $name,
+                type: type,
+                matches: viewModel.matches,
+                isSearching: viewModel.backgroundStates.isNotEmpty
+            )
         }
     }
 }

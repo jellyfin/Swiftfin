@@ -49,10 +49,17 @@ class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
     // MARK: - Get People Matches
 
     override func fetchMatches(_ searchTerm: String) async throws -> [BaseItemPerson] {
-        let filteredResults = self.elements
-            .filter { $0.name?.lowercased().contains(searchTerm.lowercased()) ?? false }
-            .map { BaseItemPerson(id: $0.id, name: $0.name) }
+        guard !searchTerm.isEmpty else {
+            return []
+        }
 
-        return filteredResults
+        return self.elements.compactMap {
+            guard let name = $0.name,
+                  name.range(of: searchTerm, options: .caseInsensitive) != nil
+            else {
+                return nil
+            }
+            return BaseItemPerson(id: $0.id, name: name)
+        }
     }
 }

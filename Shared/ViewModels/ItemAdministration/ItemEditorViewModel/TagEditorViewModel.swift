@@ -44,8 +44,12 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
     // MARK: - Get Tag Matches
 
     override func fetchMatches(_ searchTerm: String) async throws -> [String] {
-        self.elements.filter(
-            { $0.lowercased().contains(searchTerm.lowercased()) }
-        )
+        guard !searchTerm.isEmpty else {
+            return []
+        }
+
+        return self.elements.filter {
+            $0.range(of: searchTerm, options: .caseInsensitive) != nil
+        }
     }
 }

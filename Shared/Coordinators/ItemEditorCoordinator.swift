@@ -75,8 +75,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
             type: .genres,
             route: { router, viewModel in
                 router.route(to: \.addGenre, viewModel as! GenreEditorViewModel)
-            },
-            displayName: { $0 }
+            }
         )
     }
 
@@ -95,8 +94,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
             type: .tags,
             route: { router, viewModel in
                 router.route(to: \.addTag, viewModel as! TagEditorViewModel)
-            },
-            displayName: { $0 }
+            }
         )
     }
 
@@ -115,8 +113,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
             type: .studios,
             route: { router, viewModel in
                 router.route(to: \.addStudio, viewModel as! StudioEditorViewModel)
-            },
-            displayName: { $0.name ?? L10n.unknown }
+            }
         )
     }
 
@@ -135,8 +132,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
             type: .people,
             route: { router, viewModel in
                 router.route(to: \.addPeople, viewModel as! PeopleEditorViewModel)
-            },
-            displayName: { $0.name ?? L10n.unknown }
+            }
         )
     }
 

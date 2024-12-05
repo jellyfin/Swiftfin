@@ -19,35 +19,10 @@ extension EditItemElementView {
         @Environment(\.isSelected)
         var isSelected
 
-        private let item: Element
-        private let type: ItemElementType
-
-        private let displayName: String
-
-        private let onSelect: () -> Void
-        private let onDelete: () -> Void
-
-        init(
-            item: Element,
-            type: ItemElementType,
-            onSelect: @escaping () -> Void,
-            onDelete: @escaping () -> Void
-        ) {
-
-            self.item = item
-            self.type = type
-            self.onSelect = onSelect
-            self.onDelete = onDelete
-
-            switch type {
-            case .genres, .tags:
-                self.displayName = item as! String
-            case .studios:
-                self.displayName = (item as! NameGuidPair).name ?? L10n.unknown
-            case .people:
-                self.displayName = (item as! BaseItemPerson).name ?? L10n.unknown
-            }
-        }
+        let item: Element
+        let type: ItemArrayElements
+        let onSelect: () -> Void
+        let onDelete: () -> Void
 
         var body: some View {
             ListRow(insets: .init()) {
@@ -56,7 +31,6 @@ extension EditItemElementView {
 
                     ZStack {
                         Color.clear
-
                         ImageView(person.portraitImageSources(maxWidth: 30))
                             .failure {
                                 Image(systemName: "person.fill")
@@ -70,7 +44,7 @@ extension EditItemElementView {
             } content: {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(displayName)
+                        Text(type.getName(for: item))
                             .foregroundColor(isEditing ? (isSelected ? .primary : .secondary) : .primary)
                             .font(.headline)
                             .lineLimit(1)
