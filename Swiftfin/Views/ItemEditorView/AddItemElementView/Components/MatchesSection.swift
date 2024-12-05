@@ -84,9 +84,9 @@ extension AddItemComponentView {
             case .genres, .tags:
                 return name == (element as! String)
             case .studios:
-                return name == (element as! NameGuidPair).name ?? nil
+                return name == (element as! NameGuidPair).name
             case .people:
-                return name == (element as! BaseItemPerson).name ?? nil
+                return name == (element as! BaseItemPerson).name
             }
         }
     }
