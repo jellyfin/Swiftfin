@@ -51,7 +51,7 @@ struct ItemEditorView: View {
     private var refreshButtonView: some View {
         Section {
             RefreshMetadataButton(item: viewModel.item)
-                .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
+                .environment(\.isEnabled, userSession?.user.permissions.isAdministrator ?? false)
         } footer: {
             LearnMoreButton(L10n.metadata) {
                 TextPair(

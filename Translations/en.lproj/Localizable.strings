@@ -1453,6 +1453,10 @@
 // Toggle option for enabling media item editing
 "allowItemEditing" = "Allow media item editing";
 
+// Allow Collection Management - Toggle
+// Toggle option for enabling collection editing / deletion
+"allowCollectionManagement" = "Allow collection management";
+
 // Allow Media Item Deletion - Toggle
 // Toggle option for enabling media item deletion
 "allowItemDeletion" = "Allow media item deletion";
