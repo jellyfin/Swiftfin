@@ -12,8 +12,6 @@ import Foundation
 import JellyfinAPI
 import UIKit
 
-typealias NotificationKey<Payload> = Notifications.Key<Payload>
-
 extension Container {
     var notificationCenter: Factory<NotificationCenter> {
         self { NotificationCenter.default }.singleton
@@ -22,64 +20,71 @@ extension Container {
 
 enum Notifications {
 
-    struct Key<Payload>: Hashable {
+    typealias Keys = _AnyKey
+
+    class _AnyKey {
+        typealias Key = Notifications.Key
+    }
+
+    final class Key<Payload>: _AnyKey {
 
         @Injected(\.notificationCenter)
-        private var notificationService
+        private var notificationCenter
 
         let name: Notification.Name
+        
+        var rawValue: String {
+            name.rawValue
+        }
 
-        init(_ name: String) {
-            self.name = Notification.Name(name)
+        init(_ string: String) {
+            self.name = Notification.Name(string)
         }
 
         init(_ name: Notification.Name) {
             self.name = name
         }
 
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(name)
-        }
-
-        static func == (lhs: Key<Payload>, rhs: Key<Payload>) -> Bool {
-            lhs.name == rhs.name
-        }
-
         func post(_ payload: Payload) {
-            notificationService.post(
-                name: name,
-                object: nil,
-                userInfo: ["payload": payload]
-            )
+            notificationCenter
+                .post(
+                    name: name,
+                    object: nil,
+                    userInfo: ["payload": payload]
+                )
         }
 
-        func subscribe(_ handler: @escaping (Payload) -> Void) -> AnyCancellable {
-            notificationService.publisher(for: name)
-                .compactMap { notification -> Payload? in
-                    return notification.userInfo?["payload"] as? Payload
-                }
-                .sink { payload in
-                    handler(payload)
-                }
-        }
-
-        func unsubscribe(_ observer: Any) {
-            notificationService.removeObserver(observer, name: name, object: nil)
+        func post() where Payload == Void {
+            notificationCenter
+                .post(
+                    name: name,
+                    object: nil,
+                    userInfo: nil
+                )
         }
 
         var publisher: AnyPublisher<Payload, Never> {
-            notificationService.publisher(for: name)
-                .compactMap { notification -> Payload? in
-                    return notification.userInfo?["payload"] as? Payload
+            notificationCenter
+                .publisher(for: name)
+                .compactMap { notification in
+                    notification.userInfo?["payload"] as? Payload
                 }
                 .eraseToAnyPublisher()
         }
+
+        func subscribe(_ object: Any, selector: Selector) {
+            notificationCenter.addObserver(object, selector: selector, name: name, object: nil)
+        }
+    }
+
+    static subscript<Payload>(key: Key<Payload>) -> Key<Payload> {
+        key
     }
 }
 
 // MARK: - Keys
 
-extension Notifications {
+extension Notifications.Key {
 
     // MARK: - Authentication
 
@@ -101,7 +106,7 @@ extension Notifications {
         Key("didPurge")
     }
 
-    static var didChangeCurrentServerURL: Key<Void> {
+    static var didChangeCurrentServerURL: Key<ServerState> {
         Key("didChangeCurrentServerURL")
     }
 
@@ -127,17 +132,18 @@ extension Notifications {
         Key("itemShouldRefresh")
     }
 
+    /// - Payload: The ID of the deleted item.
     static var didDeleteItem: Key<String> {
         Key("didDeleteItem")
     }
 
     // MARK: - Server
 
-    static var didConnectToServer: Key<Void> {
+    static var didConnectToServer: Key<ServerState> {
         Key("didConnectToServer")
     }
 
-    static var didDeleteServer: Key<Void> {
+    static var didDeleteServer: Key<ServerState> {
         Key("didDeleteServer")
     }
 
@@ -153,7 +159,7 @@ extension Notifications {
         Key("didStartPlayback")
     }
 
-    static var didAddServerUser: Key<Void> {
+    static var didAddServerUser: Key<UserState> {
         Key("didAddServerUser")
     }
 
@@ -161,6 +167,10 @@ extension Notifications {
 
     static var applicationDidEnterBackground: Key<Void> {
         Key(UIApplication.didEnterBackgroundNotification)
+    }
+
+    static var applicationWillEnterForeground: Key<Void> {
+        Key(UIApplication.willEnterForegroundNotification)
     }
 
     static var applicationWillResignActive: Key<Void> {

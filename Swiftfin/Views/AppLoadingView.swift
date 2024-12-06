@@ -32,7 +32,7 @@ struct AppLoadingView: View {
                 .disabled(true)
                 .opacity(didFailMigration ? 0 : 1)
         }
-        .onNotification(Notifications.didFailMigration) { _ in
+        .onNotification(.didFailMigration) { _ in
             didFailMigration = true
         }
     }

@@ -13,10 +13,10 @@ struct RedrawOnNotificationView<Content: View, P>: View {
     @State
     private var id = 0
 
-    private let key: NotificationKey<P>
+    private let key: Notifications.Key<P>
     private let content: () -> Content
 
-    init(_ key: NotificationKey<P>, @ViewBuilder content: @escaping () -> Content) {
+    init(_ key: Notifications.Key<P>, @ViewBuilder content: @escaping () -> Content) {
         self.key = key
         self.content = content
     }

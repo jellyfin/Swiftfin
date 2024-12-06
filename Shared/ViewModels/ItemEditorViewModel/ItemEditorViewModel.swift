@@ -159,7 +159,7 @@ class ItemEditorViewModel<ItemType: Equatable>: ViewModel, Stateful, Eventful {
         }
 
         await MainActor.run {
-            Notifications.itemMetadataDidChange.post(newItem)
+            Notifications[.itemMetadataDidChange].post(newItem)
         }
     }
 

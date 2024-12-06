@@ -159,12 +159,17 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem].publisher
-            .sink(receiveCompletion: { _ in }) { [weak self] notification in
-                guard let item = notification.object as? Element else { return }
-                self?.elements.remove(item)
+        Notifications[.didDeleteItem]
+            .publisher
+            .sink { <#String#> in
+                <#code#>
             }
-            .store(in: &cancellables)
+//            .publisher
+//            .sink(receiveCompletion: { _ in }) { [weak self] notification in
+//                guard let item = notification.object as? Element else { return }
+//                self?.elements.remove(item)
+//            }
+//            .store(in: &cancellables)
 
         if let filterViewModel {
             filterViewModel.$currentFilters

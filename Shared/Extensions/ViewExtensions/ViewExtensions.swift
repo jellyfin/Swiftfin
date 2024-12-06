@@ -314,10 +314,10 @@ extension View {
         }
     }
 
-    func onNotification<P>(_ notification: NotificationKey<P>, perform action: @escaping (P) -> Void) -> some View {
+    func onNotification<P>(_ key: Notifications.Key<P>, perform action: @escaping (P) -> Void) -> some View {
         modifier(
             OnReceiveNotificationModifier(
-                notification: notification,
+                key: key,
                 onReceive: action
             )
         )

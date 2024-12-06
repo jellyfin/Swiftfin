@@ -55,19 +55,19 @@ extension View {
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(Notifications.applicationDidEnterBackground) {
+        onNotification(.applicationDidEnterBackground) {
             action()
         }
     }
 
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        onNotification(Notifications.applicationWillResignActive) { _ in
+        onNotification(.applicationWillResignActive) { _ in
             action()
         }
     }
 
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        onNotification(Notifications.applicationWillTerminate) { _ in
+        onNotification(.applicationWillTerminate) { _ in
             action()
         }
     }

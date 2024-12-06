@@ -94,11 +94,11 @@ struct HomeView: View {
                 mainRouter.route(to: \.settings)
             }
         }
-        .sinceLastDisappear { interval in
-            if interval > 60 || viewModel.notificationsReceived.contains(Notifications.itemMetadataDidChange.asAny) {
-                viewModel.send(.backgroundRefresh)
-                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
-            }
+        .sinceLastDisappear { _ in
+//            if interval > 60 || viewModel.notificationsReceived.contains(Notifications.itemMetadataDidChange.asAny) {
+//                viewModel.send(.backgroundRefresh)
+//                viewModel.notificationsReceived.remove(.itemMetadataDidChange)
+//            }
         }
     }
 }
