@@ -67,25 +67,3 @@ extension Trie {
         return currentNode.elements
     }
 }
-
-// extension Trie where Key == Element {
-//
-//    func insert(_ element: Element) {
-//        var currentNode = root
-//
-//        for key in element {
-//            if currentNode.children[key] == nil {
-//                currentNode.children[key] = TrieNode()
-//            }
-//            currentNode = currentNode.children[key]!
-//            currentNode.elements.append(element)
-//        }
-//        currentNode.isEndOfWord = true
-//    }
-//
-//    func insert(contentsOf elements: some Collection<Element>) {
-//        for element in elements {
-//            insert(element)
-//        }
-//    }
-// }
