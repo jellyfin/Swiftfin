@@ -6,49 +6,86 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-class Trie {
+class Trie<Key: Collection & Hashable, Element> where Key.Element: Hashable {
+
+    class TrieNode {
+        var children: [Key.Element: TrieNode] = [:]
+        var isEndOfWord: Bool = false
+        var elements: [Element] = []
+    }
 
     private let root = TrieNode()
+}
 
-    // MARK: - Insert Word into Trie
+extension Trie {
 
-    func insert(_ word: String) {
-        guard !word.isEmpty else { return }
+    func contains(key: Key) -> Bool {
         var currentNode = root
 
-        for char in word.lowercased() {
-            if currentNode.children[char] == nil {
-                currentNode.children[char] = TrieNode()
+        for key in key {
+            guard let nextNode = currentNode.children[key] else {
+                return false
             }
-            currentNode = currentNode.children[char]!
-            currentNode.words.append(word)
+            currentNode = nextNode
+        }
+
+        return currentNode.isEndOfWord
+    }
+
+    func insert(key: Key, element: Element) {
+        var currentNode = root
+
+        for key in key {
+            if currentNode.children[key] == nil {
+                currentNode.children[key] = TrieNode()
+            }
+            currentNode = currentNode.children[key]!
+            currentNode.elements.append(element)
         }
         currentNode.isEndOfWord = true
     }
 
-    // MARK: - Search for Prefix Matches
+    func insert(contentsOf contents: [Key: Element]) {
+        for (key, element) in contents {
+            insert(key: key, element: element)
+        }
+    }
 
-    func search(prefix: String) -> [String] {
-        guard !prefix.isEmpty else { return [] }
+    func search(prefix: Key) -> [Element] {
+
+        guard prefix.isNotEmpty else { return [] }
+
         var currentNode = root
 
-        for char in prefix.lowercased() {
-            guard let nextNode = currentNode.children[char] else {
+        for key in prefix {
+            guard let nextNode = currentNode.children[key] else {
                 return []
             }
             currentNode = nextNode
         }
 
-        return currentNode.words
+        return currentNode.elements
     }
 }
 
-extension Trie {
-
-    class TrieNode {
-
-        var children: [Character: TrieNode] = [:]
-        var isEndOfWord: Bool = false
-        var words: [String] = []
-    }
-}
+// extension Trie where Key == Element {
+//
+//    func insert(_ element: Element) {
+//        var currentNode = root
+//
+//        for key in element {
+//            if currentNode.children[key] == nil {
+//                currentNode.children[key] = TrieNode()
+//            }
+//            currentNode = currentNode.children[key]!
+//            currentNode.elements.append(element)
+//        }
+//        currentNode.isEndOfWord = true
+//    }
+//
+//    func insert(contentsOf elements: some Collection<Element>) {
+//        for element in elements {
+//            insert(element)
+//        }
+//    }
+// }

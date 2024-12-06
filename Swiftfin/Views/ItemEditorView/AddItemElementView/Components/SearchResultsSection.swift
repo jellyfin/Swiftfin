@@ -87,8 +87,7 @@ extension AddItemElementView {
                         Color.clear
                         ImageView(person.portraitImageSources(maxWidth: 30))
                             .failure {
-                                Image(systemName: "person.fill")
-                                    .foregroundStyle(.primary)
+                                SystemImageContentView(systemName: "person.fill")
                             }
                     }
                     .posterStyle(.portrait)

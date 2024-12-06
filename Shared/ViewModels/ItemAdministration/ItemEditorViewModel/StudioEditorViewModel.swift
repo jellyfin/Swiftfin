@@ -15,11 +15,13 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
     // MARK: - Populate the Trie
 
     override func populateTrie() {
-        for element in self.elements {
-            if let name = element.name {
-                trie.insert(name)
+        let elements = elements
+            .compacted(using: \.name)
+            .reduce(into: [String: NameGuidPair]()) { result, element in
+                result[element.name!] = element
             }
-        }
+
+        trie.insert(contentsOf: elements)
     }
 
     // MARK: - Add Studio(s)
@@ -62,15 +64,5 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         } else {
             return []
         }
-    }
-
-    // MARK: - Search For Matching Studios
-
-    override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
-        guard !searchTerm.isEmpty else { return [] }
-
-        let matchingItems = Set(trie.search(prefix: searchTerm))
-
-        return elements.filter { matchingItems.contains($0.name!) }
     }
 }

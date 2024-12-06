@@ -69,19 +69,6 @@ enum ItemArrayElements: Displayable {
         }
     }
 
-    // MARK: - Validate an Element Name Exists in a List
-
-    func validateElement<T: Hashable>(name: String, list: [T]) -> Bool {
-        switch self {
-        case .genres, .tags:
-            (list as! [String]).contains(name)
-        case .people:
-            (list as! [BaseItemPerson]).compactMap(\.name).contains(name)
-        case .studios:
-            (list as! [NameGuidPair]).compactMap(\.name).contains(name)
-        }
-    }
-
     // MARK: - Get the Element from the BaseItemDto Based on Type
 
     func getElement<T: Hashable>(for item: BaseItemDto) -> [T] {

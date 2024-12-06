@@ -60,7 +60,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     @Published
     var state: State = .initial
 
-    var trie = Trie()
+    final var trie = Trie<String, Element>()
 
     private var loadTask: AnyCancellable?
     private var updateTask: AnyCancellable?
@@ -292,6 +292,6 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
     // MARK: - Return Matching Elements (To Be Overridden)
 
     func searchElements(_ searchTerm: String) async throws -> [Element] {
-        fatalError("This method should be overridden in subclasses")
+        trie.search(prefix: searchTerm.localizedLowercase)
     }
 }

@@ -15,9 +15,7 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
     // MARK: - Populate the Trie
 
     override func populateTrie() {
-        for element in self.elements {
-            trie.insert(element)
-        }
+        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
     }
 
     // MARK: - Add Genre(s)
@@ -58,15 +56,5 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         } else {
             return []
         }
-    }
-
-    // MARK: - Search For Matching Genres
-
-    override func searchElements(_ searchTerm: String) async throws -> [String] {
-        guard !searchTerm.isEmpty else { return [] }
-
-        var items = trie.search(prefix: searchTerm)
-
-        return trie.search(prefix: searchTerm)
     }
 }

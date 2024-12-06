@@ -91,10 +91,10 @@ extension EditItemElementView {
 
             ZStack {
                 Color.clear
+
                 ImageView(person.portraitImageSources(maxWidth: 30))
                     .failure {
-                        Image(systemName: "person.fill")
-                            .foregroundStyle(.secondary)
+                        SystemImageContentView(systemName: "person.fill")
                     }
             }
             .posterStyle(.portrait)

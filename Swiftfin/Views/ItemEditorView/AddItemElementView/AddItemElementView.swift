@@ -47,6 +47,10 @@ struct AddItemElementView<Element: Hashable>: View {
         name.isNotEmpty
     }
 
+    private var itemAlreadyExists: Bool {
+        viewModel.trie.contains(key: name.localizedLowercase)
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -121,8 +125,9 @@ struct AddItemElementView<Element: Hashable>: View {
                 type: type,
                 personKind: $personKind,
                 personRole: $personRole,
-                population: viewModel.matches
+                itemAlreadyExists: itemAlreadyExists
             )
+
             SearchResultsSection(
                 id: $id,
                 name: $name,

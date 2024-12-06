@@ -22,7 +22,7 @@ extension AddItemElementView {
         @Binding
         var personRole: String
 
-        let population: [Element]
+        let itemAlreadyExists: Bool
 
         // MARK: - Body
 
@@ -50,7 +50,7 @@ extension AddItemElementView {
                     )
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 } else {
-                    if type.validateElement(name: name, list: population) {
+                    if itemAlreadyExists {
                         Label(
                             L10n.existsOnServer,
                             systemImage: "checkmark.circle.fill"

@@ -15,11 +15,13 @@ class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
     // MARK: - Populate the Trie
 
     override func populateTrie() {
-        for element in self.elements {
-            if let name = element.name {
-                trie.insert(name)
+        let elements = elements
+            .compacted(using: \.name)
+            .reduce(into: [String: BaseItemPerson]()) { result, element in
+                result[element.name!.localizedLowercase] = element
             }
-        }
+
+        trie.insert(contentsOf: elements)
     }
 
     // MARK: - Add People(s)
@@ -62,15 +64,5 @@ class PeopleEditorViewModel: ItemEditorViewModel<BaseItemPerson> {
         } else {
             return []
         }
-    }
-
-    // MARK: - Search For Matching People
-
-    override func searchElements(_ searchTerm: String) async throws -> [BaseItemPerson] {
-        guard !searchTerm.isEmpty else { return [] }
-
-        let matchingItems = Set(trie.search(prefix: searchTerm))
-
-        return elements.filter { matchingItems.contains($0.name!) }
     }
 }

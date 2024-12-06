@@ -15,9 +15,7 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
     // MARK: - Populate the Trie
 
     override func populateTrie() {
-        for element in self.elements {
-            trie.insert(element)
-        }
+        trie.insert(contentsOf: elements.keyed(using: \.localizedLowercase))
     }
 
     // MARK: - Add Tag(s)
@@ -55,13 +53,5 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         guard let response = try? await userSession.client.send(request) else { return [] }
 
         return response.value.tags ?? []
-    }
-
-    // MARK: - Search For Matching Tags
-
-    override func searchElements(_ searchTerm: String) async throws -> [String] {
-        guard !searchTerm.isEmpty else { return [] }
-
-        return trie.search(prefix: searchTerm)
     }
 }
