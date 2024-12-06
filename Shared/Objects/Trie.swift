@@ -10,7 +10,7 @@ class Trie<Key: Collection & Hashable, Element> where Key.Element: Hashable {
 
     class TrieNode {
         var children: [Key.Element: TrieNode] = [:]
-        var isEndOfWord: Bool = false
+        var isLeafNode: Bool = false
         var elements: [Element] = []
     }
 
@@ -29,7 +29,7 @@ extension Trie {
             currentNode = nextNode
         }
 
-        return currentNode.isEndOfWord
+        return currentNode.isLeafNode
     }
 
     func insert(key: Key, element: Element) {
@@ -42,7 +42,7 @@ extension Trie {
             currentNode = currentNode.children[key]!
             currentNode.elements.append(element)
         }
-        currentNode.isEndOfWord = true
+        currentNode.isLeafNode = true
     }
 
     func insert(contentsOf contents: [Key: Element]) {
