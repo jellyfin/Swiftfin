@@ -132,7 +132,10 @@ struct ServerUserAccessView: View {
 
         if tempPolicy.enableContentDeletion == false {
             Section {
-                ForEach(viewModel.libraries, id: \.id) { library in
+                ForEach(
+                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
+                    id: \.id
+                ) { library in
                     Toggle(
                         library.displayTitle,
                         isOn: $tempPolicy.enableContentDeletionFromFolders
