@@ -14,7 +14,6 @@
 "connectToJellyfin" = "Connect to Jellyfin";
 "connectToServer" = "Connect to Server";
 "continueWatching" = "Continue Watching";
-"director" = "DIRECTOR";
 "discoveredServers" = "Discovered Servers";
 "displayOrder" = "Display order";
 "emptyNextUp" = "Empty Next Up";
@@ -1454,6 +1453,10 @@
 // Toggle option for enabling media item editing
 "allowItemEditing" = "Allow media item editing";
 
+// Allow Collection Management - Toggle
+// Toggle option for enabling collection editing / deletion
+"allowCollectionManagement" = "Allow collection management";
+
 // Allow Media Item Deletion - Toggle
 // Toggle option for enabling media item deletion
 "allowItemDeletion" = "Allow media item deletion";
@@ -1882,6 +1885,50 @@
 // Explanation of custom connections policy
 "customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
 
+// Required - Validation
+// Indicates a field is required
+"required" = "Required";
+
+// Reorder - Menu Option
+// Menu option to allow for reorder items in a set or array
+"reorder" = "Reorder";
+
+// Exists on Server - Validation
+// Indicates a specific item exists on your Jellyfin Server
+"existsOnServer" = "This item exists on your Jellyfin Server.";
+
+// Will Be Created on Server - Notification
+// Indicates a specific item will be created as new on your Jellyfin Server
+"willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
+
+// Genres - Description
+// A brief explanation of genres in the context of media items
+"genresDescription" = "Categories that describe the themes or styles of media.";
+
+// Tags - Description
+// A brief explanation of tags in the context of media items
+"tagsDescription" = "Labels used to organize or highlight specific attributes of media.";
+
+// Studios - Description
+// A brief explanation of studios in the context of media items
+"studiosDescription" = "Studio(s) involved in the creation of media.";
+
+// People - Description
+// A brief explanation of tags in the people of media items
+"peopleDescription" = "People who helped create or perform specific media.";
+
+// Delete Item - Confirmation
+// Asks the user to confirm the deletion of a single item
+"deleteItemConfirmation" = "Are you sure you want to delete this item?";
+
+// Delete Selected Items - Confirmation
+// Asks the user to confirm the deletion of selected item
+"deleteSelectedConfirmation" = "Are you sure you want to delete the selected items?";
+
+// Existing items - Section Title
+// Section for Items that already exist on the Jellyfin Server
+"existingItems" = "Existing items";
+
 // Enable All Libraries - Toggle
 // Toggle to enable a setting for all Libraries
 "enableAllLibraries" = "Enable all libraries";
@@ -1897,3 +1944,99 @@
 // Access - Section Description
 // Section Title for Media Access
 "access" = "Access";
+
+// Actor - Enum
+// Represents an actor
+"actor" = "Actor";
+
+// Composer - Enum
+// Represents a composer
+"composer" = "Composer";
+
+// Director - Enum
+// Represents a director
+"director" = "Director";
+
+// Writer - Enum
+// Represents a writer
+"writer" = "Writer";
+
+// Guest Star - Enum
+// Represents a guest star
+"guestStar" = "Guest Star";
+
+// Producer - Enum
+// Represents a producer
+"producer" = "Producer";
+
+// Conductor - Enum
+// Represents a conductor
+"conductor" = "Conductor";
+
+// Lyricist - Enum
+// Represents a lyricist
+"lyricist" = "Lyricist";
+
+// Arranger - Enum
+// Represents an arranger
+"arranger" = "Arranger";
+
+// Engineer - Enum
+// Represents an engineer
+"engineer" = "Engineer";
+
+// Mixer - Enum
+// Represents a mixer
+"mixer" = "Mixer";
+
+// Remixer - Enum
+// Represents a remixer
+"remixer" = "Remixer";
+
+// Creator - Enum
+// Represents a creator
+"creator" = "Creator";
+
+// Artist - Enum
+// Represents an artist
+"artist" = "Artist";
+
+// Album Artist - Enum
+// Represents an album artist
+"albumArtist" = "Album Artist";
+
+// Author - Enum
+// Represents an author
+"author" = "Author";
+
+// Illustrator - Enum
+// Represents an illustrator
+"illustrator" = "Illustrator";
+
+// Penciller - Enum
+// Represents a penciller
+"penciller" = "Penciller";
+
+// Inker - Enum
+// Represents an inker
+"inker" = "Inker";
+
+// Colorist - Enum
+// Represents a colorist
+"colorist" = "Colorist";
+
+// Letterer - Enum
+// Represents a letterer
+"letterer" = "Letterer";
+
+// Cover Artist - Enum
+// Represents a cover artist
+"coverArtist" = "Cover Artist";
+
+// Editor - Enum
+// Represents an editor
+"editor" = "Editor";
+
+// Translator - Enum
+// Represents a translator
+"translator" = "Translator";
