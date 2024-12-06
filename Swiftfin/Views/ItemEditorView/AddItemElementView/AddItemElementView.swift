@@ -11,7 +11,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct AddItemComponentView<Element: Hashable>: View {
+struct AddItemElementView<Element: Hashable>: View {
 
     @Default(.accentColor)
     private var accentColor
@@ -126,9 +126,9 @@ struct AddItemComponentView<Element: Hashable>: View {
             SearchResultsSection(
                 id: $id,
                 name: $name,
-                isSearching: viewModel.backgroundStates.contains(.searching),
                 type: type,
-                population: viewModel.matches
+                population: viewModel.matches,
+                isSearching: viewModel.backgroundStates.contains(.searching)
             )
         }
     }

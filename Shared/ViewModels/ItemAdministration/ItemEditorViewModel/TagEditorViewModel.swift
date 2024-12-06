@@ -12,6 +12,14 @@ import JellyfinAPI
 
 class TagEditorViewModel: ItemEditorViewModel<String> {
 
+    // MARK: - Populate the Trie
+
+    override func populateTrie() {
+        for element in self.elements {
+            trie.insert(element)
+        }
+    }
+
     // MARK: - Add Tag(s)
 
     override func addComponents(_ tags: [String]) async throws {
@@ -49,15 +57,11 @@ class TagEditorViewModel: ItemEditorViewModel<String> {
         return response.value.tags ?? []
     }
 
-    // MARK: - Get Tag Matches from Population
+    // MARK: - Search For Matching Tags
 
     override func searchElements(_ searchTerm: String) async throws -> [String] {
-        guard !searchTerm.isEmpty else {
-            return []
-        }
+        guard !searchTerm.isEmpty else { return [] }
 
-        return self.elements.filter {
-            $0.range(of: searchTerm, options: .caseInsensitive) != nil
-        }
+        return trie.search(prefix: searchTerm)
     }
 }

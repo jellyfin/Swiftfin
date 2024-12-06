@@ -12,6 +12,16 @@ import JellyfinAPI
 
 class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
 
+    // MARK: - Populate the Trie
+
+    override func populateTrie() {
+        for element in self.elements {
+            if let name = element.name {
+                trie.insert(name)
+            }
+        }
+    }
+
     // MARK: - Add Studio(s)
 
     override func addComponents(_ studios: [NameGuidPair]) async throws {
@@ -54,20 +64,13 @@ class StudioEditorViewModel: ItemEditorViewModel<NameGuidPair> {
         }
     }
 
-    // MARK: - Get Studio Matches from Population
+    // MARK: - Search For Matching Studios
 
     override func searchElements(_ searchTerm: String) async throws -> [NameGuidPair] {
-        guard !searchTerm.isEmpty else {
-            return []
-        }
+        guard !searchTerm.isEmpty else { return [] }
 
-        return self.elements.compactMap {
-            guard let name = $0.name,
-                  name.range(of: searchTerm, options: .caseInsensitive) != nil
-            else {
-                return nil
-            }
-            return NameGuidPair(id: $0.id, name: name)
-        }
+        let matchingItems = Set(trie.search(prefix: searchTerm))
+
+        return elements.filter { matchingItems.contains($0.name!) }
     }
 }

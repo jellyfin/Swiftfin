@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension AddItemComponentView {
+extension AddItemElementView {
 
     struct SearchResultsSection: View {
 
@@ -17,11 +17,10 @@ extension AddItemComponentView {
         var id: String?
         @Binding
         var name: String
-        @State
-        var isSearching: Bool
 
         let type: ItemArrayElements
         let population: [Element]
+        let isSearching: Bool
 
         // MARK: - Body
 
@@ -46,6 +45,7 @@ extension AddItemComponentView {
                             Text(population.count.description)
                         }
                     }
+                    .animation(.easeInOut, value: isSearching)
                 }
             }
         }

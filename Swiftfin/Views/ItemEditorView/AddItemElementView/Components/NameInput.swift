@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension AddItemComponentView {
+extension AddItemElementView {
 
     struct NameInput: View {
 

@@ -12,6 +12,14 @@ import JellyfinAPI
 
 class GenreEditorViewModel: ItemEditorViewModel<String> {
 
+    // MARK: - Populate the Trie
+
+    override func populateTrie() {
+        for element in self.elements {
+            trie.insert(element)
+        }
+    }
+
     // MARK: - Add Genre(s)
 
     override func addComponents(_ genres: [String]) async throws {
@@ -52,15 +60,13 @@ class GenreEditorViewModel: ItemEditorViewModel<String> {
         }
     }
 
-    // MARK: - Get Genres Matches from Population
+    // MARK: - Search For Matching Genres
 
     override func searchElements(_ searchTerm: String) async throws -> [String] {
-        guard !searchTerm.isEmpty else {
-            return []
-        }
+        guard !searchTerm.isEmpty else { return [] }
 
-        return self.elements.filter {
-            $0.range(of: searchTerm, options: .caseInsensitive) != nil
-        }
+        var items = trie.search(prefix: searchTerm)
+
+        return trie.search(prefix: searchTerm)
     }
 }

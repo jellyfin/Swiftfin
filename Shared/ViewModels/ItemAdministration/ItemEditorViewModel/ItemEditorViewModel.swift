@@ -51,16 +51,16 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
     @Published
     var backgroundStates: OrderedSet<BackgroundState> = []
-
     @Published
     var item: BaseItemDto
     @Published
     var elements: [Element] = []
     @Published
     var matches: [Element] = []
-
     @Published
     var state: State = .initial
+
+    var trie = Trie()
 
     private var loadTask: AnyCancellable?
     private var updateTask: AnyCancellable?
@@ -73,10 +73,11 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    // MARK: - Init
+    // MARK: - Initializer
 
     init(item: BaseItemDto) {
         self.item = item
+
         super.init()
 
         setupSearchDebounce()
@@ -123,6 +124,9 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
 
                         _ = self.backgroundStates.remove(.loading)
                     }
+
+                    populateTrie()
+
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
@@ -255,6 +259,12 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         }
     }
 
+    // MARK: - Populate the Trie
+
+    func populateTrie() {
+        fatalError("This method should be overridden in subclasses")
+    }
+
     // MARK: - Add Element Component to Item (To Be Overridden)
 
     func addComponents(_ components: [Element]) async throws {
@@ -279,7 +289,7 @@ class ItemEditorViewModel<Element: Equatable>: ViewModel, Stateful, Eventful {
         fatalError("This method should be overridden in subclasses")
     }
 
-    // MARK: - Search for Matches in the Element Population (To Be Overridden)
+    // MARK: - Return Matching Elements (To Be Overridden)
 
     func searchElements(_ searchTerm: String) async throws -> [Element] {
         fatalError("This method should be overridden in subclasses")
