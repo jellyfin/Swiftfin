@@ -87,7 +87,6 @@ struct ServerUserDeviceAccessView: View {
                 Text(error.localizedDescription)
             }
             .onFirstAppear {
-                viewModel.send(.loadLibraries(isHidden: false))
                 devicesViewModel.send(.getDevices)
             }
     }
