@@ -47,7 +47,7 @@ struct ServerUserLiveTVAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.liveTvAccess.capitalized)
+            .navigationTitle(L10n.tvAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -93,11 +93,11 @@ struct ServerUserLiveTVAccessView: View {
         List {
             Section(L10n.access) {
                 Toggle(
-                    L10n.enableLiveTVAccess,
+                    L10n.liveTvAccess,
                     isOn: $tempPolicy.enableLiveTvAccess.coalesce(false)
                 )
                 Toggle(
-                    L10n.enableLiveTVManagement,
+                    L10n.liveTvRecordingManagement,
                     isOn: $tempPolicy.enableLiveTvManagement.coalesce(false)
                 )
             }

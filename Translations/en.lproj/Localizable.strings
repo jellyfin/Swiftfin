@@ -1945,6 +1945,10 @@
 // Section Title for Server User Device Access Editing
 "deviceAccess" = "Device Access";
 
+// (Live) TV Access - Section Title
+// Section Title for Server User Live TV Access Editing
+"tvAccess" = "TV Access";
+
 // Deletion - Section Description
 // Section Title for Media Deletion
 "deletion" = "Deletion";
@@ -2048,27 +2052,3 @@
 // Translator - Enum
 // Represents a translator
 "translator" = "Translator";
-
-// Enable Live TV Access - Toggle
-// Toggle to allow the user to access Live TV
-"enableLiveTVAccess" = "Enable Live TV access";
-
-// Enable Live TV Management - Toggle
-// Toggle to allow the user to manage Live TV
-"enableLiveTVManagement" = "Enable Live TV management";
-
-// Enable All Channels - Toggle
-// Toggle to allow access to all channels
-"enableAllChannels" = "Enable All Channels";
-
-// Channel Mode - Picker title
-// Title for the mode picker to switch between enabled and blocked channels
-"channelMode" = "Channel Mode";
-
-// Enabled Channels - Picker option
-// Option to edit enabled channels
-"enabledChannels" = "Enabled Channels";
-
-// Blocked Channels - Picker option
-// Option to edit blocked channels
-"blockedChannels" = "Blocked Channels";
