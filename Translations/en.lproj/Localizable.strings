@@ -1937,9 +1937,13 @@
 // Toggle to enable a setting for all devices
 "enableAllDevices" = "Enable all devices";
 
-// Item Access - Section Title
-// Section Title for Server User Media / Device Access Editing
-"stringWithAccess" = "%@ Access";
+// Media Access - Section Title
+// Section Title for Server User Media Access Editing
+"mediaAccess" = "Media Access";
+
+// Device Access - Section Title
+// Section Title for Server User Device Access Editing
+"deviceAccess" = "Device Access";
 
 // Deletion - Section Description
 // Section Title for Media Deletion

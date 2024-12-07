@@ -42,7 +42,7 @@ struct ServerUserAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.stringWithAccess(L10n.media))
+            .navigationTitle(L10n.mediaAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()

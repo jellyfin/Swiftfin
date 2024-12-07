@@ -436,6 +436,8 @@ internal enum L10n {
   internal static let details = L10n.tr("Localizable", "details", fallback: "Details")
   /// Device
   internal static let device = L10n.tr("Localizable", "device", fallback: "Device")
+  /// Device Access
+  internal static let deviceAccess = L10n.tr("Localizable", "deviceAccess", fallback: "Device Access")
   /// Device Profile
   internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
   /// Decide which media plays natively or requires server transcoding for compatibility.
@@ -746,6 +748,8 @@ internal enum L10n {
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback.")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
+  /// Media Access
+  internal static let mediaAccess = L10n.tr("Localizable", "mediaAccess", fallback: "Media Access")
   /// Media downloads
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
@@ -1086,10 +1090,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Runtime
-  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Run Time
   internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
+  /// Runtime
+  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
@@ -1234,10 +1238,6 @@ internal enum L10n {
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story Arc")
   /// Streams
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
-  /// %@ Access
-  internal static func stringWithAccess(_ p1: Any) -> String {
-    return L10n.tr("Localizable", "stringWithAccess", String(describing: p1), fallback: "%@ Access")
-  }
   /// STUDIO
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "STUDIO")
   /// Studios
