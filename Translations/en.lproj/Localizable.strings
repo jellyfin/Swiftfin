@@ -1933,9 +1933,13 @@
 // Toggle to enable a setting for all Libraries
 "enableAllLibraries" = "Enable all libraries";
 
-// Media Access - Section Title
-// Section Title for Server User Media Access Editing
-"mediaAccess" = "Media Access";
+// Enable All Devices - Toggle
+// Toggle to enable a setting for all devices
+"enableAllDevices" = "Enable all devices";
+
+// Item Access - Section Title
+// Section Title for Server User Media / Device Access Editing
+"stringWithAccess" = "%@ Access";
 
 // Deletion - Section Description
 // Section Title for Media Deletion

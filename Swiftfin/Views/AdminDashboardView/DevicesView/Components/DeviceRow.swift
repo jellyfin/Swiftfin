@@ -73,6 +73,7 @@ extension DevicesView {
             HStack {
                 VStack(alignment: .leading) {
 
+                    // TODO: 10.9 SDK - Enable Nicknames
                     Text(device.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)

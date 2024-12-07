@@ -484,6 +484,8 @@ internal enum L10n {
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
+  /// Enable all devices
+  internal static let enableAllDevices = L10n.tr("Localizable", "enableAllDevices", fallback: "Enable all devices")
   /// Enable all libraries
   internal static let enableAllLibraries = L10n.tr("Localizable", "enableAllLibraries", fallback: "Enable all libraries")
   /// Enabled
@@ -744,8 +746,6 @@ internal enum L10n {
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback.")
   /// Media
   internal static let media = L10n.tr("Localizable", "media", fallback: "Media")
-  /// Media Access
-  internal static let mediaAccess = L10n.tr("Localizable", "mediaAccess", fallback: "Media Access")
   /// Media downloads
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
@@ -1234,6 +1234,10 @@ internal enum L10n {
   internal static let storyArc = L10n.tr("Localizable", "storyArc", fallback: "Story Arc")
   /// Streams
   internal static let streams = L10n.tr("Localizable", "streams", fallback: "Streams")
+  /// %@ Access
+  internal static func stringWithAccess(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "stringWithAccess", String(describing: p1), fallback: "%@ Access")
+  }
   /// STUDIO
   internal static let studio = L10n.tr("Localizable", "studio", fallback: "STUDIO")
   /// Studios

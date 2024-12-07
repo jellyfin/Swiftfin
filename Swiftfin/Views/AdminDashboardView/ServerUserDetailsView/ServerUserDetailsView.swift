@@ -45,22 +45,23 @@ struct ServerUserDetailsView: View {
                             router.route(to: \.resetUserPassword, userId)
                         }
                 }
-            }
-
-            Section {
-                ChevronButton(L10n.mediaAccess)
-                    .onSelect {
-                        router.route(to: \.userMediaAccess, viewModel)
-                    }
 
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
                     }
+            }
 
-                // TODO: Access: enabledFolders & enableAllFolders
+            Section(L10n.access) {
+                ChevronButton(L10n.media)
+                    .onSelect {
+                        router.route(to: \.userMediaAccess, viewModel)
+                    }
 
-                // TODO: Deletion: enableContentDeletion & enableContentDeletionFromFolders
+                ChevronButton(L10n.devices)
+                    .onSelect {
+                        router.route(to: \.userDeviceAccess, viewModel)
+                    }
 
                 // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
 

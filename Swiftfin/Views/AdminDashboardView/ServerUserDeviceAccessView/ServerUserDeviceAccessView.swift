@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ServerUserAccessView: View {
+struct ServerUserDeviceAccessView: View {
 
     // MARK: - Environment
 
@@ -21,6 +21,8 @@ struct ServerUserAccessView: View {
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
+    @ObservedObject
+    private var devicesViewModel = DevicesViewModel()
 
     // MARK: - State Variables
 
@@ -30,6 +32,11 @@ struct ServerUserAccessView: View {
     private var error: Error?
     @State
     private var isPresentingError: Bool = false
+
+    // MARK: - Current Date
+
+    @CurrentDate
+    private var currentDate: Date
 
     // MARK: - Initializer
 
@@ -42,7 +49,7 @@ struct ServerUserAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.stringWithAccess(L10n.media))
+            .navigationTitle(L10n.stringWithAccess(L10n.device))
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -81,6 +88,7 @@ struct ServerUserAccessView: View {
             }
             .onFirstAppear {
                 viewModel.send(.loadLibraries(isHidden: false))
+                devicesViewModel.send(.getDevices)
             }
     }
 
@@ -89,58 +97,82 @@ struct ServerUserAccessView: View {
     @ViewBuilder
     var contentView: some View {
         List {
-            accessView
-            deletionView
-        }
-    }
+            Section(L10n.access) {
+                Toggle(
+                    L10n.enableAllDevices,
+                    isOn: $tempPolicy.enableAllDevices.coalesce(false)
+                )
+            }
 
-    // MARK: - Media Access View
-
-    @ViewBuilder
-    var accessView: some View {
-        Section(L10n.access) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableAllFolders.coalesce(false)
-            )
-        }
-
-        if tempPolicy.enableAllFolders == false {
-            Section {
-                ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enabledFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
+            if tempPolicy.enableAllDevices == false {
+                Section {
+                    ForEach(devicesViewModel.devices, id: \.self) { device in
+                        Toggle(
+                            isOn: $tempPolicy.enabledDevices
+                                .coalesce([])
+                                .contains(device.id!)
+                        ) {
+                            HStack {
+                                deviceImage(device)
+                                deviceDetails(device)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    // MARK: - Media Deletion View
+    // MARK: - Device Details View
 
     @ViewBuilder
-    var deletionView: some View {
-        Section(L10n.deletion) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableContentDeletion.coalesce(false)
-            )
-        }
+    private func deviceDetails(_ device: DeviceInfo) -> some View {
+        VStack(alignment: .leading) {
 
-        if tempPolicy.enableContentDeletion == false {
-            Section {
-                ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enableContentDeletionFromFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
-                }
-            }
+            // TODO: 10.9 SDK - Enable Nicknames
+            Text(device.name ?? L10n.unknown)
+                .font(.headline)
+                .lineLimit(1)
+                .multilineTextAlignment(.leading)
+
+            TextPairView(
+                leading: L10n.latestWithString(L10n.user),
+                trailing: device.lastUserName ?? L10n.unknown
+            )
+            .lineLimit(1)
+
+            TextPairView(
+                leading: L10n.client,
+                trailing: device.appName ?? L10n.unknown
+            )
+            .lineLimit(1)
+
+            TextPairView(
+                L10n.lastSeen,
+                value: Text(device.dateLastActivity, format: .lastSeen)
+            )
+            .id(currentDate)
+            .monospacedDigit()
         }
+        .font(.subheadline)
+        .foregroundStyle(.primary, .secondary)
+    }
+
+    // MARK: - Device Image View
+
+    @ViewBuilder
+    private func deviceImage(_ device: DeviceInfo) -> some View {
+        ZStack {
+            device.type.clientColor
+
+            Image(device.type.image)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 40)
+        }
+        .squarePosterStyle()
+        .posterShadow()
+        .frame(width: 60, height: 60)
+        .padding(.trailing)
     }
 }
