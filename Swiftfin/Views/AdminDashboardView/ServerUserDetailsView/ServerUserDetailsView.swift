@@ -45,11 +45,17 @@ struct ServerUserDetailsView: View {
                             router.route(to: \.resetUserPassword, userId)
                         }
                 }
+            }
 
+            Section {
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
                     }
+
+                // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
+
+                // TODO: Live TV: enabledChannels & enableAllChannels
             }
 
             Section(L10n.access) {
@@ -62,10 +68,6 @@ struct ServerUserDetailsView: View {
                     .onSelect {
                         router.route(to: \.userDeviceAccess, viewModel)
                     }
-
-                // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
-
-                // TODO: Live TV: enabledChannels & enableAllChannels
             }
         }
         .navigationTitle(L10n.user)
