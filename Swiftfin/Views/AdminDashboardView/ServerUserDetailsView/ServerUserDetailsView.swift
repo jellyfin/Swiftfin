@@ -47,7 +47,7 @@ struct ServerUserDetailsView: View {
                 }
             }
 
-            Section {
+            Section(L10n.advanced) {
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
