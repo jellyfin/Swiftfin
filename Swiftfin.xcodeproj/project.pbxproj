@@ -605,8 +605,8 @@
 		E1549663296CA2EF00C4EF88 /* UserSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549657296CA2EF00C4EF88 /* UserSession.swift */; };
 		E1549664296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */; };
 		E1549665296CA2EF00C4EF88 /* SwiftfinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */; };
-		E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */; };
-		E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */; };
+		E1549666296CA2EF00C4EF88 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* Notifications.swift */; };
+		E1549667296CA2EF00C4EF88 /* Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1549659296CA2EF00C4EF88 /* Notifications.swift */; };
 		E154966A296CA2EF00C4EF88 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965B296CA2EF00C4EF88 /* DownloadManager.swift */; };
 		E154966B296CA2EF00C4EF88 /* DownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965B296CA2EF00C4EF88 /* DownloadManager.swift */; };
 		E154966E296CA2EF00C4EF88 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E154965D296CA2EF00C4EF88 /* LogManager.swift */; };
@@ -1565,7 +1565,7 @@
 		E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinDefaults.swift; sourceTree = "<group>"; };
 		E1549657296CA2EF00C4EF88 /* UserSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserSession.swift; sourceTree = "<group>"; };
 		E1549658296CA2EF00C4EF88 /* SwiftfinStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinStore.swift; sourceTree = "<group>"; };
-		E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftfinNotifications.swift; sourceTree = "<group>"; };
+		E1549659296CA2EF00C4EF88 /* Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notifications.swift; sourceTree = "<group>"; };
 		E154965B296CA2EF00C4EF88 /* DownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DownloadManager.swift; sourceTree = "<group>"; };
 		E154965D296CA2EF00C4EF88 /* LogManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InlineEnumToggle.swift; sourceTree = "<group>"; };
@@ -3641,8 +3641,8 @@
 				E1549655296CA2EF00C4EF88 /* DownloadTask.swift */,
 				E19D41A92BF077130082B8B2 /* Keychain.swift */,
 				E154965D296CA2EF00C4EF88 /* LogManager.swift */,
+				E1549659296CA2EF00C4EF88 /* Notifications.swift */,
 				E1549656296CA2EF00C4EF88 /* SwiftfinDefaults.swift */,
-				E1549659296CA2EF00C4EF88 /* SwiftfinNotifications.swift */,
 				E1549657296CA2EF00C4EF88 /* UserSession.swift */,
 			);
 			path = Services;
@@ -4956,7 +4956,7 @@
 				62E632F4267D54030063E547 /* ItemViewModel.swift in Sources */,
 				4E2182E52CAF67F50094806B /* PlayMethod.swift in Sources */,
 				62E632E7267D3F5B0063E547 /* EpisodeItemViewModel.swift in Sources */,
-				E1549667296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
+				E1549667296CA2EF00C4EF88 /* Notifications.swift in Sources */,
 				E150C0BB2BFD44F500944FFA /* ImagePipeline.swift in Sources */,
 				E11E0E8D2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E1575E6B293E77B5001665B1 /* Displayable.swift in Sources */,
@@ -5496,7 +5496,7 @@
 				E1E0BEB729EF450B0002E8D3 /* UIGestureRecognizer.swift in Sources */,
 				E1FA891E289A305D00176FEB /* iPadOSCollectionItemContentView.swift in Sources */,
 				E12CC1AE28D0FAEA00678D5D /* NextUpLibraryViewModel.swift in Sources */,
-				E1549666296CA2EF00C4EF88 /* SwiftfinNotifications.swift in Sources */,
+				E1549666296CA2EF00C4EF88 /* Notifications.swift in Sources */,
 				4EE141692C8BABDF0045B661 /* ActiveSessionProgressSection.swift in Sources */,
 				E1A1528528FD191A00600579 /* TextPair.swift in Sources */,
 				6334175D287DE0D0000603CE /* QuickConnectAuthorizeViewModel.swift in Sources */,

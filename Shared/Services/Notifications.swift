@@ -32,7 +32,7 @@ enum Notifications {
         private var notificationCenter
 
         let name: Notification.Name
-        
+
         var rawValue: String {
             name.rawValue
         }
@@ -153,14 +153,14 @@ extension Notifications.Key {
         Key("didChangeUserProfileImage")
     }
 
+    static var didAddServerUser: Key<UserState> {
+        Key("didAddServerUser")
+    }
+
     // MARK: - Playback
 
     static var didStartPlayback: Key<Void> {
         Key("didStartPlayback")
-    }
-
-    static var didAddServerUser: Key<UserState> {
-        Key("didAddServerUser")
     }
 
     // MARK: - UIApplication
