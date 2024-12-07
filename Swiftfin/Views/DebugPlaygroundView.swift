@@ -21,7 +21,7 @@ struct DebugPlaygroundView: View {
 
 #if DEBUG
 struct TestPlaybackProgressView: View {
-    
+
     @ObserveInjection
     private var inject
 

@@ -14,7 +14,7 @@ import SwiftUI
 extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
     struct PlaybackRateMenu: View {
-        
+
         @Default(.VideoPlayer.Playback.rates)
         private var rates: [Float]
 

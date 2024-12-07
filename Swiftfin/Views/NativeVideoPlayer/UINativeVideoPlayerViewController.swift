@@ -38,9 +38,9 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 
         allowsPictureInPicturePlayback = true
         updatesNowPlayingInfoCenter = false
-        
+
         timeObserver = newPlayer.addPeriodicTimeObserver(
-            forInterval: CMTime(seconds: 1, preferredTimescale: 1_000),
+            forInterval: CMTime(seconds: 1, preferredTimescale: 1000),
             queue: .main
         ) { newTime in
             print(newTime)
@@ -48,8 +48,8 @@ class UINativeVideoPlayerViewController: AVPlayerViewController {
 //                await manager.send(.seek(seconds: newTime.seconds))
 //            }
         }
-        
-        rateObserver = newPlayer.observe(\.rate, options: [.new, .initial]) { player, value in
+
+        rateObserver = newPlayer.observe(\.rate, options: [.new, .initial]) { _, value in
             if let rate = value.newValue {
                 print(rate)
             }

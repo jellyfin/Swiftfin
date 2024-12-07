@@ -15,7 +15,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
         @Default(.VideoPlayer.autoPlayEnabled)
         private var isAutoPlayEnabled
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
 

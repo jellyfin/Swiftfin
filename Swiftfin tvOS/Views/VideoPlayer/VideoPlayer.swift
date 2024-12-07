@@ -27,7 +27,7 @@ struct VideoPlayer: View {
     private var router: VideoPlayerCoordinator.Router
 
     @State
-    private var audioOffset: Int = 0
+    private var audioOffset: TimeInterval = 0
     @State
     private var isAspectFilled: Bool = false
     @State
@@ -37,12 +37,28 @@ struct VideoPlayer: View {
     @State
     private var scrubbedSeconds: TimeInterval = 0.0
     @State
-    private var subtitleOffset: Int = 0
+    private var subtitleOffset: TimeInterval = 0
 
     @StateObject
     private var manager: MediaPlayerManager
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
+
+    // MARK: init
+
+    init(manager: MediaPlayerManager) {
+
+        let videoPlayerProxy = VLCVideoPlayerProxy()
+        let vlcUIProxy = VLCVideoPlayer.Proxy()
+
+        videoPlayerProxy.vlcUIProxy = vlcUIProxy
+        manager.proxy = videoPlayerProxy
+
+        manager.listeners.append(NowPlayableListener(manager: manager))
+
+        self._manager = StateObject(wrappedValue: manager)
+        self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
+    }
 
     // MARK: playerView
 
@@ -57,22 +73,20 @@ struct VideoPlayer: View {
                     .proxy(vlcUIProxy)
                     .onSecondsUpdated { newSeconds, _ in
 
-                        guard manager.state != .initial || manager.state != .loadingItem else { return }
-
                         if !isScrubbing {
                             scrubbedSeconds = newSeconds
                         }
 
                         // TODO: fix menu pulsing issue
-                        manager.send(.seek(seconds: newSeconds))
+                        manager.set(seconds: newSeconds)
                     }
                     .onStateUpdated { state, _ in
 
-                        guard state != .playing || manager.state != .playing else { return }
-
                         switch state {
-                        case .buffering, .esAdded, .opening:
-                            manager.send(.buffer)
+                        case .buffering, .esAdded, .opening: ()
+//                            if manager.playbackStatus != .buffering {
+//                                manager.playbackStatus = .buffering
+//                            }
                         case .ended, .stopped:
                             isScrubbing = false
                             manager.send(.ended)
@@ -81,20 +95,20 @@ struct VideoPlayer: View {
                             isScrubbing = false
                             manager.send(.error(.init("Unable to perform playback")))
                         case .playing:
-                            manager.send(.play)
+                            manager.set(playbackRequestStatus: .playing)
                         case .paused:
-                            manager.send(.pause)
+                            manager.set(playbackRequestStatus: .paused)
                         }
                     }
             }
 
             Overlay()
+                .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
                 .environment(\.isScrubbing, $isScrubbing)
                 .environment(\.safeAreaInsets, $safeAreaInsets)
                 .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
-                .environmentObject(vlcUIProxy)
         }
     }
 
@@ -102,14 +116,14 @@ struct VideoPlayer: View {
 
     var body: some View {
 
-        let _ = Self._printChanges()
+//        let _ = Self._printChanges()
 
         playerView
             .ignoresSafeArea()
             .navigationBarHidden()
             .trackingSize(.constant(.zero), $safeAreaInsets)
             .onChange(of: audioOffset) {
-                vlcUIProxy.setAudioDelay(.ticks(audioOffset))
+                vlcUIProxy.setAudioDelay(.seconds(audioOffset))
             }
             .onChange(of: isAspectFilled) {
                 UIView.animate(withDuration: 0.2) {
@@ -119,8 +133,8 @@ struct VideoPlayer: View {
             .onChange(of: isScrubbing) {
                 guard !isScrubbing else { return }
 
-                manager.send(.seek(seconds: scrubbedSeconds))
                 manager.proxy?.setTime(scrubbedSeconds)
+                manager.set(seconds: scrubbedSeconds)
             }
             .onChange(of: subtitleColor) {
                 vlcUIProxy.setSubtitleColor(.absolute(subtitleColor.uiColor))
@@ -129,7 +143,7 @@ struct VideoPlayer: View {
                 vlcUIProxy.setSubtitleFont(subtitleFontName)
             }
             .onChange(of: subtitleOffset) {
-                vlcUIProxy.setSubtitleDelay(.ticks(subtitleOffset))
+                vlcUIProxy.setSubtitleDelay(.seconds(subtitleOffset))
             }
             .onChange(of: subtitleSize) {
                 vlcUIProxy.setSubtitleSize(.absolute(24 - subtitleSize))
@@ -154,39 +168,3 @@ struct VideoPlayer: View {
             }
     }
 }
-
-// MARK: init
-
-extension VideoPlayer {
-
-    init(manager: MediaPlayerManager) {
-
-        let videoPlayerProxy = VLCVideoPlayerProxy()
-        let vlcUIProxy = VLCVideoPlayer.Proxy()
-
-        videoPlayerProxy.vlcUIProxy = vlcUIProxy
-        manager.proxy = videoPlayerProxy
-
-        manager.listeners.append(NowPlayableListener(manager: manager))
-
-        self.init(
-            manager: manager,
-            vlcUIProxy: vlcUIProxy
-        )
-    }
-}
-
-// struct VideoPlayer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VideoPlayer(
-//            item: .init(
-//                baseItem: .init(name: "Top Gun Maverick", runTimeTicks: 10_000_000_000),
-//                mediaSource: .init(),
-//                playSessionID: "",
-//                url: URL(string: "/")!
-//            )
-//        )
-//        .previewInterfaceOrientation(.landscapeLeft)
-//        .preferredColorScheme(.dark)
-//    }
-// }

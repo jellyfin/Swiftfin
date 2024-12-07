@@ -20,7 +20,7 @@ class ToastProxy: ObservableObject {
 
     private let pokeTimer = PokeIntervalTimer(defaultInterval: 1)
     private var pokeCancellable: AnyCancellable?
-    
+
     init() {
         pokeCancellable = pokeTimer.hasFired
             .sink {
@@ -31,17 +31,17 @@ class ToastProxy: ObservableObject {
     func present(_ text: String, systemName: String? = nil) {
         self.text = Text(text)
         self.systemName = systemName
-        
+
         poke()
     }
-    
+
     func present(_ text: Text, systemName: String? = nil) {
         self.text = text
         self.systemName = systemName
-        
+
         poke()
     }
-    
+
     private func poke() {
         isPresenting = true
         pokeTimer.poke()

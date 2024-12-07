@@ -12,7 +12,7 @@ import Stinsen
 import SwiftUI
 
 struct SettingsView: View {
-    
+
     @ObserveInjection
     private var inject
 

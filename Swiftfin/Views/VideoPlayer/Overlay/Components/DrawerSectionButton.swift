@@ -34,7 +34,7 @@ extension VideoPlayer.Overlay {
                 .background {
                     ZStack {
                         EmptyHitTestView()
-                        
+
                         if isActive {
                             Rectangle()
                                 .foregroundStyle(.white)

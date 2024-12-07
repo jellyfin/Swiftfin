@@ -36,7 +36,7 @@ protocol MediaPlayerSupplement: Identifiable<String> {
 }
 
 extension MediaPlayerSupplement {
-    
+
     var asAny: AnyMediaPlayerSupplement {
         AnyMediaPlayerSupplement(supplement: self)
     }

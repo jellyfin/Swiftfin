@@ -24,14 +24,14 @@ protocol MediaPlayerListener {
 typealias MediaPlayerItemProvider = (BaseItemDto) async throws -> MediaPlayerItem
 
 class MediaPlayerManager: ViewModel, Eventful, Stateful {
-    
+
     /// A status indicating the player's
     /// request for media playback.
     enum PlaybackRequestStatus {
-        
+
         /// The player requests more info to be playing
         case playing
-        
+
         /// The player is paused
         case paused
     }
@@ -87,7 +87,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     private(set) var seconds: TimeInterval = 0
     @Published
     final var state: State = .playback
-    
+
     var proxy: MediaPlayerProxy?
     var queue: (any MediaPlayerQueue)?
 
@@ -101,7 +101,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     /// - PlaybackItem provided supplements
     @Published
     private(set) var supplements: [any MediaPlayerSupplement] = []
-    
+
     /// The playback item provider that should be used
     /// during the lifetime of this manager
     private let playbackItemProvider: MediaPlayerItemProvider?
@@ -122,7 +122,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         self.queue = queue
         self.playbackItemProvider = playbackItemProvider
         super.init()
-        
+
         self.queue?.manager = self
 
         supplements = [MediaInfoSupplement(item: item)]
@@ -141,7 +141,7 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
         self.queue = queue
         self.playbackItemProvider = playbackItemProvider
         super.init()
-        
+
         self.queue?.manager = self
 
         supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
@@ -174,30 +174,30 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
             guard let playbackItemProvider else {
                 return .error(.init("Attempted to play new item from base item, but no playback item provider was provided"))
             }
-            
+
             self.item = item
             buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
                 self.state = .playback
                 self.playbackItem = newItem
                 self.eventSubject.send(.playNew(playbackItem: newItem))
             }
-            
+
             return .loadingItem
         }
     }
-    
+
     @MainActor
     func set(seconds: TimeInterval) {
         self.seconds = seconds
     }
-    
+
     @MainActor
     func set(playbackRequestStatus: PlaybackRequestStatus) {
         if self.playbackRequestStatus != playbackRequestStatus {
             self.playbackRequestStatus = playbackRequestStatus
         }
     }
-    
+
     @MainActor
     func set(rate: Float) {
         if self.rate != rate {

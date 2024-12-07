@@ -13,38 +13,38 @@ import OrderedCollections
 import SwiftUI
 
 protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
-    
+
     var hasNextItem: Bool { get }
     var hasPreviousItem: Bool { get }
-    
+
     var items: OrderedSet<BaseItemDto> { get set }
-    
+
     var nextItem: BaseItemDto? { get }
     var previousItem: BaseItemDto? { get }
-    
+
     func playNextItem()
     func playPreviousItem()
 }
 
 extension MediaPlayerQueue {
-    
+
     var hasNextItem: Bool {
         guard let currentItem = manager?.item else { return false }
         return items.last != currentItem
     }
-    
+
     var hasPreviousItem: Bool {
         guard let currentItem = manager?.item else { return false }
         return items.first != currentItem
     }
-    
+
     var nextItem: BaseItemDto? {
         guard let currentItem = manager?.item,
               let i = items.firstIndex(where: { $0.id == currentItem.id }),
               i != items.endIndex else { return items.first }
         return items[items.index(after: i)]
     }
-    
+
     var previousItem: BaseItemDto? {
         guard let currentItem = manager?.item,
               let i = items.firstIndex(where: { $0.id == currentItem.id }),
@@ -54,32 +54,31 @@ extension MediaPlayerQueue {
 }
 
 class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
-    
+
     weak var manager: MediaPlayerManager?
-    
+
     var items: OrderedSet<BaseItemDto> = []
     let title: String = "Episodes"
-    
+
     private let seriesViewModel: SeriesItemViewModel
-    
+
     var id: String {
         "EpisodeMediaPlayerQueue"
     }
-    
+
     init(episode: BaseItemDto) {
         self.seriesViewModel = SeriesItemViewModel(episode: episode)
         super.init()
-        
-        seriesViewModel.$seasons.sink { seasons in
-            
+
+        seriesViewModel.$seasons.sink { _ in
         }
         .store(in: &cancellables)
-        
+
         Task {
             await seriesViewModel.send(.refresh)
         }
     }
-    
+
     private func setup(with manager: MediaPlayerManager) {
         cancellables = []
 
@@ -87,32 +86,28 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 //        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
 //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
-    
-    func playNextItem() {
-        
-    }
-    
-    func playPreviousItem() {
-        
-    }
-    
+
+    func playNextItem() {}
+
+    func playPreviousItem() {}
+
     @ViewBuilder
     func videoPlayerBody() -> some View {
         _View(viewModel: seriesViewModel)
             .frame(height: 150)
     }
-    
+
     struct _View: View {
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         @ObservedObject
         var viewModel: SeriesItemViewModel
-        
+
         @State
         private var selection: SeasonItemViewModel?
-        
+
         var body: some View {
             ZStack {
                 if let selection {
@@ -146,7 +141,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     manager.queue?.items.removeAll()
                     return
                 }
-                
+
                 manager.queue?.items = newValue.elements
 
                 if newValue.state == .initial {
@@ -155,26 +150,26 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             }
             .onChange(of: selection?.elements) { newValue in
                 guard let newValue else { return }
-                
+
                 manager.queue?.items = newValue
             }
         }
     }
-    
+
     struct EpisodeButton: View {
-        
+
         @Default(.accentColor)
         private var accentColor
-        
+
         @Environment(\.isPresentingOverlay)
         @Binding
         private var isPresentingOverlay: Bool
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         let item: BaseItemDto
-        
+
         var body: some View {
             Button {
                 isPresentingOverlay = false
@@ -183,12 +178,12 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                 VStack(alignment: .leading, spacing: 5) {
                     ZStack {
                         Color.clear
-                        
+
                         ImageView(item.imageSource(.primary, maxWidth: 150))
                             .failure {
                                 ZStack {
                                     BlurView()
-                                    
+
                                     SystemImageContentView(systemName: item.systemImage)
                                         .background(color: Color.clear)
                                 }
@@ -204,12 +199,12 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     .aspectRatio(1.77, contentMode: .fill)
                     .posterBorder(ratio: 1 / 30, of: \.width)
                     .cornerRadius(ratio: 1 / 30, of: \.width)
-                    
+
                     Text(item.displayTitle)
                         .lineLimit(1)
                         .foregroundStyle(.white)
                         .frame(height: 15)
-                    
+
                     Text(item.seasonEpisodeLabel ?? .emptyDash)
                         .frame(height: 20)
                         .foregroundStyle(Color(UIColor.systemBlue))

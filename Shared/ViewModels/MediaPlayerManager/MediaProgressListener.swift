@@ -35,7 +35,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
     private func sendReport() {
         guard let item else { return }
-        
+
         switch lastPlaybackStatus {
         case .playing:
             if hasSentStart {
@@ -73,7 +73,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
             self.item = nil
         }
     }
-    
+
     private func playbackStatusDidChange(newStatus: MediaPlayerManager.PlaybackRequestStatus) {
         lastPlaybackStatus = newStatus
     }
@@ -100,7 +100,7 @@ class MediaProgressListener: ViewModel, MediaPlayerListener {
 
             let request = Paths.reportPlaybackStart(info)
             let _ = try await userSession.client.send(request)
-            
+
             self.hasSentStart = true
         }
         .asAnyCancellable()

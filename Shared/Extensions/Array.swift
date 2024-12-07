@@ -21,7 +21,7 @@ extension Array {
             return self
         }
     }
-    
+
     func appending(ifLet element: Element?) -> [Element] {
         if let element {
             return self + [element]

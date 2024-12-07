@@ -46,16 +46,16 @@ extension VideoPlayer.Overlay {
         private var liveIndicatorSize: CGSize = .zero
         @State
         private var sliderSize: CGSize = .zero
-        
+
         private var progress: Double {
             scrubbedSeconds / manager.item.runTimeSeconds
         }
-        
+
         private var previewXOffset: CGFloat {
             let p = sliderSize.width * progress
             return clamp(p, min: 100, max: sliderSize.width - 100)
         }
-        
+
         @ViewBuilder
         private var liveIndicator: some View {
             Text("Live")
@@ -116,7 +116,7 @@ extension VideoPlayer.Overlay {
                         }
                     }
                     .trackingSize($sliderSize)
-                    
+
                     SplitTimeStamp()
                         .if(sliderType == .capsule) { view in
                             view.offset(y: isScrubbing ? 5 : 0)

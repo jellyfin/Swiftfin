@@ -72,14 +72,14 @@ struct ChannelLibraryView: View {
     }
 
     // MARK: item view
-    
+
     private func onChannelSelected(_ channel: BaseItemDto) {
         guard let mediaSource = channel.mediaSources?.first else { return }
-        
+
         let manager = MediaPlayerManager(item: channel) { _ in
             try await MediaPlayerItem.build(for: channel, mediaSource: mediaSource)
         }
-        
+
         mainRouter.route(to: \.videoPlayer, manager)
     }
 

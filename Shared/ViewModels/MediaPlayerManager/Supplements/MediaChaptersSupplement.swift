@@ -33,14 +33,14 @@ struct MediaChaptersSupplement: MediaPlayerSupplement {
 }
 
 extension MediaChaptersSupplement {
-    
+
     struct ChapterOverlay: View {
-        
+
         @StateObject
         private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
-        
+
         let chapters: [ChapterInfo.FullInfo]
-        
+
         var body: some View {
             CollectionHStack(chapters) { chapter in
                 ChapterButton(chapter: chapter)
@@ -51,20 +51,20 @@ extension MediaChaptersSupplement {
             .frame(height: 150)
         }
     }
-    
+
     struct ChapterButton: View {
-        
+
         @Default(.accentColor)
         private var accentColor
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         @State
         private var contentSize: CGSize = .zero
-        
+
         let chapter: ChapterInfo.FullInfo
-        
+
         var body: some View {
             Button {
                 manager.set(seconds: chapter.secondsRange.lowerBound)
@@ -73,12 +73,12 @@ extension MediaChaptersSupplement {
                 VStack(alignment: .leading, spacing: 5) {
                     ZStack {
                         Color.clear
-                        
+
                         ImageView(chapter.landscapeImageSources(maxWidth: 500))
                             .failure {
                                 ZStack {
                                     BlurView()
-                                    
+
                                     SystemImageContentView(systemName: chapter.systemImage)
                                         .background(color: Color.clear)
                                 }
@@ -93,12 +93,12 @@ extension MediaChaptersSupplement {
                     .aspectRatio(1.77, contentMode: .fill)
                     .posterBorder(ratio: 1 / 30, of: \.width)
                     .cornerRadius(ratio: 1 / 30, of: \.width)
-                    
+
                     Text(chapter.chapterInfo.displayTitle)
                         .lineLimit(1)
                         .foregroundStyle(.white)
                         .frame(height: 15)
-                    
+
                     Text(chapter.chapterInfo.startTimeSeconds, format: .runtime)
                         .frame(height: 20)
                         .foregroundStyle(Color(UIColor.systemBlue))

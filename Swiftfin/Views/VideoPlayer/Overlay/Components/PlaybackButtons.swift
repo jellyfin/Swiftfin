@@ -24,7 +24,7 @@ extension VideoPlayer.Overlay {
         private var overlayTimer: PokeIntervalTimer
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         private func onPressed(isPressed: Bool) {
             if isPressed {
                 overlayTimer.stop()
@@ -32,7 +32,7 @@ extension VideoPlayer.Overlay {
                 overlayTimer.poke()
             }
         }
-        
+
         private var shouldShowJumpButtons: Bool {
             showJumpButtons && !manager.item.isLiveStream
         }

@@ -85,7 +85,7 @@ struct RateStyle: FormatStyle {
     // that's small and centered
     func format(_ value: Float) -> String {
         FloatingPointFormatStyle<Float>()
-            .precision(.significantDigits(1...3))
+            .precision(.significantDigits(1 ... 3))
             .format(value)
             .appending("x")
     }

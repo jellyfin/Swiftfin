@@ -20,9 +20,9 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
     @Root
     var start = makeStart
-    
+
     private var manager: MediaPlayerManager
-    
+
     init(manager: MediaPlayerManager) {
         self.manager = manager
     }
@@ -77,19 +77,13 @@ final class VideoPlayerCoordinator: NavigationCoordinatable {
 
         #else
 
-        let manager = MediaPlayerManager(item: self.baseItem) {
-            try await MediaPlayerItem.build(for: self.baseItem, mediaSource: self.mediaSource)
-        }
-
-        if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
-            VideoPlayer(manager: manager)
-
-//            PreferencesView {
-//            }
-//            .ignoresSafeArea()
-        } else {
-            Color.red
-//            NativeVideoPlayer(manager: self.videoPlayerManager)
+        ZStack {
+            if Defaults[.VideoPlayer.videoPlayerType] == .swiftfin {
+                VideoPlayer(manager: self.manager)
+            } else {
+//                NativeVideoPlayer(manager: self.manager)
+                Color.red
+            }
         }
         #endif
     }

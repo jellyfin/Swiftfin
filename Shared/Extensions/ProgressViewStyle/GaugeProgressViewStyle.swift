@@ -19,7 +19,7 @@ struct GaugeProgressViewStyle: ProgressViewStyle {
 
     private let lineWidthRatio: CGFloat
     private let systemImage: String?
-    
+
     init(systemImage: String? = nil) {
         self.lineWidthRatio = systemImage == nil ? 0.2 : 0.125
         self.systemImage = systemImage

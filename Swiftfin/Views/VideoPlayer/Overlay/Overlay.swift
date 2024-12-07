@@ -14,7 +14,7 @@ import SwiftUI
 extension VideoPlayer {
 
     struct Overlay: View {
-        
+
         @ObserveInjection
         private var injection
 
@@ -80,11 +80,11 @@ extension VideoPlayer {
             ZStack {
 
                 ZStack(alignment: .bottom) {
-                    
+
                     Color.black
                         .isVisible(opacity: 0.5, !isScrubbing && isPresentingOverlay)
                         .allowsHitTesting(false)
-                    
+
                     OpacityLinearGradient {
                         (0, 0)
                         (1, 0.5)

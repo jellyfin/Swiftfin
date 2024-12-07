@@ -937,6 +937,7 @@
 		E1E1644128BB301900323B0A /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1644028BB301900323B0A /* Array.swift */; };
 		E1E1E24D28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */; };
 		E1E1E24E28DF8A2E000DF5FD /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E1E24C28DF8A2E000DF5FD /* PreferenceKeys.swift */; };
+		E1E2782A2D04FE6F00B76B7B /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1E278292D04FE6F00B76B7B /* CollectionHStack */; };
 		E1E2F83F2B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */; };
 		E1E2F8402B757DFA00B75998 /* OnFinalDisappearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F83E2B757DFA00B75998 /* OnFinalDisappearModifier.swift */; };
 		E1E2F8422B757E0900B75998 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E2F8412B757E0900B75998 /* OnFirstAppearModifier.swift */; };
@@ -1783,6 +1784,7 @@
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
 				E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
+				E1E2782A2D04FE6F00B76B7B /* CollectionHStack in Frameworks */,
 				E150C0C32BFD6DA200944FFA /* JellyfinAPI in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
@@ -4235,6 +4237,7 @@
 				E19D41B12BF2BFA50082B8B2 /* KeychainSwift */,
 				E150C0C22BFD6DA200944FFA /* JellyfinAPI */,
 				E15BC8152C8FFA9500E4F770 /* VLCUI */,
+				E1E278292D04FE6F00B76B7B /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -6330,6 +6333,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */;
 			productName = PulseLogHandler;
+		};
+		E1E278292D04FE6F00B76B7B /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E173D5882CCCC4A00099AE0C /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
 		};
 		E1E657F12CCC78C8001D5B7B /* Inject */ = {
 			isa = XCSwiftPackageProductDependency;

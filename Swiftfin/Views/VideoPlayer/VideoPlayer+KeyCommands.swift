@@ -12,24 +12,24 @@ import SwiftUI
 import VLCUI
 
 extension VideoPlayer {
-    
+
     struct KeyCommandsLayer: View {
-        
+
         @Default(.VideoPlayer.jumpBackwardInterval)
         private var jumpBackwardInterval
         @Default(.VideoPlayer.jumpForwardInterval)
         private var jumpForwardInterval
-        
+
         @Environment(\.isAspectFilled)
         @Binding
         private var isAspectFilled
-        
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
-        
+
         var body: some View {
             keyCommands {
-                
+
                 KeyCommandAction(
                     title: L10n.playAndPause,
                     input: " "
@@ -40,13 +40,13 @@ extension VideoPlayer {
                     case .paused:
                         manager.proxy?.play()
                     }
-    //                if videoPlayerManager.state == .playing {
-    //                    videoPlayerManager.proxy?.pause()
-    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
-    //                } else {
-    //                    videoPlayerManager.proxy?.play()
-    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
-    //                }
+                    //                if videoPlayerManager.state == .playing {
+                    //                    videoPlayerManager.proxy?.pause()
+                    //                    updateViewProxy.present(systemName: "pause.fill", title: "Pause")
+                    //                } else {
+                    //                    videoPlayerManager.proxy?.play()
+                    //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
+                    //                }
                 }
             }
         }

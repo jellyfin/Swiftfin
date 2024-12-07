@@ -10,7 +10,7 @@ import Defaults
 import SwiftUI
 
 extension VideoPlayerSettingsView {
-    
+
     struct ButtonSection: View {
 
         @Default(.VideoPlayer.showJumpButtons)

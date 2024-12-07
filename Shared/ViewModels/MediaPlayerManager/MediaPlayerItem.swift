@@ -69,13 +69,13 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
 
         let configuration = VLCVideoPlayer.Configuration(url: url)
         configuration.autoPlay = true
-        
+
         if !baseItem.isLiveStream {
             configuration.startTime = .seconds(startSeconds)
             configuration.audioIndex = .absolute(mediaSource.defaultAudioStreamIndex ?? -1)
             configuration.subtitleIndex = .absolute(mediaSource.defaultSubtitleStreamIndex ?? -1)
         }
-        
+
         configuration.subtitleSize = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleSize])
         configuration.subtitleColor = .absolute(Defaults[.VideoPlayer.Subtitle.subtitleColor].uiColor)
 
@@ -132,29 +132,30 @@ class MediaPlayerItem: ViewModel, MediaPlayerListener {
         )
 
         let response = try await userSession.client.send(request)
-        
+
         let matchingMediaSource: MediaSourceInfo? = {
-            
+
             guard let mediaSources = response.value.mediaSources else { return nil }
-            
+
             if let matchingTag = mediaSources.first(where: { $0.eTag == mediaSource.eTag }) {
                 return matchingTag
             }
-            
+
             for source in mediaSources {
                 if let openToken = source.openToken,
-                    let id = source.id,
-                    openToken.contains(id) {
+                   let id = source.id,
+                   openToken.contains(id)
+                {
                     return source
                 }
             }
-            
+
             Container.shared.logService()
                 .log(level: .warning, "Unable to find matching media source, defaulting to first media source")
-            
+
             return mediaSources.first
         }()
-        
+
         guard let matchingMediaSource else {
             throw JellyfinAPIError("Unable to find media source for item")
         }

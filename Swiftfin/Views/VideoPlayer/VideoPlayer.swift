@@ -43,9 +43,9 @@ struct VideoPlayer: View {
     private var manager: MediaPlayerManager
     @StateObject
     private var vlcUIProxy: VLCVideoPlayer.Proxy
-    
+
     // MARK: init
-    
+
     init(manager: MediaPlayerManager) {
 
         let videoPlayerProxy = VLCVideoPlayerProxy()
@@ -55,7 +55,7 @@ struct VideoPlayer: View {
         manager.proxy = videoPlayerProxy
 
         manager.listeners.append(NowPlayableListener(manager: manager))
-        
+
         self._manager = StateObject(wrappedValue: manager)
         self._vlcUIProxy = StateObject(wrappedValue: vlcUIProxy)
     }
