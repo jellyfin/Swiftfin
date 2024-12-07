@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ServerUserAccessView: View {
+struct ServerUserMediaAccessView: View {
 
     // MARK: - Environment
 

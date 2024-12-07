@@ -92,6 +92,7 @@
 		4E5071E42CFCEFD3003FA2AD /* AddItemElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5071E32CFCEFD1003FA2AD /* AddItemElementView.swift */; };
 		4E5334A22CD1A28700D59FA8 /* ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5334A12CD1A28400D59FA8 /* ActionButton.swift */; };
 		4E537A842D03D11200659A1A /* ServerUserDeviceAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E537A832D03D10B00659A1A /* ServerUserDeviceAccessView.swift */; };
+		4E537A8D2D04410E00659A1A /* ServerUserLiveTVAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E537A8B2D04410E00659A1A /* ServerUserLiveTVAccessView.swift */; };
 		4E556AB02D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
 		4E556AB12D036F6900733377 /* UserPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E556AAF2D036F5E00733377 /* UserPermissions.swift */; };
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
@@ -200,7 +201,7 @@
 		4EF18B262CB9934C00343666 /* LibraryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B252CB9934700343666 /* LibraryRow.swift */; };
 		4EF18B282CB9936D00343666 /* ListColumnsPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */; };
 		4EF18B2A2CB993BD00343666 /* ListRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF18B292CB993AD00343666 /* ListRow.swift */; };
-		4EF3D80B2CF7D6670081AD20 /* ServerUserAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */; };
+		4EF3D80B2CF7D6670081AD20 /* ServerUserMediaAccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF3D8092CF7D6670081AD20 /* ServerUserMediaAccessView.swift */; };
 		4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */; };
 		4EFD172E2CE4182200A4BAC5 /* LearnMoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */; };
 		4EFE0C7D2D0156A900D4834D /* PersonKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE0C7C2D0156A500D4834D /* PersonKind.swift */; };
@@ -1206,6 +1207,7 @@
 		4E5071E32CFCEFD1003FA2AD /* AddItemElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddItemElementView.swift; sourceTree = "<group>"; };
 		4E5334A12CD1A28400D59FA8 /* ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionButton.swift; sourceTree = "<group>"; };
 		4E537A832D03D10B00659A1A /* ServerUserDeviceAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserDeviceAccessView.swift; sourceTree = "<group>"; };
+		4E537A8B2D04410E00659A1A /* ServerUserLiveTVAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserLiveTVAccessView.swift; sourceTree = "<group>"; };
 		4E556AAF2D036F5E00733377 /* UserPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPermissions.swift; sourceTree = "<group>"; };
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdminDashboardView.swift; sourceTree = "<group>"; };
@@ -1295,7 +1297,7 @@
 		4EF18B252CB9934700343666 /* LibraryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryRow.swift; sourceTree = "<group>"; };
 		4EF18B272CB9936400343666 /* ListColumnsPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListColumnsPickerView.swift; sourceTree = "<group>"; };
 		4EF18B292CB993AD00343666 /* ListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRow.swift; sourceTree = "<group>"; };
-		4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserAccessView.swift; sourceTree = "<group>"; };
+		4EF3D8092CF7D6670081AD20 /* ServerUserMediaAccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserMediaAccessView.swift; sourceTree = "<group>"; };
 		4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenu.swift; sourceTree = "<group>"; };
 		4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreButton.swift; sourceTree = "<group>"; };
 		4EFE0C7C2D0156A500D4834D /* PersonKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonKind.swift; sourceTree = "<group>"; };
@@ -2246,6 +2248,14 @@
 			path = ServerUserDeviceAccessView;
 			sourceTree = "<group>";
 		};
+		4E537A8C2D04410E00659A1A /* ServerUserLiveTVAccessView */ = {
+			isa = PBXGroup;
+			children = (
+				4E537A8B2D04410E00659A1A /* ServerUserLiveTVAccessView.swift */,
+			);
+			path = ServerUserLiveTVAccessView;
+			sourceTree = "<group>";
+		};
 		4E63B9F52C8A5BEF00C25378 /* AdminDashboardView */ = {
 			isa = PBXGroup;
 			children = (
@@ -2261,9 +2271,10 @@
 				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
 				4E35CE622CBED3FF00DBD886 /* ServerLogsView */,
 				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
-				4EF3D80A2CF7D6670081AD20 /* ServerUserAccessView */,
 				4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */,
 				4E537A822D03D0FA00659A1A /* ServerUserDeviceAccessView */,
+				4E537A8C2D04410E00659A1A /* ServerUserLiveTVAccessView */,
+				4EF3D80A2CF7D6670081AD20 /* ServerUserMediaAccessView */,
 				4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */,
 				4EC2B1992CC96E5E00D866BE /* ServerUsersView */,
 			);
@@ -2623,12 +2634,12 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
-		4EF3D80A2CF7D6670081AD20 /* ServerUserAccessView */ = {
+		4EF3D80A2CF7D6670081AD20 /* ServerUserMediaAccessView */ = {
 			isa = PBXGroup;
 			children = (
-				4EF3D8092CF7D6670081AD20 /* ServerUserAccessView.swift */,
+				4EF3D8092CF7D6670081AD20 /* ServerUserMediaAccessView.swift */,
 			);
-			path = ServerUserAccessView;
+			path = ServerUserMediaAccessView;
 			sourceTree = "<group>";
 		};
 		5310694F2684E7EE00CFFDBA /* VideoPlayer */ = {
@@ -5435,6 +5446,7 @@
 				C44FA6E12AACD19C00EDEB56 /* LiveLargePlaybackButtons.swift in Sources */,
 				4E661A322CEFE7BC00025C99 /* SeriesStatus.swift in Sources */,
 				E1401CA02937DFF500E8B599 /* AppIconSelectorView.swift in Sources */,
+				4E537A8D2D04410E00659A1A /* ServerUserLiveTVAccessView.swift in Sources */,
 				BD39577E2C1140810078CEF8 /* TransitionSection.swift in Sources */,
 				4EC2B1A52CC96FA400D866BE /* ServerUserAdminViewModel.swift in Sources */,
 				E1092F4C29106F9F00163F57 /* GestureAction.swift in Sources */,
@@ -5844,7 +5856,7 @@
 				E1ED7FE32CAA6BAF00ACB6E3 /* ServerLogsViewModel.swift in Sources */,
 				E1ED91182B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				E13DD3F92717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
-				4EF3D80B2CF7D6670081AD20 /* ServerUserAccessView.swift in Sources */,
+				4EF3D80B2CF7D6670081AD20 /* ServerUserMediaAccessView.swift in Sources */,
 				E1194F502BEB1E3000888DB6 /* StoredValues+Temp.swift in Sources */,
 				E1BDF2E52951475300CC0294 /* VideoPlayerActionButton.swift in Sources */,
 				E133328F2953B71000EE76AB /* DownloadTaskView.swift in Sources */,
