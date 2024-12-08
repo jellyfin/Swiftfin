@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import Foundation
 import Get
+import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import UIKit
@@ -32,7 +33,7 @@ private let DefaultPageSize = 50
        on remembering other filters.
  */
 
-class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -67,7 +68,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
     @Published
-    final var elements: OrderedSet<Element>
+    final var elements: IdentifiedArrayOf<Element>
     @Published
     final var state: State = .initial
     @Published
@@ -103,7 +104,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = OrderedSet(data)
+        self.elements = IdentifiedArray(uniqueElements: data)
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
@@ -130,7 +131,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = OrderedSet()
+        self.elements = IdentifiedArray()
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent

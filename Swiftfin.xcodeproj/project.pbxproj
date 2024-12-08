@@ -453,13 +453,12 @@
 		E1153D9C2BBA3E9D00424D36 /* LoadingCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153D9B2BBA3E9D00424D36 /* LoadingCard.swift */; };
 		E1153DA42BBA614F00424D36 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DA32BBA614F00424D36 /* CollectionVGrid */; };
 		E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAB2BBA6AD200424D36 /* CollectionHStack */; };
-		E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DAE2BBA734200424D36 /* CollectionHStack */; };
-		E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DB02BBA734C00424D36 /* CollectionHStack */; };
 		E1153DB42BBA80FB00424D36 /* EmptyCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DB22BBA80B400424D36 /* EmptyCard.swift */; };
 		E1153DCC2BBB633B00424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DCB2BBB633B00424D36 /* FastSVGView.swift */; };
 		E1153DCD2BBB633B00424D36 /* FastSVGView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1153DCB2BBB633B00424D36 /* FastSVGView.swift */; };
 		E1153DD02BBB634F00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DCF2BBB634F00424D36 /* SVGKit */; };
 		E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */ = {isa = PBXBuildFile; productRef = E1153DD12BBB649C00424D36 /* SVGKit */; };
+		E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E1155ACA2D0584A90021557A /* IdentifiedCollections */; };
 		E11562952C818CB2001D5DE4 /* BindingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11562942C818CB2001D5DE4 /* BindingBox.swift */; };
 		E11562962C818CB2001D5DE4 /* BindingBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11562942C818CB2001D5DE4 /* BindingBox.swift */; };
 		E118959D289312020042947B /* BaseItemPerson+Poster.swift in Sources */ = {isa = PBXBuildFile; fileRef = E118959C289312020042947B /* BaseItemPerson+Poster.swift */; };
@@ -525,8 +524,6 @@
 		E12E30F5296392EC0022FAC9 /* EnumPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */; };
 		E12F038C28F8B0B100976CC3 /* EdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12F038B28F8B0B100976CC3 /* EdgeInsets.swift */; };
 		E132D3C82BD200C10058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3C72BD200C10058A2DF /* CollectionVGrid */; };
-		E132D3CD2BD2179C0058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3CC2BD2179C0058A2DF /* CollectionVGrid */; };
-		E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E132D3CE2BD217AA0058A2DF /* CollectionVGrid */; };
 		E13316FE2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* OnSizeChangedModifier.swift */; };
 		E13316FF2ADE42B6009BF865 /* OnSizeChangedModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13316FD2ADE42B6009BF865 /* OnSizeChangedModifier.swift */; };
 		E133328829538D8D00EE76AB /* Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = E133328729538D8D00EE76AB /* Files.swift */; };
@@ -749,6 +746,10 @@
 		E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E1763A742BF3FA4C004DF6AB /* AppLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */; };
 		E1763A762BF3FF01004DF6AB /* AppLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A752BF3FF01004DF6AB /* AppLoadingView.swift */; };
+		E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBDD2D050067009F4CF1 /* IdentifiedCollections */; };
+		E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBDF2D0502A6009F4CF1 /* CollectionHStack */; };
+		E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE22D0502C6009F4CF1 /* CollectionHStack */; };
+		E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E176EBE82D050925009F4CF1 /* CollectionVGrid */; };
 		E178859B2780F1F40094FBCF /* tvOSSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859A2780F1F40094FBCF /* tvOSSlider.swift */; };
 		E178859E2780F53B0094FBCF /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E178859D2780F53B0094FBCF /* SliderView.swift */; };
 		E17885A4278105170094FBCF /* SFSymbolButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E17885A3278105170094FBCF /* SFSymbolButton.swift */; };
@@ -878,6 +879,10 @@
 		E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0628A0B958005C10C8 /* NukeUI */; };
 		E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */ = {isa = PBXBuildFile; productRef = E19E6E0928A0BEFF005C10C8 /* BlurHashKit */; };
 		E19F6C5D28F5189300C5197E /* MediaStreamInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19F6C5C28F5189300C5197E /* MediaStreamInfoView.swift */; };
+		E1A09F722D05933D00835265 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F712D05933D00835265 /* CollectionVGrid */; };
+		E1A09F752D05935100835265 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F742D05935100835265 /* CollectionHStack */; };
+		E1A09F772D05935A00835265 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F762D05935A00835265 /* CollectionVGrid */; };
+		E1A09F792D05935A00835265 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = E1A09F782D05935A00835265 /* CollectionHStack */; };
 		E1A1528228FD126C00600579 /* VerticalAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528128FD126C00600579 /* VerticalAlignment.swift */; };
 		E1A1528528FD191A00600579 /* TextPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528428FD191A00600579 /* TextPair.swift */; };
 		E1A1528828FD229500600579 /* ChevronButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1528728FD229500600579 /* ChevronButton.swift */; };
@@ -1934,6 +1939,7 @@
 				E13AF3B828A0C598009093AB /* NukeExtensions in Frameworks */,
 				E1575E58293E7685001665B1 /* Files in Frameworks */,
 				E1B5F7A729577BCE004B26CF /* Pulse in Frameworks */,
+				E1A09F792D05935A00835265 /* CollectionHStack in Frameworks */,
 				E13AF3BA28A0C598009093AB /* NukeUI in Frameworks */,
 				E1B5F7AB29577BCE004B26CF /* PulseUI in Frameworks */,
 				E1B5F7A929577BCE004B26CF /* PulseLogHandler in Frameworks */,
@@ -1943,18 +1949,18 @@
 				62666E1927E501D000EC0ECD /* CoreFoundation.framework in Frameworks */,
 				E19D41B22BF2BFA50082B8B2 /* KeychainSwift in Frameworks */,
 				E18443CB2A037773002DDDC8 /* UDPBroadcast in Frameworks */,
+				E1155ACB2D0584A90021557A /* IdentifiedCollections in Frameworks */,
 				62666E2E27E5021400EC0ECD /* Security.framework in Frameworks */,
 				E1B5F7AD29577BDD004B26CF /* OrderedCollections in Frameworks */,
 				53ABFDDC267972BF00886593 /* TVServices.framework in Frameworks */,
 				62666E1F27E501DF00EC0ECD /* CoreText.framework in Frameworks */,
 				E13DD3CD27164CA7009D4DAF /* CoreStore in Frameworks */,
 				E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */,
+				E1A09F772D05935A00835265 /* CollectionVGrid in Frameworks */,
 				E1153DD22BBB649C00424D36 /* SVGKit in Frameworks */,
 				62666E1527E501C800EC0ECD /* AVFoundation.framework in Frameworks */,
-				E132D3CF2BD217AA0058A2DF /* CollectionVGrid in Frameworks */,
 				E13AF3BC28A0C59E009093AB /* BlurHashKit in Frameworks */,
 				E150C0C32BFD6DA200944FFA /* JellyfinAPI in Frameworks */,
-				E1153DB12BBA734C00424D36 /* CollectionHStack in Frameworks */,
 				62666E1327E501C300EC0ECD /* AudioToolbox.framework in Frameworks */,
 				E13AF3B628A0C598009093AB /* Nuke in Frameworks */,
 				E12186DE2718F1C50010884C /* Defaults in Frameworks */,
@@ -1981,6 +1987,7 @@
 				62666E0627E5017A00EC0ECD /* CoreVideo.framework in Frameworks */,
 				E19DDEC72948EF9900954E10 /* OrderedCollections in Frameworks */,
 				E10706102942F57D00646DAF /* Pulse in Frameworks */,
+				E176EBE92D050925009F4CF1 /* CollectionVGrid in Frameworks */,
 				E192608328D2D0DB002314B4 /* Factory in Frameworks */,
 				E150C0C12BFD62FD00944FFA /* JellyfinAPI in Frameworks */,
 				E113A2A72B5A178D009CAAAA /* CollectionHStack in Frameworks */,
@@ -1990,7 +1997,9 @@
 				62C29E9C26D0FE4200C1D2E7 /* Stinsen in Frameworks */,
 				62666E0227E5016D00EC0ECD /* CoreGraphics.framework in Frameworks */,
 				E1575E3C293C6B15001665B1 /* Files in Frameworks */,
+				E176EBE02D0502A6009F4CF1 /* CollectionHStack in Frameworks */,
 				E14EA1652BF70A8E00DE757A /* Mantis in Frameworks */,
+				E176EBDE2D050067009F4CF1 /* IdentifiedCollections in Frameworks */,
 				62666E1027E501B400EC0ECD /* VideoToolbox.framework in Frameworks */,
 				62666E0C27E501A500EC0ECD /* OpenGLES.framework in Frameworks */,
 				E19E6E0A28A0BEFF005C10C8 /* BlurHashKit in Frameworks */,
@@ -2003,22 +2012,23 @@
 				E18A8E7A28D5FEDF00333B9A /* VLCUI in Frameworks */,
 				E114DB332B1944FA00B75FB3 /* CollectionVGrid in Frameworks */,
 				E15210562946DF1B00375CC2 /* PulseLogHandler in Frameworks */,
-				E1153DAF2BBA734200424D36 /* CollectionHStack in Frameworks */,
 				62666E0427E5017500EC0ECD /* CoreText.framework in Frameworks */,
-				E132D3CD2BD2179C0058A2DF /* CollectionVGrid in Frameworks */,
 				E13DD3C62716499E009D4DAF /* CoreStore in Frameworks */,
+				E176EBE32D0502C6009F4CF1 /* CollectionHStack in Frameworks */,
 				62666E0E27E501AF00EC0ECD /* Security.framework in Frameworks */,
 				E1DC9814296DC06200982F06 /* PulseLogHandler in Frameworks */,
 				E15EFA842BA167350080E926 /* CollectionHStack in Frameworks */,
 				E15EFA862BA1685F0080E926 /* SwiftUIIntrospect in Frameworks */,
 				62666DFE27E5015700EC0ECD /* AVFoundation.framework in Frameworks */,
 				62666DFD27E5014F00EC0ECD /* AudioToolbox.framework in Frameworks */,
+				E1A09F722D05933D00835265 /* CollectionVGrid in Frameworks */,
 				E19E6E0528A0B958005C10C8 /* Nuke in Frameworks */,
 				E1153DAC2BBA6AD200424D36 /* CollectionHStack in Frameworks */,
 				62666E0D27E501AA00EC0ECD /* QuartzCore.framework in Frameworks */,
 				E15D4F052B1B0C3C00442DB8 /* PreferencesView in Frameworks */,
 				E19E6E0728A0B958005C10C8 /* NukeUI in Frameworks */,
 				62666E3F27E5040300EC0ECD /* SystemConfiguration.framework in Frameworks */,
+				E1A09F752D05935100835265 /* CollectionHStack in Frameworks */,
 				62666E3927E502CE00EC0ECD /* SwizzleSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4611,11 +4621,12 @@
 				E18443CA2A037773002DDDC8 /* UDPBroadcast */,
 				E1A7B1642B9A9F7800152546 /* PreferencesView */,
 				E1392FEC2BA218A80034110D /* SwiftUIIntrospect */,
-				E1153DB02BBA734C00424D36 /* CollectionHStack */,
 				E1153DD12BBB649C00424D36 /* SVGKit */,
-				E132D3CE2BD217AA0058A2DF /* CollectionVGrid */,
 				E19D41B12BF2BFA50082B8B2 /* KeychainSwift */,
 				E150C0C22BFD6DA200944FFA /* JellyfinAPI */,
+				E1155ACA2D0584A90021557A /* IdentifiedCollections */,
+				E1A09F762D05935A00835265 /* CollectionVGrid */,
+				E1A09F782D05935A00835265 /* CollectionHStack */,
 			);
 			productName = "JellyfinPlayer tvOS";
 			productReference = 535870602669D21600D05A09 /* Swiftfin tvOS.app */;
@@ -4665,13 +4676,17 @@
 				E18D6AA52BAA96F000A0D167 /* CollectionHStack */,
 				E1153DA32BBA614F00424D36 /* CollectionVGrid */,
 				E1153DAB2BBA6AD200424D36 /* CollectionHStack */,
-				E1153DAE2BBA734200424D36 /* CollectionHStack */,
 				E1153DCF2BBB634F00424D36 /* SVGKit */,
 				E132D3C72BD200C10058A2DF /* CollectionVGrid */,
-				E132D3CC2BD2179C0058A2DF /* CollectionVGrid */,
 				E145EB4A2BE16849003BF6F3 /* KeychainSwift */,
 				E14EA1642BF70A8E00DE757A /* Mantis */,
 				E150C0C02BFD62FD00944FFA /* JellyfinAPI */,
+				E176EBDD2D050067009F4CF1 /* IdentifiedCollections */,
+				E176EBDF2D0502A6009F4CF1 /* CollectionHStack */,
+				E176EBE22D0502C6009F4CF1 /* CollectionHStack */,
+				E176EBE82D050925009F4CF1 /* CollectionVGrid */,
+				E1A09F712D05933D00835265 /* CollectionVGrid */,
+				E1A09F742D05935100835265 /* CollectionHStack */,
 			);
 			productName = JellyfinPlayer;
 			productReference = 5377CBF1263B596A003A4E83 /* Swiftfin iOS.app */;
@@ -4739,12 +4754,13 @@
 				E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */,
 				E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */,
 				E15D4F032B1B0C3C00442DB8 /* XCLocalSwiftPackageReference "PreferencesView" */,
-				E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 				E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */,
-				E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
 				E145EB492BE16849003BF6F3 /* XCRemoteSwiftPackageReference "keychain-swift" */,
 				E14EA1632BF70A8E00DE757A /* XCRemoteSwiftPackageReference "Mantis" */,
 				E150C0BF2BFD62FD00944FFA /* XCRemoteSwiftPackageReference "jellyfin-sdk-swift" */,
+				E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */,
+				E1A09F702D05933D00835265 /* XCRemoteSwiftPackageReference "CollectionVGrid" */,
+				E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */,
 			);
 			productRefGroup = 5377CBF2263B596A003A4E83 /* Products */;
 			projectDirPath = "";
@@ -6359,28 +6375,12 @@
 				minimumVersion = 2.0.0;
 			};
 		};
-		E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionHStack";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SVGKit/SVGKit";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 3.0.0;
-			};
-		};
-		E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/LePips/CollectionVGrid";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 		E13DD3C42716499E009D4DAF /* XCRemoteSwiftPackageReference "CoreStore" */ = {
@@ -6439,6 +6439,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-identified-collections";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 		E18A8E7828D5FEDF00333B9A /* XCRemoteSwiftPackageReference "VLCUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/LePips/VLCUI";
@@ -6477,6 +6485,22 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.0.0;
+			};
+		};
+		E1A09F702D05933D00835265 /* XCRemoteSwiftPackageReference "CollectionVGrid" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionVGrid";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/LePips/CollectionHStack";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		E1DC9812296DC06200982F06 /* XCRemoteSwiftPackageReference "PulseLogHandler" */ = {
@@ -6558,16 +6582,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = CollectionHStack;
 		};
-		E1153DAE2BBA734200424D36 /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
-		E1153DB02BBA734C00424D36 /* CollectionHStack */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1153DAD2BBA734200424D36 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
-			productName = CollectionHStack;
-		};
 		E1153DCF2BBB634F00424D36 /* SVGKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
@@ -6578,6 +6592,11 @@
 			package = E1153DCE2BBB634F00424D36 /* XCRemoteSwiftPackageReference "SVGKit" */;
 			productName = SVGKit;
 		};
+		E1155ACA2D0584A90021557A /* IdentifiedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = IdentifiedCollections;
+		};
 		E12186DD2718F1C50010884C /* Defaults */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E13DD3D127168E65009D4DAF /* XCRemoteSwiftPackageReference "Defaults" */;
@@ -6585,16 +6604,6 @@
 		};
 		E132D3C72BD200C10058A2DF /* CollectionVGrid */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = CollectionVGrid;
-		};
-		E132D3CC2BD2179C0058A2DF /* CollectionVGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
-			productName = CollectionVGrid;
-		};
-		E132D3CE2BD217AA0058A2DF /* CollectionVGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E132D3CB2BD2179C0058A2DF /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
 			productName = CollectionVGrid;
 		};
 		E1388A45293F0ABA009721B1 /* SwizzleSwift */ = {
@@ -6709,6 +6718,24 @@
 			package = 5335256F265EA0A0006CCA86 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = SwiftUIIntrospect;
 		};
+		E176EBDD2D050067009F4CF1 /* IdentifiedCollections */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = IdentifiedCollections;
+		};
+		E176EBDF2D0502A6009F4CF1 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E176EBDC2D050067009F4CF1 /* XCRemoteSwiftPackageReference "swift-identified-collections" */;
+			productName = CollectionHStack;
+		};
+		E176EBE22D0502C6009F4CF1 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionHStack;
+		};
+		E176EBE82D050925009F4CF1 /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = CollectionVGrid;
+		};
 		E18443CA2A037773002DDDC8 /* UDPBroadcast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E1FAD1C42A0375BA007F5521 /* XCRemoteSwiftPackageReference "UDPBroadcastConnection" */;
@@ -6757,6 +6784,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E19E6E0828A0BEFF005C10C8 /* XCRemoteSwiftPackageReference "BlurHashKit" */;
 			productName = BlurHashKit;
+		};
+		E1A09F712D05933D00835265 /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1A09F702D05933D00835265 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
+			productName = CollectionVGrid;
+		};
+		E1A09F742D05935100835265 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
+		};
+		E1A09F762D05935A00835265 /* CollectionVGrid */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1A09F702D05933D00835265 /* XCRemoteSwiftPackageReference "CollectionVGrid" */;
+			productName = CollectionVGrid;
+		};
+		E1A09F782D05935A00835265 /* CollectionHStack */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E1A09F732D05935100835265 /* XCRemoteSwiftPackageReference "CollectionHStack" */;
+			productName = CollectionHStack;
 		};
 		E1A7B1642B9A9F7800152546 /* PreferencesView */ = {
 			isa = XCSwiftPackageProductDependency;
