@@ -8,9 +8,7 @@
 
 import CollectionVGrid
 import Defaults
-import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 // TODO: need to think about better design for views that may not support current library display type

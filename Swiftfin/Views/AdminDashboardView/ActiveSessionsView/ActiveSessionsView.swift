@@ -9,7 +9,6 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
 // TODO: filter for streaming/inactive
