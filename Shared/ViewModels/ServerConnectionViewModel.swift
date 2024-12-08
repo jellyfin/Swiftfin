@@ -50,7 +50,7 @@ class ServerConnectionViewModel: ViewModel {
                 UserDefaults.userSuite(id: user.id).removeAll()
             }
 
-            Notifications[.didDeleteServer].post(object: server)
+            Notifications[.didDeleteServer].post(server)
         } catch {
             logger.critical("Unable to delete server: \(server.name)")
         }
@@ -67,7 +67,7 @@ class ServerConnectionViewModel: ViewModel {
                 return storedServer.state
             }
 
-            Notifications[.didChangeCurrentServerURL].post(object: newState)
+            Notifications[.didChangeCurrentServerURL].post(newState)
 
             self.server = newState
         } catch {

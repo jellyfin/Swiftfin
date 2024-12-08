@@ -13,9 +13,13 @@ import JellyfinAPI
 // Since we don't view care to view seasons directly, this doesn't subclass from `ItemViewModel`.
 // If we ever care for viewing seasons directly, subclass from that and have the library view model
 // as a property.
-final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto> {
+final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiable {
 
     let season: BaseItemDto
+
+    var id: String? {
+        season.id
+    }
 
     init(season: BaseItemDto) {
         self.season = season
@@ -41,16 +45,5 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto> {
         let response = try await userSession.client.send(request)
 
         return response.value.items ?? []
-    }
-}
-
-extension SeasonItemViewModel: Hashable {
-
-    static func == (lhs: SeasonItemViewModel, rhs: SeasonItemViewModel) -> Bool {
-        lhs.parent as! BaseItemDto == rhs.parent as! BaseItemDto
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine((parent as! BaseItemDto).hashValue)
     }
 }

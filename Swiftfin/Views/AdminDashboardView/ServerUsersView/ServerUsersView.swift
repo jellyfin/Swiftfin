@@ -147,8 +147,7 @@ struct ServerUsersView: View {
         } message: {
             Text(L10n.deleteUserSelfDeletion(viewModel.userSession.user.username))
         }
-        .onNotification(.didAddServerUser) { notification in
-            let newUser = notification.object as! UserDto
+        .onNotification(.didAddServerUser) { newUser in
             viewModel.send(.appendUser(newUser))
             router.route(to: \.userDetails, newUser)
         }

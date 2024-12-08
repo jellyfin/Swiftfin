@@ -20,16 +20,20 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: SeasonItemViewModel?
+    private var selection: SeasonItemViewModel.ID?
+
+    private var selectionViewModel: SeasonItemViewModel? {
+        viewModel.seasons.first(where: { $0.id == selection })
+    }
 
     @ViewBuilder
     private var seasonSelectorMenu: some View {
         Menu {
             ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
                 Button {
-                    selection = seasonViewModel
+                    selection = seasonViewModel.id
                 } label: {
-                    if seasonViewModel == selection {
+                    if seasonViewModel.id == selection {
                         Label(seasonViewModel.season.displayTitle, systemImage: "checkmark")
                     } else {
                         Text(seasonViewModel.season.displayTitle)
@@ -38,7 +42,7 @@ struct SeriesEpisodeSelector: View {
             }
         } label: {
             Label(
-                selection?.season.displayTitle ?? .emptyDash,
+                selectionViewModel?.season.displayTitle ?? .emptyDash,
                 systemImage: "chevron.down"
             )
             .labelStyle(.episodeSelector)
@@ -52,8 +56,8 @@ struct SeriesEpisodeSelector: View {
                 .edgePadding([.bottom, .horizontal])
 
             Group {
-                if let selection {
-                    EpisodeHStack(viewModel: selection, playButtonItem: viewModel.playButtonItem)
+                if let selectionViewModel {
+                    EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
                 } else {
                     LoadingHStack()
                 }
@@ -65,17 +69,17 @@ struct SeriesEpisodeSelector: View {
             guard !didSelectPlayButtonSeason else { return }
             didSelectPlayButtonSeason = true
 
-            if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
-                selection = season
+            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+                selection = playButtonSeason.id
             } else {
-                selection = viewModel.seasons.first
+                selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { newValue in
-            guard let newValue else { return }
+        .onChange(of: selection) { _ in
+            guard let selectionViewModel else { return }
 
-            if newValue.state == .initial {
-                newValue.send(.refresh)
+            if selectionViewModel.state == .initial {
+                selectionViewModel.send(.refresh)
             }
         }
     }

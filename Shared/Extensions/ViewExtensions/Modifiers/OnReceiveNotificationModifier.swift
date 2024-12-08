@@ -8,15 +8,13 @@
 
 import SwiftUI
 
-struct OnReceiveNotificationModifier: ViewModifier {
+struct OnReceiveNotificationModifier<P, K: Notifications.Key<P>>: ViewModifier {
 
-    let notification: NSNotification.Name
-    let onReceive: (Notification) -> Void
+    let key: K
+    let onReceive: (P) -> Void
 
     func body(content: Content) -> some View {
         content
-            .onReceive(NotificationCenter.default.publisher(for: notification)) {
-                onReceive($0)
-            }
+            .onReceive(key.publisher, perform: onReceive)
     }
 }

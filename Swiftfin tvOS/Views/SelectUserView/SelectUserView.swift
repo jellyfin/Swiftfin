@@ -310,33 +310,27 @@ struct SelectUserView: View {
                 Notifications[.didSignIn].post()
             }
         }
-        .onNotification(.didConnectToServer) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didConnectToServer) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didChangeCurrentServerURL) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didDeleteServer) { notification in
+        .onNotification(.didDeleteServer) { server in
             viewModel.send(.getServers)
 
-            if let server = notification.object as? ServerState {
-                if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                    if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                        serverSelection = .server(id: first.id)
-                    } else {
-                        serverSelection = .all
-                    }
+            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                    serverSelection = .server(id: first.id)
+                } else {
+                    serverSelection = .all
                 }
-
-                // change splash screen selection if necessary
-//                selectUserAllServersSplashscreen = serverSelection
             }
+
+            // change splash screen selection if necessary
+//            selectUserAllServersSplashscreen = serverSelection
         }
     }
 }

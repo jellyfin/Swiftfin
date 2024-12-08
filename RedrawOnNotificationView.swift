@@ -8,28 +8,23 @@
 
 import SwiftUI
 
-struct RedrawOnNotificationView<Content: View>: View {
+struct RedrawOnNotificationView<Content: View, P>: View {
 
     @State
     private var id = 0
 
-    private let name: NSNotification.Name
+    private let key: Notifications.Key<P>
     private let content: () -> Content
 
-    init(name: NSNotification.Name, @ViewBuilder content: @escaping () -> Content) {
-        self.name = name
-        self.content = content
-    }
-
-    init(_ swiftfinNotification: Notifications.Key, @ViewBuilder content: @escaping () -> Content) {
-        self.name = swiftfinNotification.underlyingNotification.name
+    init(_ key: Notifications.Key<P>, @ViewBuilder content: @escaping () -> Content) {
+        self.key = key
         self.content = content
     }
 
     var body: some View {
         content()
             .id(id)
-            .onNotification(name) { _ in
+            .onNotification(key) { _ in
                 id += 1
             }
     }
