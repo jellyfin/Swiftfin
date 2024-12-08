@@ -81,6 +81,7 @@ extension AppURLHandler {
             // It would be nice if the ItemViewModel could be initialized to id later.
             getItem(userID: userID, itemID: itemID) { item in
                 guard let item = item else { return }
+                // TODO: reimplement URL handling
 //                Notifications[.processDeepLink].post(DeepLink.item(item))
             }
 

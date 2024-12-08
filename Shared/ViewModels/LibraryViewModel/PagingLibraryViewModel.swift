@@ -105,7 +105,6 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-//        self.elements = IdentifiedArray(uniqueElements: data)
         self.elements = IdentifiedArray(uniqueElements: data, id: \.id.hashValue)
         self.isStatic = true
         self.hasNextPage = false
