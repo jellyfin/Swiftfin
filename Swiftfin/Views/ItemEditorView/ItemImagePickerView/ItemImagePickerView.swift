@@ -138,8 +138,8 @@ struct ItemImagePickerView: View {
                 .listRowInsets(.zero)
         } else {
             CollectionVGrid(
-                viewModel.images,
-                layout: $layout
+                uniqueElements: viewModel.images,
+                layout: layout
             ) { image in
                 imageButton(image)
                     .padding(.vertical, 4)

@@ -9,6 +9,7 @@
 import Combine
 import Foundation
 import Get
+import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import UIKit
@@ -57,7 +58,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     @Published
     var includeAllLanguages: Bool
     @Published
-    var images: OrderedSet<RemoteImageInfo> = []
+    var images: IdentifiedArrayOf<RemoteImageInfo> = []
 
     private let pageSize: Int
     private(set) var currentPage: Int = 0
