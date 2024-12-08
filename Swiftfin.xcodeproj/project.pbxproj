@@ -66,6 +66,10 @@
 		4E36395C2CC4DF0E00110EBC /* APIKeysViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36395A2CC4DF0900110EBC /* APIKeysViewModel.swift */; };
 		4E3A24DA2CFE34A00083A72C /* SearchResultsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3A24D92CFE349A0083A72C /* SearchResultsSection.swift */; };
 		4E3A24DC2CFE35D50083A72C /* NameInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3A24DB2CFE35CC0083A72C /* NameInput.swift */; };
+		4E45939E2D04E20000E277E1 /* RemoteItemImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45939D2D04E1E600E277E1 /* RemoteItemImageViewModel.swift */; };
+		4E45939F2D04E20000E277E1 /* RemoteItemImageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E45939D2D04E1E600E277E1 /* RemoteItemImageViewModel.swift */; };
+		4E4593A32D04E2B500E277E1 /* EditItemImagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */; };
+		4E4593A62D04E4E300E277E1 /* ItemImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4593A52D04E4DE00E277E1 /* ItemImagePickerView.swift */; };
 		4E49DECB2CE54AA200352DCD /* SessionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECA2CE54A9200352DCD /* SessionsSection.swift */; };
 		4E49DECD2CE54C7A00352DCD /* PermissionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECC2CE54C7200352DCD /* PermissionSection.swift */; };
 		4E49DECF2CE54D3000352DCD /* MaxBitratePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */; };
@@ -1188,6 +1192,9 @@
 		4E36395A2CC4DF0900110EBC /* APIKeysViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysViewModel.swift; sourceTree = "<group>"; };
 		4E3A24D92CFE349A0083A72C /* SearchResultsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsSection.swift; sourceTree = "<group>"; };
 		4E3A24DB2CFE35CC0083A72C /* NameInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameInput.swift; sourceTree = "<group>"; };
+		4E45939D2D04E1E600E277E1 /* RemoteItemImageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteItemImageViewModel.swift; sourceTree = "<group>"; };
+		4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditItemImagesView.swift; sourceTree = "<group>"; };
+		4E4593A52D04E4DE00E277E1 /* ItemImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemImagePickerView.swift; sourceTree = "<group>"; };
 		4E49DECA2CE54A9200352DCD /* SessionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsSection.swift; sourceTree = "<group>"; };
 		4E49DECC2CE54C7200352DCD /* PermissionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionSection.swift; sourceTree = "<group>"; };
 		4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBitratePolicy.swift; sourceTree = "<group>"; };
@@ -2187,6 +2194,22 @@
 			path = PlaybackBitrate;
 			sourceTree = "<group>";
 		};
+		4E4593A12D04E2A200E277E1 /* EditItemImagesView */ = {
+			isa = PBXGroup;
+			children = (
+				4E4593A22D04E2AF00E277E1 /* EditItemImagesView.swift */,
+			);
+			path = EditItemImagesView;
+			sourceTree = "<group>";
+		};
+		4E4593A42D04E4D600E277E1 /* ItemImagePickerView */ = {
+			isa = PBXGroup;
+			children = (
+				4E4593A52D04E4DE00E277E1 /* ItemImagePickerView.swift */,
+			);
+			path = ItemImagePickerView;
+			sourceTree = "<group>";
+		};
 		4E49DEDE2CE55F7F00352DCD /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -2370,8 +2393,10 @@
 				4E5071E22CFCEFC3003FA2AD /* AddItemElementView */,
 				4E8F74A62CE03D4C00CC8969 /* Components */,
 				4E31EFA22CFFFB410053DFE7 /* EditItemElementView */,
+				4E4593A12D04E2A200E277E1 /* EditItemImagesView */,
 				4E6619FF2CEFE39000025C99 /* EditMetadataView */,
 				4E8F74A42CE03D3800CC8969 /* ItemEditorView.swift */,
+				4E4593A42D04E4D600E277E1 /* ItemImagePickerView */,
 			);
 			path = ItemEditorView;
 			sourceTree = "<group>";
@@ -2390,6 +2415,7 @@
 				4E8F74AA2CE03DC600CC8969 /* DeleteItemViewModel.swift */,
 				4E5071D52CFCEB03003FA2AD /* ItemEditorViewModel */,
 				4E8F74B02CE03EAF00CC8969 /* RefreshMetadataViewModel.swift */,
+				4E45939D2D04E1E600E277E1 /* RemoteItemImageViewModel.swift */,
 			);
 			path = ItemAdministration;
 			sourceTree = "<group>";
@@ -5221,6 +5247,7 @@
 				4E8F74B12CE03EB000CC8969 /* RefreshMetadataViewModel.swift in Sources */,
 				E185920A28CEF23A00326F80 /* FocusGuide.swift in Sources */,
 				E1153D9C2BBA3E9D00424D36 /* LoadingCard.swift in Sources */,
+				4E45939F2D04E20000E277E1 /* RemoteItemImageViewModel.swift in Sources */,
 				53ABFDEB2679753200886593 /* ConnectToServerView.swift in Sources */,
 				E102312F2BCF8A08009D71FC /* tvOSLiveTVCoordinator.swift in Sources */,
 				E1575E68293E77B5001665B1 /* LibraryParent.swift in Sources */,
@@ -5359,6 +5386,7 @@
 				E102314A2BCF8A6D009D71FC /* ProgramsViewModel.swift in Sources */,
 				E1721FAA28FB7CAC00762992 /* CompactTimeStamp.swift in Sources */,
 				E1803EA12BFBD6CF0039F90E /* Hashable.swift in Sources */,
+				4E4593A32D04E2B500E277E1 /* EditItemImagesView.swift in Sources */,
 				4E699BB92CB33FC2007CBD5D /* HomeSection.swift in Sources */,
 				62C29E9F26D1016600C1D2E7 /* iOSMainCoordinator.swift in Sources */,
 				E12CC1B128D1008F00678D5D /* NextUpView.swift in Sources */,
@@ -5473,6 +5501,7 @@
 				E18E01E1288747230022598C /* EpisodeItemContentView.swift in Sources */,
 				4E8F74B22CE03EB000CC8969 /* RefreshMetadataViewModel.swift in Sources */,
 				E129429B28F4A5E300796AC6 /* PlaybackSettingsView.swift in Sources */,
+				4E4593A62D04E4E300E277E1 /* ItemImagePickerView.swift in Sources */,
 				E1E9017B28DAAE4D001B1594 /* RoundedCorner.swift in Sources */,
 				E18E01F2288747230022598C /* ActionButtonHStack.swift in Sources */,
 				4E2AC4C52C6C492700DD600D /* MediaContainer.swift in Sources */,
@@ -5575,6 +5604,7 @@
 				E18E0207288749200022598C /* AttributeStyleModifier.swift in Sources */,
 				E1002B642793CEE800E47059 /* ChapterInfo.swift in Sources */,
 				4E661A012CEFE39D00025C99 /* EditMetadataView.swift in Sources */,
+				4E45939E2D04E20000E277E1 /* RemoteItemImageViewModel.swift in Sources */,
 				C46DD8E52A8FA6510046A504 /* LiveTopBarView.swift in Sources */,
 				E18E01AD288746AF0022598C /* DotHStack.swift in Sources */,
 				E170D107294D23BA0017224C /* MediaSourceInfoCoordinator.swift in Sources */,
