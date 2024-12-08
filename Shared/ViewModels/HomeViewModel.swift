@@ -13,23 +13,6 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-struct NotificationSet {
-
-    private var names: Set<String> = []
-
-    func contains<P>(_ key: Notifications.Key<P>) -> Bool {
-        names.contains(key.name.rawValue)
-    }
-
-    mutating func insert<P>(_ key: Notifications.Key<P>) {
-        names.insert(key.name.rawValue)
-    }
-
-    mutating func remove<P>(_ key: Notifications.Key<P>) {
-        names.remove(key.name.rawValue)
-    }
-}
-
 final class HomeViewModel: ViewModel, Stateful {
 
     // MARK: Action
