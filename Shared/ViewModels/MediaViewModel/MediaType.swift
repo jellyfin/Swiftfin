@@ -11,7 +11,8 @@ import JellyfinAPI
 
 extension MediaViewModel {
 
-    enum MediaType: Displayable, Hashable {
+    enum MediaType: Displayable, Hashable, Identifiable {
+
         case collectionFolder(BaseItemDto)
         case downloads
         case favorites
@@ -27,6 +28,19 @@ extension MediaViewModel {
                 return L10n.favorites
             case .liveTV:
                 return L10n.liveTV
+            }
+        }
+
+        var id: String? {
+            switch self {
+            case let .collectionFolder(item):
+                return item.id
+            case .downloads:
+                return "downloads"
+            case .favorites:
+                return "favorites"
+            case let .liveTV(item):
+                return item.id
             }
         }
     }

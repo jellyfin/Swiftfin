@@ -34,7 +34,7 @@ extension HomeView {
 
         var body: some View {
             CollectionHStack(
-                $viewModel.resumeItems,
+                uniqueElements: viewModel.resumeItems,
                 columns: columnCount
             ) { item in
                 PosterButton(item: item, type: .landscape)

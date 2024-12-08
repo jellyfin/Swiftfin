@@ -9,6 +9,7 @@
 import CollectionVGrid
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 
 // TODO: filter for streaming/inactive
@@ -32,7 +33,8 @@ struct ActiveSessionsView: View {
             L10n.noResults.text
         } else {
             CollectionVGrid(
-                viewModel.sessions.keys,
+                uniqueElements: viewModel.sessions.keys,
+                id: \.self,
                 layout: .columns(1, insets: .zero, itemSpacing: 0, lineSpacing: 0)
             ) { id in
                 ActiveSessionRow(box: viewModel.sessions[id]!) {

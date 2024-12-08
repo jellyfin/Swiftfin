@@ -22,12 +22,25 @@ extension ItemView {
 
     struct AboutView: View {
 
-        private enum AboutViewItem: Hashable {
+        private enum AboutViewItem: Hashable, Identifiable {
 
             case image
             case overview
             case mediaSource(MediaSourceInfo)
             case ratings
+
+            var id: String? {
+                switch self {
+                case .image:
+                    return "image"
+                case .overview:
+                    return "overview"
+                case let .mediaSource(source):
+                    return source.id
+                case .ratings:
+                    return "ratings"
+                }
+            }
         }
 
         @Default(.accentColor)
@@ -121,7 +134,10 @@ extension ItemView {
                     .accessibility(addTraits: [.isHeader])
                     .edgePadding(.horizontal)
 
-                CollectionHStack($items, variadicWidths: true) { item in
+                CollectionHStack(
+                    uniqueElements: items,
+                    variadicWidths: true
+                ) { item in
                     switch item {
                     case .image:
                         imageView
