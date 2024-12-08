@@ -24,7 +24,7 @@ extension HomeView {
                 PosterHStack(
                     title: L10n.latestWithString(viewModel.parent?.displayTitle ?? .emptyDash),
                     type: .portrait,
-                    items: $viewModel.elements
+                    items: viewModel.elements
                 )
                 .onSelect { item in
                     router.route(to: \.item, item)

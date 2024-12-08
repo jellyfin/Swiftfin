@@ -51,7 +51,7 @@ struct ItemEditorView: View {
     private var refreshButtonView: some View {
         Section {
             RefreshMetadataButton(item: viewModel.item)
-                .environment(\.isEnabled, userSession?.user.isAdministrator ?? false)
+                .environment(\.isEnabled, userSession?.user.permissions.isAdministrator ?? false)
         } footer: {
             LearnMoreButton(L10n.metadata) {
                 TextPair(
@@ -80,6 +80,25 @@ struct ItemEditorView: View {
             ChevronButton(L10n.metadata)
                 .onSelect {
                     router.route(to: \.editMetadata, viewModel.item)
+                }
+        }
+
+        Section {
+            ChevronButton(L10n.genres)
+                .onSelect {
+                    router.route(to: \.editGenres, viewModel.item)
+                }
+            ChevronButton(L10n.people)
+                .onSelect {
+                    router.route(to: \.editPeople, viewModel.item)
+                }
+            ChevronButton(L10n.tags)
+                .onSelect {
+                    router.route(to: \.editTags, viewModel.item)
+                }
+            ChevronButton(L10n.studios)
+                .onSelect {
+                    router.route(to: \.editStudios, viewModel.item)
                 }
         }
     }

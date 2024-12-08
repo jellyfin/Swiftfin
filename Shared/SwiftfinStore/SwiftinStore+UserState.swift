@@ -64,13 +64,8 @@ extension UserState {
         }
     }
 
-    var isAdministrator: Bool {
-        data.policy?.isAdministrator ?? false
-    }
-
-    // Validate that the use has permission to delete something whether from a folder or all folders
-    var hasDeletionPermissions: Bool {
-        data.policy?.enableContentDeletion ?? false || data.policy?.enableContentDeletionFromFolders != []
+    var permissions: UserPermissions {
+        UserPermissions(data.policy)
     }
 
     var pinHint: String {

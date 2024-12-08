@@ -32,21 +32,31 @@ struct ItemView: View {
 
     @StoredValue(.User.enableItemDeletion)
     private var enableItemDeletion: Bool
-    @StoredValue(.User.enableItemEditor)
-    private var enableItemEditor: Bool
+    @StoredValue(.User.enableItemEditing)
+    private var enableItemEditing: Bool
+    @StoredValue(.User.enableCollectionManagement)
+    private var enableCollectionManagement: Bool
 
     private var canDelete: Bool {
-        enableItemDeletion && viewModel.item.canDelete ?? false
+        if viewModel.item.type == .boxSet {
+            return enableCollectionManagement && viewModel.item.canDelete ?? false
+        } else {
+            return enableItemDeletion && viewModel.item.canDelete ?? false
+        }
     }
 
-    private var canDownload: Bool {
-        viewModel.item.canDownload ?? false
+    private var canEdit: Bool {
+        if viewModel.item.type == .boxSet {
+            return enableCollectionManagement
+        } else {
+            return enableItemEditing
+        }
     }
 
     // Use to hide the menu button when not needed.
     // Add more checks as needed. For example, canDownload.
     private var enableMenu: Bool {
-        canDelete || enableItemEditor
+        canDelete || canEdit
     }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
@@ -132,7 +142,7 @@ struct ItemView: View {
             isLoading: viewModel.backgroundStates.contains(.refresh),
             isHidden: !enableMenu
         ) {
-            if enableItemEditor {
+            if canEdit {
                 Button(L10n.edit, systemImage: "pencil") {
                     router.route(to: \.itemEditor, viewModel)
                 }

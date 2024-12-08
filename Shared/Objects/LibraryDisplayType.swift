@@ -19,9 +19,9 @@ enum LibraryDisplayType: String, CaseIterable, Displayable, Storable, SystemImag
     var displayTitle: String {
         switch self {
         case .grid:
-            "Grid"
+            L10n.grid
         case .list:
-            "List"
+            L10n.list
         }
     }
 

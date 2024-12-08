@@ -149,10 +149,10 @@ extension StoredValues.Keys {
             )
         }
 
-        static var enableItemEditor: Key<Bool> {
+        static var enableItemEditing: Key<Bool> {
             CurrentUserKey(
-                "enableItemEditor",
-                domain: "enableItemEditor",
+                "enableItemEditing",
+                domain: "enableItemEditing",
                 default: false
             )
         }
@@ -161,6 +161,14 @@ extension StoredValues.Keys {
             CurrentUserKey(
                 "enableItemDeletion",
                 domain: "enableItemDeletion",
+                default: false
+            )
+        }
+
+        static var enableCollectionManagement: Key<Bool> {
+            CurrentUserKey(
+                "enableCollectionManagement",
+                domain: "enableCollectionManagement",
                 default: false
             )
         }
