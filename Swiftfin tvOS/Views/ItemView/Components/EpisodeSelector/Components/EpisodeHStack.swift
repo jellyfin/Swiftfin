@@ -30,13 +30,13 @@ extension SeriesEpisodeSelector {
         private var lastFocusedEpisodeID: String?
 
         @StateObject
-        private var proxy = CollectionHStackProxy<BaseItemDto>()
+        private var proxy = CollectionHStackProxy()
 
         let playButtonItem: BaseItemDto?
 
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
-                $viewModel.elements,
+                uniqueElements: viewModel.elements,
                 columns: 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -103,7 +103,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             CollectionHStack(
-                0 ..< 1,
+                count: 1,
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(error: error)
@@ -121,7 +121,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             CollectionHStack(
-                0 ..< Int.random(in: 2 ..< 5),
+                count: Int.random(in: 2 ..< 5),
                 columns: 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()

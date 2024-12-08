@@ -32,7 +32,7 @@ extension ItemView {
             PosterHStack(
                 title: L10n.recommended,
                 type: similarPosterType,
-                items: $viewModel.elements
+                items: viewModel.elements
             )
             .trailing {
                 SeeAllButton()

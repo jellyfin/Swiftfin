@@ -1,5 +1,5 @@
 {
-  "originHash" : "651194fc1966b57201a0de2cba27dc40798bbdf515febdc83f00d634d916fea4",
+  "originHash" : "b7189175c8066640649da818750e83deee8ef2f766db25c34025f23d451b301d",
   "pins" : [
     {
       "identity" : "blurhashkit",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/LePips/CollectionHStack",
       "state" : {
         "branch" : "main",
-        "revision" : "894b595185bbfce007d60b219ee3e4013884131c"
+        "revision" : "00beb78cc570ee1014a92eb1cd7a60c099bce5ec"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/LePips/CollectionVGrid",
       "state" : {
         "branch" : "main",
-        "revision" : "91ba930a502761924204ae74a59ded05f3b7ef89"
+        "revision" : "4b1591321339481756af6157c9205051d7fe3040"
       }
     },
     {
@@ -179,6 +179,15 @@
       "state" : {
         "revision" : "a902f1823a7ff3c9ab2fba0f992396b948eda307",
         "version" : "1.0.5"
+      }
+    },
+    {
+      "identity" : "swift-identified-collections",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-identified-collections",
+      "state" : {
+        "revision" : "2f5ab6e091dd032b63dacbda052405756010dc3b",
+        "version" : "1.1.0"
       }
     },
     {
