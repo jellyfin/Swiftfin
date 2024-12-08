@@ -73,6 +73,14 @@ struct ItemImagePickerView: View {
                     isPresentingDeletion = true
                 }
             }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .updated:
+                    router.dismissCoordinator()
+                case let .error(eventError):
+                    break
+                }
+            }
             .fileImporter(
                 isPresented: $isImportingFile,
                 allowedContentTypes: [.image],
@@ -81,14 +89,13 @@ struct ItemImagePickerView: View {
                 switch result {
                 case let .success(urls):
                     if let url = urls.first {
-                        guard url.startAccessingSecurityScopedResource() else {
-                            return
-                        }
+                        guard url.startAccessingSecurityScopedResource() else { return }
                         defer { url.stopAccessingSecurityScopedResource() }
 
-                        if let imageData = try? Data(contentsOf: url) {
-                            viewModel.send(.setImage(imageData: imageData))
-                            router.dismissCoordinator()
+                        if let data = try? Data(contentsOf: url),
+                           let newImage = UIImage(data: data)
+                        {
+                            viewModel.send(.uploadImage(image: newImage))
                         }
                     }
                 case .failure:
@@ -101,8 +108,8 @@ struct ItemImagePickerView: View {
                 titleVisibility: .visible
             ) {
                 Button(L10n.confirm) {
-                    if let newImageURL = selectedImage?.url {
-                        viewModel.send(.setImage(imageURL: newImageURL))
+                    if let newURL = selectedImage?.url {
+                        viewModel.send(.setImage(url: newURL))
                     }
                     selectedImage = nil
                     router.dismissCoordinator()
@@ -168,7 +175,10 @@ struct ItemImagePickerView: View {
             selectedImage = image
         } label: {
             VStack {
-                posterImage(image)
+                posterImage(
+                    image,
+                    posterStyle: image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
+                )
 
                 if let imageWidth = image?.width, let imageHeight = image?.height {
                     Text("\(imageWidth) x \(imageHeight)")
@@ -182,7 +192,10 @@ struct ItemImagePickerView: View {
         }
     }
 
-    private func posterImage(_ posterImageInfo: RemoteImageInfo?) -> some View {
+    private func posterImage(
+        _ posterImageInfo: RemoteImageInfo?,
+        posterStyle: PosterDisplayType
+    ) -> some View {
         ZStack {
             Color.secondarySystemFill
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -206,6 +219,6 @@ struct ItemImagePickerView: View {
                 .font(.headline)
         }
         .scaledToFit()
-        .posterStyle(.landscape)
+        .posterStyle(posterStyle)
     }
 }

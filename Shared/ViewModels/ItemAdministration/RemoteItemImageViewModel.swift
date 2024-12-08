@@ -8,8 +8,11 @@
 
 import Combine
 import Foundation
+import Get
 import JellyfinAPI
 import OrderedCollections
+import UIKit
+import URLQueryEncoder
 
 private let DefaultPageSize = 50
 
@@ -23,7 +26,8 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     enum Action: Equatable {
         case refresh
         case getNextPage
-        case setImage(imageURL: String? = nil, imageData: Data? = nil)
+        case setImage(url: String)
+        case uploadImage(image: UIImage)
         case deleteImage
     }
 
@@ -105,7 +109,6 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.state = .content
-                        self.eventSubject.send(.updated)
                         _ = self.backgroundStates.remove(.refreshing)
                     }
                 } catch {
@@ -134,7 +137,6 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.state = .content
-                        self.eventSubject.send(.updated)
                         _ = self.backgroundStates.remove(.gettingNextPage)
                     }
                 } catch {
@@ -149,7 +151,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .setImage(imageURL, imageData):
+        case let .setImage(url):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -159,12 +161,35 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.updating)
                     }
 
-                    try await self.setImage(
-                        self.imageType,
-                        imageURL: imageURL,
-                        imageData: imageData,
-                        index: self.imageIndex
-                    )
+                    try await self.setImage(url, index: self.imageIndex)
+
+                    await MainActor.run {
+                        self.eventSubject.send(.updated)
+                        _ = self.backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.state = .error(apiError)
+                        self.eventSubject.send(.error(apiError))
+                        _ = self.backgroundStates.remove(.updating)
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
+        case let .uploadImage(image):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        _ = self.backgroundStates.append(.updating)
+                    }
+
+                    try await self.uploadImage(image, index: self.imageIndex)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -192,7 +217,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.updating)
                     }
 
-                    try await self.deleteImage(self.imageType, index: self.imageIndex)
+                    try await self.deleteImage(index: self.imageIndex)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -239,63 +264,98 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Set Image
 
-    private func setImage(
-        _ type: ImageType,
-        imageURL: String? = nil,
-        imageData: Data? = nil,
-        index: Int? = nil
-    ) async throws {
-
+    private func setImage(_ url: String, index: Int? = nil) async throws {
         guard let itemID = item.id else { return }
 
-        var uploadData: Data?
+        let parameters = Paths.DownloadRemoteImageParameters(type: imageType, imageURL: url)
+        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
+        let response = try await userSession.client.send(imageRequest)
 
-        if let imageData {
-            uploadData = imageData
-        } else if let imageURL {
-            let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: imageURL)
-            let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
-            let response = try await userSession.client.send(imageRequest)
+        let imageData = response.data
+        var updateRequest: Request<Void>
 
-            uploadData = response.data
-        }
-
-        if let imageData = uploadData {
-            if let index {
-                let updateRequest = Paths.setItemImageByIndex(
-                    itemID: itemID,
-                    imageType: type.rawValue,
-                    imageIndex: index,
-                    imageData
-                )
-                _ = try await userSession.client.send(updateRequest)
-            } else {
-                let updateRequest = Paths.setItemImage(
-                    itemID: itemID,
-                    imageType: type.rawValue,
-                    imageData
-                )
-                _ = try await userSession.client.send(updateRequest)
-            }
+        if let index {
+            updateRequest = Paths.setItemImageByIndex(
+                itemID: itemID,
+                imageType: imageType.rawValue,
+                imageIndex: index,
+                imageData
+            )
         } else {
-            throw JellyfinAPIError("No image data provided or downloaded.")
+            updateRequest = Paths.setItemImage(
+                itemID: itemID,
+                imageType: imageType.rawValue,
+                imageData
+            )
         }
+
+        _ = try await userSession.client.send(updateRequest)
+
+        try await refreshItem()
+    }
+
+    // MARK: - Upload Image
+
+    private func uploadImage(_ image: UIImage, index: Int? = nil) async throws {
+        guard let itemID = item.id else { return }
+
+        var contentType: String
+        var imageData: Data
+        var request: Request<Void>
+
+        if let pngData = image.pngData() {
+            contentType = "image/png"
+            imageData = pngData
+        } else if let jpgData = image.jpegData(compressionQuality: 1) {
+            contentType = "image/jpeg"
+            imageData = jpgData
+        } else {
+            logger.error("Unable to convert given image to png/jpg")
+            throw JellyfinAPIError("An internal error occurred")
+        }
+
+        if let index {
+            request = Paths.setItemImageByIndex(
+                itemID: itemID,
+                imageType: imageType.rawValue,
+                imageIndex: index,
+                imageData
+            )
+        } else {
+            request = Paths.setItemImage(
+                itemID: itemID,
+                imageType: imageType.rawValue,
+                imageData
+            )
+        }
+
+        request.headers = ["Content-Type": contentType]
+        _ = try await userSession.client.send(request)
 
         try await refreshItem()
     }
 
     // MARK: - Delete Image
 
-    private func deleteImage(_ type: ImageType, index: Int?) async throws {
+    private func deleteImage(index: Int?) async throws {
         guard let itemID = item.id else { return }
 
+        var request: Request<Void>
+
         if let index {
-            let request = Paths.deleteItemImageByIndex(itemID: itemID, imageType: type.rawValue, imageIndex: index)
-            _ = try await userSession.client.send(request)
+            request = Paths.deleteItemImageByIndex(
+                itemID: itemID,
+                imageType: imageType.rawValue,
+                imageIndex: index
+            )
         } else {
-            let request = Paths.deleteItemImage(itemID: itemID, imageType: type.rawValue)
-            _ = try await userSession.client.send(request)
+            request = Paths.deleteItemImage(
+                itemID: itemID,
+                imageType: imageType.rawValue
+            )
         }
+
+        _ = try await userSession.client.send(request)
 
         try await refreshItem()
     }
@@ -309,7 +369,10 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
             _ = backgroundStates.append(.refreshing)
         }
 
-        let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
+        let request = Paths.getItem(
+            userID: userSession.user.id,
+            itemID: itemId
+        )
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
