@@ -104,7 +104,7 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            Notifications[.didDeleteItem].post(item)
+            Notifications[.didDeleteItem].post(itemID)
             self.item = nil
         }
     }

@@ -100,7 +100,7 @@ struct SwiftfinApp: App {
                 .onNotification(.applicationDidEnterBackground) {
                     Defaults[.backgroundTimeStamp] = Date.now
                 }
-                .onNotification(.applicationWillEnterForeground) { _ in
+                .onNotification(.applicationWillEnterForeground) {
 
                     // TODO: needs to check if any background playback is happening
                     //       - atow, background video playback isn't officially supported

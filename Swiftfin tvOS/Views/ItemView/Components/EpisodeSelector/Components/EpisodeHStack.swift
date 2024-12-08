@@ -79,8 +79,8 @@ extension SeriesEpisodeSelector {
                 onContentFocus: { focusedEpisodeID = lastFocusedEpisodeID },
                 top: "seasons"
             )
-            .onChange(of: viewModel) { _, newValue in
-                lastFocusedEpisodeID = newValue.elements.first?.id
+            .onChange(of: viewModel.id) {
+                lastFocusedEpisodeID = viewModel.elements.first?.id
             }
             .onChange(of: focusedEpisodeID) { _, newValue in
                 guard let newValue else { return }

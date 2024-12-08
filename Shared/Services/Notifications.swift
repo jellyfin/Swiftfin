@@ -124,6 +124,7 @@ extension Notifications.Key {
 
     // MARK: - Media Items
 
+    /// - Payload: The new item with updated metadata.
     static var itemMetadataDidChange: Key<BaseItemDto> {
         Key("itemMetadataDidChange")
     }
@@ -153,7 +154,7 @@ extension Notifications.Key {
         Key("didChangeUserProfileImage")
     }
 
-    static var didAddServerUser: Key<UserState> {
+    static var didAddServerUser: Key<UserDto> {
         Key("didAddServerUser")
     }
 

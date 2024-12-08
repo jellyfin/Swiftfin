@@ -67,8 +67,9 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
+    /// - Keys: the `hashValue` of the `Element.ID`
     @Published
-    final var elements: IdentifiedArrayOf<Element>
+    final var elements: IdentifiedArray<Int, Element>
     @Published
     final var state: State = .initial
     @Published
@@ -104,7 +105,8 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = IdentifiedArray(uniqueElements: data)
+//        self.elements = IdentifiedArray(uniqueElements: data)
+        self.elements = IdentifiedArray(uniqueElements: data, id: \.id.hashValue)
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
@@ -131,7 +133,7 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = IdentifiedArray()
+        self.elements = IdentifiedArray(id: \.id.hashValue)
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent
@@ -162,15 +164,10 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
 
         Notifications[.didDeleteItem]
             .publisher
-            .sink { <#String#> in
-                <#code#>
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
             }
-//            .publisher
-//            .sink(receiveCompletion: { _ in }) { [weak self] notification in
-//                guard let item = notification.object as? Element else { return }
-//                self?.elements.remove(item)
-//            }
-//            .store(in: &cancellables)
+            .store(in: &cancellables)
 
         if let filterViewModel {
             filterViewModel.$currentFilters

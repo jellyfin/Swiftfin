@@ -110,7 +110,7 @@ class ItemViewModel: ViewModel, Stateful {
 //            }
 //            .store(in: &cancellables)
 
-        Notifications.itemShouldRefresh
+        Notifications[.itemShouldRefresh]
             .publisher
             .sink { itemID, parentID in
                 guard itemID == self.item.id || parentID == self.item.id else { return }
@@ -121,7 +121,7 @@ class ItemViewModel: ViewModel, Stateful {
             }
             .store(in: &cancellables)
 
-        Notifications.itemMetadataDidChange
+        Notifications[.itemMetadataDidChange]
             .publisher
             .sink { newItem in
                 guard let newItemID = newItem.id, newItemID == self.item.id else { return }
@@ -353,7 +353,7 @@ class ItemViewModel: ViewModel, Stateful {
         }
 
         let _ = try await userSession.client.send(request)
-        Notifications.itemShouldRefresh.post((itemID, nil))
+        Notifications[.itemShouldRefresh].post((itemID, nil))
     }
 
     private func setIsFavorite(_ isFavorite: Bool) async throws {
