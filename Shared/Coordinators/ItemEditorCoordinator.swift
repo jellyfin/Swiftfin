@@ -24,6 +24,13 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Route(.modal)
     var editMetadata = makeEditMetadata
 
+    // MARK: - Route to Metadata
+
+    @Route(.push)
+    var editImages = makeEditImages
+    @Route(.modal)
+    var imagePicker = makeImagePicker
+
     // MARK: - Route to Genres
 
     @Route(.push)
@@ -63,6 +70,20 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             EditMetadataView(viewModel: ItemEditorViewModel(item: item))
+        }
+    }
+
+    // MARK: - Item Images
+
+    @ViewBuilder
+    func makeEditImages(item: BaseItemDto) -> some View {
+        EditItemImagesView(viewModel: ItemViewModel(item: item))
+    }
+
+    func makeImagePicker(viewModel: RemoteItemImageViewModel)
+    -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ItemImagePickerView(viewModel: viewModel)
         }
     }
 

@@ -113,6 +113,9 @@ struct AddItemElementView<Element: Hashable>: View {
             presenting: error
         ) { error in
             Text(error.localizedDescription)
+            Button(L10n.dismiss, role: .cancel) {
+                isPresentingError = false
+            }
         }
     }
 
