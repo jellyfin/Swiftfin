@@ -159,7 +159,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
-            viewModel.elements,
+            uniqueElements: viewModel.elements,
             layout: layout
         ) { item in
             switch (posterType, viewType) {
