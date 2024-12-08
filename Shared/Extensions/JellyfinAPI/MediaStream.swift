@@ -220,14 +220,17 @@ extension [MediaStream] {
     func adjustExternalSubtitleIndexes(audioStreamCount: Int) -> [MediaStream] {
         guard allSatisfy({ $0.type == .subtitle }) else { return self }
         let embeddedSubtitleCount = filter { !($0.isExternal ?? false) }.count
+        let externalSubtitleCount = filter { $0.isExternal ?? false }.count
 
         var mediaStreams = self
 
         for (i, mediaStream) in mediaStreams.enumerated() {
-            guard mediaStream.isExternal ?? false else { continue }
             var copy = mediaStream
-            copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
-
+            if copy.isExternal ?? false {
+                copy.index = (copy.index ?? 0) + 1 + embeddedSubtitleCount + audioStreamCount
+            } else {
+                copy.index = (copy.index ?? 0) - externalSubtitleCount
+            }
             mediaStreams[i] = copy
         }
 
