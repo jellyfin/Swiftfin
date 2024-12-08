@@ -27,7 +27,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
         case refresh
         case getNextPage
         case setImage(url: String)
-        case uploadImage(image: UIImage)
+        case uploadImage(image: Data)
         case deleteImage
     }
 
@@ -170,7 +170,6 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
                         _ = self.backgroundStates.remove(.updating)
                     }
@@ -198,7 +197,6 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
                         _ = self.backgroundStates.remove(.updating)
                     }
@@ -226,7 +224,6 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
                         _ = self.backgroundStates.remove(.updating)
                     }
@@ -272,65 +269,48 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
         let response = try await userSession.client.send(imageRequest)
 
         let imageData = response.data
-        var updateRequest: Request<Void>
 
         if let index {
-            updateRequest = Paths.setItemImageByIndex(
+            let updateRequest = Paths.setItemImageByIndex(
                 itemID: itemID,
                 imageType: imageType.rawValue,
                 imageIndex: index,
                 imageData
             )
+            _ = try await userSession.client.send(updateRequest)
         } else {
-            updateRequest = Paths.setItemImage(
+            let updateRequest = Paths.setItemImage(
                 itemID: itemID,
                 imageType: imageType.rawValue,
                 imageData
             )
+            _ = try await userSession.client.send(updateRequest)
         }
-
-        _ = try await userSession.client.send(updateRequest)
 
         try await refreshItem()
     }
 
     // MARK: - Upload Image
 
-    private func uploadImage(_ image: UIImage, index: Int? = nil) async throws {
+    private func uploadImage(_ image: Data, index: Int? = nil) async throws {
         guard let itemID = item.id else { return }
 
-        var contentType: String
-        var imageData: Data
-        var request: Request<Void>
-
-        if let pngData = image.pngData() {
-            contentType = "image/png"
-            imageData = pngData
-        } else if let jpgData = image.jpegData(compressionQuality: 1) {
-            contentType = "image/jpeg"
-            imageData = jpgData
-        } else {
-            logger.error("Unable to convert given image to png/jpg")
-            throw JellyfinAPIError("An internal error occurred")
-        }
-
         if let index {
-            request = Paths.setItemImageByIndex(
+            let request = Paths.setItemImageByIndex(
                 itemID: itemID,
                 imageType: imageType.rawValue,
                 imageIndex: index,
-                imageData
+                image
             )
+            _ = try await userSession.client.send(request)
         } else {
-            request = Paths.setItemImage(
+            let request = Paths.setItemImage(
                 itemID: itemID,
                 imageType: imageType.rawValue,
-                imageData
+                image
             )
+            _ = try await userSession.client.send(request)
         }
-
-        request.headers = ["Content-Type": contentType]
-        _ = try await userSession.client.send(request)
 
         try await refreshItem()
     }

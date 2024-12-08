@@ -91,23 +91,25 @@ struct EditItemImagesView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 ZStack {
-                    ImageView(viewModel.item.imageSource(imageType))
-                        .placeholder { source in
-                            if let blurHash = source.blurHash {
-                                BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-                                    .scaledToFit()
-                            } else {
-                                Image(systemName: "circle")
+                    RedrawOnNotificationView(.itemMetadataDidChange) {
+                        ImageView(viewModel.item.imageSource(imageType))
+                            .placeholder { source in
+                                if let blurHash = source.blurHash {
+                                    BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+                                        .scaledToFit()
+                                } else {
+                                    Image(systemName: "circle")
+                                }
                             }
-                        }
-                        .failure {
-                            VStack(spacing: 8) {
-                                Image(systemName: "photo")
-                                Text(L10n.none)
+                            .failure {
+                                VStack(spacing: 8) {
+                                    Image(systemName: "photo")
+                                    Text(L10n.none)
+                                }
                             }
-                        }
-                        .foregroundColor(.secondary)
-                        .font(.headline)
+                            .foregroundColor(.secondary)
+                            .font(.headline)
+                    }
 
                     VStack {
                         Spacer()
