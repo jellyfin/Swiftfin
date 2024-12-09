@@ -2139,8 +2139,8 @@
 		4E31EFA22CFFFB410053DFE7 /* EditItemElementView */ = {
 			isa = PBXGroup;
 			children = (
-				4E31EFA42CFFFB670053DFE7 /* EditItemElementView.swift */,
 				4E31EFA32CFFFB480053DFE7 /* Components */,
+				4E31EFA42CFFFB670053DFE7 /* EditItemElementView.swift */,
 			);
 			path = EditItemElementView;
 			sourceTree = "<group>";
