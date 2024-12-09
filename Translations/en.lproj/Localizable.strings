@@ -1817,10 +1817,6 @@
 // Label for selecting the air time of an episode.
 "airTime" = "Air Time";
 
-// Run Time - Label for runtime input field
-// Label for specifying episode runtime.
-"runTime" = "Run Time";
-
 // Episode Runtime Description - Description for runtime input
 // Description displayed below runtime input for episodes.
 "episodeRuntimeDescription" = "Episode runtime in minutes.";
