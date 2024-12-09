@@ -97,10 +97,10 @@ struct SwiftfinApp: App {
         WindowGroup {
             versionedView
                 .ignoresSafeArea()
-                .onNotification(UIApplication.didEnterBackgroundNotification) { _ in
+                .onNotification(.applicationDidEnterBackground) {
                     Defaults[.backgroundTimeStamp] = Date.now
                 }
-                .onNotification(UIApplication.willEnterForegroundNotification) { _ in
+                .onNotification(.applicationWillEnterForeground) {
 
                     // TODO: needs to check if any background playback is happening
                     //       - atow, background video playback isn't officially supported

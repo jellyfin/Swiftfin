@@ -10,6 +10,7 @@ import Combine
 import Defaults
 import Foundation
 import Get
+import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import UIKit
@@ -32,7 +33,7 @@ private let DefaultPageSize = 50
        on remembering other filters.
  */
 
-class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -66,8 +67,9 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
+    /// - Keys: the `hashValue` of the `Element.ID`
     @Published
-    final var elements: OrderedSet<Element>
+    final var elements: IdentifiedArray<Int, Element>
     @Published
     final var state: State = .initial
     @Published
@@ -103,7 +105,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = OrderedSet(data)
+        self.elements = IdentifiedArray(uniqueElements: data, id: \.id.hashValue)
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
@@ -130,7 +132,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = OrderedSet()
+        self.elements = IdentifiedArray(id: \.id.hashValue)
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent
@@ -159,10 +161,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem].publisher
-            .sink(receiveCompletion: { _ in }) { [weak self] notification in
-                guard let item = notification.object as? Element else { return }
-                self?.elements.remove(item)
+        Notifications[.didDeleteItem]
+            .publisher
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
             }
             .store(in: &cancellables)
 

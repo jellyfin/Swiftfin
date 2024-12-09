@@ -23,7 +23,7 @@ struct MediaView: View {
     @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.mediaItems,
+            uniqueElements: viewModel.mediaItems,
             layout: .columns(4, insets: .init(50), itemSpacing: 50, lineSpacing: 50)
         ) { mediaType in
             MediaItem(viewModel: viewModel, type: mediaType)

@@ -96,7 +96,7 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
     // MARK: Metadata Refresh Logic
 
     private func deleteItem() async throws {
-        guard let itemID = item?.id else {
+        guard let item, let itemID = item.id else {
             throw JellyfinAPIError(L10n.unknownError)
         }
 
@@ -104,7 +104,7 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            Notifications[.didDeleteItem].post(object: item)
+            Notifications[.didDeleteItem].post(itemID)
             self.item = nil
         }
     }
