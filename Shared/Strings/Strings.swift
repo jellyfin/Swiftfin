@@ -22,6 +22,10 @@ internal enum L10n {
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
+  /// Access schedule
+  internal static let accessSchedule = L10n.tr("Localizable", "accessSchedule", fallback: "Access schedule")
+  /// Create an access schedule to limit access to certain hours.
+  internal static let accessScheduleDescription = L10n.tr("Localizable", "accessScheduleDescription", fallback: "Create an access schedule to limit access to certain hours.")
   /// Active
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Active Devices
@@ -66,6 +70,10 @@ internal enum L10n {
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
   /// Allow collection management
   internal static let allowCollectionManagement = L10n.tr("Localizable", "allowCollectionManagement", fallback: "Allow collection management")
+  /// Allowed tags
+  internal static let allowedTags = L10n.tr("Localizable", "allowedTags", fallback: "Allowed tags")
+  /// Only show media to this user with at least one of the specified tags.
+  internal static let allowedTagsDescription = L10n.tr("Localizable", "allowedTagsDescription", fallback: "Only show media to this user with at least one of the specified tags.")
   /// Allow media item deletion
   internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow media item deletion")
   /// Allow media item editing
@@ -196,6 +204,14 @@ internal enum L10n {
   internal static let bitrateTestDisclaimer = L10n.tr("Localizable", "bitrateTestDisclaimer", fallback: "Longer tests are more accurate but may result in a delayed playback.")
   /// bps
   internal static let bitsPerSecond = L10n.tr("Localizable", "bitsPerSecond", fallback: "bps")
+  /// Blocked tags
+  internal static let blockedTags = L10n.tr("Localizable", "blockedTags", fallback: "Blocked tags")
+  /// Hide media with at least one of the specified tags.
+  internal static let blockedTagsDescription = L10n.tr("Localizable", "blockedTagsDescription", fallback: "Hide media with at least one of the specified tags.")
+  /// Block unrated items
+  internal static let blockUnratedItems = L10n.tr("Localizable", "blockUnratedItems", fallback: "Block unrated items")
+  /// Block items from this user with no or unrecognized rating information.
+  internal static let blockUnratedItemsDescription = L10n.tr("Localizable", "blockUnratedItemsDescription", fallback: "Block items from this user with no or unrecognized rating information.")
   /// Blue
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
   /// Bugs and Features
@@ -740,6 +756,10 @@ internal enum L10n {
   internal static let maximumSessions = L10n.tr("Localizable", "maximumSessions", fallback: "Maximum sessions")
   /// Maximum sessions policy
   internal static let maximumSessionsPolicy = L10n.tr("Localizable", "maximumSessionsPolicy", fallback: "Maximum sessions policy")
+  /// Maximum parental rating
+  internal static let maxParentalRating = L10n.tr("Localizable", "maxParentalRating", fallback: "Maximum parental rating")
+  /// Content with a higher rating will be hidden from this user.
+  internal static let maxParentalRatingDescription = L10n.tr("Localizable", "maxParentalRatingDescription", fallback: "Content with a higher rating will be hidden from this user.")
   /// This setting may result in media failing to start playback.
   internal static let mayResultInPlaybackFailure = L10n.tr("Localizable", "mayResultInPlaybackFailure", fallback: "This setting may result in media failing to start playback.")
   /// Media
@@ -1086,10 +1106,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
