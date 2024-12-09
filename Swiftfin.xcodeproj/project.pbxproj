@@ -1042,6 +1042,8 @@
 		E1DD20412BE1EB8C00C0DE51 /* AddUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD20402BE1EB8C00C0DE51 /* AddUserButton.swift */; };
 		E1DD55372B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
 		E1DD55382B6EE533007501C0 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD55362B6EE533007501C0 /* Task.swift */; };
+		E1DD95CC2D07876400335494 /* SeparatorVStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD95CB2D07876400335494 /* SeparatorVStack.swift */; };
+		E1DD95CD2D07876400335494 /* SeparatorVStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DD95CB2D07876400335494 /* SeparatorVStack.swift */; };
 		E1DE2B4A2B97ECB900F6715F /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE2B492B97ECB900F6715F /* ErrorView.swift */; };
 		E1DE64922CC6F0C900E423B6 /* DeviceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE64912CC6F0C900E423B6 /* DeviceSection.swift */; };
 		E1DE84142B9531C1008CCE21 /* OrderedSectionSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */; };
@@ -1862,6 +1864,7 @@
 		E1DC9846296DEFF500982F06 /* FavoriteIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteIndicator.swift; sourceTree = "<group>"; };
 		E1DD20402BE1EB8C00C0DE51 /* AddUserButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
 		E1DD55362B6EE533007501C0 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		E1DD95CB2D07876400335494 /* SeparatorVStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparatorVStack.swift; sourceTree = "<group>"; };
 		E1DE2B492B97ECB900F6715F /* ErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorView.swift; sourceTree = "<group>"; };
 		E1DE64912CC6F0C900E423B6 /* DeviceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceSection.swift; sourceTree = "<group>"; };
 		E1DE84132B9531C1008CCE21 /* OrderedSectionSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderedSectionSelectorView.swift; sourceTree = "<group>"; };
@@ -4230,7 +4233,6 @@
 		E1AD105326D96F5A003E4A08 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */,
 				E102314C2BCF8A7E009D71FC /* AlternateLayoutView.swift */,
 				E104DC952B9E7E29008F506D /* AssertionFailureView.swift */,
 				E18E0203288749200022598C /* BlurView.swift */,
@@ -4240,6 +4242,7 @@
 				E1153DCB2BBB633B00424D36 /* FastSVGView.swift */,
 				531AC8BE26750DE20091C7EB /* ImageView.swift */,
 				4E16FD562C01A32700110147 /* LetterPickerOrientation.swift */,
+				4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */,
 				E1D37F472B9C648E00343D2B /* MaxHeightText.swift */,
 				E1DC983F296DEBA500982F06 /* PosterIndicators */,
 				E1FE69A628C29B720021BC93 /* ProgressBar.swift */,
@@ -4248,6 +4251,7 @@
 				E18E01FF288749200022598C /* RowDivider.swift */,
 				E1E1643D28BB074000323B0A /* SelectorView.swift */,
 				E1356E0129A7309D00382563 /* SeparatorHStack.swift */,
+				E1DD95CB2D07876400335494 /* SeparatorVStack.swift */,
 				E1047E2227E5880000CB0D4A /* SystemImageContentView.swift */,
 				E1A1528928FD22F600600579 /* TextPairView.swift */,
 				E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */,
@@ -5308,6 +5312,7 @@
 				E1CB75702C80E66700217C76 /* CommaStringBuilder.swift in Sources */,
 				5364F456266CA0DC0026ECBA /* BaseItemPerson.swift in Sources */,
 				E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */,
+				E1DD95CC2D07876400335494 /* SeparatorVStack.swift in Sources */,
 				E1575E7C293E77B5001665B1 /* TimerProxy.swift in Sources */,
 				E1E5D5512783E67700692DFE /* ExperimentalSettingsView.swift in Sources */,
 				E1FE69A828C29B720021BC93 /* ProgressBar.swift in Sources */,
@@ -5762,6 +5767,7 @@
 				E18ACA952A15A3E100BB4F35 /* (null) in Sources */,
 				4EB1A8CE2C9B2D0800F43898 /* ActiveSessionRow.swift in Sources */,
 				E1D5C39B28DF993400CDBEFB /* ThumbSlider.swift in Sources */,
+				E1DD95CD2D07876400335494 /* SeparatorVStack.swift in Sources */,
 				E1DC983D296DEB9B00982F06 /* UnwatchedIndicator.swift in Sources */,
 				E1FE69AA28C29CC20021BC93 /* LandscapePosterProgressBar.swift in Sources */,
 				E1C925F72887504B002A7A66 /* PanDirectionGestureRecognizer.swift in Sources */,
@@ -6242,7 +6248,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 78;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -6258,7 +6264,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -6282,7 +6288,7 @@
 				CURRENT_PROJECT_VERSION = 78;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = TY84JMYEFE;
 				ENABLE_BITCODE = NO;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -6298,7 +6304,7 @@
 				);
 				MARKETING_VERSION = 1.0.0;
 				OTHER_CFLAGS = "";
-				PRODUCT_BUNDLE_IDENTIFIER = org.jellyfin.swiftfin;
+				PRODUCT_BUNDLE_IDENTIFIER = pip.jellyfin.swiftfin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;

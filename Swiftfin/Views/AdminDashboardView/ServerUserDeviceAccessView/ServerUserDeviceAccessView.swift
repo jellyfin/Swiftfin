@@ -96,12 +96,15 @@ struct ServerUserDeviceAccessView: View {
     @ViewBuilder
     var contentView: some View {
         List {
-            Section(L10n.access) {
+            InsetGroupedListHeader {
                 Toggle(
                     L10n.enableAllDevices,
                     isOn: $tempPolicy.enableAllDevices.coalesce(false)
                 )
             }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .padding(.vertical, 24)
 
             if tempPolicy.enableAllDevices == false {
                 Section {
@@ -122,5 +125,6 @@ struct ServerUserDeviceAccessView: View {
                 }
             }
         }
+        .listStyle(.plain)
     }
 }

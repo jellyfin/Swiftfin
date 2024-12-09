@@ -67,67 +67,122 @@ extension ListTitleSection {
     }
 }
 
-struct InsetGroupedListHeader: View {
+/// A view that mimics an inset grouped section, meant to be
+/// used as a header for a `List` with `listStyle(.plain)`.
+struct InsetGroupedListHeader<Content: View>: View {
 
     @Default(.accentColor)
     private var accentColor
 
-    private let title: String
-    private let description: String?
+    private let content: () -> Content
+    private let title: Text?
+    private let description: Text?
     private let onLearnMore: (() -> Void)?
 
-    var body: some View {
+    @ViewBuilder
+    private var header: some View {
         Button {
             onLearnMore?()
         } label: {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.secondarySystemBackground)
+            VStack(alignment: .center, spacing: 10) {
 
-                VStack(alignment: .center, spacing: 10) {
-
-                    Text(title)
+                if let title {
+                    title
                         .font(.title3)
                         .fontWeight(.semibold)
-
-                    if let description {
-                        Text(description)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    if onLearnMore != nil {
-                        Text("Learn More\u{2026}")
-                            .foregroundStyle(accentColor)
-                    }
                 }
-                .font(.subheadline)
-                .frame(maxWidth: .infinity)
-                .padding(16)
+
+                if let description {
+                    description
+                        .multilineTextAlignment(.center)
+                }
+
+                if onLearnMore != nil {
+                    Text("Learn More\u{2026}")
+                        .foregroundStyle(accentColor)
+                }
             }
+            .font(.subheadline)
+            .frame(maxWidth: .infinity)
+            .padding(16)
         }
         .foregroundStyle(.primary, .secondary)
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.secondarySystemBackground)
+
+            SeparatorVStack {
+                RowDivider()
+            } content: {
+                if title != nil || description != nil {
+                    header
+                }
+
+                content()
+                    .listRowSeparator(.hidden)
+                    .padding(.init(vertical: 5, horizontal: 20))
+                    .listRowInsets(.init(vertical: 10, horizontal: 20))
+            }
+        }
     }
 }
 
 extension InsetGroupedListHeader {
 
     init(
-        _ title: String,
-        description: String? = nil
+        _ title: String? = nil,
+        description: String? = nil,
+        onLearnMore: (() -> Void)? = nil,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
-            title: title,
-            description: description,
-            onLearnMore: nil
+            content: content,
+            title: title == nil ? nil : Text(title!),
+            description: description == nil ? nil : Text(description!),
+            onLearnMore: onLearnMore
         )
     }
 
     init(
-        _ title: String,
-        description: String? = nil,
-        onLearnMore: @escaping () -> Void
+        title: Text,
+        description: Text? = nil,
+        onLearnMore: (() -> Void)? = nil,
+        @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
+            content: content,
+            title: title,
+            description: description,
+            onLearnMore: onLearnMore
+        )
+    }
+}
+
+extension InsetGroupedListHeader where Content == EmptyView {
+
+    init(
+        _ title: String,
+        description: String? = nil,
+        onLearnMore: (() -> Void)? = nil
+    ) {
+        self.init(
+            content: { EmptyView() },
+            title: Text(title),
+            description: description == nil ? nil : Text(description!),
+            onLearnMore: onLearnMore
+        )
+    }
+
+    init(
+        title: Text,
+        description: Text? = nil,
+        onLearnMore: (() -> Void)? = nil
+    ) {
+        self.init(
+            content: { EmptyView() },
             title: title,
             description: description,
             onLearnMore: onLearnMore
