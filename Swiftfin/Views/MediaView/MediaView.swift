@@ -36,7 +36,7 @@ struct MediaView: View {
     @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.mediaItems,
+            uniqueElements: viewModel.mediaItems,
             layout: UIDevice.isPhone ? phoneLayout : padLayout
         ) { mediaType in
             MediaItem(viewModel: viewModel, type: mediaType)
