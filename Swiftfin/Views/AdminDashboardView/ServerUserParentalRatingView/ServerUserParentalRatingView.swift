@@ -140,7 +140,7 @@ struct ServerUserParentalRatingView: View {
         let groups = Dictionary(
             grouping: parentalRatingsViewModel.parentalRatings
         ) {
-            $0.value ?? 0
+            $0.value!
         }
 
         var groupedRatings = groups.map { key, group in

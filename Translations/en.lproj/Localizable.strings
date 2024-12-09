@@ -2041,6 +2041,10 @@
 // Represents a translator
 "translator" = "Translator";
 
+// Parental controls - Section Title
+// Parental controls section & view titles
+"parentalControls" = "Parental controls";
+
 // Block unrated items - Section Title
 // Parental ratings block unrated items section
 "blockUnratedItems" = "Block unrated items";

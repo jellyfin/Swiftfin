@@ -904,6 +904,8 @@ internal enum L10n {
   internal static func pageOfWithNumbers(_ p1: Any, _ p2: Any) -> String {
     return L10n.tr("Localizable", "pageOfWithNumbers", String(describing: p1), String(describing: p2), fallback: "Page %1$@ of %2$@")
   }
+  /// Parental controls
+  internal static let parentalControls = L10n.tr("Localizable", "parentalControls", fallback: "Parental controls")
   /// Parental Rating
   internal static let parentalRating = L10n.tr("Localizable", "parentalRating", fallback: "Parental Rating")
   /// Password
@@ -1106,10 +1108,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Runtime
-  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Run Time
   internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
+  /// Runtime
+  internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
