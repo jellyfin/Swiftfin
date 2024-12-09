@@ -134,8 +134,6 @@ extension ServerUsersView {
                 Spacer()
 
                 ListRowCheckbox()
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, isSelected)
             }
         }
 

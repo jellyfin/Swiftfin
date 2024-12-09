@@ -114,8 +114,6 @@ extension DevicesView {
                 Spacer()
 
                 ListRowCheckbox()
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, isSelected)
             }
         }
 

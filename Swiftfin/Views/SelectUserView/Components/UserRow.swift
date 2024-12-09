@@ -118,8 +118,6 @@ extension SelectUserView {
                 Spacer()
 
                 ListRowCheckbox()
-                    .environment(\.isEditing, isEditing)
-                    .environment(\.isSelected, isSelected)
             }
         }
 
