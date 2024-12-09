@@ -42,7 +42,7 @@ struct ConnectToServerView: View {
         case let .connected(server):
             UIDevice.feedback(.success)
 
-            Notifications[.didConnectToServer].post(object: server)
+            Notifications[.didConnectToServer].post(server)
             router.popLast()
         case let .duplicateServer(server):
             UIDevice.feedback(.warning)
