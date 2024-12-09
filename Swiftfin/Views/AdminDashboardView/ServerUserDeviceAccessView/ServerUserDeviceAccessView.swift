@@ -106,24 +106,18 @@ struct ServerUserDeviceAccessView: View {
             if tempPolicy.enableAllDevices == false {
                 Section {
                     ForEach(devicesViewModel.devices, id: \.self) { device in
-                        Toggle(
-                            isOn: $tempPolicy.enabledDevices
-                                .coalesce([])
-                                .contains(device.id!)
-                        ) {
-                            HStack {
-                                DevicesView.DeviceRow(device: device) {
-                                    if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
-                                        tempPolicy.enabledDevices?.remove(at: index)
-                                    } else {
-                                        if tempPolicy.enabledDevices == nil {
-                                            tempPolicy.enabledDevices = []
-                                        }
-                                        tempPolicy.enabledDevices?.append(device.id!)
-                                    }
+                        DevicesView.DeviceRow(device: device) {
+                            if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
+                                tempPolicy.enabledDevices?.remove(at: index)
+                            } else {
+                                if tempPolicy.enabledDevices == nil {
+                                    tempPolicy.enabledDevices = []
                                 }
+                                tempPolicy.enabledDevices?.append(device.id!)
                             }
                         }
+                        .environment(\.isEditing, true)
+                        .environment(\.isSelected, tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
                     }
                 }
             }
