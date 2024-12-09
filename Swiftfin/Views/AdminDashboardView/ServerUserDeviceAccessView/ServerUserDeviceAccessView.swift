@@ -19,9 +19,9 @@ struct ServerUserDeviceAccessView: View {
 
     // MARK: - ViewModel
 
-    @ObservedObject
+    @StateObject
     private var viewModel: ServerUserAdminViewModel
-    @ObservedObject
+    @StateObject
     private var devicesViewModel = DevicesViewModel()
 
     // MARK: - State Variables
@@ -41,7 +41,7 @@ struct ServerUserDeviceAccessView: View {
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
@@ -112,66 +112,21 @@ struct ServerUserDeviceAccessView: View {
                                 .contains(device.id!)
                         ) {
                             HStack {
-                                deviceImage(device)
-                                deviceDetails(device)
+                                DevicesView.DeviceRow(device: device) {
+                                    if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
+                                        tempPolicy.enabledDevices?.remove(at: index)
+                                    } else {
+                                        if tempPolicy.enabledDevices == nil {
+                                            tempPolicy.enabledDevices = []
+                                        }
+                                        tempPolicy.enabledDevices?.append(device.id!)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    // MARK: - Device Details View
-
-    @ViewBuilder
-    private func deviceDetails(_ device: DeviceInfo) -> some View {
-        VStack(alignment: .leading) {
-
-            // TODO: 10.9 SDK - Enable Nicknames
-            Text(device.name ?? L10n.unknown)
-                .font(.headline)
-                .lineLimit(1)
-                .multilineTextAlignment(.leading)
-
-            TextPairView(
-                leading: L10n.latestWithString(L10n.user),
-                trailing: device.lastUserName ?? L10n.unknown
-            )
-            .lineLimit(1)
-
-            TextPairView(
-                leading: L10n.client,
-                trailing: device.appName ?? L10n.unknown
-            )
-            .lineLimit(1)
-
-            TextPairView(
-                L10n.lastSeen,
-                value: Text(device.dateLastActivity, format: .lastSeen)
-            )
-            .id(currentDate)
-            .monospacedDigit()
-        }
-        .font(.subheadline)
-        .foregroundStyle(.primary, .secondary)
-    }
-
-    // MARK: - Device Image View
-
-    @ViewBuilder
-    private func deviceImage(_ device: DeviceInfo) -> some View {
-        ZStack {
-            device.type.clientColor
-
-            Image(device.type.image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 40)
-        }
-        .squarePosterStyle()
-        .posterShadow()
-        .frame(width: 60, height: 60)
-        .padding(.trailing)
     }
 }

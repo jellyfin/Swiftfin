@@ -158,13 +158,13 @@ extension ServerUsersView {
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow {
                 userImage
             } content: {
                 rowContent
-                    .padding(.vertical, 8)
             }
             .onSelect(perform: onSelect)
+            .isSeparatorVisible(false)
             .swipeActions {
                 Button(
                     L10n.delete,

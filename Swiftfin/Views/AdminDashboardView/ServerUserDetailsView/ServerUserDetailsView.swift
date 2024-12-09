@@ -58,15 +58,13 @@ struct ServerUserDetailsView: View {
                     .onSelect {
                         router.route(to: \.userDeviceAccess, viewModel)
                     }
-
-                ChevronButton(L10n.media)
-                    .onSelect {
-                        router.route(to: \.userMediaAccess, viewModel)
-                    }
-
                 ChevronButton(L10n.liveTV)
                     .onSelect {
                         router.route(to: \.userLiveTVAccess, viewModel)
+                    }
+                ChevronButton(L10n.media)
+                    .onSelect {
+                        router.route(to: \.userMediaAccess, viewModel)
                     }
             }
 
