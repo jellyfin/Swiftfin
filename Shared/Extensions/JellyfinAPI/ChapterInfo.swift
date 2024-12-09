@@ -45,6 +45,10 @@ extension ChapterInfo {
             chapterInfo.displayTitle
         }
 
+        var unwrappedIDHashOrZero: Int {
+            id
+        }
+
         let systemImage: String = "film"
         var subtitle: String?
         var showTitle: Bool = true
