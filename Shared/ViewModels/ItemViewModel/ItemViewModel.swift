@@ -89,27 +89,6 @@ class ItemViewModel: ViewModel, Stateful {
         self.item = item
         super.init()
 
-        // TODO: should replace with a more robust "PlaybackManager"
-//        Notifications[.itemMetadataDidChange].publisher
-//            .sink { [weak self] notification in
-//                if let userInfo = notification.object as? [String: String] {
-//                    if let itemID = userInfo["itemID"], itemID == item.id {
-//                        Task { [weak self] in
-//                            await self?.send(.backgroundRefresh)
-//                        }
-//                    } else if let seriesID = userInfo["seriesID"], seriesID == item.id {
-//                        Task { [weak self] in
-//                            await self?.send(.backgroundRefresh)
-//                        }
-//                    }
-//                } else if let newItem = notification.object as? BaseItemDto, newItem.id == self?.item.id {
-//                    Task { [weak self] in
-//                        await self?.send(.replace(newItem))
-//                    }
-//                }
-//            }
-//            .store(in: &cancellables)
-
         Notifications[.itemShouldRefresh]
             .publisher
             .sink { itemID, parentID in
