@@ -100,7 +100,7 @@ extension EditMetadataView {
         @ViewBuilder
         private var runTimeView: some View {
             ChevronAlertButton(
-                L10n.runTime,
+                L10n.runtime,
                 subtitle: ServerTicks(item.runTimeTicks ?? 0)
                     .seconds.formatted(.hourMinute),
                 description: L10n.episodeRuntimeDescription

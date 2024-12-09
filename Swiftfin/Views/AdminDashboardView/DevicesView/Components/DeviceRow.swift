@@ -30,17 +30,28 @@ extension DevicesView {
         @CurrentDate
         private var currentDate: Date
 
-        // MARK: - Observed Objects
+        // MARK: - Properties
 
         let device: DeviceInfo
         let onSelect: () -> Void
-        let onDelete: () -> Void
+        let onDelete: (() -> Void)?
+
+        // MARK: - Initializer
+
+        init(
+            device: DeviceInfo,
+            onSelect: @escaping () -> Void,
+            onDelete: (() -> Void)? = nil
+        ) {
+            self.device = device
+            self.onSelect = onSelect
+            self.onDelete = onDelete
+        }
 
         // MARK: - Label Styling
 
         private var labelForegroundStyle: some ShapeStyle {
             guard isEditing else { return .primary }
-
             return isSelected ? .primary : .secondary
         }
 
@@ -72,7 +83,6 @@ extension DevicesView {
         private var rowContent: some View {
             HStack {
                 VStack(alignment: .leading) {
-
                     Text(device.name ?? L10n.unknown)
                         .font(.headline)
                         .lineLimit(2)
@@ -82,17 +92,20 @@ extension DevicesView {
                         leading: L10n.user,
                         trailing: device.lastUserName ?? L10n.unknown
                     )
+                    .lineLimit(1)
 
                     TextPairView(
                         leading: L10n.client,
                         trailing: device.appName ?? L10n.unknown
                     )
+                    .lineLimit(1)
 
                     TextPairView(
                         L10n.lastSeen,
                         value: Text(device.dateLastActivity, format: .lastSeen)
                     )
                     .id(currentDate)
+                    .lineLimit(1)
                     .monospacedDigit()
                 }
                 .font(.subheadline)
@@ -100,45 +113,29 @@ extension DevicesView {
 
                 Spacer()
 
-                if isEditing, isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .backport
-                        .fontWeight(.bold)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
-
-                } else if isEditing {
-                    Image(systemName: "circle")
-                        .resizable()
-                        .backport
-                        .fontWeight(.bold)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(.secondary)
-                }
+                ListRowCheckbox()
             }
         }
 
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow {
                 deviceImage
             } content: {
                 rowContent
-                    .padding(.vertical, 8)
             }
             .onSelect(perform: onSelect)
+            .isSeparatorVisible(false)
             .swipeActions {
-                Button(
-                    L10n.delete,
-                    systemImage: "trash",
-                    action: onDelete
-                )
-                .tint(.red)
+                if let onDelete = onDelete {
+                    Button(
+                        L10n.delete,
+                        systemImage: "trash",
+                        action: onDelete
+                    )
+                    .tint(.red)
+                }
             }
         }
     }
