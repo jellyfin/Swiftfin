@@ -68,6 +68,11 @@ struct ServerUserDetailsView: View {
                     }
             }
 
+            ChevronButton(L10n.accessSchedules)
+                .onSelect {
+                    router.route(to: \.userEditAccessSchedules, viewModel)
+                }
+
             /* Section("Parental controls") {
                  // TODO: Allow items SDK 10.10 - allowedTags
                  ChevronButton("Allow items")

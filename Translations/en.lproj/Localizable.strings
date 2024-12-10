@@ -2048,3 +2048,23 @@
 // Translator - Enum
 // Represents a translator
 "translator" = "Translator";
+
+// Start Time - Label
+// Label for selecting or displaying the start time
+"startTime" = "Start Time";
+
+// End Time - Label
+// Label for selecting or displaying the end time
+"endTime" = "End Time";
+
+// Access Schedules - Label
+// Label for configuring or viewing the access schedule
+"accessSchedules" = "Access schedules";
+
+// Schedules - View Title
+// View Title for configuring or viewing the access schedule
+"schedules" = "Schedules";
+
+// Access Schedule Description - Label
+// Description for viewing or listing multiple schedules
+"accessSchedulesDescription" = "Access schedules define allowed hours for usage and restrict access outside those times.";

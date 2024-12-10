@@ -22,6 +22,10 @@ internal enum L10n {
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
+  /// Access schedules
+  internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access schedules")
+  /// Access schedules define allowed hours for usage and restrict access outside those times.
+  internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Access schedules define allowed hours for usage and restrict access outside those times.")
   /// Active
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Active Devices
@@ -496,6 +500,8 @@ internal enum L10n {
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End Date")
   /// Ended
   internal static let ended = L10n.tr("Localizable", "ended", fallback: "Ended")
+  /// End Time
+  internal static let endTime = L10n.tr("Localizable", "endTime", fallback: "End Time")
   /// Engineer
   internal static let engineer = L10n.tr("Localizable", "engineer", fallback: "Engineer")
   /// Enter custom bitrate in Mbps
@@ -1098,6 +1104,8 @@ internal enum L10n {
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
   /// Scheduled Tasks
   internal static let scheduledTasks = L10n.tr("Localizable", "scheduledTasks", fallback: "Scheduled Tasks")
+  /// Schedules
+  internal static let schedules = L10n.tr("Localizable", "schedules", fallback: "Schedules")
   /// Scrub Current Time
   internal static let scrubCurrentTime = L10n.tr("Localizable", "scrubCurrentTime", fallback: "Scrub Current Time")
   /// Search
@@ -1228,6 +1236,8 @@ internal enum L10n {
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
   /// Sports
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
+  /// Start Time
+  internal static let startTime = L10n.tr("Localizable", "startTime", fallback: "Start Time")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop

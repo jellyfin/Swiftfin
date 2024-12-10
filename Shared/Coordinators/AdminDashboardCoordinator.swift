@@ -52,6 +52,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDetails = makeUserDetails
     @Route(.modal)
+    var addServerUser = makeAddServerUser
+
+    // MARK: - Route: User Policy
+
+    @Route(.modal)
     var userDeviceAccess = makeUserDeviceAccess
     @Route(.modal)
     var userMediaAccess = makeUserMediaAccess
@@ -59,10 +64,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userLiveTVAccess = makeUserLiveTVAccess
     @Route(.modal)
     var userPermissions = makeUserPermissions
+    @Route(.push)
+    var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
     var resetUserPassword = makeResetUserPassword
-    @Route(.modal)
-    var addServerUser = makeAddServerUser
 
     // MARK: - Route: API Keys
 
@@ -136,6 +141,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
+    // MARK: - Views: User Policy
+
     func makeUserDeviceAccess(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ServerUserDeviceAccessView(viewModel: viewModel)
@@ -158,6 +165,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         NavigationViewCoordinator {
             ServerUserPermissionsView(viewModel: viewModel)
         }
+    }
+
+    @ViewBuilder
+    func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
+        EditAccessScheduleView(viewModel: viewModel)
     }
 
     func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
