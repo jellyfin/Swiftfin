@@ -18,6 +18,30 @@ import UIKit
 /// Magic number for page sizes
 private let DefaultPageSize = 50
 
+/// A protocol for items to conform to if they may be present within a library.
+///
+/// Similar to `Identifiable`, but `unwrappedIDHashOrZero` is an `Int`: the hash of the underlying `id`
+/// value if it is not optional, or if it is optional it must return the hash of the wrapped value,
+/// or 0 otherwise:
+///
+///     struct Item: LibraryIdentifiable {
+///         var id: String? { "id" }
+///
+///         var unwrappedIDHashOrZero: Int {
+///             // Gets the `hashValue` of the `String.hashValue`, not `Optional.hashValue`.
+///             id?.hashValue ?? 0
+///         }
+///     }
+///
+/// This is necessary because if the `ID` is optional, then `Optional.hashValue` will be used instead
+/// and result in differing hashes.
+///
+/// This also helps if items already conform to `Identifiable`, but has an optionally-typed `id`.
+protocol LibraryIdentifiable: Identifiable {
+
+    var unwrappedIDHashOrZero: Int { get }
+}
+
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
 //         a check if elements were actually appended to the set but that requires a redundant get
@@ -33,7 +57,7 @@ private let DefaultPageSize = 50
        on remembering other filters.
  */
 
-class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster & LibraryIdentifiable>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -105,11 +129,21 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = IdentifiedArray(uniqueElements: data, id: \.id.hashValue)
+        self.elements = IdentifiedArray(uniqueElements: data, id: \.unwrappedIDHashOrZero)
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
         self.parent = parent
+
+        super.init()
+
+        Notifications[.didDeleteItem]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
     }
 
     convenience init(
@@ -132,7 +166,7 @@ class PagingLibraryViewModel<Element: Poster & Identifiable>: ViewModel, Eventfu
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = IdentifiedArray(id: \.id.hashValue)
+        self.elements = IdentifiedArray(id: \.unwrappedIDHashOrZero)
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent
