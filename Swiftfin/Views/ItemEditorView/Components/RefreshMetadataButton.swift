@@ -108,20 +108,9 @@ extension ItemEditorView {
                 switch event {
                 case let .error(eventError):
                     error = eventError
-                    isPresentingEventAlert = true
-                case .refreshTriggered:
-                    UIDevice.impact(.light)
                 }
             }
-            .alert(
-                L10n.error,
-                isPresented: $isPresentingEventAlert,
-                presenting: error
-            ) { _ in
-
-            } message: { error in
-                Text(error.localizedDescription)
-            }
+            .errorMessage(apiError: $error)
         }
     }
 }

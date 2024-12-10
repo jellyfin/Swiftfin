@@ -17,8 +17,6 @@ extension ItemView {
         private var viewModel: RefreshMetadataViewModel
 
         @State
-        private var isPresentingEventAlert = false
-        @State
         private var error: JellyfinAPIError?
 
         // MARK: - Initializer
@@ -90,25 +88,14 @@ extension ItemView {
                 }
             }
             .foregroundStyle(.primary, .secondary)
-            .disabled(viewModel.state == .refreshing || isPresentingEventAlert)
+            .disabled(viewModel.state == .refreshing || error != nil)
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .error(eventError):
                     error = eventError
-                    isPresentingEventAlert = true
-                case .refreshTriggered:
-                    break
                 }
             }
-            .alert(
-                L10n.error,
-                isPresented: $isPresentingEventAlert,
-                presenting: error
-            ) { _ in
-
-            } message: { error in
-                Text(error.localizedDescription)
-            }
+            .errorMessage(apiError: $error)
         }
     }
 }

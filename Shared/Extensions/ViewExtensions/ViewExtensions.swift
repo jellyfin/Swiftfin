@@ -148,6 +148,29 @@ extension View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
+    /// Standard Error Messaging
+    func errorMessage(
+        error: Binding<Error?>,
+        dismissActions: (() -> Void)? = nil
+    ) -> some View {
+        modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
+    }
+
+    /// JellyfinAPI Error Messaging
+    func errorMessage(
+        apiError: Binding<JellyfinAPIError?>,
+        dismissActions: (() -> Void)? = nil
+    ) -> some View {
+        let errorBinding = Binding<Error?>(
+            get: { apiError.wrappedValue },
+            set: { newValue in
+                apiError.wrappedValue = newValue as? JellyfinAPIError
+            }
+        )
+        return modifier(ErrorMessageModifier(error: errorBinding, dismissActions: dismissActions))
+    }
+
+    /// Apply a corner radius as a ratio of a view's side
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }
