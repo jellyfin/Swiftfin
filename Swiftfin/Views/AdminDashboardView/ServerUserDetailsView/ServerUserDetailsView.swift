@@ -31,7 +31,6 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-
             // TODO: Replace with Update Profile Picture & Username
             AdminDashboardView.UserSection(
                 user: viewModel.user,
@@ -47,31 +46,48 @@ struct ServerUserDetailsView: View {
                 }
             }
 
-            Section(L10n.parentalControls) {
-                ChevronButton(L10n.ratings)
-                    .onSelect {
-                        router.route(to: \.userParentalRatings, viewModel)
-                    }
-            }
-
-            Section {
-                ChevronButton(L10n.mediaAccess)
-                    .onSelect {
-                        router.route(to: \.userMediaAccess, viewModel)
-                    }
-
+            Section(L10n.advanced) {
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
                     }
+            }
 
-                // TODO: Access: enabledFolders & enableAllFolders
+            Section(L10n.access) {
+                ChevronButton(L10n.devices)
+                    .onSelect {
+                        router.route(to: \.userDeviceAccess, viewModel)
+                    }
+                ChevronButton(L10n.liveTV)
+                    .onSelect {
+                        router.route(to: \.userLiveTVAccess, viewModel)
+                    }
+                ChevronButton(L10n.media)
+                    .onSelect {
+                        router.route(to: \.userMediaAccess, viewModel)
+                    }
+            }
 
-                // TODO: Deletion: enableContentDeletion & enableContentDeletionFromFolders
-
-                // TODO: Parental: accessSchedules, maxParentalRating, blockUnratedItems, blockedTags, blockUnratedItems & blockedMediaFolders
-
-                // TODO: Live TV: enabledChannels & enableAllChannels
+            Section(L10n.parentalControls) {
+                // TODO: Allow items SDK 10.10 - allowedTags
+                /* ChevronButton("Allow items")
+                    .onSelect {
+                        router.route(to: \.userAllowedTags, viewModel)
+                    }
+                // TODO: Block items - blockedTags
+                ChevronButton("Block items")
+                    .onSelect {
+                        router.route(to: \.userBlockedTags, viewModel)
+                    }
+                // TODO: Access Schedules - accessSchedules
+                ChevronButton("Access schedule")
+                    .onSelect {
+                        router.route(to: \.userAccessSchedules, viewModel)
+                    }*/
+                ChevronButton(L10n.ratings)
+                    .onSelect {
+                        router.route(to: \.userParentalRatings, viewModel)
+                    }
             }
         }
         .navigationTitle(L10n.user)

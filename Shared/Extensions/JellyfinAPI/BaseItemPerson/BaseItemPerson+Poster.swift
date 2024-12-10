@@ -13,6 +13,10 @@ import UIKit
 
 extension BaseItemPerson: Poster {
 
+    var unwrappedIDHashOrZero: Int {
+        id?.hashValue ?? 0
+    }
+
     var subtitle: String? {
         firstRole
     }

@@ -117,25 +117,7 @@ extension SelectUserView {
 
                 Spacer()
 
-                if isEditing, isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .resizable()
-                        .backport
-                        .fontWeight(.bold)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(accentColor.overlayColor, accentColor)
-
-                } else if isEditing {
-                    Image(systemName: "circle")
-                        .resizable()
-                        .backport
-                        .fontWeight(.bold)
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(.secondary)
-                }
+                ListRowCheckbox()
             }
         }
 

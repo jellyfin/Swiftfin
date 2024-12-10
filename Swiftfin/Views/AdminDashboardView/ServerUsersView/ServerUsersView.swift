@@ -189,8 +189,7 @@ struct ServerUsersView: View {
                         }
                         .environment(\.isEditing, isEditing)
                         .environment(\.isSelected, selectedUsers.contains(userID))
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.zero)
+                        .listRowInsets(.edgeInsets)
                     }
                 }
             }

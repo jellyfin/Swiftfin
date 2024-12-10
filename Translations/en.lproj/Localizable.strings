@@ -1817,10 +1817,6 @@
 // Label for selecting the air time of an episode.
 "airTime" = "Air Time";
 
-// Run Time - Label for runtime input field
-// Label for specifying episode runtime.
-"runTime" = "Run Time";
-
 // Episode Runtime Description - Description for runtime input
 // Description displayed below runtime input for episodes.
 "episodeRuntimeDescription" = "Episode runtime in minutes.";
@@ -1933,9 +1929,21 @@
 // Toggle to enable a setting for all Libraries
 "enableAllLibraries" = "Enable all libraries";
 
+// Enable All Devices - Toggle
+// Toggle to enable a setting for all devices
+"enableAllDevices" = "Enable all devices";
+
 // Media Access - Section Title
 // Section Title for Server User Media Access Editing
 "mediaAccess" = "Media Access";
+
+// Device Access - Section Title
+// Section Title for Server User Device Access Editing
+"deviceAccess" = "Device Access";
+
+// (Live) TV Access - Section Title
+// Section Title for Server User Live TV Access Editing
+"tvAccess" = "TV Access";
 
 // Deletion - Section Description
 // Section Title for Media Deletion
