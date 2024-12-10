@@ -214,6 +214,8 @@ internal enum L10n {
   internal static let blockUnratedItemsDescription = L10n.tr("Localizable", "blockUnratedItemsDescription", fallback: "Block items from this user with no or unrecognized rating information.")
   /// Blue
   internal static let blue = L10n.tr("Localizable", "blue", fallback: "Blue")
+  /// Books
+  internal static let books = L10n.tr("Localizable", "books", fallback: "Books")
   /// Bugs and Features
   internal static let bugsAndFeatures = L10n.tr("Localizable", "bugsAndFeatures", fallback: "Bugs and Features")
   /// Buttons
@@ -712,6 +714,10 @@ internal enum L10n {
   internal static let liveTV = L10n.tr("Localizable", "liveTV", fallback: "Live TV")
   /// Live TV access
   internal static let liveTvAccess = L10n.tr("Localizable", "liveTvAccess", fallback: "Live TV access")
+  /// Live TV Channels
+  internal static let liveTVChannels = L10n.tr("Localizable", "liveTVChannels", fallback: "Live TV Channels")
+  /// Live TV Programs
+  internal static let liveTVPrograms = L10n.tr("Localizable", "liveTVPrograms", fallback: "Live TV Programs")
   /// Live TV recording management
   internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Loading
@@ -796,6 +802,8 @@ internal enum L10n {
   internal static func multipleUsers(_ p1: Int) -> String {
     return L10n.tr("Localizable", "multipleUsers", p1, fallback: "%d users")
   }
+  /// Music
+  internal static let music = L10n.tr("Localizable", "music", fallback: "Music")
   /// MVC
   internal static let mvc = L10n.tr("Localizable", "mvc", fallback: "MVC")
   /// Name
@@ -1108,10 +1116,10 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
+  /// Run Time
+  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
   /// Scan All Libraries
@@ -1348,6 +1356,8 @@ internal enum L10n {
   internal static let title = L10n.tr("Localizable", "title", fallback: "Title")
   /// Too Many Redirects
   internal static let tooManyRedirects = L10n.tr("Localizable", "tooManyRedirects", fallback: "Too Many Redirects")
+  /// Trailers
+  internal static let trailers = L10n.tr("Localizable", "trailers", fallback: "Trailers")
   /// Trailing Value
   internal static let trailingValue = L10n.tr("Localizable", "trailingValue", fallback: "Trailing Value")
   /// Transcode

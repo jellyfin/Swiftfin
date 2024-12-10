@@ -101,9 +101,9 @@ struct ServerUserParentalRatingView: View {
     @ViewBuilder
     var blockUnratedItemsView: some View {
         Section {
-            ForEach(UnratedItem.allCases, id: \.self) { item in
+            ForEach(UnratedItem.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { item in
                 Toggle(
-                    item.rawValue,
+                    item.displayTitle,
                     isOn: $tempPolicy.blockUnratedItems
                         .coalesce([])
                         .contains(item)
@@ -140,7 +140,7 @@ struct ServerUserParentalRatingView: View {
         let groups = Dictionary(
             grouping: parentalRatingsViewModel.parentalRatings
         ) {
-            $0.value!
+            $0.value ?? 0
         }
 
         var groupedRatings = groups.map { key, group in

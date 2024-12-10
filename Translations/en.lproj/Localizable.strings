@@ -2084,3 +2084,23 @@
 // Access Schedule - Footer
 // Parental ratings section for allowed titles
 "accessScheduleDescription" = "Create an access schedule to limit access to certain hours.";
+
+// Trailers - Section Title
+// Title for content classified as trailers
+"trailers" = "Trailers";
+
+// Music - Section Title
+// Title for content classified as music
+"music" = "Music";
+
+// Books - Section Title
+// Title for content classified as books
+"books" = "Books";
+
+// Live TV Channels - Section Title
+// Title for content classified as live TV channels
+"liveTVChannels" = "Live TV Channels";
+
+// Live TV Programs - Section Title
+// Title for content classified as live TV programs
+"liveTVPrograms" = "Live TV Programs";

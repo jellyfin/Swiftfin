@@ -47,8 +47,8 @@ struct ServerUserDetailsView: View {
                 }
             }
 
-            Section(L10n.parentalRating) {
-                ChevronButton(L10n.maxParentalRating)
+            Section(L10n.parentalControls) {
+                ChevronButton(L10n.ratings)
                     .onSelect {
                         router.route(to: \.userParentalRatings, viewModel)
                     }
