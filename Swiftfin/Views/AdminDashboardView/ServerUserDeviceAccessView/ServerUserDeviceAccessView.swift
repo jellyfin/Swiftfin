@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ServerUserMediaAccessView: View {
+struct ServerUserDeviceAccessView: View {
 
     // MARK: - Environment
 
@@ -19,8 +19,10 @@ struct ServerUserMediaAccessView: View {
 
     // MARK: - ViewModel
 
-    @ObservedObject
+    @StateObject
     private var viewModel: ServerUserAdminViewModel
+    @StateObject
+    private var devicesViewModel = DevicesViewModel()
 
     // MARK: - State Variables
 
@@ -31,10 +33,15 @@ struct ServerUserMediaAccessView: View {
     @State
     private var isPresentingError: Bool = false
 
+    // MARK: - Current Date
+
+    @CurrentDate
+    private var currentDate: Date
+
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
@@ -42,7 +49,7 @@ struct ServerUserMediaAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.mediaAccess)
+            .navigationTitle(L10n.deviceAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -80,7 +87,7 @@ struct ServerUserMediaAccessView: View {
                 Text(error.localizedDescription)
             }
             .onFirstAppear {
-                viewModel.send(.loadLibraries(isHidden: false))
+                devicesViewModel.send(.getDevices)
             }
     }
 
@@ -89,61 +96,35 @@ struct ServerUserMediaAccessView: View {
     @ViewBuilder
     var contentView: some View {
         List {
-            accessView
-            deletionView
-        }
-    }
+            InsetGroupedListHeader {
+                Toggle(
+                    L10n.enableAllDevices,
+                    isOn: $tempPolicy.enableAllDevices.coalesce(false)
+                )
+            }
+            .listRowBackground(Color.clear)
+            .listRowSeparator(.hidden)
+            .padding(.vertical, 24)
 
-    // MARK: - Media Access View
-
-    @ViewBuilder
-    var accessView: some View {
-        Section(L10n.access) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableAllFolders.coalesce(false)
-            )
-        }
-
-        if tempPolicy.enableAllFolders == false {
-            Section {
-                ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enabledFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
+            if tempPolicy.enableAllDevices == false {
+                Section {
+                    ForEach(devicesViewModel.devices, id: \.self) { device in
+                        DevicesView.DeviceRow(device: device) {
+                            if let index = tempPolicy.enabledDevices?.firstIndex(of: device.id!) {
+                                tempPolicy.enabledDevices?.remove(at: index)
+                            } else {
+                                if tempPolicy.enabledDevices == nil {
+                                    tempPolicy.enabledDevices = []
+                                }
+                                tempPolicy.enabledDevices?.append(device.id!)
+                            }
+                        }
+                        .environment(\.isEditing, true)
+                        .environment(\.isSelected, tempPolicy.enabledDevices?.contains(device.id ?? "") == true)
+                    }
                 }
             }
         }
-    }
-
-    // MARK: - Media Deletion View
-
-    @ViewBuilder
-    var deletionView: some View {
-        Section(L10n.deletion) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableContentDeletion.coalesce(false)
-            )
-        }
-
-        if tempPolicy.enableContentDeletion == false {
-            Section {
-                ForEach(
-                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
-                    id: \.id
-                ) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enableContentDeletionFromFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
-                }
-            }
-        }
+        .listStyle(.plain)
     }
 }

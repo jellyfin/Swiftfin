@@ -10,12 +10,37 @@ import Combine
 import Defaults
 import Foundation
 import Get
+import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import UIKit
 
 /// Magic number for page sizes
 private let DefaultPageSize = 50
+
+/// A protocol for items to conform to if they may be present within a library.
+///
+/// Similar to `Identifiable`, but `unwrappedIDHashOrZero` is an `Int`: the hash of the underlying `id`
+/// value if it is not optional, or if it is optional it must return the hash of the wrapped value,
+/// or 0 otherwise:
+///
+///     struct Item: LibraryIdentifiable {
+///         var id: String? { "id" }
+///
+///         var unwrappedIDHashOrZero: Int {
+///             // Gets the `hashValue` of the `String.hashValue`, not `Optional.hashValue`.
+///             id?.hashValue ?? 0
+///         }
+///     }
+///
+/// This is necessary because if the `ID` is optional, then `Optional.hashValue` will be used instead
+/// and result in differing hashes.
+///
+/// This also helps if items already conform to `Identifiable`, but has an optionally-typed `id`.
+protocol LibraryIdentifiable: Identifiable {
+
+    var unwrappedIDHashOrZero: Int { get }
+}
 
 // TODO: fix how `hasNextPage` is determined
 //       - some subclasses might not have "paging" and only have one call. This can be solved with
@@ -32,7 +57,7 @@ private let DefaultPageSize = 50
        on remembering other filters.
  */
 
-class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster & LibraryIdentifiable>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -66,8 +91,9 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
+    /// - Keys: the `hashValue` of the `Element.ID`
     @Published
-    final var elements: OrderedSet<Element>
+    final var elements: IdentifiedArray<Int, Element>
     @Published
     final var state: State = .initial
     @Published
@@ -103,11 +129,21 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = OrderedSet(data)
+        self.elements = IdentifiedArray(uniqueElements: data, id: \.unwrappedIDHashOrZero)
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
         self.parent = parent
+
+        super.init()
+
+        Notifications[.didDeleteItem]
+            .publisher
+            .receive(on: RunLoop.main)
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
+            }
+            .store(in: &cancellables)
     }
 
     convenience init(
@@ -130,7 +166,7 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = OrderedSet()
+        self.elements = IdentifiedArray(id: \.unwrappedIDHashOrZero)
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent
@@ -159,10 +195,10 @@ class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
         super.init()
 
-        Notifications[.didDeleteItem].publisher
-            .sink(receiveCompletion: { _ in }) { [weak self] notification in
-                guard let item = notification.object as? Element else { return }
-                self?.elements.remove(item)
+        Notifications[.didDeleteItem]
+            .publisher
+            .sink { id in
+                self.elements.remove(id: id.hashValue)
             }
             .store(in: &cancellables)
 

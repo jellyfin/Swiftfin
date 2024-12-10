@@ -22,7 +22,7 @@ struct ChannelLibraryView: View {
     @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.elements,
+            uniqueElements: viewModel.elements,
             layout: .columns(3, insets: .init(0), itemSpacing: 25, lineSpacing: 25)
         ) { channel in
             WideChannelGridItem(channel: channel)

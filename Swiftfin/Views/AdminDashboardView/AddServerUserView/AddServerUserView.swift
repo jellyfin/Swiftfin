@@ -115,7 +115,7 @@ struct AddServerUserView: View {
                 UIDevice.feedback(.success)
 
                 router.dismissCoordinator {
-                    Notifications[.didAddServerUser].post(object: newUser)
+                    Notifications[.didAddServerUser].post(newUser)
                 }
             }
         }

@@ -168,7 +168,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             self.item = response.value
             self.progress = 0.0
 
-            Notifications[.itemMetadataDidChange].post(object: item)
+            Notifications[.itemMetadataDidChange].post(item)
         }
     }
 }

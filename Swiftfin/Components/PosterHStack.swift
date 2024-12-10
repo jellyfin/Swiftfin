@@ -10,23 +10,23 @@ import CollectionHStack
 import OrderedCollections
 import SwiftUI
 
-struct PosterHStack<Item: Poster>: View {
+struct PosterHStack<Element: Poster & Identifiable, Data: Collection>: View where Data.Element == Element, Data.Index == Int {
 
+    private var data: Data
     private var header: () -> any View
     private var title: String?
     private var type: PosterDisplayType
-    private var items: Binding<OrderedSet<Item>>
-    private var content: (Item) -> any View
-    private var imageOverlay: (Item) -> any View
-    private var contextMenu: (Item) -> any View
+    private var content: (Element) -> any View
+    private var imageOverlay: (Element) -> any View
+    private var contextMenu: (Element) -> any View
     private var trailingContent: () -> any View
-    private var onSelect: (Item) -> Void
+    private var onSelect: (Element) -> Void
 
     @ViewBuilder
     private var padHStack: some View {
         CollectionHStack(
-            items,
-            minWidth: type == .portrait ? 140 : 220
+            uniqueElements: data,
+            columns: type == .portrait ? 140 : 220
         ) { item in
             PosterButton(
                 item: item,
@@ -47,7 +47,7 @@ struct PosterHStack<Item: Poster>: View {
     @ViewBuilder
     private var phoneHStack: some View {
         CollectionHStack(
-            items,
+            uniqueElements: data,
             columns: type == .portrait ? 3 : 2
         ) { item in
             PosterButton(
@@ -94,13 +94,13 @@ extension PosterHStack {
     init(
         title: String? = nil,
         type: PosterDisplayType,
-        items: Binding<OrderedSet<Item>>
+        items: Data
     ) {
         self.init(
+            data: items,
             header: { DefaultHeader(title: title) },
             title: title,
             type: type,
-            items: items,
             content: { PosterButton.TitleSubtitleContentView(item: $0) },
             imageOverlay: { PosterButton.DefaultOverlay(item: $0) },
             contextMenu: { _ in EmptyView() },
@@ -109,31 +109,19 @@ extension PosterHStack {
         )
     }
 
-    init<S: Sequence<Item>>(
-        title: String? = nil,
-        type: PosterDisplayType,
-        items: S
-    ) {
-        self.init(
-            title: title,
-            type: type,
-            items: .constant(OrderedSet(items))
-        )
-    }
-
     func header(@ViewBuilder _ header: @escaping () -> any View) -> Self {
         copy(modifying: \.header, with: header)
     }
 
-    func content(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func content(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.content, with: content)
     }
 
-    func imageOverlay(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func imageOverlay(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.imageOverlay, with: content)
     }
 
-    func contextMenu(@ViewBuilder _ content: @escaping (Item) -> any View) -> Self {
+    func contextMenu(@ViewBuilder _ content: @escaping (Element) -> any View) -> Self {
         copy(modifying: \.contextMenu, with: content)
     }
 
@@ -141,7 +129,7 @@ extension PosterHStack {
         copy(modifying: \.trailingContent, with: content)
     }
 
-    func onSelect(_ action: @escaping (Item) -> Void) -> Self {
+    func onSelect(_ action: @escaping (Element) -> Void) -> Self {
         copy(modifying: \.onSelect, with: action)
     }
 }

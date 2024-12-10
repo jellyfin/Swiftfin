@@ -54,7 +54,7 @@ final class HomeViewModel: ViewModel, Stateful {
     // TODO: replace with views checking what notifications were
     //       posted since last disappear
     @Published
-    var notificationsReceived: Set<Notifications.Key> = []
+    var notificationsReceived: NotificationSet = .init()
 
     private var backgroundRefreshTask: AnyCancellable?
     private var refreshTask: AnyCancellable?
@@ -65,13 +65,14 @@ final class HomeViewModel: ViewModel, Stateful {
     override init() {
         super.init()
 
-        Notifications[.itemMetadataDidChange].publisher
+        Notifications[.itemMetadataDidChange]
+            .publisher
             .sink { _ in
                 // Necessary because when this notification is posted, even with asyncAfter,
                 // the view will cause layout issues since it will redraw while in landscape.
                 // TODO: look for better solution
                 DispatchQueue.main.async {
-                    self.notificationsReceived.insert(Notifications.Key.itemMetadataDidChange)
+                    self.notificationsReceived.insert(.itemMetadataDidChange)
                 }
             }
             .store(in: &cancellables)

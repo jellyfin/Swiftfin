@@ -182,6 +182,7 @@ struct EditItemElementView<Element: Hashable>: View {
                     )
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedElements.contains(element))
+                    .listRowInsets(.edgeInsets)
                 }
                 .onMove { source, destination in
                     guard isReordering else { return }

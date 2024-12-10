@@ -71,7 +71,7 @@ struct PagingLibraryView<Element: Poster>: View {
     private var posterType: PosterDisplayType
 
     @StateObject
-    private var collectionVGridProxy: CollectionVGridProxy<Element> = .init()
+    private var collectionVGridProxy: CollectionVGridProxy = .init()
     @StateObject
     private var viewModel: PagingLibraryViewModel<Element>
 
@@ -239,8 +239,9 @@ struct PagingLibraryView<Element: Poster>: View {
     @ViewBuilder
     private var gridView: some View {
         CollectionVGrid(
-            $viewModel.elements,
-            layout: $layout
+            uniqueElements: viewModel.elements,
+            id: \.unwrappedIDHashOrZero,
+            layout: layout
         ) { item in
 
             let displayType = Defaults[.Customization.Library.rememberLayout] ? _displayType.wrappedValue : _defaultDisplayType

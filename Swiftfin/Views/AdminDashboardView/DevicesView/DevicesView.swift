@@ -145,8 +145,7 @@ struct DevicesView: View {
                     }
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                    .listRowInsets(.edgeInsets)
                 }
             }
         }
