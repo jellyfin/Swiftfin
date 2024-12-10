@@ -17,10 +17,12 @@ extension EditMetadataView {
         @Binding
         var item: BaseItemDto
 
+        // MARK: - Body
+
         var body: some View {
             Section(L10n.season) {
 
-                // MARK: Season Number
+                // MARK: - Season Number
 
                 ChevronAlertButton(
                     L10n.season,
@@ -35,7 +37,7 @@ extension EditMetadataView {
                     .keyboardType(.numberPad)
                 }
 
-                // MARK: Episode Number
+                // MARK: - Episode Number
 
                 ChevronAlertButton(
                     L10n.episode,

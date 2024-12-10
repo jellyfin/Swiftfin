@@ -17,10 +17,12 @@ extension EditMetadataView {
         @Binding
         var item: BaseItemDto
 
+        // MARK: - Body
+
         var body: some View {
             Section(L10n.reviews) {
 
-                // MARK: Critics Rating
+                // MARK: - Critics Rating
 
                 ChevronAlertButton(
                     L10n.critics,
@@ -40,7 +42,7 @@ extension EditMetadataView {
                     }
                 }
 
-                // MARK: Community Rating
+                // MARK: - Community Rating
 
                 ChevronAlertButton(
                     L10n.community,

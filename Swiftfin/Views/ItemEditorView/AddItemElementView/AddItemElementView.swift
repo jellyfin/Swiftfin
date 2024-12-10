@@ -13,14 +13,20 @@ import SwiftUI
 
 struct AddItemElementView<Element: Hashable>: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
+
+    // MARK: - Environment & Observed Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
     @ObservedObject
     var viewModel: ItemEditorViewModel<Element>
+
+    // MARK: - Elements Variables
 
     let type: ItemArrayElements
 
@@ -33,11 +39,13 @@ struct AddItemElementView<Element: Hashable>: View {
     @State
     private var personRole: String = ""
 
+    // MARK: - Trie Data Loaded
+
     @State
     private var loaded: Bool = false
 
-    @State
-    private var isPresentingError: Bool = false
+    // MARK: - Error State
+
     @State
     private var error: Error?
 
@@ -46,6 +54,8 @@ struct AddItemElementView<Element: Hashable>: View {
     private var isValid: Bool {
         name.isNotEmpty
     }
+
+    // MARK: - Name Already Exists
 
     private var itemAlreadyExists: Bool {
         viewModel.trie.contains(key: name.localizedLowercase)
@@ -56,12 +66,10 @@ struct AddItemElementView<Element: Hashable>: View {
     var body: some View {
         ZStack {
             switch viewModel.state {
+            case .initial, .content, .updating:
+                contentView
             case let .error(error):
                 ErrorView(error: error)
-            case .updating:
-                DelayedProgressView()
-            case .initial, .content:
-                contentView
             }
         }
         .navigationTitle(type.displayTitle)
@@ -104,16 +112,9 @@ struct AddItemElementView<Element: Hashable>: View {
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
-                isPresentingError = true
             }
         }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { error in
-            Text(error.localizedDescription)
-        }
+        .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -122,15 +123,15 @@ struct AddItemElementView<Element: Hashable>: View {
         List {
             NameInput(
                 name: $name,
-                type: type,
                 personKind: $personKind,
                 personRole: $personRole,
+                type: type,
                 itemAlreadyExists: itemAlreadyExists
             )
 
             SearchResultsSection(
-                id: $id,
                 name: $name,
+                id: $id,
                 type: type,
                 population: viewModel.matches,
                 isSearching: viewModel.backgroundStates.contains(.searching)

@@ -14,13 +14,20 @@ extension EditItemElementView {
 
     struct EditItemElementRow: View {
 
+        // MARK: - Enviroment Variables
+
         @Environment(\.isEditing)
         var isEditing
         @Environment(\.isSelected)
         var isSelected
 
+        // MARK: - Metadata Variables
+
         let item: Element
         let type: ItemArrayElements
+
+        // MARK: - Row Actions
+
         let onSelect: () -> Void
         let onDelete: () -> Void
 

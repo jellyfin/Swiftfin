@@ -10,16 +10,21 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-// TODO: Reimagine this whole thing to be much leaner.
 extension EditMetadataView {
 
     struct ParentalRatingSection: View {
 
-        @Binding
-        var item: BaseItemDto
+        // MARK: - Observed Object
 
         @ObservedObject
         private var viewModel = ParentalRatingsViewModel()
+
+        // MARK: - Item
+
+        @Binding
+        var item: BaseItemDto
+
+        // MARK: - Ratings States
 
         @State
         private var officialRatings: [ParentalRating] = []
@@ -31,7 +36,7 @@ extension EditMetadataView {
         var body: some View {
             Section(L10n.parentalRating) {
 
-                // MARK: Official Rating Picker
+                // MARK: - Official Rating Picker
 
                 Picker(
                     L10n.officialRating,
@@ -53,7 +58,7 @@ extension EditMetadataView {
                     updateOfficialRatings()
                 }
 
-                // MARK: Custom Rating Picker
+                // MARK: - Custom Rating Picker
 
                 Picker(
                     L10n.customRating,

@@ -12,17 +12,15 @@ import JellyfinAPI
 
 class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
-    // MARK: Events
+    // MARK: - Events
 
     enum Event: Equatable {
         case error(JellyfinAPIError)
-        case refreshTriggered
     }
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
-        case error(JellyfinAPIError)
         case refreshMetadata(
             metadataRefreshMode: MetadataRefreshMode,
             imageRefreshMode: MetadataRefreshMode,
@@ -31,24 +29,24 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         )
     }
 
-    // MARK: State
+    // MARK: States
 
     enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
         case initial
         case refreshing
     }
 
-    // A spoof progress, since there isn't a
-    // single item metadata refresh task
-    @Published
-    private(set) var progress: Double = 0.0
-
-    @Published
-    private var item: BaseItemDto
     @Published
     final var state: State = .initial
+
+    // MARK: - Published Items
+
+    @Published
+    private(set) var progress: Double = 0.0
+    @Published
+    private var item: BaseItemDto
+
+    // MARK: - Event Objects
 
     private var itemTask: AnyCancellable?
     private var eventSubject = PassthroughSubject<Event, Never>()
@@ -59,21 +57,17 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             .eraseToAnyPublisher()
     }
 
-    // MARK: Init
+    // MARK: - Init
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
     }
 
-    // MARK: Respond
+    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .error(error):
-            eventSubject.send(.error(error))
-            return .error(error)
-
         case let .refreshMetadata(metadataRefreshMode, imageRefreshMode, replaceMetadata, replaceImages):
             itemTask?.cancel()
 
@@ -81,8 +75,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
                 guard let self else { return }
                 do {
                     await MainActor.run {
-                        self.state = .content
-                        self.eventSubject.send(.refreshTriggered)
+                        self.state = .refreshing
                     }
 
                     try await self.refreshMetadata(
@@ -93,14 +86,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
                     )
 
                     await MainActor.run {
-                        self.state = .refreshing
-                        self.eventSubject.send(.refreshTriggered)
-                    }
-
-                    try await self.refreshItem()
-
-                    await MainActor.run {
-                        self.state = .content
+                        self.state = .initial
                     }
 
                 } catch {
@@ -108,18 +94,17 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
-                        self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .refreshing
+            return state
         }
     }
 
-    // MARK: Metadata Refresh Logic
+    // MARK: - Metadata Refresh Logic
 
     private func refreshMetadata(
         metadataRefreshMode: MetadataRefreshMode,
@@ -140,28 +125,17 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             parameters: parameters
         )
         _ = try await userSession.client.send(request)
+
+        try await self.refreshItem()
     }
 
-    // MARK: Refresh Item After Request Queued
+    // MARK: - Refresh Item After Request Queued
 
     private func refreshItem() async throws {
         guard let itemId = item.id else { return }
 
-        let totalDuration: Double = 5.0
-        let interval: Double = 0.05
-        let steps = Int(totalDuration / interval)
+        try await pollRefreshProgress()
 
-        // Update progress every 0.05 seconds. Ticks up "1%" at a time.
-        for i in 1 ... steps {
-            try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
-
-            let currentProgress = Double(i) / Double(steps)
-            await MainActor.run {
-                self.progress = currentProgress
-            }
-        }
-
-        // After waiting for 5 seconds, fetch the updated item
         let request = Paths.getItem(userID: userSession.user.id, itemID: itemId)
         let response = try await userSession.client.send(request)
 
@@ -169,7 +143,26 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
             self.item = response.value
             self.progress = 0.0
 
-            Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.itemMetadataDidChange].post(self.item)
+        }
+    }
+
+    // MARK: - Poll Progress
+
+    // TODO: Find a way to actually check refresh progress. Not currently possible on 10.10.
+    private func pollRefreshProgress() async throws {
+        let totalDuration: Double = 5.0
+        let interval: Double = 0.05
+        let steps = Int(totalDuration / interval)
+
+        /// Update progress every 0.05 seconds. Ticks up "1%" at a time.
+        for i in 1 ... steps {
+            try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))
+
+            let currentProgress = Double(i) / Double(steps)
+            await MainActor.run {
+                self.progress = currentProgress
+            }
         }
     }
 }
