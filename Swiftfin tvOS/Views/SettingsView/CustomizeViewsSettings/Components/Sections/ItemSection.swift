@@ -25,15 +25,13 @@ extension CustomizeViewsSettings {
         private var enableCollectionManagement
 
         var body: some View {
-            if userSession?.user.permissions.items.canEditMetadata ?? false
-                || userSession?.user.permissions.items.canDelete ?? false
-                // || userSession?.user.permissions.items.canDownload ?? false
-                || userSession?.user.permissions.items.canManageCollections ?? false
-            // || userSession?.user.permissions.items.canManageLyrics ?? false
-            // || userSession?.user.permissions.items.canManageSubtitles
+            if userSession?.user.permissions.items.canEditMetadata ?? false ||
+                userSession?.user.permissions.items.canDelete ?? false ||
+                userSession?.user.permissions.items.canManageCollections ?? false
             {
+
                 Section(L10n.items) {
-                    /// Enable Editing Items from All Visible LIbraries
+                    /// Enable Refreshing Items from All Visible LIbraries
                     if userSession?.user.permissions.items.canEditMetadata ?? false {
                         Toggle(L10n.allowItemEditing, isOn: $enableItemEditing)
                     }
@@ -41,22 +39,10 @@ extension CustomizeViewsSettings {
                     if userSession?.user.permissions.items.canDelete ?? false {
                         Toggle(L10n.allowItemDeletion, isOn: $enableItemDeletion)
                     }
-                    /// Enable Downloading All Items
-                    /* if userSession?.user.permissions.items.canDownload ?? false {
-                     Toggle(L10n.allowItemDownloading, isOn: $enableItemDownloads)
-                     } */
-                    /// Enable Deleting or Editing Collections
+                    /// Enable Refreshing & Deleting Collections
                     if userSession?.user.permissions.items.canManageCollections ?? false {
                         Toggle(L10n.allowCollectionManagement, isOn: $enableCollectionManagement)
                     }
-                    /// Manage Item Lyrics
-                    /* if userSession?.user.permissions.items.canManageLyrics ?? false {
-                     Toggle(L10n.allowLyricsManagement isOn: $enableLyricsManagement)
-                     } */
-                    /// Manage Item Subtitles
-                    /* if userSession?.user.items.canManageSubtitles ?? false {
-                     Toggle(L10n.allowSubtitleManagement, isOn: $enableSubtitleManagement)
-                     } */
                 }
             }
         }

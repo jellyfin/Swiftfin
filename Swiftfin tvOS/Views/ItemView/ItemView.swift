@@ -66,5 +66,8 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
+        .onNotification(.itemMetadataDidChange) { _ in
+            viewModel.send(.refresh)
+        }
     }
 }
