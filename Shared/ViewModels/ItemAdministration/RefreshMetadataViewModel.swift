@@ -53,9 +53,8 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
-        // Causes issues with the refreshTriggered & refreshCompleted Events unless this is removed
-        // .receive(on: RunLoop.main)
     }
 
     // MARK: - Init
@@ -88,7 +87,6 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
 
                     await MainActor.run {
                         self.state = .initial
-                        self.eventSubject.send(.error(JellyfinAPIError("TEST ERROR")))
                     }
 
                 } catch {
