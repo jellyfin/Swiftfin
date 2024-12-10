@@ -13,8 +13,12 @@ extension ItemView {
 
     struct RefreshMetadataButton: View {
 
+        // MARK: - State Object
+
         @StateObject
         private var viewModel: RefreshMetadataViewModel
+
+        // MARK: - Error State
 
         @State
         private var error: Error?

@@ -14,10 +14,14 @@ extension EditMetadataView {
 
     struct OverviewSection: View {
 
+        // MARK: - Metadata Variables
+
         @Binding
         var item: BaseItemDto
 
         let itemType: BaseItemKind
+
+        // MARK: - Show Tagline
 
         private var showTaglines: Bool {
             [
@@ -28,6 +32,8 @@ extension EditMetadataView {
                 .audio,
             ].contains(itemType)
         }
+
+        // MARK: - Body
 
         var body: some View {
             if showTaglines {

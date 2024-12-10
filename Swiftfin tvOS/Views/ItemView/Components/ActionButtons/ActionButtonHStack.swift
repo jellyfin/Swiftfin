@@ -12,19 +12,18 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
-        // MARK: - Environment Objects
+        // MARK: - Observed, State, & Environment Objects
 
         @EnvironmentObject
         private var router: ItemCoordinator.Router
 
-        // MARK: - View Models
-
         @ObservedObject
         var viewModel: ItemViewModel
+
         @StateObject
         var deleteViewModel: DeleteItemViewModel
 
-        // MARK: - User Settings
+        // MARK: - Defaults
 
         @StoredValue(.User.enableItemDeletion)
         private var enableItemDeletion: Bool
@@ -33,16 +32,19 @@ extension ItemView {
         @StoredValue(.User.enableCollectionManagement)
         private var enableCollectionManagement: Bool
 
-        // MARK: - Alert / Dialog States
+        // MARK: - Dialog States
 
         @State
         private var showConfirmationDialog = false
         @State
         private var isPresentingEventAlert = false
-        @State
-        private var error: JellyfinAPIError?
 
-        // MARK: - Determine Permissions from Item & User Settings
+        // MARK: - Error State
+
+        @State
+        private var error: Error?
+
+        // MARK: - Can Delete Item
 
         private var canDelete: Bool {
             if viewModel.item.type == .boxSet {
@@ -51,6 +53,8 @@ extension ItemView {
                 return enableItemDeletion && viewModel.item.canDelete ?? false
             }
         }
+
+        // MARK: - Refresh Item
 
         private var canRefresh: Bool {
             if viewModel.item.type == .boxSet {
@@ -132,19 +136,11 @@ extension ItemView {
                 switch event {
                 case let .error(eventError):
                     error = eventError
-                    isPresentingEventAlert = true
                 case .deleted:
                     router.dismissCoordinator()
                 }
             }
-            .alert(
-                L10n.error,
-                isPresented: $isPresentingEventAlert,
-                presenting: error
-            ) { _ in
-            } message: { error in
-                Text(error.localizedDescription)
-            }
+            .errorMessage($error)
         }
     }
 }

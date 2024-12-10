@@ -13,6 +13,8 @@ extension ItemEditorView {
 
     struct RefreshMetadataButton: View {
 
+        // MARK: - Environment & State Objects
+
         // Bug in SwiftUI where Menu item icons will be black in dark mode
         // when a HierarchicalShapeStyle is applied to the Buttons
         @Environment(\.colorScheme)
@@ -21,8 +23,8 @@ extension ItemEditorView {
         @StateObject
         private var viewModel: RefreshMetadataViewModel
 
-        @State
-        private var isPresentingEventAlert = false
+        // MARK: - Error State
+
         @State
         private var error: Error?
 
@@ -103,7 +105,7 @@ extension ItemEditorView {
                 }
             }
             .foregroundStyle(.primary, .secondary)
-            .disabled(viewModel.state == .refreshing || isPresentingEventAlert)
+            .disabled(viewModel.state == .refreshing || error != nil)
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .error(eventError):
