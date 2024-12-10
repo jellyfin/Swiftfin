@@ -40,8 +40,6 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         case refreshing
     }
 
-    // A spoof progress, since there isn't a
-    // single item metadata refresh task
     @Published
     private(set) var progress: Double = 0.0
 
@@ -151,6 +149,7 @@ class RefreshMetadataViewModel: ViewModel, Stateful, Eventful {
         let interval: Double = 0.05
         let steps = Int(totalDuration / interval)
 
+        // TODO: Find a way to actually check refresh progress
         // Update progress every 0.05 seconds. Ticks up "1%" at a time.
         for i in 1 ... steps {
             try await Task.sleep(nanoseconds: UInt64(interval * 1_000_000_000))

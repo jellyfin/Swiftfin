@@ -12,10 +12,19 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        // MARK: - Environment Objects
+
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
+
+        // MARK: - View Models
+
         @ObservedObject
         var viewModel: ItemViewModel
-        @ObservedObject
+        @StateObject
         var deleteViewModel: DeleteItemViewModel
+
+        // MARK: - User Settings
 
         @StoredValue(.User.enableItemDeletion)
         private var enableItemDeletion: Bool
@@ -24,12 +33,16 @@ extension ItemView {
         @StoredValue(.User.enableCollectionManagement)
         private var enableCollectionManagement: Bool
 
+        // MARK: - Alert / Dialog States
+
         @State
         private var showConfirmationDialog = false
         @State
         private var isPresentingEventAlert = false
         @State
         private var error: JellyfinAPIError?
+
+        // MARK: - Determine Permissions from Item & User Settings
 
         private var canDelete: Bool {
             if viewModel.item.type == .boxSet {
@@ -47,12 +60,16 @@ extension ItemView {
             }
         }
 
+        // MARK: - Initializer
+
         init(viewModel: ItemViewModel) {
             self.viewModel = viewModel
-            self.deleteViewModel = .init(item: viewModel.item)
+            self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
         }
 
-        // TODO: Shrink to minWWith 100 (button) / 50 (menu) and 16 spacing to get 4 buttons inline
+        // MARK: - Body
+
+        /// Shrink to minWidth 100 (button) / 50 (menu) and 16 spacing to get 3 buttons + menu
         var body: some View {
             HStack(alignment: .center, spacing: 24) {
 
@@ -117,7 +134,7 @@ extension ItemView {
                     error = eventError
                     isPresentingEventAlert = true
                 case .deleted:
-                    break
+                    router.dismissCoordinator()
                 }
             }
             .alert(
