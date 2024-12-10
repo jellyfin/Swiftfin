@@ -17,7 +17,7 @@ extension ItemView {
         private var viewModel: RefreshMetadataViewModel
 
         @State
-        private var error: JellyfinAPIError?
+        private var error: Error?
 
         // MARK: - Initializer
 
@@ -95,7 +95,7 @@ extension ItemView {
                     error = eventError
                 }
             }
-            .errorMessage(apiError: $error)
+            .errorMessage($error)
         }
     }
 }

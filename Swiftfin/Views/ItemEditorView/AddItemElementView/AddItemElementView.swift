@@ -37,8 +37,6 @@ struct AddItemElementView<Element: Hashable>: View {
     private var loaded: Bool = false
 
     @State
-    private var isPresentingError: Bool = false
-    @State
     private var error: Error?
 
     // MARK: - Name is Valid
@@ -104,16 +102,9 @@ struct AddItemElementView<Element: Hashable>: View {
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
-                isPresentingError = true
             }
         }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { error in
-            Text(error.localizedDescription)
-        }
+        .errorMessage($error)
     }
 
     // MARK: - Content View

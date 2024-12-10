@@ -24,7 +24,7 @@ extension ItemEditorView {
         @State
         private var isPresentingEventAlert = false
         @State
-        private var error: JellyfinAPIError?
+        private var error: Error?
 
         // MARK: - Initializer
 
@@ -110,7 +110,7 @@ extension ItemEditorView {
                     error = eventError
                 }
             }
-            .errorMessage(apiError: $error)
+            .errorMessage($error)
         }
     }
 }
