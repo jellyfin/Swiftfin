@@ -36,7 +36,7 @@ import SwiftUI
        should be applied.
  */
 
-struct PagingLibraryView<Element: Poster & Identifiable>: View {
+struct PagingLibraryView<Element: Poster>: View {
 
     @Default(.Customization.Library.enabledDrawerFilters)
     private var enabledDrawerFilters
@@ -240,6 +240,7 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
     private var gridView: some View {
         CollectionVGrid(
             uniqueElements: viewModel.elements,
+            id: \.unwrappedIDHashOrZero,
             layout: layout
         ) { item in
 

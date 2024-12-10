@@ -436,6 +436,8 @@ internal enum L10n {
   internal static let details = L10n.tr("Localizable", "details", fallback: "Details")
   /// Device
   internal static let device = L10n.tr("Localizable", "device", fallback: "Device")
+  /// Device Access
+  internal static let deviceAccess = L10n.tr("Localizable", "deviceAccess", fallback: "Device Access")
   /// Device Profile
   internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
   /// Decide which media plays natively or requires server transcoding for compatibility.
@@ -484,6 +486,8 @@ internal enum L10n {
   internal static let editUsers = L10n.tr("Localizable", "editUsers", fallback: "Edit Users")
   /// Empty Next Up
   internal static let emptyNextUp = L10n.tr("Localizable", "emptyNextUp", fallback: "Empty Next Up")
+  /// Enable all devices
+  internal static let enableAllDevices = L10n.tr("Localizable", "enableAllDevices", fallback: "Enable all devices")
   /// Enable all libraries
   internal static let enableAllLibraries = L10n.tr("Localizable", "enableAllLibraries", fallback: "Enable all libraries")
   /// Enabled
@@ -1086,8 +1090,6 @@ internal enum L10n {
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
   internal static let running = L10n.tr("Localizable", "running", fallback: "Running...")
-  /// Run Time
-  internal static let runTime = L10n.tr("Localizable", "runTime", fallback: "Run Time")
   /// Runtime
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Save
@@ -1344,6 +1346,8 @@ internal enum L10n {
   internal static let tryAgain = L10n.tr("Localizable", "tryAgain", fallback: "Try again")
   /// TV
   internal static let tv = L10n.tr("Localizable", "tv", fallback: "TV")
+  /// TV Access
+  internal static let tvAccess = L10n.tr("Localizable", "tvAccess", fallback: "TV Access")
   /// TV Shows
   internal static let tvShows = L10n.tr("Localizable", "tvShows", fallback: "TV Shows")
   /// Type

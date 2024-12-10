@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ServerUserMediaAccessView: View {
+struct ServerUserLiveTVAccessView: View {
 
     // MARK: - Environment
 
@@ -31,6 +31,11 @@ struct ServerUserMediaAccessView: View {
     @State
     private var isPresentingError: Bool = false
 
+    // MARK: - Current Date
+
+    @CurrentDate
+    private var currentDate: Date
+
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
@@ -42,7 +47,7 @@ struct ServerUserMediaAccessView: View {
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.mediaAccess)
+            .navigationTitle(L10n.tvAccess)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -79,9 +84,6 @@ struct ServerUserMediaAccessView: View {
             } message: { error in
                 Text(error.localizedDescription)
             }
-            .onFirstAppear {
-                viewModel.send(.loadLibraries(isHidden: false))
-            }
     }
 
     // MARK: - Content View
@@ -89,60 +91,15 @@ struct ServerUserMediaAccessView: View {
     @ViewBuilder
     var contentView: some View {
         List {
-            accessView
-            deletionView
-        }
-    }
-
-    // MARK: - Media Access View
-
-    @ViewBuilder
-    var accessView: some View {
-        Section(L10n.access) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableAllFolders.coalesce(false)
-            )
-        }
-
-        if tempPolicy.enableAllFolders == false {
-            Section {
-                ForEach(viewModel.libraries, id: \.id) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enabledFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
-                }
-            }
-        }
-    }
-
-    // MARK: - Media Deletion View
-
-    @ViewBuilder
-    var deletionView: some View {
-        Section(L10n.deletion) {
-            Toggle(
-                L10n.enableAllLibraries,
-                isOn: $tempPolicy.enableContentDeletion.coalesce(false)
-            )
-        }
-
-        if tempPolicy.enableContentDeletion == false {
-            Section {
-                ForEach(
-                    viewModel.libraries.filter { $0.collectionType != "boxsets" },
-                    id: \.id
-                ) { library in
-                    Toggle(
-                        library.displayTitle,
-                        isOn: $tempPolicy.enableContentDeletionFromFolders
-                            .coalesce([])
-                            .contains(library.id!)
-                    )
-                }
+            Section(L10n.access) {
+                Toggle(
+                    L10n.liveTvAccess,
+                    isOn: $tempPolicy.enableLiveTvAccess.coalesce(false)
+                )
+                Toggle(
+                    L10n.liveTvRecordingManagement,
+                    isOn: $tempPolicy.enableLiveTvManagement.coalesce(false)
+                )
             }
         }
     }

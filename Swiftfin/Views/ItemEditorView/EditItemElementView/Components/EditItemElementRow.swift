@@ -27,15 +27,15 @@ extension EditItemElementView {
         // MARK: - Body
 
         var body: some View {
-            ListRow(insets: .init(horizontal: EdgeInsets.edgePadding)) {
+            ListRow {
                 if type == .people {
                     personImage
                 }
             } content: {
                 rowContent
             }
-            .isSeparatorVisible(false)
             .onSelect(perform: onSelect)
+            .isSeparatorVisible(false)
             .swipeActions {
                 Button(L10n.delete, systemImage: "trash", action: onDelete)
                     .tint(.red)
@@ -100,7 +100,7 @@ extension EditItemElementView {
             .posterStyle(.portrait)
             .posterShadow()
             .frame(width: 30, height: 90)
-            .padding(.trailing)
+            .padding(.horizontal)
         }
     }
 }
