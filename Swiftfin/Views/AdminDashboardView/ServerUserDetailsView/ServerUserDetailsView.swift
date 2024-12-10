@@ -11,7 +11,6 @@ import JellyfinAPI
 import SwiftUI
 
 struct ServerUserDetailsView: View {
-
     @EnvironmentObject
     private var router: AdminDashboardCoordinator.Router
 
@@ -69,21 +68,21 @@ struct ServerUserDetailsView: View {
             }
 
             Section(L10n.parentalControls) {
-                // TODO: Allow items SDK 10.10 - allowedTags
-                /* ChevronButton("Allow items")
-                    .onSelect {
-                        router.route(to: \.userAllowedTags, viewModel)
-                    }
-                // TODO: Block items - blockedTags
-                ChevronButton("Block items")
-                    .onSelect {
-                        router.route(to: \.userBlockedTags, viewModel)
-                    }
                 // TODO: Access Schedules - accessSchedules
-                ChevronButton("Access schedule")
-                    .onSelect {
-                        router.route(to: \.userAccessSchedules, viewModel)
-                    }*/
+                /* ChevronButton("Access schedule")
+                     .onSelect {
+                         router.route(to: \.userAccessSchedules, viewModel)
+                     }
+                 // TODO: Allow items SDK 10.10 - allowedTags
+                 ChevronButton("Allow items")
+                      .onSelect {
+                          router.route(to: \.userAllowedTags, viewModel)
+                      }
+                  // TODO: Block items - blockedTags
+                 ChevronButton("Block items")
+                      .onSelect {
+                          router.route(to: \.userBlockedTags, viewModel)
+                      }*/
                 ChevronButton(L10n.ratings)
                     .onSelect {
                         router.route(to: \.userParentalRatings, viewModel)
