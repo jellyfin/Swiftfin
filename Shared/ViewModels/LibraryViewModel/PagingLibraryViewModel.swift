@@ -57,7 +57,7 @@ protocol LibraryIdentifiable: Identifiable {
        on remembering other filters.
  */
 
-class PagingLibraryViewModel<Element: Poster & LibraryIdentifiable>: ViewModel, Eventful, Stateful {
+class PagingLibraryViewModel<Element: Poster>: ViewModel, Eventful, Stateful {
 
     // MARK: Event
 
@@ -129,7 +129,7 @@ class PagingLibraryViewModel<Element: Poster & LibraryIdentifiable>: ViewModel, 
         parent: (any LibraryParent)? = nil
     ) {
         self.filterViewModel = nil
-        self.elements = IdentifiedArray(uniqueElements: data, id: \.unwrappedIDHashOrZero)
+        self.elements = IdentifiedArray(data, id: \.unwrappedIDHashOrZero, uniquingIDsWith: { x, _ in x })
         self.isStatic = true
         self.hasNextPage = false
         self.pageSize = DefaultPageSize
@@ -166,7 +166,7 @@ class PagingLibraryViewModel<Element: Poster & LibraryIdentifiable>: ViewModel, 
         filters: ItemFilterCollection? = nil,
         pageSize: Int = DefaultPageSize
     ) {
-        self.elements = IdentifiedArray(id: \.unwrappedIDHashOrZero)
+        self.elements = IdentifiedArray([], id: \.unwrappedIDHashOrZero, uniquingIDsWith: { x, _ in x })
         self.isStatic = false
         self.pageSize = pageSize
         self.parent = parent
