@@ -34,7 +34,7 @@ extension SubtitleProfile {
         @ArrayBuilder<SubtitleFormat> containers: () -> [SubtitleFormat]
     ) -> [SubtitleProfile] {
         containers().map {
-            SubtitleProfile(container: $0.rawValue, method: method)
+            SubtitleProfile(container: nil, format: $0.rawValue, method: method)
         }
     }
 }
