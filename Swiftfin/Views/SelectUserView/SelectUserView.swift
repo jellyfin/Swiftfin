@@ -163,7 +163,7 @@ struct SelectUserView: View {
 
             switch user.accessPolicy {
             case .requireDeviceAuthentication:
-                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+                try await performDeviceAuthentication(reason: L10n.userRequiresDeviceAuthentication(user.username))
             case .requirePin:
                 if needsPin {
                     isPresentingLocalPin = true
@@ -190,12 +190,10 @@ struct SelectUserView: View {
             await MainActor.run {
                 self
                     .error =
-                    JellyfinAPIError(
-                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
-                    )
+                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
         do {
@@ -204,10 +202,10 @@ struct SelectUserView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform device authentication")
+                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
 
@@ -219,7 +217,7 @@ struct SelectUserView: View {
 
             Section {
                 if gridItems.count > 1 {
-                    Button("Edit Users", systemImage: "person.crop.circle") {
+                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
                         isEditingUsers.toggle()
                     }
                 }
@@ -232,7 +230,7 @@ struct SelectUserView: View {
                             .tag($0)
                     }
                 } label: {
-                    Text("Layout")
+                    Text(L10n.layout)
                     Text(userListDisplayType.displayTitle)
                     Image(systemName: userListDisplayType.systemImage)
                 }
@@ -392,7 +390,7 @@ struct SelectUserView: View {
             ZStack {
                 Color.red
 
-                Text("Delete")
+                Text(L10n.delete)
                     .font(.body.weight(.semibold))
                     .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
 
@@ -509,7 +507,7 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
-        .navigationTitle("Users")
+        .navigationTitle(L10n.users)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -619,28 +617,28 @@ struct SelectUserView: View {
             selectUserAllServersSplashscreen = serverSelection
         }
         .alert(
-            Text("Delete User"),
+            Text(L10n.deleteUser),
             isPresented: $isPresentingConfirmDeleteUsers,
             presenting: selectedUsers
         ) { selectedUsers in
-            Button("Delete", role: .destructive) {
+            Button(L10n.delete, role: .destructive) {
                 viewModel.send(.deleteUsers(Array(selectedUsers)))
             }
         } message: { selectedUsers in
             if selectedUsers.count == 1, let first = selectedUsers.first {
-                Text("Are you sure you want to delete \(first.username)?")
+                Text(L10n.deleteUserSingleConfirmation(first.username))
             } else {
-                Text("Are you sure you want to delete \(selectedUsers.count) users?")
+                Text(L10n.deleteUserMultipleConfirmation(selectedUsers.count))
             }
         }
-        .alert("Sign in", isPresented: $isPresentingLocalPin) {
+        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
 
-            TextField("Pin", text: $pin)
+            TextField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Sign In") {
+            Button(L10n.signIn) {
                 guard let user = selectedUsers.first else {
                     assertionFailure("User not selected")
                     return
@@ -649,14 +647,14 @@ struct SelectUserView: View {
                 select(user: user, needsPin: false)
             }
 
-            Button("Cancel", role: .cancel) {}
+            Button(L10n.cancel, role: .cancel) {}
         } message: {
             if let user = selectedUsers.first, user.pinHint.isNotEmpty {
                 Text(user.pinHint)
             } else {
                 let username = selectedUsers.first?.username ?? .emptyDash
 
-                Text("Enter pin for \(username)")
+                Text(L10n.enterPinForUser(username))
             }
         }
         .errorMessage($error)

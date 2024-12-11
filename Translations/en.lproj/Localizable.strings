@@ -2048,3 +2048,135 @@
 // Translator - Enum
 // Represents a translator
 "translator" = "Translator";
+
+// Loading User Failed - Error Message
+// Displayed when loading user data fails
+"loadingUserFailed" = "Loading user failed";
+
+// Pin - Personal Identification Number
+// Abbreviation to describe the login code for users
+"pin" = "Pin";
+
+// Are You Sure Delete Single User - Alert Message
+// Message asking for confirmation when deleting a single user
+"deleteUserSingleConfirmation" = "Are you sure you want to delete %@?";
+
+// Are You Sure Delete Multiple Users - Alert Message
+// Message asking for confirmation when deleting multiple users
+"deleteUserMultipleConfirmation" = "Are you sure you want to delete %d users?";
+
+// Enter Pin - Alert Message
+// Message asking for a PIN to sign in for a specific user
+"enterPinForUser" = "Enter PIN for %@";
+
+// Layout - Label
+// Label for selecting a display layout in the advanced menu
+"layout" = "Layout";
+
+// User Requires Device Authentication - Error Message
+// Message indicating that a specific user requires device authentication
+"userRequiresDeviceAuthentication" = "User %@ requires device authentication";
+
+// Unable to Perform Device Authentication - Error Message
+// Informs the user that device authentication is not possible and suggests enabling Face ID in the Settings app for Swiftfin
+"unableToPerformDeviceAuthFaceID" = "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.";
+
+// Device Authentication Failed - Error Message
+// Indicates that device authentication has failed
+"deviceAuthFailed" = "Device authentication failed";
+
+// Unable to Perform Device Authentication - Error Message
+// Indicates that device authentication cannot be performed
+"unableToPerformDeviceAuth" = "Unable to perform device authentication";
+
+// Rotate - Button
+// Label for an action that rotates an element
+"rotate" = "Rotate";
+
+// Quick Connect Code - Instruction
+// Prompts the user to enter a 6-digit Quick Connect code from another device
+"quickConnectCodeInstruction" = "Enter the 6 digit code from your other device.";
+
+// Security - Section Title
+// Title for sections or settings related to security features
+"security" = "Security";
+
+// Additional Security Access - Description
+// Explains additional security options for users signed in to the current device, without affecting Jellyfin server settings
+"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
+
+// Hint - Label
+// Label for a field or section providing additional guidance or information
+"hint" = "Hint";
+
+// Set - Button
+// Button label for confirming or applying a setting
+"set" = "Set";
+
+// Create PIN - Instruction
+// Prompts the user to create a PIN to sign in to a specific user account on the device
+"createPinForUser" = "Create a pin to sign in to %@ on this device";
+
+// Set PIN - Button
+// Button label for setting a PIN
+"setPin" = "Set Pin";
+
+// Enter PIN - Instruction
+// Prompts the user to enter their PIN
+"enterPin" = "Enter Pin";
+
+// Change PIN - Button
+// Button label for changing an existing PIN
+"changePin" = "Change Pin";
+
+// PIN Hint - Description
+// Explains the option to set a hint when prompting for the PIN
+"setPinHintDescription" = "Set a hint when prompting for the pin.";
+
+// Save User Without Local Authentication - Description
+// Explains the option to save a user without requiring local authentication
+"saveUserWithoutAuthDescription" = "Save the user to this device without any local authentication.";
+
+// Require PIN - Description
+// Explains the option to require a local PIN when signing in
+"requirePinDescription" = "Require a local pin when signing in to the user. This pin is unrecoverable.";
+
+// Require Device Authentication - Description
+// Explains the option to require device authentication when signing in
+"requireDeviceAuthDescription" = "Require device authentication when signing in to the user.";
+
+// Set PIN for New User - Instruction
+// Prompts the user to set a PIN for a new user account
+"setPinForNewUser" = "Set pin for new user.";
+
+// Duplicate User Saved - Error Message
+// Indicates that the specified user is already saved on the device
+"duplicateUserSaved" = "%@ is already saved";
+
+// Duplicate User - Error Title
+// Title for an error indicating a duplicate user
+"duplicateUser" = "Duplicate User";
+
+// Disclaimer - Section Title
+// Title for a section providing important information or warnings
+"disclaimer" = "Disclaimer";
+
+// PIN Required - Description
+// Indicates that the user will require a PIN for authentication
+"userPinRequiredDescription" = "This user will require a pin.";
+
+// Device Authentication Required - Description
+// Indicates that the user will require device authentication
+"userDeviceAuthRequiredDescription" = "This user will require device authentication.";
+
+// Require Device Authentication for User - Description
+// Explains that device authentication is required to sign in to a specific user on this device
+"requireDeviceAuthForUser" = "Require device authentication to sign in to %@ on this device.";
+
+// Require Device Authentication for Quick Connect User - Description
+// Explains that device authentication is required to sign in to the Quick Connect user on this device
+"requireDeviceAuthForQuickConnectUser" = "Require device authentication to sign in to the Quick Connect user on this device.";
+
+// Server Already Connected - Error Message
+// Indicates that the specified server is already connected
+"serverAlreadyConnected" = "%@ is already connected.";

@@ -50,7 +50,7 @@ extension UserProfileImagePicker {
             .topBarTrailing {
 
                 if viewModel.state == .initial {
-                    Button("Rotate", systemImage: "rotate.right") {
+                    Button(L10n.rotate, systemImage: "rotate.right") {
                         proxy.rotate()
                     }
                     .foregroundStyle(.gray)
@@ -65,7 +65,7 @@ extension UserProfileImagePicker {
                     Button {
                         proxy.crop()
                     } label: {
-                        Text("Save")
+                        Text(L10n.save)
                             .foregroundStyle(accentColor.overlayColor)
                             .font(.headline)
                             .padding(.vertical, 5)
@@ -82,7 +82,7 @@ extension UserProfileImagePicker {
                     if viewModel.state == .uploading {
                         ProgressView()
                     } else {
-                        Button("Reset") {
+                        Button(L10n.reset) {
                             proxy.reset()
                         }
                         .foregroundStyle(.yellow)

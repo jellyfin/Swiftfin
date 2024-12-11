@@ -94,13 +94,10 @@ struct UserLocalSecurityView: View {
 
             await MainActor.run {
                 self
-                    .error =
-                    JellyfinAPIError(
-                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
-                    )
+                    .error = JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
         do {
@@ -109,10 +106,10 @@ struct UserLocalSecurityView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform device authentication")
+                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
 
@@ -122,12 +119,10 @@ struct UserLocalSecurityView: View {
         List {
 
             Section {
-                CaseIterablePicker("Security", selection: $signInPolicy)
+                CaseIterablePicker(L10n.security, selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(
-                        "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings."
-                    )
+                    Text(L10n.additionalSecurityAccessDescription)
 
                     // frame necessary with bug within BulletedList
                     BulletedList {
@@ -136,7 +131,7 @@ struct UserLocalSecurityView: View {
                             Text(UserAccessPolicy.requireDeviceAuthentication.displayTitle)
                                 .fontWeight(.semibold)
 
-                            Text("Require device authentication when signing in to the user.")
+                            Text(L10n.requireDeviceAuthDescription)
                         }
                         .padding(.bottom, 15)
 
@@ -144,7 +139,7 @@ struct UserLocalSecurityView: View {
                             Text(UserAccessPolicy.requirePin.displayTitle)
                                 .fontWeight(.semibold)
 
-                            Text("Require a local pin when signing in to the user. This pin is unrecoverable.")
+                            Text(L10n.requirePinDescription)
                         }
                         .padding(.bottom, 15)
 
@@ -152,7 +147,7 @@ struct UserLocalSecurityView: View {
                             Text(UserAccessPolicy.none.displayTitle)
                                 .fontWeight(.semibold)
 
-                            Text("Save the user to this device without any local authentication.")
+                            Text(L10n.saveUserWithoutAuthDescription)
                         }
                     }
                     .frame(width: max(10, listSize.width - 50))
@@ -161,16 +156,16 @@ struct UserLocalSecurityView: View {
 
             if signInPolicy == .requirePin {
                 Section {
-                    TextField("Hint", text: $pinHint)
+                    TextField(L10n.hint, text: $pinHint)
                 } header: {
-                    Text("Hint")
+                    Text(L10n.hint)
                 } footer: {
-                    Text("Set a hint when prompting for the pin.")
+                    Text(L10n.setPinHintDescription)
                 }
             }
         }
         .animation(.linear, value: signInPolicy)
-        .navigationTitle("Security")
+        .navigationTitle(L10n.security)
         .navigationBarTitleDisplayMode(.inline)
         .onFirstAppear {
             pinHint = viewModel.userSession.user.pinHint
@@ -184,7 +179,7 @@ struct UserLocalSecurityView: View {
             case .promptForOldDeviceAuth:
                 Task { @MainActor in
                     try await performDeviceAuthentication(
-                        reason: "User \(viewModel.userSession.user.username) requires device authentication"
+                        reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
                     )
 
                     checkNewPolicy()
@@ -203,7 +198,7 @@ struct UserLocalSecurityView: View {
             case .promptForNewDeviceAuth:
                 Task { @MainActor in
                     try await performDeviceAuthentication(
-                        reason: "User \(viewModel.userSession.user.username) requires device authentication"
+                        reason: L10n.userRequiresDeviceAuthentication(viewModel.userSession.user.username)
                     )
 
                     viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: "")
@@ -225,9 +220,9 @@ struct UserLocalSecurityView: View {
             } label: {
                 Group {
                     if signInPolicy == .requirePin, signInPolicy == viewModel.userSession.user.accessPolicy {
-                        Text("Change Pin")
+                        Text(L10n.changePin)
                     } else {
-                        Text("Save")
+                        Text(L10n.save)
                     }
                 }
                 .foregroundStyle(accentColor.overlayColor)
@@ -242,42 +237,42 @@ struct UserLocalSecurityView: View {
         }
         .trackingSize($listSize)
         .alert(
-            "Enter Pin",
+            L10n.enterPin,
             isPresented: $isPresentingOldPinPrompt,
             presenting: onPinCompletion
         ) { completion in
 
-            TextField("Pin", text: $pin)
+            TextField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Continue") {
+            Button(L10n.continue) {
                 completion()
             }
 
             Button(L10n.cancel, role: .cancel) {}
         } message: { _ in
-            Text("Enter pin for \(viewModel.userSession.user.username)")
+            Text(L10n.enterPinForUser(viewModel.userSession.user.username))
         }
         .alert(
-            "Set Pin",
+            L10n.setPin,
             isPresented: $isPresentingNewPinPrompt,
             presenting: onPinCompletion
         ) { completion in
 
-            TextField("Pin", text: $pin)
+            TextField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Set") {
+            Button(L10n.set) {
                 completion()
             }
 
             Button(L10n.cancel, role: .cancel) {}
         } message: { _ in
-            Text("Create a pin to sign in to \(viewModel.userSession.user.username) on this device")
+            Text(L10n.createPinForUser(viewModel.userSession.user.username))
         }
         .errorMessage($error)
     }

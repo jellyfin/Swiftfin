@@ -57,7 +57,7 @@ struct UserSignInView: View {
     // MARK: - Error State
 
     @State
-    private var error: Error? = nil
+    private var error: Error?
 
     // MARK: - Initializer
 
@@ -118,7 +118,7 @@ struct UserSignInView: View {
         }
 
         if let disclaimer = viewModel.serverDisclaimer {
-            Section("Disclaimer") {
+            Section(L10n.disclaimer) {
                 Text(disclaimer)
                     .font(.callout)
             }
@@ -202,7 +202,7 @@ struct UserSignInView: View {
             viewModel.send(.getPublicData)
         }
         .alert(
-            Text("Duplicate User"),
+            Text(L10n.duplicateUser),
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
         ) { _ in
@@ -218,7 +218,7 @@ struct UserSignInView: View {
 
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
-            Text("\(duplicateUser.username) is already saved")
+            Text(L10n.duplicateUserSaved(duplicateUser.username))
         }
         .errorMessage($error)
     }

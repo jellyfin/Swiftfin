@@ -34,6 +34,8 @@ internal enum L10n {
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
   /// Add API key
   internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
+  /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
+  internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
   /// Add trigger
@@ -218,6 +220,8 @@ internal enum L10n {
   internal static let castAndCrew = L10n.tr("Localizable", "castAndCrew", fallback: "Cast & Crew")
   /// Category
   internal static let category = L10n.tr("Localizable", "category", fallback: "Category")
+  /// Change Pin
+  internal static let changePin = L10n.tr("Localizable", "changePin", fallback: "Change Pin")
   /// Change Server
   internal static let changeServer = L10n.tr("Localizable", "changeServer", fallback: "Change Server")
   /// Changes not saved
@@ -314,6 +318,10 @@ internal enum L10n {
   internal static let createAPIKey = L10n.tr("Localizable", "createAPIKey", fallback: "Create API Key")
   /// Enter the application name for the new API key.
   internal static let createAPIKeyMessage = L10n.tr("Localizable", "createAPIKeyMessage", fallback: "Enter the application name for the new API key.")
+  /// Create a pin to sign in to %@ on this device
+  internal static func createPinForUser(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "createPinForUser", String(describing: p1), fallback: "Create a pin to sign in to %@ on this device")
+  }
   /// Creator
   internal static let creator = L10n.tr("Localizable", "creator", fallback: "Creator")
   /// Critics
@@ -422,9 +430,17 @@ internal enum L10n {
   internal static let deleteUser = L10n.tr("Localizable", "deleteUser", fallback: "Delete User")
   /// Failed to Delete User
   internal static let deleteUserFailed = L10n.tr("Localizable", "deleteUserFailed", fallback: "Failed to Delete User")
+  /// Are you sure you want to delete %d users?
+  internal static func deleteUserMultipleConfirmation(_ p1: Int) -> String {
+    return L10n.tr("Localizable", "deleteUserMultipleConfirmation", p1, fallback: "Are you sure you want to delete %d users?")
+  }
   /// Cannot delete a user from the same user (%1$@).
   internal static func deleteUserSelfDeletion(_ p1: Any) -> String {
     return L10n.tr("Localizable", "deleteUserSelfDeletion", String(describing: p1), fallback: "Cannot delete a user from the same user (%1$@).")
+  }
+  /// Are you sure you want to delete %@?
+  internal static func deleteUserSingleConfirmation(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "deleteUserSingleConfirmation", String(describing: p1), fallback: "Are you sure you want to delete %@?")
   }
   /// Are you sure you wish to delete this user?
   internal static let deleteUserWarning = L10n.tr("Localizable", "deleteUserWarning", fallback: "Are you sure you wish to delete this user?")
@@ -438,6 +454,8 @@ internal enum L10n {
   internal static let device = L10n.tr("Localizable", "device", fallback: "Device")
   /// Device Access
   internal static let deviceAccess = L10n.tr("Localizable", "deviceAccess", fallback: "Device Access")
+  /// Device authentication failed
+  internal static let deviceAuthFailed = L10n.tr("Localizable", "deviceAuthFailed", fallback: "Device authentication failed")
   /// Device Profile
   internal static let deviceProfile = L10n.tr("Localizable", "deviceProfile", fallback: "Device Profile")
   /// Decide which media plays natively or requires server transcoding for compatibility.
@@ -462,6 +480,8 @@ internal enum L10n {
   internal static let disabled = L10n.tr("Localizable", "disabled", fallback: "Disabled")
   /// Discard Changes
   internal static let discardChanges = L10n.tr("Localizable", "discardChanges", fallback: "Discard Changes")
+  /// Disclaimer
+  internal static let disclaimer = L10n.tr("Localizable", "disclaimer", fallback: "Disclaimer")
   /// Discovered Servers
   internal static let discoveredServers = L10n.tr("Localizable", "discoveredServers", fallback: "Discovered Servers")
   /// Dismiss
@@ -472,6 +492,12 @@ internal enum L10n {
   internal static let done = L10n.tr("Localizable", "done", fallback: "Done")
   /// Downloads
   internal static let downloads = L10n.tr("Localizable", "downloads", fallback: "Downloads")
+  /// Duplicate User
+  internal static let duplicateUser = L10n.tr("Localizable", "duplicateUser", fallback: "Duplicate User")
+  /// %@ is already saved
+  internal static func duplicateUserSaved(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "duplicateUserSaved", String(describing: p1), fallback: "%@ is already saved")
+  }
   /// DVD
   internal static let dvd = L10n.tr("Localizable", "dvd", fallback: "DVD")
   /// Edit
@@ -506,6 +532,12 @@ internal enum L10n {
   internal static let enterCustomMaxSessions = L10n.tr("Localizable", "enterCustomMaxSessions", fallback: "Enter custom max sessions")
   /// Enter the episode number.
   internal static let enterEpisodeNumber = L10n.tr("Localizable", "enterEpisodeNumber", fallback: "Enter the episode number.")
+  /// Enter Pin
+  internal static let enterPin = L10n.tr("Localizable", "enterPin", fallback: "Enter Pin")
+  /// Enter PIN for %@
+  internal static func enterPinForUser(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "enterPinForUser", String(describing: p1), fallback: "Enter PIN for %@")
+  }
   /// Enter the season number.
   internal static let enterSeasonNumber = L10n.tr("Localizable", "enterSeasonNumber", fallback: "Enter the season number.")
   /// Episode
@@ -602,6 +634,8 @@ internal enum L10n {
   internal static let hidden = L10n.tr("Localizable", "hidden", fallback: "Hidden")
   /// Hide user from login screen
   internal static let hideUserFromLoginScreen = L10n.tr("Localizable", "hideUserFromLoginScreen", fallback: "Hide user from login screen")
+  /// Hint
+  internal static let hint = L10n.tr("Localizable", "hint", fallback: "Hint")
   /// Home
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Hours
@@ -678,6 +712,8 @@ internal enum L10n {
   internal static func latestWithString(_ p1: Any) -> String {
     return L10n.tr("Localizable", "latestWithString", String(describing: p1), fallback: "Latest %@")
   }
+  /// Layout
+  internal static let layout = L10n.tr("Localizable", "layout", fallback: "Layout")
   /// Learn more...
   internal static let learnMoreEllipsis = L10n.tr("Localizable", "learnMoreEllipsis", fallback: "Learn more...")
   /// Left
@@ -704,6 +740,8 @@ internal enum L10n {
   internal static let liveTvRecordingManagement = L10n.tr("Localizable", "liveTvRecordingManagement", fallback: "Live TV recording management")
   /// Loading
   internal static let loading = L10n.tr("Localizable", "loading", fallback: "Loading")
+  /// Loading user failed
+  internal static let loadingUserFailed = L10n.tr("Localizable", "loadingUserFailed", fallback: "Loading user failed")
   /// Local Servers
   internal static let localServers = L10n.tr("Localizable", "localServers", fallback: "Local Servers")
   /// Lock All Fields
@@ -908,6 +946,8 @@ internal enum L10n {
   internal static let peopleDescription = L10n.tr("Localizable", "peopleDescription", fallback: "People who helped create or perform specific media.")
   /// Permissions
   internal static let permissions = L10n.tr("Localizable", "permissions", fallback: "Permissions")
+  /// Pin
+  internal static let pin = L10n.tr("Localizable", "pin", fallback: "Pin")
   /// Play
   internal static let play = L10n.tr("Localizable", "play", fallback: "Play")
   /// Play / Pause
@@ -966,6 +1006,8 @@ internal enum L10n {
   internal static let quickConnect = L10n.tr("Localizable", "quickConnect", fallback: "Quick Connect")
   /// Quick Connect code
   internal static let quickConnectCode = L10n.tr("Localizable", "quickConnectCode", fallback: "Quick Connect code")
+  /// Enter the 6 digit code from your other device.
+  internal static let quickConnectCodeInstruction = L10n.tr("Localizable", "quickConnectCodeInstruction", fallback: "Enter the 6 digit code from your other device.")
   /// Invalid Quick Connect code
   internal static let quickConnectInvalidError = L10n.tr("Localizable", "quickConnectInvalidError", fallback: "Invalid Quick Connect code")
   /// Note: Quick Connect not enabled
@@ -1054,6 +1096,16 @@ internal enum L10n {
   internal static let requestFeature = L10n.tr("Localizable", "requestFeature", fallback: "Request a Feature")
   /// Required
   internal static let `required` = L10n.tr("Localizable", "required", fallback: "Required")
+  /// Require device authentication when signing in to the user.
+  internal static let requireDeviceAuthDescription = L10n.tr("Localizable", "requireDeviceAuthDescription", fallback: "Require device authentication when signing in to the user.")
+  /// Require device authentication to sign in to the Quick Connect user on this device.
+  internal static let requireDeviceAuthForQuickConnectUser = L10n.tr("Localizable", "requireDeviceAuthForQuickConnectUser", fallback: "Require device authentication to sign in to the Quick Connect user on this device.")
+  /// Require device authentication to sign in to %@ on this device.
+  internal static func requireDeviceAuthForUser(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "requireDeviceAuthForUser", String(describing: p1), fallback: "Require device authentication to sign in to %@ on this device.")
+  }
+  /// Require a local pin when signing in to the user. This pin is unrecoverable.
+  internal static let requirePinDescription = L10n.tr("Localizable", "requirePinDescription", fallback: "Require a local pin when signing in to the user. This pin is unrecoverable.")
   /// Reset
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
@@ -1086,6 +1138,8 @@ internal enum L10n {
   internal static let `right` = L10n.tr("Localizable", "right", fallback: "Right")
   /// Role
   internal static let role = L10n.tr("Localizable", "role", fallback: "Role")
+  /// Rotate
+  internal static let rotate = L10n.tr("Localizable", "rotate", fallback: "Rotate")
   /// Run
   internal static let run = L10n.tr("Localizable", "run", fallback: "Run")
   /// Running...
@@ -1094,6 +1148,8 @@ internal enum L10n {
   internal static let runtime = L10n.tr("Localizable", "runtime", fallback: "Runtime")
   /// Save
   internal static let save = L10n.tr("Localizable", "save", fallback: "Save")
+  /// Save the user to this device without any local authentication.
+  internal static let saveUserWithoutAuthDescription = L10n.tr("Localizable", "saveUserWithoutAuthDescription", fallback: "Save the user to this device without any local authentication.")
   /// Scan All Libraries
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
   /// Scheduled Tasks
@@ -1116,6 +1172,8 @@ internal enum L10n {
   internal static let seasons = L10n.tr("Localizable", "seasons", fallback: "Seasons")
   /// Secondary audio is not supported
   internal static let secondaryAudioNotSupported = L10n.tr("Localizable", "secondaryAudioNotSupported", fallback: "Secondary audio is not supported")
+  /// Security
+  internal static let security = L10n.tr("Localizable", "security", fallback: "Security")
   /// See All
   internal static let seeAll = L10n.tr("Localizable", "seeAll", fallback: "See All")
   /// Seek Slide Gesture Enabled
@@ -1132,9 +1190,9 @@ internal enum L10n {
   internal static let seriesBackdrop = L10n.tr("Localizable", "seriesBackdrop", fallback: "Series Backdrop")
   /// Server
   internal static let server = L10n.tr("Localizable", "server", fallback: "Server")
-  /// Server %s is already connected
-  internal static func serverAlreadyConnected(_ p1: UnsafePointer<CChar>) -> String {
-    return L10n.tr("Localizable", "serverAlreadyConnected", p1, fallback: "Server %s is already connected")
+  /// %@ is already connected.
+  internal static func serverAlreadyConnected(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "serverAlreadyConnected", String(describing: p1), fallback: "%@ is already connected.")
   }
   /// Server %s already exists. Add new URL?
   internal static func serverAlreadyExistsPrompt(_ p1: UnsafePointer<CChar>) -> String {
@@ -1162,6 +1220,14 @@ internal enum L10n {
   internal static let session = L10n.tr("Localizable", "session", fallback: "Session")
   /// Sessions
   internal static let sessions = L10n.tr("Localizable", "sessions", fallback: "Sessions")
+  /// Set
+  internal static let `set` = L10n.tr("Localizable", "set", fallback: "Set")
+  /// Set Pin
+  internal static let setPin = L10n.tr("Localizable", "setPin", fallback: "Set Pin")
+  /// Set pin for new user.
+  internal static let setPinForNewUser = L10n.tr("Localizable", "setPinForNewUser", fallback: "Set pin for new user.")
+  /// Set a hint when prompting for the pin.
+  internal static let setPinHintDescription = L10n.tr("Localizable", "setPinHintDescription", fallback: "Set a hint when prompting for the pin.")
   /// Settings
   internal static let settings = L10n.tr("Localizable", "settings", fallback: "Settings")
   /// Show Cast & Crew
@@ -1356,6 +1422,10 @@ internal enum L10n {
   internal static let unableToConnectServer = L10n.tr("Localizable", "unableToConnectServer", fallback: "Unable to connect to server")
   /// Unable to find host
   internal static let unableToFindHost = L10n.tr("Localizable", "unableToFindHost", fallback: "Unable to find host")
+  /// Unable to perform device authentication
+  internal static let unableToPerformDeviceAuth = L10n.tr("Localizable", "unableToPerformDeviceAuth", fallback: "Unable to perform device authentication")
+  /// Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.
+  internal static let unableToPerformDeviceAuthFaceID = L10n.tr("Localizable", "unableToPerformDeviceAuthFaceID", fallback: "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.")
   /// Unaired
   internal static let unaired = L10n.tr("Localizable", "unaired", fallback: "Unaired")
   /// Unauthorized
@@ -1396,10 +1466,18 @@ internal enum L10n {
   internal static func userAlreadySignedIn(_ p1: UnsafePointer<CChar>) -> String {
     return L10n.tr("Localizable", "userAlreadySignedIn", p1, fallback: "User %s is already signed in")
   }
+  /// This user will require device authentication.
+  internal static let userDeviceAuthRequiredDescription = L10n.tr("Localizable", "userDeviceAuthRequiredDescription", fallback: "This user will require device authentication.")
   /// Username
   internal static let username = L10n.tr("Localizable", "username", fallback: "Username")
   /// A username is required
   internal static let usernameRequired = L10n.tr("Localizable", "usernameRequired", fallback: "A username is required")
+  /// This user will require a pin.
+  internal static let userPinRequiredDescription = L10n.tr("Localizable", "userPinRequiredDescription", fallback: "This user will require a pin.")
+  /// User %@ requires device authentication
+  internal static func userRequiresDeviceAuthentication(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "userRequiresDeviceAuthentication", String(describing: p1), fallback: "User %@ requires device authentication")
+  }
   /// Users
   internal static let users = L10n.tr("Localizable", "users", fallback: "Users")
   /// Version

@@ -101,9 +101,7 @@ struct UserSignInView: View {
             switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
-                try await performDeviceAuthentication(
-                    reason: "Require device authentication to sign in to the Quick Connect user on this device"
-                )
+                try await performDeviceAuthentication(reason: L10n.requireDeviceAuthForQuickConnectUser)
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
@@ -125,7 +123,7 @@ struct UserSignInView: View {
             switch accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
-                try await performDeviceAuthentication(reason: "Require device authentication to sign in to \(username) on this device")
+                try await performDeviceAuthentication(reason: L10n.requireDeviceAuthForUser(username))
             case .requirePin:
                 if needsPin {
                     onPinCompletion = {
@@ -147,7 +145,7 @@ struct UserSignInView: View {
             switch user.accessPolicy {
             case .none: ()
             case .requireDeviceAuthentication:
-                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+                try await performDeviceAuthentication(reason: L10n.userRequiresDeviceAuthentication(user.username))
             case .requirePin:
                 onPinCompletion = {
                     viewModel.send(.signInDuplicate(user, replace: replace))
@@ -166,7 +164,7 @@ struct UserSignInView: View {
         isPresentingLocalPin = true
 
         guard pin.count > 4, pin.count < 30 else {
-            throw JellyfinAPIError("Pin auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
 
@@ -184,12 +182,10 @@ struct UserSignInView: View {
             await MainActor.run {
                 self
                     .error =
-                    JellyfinAPIError(
-                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
-                    )
+                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
         do {
@@ -198,10 +194,10 @@ struct UserSignInView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform device authentication")
+                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
 
@@ -231,10 +227,10 @@ struct UserSignInView: View {
         } footer: {
             switch accessPolicy {
             case .requireDeviceAuthentication:
-                Label("This user will require device authentication.", systemImage: "exclamationmark.circle.fill")
+                Label(L10n.userDeviceAuthRequiredDescription, systemImage: "exclamationmark.circle.fill")
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             case .requirePin:
-                Label("This user will require a pin.", systemImage: "exclamationmark.circle.fill")
+                Label(L10n.userPinRequiredDescription, systemImage: "exclamationmark.circle.fill")
                     .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
             case .none:
                 EmptyView()
@@ -274,7 +270,7 @@ struct UserSignInView: View {
         }
 
         if let disclaimer = viewModel.serverDisclaimer {
-            Section("Disclaimer") {
+            Section(L10n.disclaimer) {
                 Text(disclaimer)
                     .font(.callout)
             }
@@ -351,7 +347,7 @@ struct UserSignInView: View {
                 ProgressView()
             }
 
-            Button("Security", systemImage: "gearshape.fill") {
+            Button(L10n.security, systemImage: "gearshape.fill") {
                 let parameters = UserSignInCoordinator.SecurityParameters(
                     pinHint: $pinHint,
                     accessPolicy: $accessPolicy
@@ -360,7 +356,7 @@ struct UserSignInView: View {
             }
         }
         .alert(
-            Text("Duplicate User"),
+            Text(L10n.duplicateUser),
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
         ) { _ in
@@ -376,26 +372,26 @@ struct UserSignInView: View {
 
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
-            Text("\(duplicateUser.username) is already saved")
+            Text(L10n.duplicateUserSaved(duplicateUser.username))
         }
         .alert(
-            "Set Pin",
+            L10n.setPin,
             isPresented: $isPresentingLocalPin,
             presenting: onPinCompletion
         ) { completion in
 
-            TextField("Pin", text: $pin)
+            TextField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Sign In") {
+            Button(L10n.signIn) {
                 completion()
             }
 
             Button(L10n.cancel, role: .cancel) {}
         } message: { _ in
-            Text("Set pin for new user.")
+            Text(L10n.setPinForNewUser)
         }
         .errorMessage($error)
     }

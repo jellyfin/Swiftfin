@@ -202,7 +202,7 @@ struct ConnectToServerView: View {
                 router.popLast()
             }
         } message: { server in
-            Text("\(server.name) is already connected.")
+            Text(L10n.serverAlreadyConnected(server.name))
         }
         .errorMessage($error)
     }
