@@ -13,37 +13,54 @@ import OrderedCollections
 
 final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
-    // MARK: Event
+    // MARK: - Event
 
     enum Event {
-        case success
+        case error(JellyfinAPIError)
+        case updated
     }
 
-    // MARK: BackgroundState
-
-    enum BackgroundState {
-        case updating
-    }
-
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case cancel
         case loadDetails
-        case resetPassword
-        case updatePassword(password: String)
-        case updatePolicy(policy: UserPolicy)
-        case updateConfiguration(configuration: UserConfiguration)
+        case loadLibraries(isHidden: Bool? = false)
+        case updatePolicy(UserPolicy)
+        case updateConfiguration(UserConfiguration)
+        case updateUsername(String)
     }
 
-    // MARK: State
+    // MARK: - Background State
+
+    enum BackgroundState: Hashable {
+        case updating
+        case refreshing
+    }
+
+    // MARK: - State
 
     enum State: Hashable {
-        case error(JellyfinAPIError)
         case initial
+        case content
+        case error(JellyfinAPIError)
     }
 
-    // MARK: Published Values
+    // MARK: - Published Values
+
+    @Published
+    final var state: State = .initial
+    @Published
+    final var backgroundStates: OrderedSet<BackgroundState> = []
+
+    @Published
+    private(set) var user: UserDto
+
+    @Published
+    var libraries: [BaseItemDto] = []
+
+    private var userTaskCancellable: AnyCancellable?
+    private var eventSubject = PassthroughSubject<Event, Never>()
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -51,165 +68,186 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .eraseToAnyPublisher()
     }
 
-    @Published
-    final var backgroundStates: OrderedSet<BackgroundState> = []
-    @Published
-    final var state: State = .initial
-    @Published
-    private(set) var user: UserDto
-
-    private var resetTask: AnyCancellable?
-    private var eventSubject: PassthroughSubject<Event, Never> = .init()
-
-    // MARK: Initialize from UserDto
+    // MARK: - Initialize
 
     init(user: UserDto) {
         self.user = user
     }
 
-    // MARK: Respond
+    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         switch action {
         case .cancel:
-            resetTask?.cancel()
-            return .initial
-
-        case .resetPassword:
-            resetTask = Task {
-                await MainActor.run {
-                    _ = self.backgroundStates.append(.updating)
-                }
-
-                do {
-                    try await resetPassword()
-                    await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
-                    }
-                } catch {
-                    await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
-                    }
-                }
-
-                await MainActor.run {
-                    _ = self.backgroundStates.remove(.updating)
-                }
-            }
-            .asAnyCancellable()
-
             return .initial
 
         case .loadDetails:
-            resetTask = Task {
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
                 do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.refreshing)
+                    }
+
                     try await loadDetails()
+
                     await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
+                        state = .content
+                        _ = backgroundStates.remove(.refreshing)
                     }
                 } catch {
                     await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.refreshing)
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .initial
+            return state
 
-        case let .updatePassword(password):
-            resetTask = Task {
+        case let .loadLibraries(isHidden):
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
                 do {
-                    try await updatePassword(password: password)
                     await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
+                        _ = backgroundStates.append(.refreshing)
+                    }
+
+                    try await loadLibraries(isHidden: isHidden)
+
+                    await MainActor.run {
+                        state = .content
+                        _ = backgroundStates.remove(.refreshing)
                     }
                 } catch {
                     await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.refreshing)
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .initial
+            return state
 
         case let .updatePolicy(policy):
-            resetTask = Task {
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
                 do {
-                    try await updatePolicy(policy: policy)
                     await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updatePolicy(policy: policy)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
                     }
                 } catch {
                     await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .initial
+            return state
 
         case let .updateConfiguration(configuration):
-            resetTask = Task {
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
                 do {
-                    try await updateConfiguration(configuration: configuration)
                     await MainActor.run {
-                        self.state = .initial
-                        self.eventSubject.send(.success)
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updateConfiguration(configuration: configuration)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
                     }
                 } catch {
                     await MainActor.run {
-                        let jellyfinError = JellyfinAPIError(error.localizedDescription)
-                        self.state = .error(jellyfinError)
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
                     }
                 }
             }
             .asAnyCancellable()
 
-            return .initial
+            return state
+
+        case let .updateUsername(username):
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await updateUsername(username: username)
+
+                    await MainActor.run {
+                        state = .content
+                        eventSubject.send(.updated)
+                        _ = backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
-    // MARK: - Reset Password
+    // MARK: - Load User Details
 
-    private func resetPassword() async throws {
-        guard let userId = user.id else { return }
-        let parameters = UpdateUserPassword(isResetPassword: true)
-        let request = Paths.updateUserPassword(userID: userId, parameters)
-        try await userSession.client.send(request)
+    private func loadDetails() async throws {
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        let request = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.user.hasPassword = false
+            self.user = response.value
         }
     }
 
-    // MARK: - Update Password
+    // MARK: - Load Libraries
 
-    private func updatePassword(password: String) async throws {
-        guard let userID = user.id else { return }
-        let parameters = UpdateUserPassword(newPw: password)
-        let request = Paths.updateUserPassword(userID: userID, parameters)
-        try await userSession.client.send(request)
+    private func loadLibraries(isHidden: Bool?) async throws {
+        let request = Paths.getMediaFolders(isHidden: isHidden)
+        let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.user.hasPassword = (password != "")
+            self.libraries = response.value.items ?? []
         }
     }
 
     // MARK: - Update User Policy
 
     private func updatePolicy(policy: UserPolicy) async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         let request = Paths.updateUserPolicy(userID: userID, policy)
         try await userSession.client.send(request)
 
@@ -221,7 +259,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     // MARK: - Update User Configuration
 
     private func updateConfiguration(configuration: UserConfiguration) async throws {
-        guard let userID = user.id else { return }
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
         let request = Paths.updateUserConfiguration(userID: userID, configuration)
         try await userSession.client.send(request)
 
@@ -230,15 +268,18 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         }
     }
 
-    // MARK: - Load User
+    // MARK: - Update Username
 
-    private func loadDetails() async throws {
-        guard let userID = user.id else { return }
-        let request = Paths.getUserByID(userID: userID)
-        let response = try await userSession.client.send(request)
+    private func updateUsername(username: String) async throws {
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        var updatedUser = user
+        updatedUser.name = username
+
+        let request = Paths.updateUser(userID: userID, updatedUser)
+        try await userSession.client.send(request)
 
         await MainActor.run {
-            self.user = response.value
+            self.user.name = username
         }
     }
 }

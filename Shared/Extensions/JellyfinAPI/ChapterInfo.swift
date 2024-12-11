@@ -40,6 +40,14 @@ extension ChapterInfo {
         var id: Int {
             chapterInfo.hashValue
         }
+        
+        var unwrappedIDHashOrZero: Int {
+            id
+        }
+
+        let systemImage: String = "film"
+        var subtitle: String?
+        var showTitle: Bool = true
 
         init(
             chapterInfo: ChapterInfo,

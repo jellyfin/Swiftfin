@@ -233,7 +233,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                 return editServer.state
             }
 
-            Notifications[.didChangeCurrentServerURL].post(object: newState)
+            Notifications[.didChangeCurrentServerURL].post(newState)
         } catch {
             logger.critical("\(error.localizedDescription)")
         }

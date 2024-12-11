@@ -46,7 +46,7 @@ struct SettingsView: View {
                     router.route(to: \.serverConnection, viewModel.userSession.server)
                 }
 
-                if viewModel.userSession.user.isAdministrator {
+                if viewModel.userSession.user.permissions.isAdministrator {
                     ChevronButton(L10n.dashboard)
                         .onSelect {
                             router.route(to: \.adminDashboard)

@@ -105,6 +105,8 @@ struct CustomizeViewsSettings: View {
                     }
                 }
 
+                ItemSection()
+
                 HomeSection()
             }
             .withDescriptionTopPadding()

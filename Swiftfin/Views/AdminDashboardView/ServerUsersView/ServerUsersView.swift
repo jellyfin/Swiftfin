@@ -61,8 +61,20 @@ struct ServerUsersView: View {
                     navigationBarSelectView
                 }
             }
-            ToolbarItemGroup(placement: .topBarTrailing) {
-                navigationBarEditView
+            ToolbarItem(placement: .topBarTrailing) {
+                if isEditing {
+                    Button(isEditing ? L10n.cancel : L10n.edit) {
+                        isEditing.toggle()
+
+                        UIDevice.impact(.light)
+
+                        if !isEditing {
+                            selectedUsers.removeAll()
+                        }
+                    }
+                    .buttonStyle(.toolbarPill)
+                    .foregroundStyle(accentColor)
+                }
             }
             ToolbarItem(placement: .bottomBar) {
                 if isEditing {
@@ -75,6 +87,28 @@ struct ServerUsersView: View {
                 }
             }
         }
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.gettingUsers),
+            isHidden: isEditing
+        ) {
+            Button(L10n.addUser, systemImage: "plus") {
+                router.route(to: \.addServerUser)
+            }
+
+            if viewModel.users.isNotEmpty {
+                Button(L10n.editUsers, systemImage: "checkmark.circle") {
+                    isEditing = true
+                }
+            }
+
+            Divider()
+
+            Section(L10n.filters) {
+                Toggle(L10n.hidden, systemImage: "eye.slash", isOn: $isHiddenFilterActive)
+                Toggle(L10n.disabled, systemImage: "person.slash", isOn: $isDisabledFilterActive)
+            }
+        }
+
         .onChange(of: isDisabledFilterActive) { newValue in
             viewModel.send(.getUsers(
                 isHidden: isHiddenFilterActive,
@@ -113,8 +147,7 @@ struct ServerUsersView: View {
         } message: {
             Text(L10n.deleteUserSelfDeletion(viewModel.userSession.user.username))
         }
-        .onNotification(.didAddServerUser) { notification in
-            let newUser = notification.object as! UserDto
+        .onNotification(.didAddServerUser) { newUser in
             viewModel.send(.appendUser(newUser))
             router.route(to: \.userDetails, newUser)
         }
@@ -156,8 +189,7 @@ struct ServerUsersView: View {
                         }
                         .environment(\.isEditing, isEditing)
                         .environment(\.isSelected, selectedUsers.contains(userID))
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(.zero)
+                        .listRowInsets(.edgeInsets)
                     }
                 }
             }
@@ -173,51 +205,6 @@ struct ServerUsersView: View {
             .onRetry {
                 viewModel.send(.getUsers(isHidden: isHiddenFilterActive, isDisabled: isDisabledFilterActive))
             }
-    }
-
-    // MARK: - Navigation Bar Edit Content
-
-    @ViewBuilder
-    private var navigationBarEditView: some View {
-        if viewModel.backgroundStates.contains(.gettingUsers) {
-            ProgressView()
-        }
-
-        if isEditing {
-            Button(isEditing ? L10n.cancel : L10n.edit) {
-                isEditing.toggle()
-
-                UIDevice.impact(.light)
-
-                if !isEditing {
-                    selectedUsers.removeAll()
-                }
-            }
-            .buttonStyle(.toolbarPill)
-            .foregroundStyle(accentColor)
-        } else {
-            Menu(L10n.options, systemImage: "ellipsis.circle") {
-                Button(L10n.addUser, systemImage: "plus") {
-                    router.route(to: \.addServerUser)
-                }
-
-                if viewModel.users.isNotEmpty {
-                    Button(L10n.editUsers, systemImage: "checkmark.circle") {
-                        isEditing = true
-                    }
-                }
-
-                Divider()
-
-                Section(L10n.filters) {
-                    Toggle(L10n.hidden, systemImage: "eye.slash", isOn: $isHiddenFilterActive)
-                    Toggle(L10n.disabled, systemImage: "person.slash", isOn: $isDisabledFilterActive)
-                }
-            }
-            .labelStyle(.iconOnly)
-            .backport
-            .fontWeight(.semibold)
-        }
     }
 
     // MARK: - Navigation Bar Select/Remove All Content

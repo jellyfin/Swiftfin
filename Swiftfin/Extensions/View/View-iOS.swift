@@ -64,15 +64,21 @@ extension View {
     }
 
     func onAppDidEnterBackground(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.didEnterBackgroundNotification, perform: { _ in action() })
+        onNotification(.applicationDidEnterBackground) {
+            action()
+        }
     }
 
     func onAppWillResignActive(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.willResignActiveNotification, perform: { _ in action() })
+        onNotification(.applicationWillResignActive) { _ in
+            action()
+        }
     }
 
     func onAppWillTerminate(_ action: @escaping () -> Void) -> some View {
-        onNotification(UIApplication.willTerminateNotification, perform: { _ in action() })
+        onNotification(.applicationWillTerminate) { _ in
+            action()
+        }
     }
 
     @ViewBuilder
@@ -84,6 +90,22 @@ extension View {
             NavigationBarCloseButtonModifier(
                 disabled: disabled,
                 action: action
+            )
+        )
+    }
+
+    @ViewBuilder
+    func navigationBarMenuButton<Content: View>(
+        isLoading: Bool = false,
+        isHidden: Bool = false,
+        @ViewBuilder
+        _ items: @escaping () -> Content
+    ) -> some View {
+        modifier(
+            NavigationBarMenuButtonModifier(
+                isLoading: isLoading,
+                isHidden: isHidden,
+                items: items
             )
         )
     }

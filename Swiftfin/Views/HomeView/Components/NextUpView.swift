@@ -31,7 +31,7 @@ extension HomeView {
                 PosterHStack(
                     title: L10n.nextUp,
                     type: nextUpPosterType,
-                    items: $viewModel.elements
+                    items: viewModel.elements
                 )
                 .content { item in
                     if item.type == .episode {

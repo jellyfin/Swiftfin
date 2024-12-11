@@ -24,13 +24,13 @@ extension SeriesEpisodeSelector {
         private var didScrollToPlayButtonItem = false
 
         @StateObject
-        private var proxy = CollectionHStackProxy<BaseItemDto>()
+        private var proxy = CollectionHStackProxy()
 
         let playButtonItem: BaseItemDto?
 
         private func contentView(viewModel: SeasonItemViewModel) -> some View {
             CollectionHStack(
-                $viewModel.elements,
+                uniqueElements: viewModel.elements,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { episode in
                 SeriesEpisodeSelector.EpisodeCard(episode: episode)
@@ -71,7 +71,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             CollectionHStack(
-                0 ..< 1,
+                count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
                 SeriesEpisodeSelector.EmptyCard()
@@ -92,7 +92,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             CollectionHStack(
-                0 ..< 1,
+                count: 1,
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
                 SeriesEpisodeSelector.ErrorCard(error: error)
@@ -110,7 +110,7 @@ extension SeriesEpisodeSelector {
 
         var body: some View {
             CollectionHStack(
-                0 ..< Int.random(in: 2 ..< 5),
+                count: Int.random(in: 2 ..< 5),
                 columns: UIDevice.isPhone ? 1.5 : 3.5
             ) { _ in
                 SeriesEpisodeSelector.LoadingCard()

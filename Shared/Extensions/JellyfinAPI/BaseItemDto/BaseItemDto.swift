@@ -28,6 +28,13 @@ extension BaseItemDto: LibraryParent {
     }
 }
 
+extension BaseItemDto: LibraryIdentifiable {
+
+    var unwrappedIDHashOrZero: Int {
+        id?.hashValue ?? 0
+    }
+}
+
 extension BaseItemDto {
 
     var episodeLocator: String? {

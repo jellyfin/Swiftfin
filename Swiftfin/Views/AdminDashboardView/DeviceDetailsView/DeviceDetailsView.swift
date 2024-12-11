@@ -14,27 +14,33 @@ import SwiftUI
 
 struct DeviceDetailsView: View {
 
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+    // MARK: - Current Date
 
     @CurrentDate
     private var currentDate: Date
 
-    @State
-    private var temporaryCustomName: String
-    @State
-    private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingSuccess: Bool = false
+    // MARK: - State & Environment Objects
+
+    @EnvironmentObject
+    private var router: AdminDashboardCoordinator.Router
 
     @StateObject
     private var viewModel: DeviceDetailViewModel
 
-    private var device: DeviceInfo {
-        viewModel.device
-    }
+    // MARK: - Custom Name Variable
+
+    @State
+    private var temporaryCustomName: String
+
+    // MARK: - Dialog State
+
+    @State
+    private var isPresentingSuccess: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
 
     // MARK: - Initializer
 
@@ -43,23 +49,21 @@ struct DeviceDetailsView: View {
 
         // TODO: Enable with SDK Change
         self.temporaryCustomName = device.name ?? "" // device.customName ?? device.name
-
-//        _viewModel = StateObject(wrappedValue: DevicesViewModel(device.lastUserID))
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            if let userID = device.lastUserID,
-               let userName = device.lastUserName
+            if let userID = viewModel.device.lastUserID,
+               let userName = viewModel.device.lastUserName
             {
 
                 let user = UserDto(id: userID, name: userName)
 
                 AdminDashboardView.UserSection(
                     user: user,
-                    lastActivityDate: device.dateLastActivity
+                    lastActivityDate: viewModel.device.dateLastActivity
                 ) {
                     router.route(to: \.userDetails, user)
                 }
@@ -69,12 +73,12 @@ struct DeviceDetailsView: View {
             // CustomDeviceNameSection(customName: $temporaryCustomName)
 
             AdminDashboardView.DeviceSection(
-                client: device.appName,
-                device: device.name,
-                version: device.appVersion
+                client: viewModel.device.appName,
+                device: viewModel.device.name,
+                version: viewModel.device.appVersion
             )
 
-            CapabilitiesSection(device: device)
+            CapabilitiesSection(device: viewModel.device)
         }
         .navigationTitle(L10n.device)
         .onReceive(viewModel.events) { event in
@@ -82,7 +86,6 @@ struct DeviceDetailsView: View {
             case let .error(eventError):
                 UIDevice.feedback(.error)
                 error = eventError
-                isPresentingError = true
             case .setCustomName:
                 UIDevice.feedback(.success)
                 isPresentingSuccess = true
@@ -109,15 +112,6 @@ struct DeviceDetailsView: View {
             }
         }
         .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
-        .alert(
             L10n.success.text,
             isPresented: $isPresentingSuccess
         ) {
@@ -125,5 +119,6 @@ struct DeviceDetailsView: View {
         } message: {
             Text(L10n.customDeviceNameSaved(temporaryCustomName))
         }
+        .errorMessage($error)
     }
 }
