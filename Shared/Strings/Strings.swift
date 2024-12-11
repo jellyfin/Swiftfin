@@ -54,6 +54,10 @@ internal enum L10n {
   internal static let administrator = L10n.tr("Localizable", "administrator", fallback: "Administrator")
   /// Advanced
   internal static let advanced = L10n.tr("Localizable", "advanced", fallback: "Advanced")
+  /// Ages %@+
+  internal static func agesGroup(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "agesGroup", String(describing: p1), fallback: "Ages %@+")
+  }
   /// Aired
   internal static let aired = L10n.tr("Localizable", "aired", fallback: "Aired")
   /// Air Time
@@ -64,6 +68,8 @@ internal enum L10n {
   }
   /// Album Artist
   internal static let albumArtist = L10n.tr("Localizable", "albumArtist", fallback: "Album Artist")
+  /// All Audiences
+  internal static let allAudiences = L10n.tr("Localizable", "allAudiences", fallback: "All Audiences")
   /// View all past and present devices that have connected.
   internal static let allDevicesDescription = L10n.tr("Localizable", "allDevicesDescription", fallback: "View all past and present devices that have connected.")
   /// All Genres
