@@ -60,6 +60,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.modal)
     var userPermissions = makeUserPermissions
     @Route(.modal)
+    var userParentalRatings = makeUserParentalRatings
+    @Route(.modal)
     var resetUserPassword = makeResetUserPassword
     @Route(.modal)
     var addServerUser = makeAddServerUser
@@ -157,6 +159,12 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     func makeUserPermissions(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ServerUserPermissionsView(viewModel: viewModel)
+        }
+    }
+
+    func makeUserParentalRatings(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerUserParentalRatingView(viewModel: viewModel)
         }
     }
 

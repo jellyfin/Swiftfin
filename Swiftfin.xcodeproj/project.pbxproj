@@ -34,6 +34,7 @@
 		4E204E592C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */; };
 		4E2182E52CAF67F50094806B /* PlayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2182E42CAF67EF0094806B /* PlayMethod.swift */; };
 		4E2182E62CAF67F50094806B /* PlayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2182E42CAF67EF0094806B /* PlayMethod.swift */; };
+		4E2470082D078DD7009139D8 /* ServerUserParentalRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2470062D078DD7009139D8 /* ServerUserParentalRatingView.swift */; };
 		4E24ECFB2D076F6200A473A9 /* ListRowCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */; };
 		4E24ECFC2D076F6200A473A9 /* ListRowCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */; };
 		4E2AC4BE2C6C48D200DD600D /* CustomDeviceProfileAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */; };
@@ -100,6 +101,8 @@
 		4E5E48E52AB59806003F1B48 /* CustomizeViewsSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */; };
 		4E63B9FA2C8A5BEF00C25378 /* AdminDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */; };
 		4E63B9FC2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */; };
+		4E656C302D0798AA00F993F3 /* ParentalRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E656C2F2D0798A900F993F3 /* ParentalRating.swift */; };
+		4E656C312D0798AA00F993F3 /* ParentalRating.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E656C2F2D0798A900F993F3 /* ParentalRating.swift */; };
 		4E6619FC2CEFE2BE00025C99 /* ItemEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6619FB2CEFE2B500025C99 /* ItemEditorViewModel.swift */; };
 		4E6619FD2CEFE2BE00025C99 /* ItemEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E6619FB2CEFE2B500025C99 /* ItemEditorViewModel.swift */; };
 		4E661A012CEFE39D00025C99 /* EditMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E661A002CEFE39900025C99 /* EditMetadataView.swift */; };
@@ -1181,6 +1184,7 @@
 		4E182C9E2C94A1E000FBEFD5 /* ServerTaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTaskRow.swift; sourceTree = "<group>"; };
 		4E204E582C574FD9004D22A2 /* CustomizeSettingsCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeSettingsCoordinator.swift; sourceTree = "<group>"; };
 		4E2182E42CAF67EF0094806B /* PlayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayMethod.swift; sourceTree = "<group>"; };
+		4E2470062D078DD7009139D8 /* ServerUserParentalRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserParentalRatingView.swift; sourceTree = "<group>"; };
 		4E24ECFA2D076F2B00A473A9 /* ListRowCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowCheckbox.swift; sourceTree = "<group>"; };
 		4E2AC4BD2C6C48D200DD600D /* CustomDeviceProfileAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceProfileAction.swift; sourceTree = "<group>"; };
 		4E2AC4C12C6C491200DD600D /* AudoCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudoCodec.swift; sourceTree = "<group>"; };
@@ -1228,6 +1232,7 @@
 		4E5E48E42AB59806003F1B48 /* CustomizeViewsSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomizeViewsSettings.swift; sourceTree = "<group>"; };
 		4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdminDashboardView.swift; sourceTree = "<group>"; };
 		4E63B9FB2C8A5C3E00C25378 /* ActiveSessionsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActiveSessionsViewModel.swift; sourceTree = "<group>"; };
+		4E656C2F2D0798A900F993F3 /* ParentalRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParentalRating.swift; sourceTree = "<group>"; };
 		4E6619FB2CEFE2B500025C99 /* ItemEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemEditorViewModel.swift; sourceTree = "<group>"; };
 		4E661A002CEFE39900025C99 /* EditMetadataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMetadataView.swift; sourceTree = "<group>"; };
 		4E661A042CEFE46300025C99 /* DateSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSection.swift; sourceTree = "<group>"; };
@@ -2142,6 +2147,14 @@
 			path = Components;
 			sourceTree = "<group>";
 		};
+		4E2470072D078DD7009139D8 /* ServerUserParentalRatingView */ = {
+			isa = PBXGroup;
+			children = (
+				4E2470062D078DD7009139D8 /* ServerUserParentalRatingView.swift */,
+			);
+			path = ServerUserParentalRatingView;
+			sourceTree = "<group>";
+		};
 		4E2AC4C02C6C48EB00DD600D /* MediaComponents */ = {
 			isa = PBXGroup;
 			children = (
@@ -2299,6 +2312,7 @@
 				4E35CE622CBED3FF00DBD886 /* ServerLogsView */,
 				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
 				4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */,
+				4E2470072D078DD7009139D8 /* ServerUserParentalRatingView */,
 				4E537A822D03D0FA00659A1A /* ServerUserDeviceAccessView */,
 				4E537A8C2D04410E00659A1A /* ServerUserLiveTVAccessView */,
 				4EF3D80A2CF7D6670081AD20 /* ServerUserAccessView */,
@@ -4234,6 +4248,7 @@
 				E122A9122788EAAD0060FA63 /* MediaStream.swift */,
 				4E661A2D2CEFE77700025C99 /* MetadataField.swift */,
 				E1AD105E26D9ADDD003E4A08 /* NameGuidPair.swift */,
+				4E656C2F2D0798A900F993F3 /* ParentalRating.swift */,
 				4EFE0C7C2D0156A500D4834D /* PersonKind.swift */,
 				E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */,
 				4E2182E42CAF67EF0094806B /* PlayMethod.swift */,
@@ -5162,6 +5177,7 @@
 				E1356E0429A731EB00382563 /* SeparatorHStack.swift in Sources */,
 				E1575E69293E77B5001665B1 /* ItemSortBy.swift in Sources */,
 				E1B490482967E2E500D3EDCE /* CoreStore.swift in Sources */,
+				4E656C312D0798AA00F993F3 /* ParentalRating.swift in Sources */,
 				E1DC9845296DECB600982F06 /* ProgressIndicator.swift in Sources */,
 				E1C925F928875647002A7A66 /* LatestInLibraryView.swift in Sources */,
 				E11B1B6D2718CD68006DA3E8 /* JellyfinAPIError.swift in Sources */,
@@ -5384,6 +5400,7 @@
 				6220D0B426D5ED8000B8E046 /* LibraryCoordinator.swift in Sources */,
 				E17AC96D2954E9CA003D2BC2 /* DownloadListView.swift in Sources */,
 				4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
+				4E2470082D078DD7009139D8 /* ServerUserParentalRatingView.swift in Sources */,
 				E1A1528828FD229500600579 /* ChevronButton.swift in Sources */,
 				E1CB75732C80E71800217C76 /* DirectPlayProfile.swift in Sources */,
 				E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */,
@@ -5546,6 +5563,7 @@
 				4E2AC4C52C6C492700DD600D /* MediaContainer.swift in Sources */,
 				4E2AC4CB2C6C494E00DD600D /* VideoCodec.swift in Sources */,
 				E1EA09692BED78BB004CDE76 /* UserAccessPolicy.swift in Sources */,
+				4E656C302D0798AA00F993F3 /* ParentalRating.swift in Sources */,
 				E18E0204288749200022598C /* RowDivider.swift in Sources */,
 				E18E01DA288747230022598C /* iPadOSEpisodeContentView.swift in Sources */,
 				E1CB75752C80EAFA00217C76 /* ArrayBuilder.swift in Sources */,
