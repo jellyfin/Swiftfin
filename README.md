@@ -32,15 +32,19 @@
 Use the TestFlight version to test new features and bug fixes before being published to the App Store. We are grateful for your time and resources for reporting new bugs.
 
 > [!NOTE]
-> As of June 11, 2024, only iOS has a TestFlight version. tvOS is planned for the near future.
+> Only iOS has a TestFlight version. See [this discussion](https://github.com/jellyfin/Swiftfin/discussions/1294) for tvOS updates.
 
 <a href="https://testflight.apple.com/join/SqNPfdxq">
-  <img height=75 alt="Get the beta on TestFlight" src="./Resources/Get_the_beta_on_Testflight.svg"/>
+  <img height=75 alt="Get the beta on TestFlight" src="./Resources/testflight.svg"/>
 </a>
 
 ## ⚙️ Development
 
 Thank you for your interest in Swiftfin! Please check out the [Contribution Guidelines](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/contributing.md) to get started.
+
+## 🎬 Player Differences
+
+Swiftfin offers both **Native (AVKit)** and **Swiftfin (VLCKit)** players to provide the best compatibility across Apple devices. To learn more about the capabilities and differences between these players, visit our [Player Differences documentation](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/players.md).
 
 ## 📚 Translations
 
@@ -51,7 +55,3 @@ Check out our [Weblate instance](https://translate.jellyfin.org/projects/swiftfi
 <a href="https://translate.jellyfin.org/engage/swiftfin/">
 <img src="https://translate.jellyfin.org/widgets/swiftfin/-/multi-auto.svg"/>
 </a>
-
-## 🎬 Player Differences
-
-Swiftfin offers both **Native (AVKit)** and **Swiftfin (VLCKit)** players to provide the best compatibility across Apple devices. To learn more about the capabilities and differences between these players, visit our [Player Differences documentation](https://github.com/jellyfin/Swiftfin/blob/main/Documentation/players.md).
