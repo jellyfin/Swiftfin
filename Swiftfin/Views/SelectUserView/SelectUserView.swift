@@ -23,10 +23,7 @@ import SwiftUI
 
 struct SelectUserView: View {
 
-    private enum UserGridItem: Hashable {
-        case user(UserState, server: ServerState)
-        case addUser
-    }
+    // MARK: - Defaults
 
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
@@ -37,28 +34,36 @@ struct SelectUserView: View {
     @Default(.selectUserDisplayType)
     private var userListDisplayType
 
+    // MARK: - Environment Variable
+
     @Environment(\.colorScheme)
     private var colorScheme
+
+    // MARK: - Focus Fields
+
+    private enum UserGridItem: Hashable {
+        case user(UserState, server: ServerState)
+        case addUser
+    }
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
 
+    @StateObject
+    private var viewModel = SelectUserViewModel()
+
+    // MARK: - Select Users Variables
+
     @State
     private var contentSize: CGSize = .zero
-    @State
-    private var error: Error? = nil
     @State
     private var gridItems: OrderedSet<UserGridItem> = []
     @State
     private var gridItemSize: CGSize = .zero
     @State
     private var isEditingUsers: Bool = false
-    @State
-    private var isPresentingConfirmDeleteUsers = false
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingLocalPin: Bool = false
     @State
     private var padGridItemColumnCount: Int = 1
     @State
@@ -68,8 +73,19 @@ struct SelectUserView: View {
     @State
     private var splashScreenImageSources: [ImageSource] = []
 
-    @StateObject
-    private var viewModel = SelectUserViewModel()
+    // MARK: - Dialog States
+
+    @State
+    private var isPresentingConfirmDeleteUsers = false
+    @State
+    private var isPresentingLocalPin: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Select Server
 
     private var selectedServer: ServerState? {
         if case let SelectUserServerSelection.server(id: id) = serverSelection,
@@ -80,6 +96,8 @@ struct SelectUserView: View {
 
         return nil
     }
+
+    // MARK: - Make Grid Items
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
         switch serverSelection {
@@ -110,6 +128,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Make Splash Screen Image Source
+
     // For all server selection, .all is random
     private func makeSplashScreenImageSources(
         serverSelection: SelectUserServerSelection,
@@ -135,6 +155,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Select User(s)
+
     private func select(user: UserState, needsPin: Bool = true) {
         Task { @MainActor in
             selectedUsers.insert(user)
@@ -154,6 +176,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Perform Device Authentication
+
     // error logging/presentation is handled within here, just
     // use try+thrown error in local Task for early return
     private func performDeviceAuthentication(reason: String) async throws {
@@ -169,7 +193,6 @@ struct SelectUserView: View {
                     JellyfinAPIError(
                         "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
@@ -182,14 +205,13 @@ struct SelectUserView: View {
 
             await MainActor.run {
                 self.error = JellyfinAPIError("Unable to perform device authentication")
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
         }
     }
 
-    // MARK: advancedMenu
+    // MARK: - Advanced Menu
 
     @ViewBuilder
     private var advancedMenu: some View {
@@ -225,7 +247,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: grid
+    // MARK: - iPad Grid Item Offset
 
     private func padGridItemOffset(index: Int) -> CGFloat {
         let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
@@ -235,6 +257,8 @@ struct SelectUserView: View {
         let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
         return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
     }
+
+    // MARK: - iPad Grid Content View
 
     @ViewBuilder
     private var padGridContentView: some View {
@@ -258,6 +282,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - iPhone Grid Content View
+
     @ViewBuilder
     private var phoneGridContentView: some View {
         let columns = [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]
@@ -274,6 +300,8 @@ struct SelectUserView: View {
         .edgePadding()
         .scrollIfLargerThanContainer(padding: 100)
     }
+
+    // MARK: - Grid Item View
 
     @ViewBuilder
     private func gridItemView(for item: UserGridItem) -> some View {
@@ -307,7 +335,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: list
+    // MARK: - List Content View
 
     @ViewBuilder
     private var listContentView: some View {
@@ -319,6 +347,8 @@ struct SelectUserView: View {
             }
         }
     }
+
+    // MARK: - List Item View
 
     @ViewBuilder
     private func listItemView(for item: UserGridItem) -> some View {
@@ -352,6 +382,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Delete Users Button
+
     @ViewBuilder
     private var deleteUsersButton: some View {
         Button {
@@ -377,7 +409,7 @@ struct SelectUserView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: userView
+    // MARK: - User View
 
     @ViewBuilder
     private var userView: some View {
@@ -449,7 +481,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: emptyView
+    // MARK: - Empty View
 
     @ViewBuilder
     private var emptyView: some View {
@@ -466,7 +498,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: body
+    // MARK: - Body
 
     var body: some View {
         WrappedView {
@@ -555,9 +587,7 @@ struct SelectUserView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 self.error = eventError
-                self.isPresentingError = true
             case let .signedIn(user):
                 UIDevice.feedback(.success)
 
@@ -603,15 +633,6 @@ struct SelectUserView: View {
                 Text("Are you sure you want to delete \(selectedUsers.count) users?")
             }
         }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .destructive)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
         .alert("Sign in", isPresented: $isPresentingLocalPin) {
 
             TextField("Pin", text: $pin)
@@ -638,5 +659,6 @@ struct SelectUserView: View {
                 Text("Enter pin for \(username)")
             }
         }
+        .errorMessage($error)
     }
 }

@@ -19,20 +19,21 @@ import SwiftUI
 
 struct UserLocalSecurityView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingOldPinPrompt: Bool = false
-    @State
-    private var isPresentingNewPinPrompt: Bool = false
+    @StateObject
+    private var viewModel = UserLocalSecurityViewModel()
+
+    // MARK: - Local Security Variables
+
     @State
     private var listSize: CGSize = .zero
     @State
@@ -44,8 +45,19 @@ struct UserLocalSecurityView: View {
     @State
     private var signInPolicy: UserAccessPolicy = .none
 
-    @StateObject
-    private var viewModel = UserLocalSecurityViewModel()
+    // MARK: - Dialog States
+
+    @State
+    private var isPresentingOldPinPrompt: Bool = false
+    @State
+    private var isPresentingNewPinPrompt: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Check Old Policy
 
     private func checkOldPolicy() {
         do {
@@ -57,6 +69,8 @@ struct UserLocalSecurityView: View {
         checkNewPolicy()
     }
 
+    // MARK: - Check New Policy
+
     private func checkNewPolicy() {
         do {
             try viewModel.checkFor(newPolicy: signInPolicy)
@@ -66,6 +80,8 @@ struct UserLocalSecurityView: View {
 
         viewModel.set(newPolicy: signInPolicy, newPin: pin, newPinHint: pinHint)
     }
+
+    // MARK: - Perform Device Authentication
 
     // error logging/presentation is handled within here, just
     // use try+thrown error in local Task for early return
@@ -82,7 +98,6 @@ struct UserLocalSecurityView: View {
                     JellyfinAPIError(
                         "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
@@ -95,12 +110,13 @@ struct UserLocalSecurityView: View {
 
             await MainActor.run {
                 self.error = JellyfinAPIError("Unable to perform device authentication")
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -164,9 +180,7 @@ struct UserLocalSecurityView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 error = eventError
-                isPresentingError = true
             case .promptForOldDeviceAuth:
                 Task { @MainActor in
                     try await performDeviceAuthentication(
@@ -228,15 +242,6 @@ struct UserLocalSecurityView: View {
         }
         .trackingSize($listSize)
         .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
-        .alert(
             "Enter Pin",
             isPresented: $isPresentingOldPinPrompt,
             presenting: onPinCompletion
@@ -274,5 +279,6 @@ struct UserLocalSecurityView: View {
         } message: { _ in
             Text("Create a pin to sign in to \(viewModel.userSession.user.username) on this device")
         }
+        .errorMessage($error)
     }
 }

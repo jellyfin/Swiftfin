@@ -19,25 +19,28 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
 
-    @EnvironmentObject
-    private var router: UserSignInCoordinator.Router
+    // MARK: - Focus Fields
 
     @FocusState
     private var focusedTextField: Int?
 
+    // MARK: - State & Environment Objects
+
+    @EnvironmentObject
+    private var router: UserSignInCoordinator.Router
+
+    @StateObject
+    private var viewModel: UserSignInViewModel
+
+    // MARK: - User Signin Variables
+
     @State
     private var duplicateUser: UserState? = nil
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingDuplicateUser: Bool = false
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingLocalPin: Bool = false
     @State
     private var onPinCompletion: (() -> Void)? = nil
     @State
@@ -51,12 +54,25 @@ struct UserSignInView: View {
     @State
     private var username: String = ""
 
-    @StateObject
-    private var viewModel: UserSignInViewModel
+    // MARK: - Error State
+
+    @State
+    private var isPresentingDuplicateUser: Bool = false
+    @State
+    private var isPresentingLocalPin: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Initializer
 
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
+
+    // MARK: - Handle Sign In
 
     private func handleSignIn(_ event: UserSignInViewModel.Event) {
         switch event {
@@ -67,9 +83,7 @@ struct UserSignInView: View {
             isPresentingDuplicateUser = true
         case let .error(eventError):
             UIDevice.feedback(.error)
-
             error = eventError
-            isPresentingError = true
         case let .signedIn(user):
             UIDevice.feedback(.success)
 
@@ -79,8 +93,9 @@ struct UserSignInView: View {
         }
     }
 
-    // TODO: don't have multiple ways to handle device authentication vs required pin
+    // MARK: - Open Quick Connect
 
+    // TODO: don't have multiple ways to handle device authentication vs required pin
     private func openQuickConnect(needsPin: Bool = true) {
         Task {
             switch accessPolicy {
@@ -103,6 +118,8 @@ struct UserSignInView: View {
         }
     }
 
+    // MARK: - Sign In User Password
+
     private func signInUserPassword(needsPin: Bool = true) {
         Task {
             switch accessPolicy {
@@ -123,7 +140,9 @@ struct UserSignInView: View {
         }
     }
 
-    private func signInUplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
+    // MARK: - Sign In Duplicate User
+
+    private func signInDuplicate(user: UserState, needsPin: Bool = true, replace: Bool) {
         Task {
             switch user.accessPolicy {
             case .none: ()
@@ -141,6 +160,8 @@ struct UserSignInView: View {
         }
     }
 
+    // MARK: - Perform Pin Authentication
+
     private func performPinAuthentication() async throws {
         isPresentingLocalPin = true
 
@@ -148,6 +169,8 @@ struct UserSignInView: View {
             throw JellyfinAPIError("Pin auth failed")
         }
     }
+
+    // MARK: - Perform Device Authentication
 
     // error logging/presentation is handled within here, just
     // use try+thrown error in local Task for early return
@@ -164,7 +187,6 @@ struct UserSignInView: View {
                     JellyfinAPIError(
                         "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
                     )
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
@@ -177,12 +199,13 @@ struct UserSignInView: View {
 
             await MainActor.run {
                 self.error = JellyfinAPIError("Unable to perform device authentication")
-                self.isPresentingError = true
             }
 
             throw JellyfinAPIError("Device auth failed")
         }
     }
+
+    // MARK: - Sign In Section
 
     @ViewBuilder
     private var signInSection: some View {
@@ -258,6 +281,8 @@ struct UserSignInView: View {
         }
     }
 
+    // MARK: - Public Users Section
+
     @ViewBuilder
     private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
@@ -280,6 +305,8 @@ struct UserSignInView: View {
             }
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -340,25 +367,16 @@ struct UserSignInView: View {
 
             // TODO: uncomment when duplicate user fixed
 //            Button(L10n.signIn) {
-//                signInUplicate(user: user, replace: false)
+//                signInDuplicate(user: user, replace: false)
 //            }
 
 //            Button("Replace") {
-//                signInUplicate(user: user, replace: true)
+//                signInDuplicate(user: user, replace: true)
 //            }
 
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
             Text("\(duplicateUser.username) is already saved")
-        }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel)
-        } message: { error in
-            Text(error.localizedDescription)
         }
         .alert(
             "Set Pin",
@@ -379,5 +397,6 @@ struct UserSignInView: View {
         } message: { _ in
             Text("Set pin for new user.")
         }
+        .errorMessage($error)
     }
 }
