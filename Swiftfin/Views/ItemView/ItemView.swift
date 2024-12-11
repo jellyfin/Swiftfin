@@ -15,8 +15,49 @@ import SwiftUI
 
 struct ItemView: View {
 
+    @EnvironmentObject
+    private var router: ItemCoordinator.Router
+
     @StateObject
     private var viewModel: ItemViewModel
+    @StateObject
+    private var deleteViewModel: DeleteItemViewModel
+
+    @State
+    private var showConfirmationDialog = false
+    @State
+    private var isPresentingEventAlert = false
+    @State
+    private var error: JellyfinAPIError?
+
+    @StoredValue(.User.enableItemDeletion)
+    private var enableItemDeletion: Bool
+    @StoredValue(.User.enableItemEditing)
+    private var enableItemEditing: Bool
+    @StoredValue(.User.enableCollectionManagement)
+    private var enableCollectionManagement: Bool
+
+    private var canDelete: Bool {
+        if viewModel.item.type == .boxSet {
+            return enableCollectionManagement && viewModel.item.canDelete ?? false
+        } else {
+            return enableItemDeletion && viewModel.item.canDelete ?? false
+        }
+    }
+
+    private var canEdit: Bool {
+        if viewModel.item.type == .boxSet {
+            return enableCollectionManagement
+        } else {
+            return enableItemEditing
+        }
+    }
+
+    // Use to hide the menu button when not needed.
+    // Add more checks as needed. For example, canDownload.
+    private var enableMenu: Bool {
+        canDelete || canEdit
+    }
 
     private static func typeViewModel(for item: BaseItemDto) -> ItemViewModel {
         switch item.type {
@@ -36,6 +77,7 @@ struct ItemView: View {
 
     init(item: BaseItemDto) {
         self._viewModel = StateObject(wrappedValue: Self.typeViewModel(for: item))
+        self._deleteViewModel = StateObject(wrappedValue: DeleteItemViewModel(item: item))
     }
 
     @ViewBuilder
@@ -96,10 +138,49 @@ struct ItemView: View {
         .onFirstAppear {
             viewModel.send(.refresh)
         }
-        .topBarTrailing {
-            if viewModel.backgroundStates.contains(.refresh) {
-                ProgressView()
+        .navigationBarMenuButton(
+            isLoading: viewModel.backgroundStates.contains(.refresh),
+            isHidden: !enableMenu
+        ) {
+            if canEdit {
+                Button(L10n.edit, systemImage: "pencil") {
+                    router.route(to: \.itemEditor, viewModel)
+                }
             }
+
+            if canDelete {
+                Divider()
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    showConfirmationDialog = true
+                }
+            }
+        }
+        .confirmationDialog(
+            L10n.deleteItemConfirmationMessage,
+            isPresented: $showConfirmationDialog,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.confirm, role: .destructive) {
+                deleteViewModel.send(.delete)
+            }
+            Button(L10n.cancel, role: .cancel) {}
+        }
+        .onReceive(deleteViewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                error = eventError
+                isPresentingEventAlert = true
+            case .deleted:
+                router.dismissCoordinator()
+            }
+        }
+        .alert(
+            L10n.error,
+            isPresented: $isPresentingEventAlert,
+            presenting: error
+        ) { _ in
+        } message: { error in
+            Text(error.localizedDescription)
         }
     }
 }

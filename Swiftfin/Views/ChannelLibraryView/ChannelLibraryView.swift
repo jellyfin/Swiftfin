@@ -98,8 +98,8 @@ struct ChannelLibraryView: View {
     @ViewBuilder
     private var contentView: some View {
         CollectionVGrid(
-            $viewModel.elements,
-            layout: $layout
+            uniqueElements: viewModel.elements,
+            layout: layout
         ) { channel in
             switch channelDisplayType {
             case .grid:

@@ -13,8 +13,12 @@ extension ItemView {
 
     struct ActionMenu<Content: View>: View {
 
+        // MARK: - Focus State
+
         @FocusState
         private var isFocused: Bool
+
+        // MARK: - Menu Items
 
         @ViewBuilder
         let menuItems: Content

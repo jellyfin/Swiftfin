@@ -27,7 +27,7 @@ extension HomeView {
                 PosterHStack(
                     title: L10n.recentlyAdded,
                     type: recentlyAddedPosterType,
-                    items: $viewModel.elements
+                    items: viewModel.elements
                 )
                 .onSelect { item in
                     router.route(to: \.item, item)

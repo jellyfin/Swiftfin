@@ -21,4 +21,8 @@ extension Collection {
     subscript(safe index: Index) -> Element? {
         indices.contains(index) ? self[index] : nil
     }
+
+    func keyed<Key>(using: KeyPath<Element, Key>) -> [Key: Element] {
+        Dictionary(uniqueKeysWithValues: map { ($0[keyPath: using], $0) })
+    }
 }

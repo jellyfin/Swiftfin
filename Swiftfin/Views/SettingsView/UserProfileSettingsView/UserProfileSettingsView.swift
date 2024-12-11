@@ -28,7 +28,7 @@ struct UserProfileSettingsView: View {
 
     @ViewBuilder
     private var imageView: some View {
-        RedrawOnNotificationView(name: .init("didChangeUserProfileImage")) {
+        RedrawOnNotificationView(.didChangeUserProfileImage) {
             ImageView(
                 viewModel.userSession.user.profileImageSource(
                     client: viewModel.userSession.client,
@@ -91,7 +91,7 @@ struct UserProfileSettingsView: View {
 
                 ChevronButton("Password")
                     .onSelect {
-                        router.route(to: \.resetUserPassword)
+                        router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
                     }
             }
 

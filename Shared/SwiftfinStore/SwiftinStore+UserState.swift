@@ -64,8 +64,8 @@ extension UserState {
         }
     }
 
-    var isAdministrator: Bool {
-        data.policy?.isAdministrator ?? false
+    var permissions: UserPermissions {
+        UserPermissions(data.policy)
     }
 
     var pinHint: String {

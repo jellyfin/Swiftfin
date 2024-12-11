@@ -26,7 +26,7 @@ final class SettingsCoordinator: NavigationCoordinatable {
     var playbackQualitySettings = makePlaybackQualitySettings
     @Route(.push)
     var quickConnect = makeQuickConnectAuthorize
-    @Route(.push)
+    @Route(.modal)
     var resetUserPassword = makeResetUserPassword
     @Route(.push)
     var localSecurity = makeLocalSecurity
@@ -112,9 +112,10 @@ final class SettingsCoordinator: NavigationCoordinatable {
         QuickConnectAuthorizeView()
     }
 
-    @ViewBuilder
-    func makeResetUserPassword() -> some View {
-        ResetUserPasswordView()
+    func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ResetUserPasswordView(userID: userID, requiresCurrentPassword: true)
+        }
     }
 
     @ViewBuilder

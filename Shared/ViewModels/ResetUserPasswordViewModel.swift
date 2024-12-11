@@ -12,29 +12,32 @@ import JellyfinAPI
 
 final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
-    // MARK: Event
+    // MARK: - Event
 
     enum Event {
         case error(JellyfinAPIError)
         case success
     }
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
         case cancel
         case reset(current: String, new: String)
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
         case initial
         case resetting
     }
 
+    // MARK: - Published Variables
+
     @Published
     var state: State = .initial
+    let userID: String
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -44,6 +47,12 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     private var resetTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
+
+    // MARK: - Initializer
+
+    init(userID: String) {
+        self.userID = userID
+    }
 
     func respond(to action: Action) -> State {
         switch action {
@@ -79,7 +88,7 @@ final class ResetUserPasswordViewModel: ViewModel, Eventful, Stateful {
 
     private func reset(current: String, new: String) async throws {
         let body = UpdateUserPassword(currentPw: current, newPw: new)
-        let request = Paths.updateUserPassword(userID: userSession.user.id, body)
+        let request = Paths.updateUserPassword(userID: userID, body)
 
         try await userSession.client.send(request)
     }
