@@ -12,26 +12,25 @@ import SwiftUI
 
 struct ServerUserParentalRatingView: View {
 
-    // MARK: - Environment
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
-
-    // MARK: - ViewModel
 
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
     @ObservedObject
     private var parentalRatingsViewModel = ParentalRatingsViewModel()
 
-    // MARK: - State Variables
+    // MARK: - Policy Variable
 
     @State
     private var tempPolicy: UserPolicy
+
+    // MARK: - Error State
+
     @State
     private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
 
     // MARK: - Initializer
 
@@ -61,29 +60,20 @@ struct ServerUserParentalRatingView: View {
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.user.policy == tempPolicy)
             }
+            .onFirstAppear {
+                parentalRatingsViewModel.send(.refresh)
+            }
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
-                    isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 }
             }
-            .alert(
-                L10n.error.text,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: { error in
-                Text(error.localizedDescription)
-            }
-            .onFirstAppear {
-                parentalRatingsViewModel.send(.refresh)
-            }
+            .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -93,6 +83,30 @@ struct ServerUserParentalRatingView: View {
         List {
             maxParentalRatingsView
             blockUnratedItemsView
+        }
+    }
+
+    // MARK: - Maximum Parental Ratings View
+
+    @ViewBuilder
+    var maxParentalRatingsView: some View {
+        Section {
+            Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
+                ForEach(parentalRatingGroups, id: \.value) { rating in
+                    Text(rating.name ?? L10n.unknown)
+                        .tag(rating.value)
+                }
+            }
+        } header: {
+            Text(L10n.maxParentalRating)
+        } footer: {
+            VStack(alignment: .leading) {
+                Text(L10n.maxParentalRatingDescription)
+                LearnMoreButton(L10n.parentalRating) {
+                    parentalRatingLearnMore
+                }
+                .foregroundStyle(Color.primary, Color.secondary)
+            }
         }
     }
 
@@ -116,24 +130,6 @@ struct ServerUserParentalRatingView: View {
         }
     }
 
-    // MARK: - Maximum Parental Ratings Toggle View
-
-    @ViewBuilder
-    var maxParentalRatingsView: some View {
-        Section {
-            Picker(L10n.parentalRating, selection: $tempPolicy.maxParentalRating) {
-                ForEach(parentalRatingGroups, id: \.value) { rating in
-                    Text(rating.name ?? L10n.unknown)
-                        .tag(rating.value)
-                }
-            }
-        } header: {
-            Text(L10n.maxParentalRating)
-        } footer: {
-            Text(L10n.maxParentalRatingDescription)
-        }
-    }
-
     // MARK: - Parental Rating Groups
 
     private var parentalRatingGroups: [ParentalRating] {
@@ -144,17 +140,53 @@ struct ServerUserParentalRatingView: View {
         }
 
         var groupedRatings = groups.map { key, group in
-            let names = group
-                .compactMap(\.name)
-                .sorted()
-                .joined(separator: " / ")
+            if key < 100 {
+                if key == 0 {
+                    return ParentalRating(name: L10n.allAudiences, value: key)
+                } else {
+                    return ParentalRating(name: L10n.agesGroup(key), value: key)
+                }
+            } else {
+                // Concatenate all 100+ ratings at the same value with '/' but as of 10.10 there should be none.
+                let name = group
+                    .compactMap(\.name)
+                    .sorted()
+                    .joined(separator: " / ")
 
-            return ParentalRating(name: names, value: key)
+                return ParentalRating(name: name, value: key)
+            }
         }
         .sorted { $0.value ?? 0 < $1.value ?? 0 }
 
         let unrated = ParentalRating(name: L10n.none, value: nil)
         groupedRatings.insert(unrated, at: 0)
+
+        return groupedRatings
+    }
+
+    // MARK: - Parental Rating Learn More
+
+    private var parentalRatingLearnMore: [TextPair] {
+        let groups = Dictionary(
+            grouping: parentalRatingsViewModel.parentalRatings
+        ) {
+            $0.value ?? 0
+        }
+        .sorted { $0.key < $1.key }
+
+        let groupedRatings = groups.compactMap { key, group in
+            let matchingRating = parentalRatingGroups.first { $0.value == key }
+
+            let name = group
+                .compactMap(\.name)
+                .sorted()
+                .joined(separator: "\n")
+
+            return TextPair(
+                title: matchingRating?.name ?? L10n.none,
+                subtitle: name
+            )
+        }
 
         return groupedRatings
     }

@@ -2244,3 +2244,11 @@
 // Server Already Connected - Error Message
 // Indicates that the specified server is already connected
 "serverAlreadyConnected" = "%@ is already connected.";
+
+// All Audiences - Group Name
+// Label for content suitable for all audiences
+"allAudiences" = "All Audiences";
+
+// Ages Group - Group Name
+// Label for content suitable for a specific age group
+"agesGroup" = "Ages %@+";
