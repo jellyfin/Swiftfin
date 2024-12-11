@@ -2049,6 +2049,70 @@
 // Represents a translator
 "translator" = "Translator";
 
+// Parental controls - Section Title
+// Parental controls section & view titles
+"parentalControls" = "Parental controls";
+
+// Block unrated items - Section Title
+// Parental ratings block unrated items section
+"blockUnratedItems" = "Block unrated items";
+
+// Block unrated items - Footer
+// Parental ratings block unrated items description
+"blockUnratedItemsDescription" = "Block items from this user with no or unrecognized rating information.";
+
+// Maximum parental rating - Section Title
+// Parental ratings maximum parental rating section
+"maxParentalRating" = "Maximum parental rating";
+
+// Maximum parental rating - Footer
+// Parental ratings maximum parental rating description
+"maxParentalRatingDescription" = "Content with a higher rating will be hidden from this user.";
+
+// Allowed tags - View Title
+// Parental ratings section for allowed tags
+"allowedTags" = "Allowed tags";
+
+// Allowed tags - Footer
+// Parental ratings description for allowed tags
+"allowedTagsDescription" = "Only show media to this user with at least one of the specified tags.";
+
+// Blocked tags - View Title
+// Parental ratings section for blocked tags
+"blockedTags" = "Blocked tags";
+
+// Blocked tags - Footer
+// Parental ratings description for blocked tags
+"blockedTagsDescription" = "Hide media with at least one of the specified tags.";
+
+// Access Schedule - View Title
+// Parental ratings section for blocked titles
+"accessSchedule" = "Access schedule";
+
+// Access Schedule - Footer
+// Parental ratings section for allowed titles
+"accessScheduleDescription" = "Create an access schedule to limit access to certain hours.";
+
+// Trailers - Section Title
+// Title for content classified as trailers
+"trailers" = "Trailers";
+
+// Music - Section Title
+// Title for content classified as music
+"music" = "Music";
+
+// Books - Section Title
+// Title for content classified as books
+"books" = "Books";
+
+// Live TV Channels - Section Title
+// Title for content classified as live TV channels
+"liveTVChannels" = "Live TV Channels";
+
+// Live TV Programs - Section Title
+// Title for content classified as live TV programs
+"liveTVPrograms" = "Live TV Programs";
+
 // Loading User Failed - Error Message
 // Displayed when loading user data fails
 "loadingUserFailed" = "Loading user failed";
@@ -2180,3 +2244,11 @@
 // Server Already Connected - Error Message
 // Indicates that the specified server is already connected
 "serverAlreadyConnected" = "%@ is already connected.";
+
+// All Audiences - Group Name
+// Label for content suitable for all audiences
+"allAudiences" = "All Audiences";
+
+// Ages Group - Group Name
+// Label for content suitable for a specific age group
+"agesGroup" = "Age %@";

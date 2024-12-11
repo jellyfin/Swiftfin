@@ -43,7 +43,6 @@ struct PlaybackQualitySettingsView: View {
                             subtitle: L10n.bitrateMaxDescription(PlaybackBitrate.max.rawValue.formatted(.bitRate))
                         )
                     }
-                    .foregroundStyle(.foreground, .primary)
                 }
             }
             .animation(.none, value: appMaximumBitrate)
@@ -99,7 +98,6 @@ struct PlaybackQualitySettingsView: View {
                             subtitle: L10n.customDescription
                         )
                     }
-                    .foregroundStyle(.foreground, .primary)
                 }
             }
         }
