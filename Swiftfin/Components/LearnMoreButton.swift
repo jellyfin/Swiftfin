@@ -58,7 +58,7 @@ struct LearnMoreButton: View {
                         .padding(.vertical, 16)
                     }
                 }
-                .edgePadding()
+                .edgePadding(.horizontal)
             }
             .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
@@ -66,5 +66,6 @@ struct LearnMoreButton: View {
                 isPresented = false
             }
         }
+        .foregroundStyle(Color.primary, Color.secondary)
     }
 }
