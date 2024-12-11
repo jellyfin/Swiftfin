@@ -102,10 +102,10 @@ struct ServerUserParentalRatingView: View {
         } footer: {
             VStack(alignment: .leading) {
                 Text(L10n.maxParentalRatingDescription)
+
                 LearnMoreButton(L10n.parentalRating) {
                     parentalRatingLearnMore
                 }
-                .foregroundStyle(Color.primary, Color.secondary)
             }
         }
     }
@@ -115,7 +115,7 @@ struct ServerUserParentalRatingView: View {
     @ViewBuilder
     var blockUnratedItemsView: some View {
         Section {
-            ForEach(UnratedItem.allCases.sorted(by: { $0.displayTitle < $1.displayTitle }), id: \.self) { item in
+            ForEach(UnratedItem.allCases.sorted(using: \.displayTitle), id: \.self) { item in
                 Toggle(
                     item.displayTitle,
                     isOn: $tempPolicy.blockUnratedItems
@@ -156,7 +156,7 @@ struct ServerUserParentalRatingView: View {
                 return ParentalRating(name: name, value: key)
             }
         }
-        .sorted { $0.value ?? 0 < $1.value ?? 0 }
+        .sorted(using: \.value)
 
         let unrated = ParentalRating(name: L10n.none, value: nil)
         groupedRatings.insert(unrated, at: 0)
@@ -172,7 +172,7 @@ struct ServerUserParentalRatingView: View {
         ) {
             $0.value ?? 0
         }
-        .sorted { $0.key < $1.key }
+        .sorted(using: \.key)
 
         let groupedRatings = groups.compactMap { key, group in
             let matchingRating = parentalRatingGroups.first { $0.value == key }

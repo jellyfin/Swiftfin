@@ -42,7 +42,9 @@ struct LearnMoreButton: View {
     private var learnMoreView: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                SeparatorVStack(alignment: .leading) {
+                    Divider()
+                } content: {
                     ForEach(items) { content in
                         VStack(alignment: .leading, spacing: 8) {
                             Text(content.title)
@@ -53,7 +55,7 @@ struct LearnMoreButton: View {
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
-                        Divider()
+                        .padding(.vertical, 16)
                     }
                 }
                 .edgePadding()
