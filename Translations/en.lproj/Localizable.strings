@@ -2251,4 +2251,4 @@
 
 // Ages Group - Group Name
 // Label for content suitable for a specific age group
-"agesGroup" = "Ages %@+";
+"agesGroup" = "Age %@";

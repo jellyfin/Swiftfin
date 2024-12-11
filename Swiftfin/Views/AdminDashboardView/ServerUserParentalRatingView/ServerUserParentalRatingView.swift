@@ -12,12 +12,12 @@ import SwiftUI
 
 struct ServerUserParentalRatingView: View {
 
-    // MARK: - Observed & Environment Objects
+    // MARK: - Observed, State, & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
-    @ObservedObject
+    @StateObject
     private var viewModel: ServerUserAdminViewModel
     @ObservedObject
     private var parentalRatingsViewModel = ParentalRatingsViewModel()
@@ -35,7 +35,7 @@ struct ServerUserParentalRatingView: View {
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
