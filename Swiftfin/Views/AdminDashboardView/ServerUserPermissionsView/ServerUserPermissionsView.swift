@@ -13,24 +13,23 @@ import SwiftUI
 
 struct ServerUserPermissionsView: View {
 
-    // MARK: - Environment
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
-    // MARK: - ViewModel
-
     @ObservedObject
     var viewModel: ServerUserAdminViewModel
 
-    // MARK: - State Variables
+    // MARK: - Policy Variable
 
     @State
     private var tempPolicy: UserPolicy
+
+    // MARK: - Error State
+
     @State
     private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
 
     // MARK: - Initializer
 
@@ -65,21 +64,12 @@ struct ServerUserPermissionsView: View {
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
-                    isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 }
             }
-            .alert(
-                L10n.error.text,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: { error in
-                Text(error.localizedDescription)
-            }
+            .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -90,7 +80,7 @@ struct ServerUserPermissionsView: View {
         case let .error(error):
             ErrorView(error: error)
         case .initial:
-            ErrorView(error: JellyfinAPIError("Loading user failed"))
+            ErrorView(error: JellyfinAPIError(L10n.loadingUserFailed))
         default:
             permissionsListView
         }
