@@ -67,6 +67,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
+    var userParentalRatings = makeUserParentalRatings
+    @Route(.modal)
     var resetUserPassword = makeResetUserPassword
 
     // MARK: - Route: API Keys
@@ -170,6 +172,12 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
         EditAccessScheduleView(viewModel: viewModel)
+    }
+
+    func makeUserParentalRatings(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            ServerUserParentalRatingView(viewModel: viewModel)
+        }
     }
 
     func makeResetUserPassword(userID: String) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

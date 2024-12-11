@@ -12,11 +12,15 @@ import SwiftUI
 
 struct EditMetadataView: View {
 
+    // MARK: - Observed & Environment Objects
+
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
     @ObservedObject
     private var viewModel: ItemEditorViewModel<BaseItemDto>
+
+    // MARK: - Metadata Variables
 
     @Binding
     var item: BaseItemDto
@@ -25,6 +29,11 @@ struct EditMetadataView: View {
     private var tempItem: BaseItemDto
 
     private let itemType: BaseItemKind
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
 
     // MARK: - Initializer
 
@@ -39,20 +48,46 @@ struct EditMetadataView: View {
 
     @ViewBuilder
     var body: some View {
-        contentView
-            .navigationBarTitle(L10n.metadata)
-            .navigationBarTitleDisplayMode(.inline)
-            .topBarTrailing {
-                Button(L10n.save) {
-                    item = tempItem
-                    viewModel.send(.update(tempItem))
-                    router.dismissCoordinator()
-                }
-                .buttonStyle(.toolbarPill)
-                .disabled(viewModel.item == tempItem)
+        ZStack {
+            switch viewModel.state {
+            case .initial, .content, .updating:
+                contentView
+            case let .error(error):
+                errorView(with: error)
             }
-            .navigationBarCloseButton {
+        }
+        .navigationBarTitle(L10n.metadata)
+        .navigationBarTitleDisplayMode(.inline)
+        .topBarTrailing {
+            Button(L10n.save) {
+                item = tempItem
+                viewModel.send(.update(tempItem))
                 router.dismissCoordinator()
+            }
+            .buttonStyle(.toolbarPill)
+            .disabled(viewModel.item == tempItem)
+        }
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+        .onReceive(viewModel.events) { events in
+            switch events {
+            case let .error(eventError):
+                error = eventError
+            default:
+                break
+            }
+        }
+        .errorMessage($error)
+    }
+
+    // MARK: - ErrorView
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.load)
             }
     }
 

@@ -12,12 +12,15 @@ import SwiftUI
 
 struct ServerUserDeviceAccessView: View {
 
-    // MARK: - Environment
+    // MARK: - Current Date
+
+    @CurrentDate
+    private var currentDate: Date
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
-
-    // MARK: - ViewModel
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
@@ -28,15 +31,11 @@ struct ServerUserDeviceAccessView: View {
 
     @State
     private var tempPolicy: UserPolicy
+
+    // MARK: - Error State
+
     @State
     private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
-
-    // MARK: - Current Date
-
-    @CurrentDate
-    private var currentDate: Date
 
     // MARK: - Initializer
 
@@ -71,24 +70,15 @@ struct ServerUserDeviceAccessView: View {
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
-                    isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 }
             }
-            .alert(
-                L10n.error.text,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: { error in
-                Text(error.localizedDescription)
-            }
             .onFirstAppear {
-                devicesViewModel.send(.getDevices)
+                devicesViewModel.send(.refresh)
             }
+            .errorMessage($error)
     }
 
     // MARK: - Content View

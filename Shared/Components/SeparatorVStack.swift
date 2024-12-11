@@ -10,17 +10,18 @@ import SwiftUI
 
 // https://movingparts.io/variadic-views-in-swiftui
 
-/// An `HStack` that inserts an optional `separator` between views.
+/// A `VStack` that inserts an optional `separator` between views.
 ///
 /// - Note: Default spacing is removed. The separator view is responsible
 ///         for spacing.
 struct SeparatorVStack<Content: View, Separator: View>: View {
 
-    private var content: () -> Content
-    private var separator: () -> Separator
+    private let alignment: HorizontalAlignment
+    private let content: () -> Content
+    private let separator: () -> Separator
 
     var body: some View {
-        _VariadicView.Tree(SeparatorVStackLayout(separator: separator)) {
+        _VariadicView.Tree(SeparatorVStackLayout(alignment: alignment, separator: separator)) {
             content()
         }
     }
@@ -29,10 +30,12 @@ struct SeparatorVStack<Content: View, Separator: View>: View {
 extension SeparatorVStack {
 
     init(
+        alignment: HorizontalAlignment = .center,
         @ViewBuilder separator: @escaping () -> Separator,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.init(
+            alignment: alignment,
             content: content,
             separator: separator
         )
@@ -43,14 +46,15 @@ extension SeparatorVStack {
 
     struct SeparatorVStackLayout: _VariadicView_UnaryViewRoot {
 
-        var separator: () -> Separator
+        let alignment: HorizontalAlignment
+        let separator: () -> Separator
 
         @ViewBuilder
         func body(children: _VariadicView.Children) -> some View {
 
             let last = children.last?.id
 
-            localHStack {
+            VStack(alignment: alignment, spacing: 0) {
                 ForEach(children) { child in
                     child
 
@@ -58,13 +62,6 @@ extension SeparatorVStack {
                         separator()
                     }
                 }
-            }
-        }
-
-        @ViewBuilder
-        private func localHStack(@ViewBuilder content: @escaping () -> some View) -> some View {
-            VStack(spacing: 0) {
-                content()
             }
         }
     }

@@ -13,20 +13,31 @@ import SwiftUI
 
 struct AddServerUserView: View {
 
+    // MARK: - Defaults
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Focus Fields
+
     private enum Field: Hashable {
         case username
         case password
         case confirmPassword
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @FocusState
+    private var focusedfield: Field?
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
-    @FocusState
-    private var focusedfield: Field?
+    @StateObject
+    private var viewModel = AddServerUserViewModel()
+
+    // MARK: - Element Variables
 
     @State
     private var username: String = ""
@@ -35,19 +46,23 @@ struct AddServerUserView: View {
     @State
     private var confirmPassword: String = ""
 
-    @State
-    private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
+    // MARK: - Dialog State
+
     @State
     private var isPresentingSuccess: Bool = false
 
-    @StateObject
-    private var viewModel = AddServerUserViewModel()
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
+    // MARK: - Username is Valid
 
     private var isValid: Bool {
         username.isNotEmpty && password == confirmPassword
     }
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -80,7 +95,7 @@ struct AddServerUserView: View {
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword) {}
+                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.none)
                     .focused($focusedfield, equals: .confirmPassword)
@@ -108,12 +123,9 @@ struct AddServerUserView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 error = eventError
-                isPresentingError = true
             case let .createdNewUser(newUser):
                 UIDevice.feedback(.success)
-
                 router.dismissCoordinator {
                     Notifications[.didAddServerUser].post(newUser)
                 }
@@ -137,16 +149,8 @@ struct AddServerUserView: View {
                 .disabled(!isValid)
             }
         }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel) {
-                focusedfield = .username
-            }
-        } message: { error in
-            Text(error.localizedDescription)
+        .errorMessage($error) {
+            focusedfield = .username
         }
     }
 }

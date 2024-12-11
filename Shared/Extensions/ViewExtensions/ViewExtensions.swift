@@ -148,6 +148,15 @@ extension View {
         modifier(BottomEdgeGradientModifier(bottomColor: bottomColor))
     }
 
+    /// Error Message Alert
+    func errorMessage(
+        _ error: Binding<Error?>,
+        dismissActions: (() -> Void)? = nil
+    ) -> some View {
+        modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
+    }
+
+    /// Apply a corner radius as a ratio of a view's side
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
     }

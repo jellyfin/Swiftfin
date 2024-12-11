@@ -12,30 +12,46 @@ import SwiftUI
 
 struct ConnectToServerView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
 
-    @EnvironmentObject
-    private var router: SelectUserCoordinator.Router
+    // MARK: - Focus Fields
 
     @FocusState
     private var isURLFocused: Bool
 
-    @State
-    private var duplicateServer: ServerState? = nil
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingDuplicateServer: Bool = false
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var url: String = ""
+    // MARK: - State & Environment Objects
+
+    @EnvironmentObject
+    private var router: SelectUserCoordinator.Router
 
     @StateObject
     private var viewModel = ConnectToServerViewModel()
 
+    // MARK: - URL Variable
+
+    @State
+    private var url: String = ""
+
+    // MARK: - Duplicate Server State
+
+    @State
+    private var duplicateServer: ServerState? = nil
+    @State
+    private var isPresentingDuplicateServer: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Connection Timer
+
     private let timer = Timer.publish(every: 12, on: .main, in: .common).autoconnect()
+
+    // MARK: - Handle Connection
 
     private func handleConnection(_ event: ConnectToServerViewModel.Event) {
         switch event {
@@ -53,10 +69,11 @@ struct ConnectToServerView: View {
             UIDevice.feedback(.error)
 
             error = eventError
-            isPresentingError = true
             isURLFocused = true
         }
     }
+
+    // MARK: - Connect Section
 
     @ViewBuilder
     private var connectSection: some View {
@@ -87,6 +104,8 @@ struct ConnectToServerView: View {
         }
     }
 
+    // MARK: - Local Server Button
+
     private func localServerButton(for server: ServerState) -> some View {
         Button {
             url = server.currentURL.absoluteString
@@ -114,6 +133,8 @@ struct ConnectToServerView: View {
         .buttonStyle(.plain)
     }
 
+    // MARK: - Local Servers Section
+
     @ViewBuilder
     private var localServersSection: some View {
         Section(L10n.localServers) {
@@ -129,6 +150,8 @@ struct ConnectToServerView: View {
             }
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         List {
@@ -160,15 +183,6 @@ struct ConnectToServerView: View {
             }
         }
         .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .destructive)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
-        .alert(
             L10n.server.text,
             isPresented: $isPresentingDuplicateServer,
             presenting: duplicateServer
@@ -182,5 +196,6 @@ struct ConnectToServerView: View {
         } message: { server in
             L10n.serverAlreadyExistsPrompt(server.name).text
         }
+        .errorMessage($error)
     }
 }
