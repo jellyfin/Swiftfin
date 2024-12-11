@@ -12,10 +12,68 @@ extension ItemView {
 
     struct ActionButtonHStack: View {
 
+        // MARK: - Observed, State, & Environment Objects
+
+        @EnvironmentObject
+        private var router: ItemCoordinator.Router
+
         @ObservedObject
         var viewModel: ItemViewModel
 
-        // TODO: Shrink to minWWith 100 (button) / 50 (menu) and 16 spacing to get 4 buttons inline
+        @StateObject
+        var deleteViewModel: DeleteItemViewModel
+
+        // MARK: - Defaults
+
+        @StoredValue(.User.enableItemDeletion)
+        private var enableItemDeletion: Bool
+        @StoredValue(.User.enableItemEditing)
+        private var enableItemEditing: Bool
+        @StoredValue(.User.enableCollectionManagement)
+        private var enableCollectionManagement: Bool
+
+        // MARK: - Dialog States
+
+        @State
+        private var showConfirmationDialog = false
+        @State
+        private var isPresentingEventAlert = false
+
+        // MARK: - Error State
+
+        @State
+        private var error: Error?
+
+        // MARK: - Can Delete Item
+
+        private var canDelete: Bool {
+            if viewModel.item.type == .boxSet {
+                return enableCollectionManagement && viewModel.item.canDelete ?? false
+            } else {
+                return enableItemDeletion && viewModel.item.canDelete ?? false
+            }
+        }
+
+        // MARK: - Refresh Item
+
+        private var canRefresh: Bool {
+            if viewModel.item.type == .boxSet {
+                return enableCollectionManagement
+            } else {
+                return enableItemEditing
+            }
+        }
+
+        // MARK: - Initializer
+
+        init(viewModel: ItemViewModel) {
+            self.viewModel = viewModel
+            self._deleteViewModel = StateObject(wrappedValue: .init(item: viewModel.item))
+        }
+
+        // MARK: - Body
+
+        /// Shrink to minWidth 100 (button) / 50 (menu) and 16 spacing to get 3 buttons + menu
         var body: some View {
             HStack(alignment: .center, spacing: 24) {
 
@@ -47,11 +105,42 @@ extension ItemView {
 
                 // MARK: - Additional Menu Options
 
-                // TODO: Enable if there are more items needed
-                /* ActionMenu {}
-                 .frame(width: 70)*/
+                if canRefresh || canDelete {
+                    ActionMenu {
+                        if canRefresh {
+                            RefreshMetadataButton(item: viewModel.item)
+                        }
+
+                        if canDelete {
+                            Divider()
+                            Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                                showConfirmationDialog = true
+                            }
+                        }
+                    }
+                    .frame(width: 70)
+                }
             }
             .frame(height: 100)
+            .confirmationDialog(
+                L10n.deleteItemConfirmationMessage,
+                isPresented: $showConfirmationDialog,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.confirm, role: .destructive) {
+                    deleteViewModel.send(.delete)
+                }
+                Button(L10n.cancel, role: .cancel) {}
+            }
+            .onReceive(deleteViewModel.events) { event in
+                switch event {
+                case let .error(eventError):
+                    error = eventError
+                case .deleted:
+                    router.dismissCoordinator()
+                }
+            }
+            .errorMessage($error)
         }
     }
 }

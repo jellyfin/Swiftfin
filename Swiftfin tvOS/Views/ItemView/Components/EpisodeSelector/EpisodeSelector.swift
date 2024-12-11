@@ -21,15 +21,19 @@ struct SeriesEpisodeSelector: View {
     @State
     private var didSelectPlayButtonSeason = false
     @State
-    private var selection: SeasonItemViewModel?
+    private var selection: SeasonItemViewModel.ID?
+
+    private var selectionViewModel: SeasonItemViewModel? {
+        viewModel.seasons.first(where: { $0.id == selection })
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             SeasonsHStack(viewModel: viewModel, selection: $selection)
                 .environmentObject(parentFocusGuide)
 
-            if let selection {
-                EpisodeHStack(viewModel: selection, playButtonItem: viewModel.playButtonItem)
+            if let selectionViewModel {
+                EpisodeHStack(viewModel: selectionViewModel, playButtonItem: viewModel.playButtonItem)
                     .environmentObject(parentFocusGuide)
             } else {
                 LoadingHStack()
@@ -40,17 +44,17 @@ struct SeriesEpisodeSelector: View {
             guard !didSelectPlayButtonSeason else { return }
             didSelectPlayButtonSeason = true
 
-            if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
-                selection = season
+            if let playButtonSeason = viewModel.seasons.first(where: { $0.id == newValue.seasonID }) {
+                selection = playButtonSeason.id
             } else {
-                selection = viewModel.seasons.first
+                selection = viewModel.seasons.first?.id
             }
         }
-        .onChange(of: selection) { _, newValue in
-            guard let newValue else { return }
+        .onChange(of: selection) { _ in
+            guard let selectionViewModel else { return }
 
-            if newValue.state == .initial {
-                newValue.send(.refresh)
+            if selectionViewModel.state == .initial {
+                selectionViewModel.send(.refresh)
             }
         }
     }
@@ -66,31 +70,31 @@ extension SeriesEpisodeSelector {
         private var focusGuide: FocusGuide
 
         @FocusState
-        private var focusedSeason: SeasonItemViewModel?
+        private var focusedSeason: SeasonItemViewModel.ID?
 
         @ObservedObject
         var viewModel: SeriesItemViewModel
 
-        var selection: Binding<SeasonItemViewModel?>
+        var selection: Binding<SeasonItemViewModel.ID?>
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    ForEach(viewModel.seasons, id: \.season.id) { seasonViewModel in
+                    ForEach(viewModel.seasons) { seasonViewModel in
                         Button {
                             Text(seasonViewModel.season.displayTitle)
                                 .font(.headline)
                                 .fontWeight(.semibold)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 20)
-                                .if(selection.wrappedValue == seasonViewModel) { text in
+                                .if(selection.wrappedValue == seasonViewModel.id) { text in
                                     text
                                         .background(Color.white)
                                         .foregroundColor(.black)
                                 }
                         }
                         .buttonStyle(.card)
-                        .focused($focusedSeason, equals: seasonViewModel)
+                        .focused($focusedSeason, equals: seasonViewModel.id)
                     }
                 }
                 .focusGuide(

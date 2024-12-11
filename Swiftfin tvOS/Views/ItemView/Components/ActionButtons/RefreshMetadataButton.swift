@@ -9,16 +9,11 @@
 import JellyfinAPI
 import SwiftUI
 
-extension ItemEditorView {
+extension ItemView {
 
     struct RefreshMetadataButton: View {
 
-        // MARK: - Environment & State Objects
-
-        // Bug in SwiftUI where Menu item icons will be black in dark mode
-        // when a HierarchicalShapeStyle is applied to the Buttons
-        @Environment(\.colorScheme)
-        private var colorScheme: ColorScheme
+        // MARK: - State Object
 
         @StateObject
         private var viewModel: RefreshMetadataViewModel
@@ -83,7 +78,6 @@ extension ItemEditorView {
                         )
                     }
                 }
-                .foregroundStyle(colorScheme == .dark ? Color.white : Color.black)
             } label: {
                 HStack {
                     Text(L10n.refreshMetadata)
@@ -91,17 +85,10 @@ extension ItemEditorView {
 
                     Spacer()
 
-                    if viewModel.state == .refreshing {
-                        ProgressView(value: viewModel.progress)
-                            .progressViewStyle(.gauge)
-                            .transition(.opacity.combined(with: .scale).animation(.bouncy))
-                            .frame(width: 25, height: 25)
-                    } else {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(.secondary)
-                            .backport
-                            .fontWeight(.semibold)
-                    }
+                    Image(systemName: "arrow.clockwise")
+                        .foregroundStyle(.secondary)
+                        .backport
+                        .fontWeight(.semibold)
                 }
             }
             .foregroundStyle(.primary, .secondary)
