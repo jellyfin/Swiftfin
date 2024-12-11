@@ -12,61 +12,57 @@ import JellyfinAPI
 
 class DeleteItemViewModel: ViewModel, Stateful, Eventful {
 
-    // MARK: Events
+    // MARK: - Events
 
     enum Event: Equatable {
-        case error(JellyfinAPIError)
         case deleted
+        case error(JellyfinAPIError)
     }
 
-    // MARK: Action
+    // MARK: - Action
 
     enum Action: Equatable {
-        case error(JellyfinAPIError)
         case delete
     }
 
-    // MARK: State
+    // MARK: - State
 
     enum State: Hashable {
-        case content
-        case error(JellyfinAPIError)
         case initial
-        case refreshing
+        case error(JellyfinAPIError)
     }
-
-    @Published
-    var item: BaseItemDto?
 
     @Published
     final var state: State = .initial
 
-    private var deleteTask: AnyCancellable?
+    // MARK: - Published Item
+
+    @Published
+    var item: BaseItemDto?
 
     // MARK: Event Variables
 
+    private var deleteTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
-            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
+        // Causes issues with the Deleted Event unless this is removed
+        // .receive(on: RunLoop.main)
     }
 
-    // MARK: Init
+    // MARK: - Initializer
 
     init(item: BaseItemDto) {
         self.item = item
         super.init()
     }
 
-    // MARK: Respond
+    // MARK: - Respond
 
     func respond(to action: Action) -> State {
         switch action {
-        case let .error(error):
-            return .error(error)
-
         case .delete:
             deleteTask?.cancel()
 
@@ -75,12 +71,11 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
                 do {
                     try await self.deleteItem()
                     await MainActor.run {
-                        self.state = .content
+                        self.state = .initial
                         self.eventSubject.send(.deleted)
                     }
                 } catch {
                     guard !Task.isCancelled else { return }
-
                     await MainActor.run {
                         self.state = .error(JellyfinAPIError(error.localizedDescription))
                         self.eventSubject.send(.error(JellyfinAPIError(error.localizedDescription)))
@@ -89,11 +84,11 @@ class DeleteItemViewModel: ViewModel, Stateful, Eventful {
             }
             .asAnyCancellable()
 
-            return .refreshing
+            return .initial
         }
     }
 
-    // MARK: Metadata Refresh Logic
+    // MARK: - Item Deletion Logic
 
     private func deleteItem() async throws {
         guard let item, let itemID = item.id else {

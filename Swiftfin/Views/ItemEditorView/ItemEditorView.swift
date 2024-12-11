@@ -24,12 +24,19 @@ struct ItemEditorView: View {
     // MARK: - Body
 
     var body: some View {
-        contentView
-            .navigationBarTitle(L10n.metadata)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
+        ZStack {
+            switch viewModel.state {
+            case .initial, .content, .refreshing:
+                contentView
+            case let .error(error):
+                errorView(with: error)
             }
+        }
+        .navigationBarTitle(L10n.metadata)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
     }
 
     // MARK: - Content View
@@ -46,6 +53,18 @@ struct ItemEditorView: View {
             editView
         }
     }
+
+    // MARK: - ErrorView
+
+    @ViewBuilder
+    private func errorView(with error: some Error) -> some View {
+        ErrorView(error: error)
+            .onRetry {
+                viewModel.send(.refresh)
+            }
+    }
+
+    // MARK: - Refresh Menu Button
 
     @ViewBuilder
     private var refreshButtonView: some View {
@@ -73,6 +92,8 @@ struct ItemEditorView: View {
             }
         }
     }
+
+    // MARK: - Editable Routing Buttons
 
     @ViewBuilder
     private var editView: some View {

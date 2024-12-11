@@ -12,24 +12,23 @@ import SwiftUI
 
 struct ServerUserMediaAccessView: View {
 
-    // MARK: - Environment
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
 
-    // MARK: - ViewModel
-
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    // MARK: - State Variables
+    // MARK: - Policy Variable
 
     @State
     private var tempPolicy: UserPolicy
+
+    // MARK: - Error State
+
     @State
     private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
 
     // MARK: - Initializer
 
@@ -64,24 +63,12 @@ struct ServerUserMediaAccessView: View {
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
-                    isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
                     router.dismissCoordinator()
                 }
             }
-            .alert(
-                L10n.error.text,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: { error in
-                Text(error.localizedDescription)
-            }
-            .onFirstAppear {
-                viewModel.send(.loadLibraries(isHidden: false))
-            }
+            .errorMessage($error)
     }
 
     // MARK: - Content View

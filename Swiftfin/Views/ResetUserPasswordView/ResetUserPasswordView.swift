@@ -13,20 +13,26 @@ import SwiftUI
 
 struct ResetUserPasswordView: View {
 
+    // MARK: - Defaults
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Focus Fields
+
     private enum Field: Hashable {
         case currentPassword
         case newPassword
         case confirmNewPassword
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @FocusState
+    private var focusedField: Field?
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router
-
-    @FocusState
-    private var focusedField: Field?
 
     @StateObject
     private var viewModel: ResetUserPasswordViewModel
@@ -40,16 +46,17 @@ struct ResetUserPasswordView: View {
     @State
     private var confirmNewPassword: String = ""
 
-    // MARK: - State Variables
+    private let requiresCurrentPassword: Bool
 
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingError: Bool = false
+    // MARK: - Dialog States
+
     @State
     private var isPresentingSuccess: Bool = false
 
-    private let requiresCurrentPassword: Bool
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
 
     // MARK: - Initializer
 
@@ -144,12 +151,9 @@ struct ResetUserPasswordView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 error = eventError
-                isPresentingError = true
             case .success:
                 UIDevice.feedback(.success)
-
                 isPresentingSuccess = true
             }
         }
@@ -157,17 +161,6 @@ struct ResetUserPasswordView: View {
             if viewModel.state == .resetting {
                 ProgressView()
             }
-        }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel) {
-                focusedField = .newPassword
-            }
-        } message: { error in
-            Text(error.localizedDescription)
         }
         .alert(
             L10n.success,
@@ -178,6 +171,9 @@ struct ResetUserPasswordView: View {
             }
         } message: {
             Text(L10n.passwordChangedMessage)
+        }
+        .errorMessage($error) {
+            focusedField = .newPassword
         }
     }
 }

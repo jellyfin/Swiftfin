@@ -13,14 +13,24 @@ extension ItemView {
 
     struct ActionButton: View {
 
+        // MARK: - Environment Objects
+
         @Environment(\.isSelected)
         private var isSelected
+
+        // MARK: - Focus State
+
         @FocusState
         private var isFocused: Bool
+
+        // MARK: - Item Variables
 
         let title: String
         let icon: String
         let selectedIcon: String
+
+        // MARK: - Item Actions
+
         let onSelect: () -> Void
 
         // MARK: - Body

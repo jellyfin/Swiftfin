@@ -12,26 +12,40 @@ import SwiftUI
 
 struct QuickConnectAuthorizeView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
 
-    @EnvironmentObject
-    private var router: SettingsCoordinator.Router
+    // MARK: - Focus Fields
 
     @FocusState
     private var isCodeFocused: Bool
 
-    @State
-    private var code: String = ""
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingSuccess: Bool = false
+    // MARK: - State & Environment Objects
+
+    @EnvironmentObject
+    private var router: SettingsCoordinator.Router
 
     @StateObject
     private var viewModel = QuickConnectAuthorizeViewModel()
+
+    // MARK: - Quick Connect Variables
+
+    @State
+    private var code: String = ""
+
+    // MARK: - Dialog State
+
+    @State
+    private var isPresentingSuccess: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Body
 
     var body: some View {
         Form {
@@ -41,7 +55,7 @@ struct QuickConnectAuthorizeView: View {
                     .disabled(viewModel.state == .authorizing)
                     .focused($isCodeFocused)
             } footer: {
-                Text("Enter the 6 digit code from your other device.")
+                Text(L10n.quickConnectCodeInstruction)
             }
 
             if viewModel.state == .authorizing {
@@ -81,24 +95,12 @@ struct QuickConnectAuthorizeView: View {
                 UIDevice.feedback(.error)
 
                 error = eventError
-                isPresentingError = true
             }
         }
         .topBarTrailing {
             if viewModel.state == .authorizing {
                 ProgressView()
             }
-        }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .destructive) {
-                isCodeFocused = true
-            }
-        } message: { error in
-            Text(error.localizedDescription)
         }
         .alert(
             L10n.quickConnect,
@@ -109,6 +111,9 @@ struct QuickConnectAuthorizeView: View {
             }
         } message: {
             L10n.quickConnectSuccessMessage.text
+        }
+        .errorMessage($error) {
+            isCodeFocused = true
         }
     }
 }

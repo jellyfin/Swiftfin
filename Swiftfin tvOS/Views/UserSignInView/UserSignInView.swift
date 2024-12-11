@@ -17,39 +17,55 @@ import SwiftUI
 
 struct UserSignInView: View {
 
+    // MARK: - Defaults
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - Focus Fields
+
     private enum FocusField: Hashable {
         case username
         case password
     }
 
-    @Default(.accentColor)
-    private var accentColor
+    @FocusState
+    private var focusedTextField: FocusField?
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
 
-    @FocusState
-    private var focusedTextField: FocusField?
+    @StateObject
+    private var viewModel: UserSignInViewModel
+
+    // MARK: - User Sign In Variables
 
     @State
     private var duplicateUser: UserState? = nil
-    @State
-    private var error: Error? = nil
-    @State
-    private var isPresentingDuplicateUser: Bool = false
-    @State
-    private var isPresentingError: Bool = false
     @State
     private var password: String = ""
     @State
     private var username: String = ""
 
-    @StateObject
-    private var viewModel: UserSignInViewModel
+    // MARK: - Dialog State
+
+    @State
+    private var isPresentingDuplicateUser: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
+    // MARK: - Initializer
 
     init(server: ServerState) {
         self._viewModel = StateObject(wrappedValue: UserSignInViewModel(server: server))
     }
+
+    // MARK: - Sign In Section
 
     @ViewBuilder
     private var signInSection: some View {
@@ -102,15 +118,17 @@ struct UserSignInView: View {
         }
 
         if let disclaimer = viewModel.serverDisclaimer {
-            Section("Disclaimer") {
+            Section(L10n.disclaimer) {
                 Text(disclaimer)
                     .font(.callout)
             }
         }
     }
 
+    // MARK: - Public Users Section
+
     @ViewBuilder
-    private var publisUsersSection: some View {
+    private var publicUsersSection: some View {
         Section(L10n.publicUsers) {
             if viewModel.publicUsers.isEmpty {
                 L10n.noPublicUsers.text
@@ -131,6 +149,8 @@ struct UserSignInView: View {
             }
         }
     }
+
+    // MARK: - Body
 
     var body: some View {
         VStack {
@@ -156,7 +176,7 @@ struct UserSignInView: View {
                 }
 
                 VStack(alignment: .leading) {
-                    publisUsersSection
+                    publicUsersSection
                 }
             }
 
@@ -169,7 +189,6 @@ struct UserSignInView: View {
                 isPresentingDuplicateUser = true
             case let .error(eventError):
                 error = eventError
-                isPresentingError = true
             case let .signedIn(user):
                 router.dismissCoordinator()
 
@@ -183,7 +202,7 @@ struct UserSignInView: View {
             viewModel.send(.getPublicData)
         }
         .alert(
-            Text("Duplicate User"),
+            Text(L10n.duplicateUser),
             isPresented: $isPresentingDuplicateUser,
             presenting: duplicateUser
         ) { _ in
@@ -199,16 +218,8 @@ struct UserSignInView: View {
 
             Button(L10n.dismiss, role: .cancel)
         } message: { duplicateUser in
-            Text("\(duplicateUser.username) is already saved")
+            Text(L10n.duplicateUserSaved(duplicateUser.username))
         }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .cancel)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
+        .errorMessage($error)
     }
 }

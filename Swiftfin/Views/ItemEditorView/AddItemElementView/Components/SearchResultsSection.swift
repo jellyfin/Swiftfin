@@ -13,13 +13,19 @@ extension AddItemElementView {
 
     struct SearchResultsSection: View {
 
-        @Binding
-        var id: String?
+        // MARK: - Element Variables
+
         @Binding
         var name: String
+        @Binding
+        var id: String?
+
+        // MARK: - Element Search Variables
 
         let type: ItemArrayElements
         let population: [Element]
+
+        // TODO: Why doesn't environment(\.isSearching) work?
         let isSearching: Bool
 
         // MARK: - Body
@@ -50,7 +56,7 @@ extension AddItemElementView {
             }
         }
 
-        // MARK: - Empty Matches Results
+        // MARK: - No Results View
 
         private var noResultsView: some View {
             Text(L10n.none)
@@ -58,7 +64,7 @@ extension AddItemElementView {
                 .frame(maxWidth: .infinity, alignment: .center)
         }
 
-        // MARK: - Formatted Matches Results
+        // MARK: - Results View
 
         private var resultsView: some View {
             ForEach(population, id: \.self) { result in
@@ -75,7 +81,7 @@ extension AddItemElementView {
             }
         }
 
-        // MARK: - Element Matches Button Label by Type
+        // MARK: - Label View
 
         @ViewBuilder
         private func labelView(_ match: Element) -> some View {
