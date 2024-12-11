@@ -95,7 +95,7 @@ struct AddServerUserView: View {
             }
 
             Section {
-                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword) {}
+                UnmaskSecureField(L10n.confirmPassword, text: $confirmPassword)
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.none)
                     .focused($focusedfield, equals: .confirmPassword)
@@ -149,6 +149,8 @@ struct AddServerUserView: View {
                 .disabled(!isValid)
             }
         }
-        .errorMessage($error)
+        .errorMessage($error) {
+            focusedfield = .username
+        }
     }
 }

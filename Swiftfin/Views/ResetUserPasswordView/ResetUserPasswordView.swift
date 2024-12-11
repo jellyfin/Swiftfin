@@ -172,6 +172,8 @@ struct ResetUserPasswordView: View {
         } message: {
             Text(L10n.passwordChangedMessage)
         }
-        .errorMessage($error)
+        .errorMessage($error) {
+            focusedField = .newPassword
+        }
     }
 }
