@@ -12,22 +12,23 @@ import SwiftUI
 
 struct EditServerTaskView: View {
 
+    // MARK: - Observed & Environment Objects
+
     @EnvironmentObject
     private var router: AdminDashboardCoordinator.Router
 
     @ObservedObject
     var observer: ServerTaskObserver
 
-    // MARK: - State Variables
+    // MARK: - Trigger Variables
 
     @State
-    private var isPresentingDeleteConfirmation = false
-    @State
-    private var isPresentingEventAlert = false
-    @State
-    private var error: JellyfinAPIError?
-    @State
     private var selectedTrigger: TaskTriggerInfo?
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
 
     // MARK: - Body
 
@@ -78,17 +79,8 @@ struct EditServerTaskView: View {
             switch event {
             case let .error(eventError):
                 error = eventError
-                isPresentingEventAlert = true
             }
         }
-        .alert(
-            L10n.error,
-            isPresented: $isPresentingEventAlert,
-            presenting: error
-        ) { _ in
-
-        } message: { error in
-            Text(error.localizedDescription)
-        }
+        .errorMessage($error)
     }
 }

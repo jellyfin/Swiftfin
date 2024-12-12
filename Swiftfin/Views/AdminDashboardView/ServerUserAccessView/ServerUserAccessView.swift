@@ -58,6 +58,9 @@ struct ServerUserMediaAccessView: View {
                 .buttonStyle(.toolbarPill)
                 .disabled(viewModel.user.policy == tempPolicy)
             }
+            .onFirstAppear {
+                viewModel.send(.loadLibraries())
+            }
             .onReceive(viewModel.events) { event in
                 switch event {
                 case let .error(eventError):

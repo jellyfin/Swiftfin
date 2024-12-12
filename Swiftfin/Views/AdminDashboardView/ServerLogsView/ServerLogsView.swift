@@ -25,7 +25,7 @@ struct ServerLogsView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                L10n.logs,
+                L10n.serverLogs,
                 description: L10n.logsDescription
             ) {
                 UIApplication.shared.open(URL(string: "https://jellyfin.org/docs/general/administration/troubleshooting")!)

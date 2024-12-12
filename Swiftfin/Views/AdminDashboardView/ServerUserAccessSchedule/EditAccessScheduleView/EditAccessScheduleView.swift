@@ -12,52 +12,52 @@ import SwiftUI
 
 struct EditAccessScheduleView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - Environment
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: AdminDashboardCoordinator.Router
 
-    // MARK: - ViewModel
-
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
-    // MARK: - State Variables
+    // MARK: - Policy Variable
+
+    @State
+    private var selectedSchedules: Set<AccessSchedule> = []
+
+    // MARK: - Dialog States
 
     @State
     private var isPresentingDeleteSelectionConfirmation = false
     @State
     private var isPresentingDeleteConfirmation = false
-    @State
-    private var isPresentingSelfDeleteError = false
-    @State
-    private var selectedSchedules: Set<AccessSchedule> = []
+
+    // MARK: - Editing State
+
     @State
     private var isEditing: Bool = false
 
-    @State
-    private var error: Error?
-    @State
-    private var isPresentingError: Bool = false
+    // MARK: - Error State
 
     @State
-    private var tempPolicy: UserPolicy
+    private var error: Error?
 
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationTitle(L10n.schedules)
+            .navigationTitle(L10n.accessSchedules)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarBackButtonHidden(isEditing)
             .toolbar {
@@ -68,14 +68,10 @@ struct EditAccessScheduleView: View {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     if isEditing {
-                        Button(isEditing ? L10n.cancel : L10n.edit) {
+                        Button(L10n.cancel) {
                             isEditing.toggle()
-
+                            selectedSchedules.removeAll()
                             UIDevice.impact(.light)
-
-                            if !isEditing {
-                                selectedSchedules.removeAll()
-                            }
                         }
                         .buttonStyle(.toolbarPill)
                         .foregroundStyle(accentColor)
@@ -96,12 +92,12 @@ struct EditAccessScheduleView: View {
                 isLoading: viewModel.backgroundStates.contains(.refreshing),
                 isHidden: isEditing
             ) {
-                Button("addSchedule", systemImage: "plus") {
-                    // router.route(to: \.addServerUser)
+                Button(L10n.add, systemImage: "plus") {
+                    router.route(to: \.userAddAccessSchedule, viewModel)
                 }
 
                 if viewModel.user.policy?.accessSchedules != [] {
-                    Button("editSchedule", systemImage: "checkmark.circle") {
+                    Button(L10n.edit, systemImage: "checkmark.circle") {
                         isEditing = true
                     }
                 }
@@ -111,38 +107,29 @@ struct EditAccessScheduleView: View {
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
-                    isPresentingError = true
                 case .updated:
                     UIDevice.feedback(.success)
                 }
             }
             .confirmationDialog(
-                L10n.deleteSelectedUsers,
+                L10n.deleteSelectedSchedules,
                 isPresented: $isPresentingDeleteSelectionConfirmation,
                 titleVisibility: .visible
             ) {
-                deleteSelectedUsersConfirmationActions
+                deleteSelectedSchedulesConfirmationActions
             } message: {
-                Text(L10n.deleteSelectionUsersWarning)
+                Text(L10n.deleteSelectionSchedulesWarning)
             }
             .confirmationDialog(
-                L10n.deleteUser,
+                L10n.deleteSchedule,
                 isPresented: $isPresentingDeleteConfirmation,
                 titleVisibility: .visible
             ) {
-                deleteUserConfirmationActions
+                deleteScheduleConfirmationActions
             } message: {
-                Text(L10n.deleteUserWarning)
+                Text(L10n.deleteScheduleWarning)
             }
-            .alert(
-                L10n.error.text,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { _ in
-                Button(L10n.dismiss, role: .cancel) {}
-            } message: { error in
-                Text(error.localizedDescription)
-            }
+            .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -170,12 +157,9 @@ struct EditAccessScheduleView: View {
                     EditAccessScheduleRow(schedule: schedule) {
                         if isEditing {
                             selectedSchedules.toggle(value: schedule)
-                        } else {
-                            // router.route(to: \.userDetails, user)
                         }
                     } onDelete: {
-                        selectedSchedules.removeAll()
-                        selectedSchedules.insert(schedule)
+                        selectedSchedules = [schedule]
                         isPresentingDeleteConfirmation = true
                     }
                     .environment(\.isEditing, isEditing)
@@ -209,10 +193,13 @@ struct EditAccessScheduleView: View {
     // MARK: - Delete Selected Schedules Confirmation Actions
 
     @ViewBuilder
-    private var deleteSelectedUsersConfirmationActions: some View {
+    private var deleteSelectedSchedulesConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
+
+            var tempPolicy: UserPolicy = viewModel.user.policy!
+
             if selectedSchedules.isNotEmpty {
                 tempPolicy.accessSchedules = tempPolicy.accessSchedules?.filter { !selectedSchedules.contains($0)
                 }
@@ -226,14 +213,16 @@ struct EditAccessScheduleView: View {
     // MARK: - Delete Schedule Confirmation Actions
 
     @ViewBuilder
-    private var deleteUserConfirmationActions: some View {
+    private var deleteScheduleConfirmationActions: some View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
+
+            var tempPolicy: UserPolicy = viewModel.user.policy!
+
             if let scheduleToDelete = selectedSchedules.first,
                selectedSchedules.count == 1
             {
-
                 tempPolicy.accessSchedules = tempPolicy.accessSchedules?.filter {
                     $0 != scheduleToDelete
                 }

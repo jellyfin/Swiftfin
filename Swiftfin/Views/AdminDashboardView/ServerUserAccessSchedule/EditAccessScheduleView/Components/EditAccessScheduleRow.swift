@@ -14,12 +14,19 @@ extension EditAccessScheduleView {
 
     struct EditAccessScheduleRow: View {
 
+        // MARK: - Environment Variables
+
         @Environment(\.isEditing)
         var isEditing
         @Environment(\.isSelected)
         var isSelected
 
+        // MARK: - Schedule Variable
+
         let schedule: AccessSchedule
+
+        // MARK: - Schedule Actions
+
         let onSelect: () -> Void
         let onDelete: () -> Void
 
@@ -47,18 +54,17 @@ extension EditAccessScheduleView {
                         Text(dayOfWeek.rawValue)
                             .font(.headline)
                     }
-
                     if let startHour = schedule.startHour {
                         TextPairView(
                             leading: L10n.startTime,
-                            trailing: (startHour * 60 * 60).formatted(.hourMinute)
+                            trailing: doubleToTimeString(startHour)
                         )
                         .font(.subheadline)
                     }
                     if let endHour = schedule.endHour {
                         TextPairView(
                             leading: L10n.endTime,
-                            trailing: (endHour * 60 * 60).formatted(.hourMinute)
+                            trailing: doubleToTimeString(endHour)
                         )
                         .font(.subheadline)
                     }
@@ -72,6 +78,28 @@ extension EditAccessScheduleView {
 
                 ListRowCheckbox()
             }
+        }
+
+        // MARK: - Convert Double to Date
+
+        private func doubleToTimeString(_ double: Double) -> String {
+            let startHours = Int(double)
+            let startMinutes = Int(double.truncatingRemainder(dividingBy: 1) * 60)
+
+            var dateComponents = DateComponents()
+            dateComponents.hour = startHours
+            dateComponents.minute = startMinutes
+
+            let calendar = Calendar.current
+
+            guard let date = calendar.date(from: dateComponents) else {
+                return .emptyTime
+            }
+
+            let formatter = DateFormatter()
+            formatter.timeStyle = .short
+
+            return formatter.string(from: date)
         }
     }
 }

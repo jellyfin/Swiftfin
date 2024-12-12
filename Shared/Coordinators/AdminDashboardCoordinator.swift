@@ -34,9 +34,9 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     // MARK: - Route: Server Tasks
 
     @Route(.push)
-    var editServerTask = makeEditServerTask
-    @Route(.push)
     var tasks = makeTasks
+    @Route(.push)
+    var editServerTask = makeEditServerTask
     @Route(.modal)
     var addServerTaskTrigger = makeAddServerTaskTrigger
 
@@ -64,12 +64,14 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userLiveTVAccess = makeUserLiveTVAccess
     @Route(.modal)
     var userPermissions = makeUserPermissions
-    @Route(.push)
-    var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
     var userParentalRatings = makeUserParentalRatings
     @Route(.modal)
     var resetUserPassword = makeResetUserPassword
+    @Route(.push)
+    var userEditAccessSchedules = makeUserEditAccessSchedules
+    @Route(.modal)
+    var userAddAccessSchedule = makeUserAddAccessSchedule
 
     // MARK: - Route: API Keys
 
@@ -172,6 +174,12 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @ViewBuilder
     func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
         EditAccessScheduleView(viewModel: viewModel)
+    }
+
+    func makeUserAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddAccessScheduleView(viewModel: viewModel)
+        }
     }
 
     func makeUserParentalRatings(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {

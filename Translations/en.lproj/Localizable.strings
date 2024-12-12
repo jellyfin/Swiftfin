@@ -1122,7 +1122,7 @@
 
 // Add Trigger - Title
 // Title for adding a new task trigger
-"addTrigger" = "Add trigger";
+"addTrigger" = "Add Trigger";
 
 // Save - Button Label
 // Button to save the current task trigger
@@ -2059,15 +2059,15 @@
 
 // Access Schedules - Label
 // Label for configuring or viewing the access schedule
-"accessSchedules" = "Access schedules";
+"accessSchedules" = "Access Schedules";
 
-// Schedules - View Title
-// View Title for configuring or viewing the access schedule
-"schedules" = "Schedules";
+// Add Access Schedule - Label
+// Label for adding a single Access Schedule
+"addAccessSchedule" = "Add Access Schedule";
 
 // Access Schedule Description - Label
 // Description for viewing or listing multiple schedules
-"accessSchedulesDescription" = "Access schedules define allowed hours for usage and restrict access outside those times.";
+"accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
 
 // Parental controls - Section Title
 // Parental controls section & view titles
@@ -2264,3 +2264,39 @@
 // Ages Group - Group Name
 // Label for content suitable for a specific age group
 "agesGroup" = "Age %@";
+
+// End Time must come after Start Time - Access Schedule Error
+// Error produced when trying to create 
+"accessScheduleInvalidTime" = "The End Time must come after the Start Time.";
+
+// Everyday - Label
+// DynamicDayOfWeek label for Everyday
+"everyday" = "Everyday";
+
+// Weekday - Label
+// DynamicDayOfWeek label for Weekdays
+"weekday" = "Weekday";
+
+// Weekend - Label
+// DynamicDayOfWeek label for the Weekend
+"weekend" = "Weekend";
+
+// Schedule Already Exists -
+// Message to indicate that an Access Schedule already exists
+"scheduleAlreadyExists" = "Schedule already exists";
+
+// Delete Selected Schedules Warning - Warning Message
+// Warning message displayed when deleting all schedules
+"deleteSelectionSchedulesWarning" = "Are you sure you wish to delete all selected schedules?";
+
+// Delete Schedule Warning - Warning Message
+// Warning message displayed when deleting a single schedules
+"deleteScheduleWarning" = "Are you sure you wish to delete this schedule?";
+
+// Delete Schedule - Action
+// Message for deleting a single Access Schedule
+"deleteSchedule" = "Delete Schedule";
+
+// Delete Selected Schedules - Button
+// Button label for deleting all selected Access Schedules
+"deleteSelectedSchedules" = "Delete Selected Schedules";
