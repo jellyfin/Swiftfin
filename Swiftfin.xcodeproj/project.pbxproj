@@ -69,6 +69,7 @@
 		4E36395C2CC4DF0E00110EBC /* APIKeysViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E36395A2CC4DF0900110EBC /* APIKeysViewModel.swift */; };
 		4E3A24DA2CFE34A00083A72C /* SearchResultsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3A24D92CFE349A0083A72C /* SearchResultsSection.swift */; };
 		4E3A24DC2CFE35D50083A72C /* NameInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E3A24DB2CFE35CC0083A72C /* NameInput.swift */; };
+		4E4718252D0B95BC0080274D /* UserProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E4718242D0B95B00080274D /* UserProfileImageView.swift */; };
 		4E49DECB2CE54AA200352DCD /* SessionsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECA2CE54A9200352DCD /* SessionsSection.swift */; };
 		4E49DECD2CE54C7A00352DCD /* PermissionSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECC2CE54C7200352DCD /* PermissionSection.swift */; };
 		4E49DECF2CE54D3000352DCD /* MaxBitratePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */; };
@@ -1217,6 +1218,7 @@
 		4E36395A2CC4DF0900110EBC /* APIKeysViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeysViewModel.swift; sourceTree = "<group>"; };
 		4E3A24D92CFE349A0083A72C /* SearchResultsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsSection.swift; sourceTree = "<group>"; };
 		4E3A24DB2CFE35CC0083A72C /* NameInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameInput.swift; sourceTree = "<group>"; };
+		4E4718242D0B95B00080274D /* UserProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileImageView.swift; sourceTree = "<group>"; };
 		4E49DECA2CE54A9200352DCD /* SessionsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionsSection.swift; sourceTree = "<group>"; };
 		4E49DECC2CE54C7200352DCD /* PermissionSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionSection.swift; sourceTree = "<group>"; };
 		4E49DECE2CE54D2700352DCD /* MaxBitratePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxBitratePolicy.swift; sourceTree = "<group>"; };
@@ -2256,6 +2258,7 @@
 			children = (
 				4E49DEDE2CE55F7F00352DCD /* Components */,
 				4E49DEE52CE5616800352DCD /* UserProfileImagePicker.swift */,
+				4E4718242D0B95B00080274D /* UserProfileImageView.swift */,
 			);
 			path = UserProfileImagePicker;
 			sourceTree = "<group>";
@@ -3765,6 +3768,7 @@
 				E10B1EAF2BD9769500A92EAF /* SelectUserView */,
 				E19D41AB2BF288110082B8B2 /* ServerCheckView.swift */,
 				E1E5D54A2783E26100692DFE /* SettingsView */,
+				4E49DEDF2CE55F7F00352DCD /* UserProfileImagePicker */,
 				E1171A1A28A2215800FA1AF5 /* UserSignInView */,
 				E193D5452719418B00900D82 /* VideoPlayer */,
 			);
@@ -3835,7 +3839,6 @@
 			isa = PBXGroup;
 			children = (
 				6334175A287DDFB9000603CE /* QuickConnectAuthorizeView.swift */,
-				4E49DEDF2CE55F7F00352DCD /* UserProfileImagePicker */,
 				E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */,
 				E1BE1CEF2BDB6C97008176A9 /* UserProfileSettingsView.swift */,
 			);
@@ -5978,6 +5981,7 @@
 				E111D8F528D03B7500400001 /* PagingLibraryViewModel.swift in Sources */,
 				E16AF11C292C98A7001422A8 /* GestureSettingsView.swift in Sources */,
 				E1581E27291EF59800D6C640 /* SplitContentView.swift in Sources */,
+				4E4718252D0B95BC0080274D /* UserProfileImageView.swift in Sources */,
 				C46DD8DC2A8DC3420046A504 /* LiveVideoPlayer.swift in Sources */,
 				E11BDF972B865F550045C54A /* ItemTag.swift in Sources */,
 				E1D4BF8A2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,

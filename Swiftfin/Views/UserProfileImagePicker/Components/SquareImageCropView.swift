@@ -42,7 +42,7 @@ extension UserProfileImagePicker {
 
         var body: some View {
             _SquareImageCropView(initialImage: image, proxy: proxy) {
-                viewModel.send(.upload($0))
+                viewModel.send(.upload(userID: viewModel.userSession.user.id, image: $0))
             }
             .animation(.linear(duration: 0.1), value: viewModel.state)
             .interactiveDismissDisabled(viewModel.state == .uploading)

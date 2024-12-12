@@ -62,10 +62,10 @@ final class SettingsViewModel: ViewModel {
         }
     }
 
-    func deleteCurrentUserProfileImage() {
+    func deleteCurrentUserProfileImage(userID: String) {
         Task {
             let request = Paths.deleteUserImage(
-                userID: userSession.user.id,
+                userID: userID,
                 imageType: "Primary"
             )
             let _ = try await userSession.client.send(request)
@@ -76,7 +76,7 @@ final class SettingsViewModel: ViewModel {
             await MainActor.run {
                 userSession.user.data = response.value
 
-                Notifications[.didChangeUserProfileImage].post()
+                Notifications[.didChangeUserProfileImage].post(userID)
             }
         }
     }

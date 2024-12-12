@@ -26,61 +26,16 @@ struct UserProfileSettingsView: View {
     @State
     private var isPresentingProfileImageOptions: Bool = false
 
-    @ViewBuilder
-    private var imageView: some View {
-        RedrawOnNotificationView(.didChangeUserProfileImage) {
-            ImageView(
-                viewModel.userSession.user.profileImageSource(
+    var body: some View {
+        List {
+            UserProfileImageView(
+                username: viewModel.userSession.user.username,
+                imageSource: viewModel.userSession.user.profileImageSource(
                     client: viewModel.userSession.client,
                     maxWidth: 120
                 )
-            )
-            .pipeline(.Swiftfin.branding)
-            .image { image in
-                image.posterBorder(ratio: 1 / 2, of: \.width)
-            }
-            .placeholder { _ in
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-            .failure {
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-        }
-    }
-
-    var body: some View {
-        List {
-            Section {
-                VStack(alignment: .center) {
-                    Button {
-                        isPresentingProfileImageOptions = true
-                    } label: {
-                        ZStack(alignment: .bottomTrailing) {
-                            // `.aspectRatio(contentMode: .fill)` on `imageView` alone
-                            // causes a crash on some iOS versions
-                            ZStack {
-                                imageView
-                            }
-                            .aspectRatio(1, contentMode: .fill)
-                            .clipShape(.circle)
-                            .frame(width: 150, height: 150)
-                            .shadow(radius: 5)
-
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .shadow(radius: 10)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
-                    }
-
-                    Text(viewModel.userSession.user.username)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
+            ) {
+                isPresentingProfileImageOptions = true
             }
 
             Section {
@@ -89,14 +44,14 @@ struct UserProfileSettingsView: View {
                         router.route(to: \.quickConnect)
                     }
 
-                ChevronButton("Password")
+                ChevronButton(L10n.password)
                     .onSelect {
                         router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
                     }
             }
 
             Section {
-                ChevronButton("Security")
+                ChevronButton(L10n.security)
                     .onSelect {
                         router.route(to: \.localSecurity)
                     }
@@ -113,7 +68,11 @@ struct UserProfileSettingsView: View {
                 Text("Reset Swiftfin user settings")
             }
         }
-        .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
+        .confirmationDialog(
+            "Reset Settings",
+            isPresented: $isPresentingConfirmReset,
+            titleVisibility: .visible
+        ) {
             Button("Reset", role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
@@ -134,8 +93,8 @@ struct UserProfileSettingsView: View {
                 router.route(to: \.photoPicker, viewModel)
             }
 
-            Button("Delete", role: .destructive) {
-                viewModel.deleteCurrentUserProfileImage()
+            Button(L10n.delete, role: .destructive) {
+                viewModel.deleteCurrentUserProfileImage(userID: viewModel.userSession.user.id)
             }
         }
     }

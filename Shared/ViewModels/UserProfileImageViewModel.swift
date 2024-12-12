@@ -16,7 +16,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
     enum Action: Equatable {
         case cancel
-        case upload(UIImage)
+        case upload(userID: String, image: UIImage)
     }
 
     enum Event: Hashable {
@@ -47,11 +47,11 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             uploadCancellable?.cancel()
 
             return .initial
-        case let .upload(image):
+        case let .upload(userID, image):
 
             uploadCancellable = Task {
                 do {
-                    try await upload(image: image)
+                    try await upload(userID: userID, image: image)
 
                     await MainActor.run {
                         self.eventSubject.send(.uploaded)
@@ -72,7 +72,9 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         }
     }
 
-    private func upload(image: UIImage) async throws {
+    // MARK: - Upload Image
+
+    private func upload(userID: String, image: UIImage) async throws {
 
         let contentType: String
         let imageData: Data
@@ -89,7 +91,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         }
 
         var request = Paths.postUserImage(
-            userID: userSession.user.id,
+            userID: userID,
             imageType: "Primary",
             imageData
         )
@@ -102,8 +104,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         await MainActor.run {
             userSession.user.data = response.value
-
-            Notifications[.didChangeUserProfileImage].post()
+            Notifications[.didChangeUserProfileImage].post(userID)
         }
     }
 }
