@@ -2668,6 +2668,8 @@
 				4EEA62CF2D0B56EF00D33B1A /* Modifiers */,
 			);
 			path = ViewExtensions;
+			sourceTree = "<group>";
+		};
 		4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */ = {
 			isa = PBXGroup;
 			children = (
