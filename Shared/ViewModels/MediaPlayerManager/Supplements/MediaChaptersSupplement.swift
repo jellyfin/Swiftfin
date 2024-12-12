@@ -37,12 +37,14 @@ extension MediaChaptersSupplement {
     struct ChapterOverlay: View {
 
         @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
+        private var collectionHStackProxy: CollectionHStackProxy = .init()
 
         let chapters: [ChapterInfo.FullInfo]
 
         var body: some View {
-            CollectionHStack(chapters) { chapter in
+            CollectionHStack(
+                uniqueElements: chapters
+            ) { chapter in
                 ChapterButton(chapter: chapter)
                     .frame(height: 150)
             }
