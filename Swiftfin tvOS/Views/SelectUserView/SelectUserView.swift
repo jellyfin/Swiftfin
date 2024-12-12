@@ -290,22 +290,7 @@ struct SelectUserView: View {
         }
         .ignoresSafeArea()
         .onAppear {
-            viewModel.send(.getServers)
-
-            splashScreenImageSource = makeSplashScreenImageSource(
-                serverSelection: serverSelection,
-                allServersSelection: .all
-            )
-
-//            gridItems = OrderedSet(
-//                (0 ..< 20)
-//                    .map { i in
-//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
-//                    }
-//                    .map { u in
-//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
-//                    }
-//            )
+            didAppear()
         }
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
@@ -342,19 +327,42 @@ struct SelectUserView: View {
             serverSelection = .server(id: server.id)
         }
         .onNotification(.didDeleteServer) { server in
-            viewModel.send(.getServers)
-
-            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                    serverSelection = .server(id: first.id)
-                } else {
-                    serverSelection = .all
-                }
-            }
-
-            // change splash screen selection if necessary
-//            selectUserAllServersSplashscreen = serverSelection
+            didDelete(server)
         }
         .errorMessage($error)
+    }
+
+    private func didDelete(_ server: ServerState) {
+        viewModel.send(.getServers)
+
+        if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+            if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                serverSelection = .server(id: first.id)
+            } else {
+                serverSelection = .all
+            }
+        }
+
+        // change splash screen selection if necessary
+//            selectUserAllServersSplashscreen = serverSelection
+    }
+
+    private func didAppear() {
+        viewModel.send(.getServers)
+
+        splashScreenImageSource = makeSplashScreenImageSource(
+            serverSelection: serverSelection,
+            allServersSelection: .all
+        )
+
+//            gridItems = OrderedSet(
+//                (0 ..< 20)
+//                    .map { i in
+//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
+//                    }
+//                    .map { u in
+//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
+//                    }
+//            )
     }
 }
