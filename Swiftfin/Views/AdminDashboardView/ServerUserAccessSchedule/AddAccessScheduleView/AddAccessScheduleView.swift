@@ -159,7 +159,7 @@ struct AddAccessScheduleView: View {
                 }
 
                 if isDuplicateSchedule {
-                    Label("Schedule already exists", systemImage: "exclamationmark.circle.fill")
+                    Label(L10n.scheduleAlreadyExists, systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
