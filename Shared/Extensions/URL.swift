@@ -39,6 +39,8 @@ extension URL {
 
     static let jellyfinDocsUsers: URL = URL(string: "https://jellyfin.org/docs/general/server/users")!
 
+    static let jellyfinDocsManagingUsers: URL = URL(string: "https://jellyfin.org/docs/general/server/users/adding-managing-users")!
+
     func isDirectoryAndReachable() throws -> Bool {
         guard try resourceValues(forKeys: [.isDirectoryKey]).isDirectory == true else {
             return false

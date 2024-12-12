@@ -200,6 +200,11 @@
 		4EC6C16B2C92999800FC904B /* TranscodeSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EC6C16A2C92999800FC904B /* TranscodeSection.swift */; };
 		4ECDAA9E2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
 		4ECDAA9F2C920A8E0030F2F5 /* TranscodeReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */; };
+		4ECF5D882D0A3D0200F066B1 /* AddAccessScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */; };
+		4ECF5D8A2D0A57EF00F066B1 /* DynamicDayOfWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */; };
+		4ECF5D8B2D0A57EF00F066B1 /* DynamicDayOfWeek.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */; };
+		4ED25CA12D07E3590010333C /* EditAccessScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */; };
+		4ED25CA42D07E4990010333C /* EditAccessScheduleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */; };
 		4EE07CBB2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE07CBC2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE141692C8BABDF0045B661 /* ActiveSessionProgressSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */; };
@@ -916,6 +921,8 @@
 		E1A42E4A28CA6CCD00A14DCB /* CinematicItemSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */; };
 		E1A42E4F28CBD3E100A14DCB /* HomeErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */; };
 		E1A42E5128CBE44500A14DCB /* LandscapePosterProgressBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */; };
+		E1A5056A2D0B733F007EE305 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A505692D0B733F007EE305 /* Optional.swift */; };
+		E1A5056B2D0B733F007EE305 /* Optional.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A505692D0B733F007EE305 /* Optional.swift */; };
 		E1A7B1652B9A9F7800152546 /* PreferencesView in Frameworks */ = {isa = PBXBuildFile; productRef = E1A7B1642B9A9F7800152546 /* PreferencesView */; };
 		E1A7B1662B9ADAD300152546 /* ItemTypeLibraryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C40CD924271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift */; };
 		E1A7F0DF2BD4EC7400620DDD /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A7F0DE2BD4EC7400620DDD /* Dictionary.swift */; };
@@ -1311,6 +1318,10 @@
 		4EC50D602C934B3A00FC3D0E /* ServerTasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTasksViewModel.swift; sourceTree = "<group>"; };
 		4EC6C16A2C92999800FC904B /* TranscodeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeSection.swift; sourceTree = "<group>"; };
 		4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeReason.swift; sourceTree = "<group>"; };
+		4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccessScheduleView.swift; sourceTree = "<group>"; };
+		4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicDayOfWeek.swift; sourceTree = "<group>"; };
+		4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccessScheduleView.swift; sourceTree = "<group>"; };
+		4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccessScheduleRow.swift; sourceTree = "<group>"; };
 		4EDBDCD02CBDD6510033D347 /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
 		4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionProgressSection.swift; sourceTree = "<group>"; };
@@ -1782,6 +1793,7 @@
 		E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinematicItemSelector.swift; sourceTree = "<group>"; };
 		E1A42E4E28CBD3E100A14DCB /* HomeErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeErrorView.swift; sourceTree = "<group>"; };
 		E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandscapePosterProgressBar.swift; sourceTree = "<group>"; };
+		E1A505692D0B733F007EE305 /* Optional.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Optional.swift; sourceTree = "<group>"; };
 		E1A7F0DE2BD4EC7400620DDD /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		E1A8FDEB2C0574A800D0A51C /* ListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRow.swift; sourceTree = "<group>"; };
 		E1AA331C2782541500F6439C /* PrimaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButton.swift; sourceTree = "<group>"; };
@@ -2302,19 +2314,18 @@
 				4E6C27062C8BD09200FD2185 /* ActiveSessionDetailView */,
 				4EB1A8CF2C9B2FA200F43898 /* ActiveSessionsView */,
 				4EB7C8D32CCED318000CC011 /* AddServerUserView */,
-				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
 				4E63B9F42C8A5BEF00C25378 /* AdminDashboardView.swift */,
 				4EA09DDF2CC4E4D000CB27E4 /* APIKeyView */,
 				E1DE64902CC6F06C00E423B6 /* Components */,
 				4E10C80F2CC030B20012CC9F /* DeviceDetailsView */,
 				4EED87492CBF824B002354D2 /* DevicesView */,
-				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
 				4E35CE622CBED3FF00DBD886 /* ServerLogsView */,
-				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
+				4ECF5D8C2D0A780F00F066B1 /* ServerTasks */,
 				4EC2B1A72CC9725400D866BE /* ServerUserDetailsView */,
 				4E2470072D078DD7009139D8 /* ServerUserParentalRatingView */,
 				4E537A822D03D0FA00659A1A /* ServerUserDeviceAccessView */,
 				4E537A8C2D04410E00659A1A /* ServerUserLiveTVAccessView */,
+				4ED25C9F2D07E20C0010333C /* ServerUserAccessSchedule */,
 				4EF3D80A2CF7D6670081AD20 /* ServerUserAccessView */,
 				4EB538B32CE3C75900EB72D5 /* ServerUserPermissionsView */,
 				4EC2B1992CC96E5E00D866BE /* ServerUsersView */,
@@ -2631,6 +2642,50 @@
 				4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */,
 			);
 			path = ServerUserDetailsView;
+			sourceTree = "<group>";
+		};
+		4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */ = {
+			isa = PBXGroup;
+			children = (
+				4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */,
+			);
+			path = AddAccessScheduleView;
+			sourceTree = "<group>";
+		};
+		4ECF5D8C2D0A780F00F066B1 /* ServerTasks */ = {
+			isa = PBXGroup;
+			children = (
+				4E35CE5B2CBED3F300DBD886 /* AddTaskTriggerView */,
+				4E90F7622CC72B1F00417C31 /* EditServerTaskView */,
+				4E182C9A2C94991800FBEFD5 /* ServerTasksView */,
+			);
+			path = ServerTasks;
+			sourceTree = "<group>";
+		};
+		4ED25C9F2D07E20C0010333C /* ServerUserAccessSchedule */ = {
+			isa = PBXGroup;
+			children = (
+				4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */,
+				4ED25CA52D07E64F0010333C /* EditAccessScheduleView */,
+			);
+			path = ServerUserAccessSchedule;
+			sourceTree = "<group>";
+		};
+		4ED25CA32D07E4990010333C /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				4ED25CA22D07E4990010333C /* EditAccessScheduleRow.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		4ED25CA52D07E64F0010333C /* EditAccessScheduleView */ = {
+			isa = PBXGroup;
+			children = (
+				4ED25CA32D07E4990010333C /* Components */,
+				4ED25CA02D07E3520010333C /* EditAccessScheduleView.swift */,
+			);
+			path = EditAccessScheduleView;
 			sourceTree = "<group>";
 		};
 		4EED87472CBF824B002354D2 /* Components */ = {
@@ -3162,6 +3217,7 @@
 				E1AD105226D96D5F003E4A08 /* JellyfinAPI */,
 				E174120E29AE9D94003EF3B5 /* NavigationCoordinatable.swift */,
 				E150C0B82BFD44E900944FFA /* Nuke */,
+				E1A505692D0B733F007EE305 /* Optional.swift */,
 				E1B4E4362CA7795200DC49DE /* OrderedDictionary.swift */,
 				E1B490432967E26300D3EDCE /* PersistentLogHandler.swift */,
 				E1B5861129E32EEF00E45D6E /* Sequence.swift */,
@@ -4235,8 +4291,8 @@
 				4E17498D2CC00A2E00DD07D1 /* DeviceInfo.swift */,
 				4EBE06502C7ED0E1004A6C03 /* DeviceProfile.swift */,
 				4E12F9152CBE9615006C217E /* DeviceType.swift */,
-				4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */,
 				E1CB75712C80E71800217C76 /* DirectPlayProfile.swift */,
+				4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */,
 				E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */,
 				E1D842902933F87500D1041A /* ItemFields.swift */,
 				E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */,
@@ -4253,6 +4309,7 @@
 				E1ED7FDA2CAA4B6D00ACB6E3 /* PlayerStateInfo.swift */,
 				4E2182E42CAF67EF0094806B /* PlayMethod.swift */,
 				4E35CE652CBED8B300DBD886 /* ServerTicks.swift */,
+				4EB4ECE22CBEFC49002FF2FC /* SessionInfo.swift */,
 				4EDBDCD02CBDD6510033D347 /* SessionInfo.swift */,
 				E148128428C15472003B8787 /* SortOrder+ItemSortOrder.swift */,
 				E1DA654B28E69B0500592A73 /* SpecialFeatureType.swift */,
@@ -5119,6 +5176,7 @@
 				E103DF952BCF31CD000229B2 /* MediaItem.swift in Sources */,
 				E1ED91192B95993300802036 /* TitledLibraryParent.swift in Sources */,
 				62E632E1267D30CA0063E547 /* ItemLibraryViewModel.swift in Sources */,
+				4ECF5D8B2D0A57EF00F066B1 /* DynamicDayOfWeek.swift in Sources */,
 				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				5398514526B64DA100101B49 /* SettingsView.swift in Sources */,
 				E193D54B271941D300900D82 /* SelectServerView.swift in Sources */,
@@ -5333,6 +5391,7 @@
 				E18E021C2887492B0022598C /* BlurView.swift in Sources */,
 				E187F7682B8E6A1C005400FE /* EnvironmentValue+Values.swift in Sources */,
 				E1E6C44729AECD5D0064123F /* PlayPreviousItemActionButton.swift in Sources */,
+				E1A5056B2D0B733F007EE305 /* Optional.swift in Sources */,
 				E1E6C44E29AEE9DC0064123F /* SmallMenuOverlay.swift in Sources */,
 				E1CB75832C80F66900217C76 /* VideoPlayerType+Swiftfin.swift in Sources */,
 				E10B1ECB2BD9AF8200A92EAF /* SwiftfinStore+V1.swift in Sources */,
@@ -5402,6 +5461,7 @@
 				4E8B34EA2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				4E2470082D078DD7009139D8 /* ServerUserParentalRatingView.swift in Sources */,
 				E1A1528828FD229500600579 /* ChevronButton.swift in Sources */,
+				4ECF5D882D0A3D0200F066B1 /* AddAccessScheduleView.swift in Sources */,
 				E1CB75732C80E71800217C76 /* DirectPlayProfile.swift in Sources */,
 				E1B490472967E2E500D3EDCE /* CoreStore.swift in Sources */,
 				6220D0C026D61C5000B8E046 /* ItemCoordinator.swift in Sources */,
@@ -5533,6 +5593,7 @@
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
 				E1FCD08826C35A0D007C8DCF /* NetworkError.swift in Sources */,
 				E175AFF3299AC117004DCF52 /* DebugSettingsView.swift in Sources */,
+				E1A5056A2D0B733F007EE305 /* Optional.swift in Sources */,
 				E102314D2BCF8A7E009D71FC /* AlternateLayoutView.swift in Sources */,
 				E12CC1BB28D11E1000678D5D /* RecentlyAddedViewModel.swift in Sources */,
 				E1BE1CEE2BDB68CD008176A9 /* UserProfileRow.swift in Sources */,
@@ -5552,6 +5613,7 @@
 				4EBE064F2C7ECE8D004A6C03 /* InlineEnumToggle.swift in Sources */,
 				E14EDEC82B8FB65F000F00A4 /* ItemFilterType.swift in Sources */,
 				E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */,
+				4ED25CA12D07E3590010333C /* EditAccessScheduleView.swift in Sources */,
 				62133890265F83A900A81A2A /* MediaView.swift in Sources */,
 				E13332942953BAA100EE76AB /* DownloadTaskContentView.swift in Sources */,
 				4E14DC032CD43DD2001B621B /* AdminDashboardCoordinator.swift in Sources */,
@@ -5618,6 +5680,7 @@
 				E11E0E8C2BF7E76F007676DD /* DataCache.swift in Sources */,
 				E10231482BCF8A6D009D71FC /* ChannelLibraryViewModel.swift in Sources */,
 				E107BB9327880A8F00354E07 /* CollectionItemViewModel.swift in Sources */,
+				4ED25CA42D07E4990010333C /* EditAccessScheduleRow.swift in Sources */,
 				4E49DEE02CE55F7F00352DCD /* PhotoPicker.swift in Sources */,
 				4E49DEE12CE55F7F00352DCD /* SquareImageCropView.swift in Sources */,
 				4E90F7642CC72B1F00417C31 /* LastRunSection.swift in Sources */,
@@ -5686,6 +5749,7 @@
 				E1D3044428D1991900587289 /* LibraryViewTypeToggle.swift in Sources */,
 				C45C36542A8B1F2C003DAE46 /* LiveVideoPlayerManager.swift in Sources */,
 				E1CB75822C80F66900217C76 /* VideoPlayerType+Swiftfin.swift in Sources */,
+				4ECF5D8A2D0A57EF00F066B1 /* DynamicDayOfWeek.swift in Sources */,
 				E148128B28C15526003B8787 /* ItemSortBy.swift in Sources */,
 				E10231412BCF8A3C009D71FC /* ChannelLibraryView.swift in Sources */,
 				E1F0204E26CCCA74001C1C3B /* VideoPlayerJumpLength.swift in Sources */,
