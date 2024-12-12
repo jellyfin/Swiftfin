@@ -22,6 +22,11 @@ struct SelectUserView: View {
     @Default(.selectUserServerSelection)
     private var serverSelection
 
+    // MARK: - Environment Variable
+
+    @Environment(\.colorScheme)
+    private var colorScheme
+
     // MARK: - User Grid Item Enum
 
     private enum UserGridItem: Hashable {
@@ -46,14 +51,20 @@ struct SelectUserView: View {
     @State
     private var gridItemSize: CGSize = .zero
     @State
+    private var isEditingUsers: Bool = false
+    @State
     private var padGridItemColumnCount: Int = 1
     @State
     private var scrollViewOffset: CGFloat = 0
+    @State
+    private var selectedUsers: Set<UserState> = []
     @State
     private var splashScreenImageSource: ImageSource? = nil
 
     // MARK: - Dialog States
 
+    @State
+    private var isPresentingConfirmDeleteUsers = false
     @State
     private var isPresentingServers: Bool = false
 
@@ -175,17 +186,17 @@ struct SelectUserView: View {
                 server: server,
                 showServer: serverSelection == .all
             ) {
-//                if isEditingUsers {
-//                    selectedUsers.toggle(value: user)
-//                } else {
-                viewModel.send(.signIn(user, pin: ""))
-//                }
+                if isEditingUsers {
+                    selectedUsers.toggle(value: user)
+                } else {
+                    viewModel.send(.signIn(user, pin: ""))
+                }
             } onDelete: {
-//                selectedUsers.insert(user)
-//                isPresentingConfirmDeleteUsers = true
+                selectedUsers.insert(user)
+                isPresentingConfirmDeleteUsers = true
             }
-//            .environment(\.isEditing, isEditingUsers)
-//            .environment(\.isSelected, selectedUsers.contains(user))
+            .environment(\.isEditing, isEditingUsers)
+            .environment(\.isSelected, selectedUsers.contains(user))
         case .addUser:
             AddUserButton(
                 serverSelection: $serverSelection,
@@ -193,6 +204,7 @@ struct SelectUserView: View {
             ) { server in
                 router.route(to: \.userSignIn, server)
             }
+            .environment(\.isEnabled, !isEditingUsers)
         }
     }
 
@@ -278,6 +290,44 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Advanced Menu
+
+    @ViewBuilder
+    private var advancedMenu: some View {
+        Menu(L10n.advanced, systemImage: "gearshape.fill") {
+
+            Section {
+                if gridItems.count > 1 {
+                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
+                        isEditingUsers.toggle()
+                    }
+                }
+            }
+
+            // TODO: Do we want to support a grid view and list view like iOS?
+//            if !viewModel.servers.isEmpty {
+//                Picker(selection: $userListDisplayType) {
+//                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
+//                        Label($0.displayTitle, systemImage: $0.systemImage)
+//                            .tag($0)
+//                    }
+//                } label: {
+//                    Text(L10n.layout)
+//                    Text(userListDisplayType.displayTitle)
+//                    Image(systemName: userListDisplayType.systemImage)
+//                }
+//                .pickerStyle(.menu)
+//            }
+
+            // TODO: Advanced settings on tvOS?
+//            Section {
+//                Button(L10n.advanced, systemImage: "gearshape.fill") {
+//                    router.route(to: \.advancedSettings)
+//                }
+//            }
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -289,8 +339,40 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea()
+        .topBarTrailing {
+            if isEditingUsers {
+                Button {
+                    isEditingUsers = false
+                } label: {
+                    L10n.cancel.text
+                        .font(.headline)
+                        .padding(.vertical, 5)
+                        .padding(.horizontal, 10)
+                        .background {
+                            if colorScheme == .light {
+                                Color.secondarySystemFill
+                            } else {
+                                Color.tertiarySystemFill
+                            }
+                        }
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .buttonStyle(.plain)
+            } else {
+                advancedMenu
+            }
+        }
         .onAppear {
             didAppear()
+        }
+        .onChange(of: isEditingUsers) { _, newValue in
+            guard !newValue else { return }
+            selectedUsers.removeAll()
+        }
+        .onChange(of: isPresentingConfirmDeleteUsers) { _, newValue in
+            guard !newValue else { return }
+            isEditingUsers = false
+            selectedUsers.removeAll()
         }
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
@@ -355,6 +437,7 @@ struct SelectUserView: View {
             allServersSelection: .all
         )
 
+        // TODO: Is this necessary anymore?
 //            gridItems = OrderedSet(
 //                (0 ..< 20)
 //                    .map { i in
