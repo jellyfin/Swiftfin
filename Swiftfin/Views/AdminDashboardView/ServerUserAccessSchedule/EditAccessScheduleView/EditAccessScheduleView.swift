@@ -90,16 +90,14 @@ struct EditAccessScheduleView: View {
             }
             .navigationBarMenuButton(
                 isLoading: viewModel.backgroundStates.contains(.refreshing),
-                isHidden: isEditing
+                isHidden: isEditing || viewModel.user.policy?.accessSchedules == []
             ) {
                 Button(L10n.add, systemImage: "plus") {
                     router.route(to: \.userAddAccessSchedule, viewModel)
                 }
 
-                if viewModel.user.policy?.accessSchedules != [] {
-                    Button(L10n.edit, systemImage: "checkmark.circle") {
-                        isEditing = true
-                    }
+                Button(L10n.edit, systemImage: "checkmark.circle") {
+                    isEditing = true
                 }
             }
             .onReceive(viewModel.events) { event in
@@ -137,21 +135,17 @@ struct EditAccessScheduleView: View {
     @ViewBuilder
     var contentView: some View {
         List {
-            InsetGroupedListHeader(
+            ListTitleSection(
                 L10n.accessSchedules.localizedCapitalized,
                 description: L10n.accessSchedulesDescription
             ) {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
-            .padding(.vertical, 24)
 
             if viewModel.user.policy?.accessSchedules == [] {
-                Text(L10n.none)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                Button(L10n.add) {
+                    router.route(to: \.userAddAccessSchedule, viewModel)
+                }
             } else {
                 ForEach(viewModel.user.policy?.accessSchedules ?? [], id: \.self) { schedule in
                     EditAccessScheduleRow(schedule: schedule) {
@@ -164,11 +158,10 @@ struct EditAccessScheduleView: View {
                     }
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedSchedules.contains(schedule))
-                    .listRowInsets(.edgeInsets)
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
     }
 
     // MARK: - Navigation Bar Select/Remove All Content

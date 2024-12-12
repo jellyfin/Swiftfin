@@ -17,9 +17,9 @@ extension EditAccessScheduleView {
         // MARK: - Environment Variables
 
         @Environment(\.isEditing)
-        var isEditing
+        private var isEditing
         @Environment(\.isSelected)
-        var isSelected
+        private var isSelected
 
         // MARK: - Schedule Variable
 
@@ -33,11 +33,10 @@ extension EditAccessScheduleView {
         // MARK: - Body
 
         var body: some View {
-            ListRow {} content: {
+            Button(action: onSelect) {
                 rowContent
             }
-            .onSelect(perform: onSelect)
-            .isSeparatorVisible(false)
+            .foregroundStyle(.primary, .secondary)
             .swipeActions {
                 Button(L10n.delete, systemImage: "trash", action: onDelete)
                     .tint(.red)
@@ -52,22 +51,26 @@ extension EditAccessScheduleView {
                 VStack(alignment: .leading) {
                     if let dayOfWeek = schedule.dayOfWeek {
                         Text(dayOfWeek.rawValue)
-                            .font(.headline)
+                            .fontWeight(.semibold)
                     }
-                    if let startHour = schedule.startHour {
-                        TextPairView(
-                            leading: L10n.startTime,
-                            trailing: doubleToTimeString(startHour)
-                        )
-                        .font(.subheadline)
+
+                    Group {
+                        if let startHour = schedule.startHour {
+                            TextPairView(
+                                leading: L10n.startTime,
+                                trailing: doubleToTimeString(startHour)
+                            )
+                        }
+
+                        if let endHour = schedule.endHour {
+                            TextPairView(
+                                leading: L10n.endTime,
+                                trailing: doubleToTimeString(endHour)
+                            )
+                        }
                     }
-                    if let endHour = schedule.endHour {
-                        TextPairView(
-                            leading: L10n.endTime,
-                            trailing: doubleToTimeString(endHour)
-                        )
-                        .font(.subheadline)
-                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 }
                 .foregroundStyle(
                     isEditing ? (isSelected ? .primary : .secondary) : .primary,

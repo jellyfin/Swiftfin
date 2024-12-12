@@ -42,6 +42,52 @@ struct AddAccessScheduleView: View {
         self.tempPolicy = viewModel.user.policy!
     }
 
+    private var isValidRange: Bool {
+        startTime < endTime
+    }
+
+    private var newSchedule: AccessSchedule? {
+        guard isValidRange else { return nil }
+
+        let calendar = Calendar.current
+        let startComponents = calendar.dateComponents([.hour, .minute], from: startTime)
+        let endComponents = calendar.dateComponents([.hour, .minute], from: endTime)
+
+        guard let startHour = startComponents.hour,
+              let startMinute = startComponents.minute,
+              let endHour = endComponents.hour,
+              let endMinute = endComponents.minute
+        else {
+            return nil
+        }
+
+        // AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
+        let startDouble = Double(startHour) + Double(startMinute) / 60.0
+        let endDouble = Double(endHour) + Double(endMinute) / 60.0
+
+        // AccessSchedule should have valid Start & End Hours
+        let newSchedule = AccessSchedule(
+            dayOfWeek: selectedDay,
+            endHour: endDouble,
+            startHour: startDouble,
+            userID: viewModel.user.id
+        )
+
+        return newSchedule
+    }
+
+    private var isDuplicateSchedule: Bool {
+        guard let newSchedule, let existingSchedules = viewModel.user.policy?.accessSchedules else {
+            return false
+        }
+
+        return existingSchedules.contains { other in
+            other.dayOfWeek == selectedDay &&
+                other.startHour == newSchedule.startHour &&
+                other.endHour == newSchedule.endHour
+        }
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -65,7 +111,7 @@ struct AddAccessScheduleView: View {
                         saveSchedule()
                     }
                     .buttonStyle(.toolbarPill)
-                    .disabled(endTime <= startTime)
+                    .disabled(!isValidRange)
                 }
             }
             .onReceive(viewModel.events) { event in
@@ -88,20 +134,32 @@ struct AddAccessScheduleView: View {
             Section(L10n.dayOfWeek) {
                 Picker(L10n.dayOfWeek, selection: $selectedDay) {
                     ForEach(DynamicDayOfWeek.allCases, id: \.self) { day in
+
+                        if day == .everyday {
+                            Divider()
+                        }
+
                         Text(day.displayTitle).tag(day)
                     }
                 }
             }
+
             Section(L10n.startTime) {
                 DatePicker(L10n.startTime, selection: $startTime, displayedComponents: .hourAndMinute)
             }
+
             Section {
                 DatePicker(L10n.endTime, selection: $endTime, displayedComponents: .hourAndMinute)
             } header: {
                 Text(L10n.endTime)
             } footer: {
-                if endTime <= startTime {
+                if !isValidRange {
                     Label(L10n.accessScheduleInvalidTime, systemImage: "exclamationmark.circle.fill")
+                        .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
+                }
+
+                if isDuplicateSchedule {
+                    Label("Schedule already exists", systemImage: "exclamationmark.circle.fill")
                         .labelStyle(.sectionFooterWithImage(imageStyle: .orange))
                 }
             }
@@ -111,47 +169,20 @@ struct AddAccessScheduleView: View {
     // MARK: - Save Schedule
 
     private func saveSchedule() {
-        let calendar = Calendar.current
-        let startComponents = calendar.dateComponents([.hour, .minute], from: startTime)
-        let endComponents = calendar.dateComponents([.hour, .minute], from: endTime)
 
-        guard let startHour = startComponents.hour,
-              let startMinute = startComponents.minute,
-              let endHour = endComponents.hour,
-              let endMinute = endComponents.minute
-        else {
-            error = JellyfinAPIError(L10n.unknownError)
-            return
-        }
-
-        // AccessSchedule Hours are formatted as 23.5 == 11:30pm or 8.25 == 8:15am
-        let startDouble = Double(startHour) + Double(startMinute) / 60.0
-        let endDouble = Double(endHour) + Double(endMinute) / 60.0
-
-        // AccessSchedule should have valid Start & End Hours
-        if endDouble <= startDouble {
+        guard isValidRange, let newSchedule else {
             error = JellyfinAPIError(L10n.accessScheduleInvalidTime)
             return
-        } else {
-            let newSchedule = AccessSchedule(
-                dayOfWeek: selectedDay,
-                endHour: endDouble,
-                startHour: startDouble,
-                userID: viewModel.user.id
-            )
-
-            if let accessSchedules = viewModel.user.policy?.accessSchedules, accessSchedules.contains(newSchedule) {
-                error = JellyfinAPIError(L10n.scheduleAlreadyExists)
-                return
-            } else {
-                if tempPolicy.accessSchedules == nil {
-                    tempPolicy.accessSchedules = [newSchedule]
-                } else {
-                    tempPolicy.accessSchedules?.append(newSchedule)
-                }
-
-                viewModel.send(.updatePolicy(tempPolicy))
-            }
         }
+
+        guard !isDuplicateSchedule else {
+            error = JellyfinAPIError(L10n.scheduleAlreadyExists)
+            return
+        }
+
+        tempPolicy.accessSchedules = tempPolicy.accessSchedules
+            .appendedOrInit(newSchedule)
+
+        viewModel.send(.updatePolicy(tempPolicy))
     }
 }
