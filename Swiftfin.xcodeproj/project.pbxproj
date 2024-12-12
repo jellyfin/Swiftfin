@@ -203,6 +203,7 @@
 		4EE07CBB2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE07CBC2D08B19700B0B636 /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */; };
 		4EE141692C8BABDF0045B661 /* ActiveSessionProgressSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */; };
+		4EEA62E42D0B56EF00D33B1A /* OverlayMenuModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EEA62CE2D0B56EF00D33B1A /* OverlayMenuModifier.swift */; };
 		4EED874A2CBF824B002354D2 /* DeviceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED87462CBF824B002354D2 /* DeviceRow.swift */; };
 		4EED874B2CBF824B002354D2 /* DevicesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED87482CBF824B002354D2 /* DevicesView.swift */; };
 		4EED87512CBF84AD002354D2 /* DevicesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */; };
@@ -1314,6 +1315,7 @@
 		4EDBDCD02CBDD6510033D347 /* SessionInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionInfo.swift; sourceTree = "<group>"; };
 		4EE07CBA2D08B19100B0B636 /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		4EE141682C8BABDF0045B661 /* ActiveSessionProgressSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionProgressSection.swift; sourceTree = "<group>"; };
+		4EEA62CE2D0B56EF00D33B1A /* OverlayMenuModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayMenuModifier.swift; sourceTree = "<group>"; };
 		4EED87462CBF824B002354D2 /* DeviceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceRow.swift; sourceTree = "<group>"; };
 		4EED87482CBF824B002354D2 /* DevicesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesView.swift; sourceTree = "<group>"; };
 		4EED874F2CBF84AD002354D2 /* DevicesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicesViewModel.swift; sourceTree = "<group>"; };
@@ -2633,6 +2635,30 @@
 			path = ServerUserDetailsView;
 			sourceTree = "<group>";
 		};
+		4EEA62C22D0B56DB00D33B1A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4EEA62D52D0B56EF00D33B1A /* ViewExtensions */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		4EEA62CF2D0B56EF00D33B1A /* Modifiers */ = {
+			isa = PBXGroup;
+			children = (
+				4EEA62CE2D0B56EF00D33B1A /* OverlayMenuModifier.swift */,
+			);
+			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		4EEA62D52D0B56EF00D33B1A /* ViewExtensions */ = {
+			isa = PBXGroup;
+			children = (
+				4EEA62CF2D0B56EF00D33B1A /* Modifiers */,
+			);
+			path = ViewExtensions;
+			sourceTree = "<group>";
+		};
 		4EED87472CBF824B002354D2 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -2784,6 +2810,7 @@
 			children = (
 				E12186DF2718F2030010884C /* App */,
 				536D3D77267BB9650004248C /* Components */,
+				4EEA62C22D0B56DB00D33B1A /* Extensions */,
 				E185920B28CEF23F00326F80 /* Objects */,
 				E1DABAD62A26E28E008AC34A /* Resources */,
 				E12186E02718F23B0010884C /* Views */,
@@ -5239,6 +5266,7 @@
 				E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */,
 				E1DABAFA2A270E62008AC34A /* OverviewCard.swift in Sources */,
 				E11CEB8928998549003E74C7 /* BottomEdgeGradientModifier.swift in Sources */,
+				4EEA62E42D0B56EF00D33B1A /* OverlayMenuModifier.swift in Sources */,
 				4E2AC4CC2C6C494E00DD600D /* VideoCodec.swift in Sources */,
 				4EF18B262CB9934C00343666 /* LibraryRow.swift in Sources */,
 				4E661A1B2CEFE54800025C99 /* BoxSetDisplayOrder.swift in Sources */,

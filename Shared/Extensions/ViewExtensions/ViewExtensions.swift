@@ -156,6 +156,30 @@ extension View {
         modifier(ErrorMessageModifier(error: error, dismissActions: dismissActions))
     }
 
+    #if os(tvOS)
+
+    /// tvOS Overlayed Menu
+    func overlayMenu<Contents: View>(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        subtitle: String? = nil,
+        @ViewBuilder contents: @escaping () -> Contents,
+
+        dismissActions: (() -> Void)? = nil
+    ) -> some View {
+        self.modifier(
+            OverlayMenuModifier(
+                isPresented: isPresented,
+                title: title,
+                subtitle: subtitle,
+                contents: contents(),
+                dismissActions: dismissActions
+            )
+        )
+    }
+
+    #endif
+
     /// Apply a corner radius as a ratio of a view's side
     func posterShadow() -> some View {
         shadow(radius: 4, y: 2)
