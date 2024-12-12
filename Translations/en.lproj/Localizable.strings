@@ -1122,7 +1122,7 @@
 
 // Add Trigger - Title
 // Title for adding a new task trigger
-"addTrigger" = "Add Trigger";
+"addTrigger" = "Add trigger";
 
 // Save - Button Label
 // Button to save the current task trigger
