@@ -161,7 +161,6 @@ struct EditAccessScheduleView: View {
                 }
             }
         }
-        .listStyle(.insetGrouped)
     }
 
     // MARK: - Navigation Bar Select/Remove All Content
