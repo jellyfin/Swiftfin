@@ -2300,3 +2300,23 @@
 // Delete Selected Schedules - Button
 // Button label for deleting all selected Access Schedules
 "deleteSelectedSchedules" = "Delete Selected Schedules";
+
+// Profile Image - Dialog Title
+// Title for the profile image confirmation dialog
+"profileImage" = "Profile Image";
+
+// Select Image - Button
+// Button label for selecting a profile image
+"selectImage" = "Select Image";
+
+/* Reset Settings - Button */
+// Button label for resetting settings
+"resetSettings" = "Reset Settings";
+
+/* Reset Settings - Footer */
+// Footer text for reset settings section
+"resetSettingsDescription" = "Reset Swiftfin user settings";
+
+/* Reset Settings - Dialog Message */
+// Message displayed in the reset settings confirmation dialog
+"resetSettingsMessage" = "Are you sure you want to reset all user settings?";

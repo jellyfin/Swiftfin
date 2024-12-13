@@ -28,14 +28,16 @@ struct UserProfileSettingsView: View {
 
     var body: some View {
         List {
-            UserProfileImageView(
+            UserProfileImage(
                 username: viewModel.userSession.user.username,
                 imageSource: viewModel.userSession.user.profileImageSource(
                     client: viewModel.userSession.client,
                     maxWidth: 120
                 )
             ) {
-                isPresentingProfileImageOptions = true
+                router.route(to: \.photoPicker, viewModel)
+            } delete: {
+                viewModel.deleteCurrentUserProfileImage(userID: viewModel.userSession.user.id)
             }
 
             Section {
@@ -60,20 +62,20 @@ struct UserProfileSettingsView: View {
             Section {
                 // TODO: move under future "Storage" tab
                 //       when downloads implemented
-                Button("Reset Settings") {
+                Button(L10n.resetSettings) {
                     isPresentingConfirmReset = true
                 }
                 .foregroundStyle(.red)
             } footer: {
-                Text("Reset Swiftfin user settings")
+                Text(L10n.resetSettingsDescription)
             }
         }
         .confirmationDialog(
-            "Reset Settings",
+            L10n.resetSettings,
             isPresented: $isPresentingConfirmReset,
             titleVisibility: .visible
         ) {
-            Button("Reset", role: .destructive) {
+            Button(L10n.reset, role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
                 } catch {
@@ -81,21 +83,7 @@ struct UserProfileSettingsView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to reset all user settings?")
-        }
-        .confirmationDialog(
-            "Profile Image",
-            isPresented: $isPresentingProfileImageOptions,
-            titleVisibility: .visible
-        ) {
-
-            Button("Select Image") {
-                router.route(to: \.photoPicker, viewModel)
-            }
-
-            Button(L10n.delete, role: .destructive) {
-                viewModel.deleteCurrentUserProfileImage(userID: viewModel.userSession.user.id)
-            }
+            Text(L10n.resetSettingsMessage)
         }
     }
 }

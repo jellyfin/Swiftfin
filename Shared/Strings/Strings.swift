@@ -46,8 +46,8 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
-  /// Add Trigger
-  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add Trigger")
+  /// Add trigger
+  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Add User
@@ -1046,6 +1046,8 @@ internal enum L10n {
   internal static let production = L10n.tr("Localizable", "production", fallback: "Production")
   /// Production Locations
   internal static let productionLocations = L10n.tr("Localizable", "productionLocations", fallback: "Production Locations")
+  /// Profile Image
+  internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// Profiles
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Programs
@@ -1164,6 +1166,12 @@ internal enum L10n {
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
   /// Reset App Settings
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
+  /// Reset Settings - Button
+  internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
+  /// Reset Settings - Footer
+  internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings")
+  /// Reset Settings - Dialog Message
+  internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Reset User Settings
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
   /// Restart Server
@@ -1238,6 +1246,8 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
+  /// Select Image
+  internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop

@@ -10,7 +10,7 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct UserProfileImageView: View {
+struct UserProfileImage: View {
 
     // MARK: - Defaults
 
@@ -22,9 +22,10 @@ struct UserProfileImageView: View {
     let username: String?
     let imageSource: ImageSource
 
-    // MARK: - User Profile Action
+    // MARK: - User Profile Action Menu
 
-    let onSelect: () -> Void
+    let select: () -> Void
+    let delete: () -> Void
 
     // MARK: - Dialog State
 
@@ -56,7 +57,7 @@ struct UserProfileImageView: View {
         Section {
             VStack(alignment: .center) {
                 Button {
-                    onSelect()
+                    isPresentingOptions = true
                 } label: {
                     ZStack(alignment: .bottomTrailing) {
                         // `.aspectRatio(contentMode: .fill)` on `imageView` alone
@@ -84,6 +85,18 @@ struct UserProfileImageView: View {
             }
             .frame(maxWidth: .infinity)
             .listRowBackground(Color.clear)
+        }
+        .confirmationDialog(
+            L10n.profileImage,
+            isPresented: $isPresentingOptions,
+            titleVisibility: .visible
+        ) {
+            Button(L10n.selectImage) {
+                select()
+            }
+            Button(L10n.delete, role: .destructive) {
+                delete()
+            }
         }
     }
 }

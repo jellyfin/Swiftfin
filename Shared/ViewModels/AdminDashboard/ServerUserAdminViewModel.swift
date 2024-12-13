@@ -29,6 +29,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case updatePolicy(UserPolicy)
         case updateConfiguration(UserConfiguration)
         case updateUsername(String)
+        case deleteProfileImage
     }
 
     // MARK: - Background State
@@ -218,6 +219,52 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .asAnyCancellable()
 
             return state
+
+        case .deleteProfileImage:
+            userTaskCancellable?.cancel()
+
+            userTaskCancellable = Task {
+                do {
+                    await MainActor.run {
+                        _ = backgroundStates.append(.updating)
+                    }
+
+                    try await deleteUserProfileImage()
+
+                    await MainActor.run {
+                        state = .content
+                        _ = backgroundStates.remove(.updating)
+                    }
+                } catch {
+                    await MainActor.run {
+                        state = .error(.init(error.localizedDescription))
+                        eventSubject.send(.error(.init(error.localizedDescription)))
+                        _ = backgroundStates.remove(.updating)
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+        }
+    }
+
+    // MARK: - Delete User Profile Image
+
+    private func deleteUserProfileImage() async throws {
+        guard let userID = user.id else { throw JellyfinAPIError("User ID is missing") }
+        let request = Paths.deleteUserImage(
+            userID: userID,
+            imageType: "Primary"
+        )
+        let _ = try await userSession.client.send(request)
+
+        let userRequest = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(userRequest)
+
+        await MainActor.run {
+            user = response.value
+            Notifications[.didChangeUserProfileImage].post(userID)
         }
     }
 
