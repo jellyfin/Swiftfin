@@ -83,6 +83,13 @@ extension SelectUserView {
                         }
                         .aspectRatio(1, contentMode: .fill)
                     }
+                    .overlay {
+                        if isEditing {
+                            Color.black
+                                .opacity(isSelected ? 0 : 0.5)
+                                .clipShape(.circle)
+                        }
+                    }
                 }
                 .buttonStyle(.card)
                 .buttonBorderShape(.circleBackport)
@@ -105,21 +112,13 @@ extension SelectUserView {
                 }
             }
             .overlay {
-                if isEditing {
-                    ZStack(alignment: .bottomTrailing) {
-                        Color.black
-                            .opacity(isSelected ? 0 : 0.5)
-                            .clipShape(.circle)
-
-                        if isSelected {
-                            Image(systemName: "checkmark.circle.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 40, height: 40, alignment: .bottomTrailing)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
-                    }
+                if isEditing && isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40, height: 40, alignment: .bottomTrailing)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(accentColor.overlayColor, accentColor)
                 }
             }
         }
