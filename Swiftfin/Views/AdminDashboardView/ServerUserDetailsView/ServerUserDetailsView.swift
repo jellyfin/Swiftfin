@@ -68,13 +68,12 @@ struct ServerUserDetailsView: View {
             }
 
             Section(L10n.parentalControls) {
-                // TODO: Access Schedules - accessSchedules
-                /* ChevronButton("Access schedule")
-                     .onSelect {
-                         router.route(to: \.userAccessSchedules, viewModel)
-                     }
-                 // TODO: Allow items SDK 10.10 - allowedTags
-                 ChevronButton("Allow items")
+                ChevronButton(L10n.accessSchedules)
+                    .onSelect {
+                        router.route(to: \.userEditAccessSchedules, viewModel)
+                    }
+                // TODO: Allow items SDK 10.10 - allowedTags
+                /* ChevronButton("Allow items")
                       .onSelect {
                           router.route(to: \.userAllowedTags, viewModel)
                       }
@@ -82,7 +81,7 @@ struct ServerUserDetailsView: View {
                  ChevronButton("Block items")
                       .onSelect {
                           router.route(to: \.userBlockedTags, viewModel)
-                      }*/
+                      } */
                 ChevronButton(L10n.ratings)
                     .onSelect {
                         router.route(to: \.userParentalRatings, viewModel)
