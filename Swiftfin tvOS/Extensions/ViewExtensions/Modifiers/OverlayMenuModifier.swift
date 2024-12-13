@@ -26,37 +26,34 @@ struct OverlayMenuModifier<Contents: View>: ViewModifier {
 
     @ViewBuilder
     private var menuView: some View {
-        VStack(alignment: .center, spacing: 16) {
+        VStack {
             if let title = title {
                 Text(title)
                     .font(.title)
                     .foregroundStyle(.primary)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.horizontal)
             }
             if let subtitle = subtitle {
                 Text(subtitle)
                     .font(.headline)
                     .foregroundStyle(.primary)
-                    .frame(maxWidth: .infinity)
-            }
-            if (title != nil) || (subtitle != nil) {
-                Divider()
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    .padding(.horizontal)
             }
             ScrollView {
                 contents
-                    .frame(maxWidth: .infinity)
                     .padding()
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal)
             }
         }
-        .padding(64)
+        .padding(32)
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .fill(Material.regular)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.primary, lineWidth: 2)
-                )
         }
         .frame(
             maxWidth: UIScreen.main.bounds.width / 2,
