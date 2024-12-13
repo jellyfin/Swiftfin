@@ -67,8 +67,6 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
     @EnvironmentObject
     private var manager: MediaPlayerManager
 
-    let gestureStateHandler: VideoPlayer.GestureStateHandler
-
     func body(content: Content) -> some View {
         content.keyCommands {
 

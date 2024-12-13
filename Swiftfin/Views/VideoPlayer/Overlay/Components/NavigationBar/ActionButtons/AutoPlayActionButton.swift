@@ -42,7 +42,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                     toastProxy.present("Auto Play disabled", systemName: "stop.circle")
                 }
             }
-            .transition(.scale.combined(with: .opacity).animation(.snappy))
+            .videoPlayerActionButtonTransition()
             .id(isAutoPlayEnabled)
             .disabled(manager.queue == nil)
         }

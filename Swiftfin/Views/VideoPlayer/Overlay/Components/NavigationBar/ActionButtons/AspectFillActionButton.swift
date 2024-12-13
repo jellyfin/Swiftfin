@@ -31,7 +31,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
             ) {
                 isAspectFilled.toggle()
             }
-            .transition(.opacity.combined(with: .scale).animation(.snappy))
+            .videoPlayerActionButtonTransition()
             .id(isAspectFilled)
         }
     }

@@ -43,7 +43,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                         }
                     }
                 }
-                .transition(.opacity.combined(with: .scale).animation(.snappy))
+                .videoPlayerActionButtonTransition()
                 .id(systemImage)
             }
         }

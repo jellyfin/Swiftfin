@@ -51,7 +51,7 @@ extension VideoPlayer.Overlay {
                     RoundedRectangle(cornerRadius: 7)
                 }
                 .onTapGesture {
-                    if selection?.id == supplement.id {
+                    if isActive {
                         selection = nil
                     } else {
                         selection = supplement

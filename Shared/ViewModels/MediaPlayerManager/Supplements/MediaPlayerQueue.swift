@@ -12,7 +12,6 @@ import IdentifiedCollections
 import JellyfinAPI
 import SwiftUI
 
-// TODO: move from OrderedSet to IdentifiedArray
 protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
 
     var hasNextItem: Bool { get }
@@ -22,21 +21,16 @@ protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
 
     var nextItem: BaseItemDto? { get }
     var previousItem: BaseItemDto? { get }
-
-    func playNextItem()
-    func playPreviousItem()
 }
 
 extension MediaPlayerQueue {
 
     var hasNextItem: Bool {
-        guard let currentItem = manager?.item else { return false }
-        return items.last != currentItem
+        nextItem != nil
     }
 
     var hasPreviousItem: Bool {
-        guard let currentItem = manager?.item else { return false }
-        return items.first != currentItem
+        previousItem != nil
     }
 
     var nextItem: BaseItemDto? {
@@ -49,7 +43,6 @@ extension MediaPlayerQueue {
 
     var previousItem: BaseItemDto? {
         guard let currentItem = manager?.item,
-              //              let i = items.firstIndex(where: { $0.id == currentItem.id }),
               let i = items.index(id: currentItem.id),
               i != items.startIndex else { return nil }
 
@@ -63,12 +56,9 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     var items: IdentifiedArrayOf<BaseItemDto> = []
     let title: String = "Episodes"
+    let id: String = "EpisodeMediaPlayerQueue"
 
     private let seriesViewModel: SeriesItemViewModel
-
-    var id: String {
-        "EpisodeMediaPlayerQueue"
-    }
 
     init(episode: BaseItemDto) {
         self.seriesViewModel = SeriesItemViewModel(episode: episode)
@@ -90,10 +80,6 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 //        manager.$seconds.sink(receiveValue: secondsDidChange).store(in: &cancellables)
 //        manager.$playbackRequestStatus.sink(receiveValue: playbackStatusDidChange).store(in: &cancellables)
     }
-
-    func playNextItem() {}
-
-    func playPreviousItem() {}
 
     @ViewBuilder
     func videoPlayerBody() -> some View {

@@ -9,6 +9,11 @@
 import Defaults
 import SwiftUI
 
+struct OverlayState {
+    
+    
+}
+
 // TODO: drawer animation fixes
 
 extension VideoPlayer {
@@ -33,6 +38,8 @@ extension VideoPlayer {
 
         @State
         private var effectiveSafeArea: EdgeInsets = .zero
+        @State
+        private var isGestureLocked: Bool = false
         @State
         private var isPresentingOverlay: Bool = true
         @State
@@ -64,7 +71,12 @@ extension VideoPlayer {
                     .trackingFrame($progressViewFrame)
             }
 
-            // TODO: finish implementation
+            // TODO: only here for current chapters implementation,
+            //       replace with below
+            if let selectedSupplement {
+                DrawerSectionButton(supplement: selectedSupplement)
+            }
+            
 //            HStack(spacing: 10) {
 //                ForEach(manager.supplements.map(\.asAny)) { supplement in
 //                    DrawerSectionButton(
@@ -138,11 +150,12 @@ extension VideoPlayer {
                 if !isPresentingDrawer {
                     PlaybackButtons()
                         .isVisible(!isScrubbing && isPresentingOverlay)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .transition(.opacity)
                 }
             }
             .overlay(alignment: .top) {
-                ToastView(proxy: toastProxy)
+                ToastView()
+                    .edgePadding()
             }
             .animation(.linear(duration: 0.1), value: isScrubbing)
             .animation(.bouncy(duration: 0.4), value: isPresentingDrawer)

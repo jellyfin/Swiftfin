@@ -13,6 +13,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
     struct ChaptersButton: View {
 
         @Environment(\.selectedMediaPlayerSupplement)
+        @Binding
         private var selectedMediaPlayerSupplement
 
         @EnvironmentObject
@@ -20,7 +21,11 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
         var body: some View {
             Button("Chapters", systemImage: "list.bullet") {
-                selectedMediaPlayerSupplement.wrappedValue = MediaChaptersSupplement(chapters: manager.item.fullChapterInfo).asAny
+                if selectedMediaPlayerSupplement == nil {
+                    selectedMediaPlayerSupplement = MediaChaptersSupplement(chapters: manager.item.fullChapterInfo).asAny
+                } else {
+                    selectedMediaPlayerSupplement = nil
+                }
             }
         }
     }

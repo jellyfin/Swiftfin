@@ -73,9 +73,6 @@ extension VideoPlayer.Overlay {
         @State
         private var volumePanGestureState: PanGestureState<Float> = .zero
 
-        @StateObject
-        private var overlayTimer: PokeIntervalTimer = .init()
-
         private var isPresentingDrawer: Bool {
             selectedSupplement != nil
         }
@@ -108,7 +105,7 @@ extension VideoPlayer.Overlay.GestureLayer {
         let action = Defaults[.VideoPlayer.Gesture.panAction]
 
         switch action {
-        case .audioffset:
+        case .audioffset: ()
             mediaOffsetAction(state: state, translation: translation, source: _audioOffset.wrappedValue)
         case .brightness:
             brightnessAction(state: state, point: point)

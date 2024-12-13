@@ -29,7 +29,7 @@ extension VideoPlayer.Overlay.NavigationBar {
             case .aspectFill:
                 AspectFill()
             case .audio:
-                if manager.playbackItem?.audioStreams.isNotEmpty ?? false {
+                if manager.playbackItem?.audioStreams.isNotEmpty == true {
                     Audio()
                 }
             case .autoPlay:
@@ -53,7 +53,7 @@ extension VideoPlayer.Overlay.NavigationBar {
                     PlayPreviousItem()
                 }
             case .subtitles:
-                if manager.playbackItem?.subtitleStreams.isNotEmpty ?? false {
+                if manager.playbackItem?.subtitleStreams.isNotEmpty == true {
                     Subtitles()
                 }
             }
@@ -65,9 +65,10 @@ extension VideoPlayer.Overlay.NavigationBar {
                 "Menu",
                 systemImage: "ellipsis.circle"
             ) {
-                ForEach(menuActionButtons) { actionButton in
-                    view(for: actionButton)
-                }
+                ForEach(
+                    menuActionButtons,
+                    content: view(for:)
+                )
             }
             .iOS16 { menu in
                 menu
@@ -90,9 +91,10 @@ extension VideoPlayer.Overlay.NavigationBar {
 
         var body: some View {
             HStack(spacing: 0) {
-                ForEach(barActionButtons) { actionButton in
-                    view(for: actionButton)
-                }
+                ForEach(
+                    barActionButtons,
+                    content: view(for:)
+                )
 
                 if menuActionButtons.isNotEmpty {
                     menuButtons

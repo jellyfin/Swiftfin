@@ -35,7 +35,7 @@ struct VideoPlayer: View {
     @State
     private var safeAreaInsets: EdgeInsets = .zero
     @State
-    private var scrubbedSeconds: TimeInterval = 0.0
+    private var scrubbedSeconds: TimeInterval = 0
     @State
     private var subtitleOffset: TimeInterval = 0
 

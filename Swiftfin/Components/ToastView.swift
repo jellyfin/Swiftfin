@@ -17,6 +17,8 @@ class ToastProxy: ObservableObject {
     private(set) var systemName: String? = nil
     @Published
     private(set) var text: Text = Text("")
+    @State
+    private(set) var messageID: String = ""
 
     private let pokeTimer = PokeIntervalTimer(defaultInterval: 1)
     private var pokeCancellable: AnyCancellable?
@@ -44,18 +46,15 @@ class ToastProxy: ObservableObject {
 
     private func poke() {
         isPresenting = true
+        messageID = UUID().uuidString
         pokeTimer.poke()
     }
 }
 
 struct ToastView: View {
 
-    @ObservedObject
+    @EnvironmentObject
     private var proxy: ToastProxy
-
-    init(proxy: ToastProxy) {
-        self.proxy = proxy
-    }
 
     var body: some View {
         ZStack {
@@ -82,6 +81,7 @@ struct ToastView: View {
                 .overlay(Capsule().stroke(Color.gray.opacity(0.2), lineWidth: 1))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 6)
                 .transition(.opacity)
+                .animation(.linear(duration: 0.2), value: proxy.messageID)
             }
         }
         .animation(.spring, value: proxy.isPresenting)

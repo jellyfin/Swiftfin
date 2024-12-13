@@ -23,7 +23,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                 guard let nextItem = manager.queue?.nextItem else { return }
                 manager.send(.playNew(item: nextItem))
             }
-            .disabled(!(manager.queue?.hasNextItem ?? false))
+            .disabled(manager.queue?.hasNextItem == false)
         }
     }
 }

@@ -307,7 +307,7 @@ extension View {
         modifier(OnFinalDisappearModifier(action: action))
     }
 
-    /// Perform an action before the first appearance of a `View`.
+    /// Perform an action on the first appearance of a `View`.
     func onFirstAppear(perform action: @escaping () -> Void) -> some View {
         modifier(OnFirstAppearModifier(action: action))
     }
@@ -341,6 +341,10 @@ extension View {
 
     func pulse(_ isPulsing: Binding<Bool> = .constant(true)) -> some View {
         modifier(PulseViewModifier(isPulsing: isPulsing))
+    }
+       
+    func videoPlayerActionButtonTransition() -> some View {
+        transition(.opacity.combined(with: .scale).animation(.snappy))
     }
 
     // MARK: debug
