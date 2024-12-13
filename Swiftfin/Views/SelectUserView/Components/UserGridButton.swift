@@ -126,7 +126,7 @@ extension SelectUserView {
             }
             .buttonStyle(.plain)
             .contextMenu {
-                Button("Delete", role: .destructive) {
+                Button(L10n.delete, role: .destructive) {
                     onDelete()
                 }
             }

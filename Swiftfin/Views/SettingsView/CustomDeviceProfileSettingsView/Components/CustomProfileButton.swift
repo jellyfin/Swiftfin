@@ -50,7 +50,7 @@ extension CustomDeviceProfileSettingsView {
 
                         profileDetailsView(
                             title: L10n.useAsTranscodingProfile,
-                            detail: profile.useAsTranscodingProfile ? "Yes" : "No"
+                            detail: profile.useAsTranscodingProfile ? L10n.yes : L10n.no
                         )
                     }
 

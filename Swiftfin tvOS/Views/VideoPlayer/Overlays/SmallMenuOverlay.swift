@@ -20,11 +20,11 @@ extension VideoPlayer {
             var displayTitle: String {
                 switch self {
                 case .audio:
-                    return "Audio"
+                    return L10n.audio
                 case .playbackSpeed:
-                    return "Playback Speed"
+                    return L10n.playbackSpeed
                 case .subtitles:
-                    return "Subtitles"
+                    return L10n.subtitles
                 }
             }
         }

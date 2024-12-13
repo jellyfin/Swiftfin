@@ -95,7 +95,7 @@ extension CustomDeviceProfileSettingsView {
                         HStack {
                             Text(L10n.customProfile)
                             Spacer()
-                            Button("Save") {
+                            Button(L10n.save) {
                                 if createProfile {
                                     customDeviceProfiles.append(profile.value)
                                 }
@@ -135,7 +135,7 @@ extension CustomDeviceProfileSettingsView {
                 }
                 .navigationTitle(L10n.customProfile)
                 .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
-                    Button("Close", role: .destructive) {
+                    Button(L10n.close, role: .destructive) {
                         router.dismissCoordinator()
                     }
                 }
