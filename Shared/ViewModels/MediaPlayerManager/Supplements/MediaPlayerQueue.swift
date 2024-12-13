@@ -8,16 +8,17 @@
 
 import CollectionHStack
 import Defaults
+import IdentifiedCollections
 import JellyfinAPI
-import OrderedCollections
 import SwiftUI
 
+// TODO: move from OrderedSet to IdentifiedArray
 protocol MediaPlayerQueue: MediaPlayerListener, MediaPlayerSupplement {
 
     var hasNextItem: Bool { get }
     var hasPreviousItem: Bool { get }
 
-    var items: OrderedSet<BaseItemDto> { get set }
+    var items: IdentifiedArrayOf<BaseItemDto> { get set }
 
     var nextItem: BaseItemDto? { get }
     var previousItem: BaseItemDto? { get }
@@ -40,15 +41,18 @@ extension MediaPlayerQueue {
 
     var nextItem: BaseItemDto? {
         guard let currentItem = manager?.item,
-              let i = items.firstIndex(where: { $0.id == currentItem.id }),
-              i != items.endIndex else { return items.first }
+              let i = items.index(id: currentItem.id),
+              i != items.endIndex else { return nil }
+
         return items[items.index(after: i)]
     }
 
     var previousItem: BaseItemDto? {
         guard let currentItem = manager?.item,
-              let i = items.firstIndex(where: { $0.id == currentItem.id }),
+              //              let i = items.firstIndex(where: { $0.id == currentItem.id }),
+              let i = items.index(id: currentItem.id),
               i != items.startIndex else { return nil }
+
         return items[items.index(before: i)]
     }
 }
@@ -57,7 +61,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
 
     weak var manager: MediaPlayerManager?
 
-    var items: OrderedSet<BaseItemDto> = []
+    var items: IdentifiedArrayOf<BaseItemDto> = []
     let title: String = "Episodes"
 
     private let seriesViewModel: SeriesItemViewModel
@@ -106,12 +110,20 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
         var viewModel: SeriesItemViewModel
 
         @State
-        private var selection: SeasonItemViewModel?
+        private var selection: SeasonItemViewModel.ID?
+
+        private var selectionViewModel: SeasonItemViewModel? {
+            guard let selection else { return nil }
+            return viewModel.seasons[id: selection]
+        }
 
         var body: some View {
             ZStack {
-                if let selection {
-                    CollectionHStack(selection.elements) { item in
+                if let selectionViewModel {
+                    CollectionHStack(
+                        uniqueElements: selectionViewModel.elements,
+                        id: \.unwrappedIDHashOrZero
+                    ) { item in
                         EpisodeButton(item: item)
                             .frame(height: 150)
                     }
@@ -119,7 +131,7 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     .debugBackground(.green.opacity(0.5))
                     .frame(maxHeight: .infinity)
                 } else {
-                    CollectionHStack(0 ..< Int.random(in: 2 ..< 5)) { _ in
+                    CollectionHStack(count: Int.random(in: 2 ..< 5)) { _ in
                         Color.secondarySystemFill
                             .opacity(0.75)
                             .posterStyle(.landscape)
@@ -130,10 +142,10 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
             }
             .frame(height: 150)
             .onReceive(viewModel.playButtonItem.publisher) { newValue in
-                if let season = viewModel.seasons.first(where: { $0.season.id == newValue.seasonID }) {
-                    selection = season
+                if let season = viewModel.seasons[id: newValue.seasonID.hashValueOrZero] {
+                    selection = season.id
                 } else {
-                    selection = viewModel.seasons.first
+                    selection = viewModel.seasons.first?.id
                 }
             }
             .onChange(of: selection) { newValue in
@@ -142,17 +154,25 @@ class EpisodeMediaPlayerQueue: ViewModel, MediaPlayerQueue {
                     return
                 }
 
-                manager.queue?.items = newValue.elements
-
-                if newValue.state == .initial {
-                    newValue.send(.refresh)
-                }
+//                manager.queue?.items =
             }
-            .onChange(of: selection?.elements) { newValue in
-                guard let newValue else { return }
-
-                manager.queue?.items = newValue
-            }
+//            .onChange(of: selection) { newValue in
+//                guard let newValue else {
+//                    manager.queue?.items.removeAll()
+//                    return
+//                }
+//
+//                manager.queue?.items = newValue.elements
+//
+//                if newValue.state == .initial {
+//                    newValue.send(.refresh)
+//                }
+//            }
+//            .onChange(of: selection?.elements) { newValue in
+//                guard let newValue else { return }
+//
+//                manager.queue?.items = newValue
+//            }
         }
     }
 

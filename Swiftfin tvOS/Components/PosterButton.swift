@@ -63,7 +63,7 @@ struct PosterButton<Item: Poster>: View {
                 }
                 .posterStyle(type)
             }
-            .buttonStyle(.card)
+//            .buttonStyle(.card)
             .contextMenu(menuItems: {
                 contextMenu()
                     .eraseToAnyView()
@@ -77,6 +77,7 @@ struct PosterButton<Item: Poster>: View {
                     }
             }
             .accessibilityLabel(item.displayTitle)
+            .hoverEffect(.highlight)
 
             content()
                 .eraseToAnyView()

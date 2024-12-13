@@ -40,7 +40,7 @@ extension ChapterInfo {
         var id: Int {
             chapterInfo.hashValue
         }
-        
+
         var unwrappedIDHashOrZero: Int {
             id
         }

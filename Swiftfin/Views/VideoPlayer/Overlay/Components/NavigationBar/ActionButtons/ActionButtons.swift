@@ -36,6 +36,10 @@ extension VideoPlayer.Overlay.NavigationBar {
                 if manager.queue != nil {
                     AutoPlay()
                 }
+            case .chapters:
+                if manager.item.fullChapterInfo.isNotEmpty {
+                    ChaptersButton()
+                }
             case .playbackSpeed:
                 if !manager.item.isLiveStream {
                     PlaybackRateMenu()

@@ -64,14 +64,15 @@ extension VideoPlayer {
                     .trackingFrame($progressViewFrame)
             }
 
-            HStack(spacing: 10) {
-                ForEach(manager.supplements.map(\.asAny)) { supplement in
-                    DrawerSectionButton(
-                        supplement: supplement
-                    )
-                }
-            }
-            .isVisible(!isScrubbing && isPresentingOverlay)
+            // TODO: finish implementation
+//            HStack(spacing: 10) {
+//                ForEach(manager.supplements.map(\.asAny)) { supplement in
+//                    DrawerSectionButton(
+//                        supplement: supplement
+//                    )
+//                }
+//            }
+//            .isVisible(!isScrubbing && isPresentingOverlay)
         }
 
         // MARK: body
@@ -96,7 +97,6 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
                 GestureLayer()
-                    .environmentObject(toastProxy)
 
                 VStack {
                     navigationBar
@@ -150,6 +150,7 @@ extension VideoPlayer {
             .environment(\.isPresentingOverlay, $isPresentingOverlay)
             .environment(\.selectedMediaPlayerSupplement, $selectedSupplement)
             .environmentObject(overlayTimer)
+            .environmentObject(toastProxy)
             .onChange(of: isPresentingOverlay) { newValue in
                 guard newValue, !isScrubbing else { return }
                 overlayTimer.poke()

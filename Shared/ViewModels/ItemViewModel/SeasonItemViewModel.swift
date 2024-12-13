@@ -17,8 +17,8 @@ final class SeasonItemViewModel: PagingLibraryViewModel<BaseItemDto>, Identifiab
 
     let season: BaseItemDto
 
-    var id: String? {
-        season.id
+    var id: Int {
+        season.unwrappedIDHashOrZero
     }
 
     init(season: BaseItemDto) {

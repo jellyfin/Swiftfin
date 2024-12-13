@@ -95,10 +95,6 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
     var listeners: [any MediaPlayerListener] = []
 
     /// Supplements of the media player.
-    ///
-    /// Supplements are ordered as:
-    /// - MediaPlayerManager provided supplements
-    /// - PlaybackItem provided supplements
     @Published
     private(set) var supplements: [any MediaPlayerSupplement] = []
 
@@ -125,8 +121,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         self.queue?.manager = self
 
-        supplements = [MediaInfoSupplement(item: item)]
-            .appending(ifLet: queue)
+//        supplements = [MediaInfoSupplement(item: item)]
+//            .appending(ifLet: queue)
 
         // TODO: don't build on init?
         buildMediaItem(from: playbackItemProvider) { @MainActor newItem in
@@ -144,8 +140,8 @@ class MediaPlayerManager: ViewModel, Eventful, Stateful {
 
         self.queue?.manager = self
 
-        supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
-            .appending(ifLet: queue)
+//        supplements = [MediaInfoSupplement(item: playbackItem.baseItem)]
+//            .appending(ifLet: queue)
 
         state = .playback
         self.playbackItem = playbackItem

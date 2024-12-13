@@ -8,8 +8,8 @@
 
 import SwiftUI
 
-/// An empty `UIView` for the purpose of being a
-/// hit target.
+/// An empty `UIView` for the general purpose of
+/// being a hit target.
 struct EmptyHitTestView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
         UIView()

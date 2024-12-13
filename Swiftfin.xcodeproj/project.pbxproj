@@ -1052,6 +1052,12 @@
 		E1EA09692BED78BB004CDE76 /* UserAccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */; };
 		E1EA096A2BED78F5004CDE76 /* UserAccessPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */; };
 		E1EA09882BEE9CF3004CDE76 /* UserLocalSecurityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */; };
+		E1EA960A2D0B8580007C2706 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 9923E6A53C6DDAA27D608B67 /* IdentifiedCollections */; };
+		E1EA960B2D0B8580007C2706 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 66C9050A7C7AEEF1A24E6DDB /* CollectionHStack */; };
+		E1EA960C2D0B8580007C2706 /* CollectionHStack in Frameworks */ = {isa = PBXBuildFile; productRef = 95CEEDD29AA196AF9D9B31B0 /* CollectionHStack */; };
+		E1EA960D2D0B8580007C2706 /* CollectionVGrid in Frameworks */ = {isa = PBXBuildFile; productRef = E6E6DF542DD1214A10C573C4 /* CollectionVGrid */; };
+		E1EA960E2D0B8580007C2706 /* IdentifiedCollections in Frameworks */ = {isa = PBXBuildFile; productRef = 1CC1615CBD70C53745425FF9 /* IdentifiedCollections */; };
+		E1EA96102D0B8970007C2706 /* ChaptersButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA960F2D0B8970007C2706 /* ChaptersButton.swift */; };
 		E1EA9F6A28F8A79E00BEC442 /* MediaPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */; };
 		E1EA9F6B28F8A79E00BEC442 /* MediaPlayerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */; };
 		E1EBCB42278BD174009FE6E9 /* TruncatedText.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */; };
@@ -1867,6 +1873,7 @@
 		E1EA09662BED6815004CDE76 /* UserSignInSecurityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInSecurityView.swift; sourceTree = "<group>"; };
 		E1EA09682BED78BB004CDE76 /* UserAccessPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAccessPolicy.swift; sourceTree = "<group>"; };
 		E1EA09872BEE9CF3004CDE76 /* UserLocalSecurityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalSecurityView.swift; sourceTree = "<group>"; };
+		E1EA960F2D0B8970007C2706 /* ChaptersButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaptersButton.swift; sourceTree = "<group>"; };
 		E1EA9F6928F8A79E00BEC442 /* MediaPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerManager.swift; sourceTree = "<group>"; };
 		E1EBCB41278BD174009FE6E9 /* TruncatedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TruncatedText.swift; sourceTree = "<group>"; };
 		E1EBCB45278BD595009FE6E9 /* ItemOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemOverviewView.swift; sourceTree = "<group>"; };
@@ -1914,6 +1921,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1EA960E2D0B8580007C2706 /* IdentifiedCollections in Frameworks */,
 				E15BC8162C8FFA9500E4F770 /* VLCUI in Frameworks */,
 				62666E1727E501CC00EC0ECD /* CFNetwork.framework in Frameworks */,
 				62666DFA27E5013700EC0ECD /* TVVLCKit.xcframework in Frameworks */,
@@ -1961,6 +1969,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1EA960D2D0B8580007C2706 /* CollectionVGrid in Frameworks */,
+				E1EA960C2D0B8580007C2706 /* CollectionHStack in Frameworks */,
+				E1EA960B2D0B8580007C2706 /* CollectionHStack in Frameworks */,
+				E1EA960A2D0B8580007C2706 /* IdentifiedCollections in Frameworks */,
 				E12B93072947CD0F00CE0BD9 /* Pulse in Frameworks */,
 				62666E3E27E503FA00EC0ECD /* MediaAccessibility.framework in Frameworks */,
 				62666DFF27E5016400EC0ECD /* CFNetwork.framework in Frameworks */,
@@ -4216,6 +4228,7 @@
 			isa = PBXGroup;
 			children = (
 				E1E9017E28DAB15F001B1594 /* ActionButtons.swift */,
+				E1EA960F2D0B8970007C2706 /* ChaptersButton.swift */,
 				E1BDF2EB2952290200CC0294 /* AspectFillActionButton.swift */,
 				E1BDF2EE29522A5900CC0294 /* AudioActionButton.swift */,
 				E1BDF2F029524AB700CC0294 /* AutoPlayActionButton.swift */,
@@ -5532,6 +5545,7 @@
 				E1401CB129386C9200E8B599 /* UIColor.swift in Sources */,
 				E1E2F8452B757E3400B75998 /* SinceLastDisappearModifier.swift in Sources */,
 				E18E01AB288746AF0022598C /* PillHStack.swift in Sources */,
+				E1EA96102D0B8970007C2706 /* ChaptersButton.swift in Sources */,
 				E19070492C84F2BB0004600E /* ButtonStyle-iOS.swift in Sources */,
 				E1401CAB2938140A00E8B599 /* LightAppIcon.swift in Sources */,
 				E19D41A72BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift in Sources */,

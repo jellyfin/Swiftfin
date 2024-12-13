@@ -18,6 +18,8 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
 
         @EnvironmentObject
         private var manager: MediaPlayerManager
+        @EnvironmentObject
+        private var toastProxy: ToastProxy
 
         private var systemImage: String {
             if isAutoPlayEnabled {
@@ -33,6 +35,12 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                 systemImage: systemImage
             ) {
                 isAutoPlayEnabled.toggle()
+
+                if isAutoPlayEnabled {
+                    toastProxy.present("Auto Play enabled", systemName: "play.circle.fill")
+                } else {
+                    toastProxy.present("Auto Play disabled", systemName: "stop.circle")
+                }
             }
             .transition(.scale.combined(with: .opacity).animation(.snappy))
             .id(isAutoPlayEnabled)

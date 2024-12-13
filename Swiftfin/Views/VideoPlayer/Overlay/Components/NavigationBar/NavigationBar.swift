@@ -13,12 +13,23 @@ extension VideoPlayer.Overlay {
 
     struct NavigationBar: View {
 
+        @Environment(\.selectedMediaPlayerSupplement)
+        @Binding
+        private var selectedMediaPlayerSupplement
+
         @EnvironmentObject
         private var manager: MediaPlayerManager
         @EnvironmentObject
         private var overlayTimer: PokeIntervalTimer
 
         private func onPressed(isPressed: Bool) {
+
+            // TODO: remove after Chapters is no longer
+            //       an action button
+            guard selectedMediaPlayerSupplement == nil else {
+                return
+            }
+
             if isPressed {
                 overlayTimer.stop()
             } else {
