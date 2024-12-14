@@ -113,6 +113,8 @@ extension VideoPlayer {
                 .animation(.linear(duration: 0.25), value: isPresentingOverlay)
 
                 GestureLayer()
+                
+//                KeyCommandsLayer()
 
                 VStack {
                     navigationBar

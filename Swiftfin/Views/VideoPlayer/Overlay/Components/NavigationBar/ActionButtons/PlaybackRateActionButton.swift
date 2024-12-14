@@ -37,6 +37,15 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                         }
                     }
                 }
+                
+                if !rates.contains(manager.rate) {
+                    Divider()
+                    
+                    Label(
+                        "\(manager.rate, format: .rate)",
+                        systemImage: "checkmark"
+                    )
+                }
             }
         }
     }

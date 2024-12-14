@@ -275,11 +275,13 @@ class ItemViewModel: ViewModel, Stateful {
     func onRefresh() async throws {}
 
     private func getFullItem() async throws -> BaseItemDto {
+        
+        guard let itemID = item.id else { return item }
 
         var parameters = Paths.GetItemsByUserIDParameters()
         parameters.enableUserData = true
         parameters.fields = ItemFields.allCases
-        parameters.ids = [item.id!]
+        parameters.ids = [itemID]
 
         let request = Paths.getItemsByUserID(userID: userSession.user.id, parameters: parameters)
         let response = try await userSession.client.send(request)
@@ -290,6 +292,8 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getSimilarItems() async -> [BaseItemDto] {
+        
+        guard let itemID = item.id else { return [] }
 
         var parameters = Paths.GetSimilarItemsParameters()
         parameters.fields = .MinimumFields
@@ -297,7 +301,7 @@ class ItemViewModel: ViewModel, Stateful {
         parameters.userID = userSession.user.id
 
         let request = Paths.getSimilarItems(
-            itemID: item.id!,
+            itemID: itemID,
             parameters: parameters
         )
 
@@ -307,10 +311,12 @@ class ItemViewModel: ViewModel, Stateful {
     }
 
     private func getSpecialFeatures() async -> [BaseItemDto] {
+        
+        guard let itemID = item.id else { return [] }
 
         let request = Paths.getSpecialFeatures(
             userID: userSession.user.id,
-            itemID: item.id!
+            itemID: itemID
         )
         let response = try? await userSession.client.send(request)
 

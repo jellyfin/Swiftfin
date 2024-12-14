@@ -25,6 +25,8 @@ extension VideoPlayer {
         private var isAspectFilled
 
         @EnvironmentObject
+        private var toastProxy: ToastProxy
+        @EnvironmentObject
         private var manager: MediaPlayerManager
 
         var body: some View {
@@ -48,6 +50,22 @@ extension VideoPlayer {
                     //                    updateViewProxy.present(systemName: "play.fill", title: "Play")
                     //                }
                 }
+                
+                KeyCommandAction(
+                    title: "Increase Playback Speed",
+                    input: "]",
+                    modifierFlags: .command
+                ) {
+                    let newRate = clamp(
+                        manager.rate + 0.25,
+                        min: 0.25,
+                        max: 4
+                    )
+                    
+                    manager.set(rate: newRate)
+                    
+                    toastProxy.present(Text(newRate, format: .rate), systemName: "speedometer")
+                }
             }
         }
     }
@@ -66,6 +84,8 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
 
     @EnvironmentObject
     private var manager: MediaPlayerManager
+    @EnvironmentObject
+    private var toastProxy: ToastProxy
 
     func body(content: Content) -> some View {
         content.keyCommands {
@@ -163,6 +183,7 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: "[",
                 modifierFlags: .command
             ) {
+                
 //                let clampedPlaybackSpeed = clamp(
 //                    videoPlayerManager.playbackRate.rate - 0.25,
 //                    min: 0.25,
@@ -183,6 +204,16 @@ struct VideoPlayerKeyCommandsModifier: ViewModifier {
                 input: "]",
                 modifierFlags: .command
             ) {
+                let newRate = clamp(
+                    manager.rate + 0.25,
+                    min: 0.25,
+                    max: 4
+                )
+                
+                manager.set(rate: newRate)
+                
+                toastProxy.present(Text(newRate, format: .rate), systemName: "speedometer")
+                
 //                let clampedPlaybackSpeed = clamp(
 //                    videoPlayerManager.playbackSpeed.rawValue + 0.25,
 //                    min: 0.25,
