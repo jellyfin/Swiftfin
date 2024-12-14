@@ -28,7 +28,6 @@ struct MediaInfoSupplement: MediaPlayerSupplement {
     private struct _View: View {
 
         @Environment(\.safeAreaInsets)
-        @Binding
         private var safeAreaInsets
 
         @Environment(\.selectedMediaPlayerSupplement)

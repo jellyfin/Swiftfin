@@ -52,7 +52,7 @@ struct TestPlaybackProgressView: View {
             .environment(\.isScrubbing, $isScrubbing)
             .environment(\.isAspectFilled, .mock(false))
             .environment(\.isPresentingOverlay, .constant(true))
-            .environment(\.playbackSpeed, .constant(1.0))
+//            .environment(\.playbackSpeed, .constant(1.0))
             .environment(\.selectedMediaPlayerSupplement, .mock(nil))
             .environment(\.scrubbedSeconds, $scrubbedSeconds)
             .enableInjection()

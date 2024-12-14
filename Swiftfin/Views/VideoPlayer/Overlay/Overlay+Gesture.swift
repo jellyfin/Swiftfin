@@ -36,6 +36,10 @@ extension VideoPlayer.Overlay {
         @Environment(\.isAspectFilled)
         @Binding
         private var isAspectFilled
+        
+        @Environment(\.isGestureLocked)
+        @Binding
+        private var isGestureLocked
 
         @Environment(\.isPresentingOverlay)
         @Binding
@@ -65,7 +69,7 @@ extension VideoPlayer.Overlay {
         @State
         private var brightnessPanGestureState: PanGestureState<CGFloat> = .zero
         @State
-        private var mediaOffsetPanGestureState: PanGestureState<Double> = .zero
+        private var mediaOffsetPanGestureState: PanGestureState<TimeInterval> = .zero
         @State
         private var playbackRatePanGestureState: PanGestureState<Float> = .zero
         @State
@@ -100,7 +104,10 @@ extension VideoPlayer.Overlay.GestureLayer {
         velocity: CGFloat,
         translation: CGFloat
     ) {
-//        guard !isGestureLocked else { return }
+        guard !isGestureLocked else {
+            toastProxy.present("Gesture lock", systemName: "lock.fill")
+            return
+        }
 
         let action = Defaults[.VideoPlayer.Gesture.panAction]
 
@@ -128,7 +135,10 @@ extension VideoPlayer.Overlay.GestureLayer {
         unitPoint: UnitPoint,
         scale: CGFloat
     ) {
-//        guard !isGestureLocked else { return }
+        guard !isGestureLocked else {
+            toastProxy.present("Gesture lock", systemName: "lock.fill")
+            return
+        }
 
         let action = Defaults[.VideoPlayer.Gesture.pinchGesture]
 

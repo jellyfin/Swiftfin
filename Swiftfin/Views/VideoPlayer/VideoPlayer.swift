@@ -31,6 +31,8 @@ struct VideoPlayer: View {
     @State
     private var isAspectFilled: Bool = false
     @State
+    private var isGestureLocked: Bool = false
+    @State
     private var isScrubbing: Bool = false
     @State
     private var safeAreaInsets: EdgeInsets = .zero
@@ -105,8 +107,9 @@ struct VideoPlayer: View {
             Overlay()
                 .environment(\.audioOffset, $audioOffset)
                 .environment(\.isAspectFilled, $isAspectFilled)
+                .environment(\.isGestureLocked, $isGestureLocked)
                 .environment(\.isScrubbing, $isScrubbing)
-                .environment(\.safeAreaInsets, $safeAreaInsets)
+                .environment(\.safeAreaInsets, safeAreaInsets)
                 .environment(\.scrubbedSeconds, $scrubbedSeconds)
                 .environmentObject(manager)
         }

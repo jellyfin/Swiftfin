@@ -9,10 +9,15 @@
 import Defaults
 import SwiftUI
 
-struct OverlayState {
-    
-    
-}
+//extension VideoPlayer {
+//    
+//    struct OverlayState {
+//        
+//        var isGestureLocked: Bool = false
+//        var isPresentingOverlay: Bool = false
+//        var selectedSupplement: AnyMediaPlayerSupplement?
+//    }
+//}
 
 // TODO: drawer animation fixes
 
@@ -30,7 +35,6 @@ extension VideoPlayer {
         // since this view ignores safe area, it must
         // get safe area insets from parent views
         @Environment(\.safeAreaInsets)
-        @Binding
         private var safeAreaInsets
 
         @EnvironmentObject
@@ -133,7 +137,7 @@ extension VideoPlayer {
                                 .frame(height: 150)
                                 .id(selectedSupplement.id)
                                 .transition(.opacity.animation(.linear(duration: 0.1)))
-                                .environment(\.safeAreaInsets, .constant(effectiveSafeArea))
+                                .environment(\.safeAreaInsets, effectiveSafeArea)
                         }
 
                         Color.clear
@@ -233,7 +237,7 @@ struct VideoPlayer_Overlay_Previews: PreviewProvider {
             .environment(\.isScrubbing, .mock(false))
             .environment(\.isAspectFilled, .mock(false))
             .environment(\.isPresentingOverlay, .constant(true))
-            .environment(\.playbackSpeed, .constant(1.0))
+//            .environment(\.playbackSpeed, .constant(1.0))
             .environment(\.selectedMediaPlayerSupplement, .mock(nil))
             .previewInterfaceOrientation(.landscapeLeft)
             .preferredColorScheme(.dark)

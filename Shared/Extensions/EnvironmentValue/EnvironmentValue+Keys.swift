@@ -22,6 +22,10 @@ extension EnvironmentValues {
     struct IsEditingKey: EnvironmentKey {
         static let defaultValue: Bool = false
     }
+    
+    struct IsGestureLockedKey: EnvironmentKey {
+        static let defaultValue: Binding<Bool> = .constant(false)
+    }
 
     struct IsScrubbingKey: EnvironmentKey {
         static let defaultValue: Binding<Bool> = .constant(false)
@@ -31,12 +35,8 @@ extension EnvironmentValues {
         static let defaultValue: Bool = false
     }
 
-    struct PlaybackRateKey: EnvironmentKey {
-        static let defaultValue: Binding<Double> = .constant(1)
-    }
-
     struct SafeAreaInsetsKey: EnvironmentKey {
-        static var defaultValue: Binding<EdgeInsets> = .constant(.zero)
+        static var defaultValue: EdgeInsets = .zero
     }
 
     struct SubtitleOffsetKey: EnvironmentKey {

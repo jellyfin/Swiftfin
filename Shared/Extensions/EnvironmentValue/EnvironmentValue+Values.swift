@@ -34,6 +34,11 @@ extension EnvironmentValues {
         get { self[IsEditingKey.self] }
         set { self[IsEditingKey.self] = newValue }
     }
+    
+    var isGestureLocked: Binding<Bool> {
+        get { self[IsGestureLockedKey.self] }
+        set { self[IsGestureLockedKey.self] = newValue }
+    }
 
     var isPresentingOverlay: Binding<Bool> {
         get { self[IsPresentingOverlayKey.self] }
@@ -50,12 +55,7 @@ extension EnvironmentValues {
         set { self[IsSelectedKey.self] = newValue }
     }
 
-    var playbackSpeed: Binding<Double> {
-        get { self[PlaybackRateKey.self] }
-        set { self[PlaybackRateKey.self] = newValue }
-    }
-
-    var safeAreaInsets: Binding<EdgeInsets> {
+    var safeAreaInsets: EdgeInsets {
         get { self[SafeAreaInsetsKey.self] }
         set { self[SafeAreaInsetsKey.self] = newValue }
     }
