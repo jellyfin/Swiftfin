@@ -19,7 +19,7 @@ enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
         case .split:
             return "Split"
         case .compact:
-            return "Compact"
+            return L10n.compact
         }
     }
 }

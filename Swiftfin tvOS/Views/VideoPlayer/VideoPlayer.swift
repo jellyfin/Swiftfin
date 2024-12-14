@@ -87,7 +87,7 @@ struct VideoPlayer: View {
 
     @ViewBuilder
     private var loadingView: some View {
-        Text("Retrieving media information")
+        Text(L10n.retrievingMediaInformation)
     }
 
     var body: some View {

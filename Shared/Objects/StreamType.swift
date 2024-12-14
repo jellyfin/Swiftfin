@@ -17,9 +17,9 @@ enum StreamType: String, Displayable {
     var displayTitle: String {
         switch self {
         case .direct:
-            return "Direct"
+            return L10n.direct
         case .transcode:
-            return "Transcode"
+            return L10n.transcode
         case .hls:
             return "HLS"
         }

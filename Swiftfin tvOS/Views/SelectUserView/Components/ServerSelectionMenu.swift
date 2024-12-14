@@ -56,7 +56,7 @@ extension SelectUserView {
                     Group {
                         switch serverSelection {
                         case .all:
-                            Label("All Servers", systemImage: "person.2.fill")
+                            Label(L10n.allServers, systemImage: "person.2.fill")
                         case let .server(id):
                             if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
                                 Label(server.name, systemImage: "server.rack")

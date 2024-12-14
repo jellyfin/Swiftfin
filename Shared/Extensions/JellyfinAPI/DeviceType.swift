@@ -73,7 +73,7 @@ enum DeviceType: String, Displayable, Codable, CaseIterable {
         case .xbox:
             return "Xbox"
         case .other:
-            return "Other"
+            return L10n.other
         }
     }
 

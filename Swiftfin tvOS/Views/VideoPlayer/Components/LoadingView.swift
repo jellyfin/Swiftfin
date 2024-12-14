@@ -22,7 +22,7 @@ extension VideoPlayer {
 
                 VStack(spacing: 10) {
 
-                    Text("Retrieving media information")
+                    Text(L10n.retrievingMediaInformation)
                         .foregroundColor(.white)
 
                     ProgressView()
@@ -30,7 +30,7 @@ extension VideoPlayer {
                     Button {
                         router.dismissCoordinator()
                     } label: {
-                        Text("Cancel")
+                        Text(L10n.cancel)
                             .foregroundColor(.red)
                             .padding()
                             .overlay {

@@ -22,13 +22,13 @@ enum ItemSortBy: String, CaseIterable, Displayable, Codable {
     var displayTitle: String {
         switch self {
         case .premiereDate:
-            return "Premiere date"
+            return L10n.premiereDate
         case .name:
-            return "Name"
+            return L10n.name
         case .dateAdded:
-            return "Date added"
+            return L10n.dateAdded
         case .random:
-            return "Random"
+            return L10n.random
         }
     }
 }

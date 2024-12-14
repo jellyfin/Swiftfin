@@ -165,7 +165,7 @@ struct ChannelLibraryView: View {
                 // We repurposed `LibraryDisplayType` but want different labels
                 Picker("Channel Display", selection: $channelDisplayType) {
 
-                    Label("Compact", systemImage: LibraryDisplayType.grid.systemImage)
+                    Label(L10n.compact, systemImage: LibraryDisplayType.grid.systemImage)
                         .tag(LibraryDisplayType.grid)
 
                     Label("Detailed", systemImage: LibraryDisplayType.list.systemImage)
