@@ -15,7 +15,6 @@ import JellyfinAPI
 import UIKit
 
 // TODO: should probably break out into a `Settings` and `AppSettings` view models
-//       - don't need delete user profile image from app settings
 //       - could clean up all settings view models
 
 final class SettingsViewModel: ViewModel {
