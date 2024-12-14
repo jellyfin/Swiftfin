@@ -228,11 +228,14 @@ struct SelectUserView: View {
                 .scrollViewOffset($scrollViewOffset)
             }
 
-            HStack {
+            HStack(alignment: .center) {
                 ServerSelectionMenu(
                     selection: $serverSelection,
                     viewModel: viewModel
                 )
+
+                advancedMenu
+                    .labelStyle(.iconOnly)
             }
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
@@ -296,13 +299,11 @@ struct SelectUserView: View {
     private var advancedMenu: some View {
         Menu(L10n.advanced, systemImage: "gearshape.fill") {
 
-            Section {
-                if gridItems.count > 1 {
-                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                        isEditingUsers.toggle()
-                    }
-                }
+//                if gridItems.count > 1 { // TODO: conditional prevents menu from working?
+            Button(L10n.editUsers, systemImage: "person.crop.circle") {
+                isEditingUsers.toggle()
             }
+//                }
 
             // TODO: Do we want to support a grid view and list view like iOS?
 //            if !viewModel.servers.isEmpty {
@@ -358,8 +359,6 @@ struct SelectUserView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
-            } else {
-                advancedMenu
             }
         }
         .onAppear {

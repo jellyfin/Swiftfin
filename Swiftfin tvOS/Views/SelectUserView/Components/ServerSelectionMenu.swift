@@ -43,16 +43,30 @@ extension SelectUserView {
         }
 
         var body: some View {
-            Button {
-                let parameters = SelectUserCoordinator.SelectServerParameters(
-                    selection: _serverSelection,
-                    viewModel: viewModel
-                )
+            Menu {
+                Button {
+                    serverSelection = .all
+                } label: {
+                    Label("All Servers", systemImage: "person.2.fill")
+                }
 
-                router.route(to: \.selectServer, parameters)
+                ForEach(viewModel.servers.keys) { server in
+                    Button {
+                        serverSelection = .server(id: server.id)
+                    } label: {
+                        Label(server.name, systemImage: "server.rack")
+                    }
+                }
+
+//            Button {
+//                let parameters = SelectUserCoordinator.SelectServerParameters(
+//                    selection: _serverSelection,
+//                    viewModel: viewModel
+//                )
+//
+//                router.route(to: \.selectServer, parameters)
             } label: {
                 ZStack {
-
                     Group {
                         switch serverSelection {
                         case .all:
@@ -66,8 +80,7 @@ extension SelectUserView {
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)
                 }
-                .frame(height: 50)
-                .frame(maxWidth: 400)
+                .frame(width: 400, height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
