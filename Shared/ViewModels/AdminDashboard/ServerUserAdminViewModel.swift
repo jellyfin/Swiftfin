@@ -43,7 +43,6 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
     enum State: Hashable {
         case initial
         case content
-        case updating
         case error(JellyfinAPIError)
     }
 

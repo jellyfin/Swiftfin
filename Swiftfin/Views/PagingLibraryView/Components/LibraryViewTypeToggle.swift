@@ -59,7 +59,7 @@ extension PagingLibraryView {
                     }
                 }
 
-                Section("Layout") {
+                Section(L10n.layout) {
                     Button {
                         viewType = .grid
                     } label: {
@@ -87,9 +87,9 @@ extension PagingLibraryView {
             } label: {
                 switch viewType {
                 case .grid:
-                    Label("Layout", systemImage: "square.grid.2x2.fill")
+                    Label(L10n.layout, systemImage: "square.grid.2x2.fill")
                 case .list:
-                    Label("Layout", systemImage: "square.fill.text.grid.1x2")
+                    Label(L10n.layout, systemImage: "square.fill.text.grid.1x2")
                 }
             }
         }

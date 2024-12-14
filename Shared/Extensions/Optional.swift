@@ -6,20 +6,15 @@
 // Copyright (c) 2024 Jellyfin & Jellyfin Contributors
 //
 
-import Defaults
 import Foundation
 
-enum TimestampType: String, CaseIterable, Defaults.Serializable, Displayable {
+extension Optional where Wrapped: Collection {
 
-    case split
-    case compact
-
-    var displayTitle: String {
-        switch self {
-        case .split:
-            return "Split"
-        case .compact:
-            return L10n.compact
+    mutating func appendedOrInit(_ element: Wrapped.Element) -> [Wrapped.Element] {
+        if let self {
+            return self + [element]
+        } else {
+            return [element]
         }
     }
 }
