@@ -93,11 +93,11 @@ extension SelectUserView {
                 }
                 .buttonStyle(.card)
                 .buttonBorderShape(.circleBackport)
-                //            .contextMenu {
-                //                Button("Delete", role: .destructive) {
-                //                    onDelete()
-                //                }
-                //            }
+                .contextMenu {
+                    Button("Delete", role: .destructive) {
+                        onDelete()
+                    }
+                }
 
                 Text(user.username)
                     .font(.title3)
