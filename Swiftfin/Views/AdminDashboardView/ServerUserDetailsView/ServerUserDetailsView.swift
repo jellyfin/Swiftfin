@@ -17,13 +17,16 @@ struct ServerUserDetailsView: View {
     @CurrentDate
     private var currentDate: Date
 
-    // MARK: - State & Environment Objects
+    // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
     private var router: AdminDashboardCoordinator.Router
 
     @StateObject
     private var viewModel: ServerUserAdminViewModel
+
+    @ObservedObject
+    private var profileViewModel: UserProfileImageViewModel
 
     // MARK: - Dialog State
 
@@ -41,6 +44,7 @@ struct ServerUserDetailsView: View {
 
     init(user: UserDto) {
         self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        self.profileViewModel = .init(userID: user.id!)
         self.username = user.name ?? ""
     }
 
@@ -55,9 +59,9 @@ struct ServerUserDetailsView: View {
                     maxWidth: 120
                 )
             ) {
-                print("Selected")
+                router.route(to: \.userPhotoPicker, profileViewModel)
             } delete: {
-                viewModel.send(.deleteProfileImage)
+                profileViewModel.send(.delete)
             }
 
             Section {
@@ -127,7 +131,7 @@ struct ServerUserDetailsView: View {
         }
         .navigationTitle(L10n.user)
         .onAppear {
-            viewModel.send(.loadDetails)
+            viewModel.send(.refresh)
         }
         .onReceive(viewModel.events) { event in
             switch event {

@@ -36,7 +36,7 @@ struct UserProfileImage: View {
 
     @ViewBuilder
     private var imageView: some View {
-        RedrawOnNotificationView(.didChangeUserProfileImage) {
+        RedrawOnNotificationView(.didChangeUserProfile) {
             ImageView(imageSource)
                 .pipeline(.Swiftfin.branding)
                 .image { image in

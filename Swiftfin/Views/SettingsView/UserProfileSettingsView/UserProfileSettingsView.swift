@@ -20,11 +20,18 @@ struct UserProfileSettingsView: View {
 
     @ObservedObject
     var viewModel: SettingsViewModel
+    @ObservedObject
+    var profileViewModel: UserProfileImageViewModel
 
     @State
     private var isPresentingConfirmReset: Bool = false
     @State
     private var isPresentingProfileImageOptions: Bool = false
+
+    init(viewModel: SettingsViewModel) {
+        self.viewModel = viewModel
+        self.profileViewModel = .init(userID: viewModel.userSession.user.id)
+    }
 
     var body: some View {
         List {
@@ -35,9 +42,9 @@ struct UserProfileSettingsView: View {
                     maxWidth: 120
                 )
             ) {
-                router.route(to: \.photoPicker, viewModel)
+                router.route(to: \.photoPicker, profileViewModel)
             } delete: {
-                viewModel.deleteCurrentUserProfileImage(userID: viewModel.userSession.user.id)
+                profileViewModel.send(.delete)
             }
 
             Section {

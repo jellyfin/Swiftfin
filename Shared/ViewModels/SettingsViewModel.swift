@@ -62,25 +62,6 @@ final class SettingsViewModel: ViewModel {
         }
     }
 
-    func deleteCurrentUserProfileImage(userID: String) {
-        Task {
-            let request = Paths.deleteUserImage(
-                userID: userID,
-                imageType: "Primary"
-            )
-            let _ = try await userSession.client.send(request)
-
-            let currentUserRequest = Paths.getCurrentUser
-            let response = try await userSession.client.send(currentUserRequest)
-
-            await MainActor.run {
-                userSession.user.data = response.value
-
-                Notifications[.didChangeUserProfileImage].post(userID)
-            }
-        }
-    }
-
     func select(icon: any AppIcon) {
         let previousAppIcon = currentAppIcon
         currentAppIcon = icon

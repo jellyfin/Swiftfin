@@ -22,7 +22,7 @@ extension SettingsView {
 
         @ViewBuilder
         private var imageView: some View {
-            RedrawOnNotificationView(.didChangeUserProfileImage) {
+            RedrawOnNotificationView(.didChangeUserProfile) {
                 ImageView(user.profileImageSource(client: userSession.client, maxWidth: 120))
                     .pipeline(.Swiftfin.branding)
                     .placeholder { _ in

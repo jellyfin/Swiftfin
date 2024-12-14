@@ -24,6 +24,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     // MARK: Actions
 
     enum Action: Equatable {
+        case refreshUser(String)
         case getUsers(isHidden: Bool = false, isDisabled: Bool = false)
         case deleteUsers([String])
         case appendUser(UserDto)
@@ -63,10 +64,51 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private var userTask: AnyCancellable?
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
 
+    // MARK: - Initializer
+
+    override init() {
+        super.init()
+
+        Notifications[.didChangeUserProfile]
+            .publisher
+            .sink { userID in
+                Task {
+                    await self.send(.refreshUser(userID))
+                }
+            }
+            .store(in: &cancellables)
+    }
+
     // MARK: - Respond to Action
 
     func respond(to action: Action) -> State {
         switch action {
+        case let .refreshUser(userID):
+            userTask?.cancel()
+            backgroundStates.append(.gettingUsers)
+
+            userTask = Task {
+                do {
+                    try await refreshUser(userID)
+
+                    await MainActor.run {
+                        state = .content
+                    }
+                } catch {
+                    await MainActor.run {
+                        self.state = .error(.init(error.localizedDescription))
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+
+                await MainActor.run {
+                    _ = self.backgroundStates.remove(.gettingUsers)
+                }
+            }
+            .asAnyCancellable()
+
+            return state
+
         case let .getUsers(isHidden, isDisabled):
             userTask?.cancel()
             backgroundStates.append(.gettingUsers)
@@ -141,6 +183,21 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .asAnyCancellable()
 
             return state
+        }
+    }
+
+    // MARK: - Refresh User
+
+    private func refreshUser(_ userID: String) async throws {
+        let request = Paths.getUserByID(userID: userID)
+        let response = try await userSession.client.send(request)
+
+        let newUser = response.value
+
+        await MainActor.run {
+            if let index = self.users.firstIndex(where: { $0.id == userID }) {
+                self.users[index] = newUser
+            }
         }
     }
 
