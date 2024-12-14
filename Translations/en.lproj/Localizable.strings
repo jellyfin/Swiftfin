@@ -43,6 +43,9 @@
 /// Add Access Schedule
 "addAccessSchedule" = "Add Access Schedule";
 
+/// Add profile
+"addProfile" = "Add profile";
+
 /// Add Server
 "addServer" = "Add Server";
 
@@ -55,8 +58,8 @@
 /// Add User
 "addUser" = "Add User";
 
-/// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
-"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
+/// Additional security for users signed in to this device. This does not change any Jellyfin server user settings.
+"additionalSecurityDescription" = "Additional security for users signed in to this device. This does not change any Jellyfin server user settings.";
 
 /// Administrator
 "administrator" = "Administrator";
@@ -103,11 +106,17 @@
 /// Allow media item editing
 "allowItemEditing" = "Allow media item editing";
 
+/// Allow items
+"allowItems" = "Allow items";
+
 /// Alternate
 "alternate" = "Alternate";
 
 /// Alternate DVD
 "alternateDVD" = "Alternate DVD";
+
+/// Anamorphic
+"anamorphic" = "Anamorphic";
 
 /// Anamorphic video is not supported
 "anamorphicVideoNotSupported" = "Anamorphic video is not supported";
@@ -142,8 +151,14 @@
 /// Artist
 "artist" = "Artist";
 
+/// Ascending
+"ascending" = "Ascending";
+
 /// Aspect Fill
 "aspectFill" = "Aspect Fill";
+
+/// Aspect Ratio
+"aspectRatio" = "Aspect Ratio";
 
 /// Audio
 "audio" = "Audio";
@@ -178,6 +193,9 @@
 /// Author
 "author" = "Author";
 
+/// Authorization unsuccessful
+"authorizationUnsuccessful" = "Authorization unsuccessful";
+
 /// Authorize
 "authorize" = "Authorize";
 
@@ -190,14 +208,26 @@
 /// Auto Play
 "autoPlay" = "Auto Play";
 
+/// Average Frame Rate
+"averageFrameRate" = "Average Frame Rate";
+
 /// Back
 "back" = "Back";
+
+/// Attempted to access `backgroundStates` when there are none
+"backgroundStatesAccessError" = "Attempted to access `backgroundStates` when there are none";
+
+/// Attempted to set `backgroundStates` when there are none
+"backgroundStatesSetError" = "Attempted to set `backgroundStates` when there are none";
 
 /// Bar Buttons
 "barButtons" = "Bar Buttons";
 
 /// Behavior
 "behavior" = "Behavior";
+
+/// Behind the Scenes
+"behindTheScenes" = "Behind the Scenes";
 
 /// Tests your server connection to assess internet speed and adjust bandwidth automatically.
 "birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
@@ -207,6 +237,12 @@
 
 /// Birthday
 "birthday" = "Birthday";
+
+/// Bit Depth
+"bitDepth" = "Bit Depth";
+
+/// Bitrate
+"bitrate" = "Bitrate";
 
 /// Auto
 "bitrateAuto" = "Auto";
@@ -274,6 +310,9 @@
 /// bps
 "bitsPerSecond" = "bps";
 
+/// Block items
+"blockItems" = "Block items";
+
 /// Block unrated items
 "blockUnratedItems" = "Block unrated items";
 
@@ -285,6 +324,9 @@
 
 /// Books
 "books" = "Books";
+
+/// Brightness
+"brightness" = "Brightness";
 
 /// Bugs and Features
 "bugsAndFeatures" = "Bugs and Features";
@@ -303,6 +345,9 @@
 
 /// Capabilities
 "capabilities" = "Capabilities";
+
+/// Capsule
+"capsule" = "Capsule";
 
 /// Cast & Crew
 "castAndCrew" = "Cast & Crew";
@@ -333,6 +378,15 @@
 
 /// Close
 "close" = "Close";
+
+/// Codec
+"codec" = "Codec";
+
+/// Codec Tag
+"codecTag" = "Codec Tag";
+
+/// Codec Time Base
+"codecTimeBase" = "Codec Time Base";
 
 /// Collections
 "collections" = "Collections";
@@ -577,6 +631,9 @@
 /// Delete Server
 "deleteServer" = "Delete Server";
 
+/// Are you sure you want to delete %@ and all of its connected users?
+"deleteServerConfirmation" = "Are you sure you want to delete %@ and all of its connected users?";
+
 /// Delete Trigger
 "deleteTrigger" = "Delete Trigger";
 
@@ -751,6 +808,15 @@
 /// Error Details
 "errorDetails" = "Error Details";
 
+/// An HTTP URL error has occurred
+"errorHTTPURL" = "An HTTP URL error has occurred";
+
+/// An internal error has occurred
+"errorInternal" = "An internal error has occurred";
+
+/// Matching media source not in playback info
+"errorMatchingMediaSource" = "Matching media source not in playback info";
+
 /// Every
 "every" = "Every";
 
@@ -853,6 +919,9 @@
 /// Illustrator
 "illustrator" = "Illustrator";
 
+/// Incorrect pin for %@
+"incorrectPinFor" = "Incorrect pin for %@";
+
 /// Indicators
 "indicators" = "Indicators";
 
@@ -904,6 +973,9 @@
 /// kbps
 "kilobitsPerSecond" = "kbps";
 
+/// Landscape
+"landscape" = "Landscape";
+
 /// Language
 "language" = "Language";
 
@@ -928,8 +1000,8 @@
 /// Layout
 "layout" = "Layout";
 
-/// Learn more...
-"learnMoreEllipsis" = "Learn more...";
+/// Learn More…
+"learnMoreEllipsis" = "Learn More…";
 
 /// Left
 "left" = "Left";
@@ -1171,6 +1243,9 @@
 /// On Now
 "onNow" = "On Now";
 
+/// Only Video is currently supported.
+"onlyVideoSupported" = "Only Video is currently supported.";
+
 /// Options
 "options" = "Options";
 
@@ -1258,6 +1333,9 @@
 /// Playback Buttons
 "playbackButtons" = "Playback Buttons";
 
+/// Attempted to play item but no playback information available
+"playbackInfoError" = "Attempted to play item but no playback information available";
+
 /// Playback Quality
 "playbackQuality" = "Playback Quality";
 
@@ -1266,6 +1344,9 @@
 
 /// Played
 "played" = "Played";
+
+/// Portrait
+"portrait" = "Portrait";
 
 /// Posters
 "posters" = "Posters";
@@ -1383,6 +1464,9 @@
 
 /// Reorder
 "reorder" = "Reorder";
+
+/// Replace
+"replace" = "Replace";
 
 /// Replace All
 "replaceAll" = "Replace All";
@@ -1738,6 +1822,12 @@
 /// Test Size
 "testSize" = "Test Size";
 
+/// Text Subtitle
+"textSubtitle" = "Text Subtitle";
+
+/// Thumb
+"thumb" = "Thumb";
+
 /// Time
 "time" = "Time";
 
@@ -1857,6 +1947,9 @@
 
 /// This user will require device authentication.
 "userDeviceAuthRequiredDescription" = "This user will require device authentication.";
+
+/// User ID is missing
+"userIdMissing" = "User ID is missing";
 
 /// This user will require a pin.
 "userPinRequiredDescription" = "This user will require a pin.";

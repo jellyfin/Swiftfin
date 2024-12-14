@@ -19,7 +19,7 @@ struct AppLoadingView: View {
             Color.clear
 
             if didFailMigration {
-                Text("An internal error occurred.")
+                Text(L10n.errorInternal)
             }
         }
         .onNotification(.didFailMigration) { _ in

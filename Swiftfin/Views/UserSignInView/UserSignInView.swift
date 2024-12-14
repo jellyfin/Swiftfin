@@ -366,7 +366,7 @@ struct UserSignInView: View {
 //                signInDuplicate(user: user, replace: false)
 //            }
 
-//            Button("Replace") {
+//            Button(L10n.replace) {
 //                signInDuplicate(user: user, replace: true)
 //            }
 

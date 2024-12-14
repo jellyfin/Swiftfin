@@ -232,7 +232,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
               let username = userData.name
         else {
             logger.critical("Missing user data from network call")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.errorInternal)
         }
 
         StoredValues[.Temp.userData] = userData
@@ -259,7 +259,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
               let username = userData.name
         else {
             logger.critical("Missing user data from network call")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.errorInternal)
         }
 
         StoredValues[.Temp.userData] = userData
@@ -288,7 +288,7 @@ final class UserSignInViewModel: ViewModel, Eventful, Stateful {
 
         guard let serverModel = try? dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id)) else {
             logger.critical("Unable to find server to save user")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.errorInternal)
         }
 
         let user = try dataStack.perform { transaction in

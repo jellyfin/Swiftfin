@@ -46,7 +46,7 @@ extension BaseItemDto {
         guard let matchingMediaSource = response.value.mediaSources?
             .first(where: { $0.eTag == mediaSource.eTag && $0.id == mediaSource.id })
         else {
-            throw JellyfinAPIError("Matching media source not in playback info")
+            throw JellyfinAPIError(L10n.errorMatchingMediaSource)
         }
 
         return try matchingMediaSource.videoPlayerViewModel(with: self, playSessionID: response.value.playSessionID!)
@@ -100,7 +100,7 @@ extension BaseItemDto {
         }
         guard let matchingMediaSource else {
             logger.debug("liveVideoPlayerViewModel no matchingMediaSource found, throwing error")
-            throw JellyfinAPIError("Matching media source not in playback info")
+            throw JellyfinAPIError(L10n.errorMatchingMediaSource)
         }
 
         logger.debug("liveVideoPlayerViewModel matchingMediaSource being returned")
@@ -125,7 +125,7 @@ extension BaseItemDto {
         let userSession = Container.shared.currentUserSession()!
 
         let testStartTime = Date()
-        try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
+        _ = try await userSession.client.send(Paths.getBitrateTestBytes(size: testSize))
         let testDuration = Date().timeIntervalSince(testStartTime)
         let testSizeBits = Double(testSize * 8)
         let testBitrate = testSizeBits / testDuration

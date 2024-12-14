@@ -86,7 +86,7 @@ final class QuickConnectAuthorizeViewModel: ViewModel, Eventful, Stateful {
         let isAuthorized = (try? decoder.decode(Bool.self, from: response.value)) ?? false
 
         if !isAuthorized {
-            throw JellyfinAPIError("Authorization unsuccessful")
+            throw JellyfinAPIError(L10n.authorizationUnsuccessful)
         }
     }
 }

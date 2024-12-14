@@ -157,7 +157,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
               let id = response.value.id
         else {
             logger.critical("Missing server data from network call")
-            throw JellyfinAPIError("An internal error has occurred")
+            throw JellyfinAPIError(L10n.errorInternal)
         }
 
         let connectionURL = processConnectionURL(
@@ -224,7 +224,7 @@ final class ConnectToServerViewModel: ViewModel, Eventful, Stateful {
                 let existingServer = try self.dataStack.fetchOne(From<ServerModel>().where(\.$id == server.id))
                 guard let editServer = transaction.edit(existingServer) else {
                     logger.critical("Could not find server to add new url")
-                    throw JellyfinAPIError("An internal error has occurred")
+                    throw JellyfinAPIError(L10n.errorInternal)
                 }
 
                 editServer.urls.insert(server.currentURL)

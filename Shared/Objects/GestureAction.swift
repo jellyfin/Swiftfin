@@ -85,7 +85,7 @@ enum PanAction: String, GestureAction {
         case .audioffset:
             return L10n.audioOffset
         case .brightness:
-            return "Brightness"
+            return L10n.brightness
         case .playbackSpeed:
             return L10n.playbackSpeed
         case .scrub:

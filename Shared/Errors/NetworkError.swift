@@ -81,7 +81,7 @@ import JellyfinAPI
 //            errorMessage = ErrorMessage(
 //                code: 0,
 //                title: L10n.error,
-//                message: "An HTTP URL error has occurred"
+//                message: L10n.errorHTTPURL
 //            )
 //        }
 //

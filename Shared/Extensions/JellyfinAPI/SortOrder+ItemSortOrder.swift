@@ -17,7 +17,7 @@ extension ItemSortOrder: Displayable {
     var displayTitle: String {
         switch self {
         case .ascending:
-            return "Ascending"
+            return L10n.ascending
         case .descending:
             return "Descending"
         }

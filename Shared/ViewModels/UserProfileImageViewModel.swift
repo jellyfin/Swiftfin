@@ -85,7 +85,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             imageData = jpgData
         } else {
             logger.error("Unable to convert given profile image to png/jpg")
-            throw JellyfinAPIError("An internal error occurred")
+            throw JellyfinAPIError(L10n.errorInternal)
         }
 
         var request = Paths.postUserImage(
