@@ -158,14 +158,16 @@ extension View {
 
     #if os(tvOS)
 
-    /// tvOS Overlayed Menu
+    /// tvOS Overlayed Menu.
     func overlayMenu<Contents: View>(
         isPresented: Binding<Bool>,
         title: String? = nil,
         subtitle: String? = nil,
         @ViewBuilder contents: @escaping () -> Contents,
-
-        dismissActions: (() -> Void)? = nil
+        onSave: (() -> Void)? = nil,
+        onCancel: (() -> Void)? = nil,
+        onDismiss: (() -> Void)? = nil,
+        onDisappear: (() -> Void)? = nil
     ) -> some View {
         self.modifier(
             OverlayMenuModifier(
@@ -173,7 +175,10 @@ extension View {
                 title: title,
                 subtitle: subtitle,
                 contents: contents(),
-                dismissActions: dismissActions
+                onSave: onSave,
+                onCancel: onCancel,
+                onDismiss: onDismiss,
+                onDisappear: onDisappear
             )
         )
     }

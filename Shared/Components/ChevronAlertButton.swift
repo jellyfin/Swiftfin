@@ -22,7 +22,31 @@ struct ChevronAlertButton<Content>: View where Content: View {
     private let subtitle: Text?
     private let title: String
 
-    // MARK: - Body
+    #if os(tvOS)
+
+    // MARK: - tvOS Body
+
+    var body: some View {
+        ChevronButton(title, subtitle: subtitle)
+            .onSelect {
+                isSelected = true
+            }
+            .overlayMenu(
+                isPresented: $isSelected,
+                title: title,
+                subtitle: description
+            ) {
+                content()
+            } onSave: {
+                onSave?()
+            } onCancel: {
+                onCancel?()
+            }
+    }
+
+    #else
+
+    // MARK: - iOS Body
 
     var body: some View {
         ChevronButton(title, subtitle: subtitle)
@@ -52,6 +76,7 @@ struct ChevronAlertButton<Content>: View where Content: View {
                 }
             }
     }
+    #endif
 }
 
 extension ChevronAlertButton {

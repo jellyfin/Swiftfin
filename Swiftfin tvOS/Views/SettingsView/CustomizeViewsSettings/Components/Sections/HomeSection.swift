@@ -13,6 +13,8 @@ extension CustomizeViewsSettings {
 
     struct HomeSection: View {
 
+        // MARK: - Defaults
+
         @Default(.Customization.Home.showRecentlyAdded)
         private var showRecentlyAdded
         @Default(.Customization.Home.maxNextUp)
@@ -20,8 +22,20 @@ extension CustomizeViewsSettings {
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
 
+        // MARK: - Next Up Days Variables
+
+        @State
+        private var tempNextUpDays: TimeInterval
         @State
         private var isPresentingNextUpDays = false
+
+        // MARK: - Initializer
+
+        init() {
+            self.tempNextUpDays = Defaults[.Customization.Home.maxNextUp]
+        }
+
+        // MARK: - Body
 
         var body: some View {
             Section(L10n.home) {
@@ -30,24 +44,37 @@ extension CustomizeViewsSettings {
 
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
-                ChevronAlertButton(
-                    L10n.nextUpDays,
-                    subtitle: {
-                        if maxNextUp > 0 {
-                            return Text(maxNextUp, format: .interval(style: .narrow, fields: [.day]))
-                        } else {
-                            return Text(L10n.disabled)
-                        }
-                    }(),
-                    description: L10n.nextUpDaysDescription
-                ) {
-                    TextField(
-                        L10n.days,
-                        value: $maxNextUp,
-                        format: .dayInterval(range: 0 ... 1000)
-                    )
-                    .keyboardType(.numberPad)
-                }
+                nextUpDaysButton
+            }
+        }
+
+        // MARK: - Next Up Days Button
+
+        private var nextUpDaysButton: some View {
+            ChevronAlertButton(
+                L10n.nextUpDays,
+                subtitle: {
+                    if maxNextUp > 0 {
+                        return Text(maxNextUp, format: .interval(style: .narrow, fields: [.day]))
+                    } else {
+                        return Text(L10n.disabled)
+                    }
+                }(),
+                description: L10n.nextUpDaysDescription
+            ) {
+                TextField(
+                    L10n.days,
+                    value: $tempNextUpDays,
+                    format: .dayInterval(range: 0 ... 1000)
+                )
+                .padding(.horizontal, 36)
+                .padding(.bottom, 36)
+                .multilineTextAlignment(.center)
+                .keyboardType(.numberPad)
+            } onSave: {
+                maxNextUp = tempNextUpDays
+            } onCancel: {
+                tempNextUpDays = maxNextUp
             }
         }
     }
