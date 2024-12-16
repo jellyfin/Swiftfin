@@ -48,12 +48,15 @@ struct SelectServerView: View {
                 } label: {
                     HStack {
                         L10n.addServer.text
+                            .font(.headline)
 
                         Spacer()
 
                         Image(systemName: "plus")
                     }
+                    .padding()
                 }
+                .buttonStyle(.card)
 
                 if let selectedServer {
                     Button {
@@ -63,16 +66,19 @@ struct SelectServerView: View {
                     } label: {
                         HStack {
                             L10n.editServer.text
+                                .font(.headline)
 
                             Spacer()
 
                             Image(systemName: "server.rack")
                         }
+                        .padding()
                     }
+                    .buttonStyle(.card)
                 }
             }
 
-            Section {
+            Section(L10n.selectedServer) {
 
                 if viewModel.servers.keys.count > 1 {
                     Button {
@@ -81,6 +87,7 @@ struct SelectServerView: View {
                     } label: {
                         HStack {
                             L10n.allServers.text
+                                .font(.headline)
 
                             Spacer()
 
@@ -88,39 +95,42 @@ struct SelectServerView: View {
                                 Image(systemName: "checkmark.circle.fill")
                             }
                         }
-                    }
-                }
-
-                ForEach(viewModel.servers.keys.reversed()) { server in
-                    Button {
-                        serverSelection = .server(id: server.id)
-                        router.popLast()
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(server.name)
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-
-                                Text(server.currentURL.absoluteString)
-                                    .font(.subheadline)
-                                    .foregroundColor(.primary)
-                            }
-
-                            Spacer()
-
-                            if selectedServer == server {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                        }
                         .padding()
                     }
                     .buttonStyle(.card)
-                    .padding(.horizontal)
                 }
-            } header: {
-                Text(L10n.servers)
+
+                Form {
+                    ForEach(viewModel.servers.keys.reversed()) { server in
+                        Button {
+                            serverSelection = .server(id: server.id)
+                            router.popLast()
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(server.name)
+                                        .lineLimit(1)
+                                        .font(.headline)
+
+                                    Text(server.currentURL.absoluteString)
+                                        .lineLimit(1)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                if selectedServer == server {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }
+                        }
+                    }
+                }
+                .padding(0)
+                .scrollClipDisabled()
             }
+            .padding(.top)
             .headerProminence(.increased)
         }
     }

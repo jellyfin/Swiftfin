@@ -10,42 +10,80 @@ import SwiftUI
 
 struct FullScreenMenu<Content: View>: View {
 
-    private let content: () -> Content
-    private let title: String
+    // MARK: - Menu Variables
 
-    init(_ title: String, @ViewBuilder content: @escaping () -> Content) {
+    private var title: String?
+    private var subtitle: String?
+    private let orientation: Alignment
+
+    // MARK: - Menu Contents
+
+    private let content: () -> Content
+
+    // MARK: - Initializer
+
+    init(
+        _ title: String? = nil,
+        subtitle: String? = nil,
+        orientation: Alignment = .trailing,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
+        self.subtitle = subtitle
+        self.orientation = orientation
         self.content = content
     }
 
+    // MARK: - Body
+
     var body: some View {
-        ZStack {
-            Color.black
-                .opacity(0.5)
-
-            HStack {
-                Spacer()
-
-                VStack {
-                    Text(title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-
-                    ScrollView {
-                        VStack {
-                            content()
-                        }
-                        .padding(.horizontal, 20)
-                    }
-                    .frame(width: 580)
-                }
-                .padding(.top, 20)
-                .background(Material.regular, in: RoundedRectangle(cornerRadius: 30))
-                .frame(width: 620)
-                .padding(100)
-                .shadow(radius: 50)
-            }
+        ZStack(alignment: orientation) {
+            Color.black.opacity(0.5)
+                .ignoresSafeArea()
+            contentView
+                .padding(0)
         }
-        .ignoresSafeArea()
+    }
+
+    // MARK: - Content View
+
+    @ViewBuilder
+    private var contentView: some View {
+        VStack {
+            VStack(spacing: 4) {
+                if let title {
+                    Text(title)
+                        .font(.headline)
+                }
+                if let subtitle {
+                    Text(subtitle)
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                }
+            }
+
+            content()
+                .eraseToAnyView()
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal)
+        }
+        .padding(32)
+        .background {
+            RoundedRectangle(cornerRadius: 30)
+                .fill(Material.regular)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(Color.black.opacity(0.3))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 30)
+                        .stroke(Color.white.opacity(0.1), lineWidth: 1)
+                )
+        }
+        .shadow(radius: 50)
+        .frame(
+            width: UIScreen.main.bounds.width / 3,
+            height: UIScreen.main.bounds.height * 0.9
+        )
     }
 }
