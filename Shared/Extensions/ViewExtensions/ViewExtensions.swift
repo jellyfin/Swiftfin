@@ -158,26 +158,24 @@ extension View {
 
     #if os(tvOS)
 
-    /// tvOS Overlayed Menu.
-    func overlayMenu<Contents: View>(
+    /// tvOS Full Screen Menu
+    func fullScreenMenu<Contents: View>(
         isPresented: Binding<Bool>,
         title: String? = nil,
         subtitle: String? = nil,
+        orientation: FullScreenMenu.Orientation = .center,
         @ViewBuilder contents: @escaping () -> Contents,
-        onSave: (() -> Void)? = nil,
-        onCancel: (() -> Void)? = nil,
-        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder footer: @escaping () -> Contents,
         onDisappear: (() -> Void)? = nil
     ) -> some View {
         self.modifier(
-            OverlayMenuModifier(
+            FullScreenMenuModifier(
                 isPresented: isPresented,
                 title: title,
                 subtitle: subtitle,
+                orientation: orientation,
                 contents: contents(),
-                onSave: onSave,
-                onCancel: onCancel,
-                onDismiss: onDismiss,
+                footer: footer(),
                 onDisappear: onDisappear
             )
         )

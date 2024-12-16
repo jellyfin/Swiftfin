@@ -45,6 +45,10 @@ extension CustomizeViewsSettings {
                 Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
 
                 nextUpDaysButton
+
+                leadingButton
+                centerButton
+                trailingButton
             }
         }
 
@@ -60,7 +64,8 @@ extension CustomizeViewsSettings {
                         return Text(L10n.disabled)
                     }
                 }(),
-                description: L10n.nextUpDaysDescription
+                description: L10n.nextUpDaysDescription,
+                orientaiton: .center
             ) {
                 TextField(
                     L10n.days,
@@ -75,6 +80,33 @@ extension CustomizeViewsSettings {
                 maxNextUp = tempNextUpDays
             } onCancel: {
                 tempNextUpDays = maxNextUp
+            }
+        }
+
+        private var leadingButton: some View {
+            ChevronAlertButton(
+                "Leading",
+                orientaiton: .leading
+            ) {
+                IndicatorSettingsView()
+            }
+        }
+
+        private var centerButton: some View {
+            ChevronAlertButton(
+                "Center",
+                orientaiton: .center
+            ) {
+                IndicatorSettingsView()
+            }
+        }
+
+        private var trailingButton: some View {
+            ChevronAlertButton(
+                "Trailing",
+                orientaiton: .trailing
+            ) {
+                IndicatorSettingsView()
             }
         }
     }

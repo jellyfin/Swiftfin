@@ -39,89 +39,83 @@ struct SelectServerView: View {
     }
 
     var body: some View {
-        FullScreenMenu(L10n.servers) {
-            Section {
-                Button {
-                    router.popLast {
-                        router.route(to: \.connectToServer)
-                    }
-                } label: {
-                    HStack {
-                        L10n.addServer.text
-
-                        Spacer()
-
-                        Image(systemName: "plus")
-                    }
-                }
-
-                if let selectedServer {
+        FullScreenMenu(L10n.servers, orientation: .leading)
+            .contentView {
+                VStack(spacing: 16) {
                     Button {
                         router.popLast {
-                            router.route(to: \.editServer, selectedServer)
+                            router.route(to: \.connectToServer)
                         }
                     } label: {
                         HStack {
-                            L10n.editServer.text
-
+                            L10n.addServer.text
                             Spacer()
-
-                            Image(systemName: "server.rack")
-                        }
-                    }
-                }
-            }
-
-            Section {
-
-                if viewModel.servers.keys.count > 1 {
-                    Button {
-                        serverSelection = .all
-                        router.popLast()
-                    } label: {
-                        HStack {
-                            L10n.allServers.text
-
-                            Spacer()
-
-                            if serverSelection == .all {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                        }
-                    }
-                }
-
-                ForEach(viewModel.servers.keys.reversed()) { server in
-                    Button {
-                        serverSelection = .server(id: server.id)
-                        router.popLast()
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(server.name)
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-
-                                Text(server.currentURL.absoluteString)
-                                    .font(.subheadline)
-                                    .foregroundColor(.primary)
-                            }
-
-                            Spacer()
-
-                            if selectedServer == server {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
+                            Image(systemName: "plus")
                         }
                         .padding()
                     }
                     .buttonStyle(.card)
-                    .padding(.horizontal)
+
+                    if let selectedServer {
+                        Button {
+                            router.popLast {
+                                router.route(to: \.editServer, selectedServer)
+                            }
+                        } label: {
+                            HStack {
+                                L10n.editServer.text
+                                Spacer()
+                                Image(systemName: "server.rack")
+                            }
+                            .padding()
+                        }
+                        .buttonStyle(.card)
+                    }
+                    if viewModel.servers.keys.count > 1 {
+                        Button {
+                            serverSelection = .all
+                            router.popLast()
+                        } label: {
+                            HStack {
+                                L10n.allServers.text
+                                Spacer()
+                                if serverSelection == .all {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }
+                            .padding()
+                        }
+                        .buttonStyle(.card)
+                    }
                 }
-            } header: {
-                Text(L10n.servers)
+
+                Form {
+                    ForEach(viewModel.servers.keys.reversed()) { server in
+                        Button {
+                            serverSelection = .server(id: server.id)
+                            router.popLast()
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(server.name)
+                                        .lineLimit(1)
+                                        .foregroundColor(.primary)
+
+                                    Text(server.currentURL.absoluteString)
+                                        .lineLimit(1)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                if selectedServer == server {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }
+                        }
+                    }
+                }
+                .scrollClipDisabled()
             }
-            .headerProminence(.increased)
-        }
     }
 }
