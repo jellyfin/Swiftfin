@@ -758,7 +758,6 @@
 		E1763A292BF3046A004DF6AB /* AddUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A282BF3046A004DF6AB /* AddUserButton.swift */; };
 		E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */; };
 		E1763A642BF3C9AA004DF6AB /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */; };
-		E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */; };
 		E1763A6A2BF3D177004DF6AB /* PublicUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserRow.swift */; };
 		E1763A712BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
@@ -1688,7 +1687,6 @@
 		E1763A282BF3046A004DF6AB /* AddUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
 		E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridButton.swift; sourceTree = "<group>"; };
 		E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
-		E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenMenu.swift; sourceTree = "<group>"; };
 		E1763A692BF3D177004DF6AB /* PublicUserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserRow.swift; sourceTree = "<group>"; };
 		E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+Mappings.swift"; sourceTree = "<group>"; };
 		E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoadingView.swift; sourceTree = "<group>"; };
@@ -2929,7 +2927,6 @@
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
-				E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
@@ -5429,7 +5426,6 @@
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
-				E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */,
 				E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */,
 				E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				E154967E296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift in Sources */,
