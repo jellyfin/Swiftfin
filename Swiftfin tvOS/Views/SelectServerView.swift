@@ -54,9 +54,7 @@ struct SelectServerView: View {
 
                         Image(systemName: "plus")
                     }
-                    .padding()
                 }
-                .buttonStyle(.card)
 
                 if let selectedServer {
                     Button {
@@ -72,9 +70,7 @@ struct SelectServerView: View {
 
                             Image(systemName: "server.rack")
                         }
-                        .padding()
                     }
-                    .buttonStyle(.card)
                 }
             }
 
@@ -95,9 +91,7 @@ struct SelectServerView: View {
                                 Image(systemName: "checkmark.circle.fill")
                             }
                         }
-                        .padding()
                     }
-                    .buttonStyle(.card)
                 }
 
                 Form {
