@@ -17,7 +17,7 @@ enum CustomDeviceProfileAction: String, CaseIterable, Displayable, Storable {
     var displayTitle: String {
         switch self {
         case .add:
-            return "Add"
+            return L10n.add
         case .replace:
             return "Replace"
         }

@@ -62,10 +62,10 @@ struct AppSettingsView: View {
                 Toggle("Use splashscreen", isOn: $selectUserUseSplashscreen)
 
                 if selectUserUseSplashscreen {
-                    Picker("Servers", selection: $selectUserAllServersSplashscreen) {
+                    Picker(L10n.servers, selection: $selectUserAllServersSplashscreen) {
 
                         Section {
-                            Label("Random", systemImage: "dice.fill")
+                            Label(L10n.random, systemImage: "dice.fill")
                                 .tag(SelectUserServerSelection.all)
                         }
 

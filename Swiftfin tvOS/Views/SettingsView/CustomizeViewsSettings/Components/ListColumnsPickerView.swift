@@ -16,7 +16,7 @@ struct ListColumnsPickerView: View {
 
     var body: some View {
         StepperView(
-            title: "Columns",
+            title: L10n.columns,
             value: $selection,
             range: 1 ... 3,
             step: 1

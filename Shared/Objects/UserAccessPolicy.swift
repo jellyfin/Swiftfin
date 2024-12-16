@@ -21,11 +21,11 @@ enum UserAccessPolicy: String, CaseIterable, Codable, Displayable {
     var displayTitle: String {
         switch self {
         case .none:
-            "None"
+            L10n.none
         case .requireDeviceAuthentication:
             "Device Authentication"
         case .requirePin:
-            "Pin"
+            L10n.pin
         }
     }
 }

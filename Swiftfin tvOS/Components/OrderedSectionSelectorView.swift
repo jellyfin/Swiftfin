@@ -64,13 +64,13 @@ struct OrderedSectionSelectorView<Element: Displayable & Hashable>: View {
                                         Text(L10n.enabled)
                                         Spacer()
                                         if editMode?.wrappedValue.isEditing ?? false {
-                                            Button("Done") {
+                                            Button(L10n.done) {
                                                 withAnimation {
                                                     editMode?.wrappedValue = .inactive
                                                 }
                                             }
                                         } else {
-                                            Button("Edit") {
+                                            Button(L10n.edit) {
                                                 withAnimation {
                                                     editMode?.wrappedValue = .active
                                                 }

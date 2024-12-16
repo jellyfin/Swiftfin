@@ -34,7 +34,7 @@ enum PlaybackButtonType: String, CaseIterable, Displayable, Defaults.Serializabl
         case .large:
             return "Large"
         case .compact:
-            return "Compact"
+            return L10n.compact
         }
     }
 }

@@ -27,7 +27,7 @@ struct AppLoadingView: View {
             }
         }
         .topBarTrailing {
-            Button("Advanced", systemImage: "gearshape.fill") {}
+            Button(L10n.advanced, systemImage: "gearshape.fill") {}
                 .foregroundStyle(.secondary)
                 .disabled(true)
                 .opacity(didFailMigration ? 0 : 1)
