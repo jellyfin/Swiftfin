@@ -40,29 +40,92 @@ extension SelectUserView {
         }
 
         var body: some View {
-            Button {
-                let parameters = SelectUserCoordinator.SelectServerParameters(
-                    selection: _serverSelection,
-                    viewModel: viewModel
-                )
+            Menu {
+                Section(L10n.servers) {
+                    Button {
+                        router.route(to: \.connectToServer)
+                    } label: {
+                        HStack {
+                            L10n.addServer.text
+                                .font(.headline)
 
-                router.route(to: \.selectServer, parameters)
-            } label: {
-                ZStack {
+                            Spacer()
 
-                    Group {
-                        switch serverSelection {
-                        case .all:
-                            Label(L10n.allServers, systemImage: "person.2.fill")
-                        case let .server(id):
-                            if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
-                                Label(server.name, systemImage: "server.rack")
+                            Image(systemName: "plus")
+                        }
+                    }
+                    if let selectedServer {
+                        Button {
+                            router.route(to: \.editServer, selectedServer)
+                        } label: {
+                            HStack {
+                                L10n.editServer.text
+                                    .font(.headline)
+
+                                Spacer()
+
+                                Image(systemName: "server.rack")
                             }
                         }
                     }
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(Color.primary)
                 }
+                Section(L10n.selectedServer) {
+                    if viewModel.servers.keys.count > 1 {
+                        Button {
+                            serverSelection = .all
+                            router.popLast()
+                        } label: {
+                            HStack {
+                                L10n.allServers.text
+                                    .font(.headline)
+
+                                Spacer()
+
+                                if serverSelection == .all {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }
+                        }
+                    }
+                    ForEach(viewModel.servers.keys.reversed()) { server in
+                        Button {
+                            serverSelection = .server(id: server.id)
+                            router.popLast()
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(server.name)
+                                        .lineLimit(1)
+                                        .font(.headline)
+
+                                    Text(server.currentURL.absoluteString)
+                                        .lineLimit(1)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                Spacer()
+
+                                if selectedServer == server {
+                                    Image(systemName: "checkmark.circle.fill")
+                                }
+                            }
+                        }
+                    }
+                }
+            } label: {
+                Group {
+                    switch serverSelection {
+                    case .all:
+                        Label(L10n.allServers, systemImage: "person.2.fill")
+                    case let .server(id):
+                        if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
+                            Label(server.name, systemImage: "server.rack")
+                        }
+                    }
+                }
+                .font(.body.weight(.semibold))
+                .foregroundStyle(Color.primary)
                 .frame(height: 50)
                 .frame(maxWidth: 400)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
