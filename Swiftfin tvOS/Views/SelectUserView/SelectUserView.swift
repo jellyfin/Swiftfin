@@ -228,15 +228,7 @@ struct SelectUserView: View {
                 .scrollViewOffset($scrollViewOffset)
             }
 
-            HStack(alignment: .center) {
-                ServerSelectionMenu(
-                    selection: $serverSelection,
-                    viewModel: viewModel
-                )
-
-                advancedMenu
-                    .labelStyle(.iconOnly)
-            }
+            SelectUserBottomBar(isEditing: $isEditingUsers, serverSelection: $serverSelection, viewModel: viewModel)
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
@@ -293,42 +285,6 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Advanced Menu
-
-    @ViewBuilder
-    private var advancedMenu: some View {
-        Menu(L10n.advanced, systemImage: "gearshape.fill") {
-
-//                if gridItems.count > 1 { // TODO: conditional prevents menu from working?
-            Button(L10n.editUsers, systemImage: "person.crop.circle") {
-                isEditingUsers.toggle()
-            }
-//                }
-
-            // TODO: Do we want to support a grid view and list view like iOS?
-//            if !viewModel.servers.isEmpty {
-//                Picker(selection: $userListDisplayType) {
-//                    ForEach(LibraryDisplayType.allCases, id: \.hashValue) {
-//                        Label($0.displayTitle, systemImage: $0.systemImage)
-//                            .tag($0)
-//                    }
-//                } label: {
-//                    Text(L10n.layout)
-//                    Text(userListDisplayType.displayTitle)
-//                    Image(systemName: userListDisplayType.systemImage)
-//                }
-//                .pickerStyle(.menu)
-//            }
-
-            // TODO: Advanced settings on tvOS?
-//            Section {
-//                Button(L10n.advanced, systemImage: "gearshape.fill") {
-//                    router.route(to: \.advancedSettings)
-//                }
-//            }
-        }
-    }
-
     // MARK: - Body
 
     var body: some View {
@@ -340,27 +296,6 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea()
-        .topBarTrailing {
-            if isEditingUsers {
-                Button {
-                    isEditingUsers = false
-                } label: {
-                    L10n.cancel.text
-                        .font(.headline)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 10)
-                        .background {
-                            if colorScheme == .light {
-                                Color.secondarySystemFill
-                            } else {
-                                Color.tertiarySystemFill
-                            }
-                        }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
-                .buttonStyle(.plain)
-            }
-        }
         .onAppear {
             didAppear()
         }
