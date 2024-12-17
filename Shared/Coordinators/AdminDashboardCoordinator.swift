@@ -34,9 +34,9 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     // MARK: - Route: Server Tasks
 
     @Route(.push)
-    var editServerTask = makeEditServerTask
-    @Route(.push)
     var tasks = makeTasks
+    @Route(.push)
+    var editServerTask = makeEditServerTask
     @Route(.modal)
     var addServerTaskTrigger = makeAddServerTaskTrigger
 
@@ -52,6 +52,11 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     @Route(.push)
     var userDetails = makeUserDetails
     @Route(.modal)
+    var addServerUser = makeAddServerUser
+
+    // MARK: - Route: User Policy
+
+    @Route(.modal)
     var userDeviceAccess = makeUserDeviceAccess
     @Route(.modal)
     var userMediaAccess = makeUserMediaAccess
@@ -63,8 +68,10 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     var userParentalRatings = makeUserParentalRatings
     @Route(.modal)
     var resetUserPassword = makeResetUserPassword
+    @Route(.push)
+    var userEditAccessSchedules = makeUserEditAccessSchedules
     @Route(.modal)
-    var addServerUser = makeAddServerUser
+    var userAddAccessSchedule = makeUserAddAccessSchedule
 
     // MARK: - Route: API Keys
 
@@ -138,6 +145,8 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
         }
     }
 
+    // MARK: - Views: User Policy
+
     func makeUserDeviceAccess(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ServerUserDeviceAccessView(viewModel: viewModel)
@@ -159,6 +168,17 @@ final class AdminDashboardCoordinator: NavigationCoordinatable {
     func makeUserPermissions(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
             ServerUserPermissionsView(viewModel: viewModel)
+        }
+    }
+
+    @ViewBuilder
+    func makeUserEditAccessSchedules(viewModel: ServerUserAdminViewModel) -> some View {
+        EditAccessScheduleView(viewModel: viewModel)
+    }
+
+    func makeUserAddAccessSchedule(viewModel: ServerUserAdminViewModel) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            AddAccessScheduleView(viewModel: viewModel)
         }
     }
 
