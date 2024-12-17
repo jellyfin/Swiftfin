@@ -60,55 +60,57 @@ extension SelectUserView {
             .aspectRatio(1, contentMode: .fill)
         }
 
+        @ViewBuilder
+        private var userImage: some View {
+            ZStack {
+                ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
+                    .image { image in
+                        image
+                            .posterBorder(ratio: 1 / 2, of: \.width)
+                    }
+                    .placeholder { _ in
+                        personView
+                    }
+                    .failure {
+                        personView
+                    }
+            }
+            .aspectRatio(1, contentMode: .fill)
+            .overlay {
+                if isEditing {
+                    Color.black
+                        .opacity(isSelected ? 0 : 0.5)
+                        .clipShape(.circle)
+                }
+            }
+        }
+
         var body: some View {
             VStack {
                 Button {
                     action()
                 } label: {
-                    VStack(alignment: .center) {
-                        ZStack {
-                            Color.clear
+                    userImage
+                        .hoverEffect(.highlight)
 
-                            ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                                .image { image in
-                                    image
-                                        .posterBorder(ratio: 1 / 2, of: \.width)
-                                }
-                                .placeholder { _ in
-                                    personView
-                                }
-                                .failure {
-                                    personView
-                                }
-                        }
-                        .aspectRatio(1, contentMode: .fill)
-                    }
-                    .overlay {
-                        if isEditing {
-                            Color.black
-                                .opacity(isSelected ? 0 : 0.5)
-                                .clipShape(.circle)
-                        }
+                    Text(user.username)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(labelForegroundStyle)
+                        .lineLimit(1)
+
+                    if showServer {
+                        Text(server.name)
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
                     }
                 }
-                .buttonStyle(.card)
-                .buttonBorderShape(.circleBackport)
+                .buttonStyle(.borderless)
+                .buttonBorderShape(.circle)
                 .contextMenu {
                     Button("Delete", role: .destructive) {
                         onDelete()
                     }
-                }
-
-                Text(user.username)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(labelForegroundStyle)
-                    .lineLimit(1)
-
-                if showServer {
-                    Text(server.name)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
             }
             .overlay {
