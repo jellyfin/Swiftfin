@@ -20,6 +20,7 @@ extension SelectUserView {
         private var viewModel: SelectUserViewModel
 
         private let onDelete: () -> Void
+        private let areUsersSelected: Bool
 
         // MARK: - Environment Variable
 
@@ -31,12 +32,14 @@ extension SelectUserView {
         init(
             isEditing: Binding<Bool>,
             serverSelection: Binding<SelectUserServerSelection>,
+            areUsersSelected: Bool,
             viewModel: SelectUserViewModel,
             onDelete: @escaping () -> Void
         ) {
             self._isEditing = isEditing
             self._serverSelection = serverSelection
             self.viewModel = viewModel
+            self.areUsersSelected = areUsersSelected
             self.onDelete = onDelete
         }
 
@@ -74,12 +77,22 @@ extension SelectUserView {
             }
         }
 
+        @ViewBuilder
+        private var deleteUsersButton: some View {
+            Button {
+                onDelete()
+            } label: {
+                Text(L10n.delete)
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(areUsersSelected ? .primary : .secondary)
+            }
+            .disabled(!areUsersSelected)
+        }
+
         var body: some View {
             HStack(alignment: .center) {
                 if isEditing {
-                    Button("Delete") {
-                        onDelete()
-                    }
+                    deleteUsersButton
 
                     Button {
                         isEditing = false

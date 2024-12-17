@@ -231,6 +231,7 @@ struct SelectUserView: View {
             SelectUserBottomBar(
                 isEditing: $isEditingUsers,
                 serverSelection: $serverSelection,
+                areUsersSelected: selectedUsers.isNotEmpty,
                 viewModel: viewModel, onDelete: {
                     isPresentingConfirmDeleteUsers = true
                 }
