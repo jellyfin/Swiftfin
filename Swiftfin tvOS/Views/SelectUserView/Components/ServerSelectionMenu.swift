@@ -41,88 +41,46 @@ extension SelectUserView {
 
         var body: some View {
             Menu {
-                Section(L10n.servers) {
-                    Button {
+                Section {
+                    Button(L10n.addServer, systemImage: "plus") {
                         router.route(to: \.connectToServer)
-                    } label: {
-                        HStack {
-                            L10n.addServer.text
-                                .font(.headline)
-
-                            Spacer()
-
-                            Image(systemName: "plus")
-                        }
                     }
+
                     if let selectedServer {
-                        Button {
+                        Button(L10n.editServer, systemImage: "server.rack") {
                             router.route(to: \.editServer, selectedServer)
-                        } label: {
-                            HStack {
-                                L10n.editServer.text
-                                    .font(.headline)
-
-                                Spacer()
-
-                                Image(systemName: "server.rack")
-                            }
                         }
                     }
                 }
-                Section(L10n.selectedServer) {
+
+                Picker(L10n.servers, selection: _serverSelection) {
                     if viewModel.servers.keys.count > 1 {
-                        Button {
-                            serverSelection = .all
-                            router.popLast()
-                        } label: {
-                            HStack {
-                                L10n.allServers.text
-                                    .font(.headline)
-
-                                Spacer()
-
-                                if serverSelection == .all {
-                                    Image(systemName: "checkmark.circle.fill")
-                                }
-                            }
-                        }
+                        Label(L10n.allServers, systemImage: "person.2.fill")
+                            .tag(SelectUserServerSelection.all)
                     }
                     ForEach(viewModel.servers.keys.reversed()) { server in
                         Button {
-                            serverSelection = .server(id: server.id)
-                            router.popLast()
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(server.name)
-                                        .lineLimit(1)
-                                        .font(.headline)
-
-                                    Text(server.currentURL.absoluteString)
-                                        .lineLimit(1)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-
-                                Spacer()
-
-                                if selectedServer == server {
-                                    Image(systemName: "checkmark.circle.fill")
-                                }
-                            }
+                            Text(server.name)
+                            Text(server.currentURL.absoluteString)
                         }
+                        .tag(SelectUserServerSelection.server(id: server.id))
                     }
                 }
             } label: {
-                Group {
+                HStack(spacing: 12) {
                     switch serverSelection {
                     case .all:
-                        Label(L10n.allServers, systemImage: "person.2.fill")
+                        Image(systemName: "person.2.fill")
+                        Text(L10n.allServers)
                     case let .server(id):
                         if let server = viewModel.servers.keys.first(where: { $0.id == id }) {
-                            Label(server.name, systemImage: "server.rack")
+                            Image(systemName: "server.rack")
+                            Text(server.name)
                         }
                     }
+                    Image(systemName: "chevron.up.chevron.down")
+                        .foregroundStyle(.secondary)
+                        .font(.subheadline.weight(.semibold))
                 }
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
