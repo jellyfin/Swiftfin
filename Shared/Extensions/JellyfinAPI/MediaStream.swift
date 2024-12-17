@@ -55,11 +55,11 @@ extension MediaStream {
         }
 
         if let value = codec {
-            properties.append(.init(title: "Codec", subtitle: value))
+            properties.append(.init(title: L10n.codec, subtitle: value))
         }
 
         if let value = codecTag {
-            properties.append(.init(title: "Codec Tag", subtitle: value))
+            properties.append(.init(title: L10n.codecTag, subtitle: value))
         }
 
         if let value = language {
@@ -71,7 +71,7 @@ extension MediaStream {
         }
 
         if let value = codecTimeBase {
-            properties.append(.init(title: "Codec Time Base", subtitle: value))
+            properties.append(.init(title: L10n.codecTimeBase, subtitle: value))
         }
 
         if let value = videoRange {
@@ -91,11 +91,11 @@ extension MediaStream {
         }
 
         if let value = bitRate {
-            properties.append(.init(title: "Bitrate", subtitle: value.description))
+            properties.append(.init(title: L10n.bitrate, subtitle: value.description))
         }
 
         if let value = bitDepth {
-            properties.append(.init(title: "Bit Depth", subtitle: value.description))
+            properties.append(.init(title: L10n.bitDepth, subtitle: value.description))
         }
 
         if let value = refFrames {
@@ -123,7 +123,7 @@ extension MediaStream {
         }
 
         if let value = averageFrameRate {
-            properties.append(.init(title: "Average Frame Rate", subtitle: value.description))
+            properties.append(.init(title: L10n.averageFrameRate, subtitle: value.description))
         }
 
         if let value = realFrameRate {
@@ -135,7 +135,7 @@ extension MediaStream {
         }
 
         if let value = aspectRatio {
-            properties.append(.init(title: "Aspect Ratio", subtitle: value))
+            properties.append(.init(title: L10n.aspectRatio, subtitle: value))
         }
 
         if let value = index {
@@ -155,7 +155,7 @@ extension MediaStream {
         }
 
         if let value = isAnamorphic {
-            properties.append(.init(title: "Anamorphic", subtitle: value.description))
+            properties.append(.init(title: L10n.anamorphic, subtitle: value.description))
         }
 
         return properties
@@ -203,7 +203,7 @@ extension MediaStream {
         }
 
         if let value = isTextSubtitleStream {
-            properties.append(.init(title: "Text Subtitle", subtitle: value.description))
+            properties.append(.init(title: L10n.textSubtitle, subtitle: value.description))
         }
 
         if let value = path {

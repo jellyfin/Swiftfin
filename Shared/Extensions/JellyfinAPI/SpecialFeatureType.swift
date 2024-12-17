@@ -21,7 +21,7 @@ extension SpecialFeatureType: Displayable {
         case .trailer:
             return "Trailer"
         case .behindTheScenes:
-            return "Behind the Scenes"
+            return L10n.behindTheScenes
         case .deletedScene:
             return "Deleted Scene"
         case .interview:

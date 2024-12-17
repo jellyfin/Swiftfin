@@ -60,9 +60,9 @@ extension Stateful where BackgroundState == Never {
 
     var backgroundStates: OrderedSet<Never> {
         get {
-            assertionFailure("Attempted to access `backgroundStates` when there are none")
+            assertionFailure(L10n.backgroundStatesAccessError)
             return []
         }
-        set { assertionFailure("Attempted to set `backgroundStates` when there are none") }
+        set { assertionFailure(L10n.backgroundStatesSetError) }
     }
 }

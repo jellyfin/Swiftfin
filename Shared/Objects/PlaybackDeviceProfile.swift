@@ -43,7 +43,7 @@ struct CustomDeviceProfile: Hashable, Storable {
                 containers: container
             )
         default:
-            assertionFailure("Only Video is currently supported.")
+            assertionFailure(L10n.onlyVideoSupported)
             return DirectPlayProfile()
         }
     }
@@ -66,7 +66,7 @@ struct CustomDeviceProfile: Hashable, Storable {
                 container
             }
         default:
-            assertionFailure("Only Video is currently supported.")
+            assertionFailure(L10n.onlyVideoSupported)
             return TranscodingProfile(audioCodec: nil)
         }
     }

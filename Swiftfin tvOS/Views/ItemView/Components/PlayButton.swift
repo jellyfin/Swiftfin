@@ -70,7 +70,7 @@ extension ItemView {
 //                            selectedVideoPlayerViewModel.injectCustomValues(startFromBeginning: true)
 //                            router.route(to: \.videoPlayer, selectedVideoPlayerViewModel)
 //                        } else {
-//                            logger.error("Attempted to play item but no playback information available")
+//                            logger.error(L10n.playbackInfoError)
 //                        }
 //                    } label: {
 //                        Label(L10n.playFromBeginning, systemImage: "gobackward")

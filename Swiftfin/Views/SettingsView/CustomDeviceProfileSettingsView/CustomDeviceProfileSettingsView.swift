@@ -56,7 +56,7 @@ struct CustomDeviceProfileSettingsView: View {
             Section(L10n.profiles) {
 
                 if customProfiles.isEmpty {
-                    Button("Add profile") {
+                    Button(L10n.addProfile) {
                         router.route(to: \.createCustomDeviceProfile)
                     }
                 }

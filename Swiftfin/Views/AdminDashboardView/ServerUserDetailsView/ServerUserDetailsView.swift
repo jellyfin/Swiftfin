@@ -73,12 +73,12 @@ struct ServerUserDetailsView: View {
                         router.route(to: \.userEditAccessSchedules, viewModel)
                     }
                 // TODO: Allow items SDK 10.10 - allowedTags
-                /* ChevronButton("Allow items")
+                /* ChevronButton(L10n.allowItems)
                       .onSelect {
                           router.route(to: \.userAllowedTags, viewModel)
                       }
                   // TODO: Block items - blockedTags
-                 ChevronButton("Block items")
+                 ChevronButton(L10n.blockItems)
                       .onSelect {
                           router.route(to: \.userBlockedTags, viewModel)
                       } */

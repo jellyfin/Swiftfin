@@ -122,7 +122,7 @@ struct UserLocalSecurityView: View {
                 CaseIterablePicker(L10n.security, selection: $signInPolicy)
             } footer: {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(L10n.additionalSecurityAccessDescription)
+                    Text(L10n.additionalSecurityDescription)
 
                     // frame necessary with bug within BulletedList
                     BulletedList {

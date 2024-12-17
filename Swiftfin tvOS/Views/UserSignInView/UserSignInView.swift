@@ -212,7 +212,7 @@ struct UserSignInView: View {
 //                signInUplicate(user: user, replace: false)
 //            }
 
-//            Button("Replace") {
+//            Button(L10n.replace) {
 //                signInUplicate(user: user, replace: true)
 //            }
 

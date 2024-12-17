@@ -122,7 +122,7 @@ struct UserProfileSettingsView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to reset all user settings?")
+            Text(L10n.resetUserSettings)
         }
         .confirmationDialog(
             "Profile Image",
