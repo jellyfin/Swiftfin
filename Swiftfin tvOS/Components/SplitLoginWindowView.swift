@@ -25,52 +25,33 @@ struct SplitLoginWindowView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-
-                if isLoading {
-                    ProgressView()
-                }
-            }
-            .frame(height: 100)
-            .overlay {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
-            }
-            .padding(.bottom)
-
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    Section(leadingTitle) {
-                        VStack(alignment: .leading) {
-                            leadingContentView()
-                                .eraseToAnyView()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
+        HStack(alignment: .top) {
+            VStack(alignment: .leading) {
+                Section(leadingTitle) {
+                    VStack(alignment: .leading) {
+                        leadingContentView()
+                            .eraseToAnyView()
                     }
-                }
-
-                Divider()
-                    .padding(.vertical, 100)
-
-                VStack(alignment: .leading) {
-                    Section(trailingTitle) {
-                        VStack(alignment: .leading) {
-                            trailingContentView()
-                                .eraseToAnyView()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical)
-                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
                 }
             }
-            Spacer()
+
+            Divider()
+                .padding(.vertical, 100)
+
+            VStack(alignment: .leading) {
+                Section(trailingTitle) {
+                    VStack(alignment: .leading) {
+                        trailingContentView()
+                            .eraseToAnyView()
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical)
+                }
+            }
         }
+        .navigationBarBranding(isLoading: isLoading)
     }
 }
 

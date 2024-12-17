@@ -74,26 +74,23 @@ extension UserSignInView {
         // MARK: - Body
 
         var body: some View {
-            Button {
-                action()
-            } label: {
-                VStack(alignment: .center) {
-                    personView
-                        .aspectRatio(1, contentMode: .fill)
-                        .posterShadow()
-                        .clipShape(.circle)
-                        .frame(width: 150, height: 150)
-                        .padding()
+            Button(action: action) {
+                personView
+                    .aspectRatio(1, contentMode: .fill)
+                    .posterShadow()
+                    .clipShape(.circle)
+                    .frame(width: 150, height: 150)
+                    .hoverEffect(.highlight)
 
-                    Text(user.name ?? .emptyDash)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
-                        .padding(.bottom)
-                }
+                Text(user.name ?? .emptyDash)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.primary)
+                    .lineLimit(1)
+                    .padding(.bottom)
             }
+            .buttonBorderShape(.circle)
+            .buttonStyle(.borderless)
             .disabled(!isEnabled)
-            .buttonStyle(.card)
             .foregroundStyle(.primary)
         }
     }
