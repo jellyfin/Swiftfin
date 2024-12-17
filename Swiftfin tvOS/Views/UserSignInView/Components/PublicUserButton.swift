@@ -9,15 +9,22 @@
 import JellyfinAPI
 import SwiftUI
 
-// TODO: change from list to grid button
-
 extension UserSignInView {
 
-    struct PublicUserRow: View {
+    struct PublicUserButton: View {
+
+        // MARK: - Environment Variables
+
+        @Environment(\.isEnabled)
+        var isEnabled: Bool
+
+        // MARK: - Public User Variables
 
         private let user: UserDto
         private let client: JellyfinClient
         private let action: () -> Void
+
+        // MARK: - Initializer
 
         init(
             user: UserDto,
@@ -29,8 +36,10 @@ extension UserSignInView {
             self.action = action
         }
 
+        // MARK: - Fallback Person View
+
         @ViewBuilder
-        private var personView: some View {
+        private var fallbackPersonView: some View {
             ZStack {
                 Color.secondarySystemFill
 
@@ -41,39 +50,49 @@ extension UserSignInView {
             .aspectRatio(1, contentMode: .fill)
         }
 
+        // MARK: - Person View
+
+        @ViewBuilder
+        private var personView: some View {
+            ZStack {
+                Color.clear
+
+                ImageView(user.profileImageSource(client: client, maxWidth: 120))
+                    .image { image in
+                        image
+                            .posterBorder(ratio: 0.5, of: \.width)
+                    }
+                    .placeholder { _ in
+                        fallbackPersonView
+                    }
+                    .failure {
+                        fallbackPersonView
+                    }
+            }
+        }
+
+        // MARK: - Body
+
         var body: some View {
             Button {
                 action()
             } label: {
-                HStack {
-                    ZStack {
-                        Color.clear
-
-                        ImageView(user.profileImageSource(client: client, maxWidth: 120))
-                            .image { image in
-                                image
-                                    .posterBorder(ratio: 0.5, of: \.width)
-                            }
-                            .placeholder { _ in
-                                personView
-                            }
-                            .failure {
-                                personView
-                            }
-                    }
-                    .aspectRatio(1, contentMode: .fill)
-                    .posterShadow()
-                    .clipShape(.circle)
-                    .frame(width: 50, height: 50)
+                VStack(alignment: .center) {
+                    personView
+                        .aspectRatio(1, contentMode: .fill)
+                        .posterShadow()
+                        .clipShape(.circle)
+                        .frame(width: 150, height: 150)
+                        .padding()
 
                     Text(user.name ?? .emptyDash)
                         .fontWeight(.semibold)
                         .foregroundStyle(.primary)
                         .lineLimit(1)
-
-                    Spacer()
+                        .padding(.bottom)
                 }
             }
+            .disabled(!isEnabled)
             .buttonStyle(.card)
             .foregroundStyle(.primary)
         }
