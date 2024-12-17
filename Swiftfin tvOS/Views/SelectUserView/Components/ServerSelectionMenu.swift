@@ -12,14 +12,18 @@ extension SelectUserView {
 
     struct ServerSelectionMenu: View {
 
+        // MARK: - Observed & Environment Objects
+
         @EnvironmentObject
         private var router: SelectUserCoordinator.Router
 
-        @Binding
-        private var serverSelection: SelectUserServerSelection
-
         @ObservedObject
         private var viewModel: SelectUserViewModel
+
+        // MARK: - Server Selection
+
+        @Binding
+        private var serverSelection: SelectUserServerSelection
 
         private var selectedServer: ServerState? {
             if case let SelectUserServerSelection.server(id: id) = serverSelection,
@@ -31,6 +35,8 @@ extension SelectUserView {
             return nil
         }
 
+        // MARK: - Initializer
+
         init(
             selection: Binding<SelectUserServerSelection>,
             viewModel: SelectUserViewModel
@@ -39,35 +45,35 @@ extension SelectUserView {
             self.viewModel = viewModel
         }
 
+        // MARK: - Body
+
         var body: some View {
             Menu {
-                Section {
-                    Button(L10n.addServer, systemImage: "plus") {
-                        router.route(to: \.connectToServer)
-                    }
-
-                    if let selectedServer {
-                        Button(L10n.editServer, systemImage: "server.rack") {
-                            router.route(to: \.editServer, selectedServer)
-                        }
-                    }
-                }
-
                 Picker(L10n.servers, selection: _serverSelection) {
-                    if viewModel.servers.keys.count > 1 {
-                        Label(L10n.allServers, systemImage: "person.2.fill")
-                            .tag(SelectUserServerSelection.all)
-                    }
-                    ForEach(viewModel.servers.keys.reversed()) { server in
+                    ForEach(viewModel.servers.keys) { server in
                         Button {
                             Text(server.name)
                             Text(server.currentURL.absoluteString)
                         }
                         .tag(SelectUserServerSelection.server(id: server.id))
                     }
+                    if viewModel.servers.keys.count > 1 {
+                        Label(L10n.allServers, systemImage: "person.2.fill")
+                            .tag(SelectUserServerSelection.all)
+                    }
+                }
+                Section {
+                    if let selectedServer {
+                        Button(L10n.editServer, systemImage: "server.rack") {
+                            router.route(to: \.editServer, selectedServer)
+                        }
+                    }
+                    Button(L10n.addServer, systemImage: "plus") {
+                        router.route(to: \.connectToServer)
+                    }
                 }
             } label: {
-                HStack(spacing: 12) {
+                HStack(spacing: 16) {
                     switch serverSelection {
                     case .all:
                         Image(systemName: "person.2.fill")
@@ -88,6 +94,7 @@ extension SelectUserView {
                 .frame(maxWidth: 400)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .menuOrder(.fixed)
             .padding()
         }
     }
