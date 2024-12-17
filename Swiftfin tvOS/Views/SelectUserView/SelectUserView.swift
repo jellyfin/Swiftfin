@@ -228,7 +228,13 @@ struct SelectUserView: View {
                 .scrollViewOffset($scrollViewOffset)
             }
 
-            SelectUserBottomBar(isEditing: $isEditingUsers, serverSelection: $serverSelection, viewModel: viewModel)
+            SelectUserBottomBar(
+                isEditing: $isEditingUsers,
+                serverSelection: $serverSelection,
+                viewModel: viewModel, onDelete: {
+                    isPresentingConfirmDeleteUsers = true
+                }
+            )
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
@@ -344,6 +350,21 @@ struct SelectUserView: View {
         }
         .onNotification(.didDeleteServer) { server in
             didDelete(server)
+        }
+        .alert(
+            Text(L10n.deleteUser),
+            isPresented: $isPresentingConfirmDeleteUsers,
+            presenting: selectedUsers
+        ) { selectedUsers in
+            Button(L10n.delete, role: .destructive) {
+                viewModel.send(.deleteUsers(Array(selectedUsers)))
+            }
+        } message: { selectedUsers in
+            if selectedUsers.count == 1, let first = selectedUsers.first {
+                Text(L10n.deleteUserSingleConfirmation(first.username))
+            } else {
+                Text(L10n.deleteUserMultipleConfirmation(selectedUsers.count))
+            }
         }
         .errorMessage($error)
     }

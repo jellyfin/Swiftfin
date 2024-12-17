@@ -19,6 +19,8 @@ extension SelectUserView {
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
+        private let onDelete: () -> Void
+
         // MARK: - Environment Variable
 
         @Environment(\.colorScheme)
@@ -26,10 +28,16 @@ extension SelectUserView {
 
         // MARK: - Advanced Menu
 
-        init(isEditing: Binding<Bool>, serverSelection: Binding<SelectUserServerSelection>, viewModel: SelectUserViewModel) {
+        init(
+            isEditing: Binding<Bool>,
+            serverSelection: Binding<SelectUserServerSelection>,
+            viewModel: SelectUserViewModel,
+            onDelete: @escaping () -> Void
+        ) {
             self._isEditing = isEditing
             self._serverSelection = serverSelection
             self.viewModel = viewModel
+            self.onDelete = onDelete
         }
 
         @ViewBuilder
@@ -70,7 +78,7 @@ extension SelectUserView {
             HStack(alignment: .center) {
                 if isEditing {
                     Button("Delete") {
-                        
+                        onDelete()
                     }
 
                     Button {
