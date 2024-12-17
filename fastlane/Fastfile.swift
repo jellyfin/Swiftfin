@@ -16,12 +16,12 @@ class Fastfile: LaneFile {
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
-              let keyID = options["keyID"],
-              let issuerID = options["issuerID"],
-              let keyContents = options["keyContents"],
-              let scheme = options["scheme"],
-              let codeSign64 = options["codeSign64"],
-              let profileName64 = options["profileName64"]
+              let keyID = options["keyID"]?.trimOption(),
+              let issuerID = options["issuerID"]?.trimOption(),
+              let keyContents = options["keyContents"]?.trimOption(),
+              let scheme = options["scheme"]?.trimOption(),
+              let codeSign64 = options["codeSign64"]?.trimOption(),
+              let profileName64 = options["profileName64"]?.trimOption()
         else {
             puts(message: "ERROR: missing or incorrect options")
             exit(1)
@@ -95,5 +95,14 @@ class Fastfile: LaneFile {
         }
         
         return decoded
+    }
+}
+
+extension String {
+    
+    /// Trim the option value from whitespaces and newlines, which may
+    /// accidentally be present in GitHub secrets.
+    func trimOption() -> String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
