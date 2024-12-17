@@ -123,7 +123,7 @@ extension CustomDeviceProfileSettingsView {
             }
             .navigationTitle(L10n.customProfile)
             .topBarTrailing {
-                Button("Save") {
+                Button(L10n.save) {
                     if createProfile {
                         customDeviceProfiles.append(profile)
                     } else {
@@ -137,7 +137,7 @@ extension CustomDeviceProfileSettingsView {
                 .disabled(!isValid)
             }
             .alert("Profile not saved", isPresented: $isPresentingNotSaved) {
-                Button("Close", role: .destructive) {
+                Button(L10n.close, role: .destructive) {
                     router.dismissCoordinator()
                 }
             }

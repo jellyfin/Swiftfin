@@ -51,7 +51,7 @@ extension MediaStream {
         var properties: [TextPair] = []
 
         if let value = type {
-            properties.append(.init(title: "Type", subtitle: value.rawValue))
+            properties.append(.init(title: L10n.type, subtitle: value.rawValue))
         }
 
         if let value = codec {
@@ -63,7 +63,7 @@ extension MediaStream {
         }
 
         if let value = language {
-            properties.append(.init(title: "Language", subtitle: value))
+            properties.append(.init(title: L10n.language, subtitle: value))
         }
 
         if let value = timeBase {
@@ -107,7 +107,7 @@ extension MediaStream {
         }
 
         if let value = channels {
-            properties.append(.init(title: "Channels", subtitle: value.description))
+            properties.append(.init(title: L10n.channels, subtitle: value.description))
         }
 
         if let value = sampleRate {
@@ -115,7 +115,7 @@ extension MediaStream {
         }
 
         if let value = isDefault {
-            properties.append(.init(title: "Default", subtitle: value.description))
+            properties.append(.init(title: L10n.default, subtitle: value.description))
         }
 
         if let value = isForced {
@@ -195,7 +195,7 @@ extension MediaStream {
         }
 
         if let value = deliveryURL {
-            properties.append(.init(title: "URL", subtitle: value))
+            properties.append(.init(title: L10n.url, subtitle: value))
         }
 
         if let value = deliveryURL {

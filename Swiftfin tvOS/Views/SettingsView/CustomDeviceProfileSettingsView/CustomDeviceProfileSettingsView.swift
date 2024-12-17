@@ -82,7 +82,7 @@ struct CustomDeviceProfileSettingsView: View {
                                 Button(role: .destructive) {
                                     deleteProfile(profile)
                                 } label: {
-                                    Label("Delete", systemImage: "trash")
+                                    Label(L10n.delete, systemImage: "trash")
                                 }
                             }
                         }
@@ -93,7 +93,7 @@ struct CustomDeviceProfileSettingsView: View {
                         Text(L10n.profiles)
                         Spacer()
                         if customProfiles.isNotEmpty {
-                            Button("Add") {
+                            Button(L10n.add) {
                                 router.route(to: \.createCustomDeviceProfile)
                             }
                         }

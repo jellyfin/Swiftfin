@@ -22,10 +22,12 @@ internal enum L10n {
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
   internal static let accessibility = L10n.tr("Localizable", "accessibility", fallback: "Accessibility")
-  /// Access schedule
-  internal static let accessSchedule = L10n.tr("Localizable", "accessSchedule", fallback: "Access schedule")
-  /// Create an access schedule to limit access to certain hours.
-  internal static let accessScheduleDescription = L10n.tr("Localizable", "accessScheduleDescription", fallback: "Create an access schedule to limit access to certain hours.")
+  /// The End Time must come after the Start Time.
+  internal static let accessScheduleInvalidTime = L10n.tr("Localizable", "accessScheduleInvalidTime", fallback: "The End Time must come after the Start Time.")
+  /// Access Schedules
+  internal static let accessSchedules = L10n.tr("Localizable", "accessSchedules", fallback: "Access Schedules")
+  /// Define the allowed hours for usage and restrict access outside those times.
+  internal static let accessSchedulesDescription = L10n.tr("Localizable", "accessSchedulesDescription", fallback: "Define the allowed hours for usage and restrict access outside those times.")
   /// Active
   internal static let active = L10n.tr("Localizable", "active", fallback: "Active")
   /// Active Devices
@@ -36,14 +38,16 @@ internal enum L10n {
   internal static let actor = L10n.tr("Localizable", "actor", fallback: "Actor")
   /// Add
   internal static let add = L10n.tr("Localizable", "add", fallback: "Add")
+  /// Add Access Schedule
+  internal static let addAccessSchedule = L10n.tr("Localizable", "addAccessSchedule", fallback: "Add Access Schedule")
   /// Add API key
   internal static let addAPIKey = L10n.tr("Localizable", "addAPIKey", fallback: "Add API key")
   /// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
-  /// Add trigger
-  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
+  /// Add Trigger
+  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add Trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Add User
@@ -434,14 +438,22 @@ internal enum L10n {
   internal static let deleteItemConfirmation = L10n.tr("Localizable", "deleteItemConfirmation", fallback: "Are you sure you want to delete this item?")
   /// Are you sure you want to delete this item? This action cannot be undone.
   internal static let deleteItemConfirmationMessage = L10n.tr("Localizable", "deleteItemConfirmationMessage", fallback: "Are you sure you want to delete this item? This action cannot be undone.")
+  /// Delete Schedule
+  internal static let deleteSchedule = L10n.tr("Localizable", "deleteSchedule", fallback: "Delete Schedule")
+  /// Are you sure you wish to delete this schedule?
+  internal static let deleteScheduleWarning = L10n.tr("Localizable", "deleteScheduleWarning", fallback: "Are you sure you wish to delete this schedule?")
   /// Are you sure you want to delete the selected items?
   internal static let deleteSelectedConfirmation = L10n.tr("Localizable", "deleteSelectedConfirmation", fallback: "Are you sure you want to delete the selected items?")
   /// Delete Selected Devices
   internal static let deleteSelectedDevices = L10n.tr("Localizable", "deleteSelectedDevices", fallback: "Delete Selected Devices")
+  /// Delete Selected Schedules
+  internal static let deleteSelectedSchedules = L10n.tr("Localizable", "deleteSelectedSchedules", fallback: "Delete Selected Schedules")
   /// Delete Selected Users
   internal static let deleteSelectedUsers = L10n.tr("Localizable", "deleteSelectedUsers", fallback: "Delete Selected Users")
   /// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
   internal static let deleteSelectionDevicesWarning = L10n.tr("Localizable", "deleteSelectionDevicesWarning", fallback: "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.")
+  /// Are you sure you wish to delete all selected schedules?
+  internal static let deleteSelectionSchedulesWarning = L10n.tr("Localizable", "deleteSelectionSchedulesWarning", fallback: "Are you sure you wish to delete all selected schedules?")
   /// Are you sure you wish to delete all selected users?
   internal static let deleteSelectionUsersWarning = L10n.tr("Localizable", "deleteSelectionUsersWarning", fallback: "Are you sure you wish to delete all selected users?")
   /// Delete Server
@@ -546,6 +558,8 @@ internal enum L10n {
   internal static let endDate = L10n.tr("Localizable", "endDate", fallback: "End Date")
   /// Ended
   internal static let ended = L10n.tr("Localizable", "ended", fallback: "Ended")
+  /// End Time
+  internal static let endTime = L10n.tr("Localizable", "endTime", fallback: "End Time")
   /// Engineer
   internal static let engineer = L10n.tr("Localizable", "engineer", fallback: "Engineer")
   /// Enter custom bitrate in Mbps
@@ -582,6 +596,8 @@ internal enum L10n {
   internal static let errorDetails = L10n.tr("Localizable", "errorDetails", fallback: "Error Details")
   /// Every
   internal static let every = L10n.tr("Localizable", "every", fallback: "Every")
+  /// Everyday
+  internal static let everyday = L10n.tr("Localizable", "everyday", fallback: "Everyday")
   /// Every %1$@
   internal static func everyInterval(_ p1: Any) -> String {
     return L10n.tr("Localizable", "everyInterval", String(describing: p1), fallback: "Every %1$@")
@@ -1188,6 +1204,8 @@ internal enum L10n {
   internal static let saveUserWithoutAuthDescription = L10n.tr("Localizable", "saveUserWithoutAuthDescription", fallback: "Save the user to this device without any local authentication.")
   /// Scan All Libraries
   internal static let scanAllLibraries = L10n.tr("Localizable", "scanAllLibraries", fallback: "Scan All Libraries")
+  /// Schedule already exists
+  internal static let scheduleAlreadyExists = L10n.tr("Localizable", "scheduleAlreadyExists", fallback: "Schedule already exists")
   /// Scheduled Tasks
   internal static let scheduledTasks = L10n.tr("Localizable", "scheduledTasks", fallback: "Scheduled Tasks")
   /// Scrub Current Time
@@ -1330,6 +1348,8 @@ internal enum L10n {
   internal static let specialFeatures = L10n.tr("Localizable", "specialFeatures", fallback: "Special Features")
   /// Sports
   internal static let sports = L10n.tr("Localizable", "sports", fallback: "Sports")
+  /// Start Time
+  internal static let startTime = L10n.tr("Localizable", "startTime", fallback: "Start Time")
   /// Status
   internal static let status = L10n.tr("Localizable", "status", fallback: "Status")
   /// Stop
@@ -1546,6 +1566,10 @@ internal enum L10n {
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Video transcoding
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
+  /// Weekday
+  internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
+  /// Weekend
+  internal static let weekend = L10n.tr("Localizable", "weekend", fallback: "Weekend")
   /// Weekly
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
   /// Who's watching?

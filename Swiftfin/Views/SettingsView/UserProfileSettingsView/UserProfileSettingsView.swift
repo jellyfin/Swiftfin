@@ -89,14 +89,14 @@ struct UserProfileSettingsView: View {
                         router.route(to: \.quickConnect)
                     }
 
-                ChevronButton("Password")
+                ChevronButton(L10n.password)
                     .onSelect {
                         router.route(to: \.resetUserPassword, viewModel.userSession.user.id)
                     }
             }
 
             Section {
-                ChevronButton("Security")
+                ChevronButton(L10n.security)
                     .onSelect {
                         router.route(to: \.localSecurity)
                     }
@@ -114,7 +114,7 @@ struct UserProfileSettingsView: View {
             }
         }
         .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
-            Button("Reset", role: .destructive) {
+            Button(L10n.reset, role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
                 } catch {
@@ -134,7 +134,7 @@ struct UserProfileSettingsView: View {
                 router.route(to: \.photoPicker, viewModel)
             }
 
-            Button("Delete", role: .destructive) {
+            Button(L10n.delete, role: .destructive) {
                 viewModel.deleteCurrentUserProfileImage()
             }
         }

@@ -42,7 +42,7 @@ extension VideoPlayerSettingsView {
                 Text(L10n.subtitle)
             } footer: {
                 // TODO: better wording
-                Text("Settings only affect some subtitle types")
+                Text(L10n.subtitlesDisclaimer)
             }
         }
     }

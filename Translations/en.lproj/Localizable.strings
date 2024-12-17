@@ -2049,6 +2049,26 @@
 // Represents a translator
 "translator" = "Translator";
 
+// Start Time - Label
+// Label for selecting or displaying the start time
+"startTime" = "Start Time";
+
+// End Time - Label
+// Label for selecting or displaying the end time
+"endTime" = "End Time";
+
+// Access Schedules - Label
+// Label for configuring or viewing the access schedule
+"accessSchedules" = "Access Schedules";
+
+// Add Access Schedule - Label
+// Label for adding a single Access Schedule
+"addAccessSchedule" = "Add Access Schedule";
+
+// Access Schedule Description - Label
+// Description for viewing or listing multiple schedules
+"accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
+
 // Parental controls - Section Title
 // Parental controls section & view titles
 "parentalControls" = "Parental controls";
@@ -2084,14 +2104,6 @@
 // Blocked tags - Footer
 // Parental ratings description for blocked tags
 "blockedTagsDescription" = "Hide media with at least one of the specified tags.";
-
-// Access Schedule - View Title
-// Parental ratings section for blocked titles
-"accessSchedule" = "Access schedule";
-
-// Access Schedule - Footer
-// Parental ratings section for allowed titles
-"accessScheduleDescription" = "Create an access schedule to limit access to certain hours.";
 
 // Trailers - Section Title
 // Title for content classified as trailers
@@ -2252,3 +2264,39 @@
 // Ages Group - Group Name
 // Label for content suitable for a specific age group
 "agesGroup" = "Age %@";
+
+// End Time must come after Start Time - Access Schedule Error
+// Error produced when trying to create 
+"accessScheduleInvalidTime" = "The End Time must come after the Start Time.";
+
+// Everyday - Label
+// DynamicDayOfWeek label for Everyday
+"everyday" = "Everyday";
+
+// Weekday - Label
+// DynamicDayOfWeek label for Weekdays
+"weekday" = "Weekday";
+
+// Weekend - Label
+// DynamicDayOfWeek label for the Weekend
+"weekend" = "Weekend";
+
+// Schedule Already Exists -
+// Message to indicate that an Access Schedule already exists
+"scheduleAlreadyExists" = "Schedule already exists";
+
+// Delete Selected Schedules Warning - Warning Message
+// Warning message displayed when deleting all schedules
+"deleteSelectionSchedulesWarning" = "Are you sure you wish to delete all selected schedules?";
+
+// Delete Schedule Warning - Warning Message
+// Warning message displayed when deleting a single schedules
+"deleteScheduleWarning" = "Are you sure you wish to delete this schedule?";
+
+// Delete Schedule - Action
+// Message for deleting a single Access Schedule
+"deleteSchedule" = "Delete Schedule";
+
+// Delete Selected Schedules - Button
+// Button label for deleting all selected Access Schedules
+"deleteSelectedSchedules" = "Delete Selected Schedules";
