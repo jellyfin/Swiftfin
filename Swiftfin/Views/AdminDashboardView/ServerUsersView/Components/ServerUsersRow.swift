@@ -75,7 +75,10 @@ extension ServerUsersView {
         @ViewBuilder
         private var userImage: some View {
             ZStack {
-                RedrawOnNotificationView(.didChangeUserProfile) {
+                RedrawOnNotificationView(
+                    .didChangeUserProfile,
+                    filter: { $0 == user.id }
+                ) {
                     ImageView(user.profileImageSource(client: userSession!.client))
                         .pipeline(.Swiftfin.branding)
                         .placeholder { _ in
