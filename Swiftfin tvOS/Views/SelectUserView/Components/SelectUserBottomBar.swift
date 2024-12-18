@@ -21,6 +21,7 @@ extension SelectUserView {
 
         private let onDelete: () -> Void
         private let areUsersSelected: Bool
+        private let userCount: Int
 
         // MARK: - Environment Variable
 
@@ -34,12 +35,14 @@ extension SelectUserView {
             serverSelection: Binding<SelectUserServerSelection>,
             areUsersSelected: Bool,
             viewModel: SelectUserViewModel,
+            userCount: Int,
             onDelete: @escaping () -> Void
         ) {
             self._isEditing = isEditing
             self._serverSelection = serverSelection
             self.viewModel = viewModel
             self.areUsersSelected = areUsersSelected
+            self.userCount = userCount
             self.onDelete = onDelete
         }
 
@@ -47,7 +50,7 @@ extension SelectUserView {
         private var advancedMenu: some View {
             Menu(L10n.advanced, systemImage: "gearshape.fill") {
 
-//                if gridItems.count > 1 { // TODO: conditional prevents menu from working?
+//                if userCount > 1 { // TODO: conditional prevents menu from working?
                 Button(L10n.editUsers, systemImage: "person.crop.circle") {
                     isEditing.toggle()
                 }

@@ -232,7 +232,9 @@ struct SelectUserView: View {
                 isEditing: $isEditingUsers,
                 serverSelection: $serverSelection,
                 areUsersSelected: selectedUsers.isNotEmpty,
-                viewModel: viewModel, onDelete: {
+                viewModel: viewModel,
+                userCount: gridItems.count,
+                onDelete: {
                     isPresentingConfirmDeleteUsers = true
                 }
             )
