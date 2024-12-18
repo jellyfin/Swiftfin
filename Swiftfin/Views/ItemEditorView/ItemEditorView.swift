@@ -98,6 +98,10 @@ struct ItemEditorView: View {
     @ViewBuilder
     private var editView: some View {
         Section(L10n.edit) {
+            ChevronButton("Identify")
+                .onSelect {
+                    router.route(to: \.editIdentity, viewModel.item)
+                }
             ChevronButton(L10n.metadata)
                 .onSelect {
                     router.route(to: \.editMetadata, viewModel.item)

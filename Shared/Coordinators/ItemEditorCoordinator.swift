@@ -22,6 +22,8 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     // MARK: - Route to Metadata
 
     @Route(.modal)
+    var editIdentity = makeEditIdentity
+    @Route(.modal)
     var editMetadata = makeEditMetadata
 
     // MARK: - Route to Genres
@@ -59,6 +61,17 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     }
 
     // MARK: - Item Metadata
+
+    func makeEditIdentity(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
+        NavigationViewCoordinator {
+            switch item.type {
+            case .movie:
+                IdentifyItemView<MovieInfo>(viewModel: MovieInfoViewModel(item: item))
+            default:
+                ErrorView(error: JellyfinAPIError("How did you get here?"))
+            }
+        }
+    }
 
     func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
