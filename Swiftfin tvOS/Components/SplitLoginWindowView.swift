@@ -51,7 +51,7 @@ struct SplitLoginWindowView: View {
                 }
             }
         }
-        .navigationBarBranding(isLoading: isLoading)
+        .navigationBarBranding(isLoading: true)
     }
 }
 

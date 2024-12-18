@@ -13,27 +13,21 @@ struct NavigationBarBrandingModifier: ViewModifier {
 
     var isLoading: Bool?
 
-    func body(content: Self.Content) -> some View {
-        VStack {
-            VStack(alignment: .trailing) {
-                if let loading = isLoading, loading == true {
-                    ProgressView()
+    func body(content: Content) -> some View {
+        content
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Image(.jellyfinBlobBlue)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 100)
+                        .padding(.bottom, 25)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if let loading = isLoading, loading {
+                        ProgressView()
+                    }
                 }
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 100)
-            .overlay {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
-            }
-            .padding(.bottom)
-
-            content
-
-            Spacer()
-        }
     }
 }
