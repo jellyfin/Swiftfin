@@ -43,6 +43,7 @@ extension SelectUserView {
         }
 
         var body: some View {
+            // TODO: Switch to Menu
             Button {
                 let parameters = SelectUserCoordinator.SelectServerParameters(
                     selection: _serverSelection,
@@ -52,7 +53,6 @@ extension SelectUserView {
                 router.route(to: \.selectServer, parameters)
             } label: {
                 ZStack {
-
                     Group {
                         switch serverSelection {
                         case .all:
@@ -66,8 +66,7 @@ extension SelectUserView {
                     .font(.body.weight(.semibold))
                     .foregroundStyle(Color.primary)
                 }
-                .frame(height: 50)
-                .frame(maxWidth: 400)
+                .frame(width: 400, height: 50)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
         }
