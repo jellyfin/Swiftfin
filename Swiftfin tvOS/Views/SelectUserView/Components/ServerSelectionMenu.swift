@@ -43,28 +43,14 @@ extension SelectUserView {
         }
 
         var body: some View {
-            Menu {
-                Button {
-                    serverSelection = .all
-                } label: {
-                    Label("All Servers", systemImage: "person.2.fill")
-                }
+            // TODO: Switch to Menu
+            Button {
+                let parameters = SelectUserCoordinator.SelectServerParameters(
+                    selection: _serverSelection,
+                    viewModel: viewModel
+                )
 
-                ForEach(viewModel.servers.keys) { server in
-                    Button {
-                        serverSelection = .server(id: server.id)
-                    } label: {
-                        Label(server.name, systemImage: "server.rack")
-                    }
-                }
-
-//            Button {
-//                let parameters = SelectUserCoordinator.SelectServerParameters(
-//                    selection: _serverSelection,
-//                    viewModel: viewModel
-//                )
-//
-//                router.route(to: \.selectServer, parameters)
+                router.route(to: \.selectServer, parameters)
             } label: {
                 ZStack {
                     Group {
