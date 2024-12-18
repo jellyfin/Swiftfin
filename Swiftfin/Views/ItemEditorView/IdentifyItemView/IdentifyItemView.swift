@@ -27,17 +27,21 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
     @State
     private var selectedMatch: RemoteSearchResult? = nil
 
-    // MARK: - State Variables for Search Info
-
-    @State
-    private var movieInfo = MovieInfo()
-    @State
-    private var seriesInfo = SeriesInfo()
-
     // MARK: - Error State
 
     @State
     private var error: Error?
+
+    // MARK: - Potential States
+
+    @State
+    var boxSetInfo = BoxSetInfo()
+    @State
+    var movieInfo = MovieInfo()
+    @State
+    var personInfo = PersonLookupInfo()
+    @State
+    var seriesInfo = SeriesInfo()
 
     // MARK: - Initializer
 
@@ -49,47 +53,70 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
 
     @ViewBuilder
     var body: some View {
-        contentView
-            .navigationBarTitle(L10n.metadata)
-            .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: Binding(
-                get: { selectedMatch != nil },
-                set: { if !$0 { selectedMatch = nil } }
-            )) {
-                if let selectedMatch {
-                    selectionConfirmationModal(selectedMatch)
+        Group {
+            switch viewModel.state {
+            case .updating:
+                updateView
+            case .initial:
+                contentView
+            }
+        }
+        .navigationBarTitle(L10n.metadata)
+        .navigationBarTitleDisplayMode(.inline)
+        .sheet(isPresented: Binding(
+            get: { selectedMatch != nil },
+            set: { if !$0 { selectedMatch = nil } }
+        )) {
+            if let selectedMatch {
+                selectionConfirmationModal(selectedMatch)
+            }
+        }
+        .topBarTrailing {
+            Button(L10n.search) {
+                if let tempSearchInfo {
+                    viewModel.send(.search(tempSearchInfo))
                 }
             }
-            .topBarTrailing {
-                Button(L10n.search) {
-                    if let tempSearchInfo {
-                        viewModel.send(.search(tempSearchInfo))
-                    }
-                }
-                .buttonStyle(.toolbarPill)
-            }
-            .navigationBarCloseButton {
+            .buttonStyle(.toolbarPill)
+        }
+        .navigationBarCloseButton {
+            router.dismissCoordinator()
+        }
+        .onReceive(viewModel.events) { events in
+            switch events {
+            case let .error(eventError):
+                error = eventError
+            case .updated:
                 router.dismissCoordinator()
             }
-            .onReceive(viewModel.events) { events in
-                switch events {
-                case let .error(eventError):
-                    error = eventError
-                default:
-                    break
-                }
-            }
-            .errorMessage($error)
+        }
+        .errorMessage($error)
     }
+
+    // MARK: - UpdatE View
+
+    @ViewBuilder
+    var updateView: some View {
+        VStack(alignment: .center) {
+            Text(selectedMatch?.name ?? L10n.unknown)
+            ProgressView()
+        }
+    }
+
+    // MARK: - Content View
 
     @ViewBuilder
     var contentView: some View {
         Form {
             switch viewModel.item.type {
+            case .boxSet:
+                boxSetSearchView
             case .movie:
-                movieSearch
+                movieSearchView
+            case .person:
+                personSearchView
             case .series:
-                seriesSearch
+                seriesSearchView
             default:
                 EmptyView()
             }
@@ -115,10 +142,51 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
         }
     }
 
-    // MARK: - Movie Search Fields
+    // MARK: - Box Set Search View
 
     @ViewBuilder
-    private var movieSearch: some View {
+    private var boxSetSearchView: some View {
+        Section(header: Text(L10n.search)) {
+            TextField(
+                L10n.name,
+                text: Binding(
+                    get: { boxSetInfo.name ?? "" },
+                    set: { newValue in
+                        boxSetInfo.name = newValue
+                        tempSearchInfo = boxSetInfo as? SearchInfo
+                    }
+                )
+            )
+
+            TextField(
+                L10n.originalTitle,
+                text: Binding(
+                    get: { boxSetInfo.originalTitle ?? "" },
+                    set: { newValue in
+                        boxSetInfo.originalTitle = newValue
+                        tempSearchInfo = boxSetInfo as? SearchInfo
+                    }
+                )
+            )
+
+            TextField(
+                L10n.year,
+                text: Binding(
+                    get: { boxSetInfo.year.map(String.init) ?? "" },
+                    set: { newValue in
+                        boxSetInfo.year = Int(newValue)
+                        tempSearchInfo = boxSetInfo as? SearchInfo
+                    }
+                )
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
+    // MARK: - Movie Search View
+
+    @ViewBuilder
+    private var movieSearchView: some View {
         Section(header: Text(L10n.search)) {
             TextField(
                 L10n.name,
@@ -156,10 +224,51 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
         }
     }
 
-    // MARK: - Series Search Fields
+    // MARK: - Person Search View
 
     @ViewBuilder
-    private var seriesSearch: some View {
+    private var personSearchView: some View {
+        Section(header: Text(L10n.search)) {
+            TextField(
+                L10n.name,
+                text: Binding(
+                    get: { personInfo.name ?? "" },
+                    set: { newValue in
+                        personInfo.name = newValue
+                        tempSearchInfo = personInfo as? SearchInfo
+                    }
+                )
+            )
+
+            TextField(
+                L10n.originalTitle,
+                text: Binding(
+                    get: { personInfo.originalTitle ?? "" },
+                    set: { newValue in
+                        personInfo.originalTitle = newValue
+                        tempSearchInfo = personInfo as? SearchInfo
+                    }
+                )
+            )
+
+            TextField(
+                L10n.year,
+                text: Binding(
+                    get: { personInfo.year.map(String.init) ?? "" },
+                    set: { newValue in
+                        personInfo.year = Int(newValue)
+                        tempSearchInfo = personInfo as? SearchInfo
+                    }
+                )
+            )
+            .keyboardType(.numberPad)
+        }
+    }
+
+    // MARK: - Series Search View
+
+    @ViewBuilder
+    private var seriesSearchView: some View {
         Section(header: Text(L10n.search)) {
             TextField(
                 L10n.name,
@@ -227,7 +336,6 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
                 Button(L10n.save) {
                     viewModel.send(.update(selected))
                     selectedMatch = nil
-                    router.dismissCoordinator()
                 }
                 .buttonStyle(.toolbarPill)
             }

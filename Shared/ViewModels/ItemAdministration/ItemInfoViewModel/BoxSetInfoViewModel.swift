@@ -10,20 +10,20 @@ import Combine
 import Foundation
 import JellyfinAPI
 
-class SeriesInfoViewModel: ItemInfoViewModel<SeriesInfo> {
+class BoxSetInfoViewModel: ItemInfoViewModel<BoxSetInfo> {
 
-    // MARK: - Return Matching Movies
+    // MARK: - Return Matching Box Set
 
-    override func searchItem(_ seriesInfo: SeriesInfo) async throws -> [RemoteSearchResult] {
-        guard let itemId = item.id, item.type == .movie else {
+    override func searchItem(_ boxSetInfo: BoxSetInfo) async throws -> [RemoteSearchResult] {
+        guard let itemId = item.id, item.type == .boxSet else {
             return []
         }
 
-        let parameters = SeriesInfoRemoteSearchQuery(
+        let parameters = BoxSetInfoRemoteSearchQuery(
             itemID: itemId,
-            searchInfo: seriesInfo
+            searchInfo: boxSetInfo
         )
-        let request = Paths.getSeriesRemoteSearchResults(parameters)
+        let request = Paths.getBoxSetRemoteSearchResults(parameters)
         let response = try await userSession.client.send(request)
 
         return response.value
