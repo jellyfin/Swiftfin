@@ -312,11 +312,6 @@ struct SelectUserView: View {
             guard !newValue else { return }
             selectedUsers.removeAll()
         }
-        .onChange(of: isPresentingConfirmDeleteUsers) { _, newValue in
-            guard !newValue else { return }
-            isEditingUsers = false
-            selectedUsers.removeAll()
-        }
         .onChange(of: serverSelection) { _, newValue in
             gridItems = makeGridItems(for: newValue)
 
