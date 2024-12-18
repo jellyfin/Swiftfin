@@ -1166,11 +1166,11 @@ internal enum L10n {
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
   /// Reset App Settings
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
-  /// Reset Settings - Button
+  /// Reset Settings
   internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
-  /// Reset Settings - Footer
+  /// Reset Swiftfin user settings
   internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings")
-  /// Reset Settings - Dialog Message
+  /// Are you sure you want to reset all user settings?
   internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Reset User Settings
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")

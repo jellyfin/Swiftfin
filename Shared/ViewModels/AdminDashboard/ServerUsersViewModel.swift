@@ -8,6 +8,7 @@
 
 import Combine
 import Foundation
+import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import SwiftUI
@@ -50,8 +51,10 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
+
     @Published
-    final var users: [UserDto] = []
+    final var users: IdentifiedArrayOf<UserDto> = []
+
     @Published
     final var state: State = .initial
 
@@ -211,7 +214,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
             .sorted(using: \.name)
 
         await MainActor.run {
-            self.users = newUsers
+            self.users = IdentifiedArray(uniqueElements: newUsers)
         }
     }
 
@@ -236,9 +239,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
         }
 
         await MainActor.run {
-            self.users = self.users.filter {
-                !userIdsToDelete.contains($0.id ?? "")
-            }
+            self.users.removeAll(where: { userIdsToDelete.contains($0.id ?? "") })
         }
     }
 
@@ -254,7 +255,7 @@ final class ServerUsersViewModel: ViewModel, Eventful, Stateful, Identifiable {
     private func appendUser(user: UserDto) async {
         await MainActor.run {
             users.append(user)
-            users = users.sorted(using: \.name)
+            users.sort(by: { $0.name ?? "" < $1.name ?? "" })
         }
     }
 }
