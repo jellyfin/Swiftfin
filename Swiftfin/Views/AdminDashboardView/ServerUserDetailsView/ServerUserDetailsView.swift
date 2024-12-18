@@ -65,16 +65,6 @@ struct ServerUserDetailsView: View {
             }
 
             Section {
-                if let userId = viewModel.user.id {
-                    ChevronButton(L10n.password)
-                        .onSelect {
-                            router.route(to: \.resetUserPassword, userId)
-                        }
-                }
-                ChevronButton(L10n.permissions)
-                    .onSelect {
-                        router.route(to: \.userPermissions, viewModel)
-                    }
                 ChevronAlertButton(
                     L10n.username,
                     subtitle: viewModel.user.name
@@ -91,6 +81,16 @@ struct ServerUserDetailsView: View {
                         }
                     }
                 }
+                if let userId = viewModel.user.id {
+                    ChevronButton(L10n.password)
+                        .onSelect {
+                            router.route(to: \.resetUserPassword, userId)
+                        }
+                }
+                ChevronButton(L10n.permissions)
+                    .onSelect {
+                        router.route(to: \.userPermissions, viewModel)
+                    }
             }
 
             Section(L10n.access) {
