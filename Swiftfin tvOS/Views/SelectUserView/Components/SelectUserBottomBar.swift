@@ -63,6 +63,7 @@ extension SelectUserView {
 //                }
 //            }
             }
+            .labelStyle(.iconOnly)
         }
 
         private var deleteUsersButton: some View {
@@ -70,6 +71,7 @@ extension SelectUserView {
                 onDelete()
             } label: {
                 Text(L10n.delete)
+                    .font(.body.weight(.semibold))
                     .foregroundStyle(areUsersSelected ? .primary : .secondary)
             }
             .disabled(!areUsersSelected)
@@ -94,13 +96,18 @@ extension SelectUserView {
         var body: some View {
             HStack(alignment: .center) {
                 if isEditing {
-                    deleteUsersButton
+                    Group {
+                        deleteUsersButton
 
-                    Button {
-                        isEditing = false
-                    } label: {
-                        L10n.cancel.text
+                        Button {
+                            isEditing = false
+                        } label: {
+                            L10n.cancel.text
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(Color.primary)
+                        }
                     }
+                    .padding(.bottom, 50)
                 } else {
                     ServerSelectionMenu(
                         selection: $serverSelection,
@@ -108,7 +115,6 @@ extension SelectUserView {
                     )
 
                     advancedMenu
-                        .labelStyle(.iconOnly)
                 }
             }
         }
