@@ -19,9 +19,10 @@ extension SelectUserView {
         @ObservedObject
         private var viewModel: SelectUserViewModel
 
-        private let onDelete: () -> Void
         private let areUsersSelected: Bool
         private let userCount: Int
+
+        private let onDelete: () -> Void
 
         // MARK: - Environment Variable
 
@@ -29,22 +30,6 @@ extension SelectUserView {
         private var colorScheme
 
         // MARK: - Advanced Menu
-
-        init(
-            isEditing: Binding<Bool>,
-            serverSelection: Binding<SelectUserServerSelection>,
-            areUsersSelected: Bool,
-            viewModel: SelectUserViewModel,
-            userCount: Int,
-            onDelete: @escaping () -> Void
-        ) {
-            self._isEditing = isEditing
-            self._serverSelection = serverSelection
-            self.viewModel = viewModel
-            self.areUsersSelected = areUsersSelected
-            self.userCount = userCount
-            self.onDelete = onDelete
-        }
 
         @ViewBuilder
         private var advancedMenu: some View {
@@ -80,16 +65,30 @@ extension SelectUserView {
             }
         }
 
-        @ViewBuilder
         private var deleteUsersButton: some View {
             Button {
                 onDelete()
             } label: {
                 Text(L10n.delete)
-                    .font(.body.weight(.semibold))
                     .foregroundStyle(areUsersSelected ? .primary : .secondary)
             }
             .disabled(!areUsersSelected)
+        }
+
+        init(
+            isEditing: Binding<Bool>,
+            serverSelection: Binding<SelectUserServerSelection>,
+            areUsersSelected: Bool,
+            viewModel: SelectUserViewModel,
+            userCount: Int,
+            onDelete: @escaping () -> Void
+        ) {
+            self._isEditing = isEditing
+            self._serverSelection = serverSelection
+            self.viewModel = viewModel
+            self.areUsersSelected = areUsersSelected
+            self.userCount = userCount
+            self.onDelete = onDelete
         }
 
         var body: some View {

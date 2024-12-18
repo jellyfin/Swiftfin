@@ -243,8 +243,6 @@ struct SelectUserView: View {
         .background {
             if let splashScreenImageSource {
                 ZStack {
-                    Color.clear
-
                     ImageView(splashScreenImageSource)
                         .aspectRatio(contentMode: .fill)
                         .id(splashScreenImageSource)
@@ -292,6 +290,43 @@ struct SelectUserView: View {
                 .buttonStyle(.card)
             }
         }
+    }
+
+    // MARK: - Functions
+
+    private func didDelete(_ server: ServerState) {
+        viewModel.send(.getServers)
+
+        if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+            if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                serverSelection = .server(id: first.id)
+            } else {
+                serverSelection = .all
+            }
+        }
+
+        // change splash screen selection if necessary
+//            selectUserAllServersSplashscreen = serverSelection
+    }
+
+    private func didAppear() {
+        viewModel.send(.getServers)
+
+        splashScreenImageSource = makeSplashScreenImageSource(
+            serverSelection: serverSelection,
+            allServersSelection: .all
+        )
+
+        // TODO: Is this necessary anymore?
+//            gridItems = OrderedSet(
+//                (0 ..< 20)
+//                    .map { i in
+//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
+//                    }
+//                    .map { u in
+//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
+//                    }
+//            )
     }
 
     // MARK: - Body
@@ -349,7 +384,7 @@ struct SelectUserView: View {
         .onNotification(.didDeleteServer) { server in
             didDelete(server)
         }
-        .alert(
+        .confirmationDialog(
             Text(L10n.deleteUser),
             isPresented: $isPresentingConfirmDeleteUsers,
             presenting: selectedUsers
@@ -365,40 +400,5 @@ struct SelectUserView: View {
             }
         }
         .errorMessage($error)
-    }
-
-    private func didDelete(_ server: ServerState) {
-        viewModel.send(.getServers)
-
-        if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-            if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                serverSelection = .server(id: first.id)
-            } else {
-                serverSelection = .all
-            }
-        }
-
-        // change splash screen selection if necessary
-//            selectUserAllServersSplashscreen = serverSelection
-    }
-
-    private func didAppear() {
-        viewModel.send(.getServers)
-
-        splashScreenImageSource = makeSplashScreenImageSource(
-            serverSelection: serverSelection,
-            allServersSelection: .all
-        )
-
-        // TODO: Is this necessary anymore?
-//            gridItems = OrderedSet(
-//                (0 ..< 20)
-//                    .map { i in
-//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
-//                    }
-//                    .map { u in
-//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
-//                    }
-//            )
     }
 }

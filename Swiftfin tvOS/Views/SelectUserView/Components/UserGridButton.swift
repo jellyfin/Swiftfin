@@ -62,27 +62,25 @@ extension SelectUserView {
 
         @ViewBuilder
         private var userImage: some View {
-            ZStack {
-                ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
-                    .image { image in
-                        image
-                            .posterBorder(ratio: 1 / 2, of: \.width)
-                    }
-                    .placeholder { _ in
-                        personView
-                    }
-                    .failure {
-                        personView
-                    }
-            }
-            .aspectRatio(1, contentMode: .fill)
-            .overlay {
-                if isEditing {
-                    Color.black
-                        .opacity(isSelected ? 0 : 0.5)
-                        .clipShape(.circle)
+            ImageView(user.profileImageSource(client: server.client, maxWidth: 120))
+                .image { image in
+                    image
+                        .posterBorder(ratio: 1 / 2, of: \.width)
                 }
-            }
+                .placeholder { _ in
+                    personView
+                }
+                .failure {
+                    personView
+                }
+                .aspectRatio(1, contentMode: .fill)
+                .overlay {
+                    if isEditing {
+                        Color.black
+                            .opacity(isSelected ? 0 : 0.5)
+                            .clipShape(.circle)
+                    }
+                }
         }
 
         var body: some View {
