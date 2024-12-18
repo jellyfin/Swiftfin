@@ -391,6 +391,7 @@ struct SelectUserView: View {
         ) { selectedUsers in
             Button(L10n.delete, role: .destructive) {
                 viewModel.send(.deleteUsers(Array(selectedUsers)))
+                isEditingUsers = false
             }
         } message: { selectedUsers in
             if selectedUsers.count == 1, let first = selectedUsers.first {
