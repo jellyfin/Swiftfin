@@ -7,48 +7,53 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
+import Nuke
 import SwiftUI
 
-struct UserProfileImage: View {
+struct UserEditableHeroImage: View {
 
-    // MARK: - Defaults
+    // MARK: - Accent Color
 
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - User Profile Variables
+    // MARK: - User Session
 
-    let username: String?
-    let imageSource: ImageSource
+    @Injected(\.currentUserSession)
+    private var userSession
 
-    // MARK: - User Profile Action Menu
+    // MARK: - User Variables
 
-    let select: () -> Void
-    let delete: () -> Void
+    private let user: UserDto
+    private let source: ImageSource
+    private let pipeline: ImagePipeline
+
+    // MARK: - User Actions
+
+    private let onUpdate: () -> Void
+    private let onDelete: () -> Void
 
     // MARK: - Dialog State
 
     @State
-    private var isPresentingOptions = false
+    private var isPresentingOptions: Bool = false
 
-    // MARK: - Image View
+    // MARK: - Initializer
 
-    @ViewBuilder
-    private var imageView: some View {
-        RedrawOnNotificationView(.didChangeUserProfile) {
-            ImageView(imageSource)
-                .pipeline(.Swiftfin.branding)
-                .image { image in
-                    image.posterBorder(ratio: 1 / 2, of: \.width)
-                }
-                .placeholder { _ in
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
-                .failure {
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                }
-        }
+    init(
+        user: UserDto,
+        source: ImageSource,
+        pipeline: ImagePipeline = .Swiftfin.default,
+        onUpdate: @escaping () -> Void,
+        onDelete: @escaping () -> Void
+    ) {
+        self.user = user
+        self.source = source
+        self.pipeline = pipeline
+        self.onUpdate = onUpdate
+        self.onDelete = onDelete
     }
 
     // MARK: - Body
@@ -63,7 +68,11 @@ struct UserProfileImage: View {
                         // `.aspectRatio(contentMode: .fill)` on `imageView` alone
                         // causes a crash on some iOS versions
                         ZStack {
-                            imageView
+                            UserProfileHeroImage(
+                                userId: user.id,
+                                source: source,
+                                pipeline: userSession?.user.id == user.id ? .Swiftfin.branding : .Swiftfin.default
+                            )
                         }
                         .aspectRatio(1, contentMode: .fill)
                         .clipShape(.circle)
@@ -79,7 +88,7 @@ struct UserProfileImage: View {
                     }
                 }
 
-                Text(username ?? L10n.unknown)
+                Text(user.name ?? L10n.unknown)
                     .fontWeight(.semibold)
                     .font(.title2)
             }
@@ -87,15 +96,19 @@ struct UserProfileImage: View {
             .listRowBackground(Color.clear)
         }
         .confirmationDialog(
-            L10n.profileImage,
+            """
+            \(L10n.profileImage)
+            \(L10n.viewsMayRequireRestart)
+            """,
             isPresented: $isPresentingOptions,
             titleVisibility: .visible
         ) {
+            Text(L10n.viewsMayRequireRestart)
             Button(L10n.selectImage) {
-                select()
+                onUpdate()
             }
             Button(L10n.delete, role: .destructive) {
-                delete()
+                onDelete()
             }
         }
     }

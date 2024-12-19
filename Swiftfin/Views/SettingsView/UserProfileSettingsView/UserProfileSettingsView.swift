@@ -8,6 +8,7 @@
 
 import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 struct UserProfileSettingsView: View {
@@ -35,15 +36,18 @@ struct UserProfileSettingsView: View {
 
     var body: some View {
         List {
-            UserProfileImage(
-                username: viewModel.userSession.user.username,
-                imageSource: viewModel.userSession.user.profileImageSource(
+            UserEditableHeroImage(
+                user: UserDto(
+                    id: viewModel.userSession.user.id,
+                    name: viewModel.userSession.user.username
+                ),
+                source: viewModel.userSession.user.profileImageSource(
                     client: viewModel.userSession.client,
-                    maxWidth: 120
+                    maxWidth: 150
                 )
             ) {
                 router.route(to: \.photoPicker, profileViewModel)
-            } delete: {
+            } onDelete: {
                 profileViewModel.send(.delete)
             }
 

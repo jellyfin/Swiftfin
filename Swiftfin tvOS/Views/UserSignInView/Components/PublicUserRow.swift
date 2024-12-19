@@ -49,21 +49,14 @@ extension UserSignInView {
                     ZStack {
                         Color.clear
 
-                        ImageView(user.profileImageSource(client: client, maxWidth: 120))
-                            .image { image in
-                                image
-                                    .posterBorder(ratio: 0.5, of: \.width)
-                            }
-                            .placeholder { _ in
-                                personView
-                            }
-                            .failure {
-                                personView
-                            }
+                        UserProfileHeroImage(
+                            userId: user.id,
+                            source: user.profileImageSource(
+                                client: client,
+                                maxWidth: 120
+                            )
+                        )
                     }
-                    .aspectRatio(1, contentMode: .fill)
-                    .posterShadow()
-                    .clipShape(.circle)
                     .frame(width: 50, height: 50)
 
                     Text(user.name ?? .emptyDash)

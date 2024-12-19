@@ -248,7 +248,7 @@
 "invertedLight" = "Inverted Light";
 "appIcon" = "App Icon";
 "accentColor" = "Accent Color";
-"accentColorDescription" = "Some views may need an app restart to update.";
+"viewsMayRequireRestart" = "Some views may need an app restart to update.";
 "dismiss" = "Dismiss";
 "played" = "Played";
 "unplayed" = "Unplayed";

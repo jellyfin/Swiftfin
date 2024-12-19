@@ -16,22 +16,22 @@ struct UserProfileHeroImage: View {
     // MARK: - User Variables
 
     private let userId: String?
-    private let size: CGFloat
     private let source: ImageSource
     private let pipeline: ImagePipeline
+    private let placeholder: any View
 
     // MARK: - Initializer
 
     init(
         userId: String?,
-        size: CGFloat = 150,
         source: ImageSource,
-        pipeline: ImagePipeline = .Swiftfin.default
+        pipeline: ImagePipeline = .Swiftfin.default,
+        placeholder: any View = SystemImageContentView(systemName: "person.fill", ratio: 0.5)
     ) {
         self.userId = userId
-        self.size = size
         self.source = source
         self.pipeline = pipeline
+        self.placeholder = placeholder
     }
 
     // MARK: - Body
@@ -49,14 +49,14 @@ struct UserProfileHeroImage: View {
                     $0.posterBorder(ratio: 1 / 2, of: \.width)
                 }
                 .placeholder { _ in
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    placeholder
                 }
                 .failure {
-                    SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                    placeholder
                 }
+                .posterShadow()
                 .aspectRatio(1, contentMode: .fill)
                 .clipShape(Circle())
-                .frame(width: size, height: size)
                 .shadow(radius: 5)
         }
     }

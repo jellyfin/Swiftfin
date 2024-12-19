@@ -52,15 +52,15 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-            UserProfileImage(
-                username: viewModel.user.name,
-                imageSource: viewModel.user.profileImageSource(
+            UserEditableHeroImage(
+                user: viewModel.user,
+                source: viewModel.user.profileImageSource(
                     client: viewModel.userSession.client,
-                    maxWidth: 120
+                    maxWidth: 150
                 )
             ) {
                 router.route(to: \.userPhotoPicker, profileViewModel)
-            } delete: {
+            } onDelete: {
                 profileViewModel.send(.delete)
             }
 
