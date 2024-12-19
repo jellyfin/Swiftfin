@@ -16,8 +16,6 @@ internal enum L10n {
   internal static let absolute = L10n.tr("Localizable", "absolute", fallback: "Absolute")
   /// Accent Color
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
-  /// Some views may need an app restart to update.
-  internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
   /// Access
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
@@ -46,8 +44,8 @@ internal enum L10n {
   internal static let additionalSecurityAccessDescription = L10n.tr("Localizable", "additionalSecurityAccessDescription", fallback: "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.")
   /// Add Server
   internal static let addServer = L10n.tr("Localizable", "addServer", fallback: "Add Server")
-  /// Add Trigger
-  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add Trigger")
+  /// Add trigger
+  internal static let addTrigger = L10n.tr("Localizable", "addTrigger", fallback: "Add trigger")
   /// Add URL
   internal static let addURL = L10n.tr("Localizable", "addURL", fallback: "Add URL")
   /// Add User
@@ -1046,6 +1044,8 @@ internal enum L10n {
   internal static let production = L10n.tr("Localizable", "production", fallback: "Production")
   /// Production Locations
   internal static let productionLocations = L10n.tr("Localizable", "productionLocations", fallback: "Production Locations")
+  /// Profile Image
+  internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// Profiles
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Programs
@@ -1164,6 +1164,12 @@ internal enum L10n {
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
   /// Reset App Settings
   internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
+  /// Reset Settings
+  internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
+  /// Reset Swiftfin user settings
+  internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings")
+  /// Are you sure you want to reset all user settings?
+  internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Reset User Settings
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
   /// Restart Server
@@ -1238,6 +1244,8 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
+  /// Select Image
+  internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop
@@ -1566,6 +1574,8 @@ internal enum L10n {
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Video transcoding
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
+  /// Some views may need an app restart to update.
+  internal static let viewsMayRequireRestart = L10n.tr("Localizable", "viewsMayRequireRestart", fallback: "Some views may need an app restart to update.")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend

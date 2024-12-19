@@ -248,7 +248,7 @@
 "invertedLight" = "Inverted Light";
 "appIcon" = "App Icon";
 "accentColor" = "Accent Color";
-"accentColorDescription" = "Some views may need an app restart to update.";
+"viewsMayRequireRestart" = "Some views may need an app restart to update.";
 "dismiss" = "Dismiss";
 "played" = "Played";
 "unplayed" = "Unplayed";
@@ -2300,3 +2300,18 @@
 // Delete Selected Schedules - Button
 // Button label for deleting all selected Access Schedules
 "deleteSelectedSchedules" = "Delete Selected Schedules";
+
+/// Profile Image
+"profileImage" = "Profile Image";
+
+/// Select Image
+"selectImage" = "Select Image";
+
+/// Reset Settings
+"resetSettings" = "Reset Settings";
+
+/// Reset Swiftfin user settings
+"resetSettingsDescription" = "Reset Swiftfin user settings";
+
+/// Are you sure you want to reset all user settings?
+"resetSettingsMessage" = "Are you sure you want to reset all user settings?";
