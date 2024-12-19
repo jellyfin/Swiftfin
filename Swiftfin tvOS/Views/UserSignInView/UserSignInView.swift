@@ -13,8 +13,6 @@ import JellyfinAPI
 import Stinsen
 import SwiftUI
 
-// TODO: change public users from list to grid
-
 struct UserSignInView: View {
 
     // MARK: - Defaults
@@ -30,12 +28,15 @@ struct UserSignInView: View {
     }
 
     @FocusState
-    private var focusedTextField: FocusField?
+    private var focusedField: FocusField?
 
     // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: UserSignInCoordinator.Router
+
+    @StateObject
+    private var focusGuide: FocusGuide = .init()
 
     @StateObject
     private var viewModel: UserSignInViewModel
@@ -69,39 +70,37 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var signInSection: some View {
-        Section {
-            TextField(L10n.username, text: $username)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .focused($focusedTextField, equals: .username)
+        TextField(L10n.username, text: $username)
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($focusedField, equals: .username)
 
-            SecureField(L10n.password, text: $password)
-                .focused($focusedTextField, equals: .password)
-                .onSubmit {
-                    guard username.isNotEmpty else {
-                        return
-                    }
-                    viewModel.send(.signIn(username: username, password: password, policy: .none))
+        SecureField(L10n.password, text: $password)
+            .focused($focusedField, equals: .password)
+            .onSubmit {
+                guard username.isNotEmpty else {
+                    return
                 }
-        } header: {
-            Text(L10n.signInToServer(viewModel.server.name))
-        }
+                viewModel.send(.signIn(username: username, password: password, policy: .none))
+            }
 
         if case .signingIn = viewModel.state {
-            Button(L10n.cancel) {
+            ListRowButton(L10n.cancel) {
                 viewModel.send(.cancel)
             }
-            .foregroundStyle(.red, .red.opacity(0.2))
+            .foregroundStyle(.red, accentColor)
+            .padding(.vertical)
         } else {
-            Button(L10n.signIn) {
+            ListRowButton(L10n.signIn) {
                 viewModel.send(.signIn(username: username, password: password, policy: .none))
             }
             .disabled(username.isEmpty)
             .foregroundStyle(
                 accentColor.overlayColor,
-                accentColor
+                username.isEmpty ? Color.white.opacity(0.5) : accentColor
             )
             .opacity(username.isEmpty ? 0.5 : 1)
+            .padding(.vertical)
         }
 
         if viewModel.isQuickConnectEnabled {
@@ -114,14 +113,17 @@ struct UserSignInView: View {
                     accentColor.overlayColor,
                     accentColor
                 )
+                .padding(.bottom)
             }
         }
 
         if let disclaimer = viewModel.serverDisclaimer {
             Section(L10n.disclaimer) {
                 Text(disclaimer)
+                    .foregroundStyle(.secondary)
                     .font(.callout)
             }
+            .padding(.top)
         }
     }
 
@@ -129,22 +131,30 @@ struct UserSignInView: View {
 
     @ViewBuilder
     private var publicUsersSection: some View {
-        Section(L10n.publicUsers) {
-            if viewModel.publicUsers.isEmpty {
-                L10n.noPublicUsers.text
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-            } else {
+        if viewModel.publicUsers.isEmpty {
+            L10n.noPublicUsers.text
+                .font(.callout)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .frame(maxHeight: .infinity, alignment: .center)
+        } else {
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.flexible()), count: 4),
+                spacing: 30
+            ) {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserRow(
+                    PublicUserButton(
                         user: user,
                         client: viewModel.server.client
                     ) {
                         username = user.name ?? ""
                         password = ""
-                        focusedTextField = .password
+                        focusedField = .password
                     }
+                    .environment(
+                        \.isEnabled,
+                        viewModel.state != .signingIn
+                    )
                 }
             }
         }
@@ -153,34 +163,14 @@ struct UserSignInView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-
-                if viewModel.state == .signingIn {
-                    ProgressView()
-                }
-            }
-            .frame(height: 100)
-            .overlay {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
-            }
-
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    signInSection
-                }
-
-                VStack(alignment: .leading) {
-                    publicUsersSection
-                }
-            }
-
-            Spacer()
+        SplitLoginWindowView(
+            isLoading: viewModel.state == .signingIn,
+            leadingTitle: L10n.signInToServer(viewModel.server.name),
+            trailingTitle: L10n.publicUsers
+        ) {
+            signInSection
+        } trailingContentView: {
+            publicUsersSection
         }
         .onReceive(viewModel.events) { event in
             switch event {
@@ -198,7 +188,7 @@ struct UserSignInView: View {
             }
         }
         .onFirstAppear {
-            focusedTextField = .username
+            focusedField = .username
             viewModel.send(.getPublicData)
         }
         .alert(
@@ -209,11 +199,11 @@ struct UserSignInView: View {
 
             // TODO: uncomment when duplicate user fixed
 //            Button(L10n.signIn) {
-//                signInUplicate(user: user, replace: false)
+//                signInDuplicate(user: user, replace: false)
 //            }
 
 //            Button("Replace") {
-//                signInUplicate(user: user, replace: true)
+//                signInDuplicate(user: user, replace: true)
 //            }
 
             Button(L10n.dismiss, role: .cancel)
