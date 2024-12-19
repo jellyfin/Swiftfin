@@ -137,7 +137,7 @@ struct UserSignInView: View {
                     .frame(maxWidth: .infinity)
             } else {
                 ForEach(viewModel.publicUsers, id: \.id) { user in
-                    PublicUserRow(
+                    PublicUserButton(
                         user: user,
                         client: viewModel.server.client
                     ) {
