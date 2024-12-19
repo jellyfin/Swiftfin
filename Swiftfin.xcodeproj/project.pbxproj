@@ -881,7 +881,6 @@
 		E193D5432719407E00900D82 /* tvOSMainCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */; };
 		E193D547271941C500900D82 /* SelectUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D546271941C500900D82 /* SelectUserView.swift */; };
 		E193D549271941CC00900D82 /* UserSignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D548271941CC00900D82 /* UserSignInView.swift */; };
-		E193D54B271941D300900D82 /* SelectServerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54A271941D300900D82 /* SelectServerView.swift */; };
 		E193D5502719430400900D82 /* ServerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D54F2719430400900D82 /* ServerDetailView.swift */; };
 		E193D5512719432400900D82 /* ServerConnectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E173DA5326D050F500CC4EB7 /* ServerConnectionViewModel.swift */; };
 		E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */; };
@@ -1774,7 +1773,6 @@
 		E193D5422719407E00900D82 /* tvOSMainCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainCoordinator.swift; sourceTree = "<group>"; };
 		E193D546271941C500900D82 /* SelectUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserView.swift; sourceTree = "<group>"; };
 		E193D548271941CC00900D82 /* UserSignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSignInView.swift; sourceTree = "<group>"; };
-		E193D54A271941D300900D82 /* SelectServerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectServerView.swift; sourceTree = "<group>"; };
 		E193D54F2719430400900D82 /* ServerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerDetailView.swift; sourceTree = "<group>"; };
 		E193D552271943D500900D82 /* tvOSMainTabCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tvOSMainTabCoordinator.swift; sourceTree = "<group>"; };
 		E19D41A62BEEDC450082B8B2 /* UserLocalSecurityViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserLocalSecurityViewModel.swift; sourceTree = "<group>"; };
@@ -2980,7 +2978,6 @@
 				E1A42E4928CA6CCD00A14DCB /* CinematicItemSelector.swift */,
 				E1C92618288756BD002A7A66 /* DotHStack.swift */,
 				E12E30F4296392EC0022FAC9 /* EnumPickerView.swift */,
-				E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */,
 				E1549677296CB22B00C4EF88 /* InlineEnumToggle.swift */,
 				E1A42E5028CBE44500A14DCB /* LandscapePosterProgressBar.swift */,
 				E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */,
@@ -3737,7 +3734,6 @@
 				E10B1E8C2BD7708900A92EAF /* QuickConnectView.swift */,
 				E1E1643928BAC2EF00323B0A /* SearchView.swift */,
 				4EF18B232CB9932F00343666 /* PagingLibraryView */,
-				E193D54A271941D300900D82 /* SelectServerView.swift */,
 				E164A8122BE4995200A54B18 /* SelectUserView */,
 				E193D54F2719430400900D82 /* ServerDetailView.swift */,
 				E1E5D54D2783E66600692DFE /* SettingsView */,
@@ -5234,7 +5230,6 @@
 				4ECF5D8B2D0A57EF00F066B1 /* DynamicDayOfWeek.swift in Sources */,
 				62E632ED267D410B0063E547 /* SeriesItemViewModel.swift in Sources */,
 				5398514526B64DA100101B49 /* SettingsView.swift in Sources */,
-				E193D54B271941D300900D82 /* SelectServerView.swift in Sources */,
 				E1575E91293E7B1E001665B1 /* URL.swift in Sources */,
 				53ABFDE6267974EF00886593 /* SettingsViewModel.swift in Sources */,
 				E10B1EC22BD9AD6100A92EAF /* V1UserModel.swift in Sources */,
@@ -5485,7 +5480,6 @@
 				E193D553271943D500900D82 /* tvOSMainTabCoordinator.swift in Sources */,
 				4E8B34EB2AB91B6E0018F305 /* ItemFilter.swift in Sources */,
 				E174121029AE9D94003EF3B5 /* NavigationCoordinatable.swift in Sources */,
-				E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */,
 				E14EDECD2B8FB709000F00A4 /* ItemYear.swift in Sources */,
 				E154965F296CA2EF00C4EF88 /* DownloadTask.swift in Sources */,
 				E154967E296CCB6C00C4EF88 /* BasicNavigationCoordinator.swift in Sources */,
