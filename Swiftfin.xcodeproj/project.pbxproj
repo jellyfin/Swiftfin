@@ -763,7 +763,7 @@
 		E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */; };
 		E1763A642BF3C9AA004DF6AB /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */; };
 		E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */; };
-		E1763A6A2BF3D177004DF6AB /* PublicUserRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserRow.swift */; };
+		E1763A6A2BF3D177004DF6AB /* PublicUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserButton.swift */; };
 		E1763A712BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E1763A742BF3FA4C004DF6AB /* AppLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */; };
@@ -1695,7 +1695,7 @@
 		E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridButton.swift; sourceTree = "<group>"; };
 		E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
 		E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenMenu.swift; sourceTree = "<group>"; };
-		E1763A692BF3D177004DF6AB /* PublicUserRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserRow.swift; sourceTree = "<group>"; };
+		E1763A692BF3D177004DF6AB /* PublicUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserButton.swift; sourceTree = "<group>"; };
 		E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+Mappings.swift"; sourceTree = "<group>"; };
 		E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoadingView.swift; sourceTree = "<group>"; };
 		E1763A752BF3FF01004DF6AB /* AppLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoadingView.swift; sourceTree = "<group>"; };
@@ -4016,7 +4016,7 @@
 		E1763A682BF3D16E004DF6AB /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				E1763A692BF3D177004DF6AB /* PublicUserRow.swift */,
+				E1763A692BF3D177004DF6AB /* PublicUserButton.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -5331,7 +5331,7 @@
 				E1575E7D293E77B5001665B1 /* PosterDisplayType.swift in Sources */,
 				E1E5D553278419D900692DFE /* ConfirmCloseOverlay.swift in Sources */,
 				E18A17F2298C68BB00C22F62 /* MainOverlay.swift in Sources */,
-				E1763A6A2BF3D177004DF6AB /* PublicUserRow.swift in Sources */,
+				E1763A6A2BF3D177004DF6AB /* PublicUserButton.swift in Sources */,
 				E1E6C44B29AED2B70064123F /* HorizontalAlignment.swift in Sources */,
 				4E35CE672CBED8B600DBD886 /* ServerTicks.swift in Sources */,
 				E193D549271941CC00900D82 /* UserSignInView.swift in Sources */,
