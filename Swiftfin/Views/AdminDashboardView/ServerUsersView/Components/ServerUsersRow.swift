@@ -75,15 +75,20 @@ extension ServerUsersView {
         @ViewBuilder
         private var userImage: some View {
             ZStack {
-                ImageView(user.profileImageSource(client: userSession!.client))
-                    .pipeline(.Swiftfin.branding)
-                    .placeholder { _ in
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-                    .grayscale(userActive ? 0.0 : 1.0)
+                RedrawOnNotificationView(
+                    .didChangeUserProfile,
+                    filter: { $0 == user.id }
+                ) {
+                    ImageView(user.profileImageSource(client: userSession!.client))
+                        .pipeline(.Swiftfin.branding)
+                        .placeholder { _ in
+                            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                        }
+                        .failure {
+                            SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+                        }
+                        .grayscale(userActive ? 0.0 : 1.0)
+                }
 
                 if isEditing {
                     Color.black
