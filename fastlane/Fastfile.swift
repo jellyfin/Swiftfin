@@ -10,71 +10,18 @@ import Foundation
 
 class Fastfile: LaneFile {
     
-    // MARK: tag
-    
-    func tagLane(withOptions options: [String: String]?) {
-        
-        guard let options,
-                let tag = options["tag"] else {
-            puts(message: "ERROR: missing options")
-            exit(1)
-        }
-
-        guard !gitTagExists(tag: tag) else {
-            puts(message: "ERROR: tag \(tag) already exists")
-            exit(1)
-        }
-        
-        addGitTag(
-            tag: .userDefined(tag),
-            commit: .userDefined(options["commit"])
-        )
-        
-        pushGitTags(
-            force: true
-        )
-    }
-    
-    // MARK: draft release
-    
-    func draftReleaseLane(withOptions options: [String: String]?) {
-        
-        guard let options,
-                let repository = options["repository"],
-                let apiToken = options["apiToken"],
-                let tag = options["tag"],
-                let name64 = options["name64"] else {
-            puts(message: "ERROR: missing options")
-            exit(1)
-        }
-        
-        guard let name = decodeBase64(encoded: name64) else {
-            puts(message: "ERROR: name not valid base 64")
-            exit(1)
-        }
-        
-        setGithubRelease(
-            repositoryName: repository,
-            apiToken: .userDefined(apiToken),
-            tagName: tag,
-            name: .userDefined(name),
-            isDraft: true,
-            isGenerateReleaseNotes: true
-        )
-    }
-    
     // MARK: TestFlight
     
     // TODO: verify tvOS
     func testFlightLane(withOptions options: [String: String]?) {
         
         guard let options,
-              let keyID = options["keyID"],
-              let issuerID = options["issuerID"],
-              let keyContents = options["keyContents"],
-              let scheme = options["scheme"],
-              let codeSign64 = options["codeSign64"],
-              let profileName64 = options["profileName64"]
+              let keyID = options["keyID"]?.trimOption(),
+              let issuerID = options["issuerID"]?.trimOption(),
+              let keyContents = options["keyContents"]?.trimOption(),
+              let scheme = options["scheme"]?.trimOption(),
+              let codeSign64 = options["codeSign64"]?.trimOption(),
+              let profileName64 = options["profileName64"]?.trimOption()
         else {
             puts(message: "ERROR: missing or incorrect options")
             exit(1)
@@ -148,5 +95,14 @@ class Fastfile: LaneFile {
         }
         
         return decoded
+    }
+}
+
+extension String {
+    
+    /// Trim the option value from whitespaces and newlines, which may
+    /// accidentally be present in GitHub secrets.
+    func trimOption() -> String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
