@@ -289,6 +289,7 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea()
+        .navigationBarBranding()
         .onAppear {
             viewModel.send(.getServers)
 
