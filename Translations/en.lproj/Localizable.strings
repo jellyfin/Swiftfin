@@ -2300,7 +2300,3 @@
 // Delete Selected Schedules - Button
 // Button label for deleting all selected Access Schedules
 "deleteSelectedSchedules" = "Delete Selected Schedules";
-
-// Selected Server - Section Title
-// Section title for server selection
-"selectedServer" = "Selected Server";

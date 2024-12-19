@@ -1238,8 +1238,6 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Select Cast Destination
   internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
-  /// Selected Server
-  internal static let selectedServer = L10n.tr("Localizable", "selectedServer", fallback: "Selected Server")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop
