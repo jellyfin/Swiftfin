@@ -153,7 +153,7 @@ struct UserSignInView: View {
                     }
                     .environment(
                         \.isEnabled,
-                        viewModel.state != .signingIn && user.name != username
+                        viewModel.state != .signingIn
                     )
                 }
             }
@@ -167,11 +167,9 @@ struct UserSignInView: View {
             isLoading: viewModel.state == .signingIn,
             leadingTitle: L10n.signInToServer(viewModel.server.name),
             trailingTitle: L10n.publicUsers
-        )
-        .leadingContentView {
+        ) {
             signInSection
-        }
-        .trailingContentView {
+        } trailingContentView: {
             publicUsersSection
         }
         .onReceive(viewModel.events) { event in

@@ -14,7 +14,7 @@ extension View {
 
     @ViewBuilder
     func navigationBarBranding(
-        isLoading: Bool? = false
+        isLoading: Bool = false
     ) -> some View {
         modifier(
             NavigationBarBrandingModifier(

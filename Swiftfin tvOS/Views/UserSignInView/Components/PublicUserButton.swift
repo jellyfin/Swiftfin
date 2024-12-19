@@ -16,7 +16,7 @@ extension UserSignInView {
         // MARK: - Environment Variables
 
         @Environment(\.isEnabled)
-        var isEnabled: Bool
+        private var isEnabled: Bool
 
         // MARK: - Public User Variables
 

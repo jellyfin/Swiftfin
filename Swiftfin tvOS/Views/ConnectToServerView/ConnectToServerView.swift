@@ -117,11 +117,9 @@ struct ConnectToServerView: View {
             isLoading: viewModel.state == .connecting,
             leadingTitle: L10n.connectToServer,
             trailingTitle: L10n.localServers
-        )
-        .leadingContentView {
+        ) {
             connectSection
-        }
-        .trailingContentView {
+        } trailingContentView: {
             localServersSection
         }
         .onFirstAppear {

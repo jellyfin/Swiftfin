@@ -17,7 +17,7 @@ extension ConnectToServerView {
         // MARK: - Environment Variables
 
         @Environment(\.isEnabled)
-        var isEnabled: Bool
+        private var isEnabled: Bool
 
         // MARK: - Local Server Variables
 
@@ -34,9 +34,7 @@ extension ConnectToServerView {
         // MARK: - Local Server Button
 
         var body: some View {
-            Button {
-                action()
-            } label: {
+            Button(action: action) {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(server.name)
@@ -45,14 +43,14 @@ extension ConnectToServerView {
 
                         Text(server.currentURL.absoluteString)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.body.weight(.regular))
-                        .foregroundColor(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .padding()
             }

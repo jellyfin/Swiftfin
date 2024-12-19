@@ -9,18 +9,18 @@
 import Foundation
 import SwiftUI
 
-struct SplitLoginWindowView: View {
+struct SplitLoginWindowView<Leading: View, Trailing: View>: View {
 
     // MARK: - Loading State
 
-    private var isLoading: Bool
+    private let isLoading: Bool
 
     // MARK: - Content Variables
 
-    private var leadingTitle: String
-    private var leadingContentView: () -> any View
-    private var trailingTitle: String
-    private var trailingContentView: () -> any View
+    private let leadingTitle: String
+    private let leadingContentView: () -> Leading
+    private let trailingTitle: String
+    private let trailingContentView: () -> Trailing
 
     // MARK: - Body
 
@@ -57,19 +57,17 @@ struct SplitLoginWindowView: View {
 
 extension SplitLoginWindowView {
 
-    init(isLoading: Bool = false, leadingTitle: String, trailingTitle: String) {
+    init(
+        isLoading: Bool = false,
+        leadingTitle: String,
+        trailingTitle: String,
+        @ViewBuilder leadingContentView: @escaping () -> Leading,
+        @ViewBuilder trailingContentView: @escaping () -> Trailing
+    ) {
         self.isLoading = isLoading
         self.leadingTitle = leadingTitle
         self.trailingTitle = trailingTitle
-        self.leadingContentView = { EmptyView() }
-        self.trailingContentView = { EmptyView() }
-    }
-
-    func leadingContentView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.leadingContentView, with: content)
-    }
-
-    func trailingContentView(@ViewBuilder _ content: @escaping () -> any View) -> Self {
-        copy(modifying: \.trailingContentView, with: content)
+        self.leadingContentView = leadingContentView
+        self.trailingContentView = trailingContentView
     }
 }

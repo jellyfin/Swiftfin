@@ -11,7 +11,7 @@ import SwiftUI
 
 struct NavigationBarBrandingModifier: ViewModifier {
 
-    var isLoading: Bool?
+    let isLoading: Bool
 
     func body(content: Content) -> some View {
         content
@@ -23,8 +23,9 @@ struct NavigationBarBrandingModifier: ViewModifier {
                         .frame(height: 100)
                         .padding(.bottom, 25)
                 }
-                ToolbarItem(placement: .topBarTrailing) {
-                    if let loading = isLoading, loading {
+
+                if isLoading {
+                    ToolbarItem(placement: .topBarTrailing) {
                         ProgressView()
                     }
                 }
