@@ -21,7 +21,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     // MARK: - Route to Metadata
 
-    @Route(.modal)
+    @Route(.push)
     var editIdentity = makeEditIdentity
     @Route(.modal)
     var editMetadata = makeEditMetadata
@@ -62,14 +62,19 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     // MARK: - Item Metadata
 
-    func makeEditIdentity(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            switch item.type {
-            case .movie:
-                IdentifyItemView<MovieInfo>(viewModel: MovieInfoViewModel(item: item))
-            default:
-                ErrorView(error: JellyfinAPIError("How did you get here?"))
-            }
+    @ViewBuilder
+    func makeEditIdentity(item: BaseItemDto) -> some View {
+        switch item.type {
+        case .boxSet:
+            IdentifyItemView<BoxSetInfo>(viewModel: BoxSetInfoViewModel(item: item))
+        case .movie:
+            IdentifyItemView<MovieInfo>(viewModel: MovieInfoViewModel(item: item))
+        case .person:
+            IdentifyItemView<PersonLookupInfo>(viewModel: PersonInfoViewModel(item: item))
+        case .series:
+            IdentifyItemView<SeriesInfo>(viewModel: SeriesInfoViewModel(item: item))
+        default:
+            ErrorView(error: JellyfinAPIError("Invalid media type"))
         }
     }
 

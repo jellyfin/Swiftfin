@@ -28,17 +28,17 @@ extension IdentifyItemView {
         var body: some View {
             NavigationView {
                 VStack(alignment: .leading, spacing: 16) {
-                    HStack(alignment: .top) {
-                        remoteImage
-                            .eraseToAnyView()
-                            .frame(width: 60, height: 180)
-                            .padding(.horizontal, 32)
+                    remoteImage
+                        .eraseToAnyView()
+                        .frame(width: 60, height: 180, alignment: .leading)
 
-                        Spacer()
-                    }
+                    Text(itemInfo.name ?? L10n.unknown)
+                        .foregroundStyle(Color.primary)
+                        .font(.headline)
 
                     Text(itemInfo.premiereDate?.formatted(.dateTime.year().month().day()) ?? .emptyDash)
                         .foregroundStyle(Color.primary)
+                        .font(.subheadline)
 
                     Text(itemInfo.overview ?? L10n.unknown)
                         .foregroundStyle(Color.secondary)
@@ -49,17 +49,18 @@ extension IdentifyItemView {
                         .foregroundStyle(Color.secondary)
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(itemInfo.name ?? L10n.unknown)
-            .navigationBarCloseButton {
-                onClose()
-            }
-            .topBarTrailing {
-                Button(L10n.save) {
-                    onSave()
+                .padding()
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationTitle("Item")
+                .navigationBarCloseButton {
+                    onClose()
                 }
-                .buttonStyle(.toolbarPill)
+                .topBarTrailing {
+                    Button(L10n.save) {
+                        onSave()
+                    }
+                    .buttonStyle(.toolbarPill)
+                }
             }
         }
     }

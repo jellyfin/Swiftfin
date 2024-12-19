@@ -27,7 +27,9 @@ extension IdentifyItemView {
 
         private var resultTitle: String {
             let name = remoteSearchResult.name ?? L10n.unknown
-            let year = remoteSearchResult.productionYear?.description ?? .emptyDash
+            let year = remoteSearchResult.productionYear?.description ??
+                remoteSearchResult.premiereDate?.formatted(.dateTime.year()).description ??
+                .emptyDash
 
             return "\(name) (\(year))"
         }

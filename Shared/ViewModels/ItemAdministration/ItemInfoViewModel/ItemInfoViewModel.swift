@@ -18,12 +18,14 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
+        case cancelled
         case error(JellyfinAPIError)
     }
 
     // MARK: - Actions
 
     enum Action: Equatable {
+        case cancel
         case search(SearchInfo)
         case update(RemoteSearchResult)
     }
@@ -71,6 +73,15 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
 
     func respond(to action: Action) -> State {
         switch action {
+
+        case .cancel:
+            updateTask?.cancel()
+            searchTask?.cancel()
+
+            self.backgroundStates = []
+            self.state = .initial
+
+            return state
 
         case let .search(searchInfo):
             searchTask?.cancel()

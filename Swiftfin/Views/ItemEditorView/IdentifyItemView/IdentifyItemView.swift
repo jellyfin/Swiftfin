@@ -15,7 +15,7 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
     // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    private var router: ItemEditorCoordinator.Router
 
     @ObservedObject
     private var viewModel: ItemInfoViewModel<SearchInfo>
@@ -23,9 +23,11 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
     // MARK: - Identity Variables
 
     @State
-    private var tempSearchInfo: SearchInfo? = nil
+    private var lastSearch: SearchInfo?
     @State
-    private var selectedMatch: RemoteSearchResult? = nil
+    private var tempSearchInfo: SearchInfo?
+    @State
+    private var selectedMatch: RemoteSearchResult?
 
     // MARK: - Error State
 
@@ -67,27 +69,37 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
             get: { selectedMatch != nil },
             set: { if !$0 { selectedMatch = nil } }
         )) {
-            if let selectedMatch {
-                selectionConfirmationModal(selectedMatch)
+            if let match = selectedMatch {
+                ItemInfoConfirmationView(
+                    itemInfo: match,
+                    remoteImage: resultImage(match.imageURL)
+                ) {
+                    viewModel.send(.update(match))
+                    selectedMatch = nil
+                } onClose: {
+                    selectedMatch = nil
+                }
             }
         }
         .topBarTrailing {
             Button(L10n.search) {
                 if let tempSearchInfo {
+                    lastSearch = tempSearchInfo
                     viewModel.send(.search(tempSearchInfo))
                 }
             }
             .buttonStyle(.toolbarPill)
+            .disabled(viewModel.state == .updating || tempSearchInfo == nil || lastSearch == tempSearchInfo)
         }
-        .navigationBarCloseButton {
-            router.dismissCoordinator()
-        }
+        .navigationBarBackButtonHidden(viewModel.state == .updating)
         .onReceive(viewModel.events) { events in
             switch events {
             case let .error(eventError):
                 error = eventError
+            case .cancelled:
+                selectedMatch = nil
             case .updated:
-                router.dismissCoordinator()
+                router.pop()
             }
         }
         .errorMessage($error)
@@ -98,8 +110,12 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
     @ViewBuilder
     var updateView: some View {
         VStack(alignment: .center) {
-            Text(selectedMatch?.name ?? L10n.unknown)
             ProgressView()
+            Button(L10n.cancel, role: .destructive) {
+                viewModel.send(.cancel)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
         }
     }
 
@@ -303,42 +319,6 @@ struct IdentifyItemView<SearchInfo: Equatable>: View {
                 )
             )
             .keyboardType(.numberPad)
-        }
-    }
-
-    // MARK: - Selection Confirmation Modal
-
-    @ViewBuilder
-    private func selectionConfirmationModal(_ selected: RemoteSearchResult) -> some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                resultImage(selected.imageURL)
-                    .frame(width: 60, height: 180)
-                    .padding(.leading)
-                    .padding()
-                Text(selected.premiereDate?.formatted(.dateTime.year().month().day()) ?? .emptyDash)
-                    .foregroundStyle(Color.primary)
-                    .padding()
-                Text(selected.overview ?? L10n.unknown)
-                    .foregroundStyle(Color.secondary)
-                    .padding()
-                Text(selected.searchProviderName ?? L10n.unknown)
-                    .foregroundStyle(Color.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding()
-            }
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(selected.name ?? L10n.unknown)
-            .navigationBarCloseButton {
-                selectedMatch = nil
-            }
-            .topBarTrailing {
-                Button(L10n.save) {
-                    viewModel.send(.update(selected))
-                    selectedMatch = nil
-                }
-                .buttonStyle(.toolbarPill)
-            }
         }
     }
 
