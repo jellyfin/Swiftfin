@@ -52,7 +52,7 @@ struct ServerUserDetailsView: View {
 
     var body: some View {
         List {
-            UserEditableHeroImage(
+            UserProfileHeroImage(
                 user: viewModel.user,
                 source: viewModel.user.profileImageSource(
                     client: viewModel.userSession.client,

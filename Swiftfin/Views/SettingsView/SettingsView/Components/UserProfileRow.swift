@@ -30,7 +30,7 @@ extension SettingsView {
                     // `.aspectRatio(contentMode: .fill)` on `imageView` alone
                     // causes a crash on some iOS versions
                     ZStack {
-                        UserProfileHeroImage(
+                        UserProfileImage(
                             userId: user.id,
                             source: user.profileImageSource(
                                 client: userSession.client,

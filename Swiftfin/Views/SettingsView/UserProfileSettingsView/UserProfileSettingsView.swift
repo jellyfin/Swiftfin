@@ -36,7 +36,7 @@ struct UserProfileSettingsView: View {
 
     var body: some View {
         List {
-            UserEditableHeroImage(
+            UserProfileHeroImage(
                 user: UserDto(
                     id: viewModel.userSession.user.id,
                     name: viewModel.userSession.user.username

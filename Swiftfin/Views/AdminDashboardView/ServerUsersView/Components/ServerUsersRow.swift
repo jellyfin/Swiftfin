@@ -75,7 +75,7 @@ extension ServerUsersView {
         @ViewBuilder
         private var userImage: some View {
             ZStack {
-                UserProfileHeroImage(
+                UserProfileImage(
                     userId: user.id,
                     source: user.profileImageSource(
                         client: userSession!.client,

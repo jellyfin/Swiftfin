@@ -7,57 +7,109 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import Nuke
 import SwiftUI
 
 struct UserProfileHeroImage: View {
 
+    // MARK: - Accent Color
+
+    @Default(.accentColor)
+    private var accentColor
+
+    // MARK: - User Session
+
+    @Injected(\.currentUserSession)
+    private var userSession
+
     // MARK: - User Variables
 
-    private let userId: String?
+    private let user: UserDto
     private let source: ImageSource
     private let pipeline: ImagePipeline
-    private let placeholder: any View
+
+    // MARK: - User Actions
+
+    private let onUpdate: () -> Void
+    private let onDelete: () -> Void
+
+    // MARK: - Dialog State
+
+    @State
+    private var isPresentingOptions: Bool = false
 
     // MARK: - Initializer
 
     init(
-        userId: String?,
+        user: UserDto,
         source: ImageSource,
         pipeline: ImagePipeline = .Swiftfin.default,
-        placeholder: any View = SystemImageContentView(systemName: "person.fill", ratio: 0.5)
+        onUpdate: @escaping () -> Void,
+        onDelete: @escaping () -> Void
     ) {
-        self.userId = userId
+        self.user = user
         self.source = source
         self.pipeline = pipeline
-        self.placeholder = placeholder
+        self.onUpdate = onUpdate
+        self.onDelete = onDelete
     }
 
     // MARK: - Body
 
     var body: some View {
-        RedrawOnNotificationView(
-            .didChangeUserProfile,
-            filter: {
-                $0 == userId
+        Section {
+            VStack(alignment: .center) {
+                Button {
+                    isPresentingOptions = true
+                } label: {
+                    ZStack(alignment: .bottomTrailing) {
+                        // `.aspectRatio(contentMode: .fill)` on `imageView` alone
+                        // causes a crash on some iOS versions
+                        ZStack {
+                            UserProfileImage(
+                                userId: user.id,
+                                source: source,
+                                pipeline: userSession?.user.id == user.id ? .Swiftfin.branding : .Swiftfin.default
+                            )
+                        }
+                        .aspectRatio(1, contentMode: .fill)
+                        .clipShape(.circle)
+                        .frame(width: 150, height: 150)
+                        .shadow(radius: 5)
+
+                        Image(systemName: "pencil.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .shadow(radius: 10)
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(accentColor.overlayColor, accentColor)
+                    }
+                }
+
+                Text(user.name ?? L10n.unknown)
+                    .fontWeight(.semibold)
+                    .font(.title2)
             }
+            .frame(maxWidth: .infinity)
+            .listRowBackground(Color.clear)
+        }
+        .confirmationDialog(
+            """
+            \(L10n.profileImage)
+            \(L10n.viewsMayRequireRestart)
+            """,
+            isPresented: $isPresentingOptions,
+            titleVisibility: .visible
         ) {
-            ImageView(source)
-                .pipeline(pipeline)
-                .image {
-                    $0.posterBorder(ratio: 1 / 2, of: \.width)
-                }
-                .placeholder { _ in
-                    placeholder
-                }
-                .failure {
-                    placeholder
-                }
-                .posterShadow()
-                .aspectRatio(1, contentMode: .fill)
-                .clipShape(Circle())
-                .shadow(radius: 5)
+            Text(L10n.viewsMayRequireRestart)
+            Button(L10n.selectImage) {
+                onUpdate()
+            }
+            Button(L10n.delete, role: .destructive) {
+                onDelete()
+            }
         }
     }
 }

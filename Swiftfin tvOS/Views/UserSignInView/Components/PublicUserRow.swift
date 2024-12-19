@@ -49,7 +49,7 @@ extension UserSignInView {
                     ZStack {
                         Color.clear
 
-                        UserProfileHeroImage(
+                        UserProfileImage(
                             userId: user.id,
                             source: user.profileImageSource(
                                 client: client,
