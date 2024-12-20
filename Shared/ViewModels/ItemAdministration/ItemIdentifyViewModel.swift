@@ -12,7 +12,7 @@ import Get
 import JellyfinAPI
 import OrderedCollections
 
-class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
+class ItemIdentifyViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Events
 
@@ -26,7 +26,7 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
 
     enum Action: Equatable {
         case cancel
-        case search(SearchInfo)
+        case search(ItemIdentifySearch)
         case update(RemoteSearchResult)
     }
 
@@ -83,7 +83,7 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .search(searchInfo):
+        case let .search(itemIdentifySearch):
             searchTask?.cancel()
 
             searchTask = Task { [weak self] in
@@ -94,7 +94,7 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.searching)
                     }
 
-                    let allElements = try await self.searchItem(searchInfo)
+                    let allElements = try await self.searchItem(itemIdentifySearch)
 
                     await MainActor.run {
                         self.searchResults = allElements
@@ -142,8 +142,75 @@ class ItemInfoViewModel<SearchInfo: Equatable>: ViewModel, Stateful, Eventful {
 
     // MARK: - Return Matching Elements (To Be Overridden)
 
-    func searchItem(_ searchInfo: SearchInfo) async throws -> [RemoteSearchResult] {
-        fatalError("This method should be overridden in subclasses")
+    private func searchItem(_ itemIdentifySearch: ItemIdentifySearch) async throws -> [RemoteSearchResult] {
+        guard let itemId = item.id, let itemType = item.type else {
+            return []
+        }
+
+        let name = itemIdentifySearch.name
+        let originalTitle = itemIdentifySearch.originalTitle
+        let year = itemIdentifySearch.year
+
+        switch itemType {
+        case .boxSet:
+            let parameters = BoxSetInfoRemoteSearchQuery(
+                itemID: itemId,
+                searchInfo: BoxSetInfo(
+                    name: name,
+                    originalTitle: originalTitle,
+                    year: year
+                )
+            )
+            let request = Paths.getBoxSetRemoteSearchResults(parameters)
+            let response = try await userSession.client.send(request)
+
+            return response.value
+
+        case .movie:
+            let parameters = MovieInfoRemoteSearchQuery(
+                itemID: itemId,
+                searchInfo: MovieInfo(
+                    name: name,
+                    originalTitle: originalTitle,
+                    year: year
+                )
+            )
+            let request = Paths.getMovieRemoteSearchResults(parameters)
+            let response = try await userSession.client.send(request)
+
+            return response.value
+
+        case .person:
+            let parameters = PersonLookupInfoRemoteSearchQuery(
+                itemID: itemId,
+                searchInfo: PersonLookupInfo(
+                    name: name,
+                    originalTitle: originalTitle,
+                    year: year
+                )
+            )
+            let request = Paths.getPersonRemoteSearchResults(parameters)
+            let response = try await userSession.client.send(request)
+
+            return response.value
+
+        case .series:
+            let parameters = SeriesInfoRemoteSearchQuery(
+                itemID: itemId,
+                searchInfo: SeriesInfo(
+                    name: name,
+                    originalTitle: originalTitle,
+                    year: year
+                )
+            )
+            let request = Paths.getSeriesRemoteSearchResults(parameters)
+            let response = try await userSession.client.send(request)
+
+            return response.value
+
+        default:
+            return []
+        }
     }
 
     // MARK: - Save Updated Item to Server

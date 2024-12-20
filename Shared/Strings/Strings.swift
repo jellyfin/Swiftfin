@@ -680,6 +680,8 @@ internal enum L10n {
   internal static let home = L10n.tr("Localizable", "home", fallback: "Home")
   /// Hours
   internal static let hours = L10n.tr("Localizable", "hours", fallback: "Hours")
+  /// Identify
+  internal static let identify = L10n.tr("Localizable", "identify", fallback: "Identify")
   /// Idle
   internal static let idle = L10n.tr("Localizable", "idle", fallback: "Idle")
   /// Illustrator
@@ -1512,6 +1514,8 @@ internal enum L10n {
   internal static let unsavedChangesMessage = L10n.tr("Localizable", "unsavedChangesMessage", fallback: "You have unsaved changes. Are you sure you want to discard them?")
   /// URL
   internal static let url = L10n.tr("Localizable", "url", fallback: "URL")
+  /// Use as item
+  internal static let useAsItem = L10n.tr("Localizable", "useAsItem", fallback: "Use as item")
   /// Use as Transcoding Profile
   internal static let useAsTranscodingProfile = L10n.tr("Localizable", "useAsTranscodingProfile", fallback: "Use as Transcoding Profile")
   /// Use Primary Image

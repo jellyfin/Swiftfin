@@ -9,7 +9,7 @@
 import JellyfinAPI
 import SwiftUI
 
-extension IdentifyItemView {
+extension ItemIdentifyView {
 
     struct ItemInfoConfirmationView: View {
 
@@ -51,7 +51,7 @@ extension IdentifyItemView {
                 }
                 .padding()
                 .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle("Item")
+                .navigationTitle(L10n.useAsItem.localizedCapitalized)
                 .navigationBarCloseButton {
                     onClose()
                 }

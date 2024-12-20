@@ -10,7 +10,7 @@ import Combine
 import JellyfinAPI
 import SwiftUI
 
-extension IdentifyItemView {
+extension ItemIdentifyView {
 
     struct RemoteSearchResultButton: View {
 

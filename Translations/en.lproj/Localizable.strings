@@ -2300,3 +2300,9 @@
 // Delete Selected Schedules - Button
 // Button label for deleting all selected Access Schedules
 "deleteSelectedSchedules" = "Delete Selected Schedules";
+
+/// Identify
+"identify" = "Identify";
+
+/// Use as item
+"useAsItem" = "Use as item";

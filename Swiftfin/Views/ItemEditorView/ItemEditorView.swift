@@ -99,7 +99,7 @@ struct ItemEditorView: View {
     private var editView: some View {
         Section(L10n.edit) {
             if [.boxSet, .movie, .person, .series].contains(viewModel.item.type) {
-                ChevronButton("Identify")
+                ChevronButton(L10n.identify)
                     .onSelect {
                         router.route(to: \.editIdentity, viewModel.item)
                     }
