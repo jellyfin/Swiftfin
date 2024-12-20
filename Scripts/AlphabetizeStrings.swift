@@ -20,6 +20,8 @@ guard FileManager.default.fileExists(atPath: rootURL.path) else {
 guard let enumerator = FileManager.default.enumerator(at: rootURL, includingPropertiesForKeys: nil) else {
     exit(1)
 }
+
+// All .strings files in Translations directory
 var files = [URL]()
 
 // Collect all files with the .strings extension found in ./Translations.
