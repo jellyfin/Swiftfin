@@ -16,6 +16,8 @@ internal enum L10n {
   internal static let absolute = L10n.tr("Localizable", "absolute", fallback: "Absolute")
   /// Accent Color
   internal static let accentColor = L10n.tr("Localizable", "accentColor", fallback: "Accent Color")
+  /// Some views may need an app restart to update.
+  internal static let accentColorDescription = L10n.tr("Localizable", "accentColorDescription", fallback: "Some views may need an app restart to update.")
   /// Access
   internal static let access = L10n.tr("Localizable", "access", fallback: "Access")
   /// Accessibility
@@ -998,8 +1000,6 @@ internal enum L10n {
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
-  /// Reset App Settings
-  internal static let resetAppSettings = L10n.tr("Localizable", "resetAppSettings", fallback: "Reset App Settings")
   /// Reset Settings
   internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
   /// Reset Swiftfin user settings
@@ -1064,8 +1064,6 @@ internal enum L10n {
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
-  /// Select Cast Destination
-  internal static let selectCastDestination = L10n.tr("Localizable", "selectCastDestination", fallback: "Select Cast Destination")
   /// Select Image
   internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Series
