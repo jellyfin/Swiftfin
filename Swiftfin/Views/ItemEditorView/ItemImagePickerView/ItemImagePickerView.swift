@@ -37,8 +37,6 @@ struct ItemImagePickerView: View {
     @State
     private var isImportingFile: Bool = false
     @State
-    private var isPresentingError: Bool = false
-    @State
     private var error: Error?
 
     // MARK: - Selected Image
@@ -84,16 +82,6 @@ struct ItemImagePickerView: View {
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) { handleFileImport($0) }
-            .alert(
-                L10n.error,
-                isPresented: $isPresentingError,
-                presenting: error
-            ) { error in
-                Text(error.localizedDescription)
-                Button(L10n.dismiss, role: .cancel) {
-                    isPresentingError = false
-                }
-            }
             .confirmationDialog(
                 L10n.save,
                 isPresented: $isPresentingConfirmation,
@@ -245,7 +233,6 @@ struct ItemImagePickerView: View {
         case let .error(eventError):
             UIDevice.feedback(.error)
             error = eventError
-            isPresentingError = true
         }
     }
 
@@ -255,20 +242,10 @@ struct ItemImagePickerView: View {
         switch result {
         case let .success(urls):
             if let url = urls.first {
-                guard url.startAccessingSecurityScopedResource() else { return }
-                defer { url.stopAccessingSecurityScopedResource() }
-
-                do {
-                    let fileData = try Data(contentsOf: url)
-                    viewModel.send(.uploadImage(image: fileData))
-                } catch {
-                    self.error = error
-                    isPresentingError = true
-                }
+                viewModel.send(.setLocalImage(url: url))
             }
         case let .failure(fileError):
             error = fileError
-            isPresentingError = true
         }
     }
 
