@@ -70,11 +70,24 @@ extension SelectUserView {
             Button {
                 onDelete()
             } label: {
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(areUsersSelected ? .primary : .secondary)
+                ZStack {
+                    Color.red
+
+                    Text(L10n.delete)
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(areUsersSelected ? .primary : .secondary)
+
+                    if !areUsersSelected {
+                        Color.black
+                            .opacity(0.5)
+                    }
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .frame(height: 65)
+            .frame(maxWidth: 400)
             .disabled(!areUsersSelected)
+            .buttonStyle(.card)
         }
 
         init(
