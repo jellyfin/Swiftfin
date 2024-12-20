@@ -25,6 +25,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     }
 
     enum Action: Equatable {
+        case cancel
         case refresh
         case getNextPage
         case setImage(url: String)
@@ -35,12 +36,12 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     enum BackgroundState: Hashable {
         case gettingNextPage
         case refreshing
-        case updating
     }
 
     enum State: Hashable {
         case initial
         case content
+        case updating
         case error(JellyfinAPIError)
     }
 
@@ -92,6 +93,13 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
     func respond(to action: Action) -> State {
         switch action {
+
+        case .cancel:
+            task?.cancel()
+            self.state = .initial
+
+            return state
+
         case .refresh:
             task?.cancel()
 
@@ -159,20 +167,20 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.state = .updating
                     }
 
                     try await self.setImage(url, index: self.imageIndex)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -186,20 +194,20 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.state = .updating
                     }
 
                     try await self.setLocalImage(url, index: self.imageIndex)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -213,20 +221,20 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.backgroundStates.append(.updating)
+                        _ = self.state = .updating
                     }
 
                     try await self.deleteImage(index: self.imageIndex)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.updating)
+                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -267,22 +275,14 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
         let parameters = Paths.DownloadRemoteImageParameters(type: imageType, imageURL: url)
         let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
-        let response = try await userSession.client.send(imageRequest)
+        try await userSession.client.send(imageRequest)
 
-        let image = UIImage(data: response.data)
-
-        guard let image else {
-            logger.error("Unable to download the the selected image")
-            throw JellyfinAPIError("An internal error occurred")
-        }
-
-        try await uploadImage(image, index: index)
+        try await refreshItem()
     }
 
     // MARK: - Set Image From Local Files
 
     private func setLocalImage(_ url: URL, index: Int) async throws {
-        guard let itemID = item.id else { return }
         guard url.startAccessingSecurityScopedResource() else { return }
         defer { url.stopAccessingSecurityScopedResource() }
 
@@ -290,7 +290,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
         let image = UIImage(data: data)
 
         guard let image else {
-            logger.error("Unable to download the the selected image")
+            logger.error("Unable to access the the selected image")
             throw JellyfinAPIError("An internal error occurred")
         }
 
@@ -302,7 +302,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     private func uploadImage(_ image: UIImage, index: Int) async throws {
         guard let itemID = item.id else { return }
 
-        let contentType: String
+        var contentType: String
         let imageData: Data
 
         if let pngData = image.pngData()?.base64EncodedData() {

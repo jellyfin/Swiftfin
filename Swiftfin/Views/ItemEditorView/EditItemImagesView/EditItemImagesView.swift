@@ -15,8 +15,12 @@ import SwiftUI
 
 struct EditItemImagesView: View {
 
+    // MARK: - Defaults
+
     @Default(.accentColor)
     private var accentColor
+
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
@@ -43,7 +47,7 @@ struct EditItemImagesView: View {
     @ViewBuilder
     var body: some View {
         contentView
-            .navigationBarTitle("Images")
+            .navigationBarTitle(L10n.replaceImages)
             .navigationBarTitleDisplayMode(.inline)
     }
 

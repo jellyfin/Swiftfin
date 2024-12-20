@@ -10,9 +10,7 @@ import Foundation
 import JellyfinAPI
 import SwiftUI
 
-/// Extension declares a conformance of imported type 'RemoteImageInfo' to imported protocol 'Identifiable'; this will not behave correctly
-/// if the owners of 'JellyfinAPI' introduce this conformance in the future
-extension RemoteImageInfo: Identifiable {
+extension RemoteImageInfo: @retroactive Identifiable {
 
     public var id: String {
         UUID().uuidString

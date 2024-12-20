@@ -31,8 +31,6 @@ struct ItemImagePickerView: View {
     // MARK: - Dialog States
 
     @State
-    private var isPresentingConfirmation: Bool = false
-    @State
     private var isPresentingDeletion: Bool = false
     @State
     private var isImportingFile: Bool = false
@@ -42,11 +40,7 @@ struct ItemImagePickerView: View {
     // MARK: - Selected Image
 
     @State
-    private var selectedImage: RemoteImageInfo? {
-        didSet {
-            isPresentingConfirmation = selectedImage != nil
-        }
-    }
+    private var selectedImage: RemoteImageInfo?
 
     // MARK: - Collection Layout
 
@@ -68,33 +62,43 @@ struct ItemImagePickerView: View {
                 }
             }
             .navigationBarMenuButton(
-                isLoading: viewModel.backgroundStates.contains {
-                    $0 == .refreshing || $0 == .updating
-                }
+                isLoading: viewModel.backgroundStates.contains(.refreshing)
             ) {
-                menuContent()
+                Button(L10n.add, systemImage: "plus") {
+                    isImportingFile = true
+                }
+                Divider()
+                Button(L10n.delete, systemImage: "trash", role: .destructive) {
+                    isPresentingDeletion = true
+                }
             }
             .onReceive(viewModel.events) { event in
-                handleEvent(event)
+                switch event {
+                case .updated:
+                    UIDevice.feedback(.success)
+                    router.dismissCoordinator()
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                }
             }
+            .errorMessage($error)
             .fileImporter(
                 isPresented: $isImportingFile,
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) { handleFileImport($0) }
-            .confirmationDialog(
-                L10n.save,
-                isPresented: $isPresentingConfirmation,
-                titleVisibility: .visible
-            ) {
-                confirmationDialogContent()
+            .sheet(item: $selectedImage, onDismiss: {
+                selectedImage = nil
+            }) { selectedImage in
+                confirmationSheet(selectedImage)
             }
             .confirmationDialog(
                 L10n.delete,
                 isPresented: $isPresentingDeletion,
                 titleVisibility: .visible
             ) {
-                deletionDialogContent()
+                deletionSheet()
             }
     }
 
@@ -107,6 +111,8 @@ struct ItemImagePickerView: View {
             DelayedProgressView()
         case .content:
             gridView
+        case .updating:
+            updateView
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
@@ -138,6 +144,20 @@ struct ItemImagePickerView: View {
         }
     }
 
+    // MARK: - Update View
+
+    @ViewBuilder
+    var updateView: some View {
+        VStack(alignment: .center, spacing: 16) {
+            ProgressView()
+            Button(L10n.cancel, role: .destructive) {
+                viewModel.send(.cancel)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.red)
+        }
+    }
+
     // MARK: - Poster Image Button
 
     private func imageButton(_ image: RemoteImageInfo?) -> some View {
@@ -146,7 +166,7 @@ struct ItemImagePickerView: View {
         } label: {
             posterImage(
                 image,
-                posterStyle: image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
+                posterStyle: .landscape // image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
             )
         }
     }
@@ -157,62 +177,75 @@ struct ItemImagePickerView: View {
         _ posterImageInfo: RemoteImageInfo?,
         posterStyle: PosterDisplayType
     ) -> some View {
-        VStack {
-            ZStack {
-                Color.secondarySystemFill
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ZStack {
+            Color.secondarySystemFill
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                ImageView(URL(string: posterImageInfo?.url ?? ""))
-                    .placeholder { source in
-                        if let blurHash = source.blurHash {
-                            BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-                                .scaledToFit()
-                        } else {
-                            Image(systemName: "circle")
-                        }
+            ImageView(URL(string: posterImageInfo?.url ?? ""))
+                .placeholder { source in
+                    if let blurHash = source.blurHash {
+                        BlurHashView(blurHash: blurHash, size: .Square(length: 8))
+                            .scaledToFit()
+                    } else {
+                        Image(systemName: "circle")
                     }
-                    .failure {
-                        VStack(spacing: 8) {
-                            Image(systemName: "photo")
-                            Text(L10n.none)
-                        }
+                }
+                .failure {
+                    VStack(spacing: 8) {
+                        Image(systemName: "photo")
+                        Text(L10n.none)
                     }
-                    .foregroundColor(.secondary)
-                    .font(.headline)
-            }
-            .scaledToFit()
-            .posterStyle(posterStyle)
-
-            if let imageWidth = posterImageInfo?.width, let imageHeight = posterImageInfo?.height {
-                Text("\(imageWidth) x \(imageHeight)")
-                    .font(.body)
-            }
-
-            Text(posterImageInfo?.providerName ?? .emptyDash)
-                .font(.caption)
+                }
+                .foregroundColor(.secondary)
+                .font(.headline)
         }
-        .foregroundStyle(Color.secondary)
+        .scaledToFit()
+        .posterStyle(posterStyle)
     }
 
-    // MARK: - Set Image Dialog
+    // MARK: - Set Image Confirmation
 
     @ViewBuilder
-    private func confirmationDialogContent() -> some View {
-        Button(L10n.confirm) {
-            if let newURL = selectedImage?.url {
-                viewModel.send(.setImage(url: newURL))
+    private func confirmationSheet(_ image: RemoteImageInfo) -> some View {
+        NavigationView {
+            VStack {
+                posterImage(
+                    image,
+                    posterStyle: image.height ?? 0 > image.width ?? 0 ? .portrait : .landscape
+                )
+                .scaledToFit()
+
+                if let imageWidth = image.width, let imageHeight = image.height {
+                    Text("\(imageWidth) x \(imageHeight)")
+                        .font(.body)
+                }
+
+                Text(image.providerName ?? .emptyDash)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            selectedImage = nil
-        }
-        Button(L10n.cancel, role: .cancel) {
-            selectedImage = nil
+            .padding(.horizontal)
+            .navigationTitle(L10n.replaceImages)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                selectedImage = nil
+            }
+            .topBarTrailing {
+                Button(L10n.save) {
+                    if let newURL = image.url {
+                        viewModel.send(.setImage(url: newURL))
+                    }
+                    selectedImage = nil
+                }
+                .buttonStyle(.toolbarPill)
+            }
         }
     }
 
-    // MARK: - Delete Image Dialog
+    // MARK: - Delete Image Confirmation
 
     @ViewBuilder
-    private func deletionDialogContent() -> some View {
+    private func deletionSheet() -> some View {
         Button(L10n.delete, role: .destructive) {
             viewModel.send(.deleteImage)
             isPresentingDeletion = false
@@ -220,19 +253,6 @@ struct ItemImagePickerView: View {
         }
         Button(L10n.cancel, role: .cancel) {
             isPresentingDeletion = false
-        }
-    }
-
-    // MARK: - Handle ViewModel Events
-
-    private func handleEvent(_ event: RemoteItemImageViewModel.Event) {
-        switch event {
-        case .updated:
-            UIDevice.feedback(.success)
-            router.dismissCoordinator()
-        case let .error(eventError):
-            UIDevice.feedback(.error)
-            error = eventError
         }
     }
 
@@ -246,20 +266,6 @@ struct ItemImagePickerView: View {
             }
         case let .failure(fileError):
             error = fileError
-        }
-    }
-
-    // MARK: - Navigation Menu Content
-
-    private func menuContent() -> some View {
-        Group {
-            Button(L10n.add, systemImage: "plus") {
-                isImportingFile = true
-            }
-            Divider()
-            Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                isPresentingDeletion = true
-            }
         }
     }
 }
