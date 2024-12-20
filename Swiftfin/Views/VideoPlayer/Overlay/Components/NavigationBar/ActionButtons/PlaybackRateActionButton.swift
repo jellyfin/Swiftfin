@@ -31,9 +31,9 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                         manager.set(rate: rate)
                     } label: {
                         if rate == manager.rate {
-                            Label("\(rate, format: .rate)", systemImage: "checkmark")
+                            Label("\(rate, format: .playbackRate)", systemImage: "checkmark")
                         } else {
-                            Text(rate, format: .rate)
+                            Text(rate, format: .playbackRate)
                         }
                     }
                 }
@@ -42,7 +42,7 @@ extension VideoPlayer.Overlay.NavigationBar.ActionButtons {
                     Divider()
                     
                     Label(
-                        "\(manager.rate, format: .rate)",
+                        "\(manager.rate, format: .playbackRate)",
                         systemImage: "checkmark"
                     )
                 }

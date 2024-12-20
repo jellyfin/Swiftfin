@@ -20,7 +20,7 @@ struct NativeVideoPlayerSettingsView: View {
             Section {
 
                 BasicStepper(
-                    title: L10n.resumeOffset,
+                    L10n.resumeOffset,
                     value: $resumeOffset,
                     range: 0 ... 30
                 )

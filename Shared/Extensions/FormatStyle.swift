@@ -71,18 +71,18 @@ struct DisplayableFormatStyle<Value: Displayable>: FormatStyle {
     }
 }
 
-extension FormatStyle where Self == RateStyle {
+extension FormatStyle where Self == PlaybackRateStyle {
 
-    static var rate: RateStyle {
-        RateStyle()
+    static var playbackRate: PlaybackRateStyle {
+        PlaybackRateStyle()
     }
 }
 
-struct RateStyle: FormatStyle {
+struct PlaybackRateStyle: FormatStyle {
 
     // TODO: shouldn't use just an "x", should
-    // probably use some square unicode character
-    // that's small and centered
+    // use some square unicode character
+    // that's small and centered, or an inline symbol
     func format(_ value: Float) -> String {
         FloatingPointFormatStyle<Float>()
             .precision(.significantDigits(1 ... 3))
