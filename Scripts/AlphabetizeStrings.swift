@@ -13,11 +13,13 @@ let rootURL = URL(fileURLWithPath: "./Translations")
 
 // Exit early if the Translations directory does not exist.
 guard FileManager.default.fileExists(atPath: rootURL.path) else {
-    exit(0)
+    print("Error: Translations directory not found.")
+    exit(1)
 }
 
 // Enumerate through the Translations directory to find all .strings files.
 guard let enumerator = FileManager.default.enumerator(at: rootURL, includingPropertiesForKeys: nil) else {
+    print("Error: Failed to enumerate Translations directory.")
     exit(1)
 }
 
@@ -33,12 +35,13 @@ for case let fileURL as URL in enumerator {
 
 // This regular expression pattern matches lines of the format:
 // "Key" = "Value";
-let regex = try! NSRegularExpression(pattern: "^\"([^\"]+)\"\\s*=\\s*\"([^\"]+)\";", options: [])
+let regex = #/^\"(?<key>[^\"]+)\"\s*=\s*\"(?<value>[^\"]+)\";/#
 
 // Process each .strings file found.
 for fileURL in files {
     // Attempt to read the file content.
     guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
+        print("Skipping unreadable file: \(fileURL.path)")
         continue
     }
 
@@ -53,27 +56,25 @@ for fileURL in files {
         // Ignore empty lines and lines starting with comments.
         if trimmed.isEmpty || trimmed.hasPrefix("//") { continue }
 
-        // Use regex to find and capture the key and value from the line.
-        if let match = regex.firstMatch(in: line, options: [], range: NSRange(line.startIndex..., in: line)) {
-            let keyRange = Range(match.range(at: 1), in: line)!
-            let valueRange = Range(match.range(at: 2), in: line)!
-            let key = String(line[keyRange])
-            let value = String(line[valueRange])
+        if let match = line.firstMatch(of: regex) {
+            let key = String(match.output.key)
+            let value = String(match.output.value)
             entries[key] = value
+        } else {
+            print("Error: Invalid line format in \(fileURL.path): \(line)")
+            exit(1)
         }
     }
 
     // Sort the keys alphabetically for consistent ordering.
     let sortedKeys = entries.keys.sorted { $0.localizedCaseInsensitiveCompare($1) == .orderedAscending }
-
-    // Build the new file content with a descriptive comment before each entry.
-    var newContent = ""
-    for key in sortedKeys {
-        let value = entries[key]!
-        // Insert a comment line above each localization entry describing the value.
-        newContent += "// \(value)\n\"\(key)\" = \"\(value)\";\n\n"
-    }
+    let newContent = sortedKeys.map { "/// \(entries[$0]!)\n\"\($0)\" = \"\(entries[$0]!)\";" }.joined(separator: "\n\n")
 
     // Write the updated, sorted, and commented localizations back to the file.
-    try? newContent.write(to: fileURL, atomically: true, encoding: .utf8)
+    do {
+        try newContent.write(to: fileURL, atomically: true, encoding: .utf8)
+    } catch {
+        print("Error: Failed to write to \(fileURL.path)")
+        exit(1)
+    }
 }

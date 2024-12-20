@@ -5001,6 +5001,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -5020,6 +5021,7 @@
 		};
 		4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
