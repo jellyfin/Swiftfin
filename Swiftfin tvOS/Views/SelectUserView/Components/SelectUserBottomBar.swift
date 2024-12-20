@@ -113,7 +113,6 @@ extension SelectUserView {
                         selection: $serverSelection,
                         viewModel: viewModel
                     )
-                    .padding(.bottom, 50)
 
                     advancedMenu
                 }

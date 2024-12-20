@@ -95,7 +95,6 @@ extension SelectUserView {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
             .menuOrder(.fixed)
-            .padding()
         }
     }
 }
