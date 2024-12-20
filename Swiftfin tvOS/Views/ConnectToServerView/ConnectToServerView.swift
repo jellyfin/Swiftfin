@@ -55,82 +55,56 @@ struct ConnectToServerView: View {
 
     @ViewBuilder
     private var connectSection: some View {
-        Section(L10n.connectToServer) {
-            TextField(L10n.serverURL, text: $url)
-                .disableAutocorrection(true)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.URL)
-                .focused($isURLFocused)
-        }
+        TextField(L10n.serverURL, text: $url)
+            .disableAutocorrection(true)
+            .textInputAutocapitalization(.never)
+            .keyboardType(.URL)
+            .focused($isURLFocused)
 
         if viewModel.state == .connecting {
-//            ListRowButton(L10n.cancel) {
-//                viewModel.send(.cancel)
-//            }
-            Button(L10n.cancel) {
+            ListRowButton(L10n.cancel) {
                 viewModel.send(.cancel)
             }
-            .foregroundStyle(.red, .red.opacity(0.2))
+            .foregroundStyle(.red, accentColor)
+            .padding(.vertical)
         } else {
-//            ListRowButton(L10n.connect) {
-//                isURLFocused = false
-//                viewModel.send(.connect(url))
-//            }
-            Button(L10n.connect) {
+            ListRowButton(L10n.connect) {
                 isURLFocused = false
                 viewModel.send(.connect(url))
             }
             .disabled(url.isEmpty)
             .foregroundStyle(
                 accentColor.overlayColor,
-                accentColor
+                url.isEmpty ? Color.white.opacity(0.5) : accentColor
             )
             .opacity(url.isEmpty ? 0.5 : 1)
+            .padding(.vertical)
         }
-    }
-
-    // MARK: - Local Server Button
-
-    private func localServerButton(for server: ServerState) -> some View {
-        Button {
-            url = server.currentURL.absoluteString
-            viewModel.send(.connect(server.currentURL.absoluteString))
-        } label: {
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(server.name)
-                        .font(.headline)
-                        .fontWeight(.semibold)
-
-                    Text(server.currentURL.absoluteString)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.body.weight(.regular))
-                    .foregroundColor(.secondary)
-            }
-        }
-        .disabled(viewModel.state == .connecting)
-        .buttonStyle(.plain)
     }
 
     // MARK: - Local Servers Section
 
     @ViewBuilder
     private var localServersSection: some View {
-        Section(L10n.localServers) {
-            if viewModel.localServers.isEmpty {
-                L10n.noLocalServersFound.text
-                    .font(.callout)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-            } else {
-                ForEach(viewModel.localServers) { server in
-                    localServerButton(for: server)
+        if viewModel.localServers.isEmpty {
+            L10n.noLocalServersFound.text
+                .font(.callout)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity)
+        } else {
+            LazyVGrid(
+                columns: Array(repeating: GridItem(.flexible()), count: 1),
+                spacing: 30
+            ) {
+                ForEach(viewModel.localServers, id: \.id) { server in
+                    LocalServerButton(server: server) {
+                        url = server.currentURL.absoluteString
+                        viewModel.send(.connect(server.currentURL.absoluteString))
+                    }
+                    .environment(
+                        \.isEnabled,
+                        viewModel.state != .connecting && server.currentURL.absoluteString != url
+                    )
                 }
             }
         }
@@ -139,34 +113,14 @@ struct ConnectToServerView: View {
     // MARK: - Body
 
     var body: some View {
-        VStack {
-            HStack {
-                Spacer()
-
-                if viewModel.state == .connecting {
-                    ProgressView()
-                }
-            }
-            .frame(height: 100)
-            .overlay {
-                Image(.jellyfinBlobBlue)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(height: 100)
-                    .edgePadding()
-            }
-
-            HStack(alignment: .top) {
-                VStack(alignment: .leading) {
-                    connectSection
-                }
-
-                VStack(alignment: .leading) {
-                    localServersSection
-                }
-            }
-
-            Spacer()
+        SplitLoginWindowView(
+            isLoading: viewModel.state == .connecting,
+            leadingTitle: L10n.connectToServer,
+            trailingTitle: L10n.localServers
+        ) {
+            connectSection
+        } trailingContentView: {
+            localServersSection
         }
         .onFirstAppear {
             isURLFocused = true
