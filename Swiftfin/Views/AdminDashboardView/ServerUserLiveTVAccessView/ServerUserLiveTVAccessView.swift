@@ -17,7 +17,7 @@ struct ServerUserLiveTVAccessView: View {
     @CurrentDate
     private var currentDate: Date
 
-    // MARK: - State & Environment Objects
+    // MARK: - Observed & Environment Objects
 
     @EnvironmentObject
     private var router: BasicNavigationViewCoordinator.Router

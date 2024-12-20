@@ -19,7 +19,7 @@ enum PlaybackButtonType: String, CaseIterable, Displayable, Storable {
         case .large:
             return "Large"
         case .compact:
-            return "Compact"
+            return L10n.compact
         }
     }
 }

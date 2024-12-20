@@ -46,11 +46,6 @@ struct AddServerUserView: View {
     @State
     private var confirmPassword: String = ""
 
-    // MARK: - Dialog State
-
-    @State
-    private var isPresentingSuccess: Bool = false
-
     // MARK: - Error State
 
     @State

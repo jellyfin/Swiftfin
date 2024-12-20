@@ -20,7 +20,7 @@ extension ItemView {
 
         var body: some View {
             PosterHStack(
-                title: "Special Features",
+                title: L10n.specialFeatures,
                 type: .landscape,
                 items: items
             )

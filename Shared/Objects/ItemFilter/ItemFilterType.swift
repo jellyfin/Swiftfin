@@ -54,7 +54,7 @@ extension ItemFilterType: Displayable {
         case .genres:
             L10n.genres
         case .letter:
-            "Letter"
+            L10n.letter
         case .sortBy:
             L10n.sort
         case .sortOrder:
@@ -64,7 +64,7 @@ extension ItemFilterType: Displayable {
         case .traits:
             L10n.filters
         case .years:
-            "Years"
+            L10n.years
         }
     }
 }
