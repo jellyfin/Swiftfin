@@ -4761,7 +4761,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
-				4EC71FBD2D1620AF00D0B3A8 /* ShellScript */,
+				4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */,
 				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
 				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
 				5358705C2669D21600D05A09 /* Sources */,
@@ -5018,7 +5018,7 @@
 			shellPath = /bin/sh;
 			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/AlphabetizeStrings.swift\"\n";
 		};
-		4EC71FBD2D1620AF00D0B3A8 /* ShellScript */ = {
+		4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5028,6 +5028,7 @@
 			inputPaths = (
 				"$(SRCROOT)/Translations/*.strings",
 			);
+			name = "Alphabetize Strings";
 			outputFileListPaths = (
 			);
 			outputPaths = (
