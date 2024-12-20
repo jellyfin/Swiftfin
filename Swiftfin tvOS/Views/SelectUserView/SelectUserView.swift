@@ -340,6 +340,7 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea()
+        .navigationBarBranding()
         .onAppear {
             didAppear()
         }
