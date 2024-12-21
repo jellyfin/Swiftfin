@@ -9,7 +9,7 @@
 import Foundation
 
 // Get the English localization file
-var fileURL = URL(fileURLWithPath: "./Translations/en.lproj/Localizable.strings")
+let fileURL = URL(fileURLWithPath: "./Translations/en.lproj/Localizable.strings")
 
 // This regular expression pattern matches lines of the format:
 // "Key" = "Value";
@@ -22,26 +22,17 @@ guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
 }
 
 // Split file content by newlines to process line by line.
-let lines = content.components(separatedBy: .newlines)
-var entries = [String: String]()
+let strings = content.components(separatedBy: .newlines)
+    .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    .filter { !$0.isEmpty && !$0.hasPrefix("//") }
 
-// Extract key-value pairs from each valid line.
-for line in lines {
-    let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    // Ignore empty lines and lines starting with comments.
-    if trimmed.isEmpty || trimmed.hasPrefix("//") { continue }
-
-    if let match = line.firstMatch(of: regex) {
+let entries = strings.reduce(into: [String: String]()) {
+    if let match = $1.firstMatch(of: regex) {
         let key = String(match.output.key)
         let value = String(match.output.value)
-
-        // Add the key-value pair if the key is not already in the dictionary.
-        if entries[key] == nil {
-            entries[key] = value
-        }
+        $0[key] = value
     } else {
-        print("Error: Invalid line format in \(fileURL.path): \(line)")
+        print("Error: Invalid line format in \(fileURL.path): \($1)")
         exit(1)
     }
 }
@@ -53,6 +44,10 @@ let newContent = sortedKeys.map { "/// \(entries[$0]!)\n\"\($0)\" = \"\(entries[
 // Write the updated, sorted, and commented localizations back to the file.
 do {
     try newContent.write(to: fileURL, atomically: true, encoding: .utf8)
+
+    if let derivedFileDirectory = ProcessInfo.processInfo.environment["DERIVED_FILE_DIR"] {
+        try? "".write(toFile: derivedFileDirectory + "/alphabetizeStrings.txt", atomically: true, encoding: .utf8)
+    }
 } catch {
     print("Error: Failed to write to \(fileURL.path)")
     exit(1)
