@@ -1271,6 +1271,7 @@
 		4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionDetailView.swift; sourceTree = "<group>"; };
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
+		4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurgeUnusedStrings.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
 		4E884C642CEBB2FF004CF6AD /* LearnMoreModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreModal.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
@@ -2695,6 +2696,7 @@
 			isa = PBXGroup;
 			children = (
 				4EC71FBB2D161FE300D0B3A8 /* AlphabetizeStrings.swift */,
+				4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -4761,6 +4763,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
+				4E75B34C2D1650C700D16531 /* Purge Unused Strings */,
 				4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */,
 				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
 				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
@@ -4809,6 +4812,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
+				4E75B34B2D164BC800D16531 /* Purge Unused Strings */,
 				4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */,
 				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
 				BD0BA2282AD64BB200306A8D /* Run SwiftFormat */,
@@ -4999,6 +5003,44 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4E75B34B2D164BC800D16531 /* Purge Unused Strings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+			);
+			name = "Purge Unused Strings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/PurgeUnusedStrings.swift\"\n";
+		};
+		4E75B34C2D1650C700D16531 /* Purge Unused Strings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+			);
+			name = "Purge Unused Strings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/AlphabetizeStrings.swift\"\n";
+		};
 		4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -5008,7 +5050,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Translations/*.strings",
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
 			);
 			name = "Alphabetize Strings";
 			outputFileListPaths = (
@@ -5028,7 +5070,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Translations/*.strings",
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
 			);
 			name = "Alphabetize Strings";
 			outputFileListPaths = (

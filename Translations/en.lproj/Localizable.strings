@@ -1927,9 +1927,6 @@
 /// This will be created as a new item on your Jellyfin Server.
 "willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
 
-/// WIP
-"wip" = "WIP";
-
 /// Writer
 "writer" = "Writer";
 
