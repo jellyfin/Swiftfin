@@ -316,17 +316,6 @@ struct SelectUserView: View {
             serverSelection: serverSelection,
             allServersSelection: .all
         )
-
-        // TODO: Is this necessary anymore?
-//            gridItems = OrderedSet(
-//                (0 ..< 20)
-//                    .map { i in
-//                        UserState(accessToken: "", id: "\(i)", serverID: "", username: "\(i)")
-//                    }
-//                    .map { u in
-//                        UserGridItem.user(u, server: .init(urls: [], currentURL: URL(string: "/")!, name: "Test", id: "", usersIDs: []))
-//                    }
-//            )
     }
 
     // MARK: - Body
