@@ -1,2302 +1,1947 @@
-"accessibility" = "Accessibility";
-"allGenres" = "All Genres";
-"allMedia" = "All Media";
-"apply" = "Apply";
-"audioAndCaptions" = "Audio & Captions";
-"audioTrack" = "Audio Track";
-"back" = "Back";
-"cast" = "CAST";
-"changeServer" = "Change Server";
-"closedCaptions" = "Closed Captions";
-"comingSoon" = "Coming soon";
-"connect" = "Connect";
-"connectManually" = "Connect Manually";
-"connectToJellyfin" = "Connect to Jellyfin";
-"connectToServer" = "Connect to Server";
-"continueWatching" = "Continue Watching";
-"discoveredServers" = "Discovered Servers";
-"displayOrder" = "Display order";
-"emptyNextUp" = "Empty Next Up";
-"episodes" = "Episodes";
-"error" = "Error";
-"filterResults" = "Filter Results";
-"filters" = "Filters";
-"genres" = "Genres";
-"home" = "Home";
-"latestWithString" = "Latest %@";
-"library" = "Library";
-"loading" = "Loading";
-"localServers" = "Local Servers";
-"login" = "Login";
-"loginToWithString" = "Login to %@";
-"moreLikeThis" = "More Like This";
-"nextUp" = "Next Up";
-"noCastdevicesfound" = "No Cast devices found..";
-"noResults" = "No results.";
-"ok" = "Ok";
-"otherUser" = "Other User";
-"pageOfWithNumbers" = "Page %1$@ of %2$@";
-"playNext" = "Play Next";
-"play" = "Play";
-"playback" = "Playback";
-"playbackSettings" = "Playback settings";
-"playbackSpeed" = "Playback Speed";
-"reload" = "Reload";
-"reset" = "Reset";
-"seasonAndEpisode" = "S%1$@:E%2$@";
-"search" = "Search";
-"searchDots" = "Search…";
-"seasons" = "Seasons";
-"season" = "Season";
-"seeAll" = "See All";
-"selectCastDestination" = "Select Cast Destination";
-"serverInformation" = "Server Information";
-"serverURL" = "Server URL";
-"signedInAsWithString" = "Signed in as %@";
-"sortBy" = "Sort by";
-"studio" = "STUDIO";
-"studios" = "Studios";
-"suggestions" = "Suggestions";
-"switchUser" = "Switch User";
-"tags" = "Tags";
-"tryAgain" = "Try again";
-"notImplementedYetWithType" = "Type: %@ not implemented yet :(";
-"username" = "Username";
-"WhosWatching" = "Who's watching?";
-"wip" = "WIP";
-"yourFavorites" = "Your Favorites";
-
-/* Represents the Appearance setting label */
-"appearance" = "Appearance";
-
-/* Represents the system theme setting */
-"system" = "System";
-
-/* Represents the dark theme setting */
-"dark" = "Dark";
-
-/* Represents the light theme setting */
-"light" = "Light";
-
-"advanced" = "Advanced";
-"aspectFill" = "Aspect Fill";
-"enabled" = "Enabled";
-"disabled" = "Disabled";
-"existingServer" = "Existing Server";
-"existingUser" = "Existing User";
-"serverAlreadyConnected" = "Server %s is already connected";
-"userAlreadySignedIn" = "User %s is already signed in";
-"unknownError" = "Unknown Error";
-"unknown" = "Unknown";
-"serverAlreadyExistsPrompt" = "Server %s already exists. Add new URL?";
-"addURL" = "Add URL";
-"noEpisodesAvailable" = "No episodes available";
-"seeMore" = "See More";
-"defaultScheme" = "Default Scheme";
-"networking" = "Networking";
-"resetUserSettings" = "Reset User Settings";
-"resetAllSettings" = "Reset all settings back to defaults.";
-"resetAppSettings" = "Reset App Settings";
-"removeAllUsers" = "Remove All Users";
-"removeAllServers" = "Remove All Servers";
-"settings" = "Settings";
-"cancel" = "Cancel";
-"connectToJellyfinServer" = "Connect to a Jellyfin server";
-"connectToJellyfinServerStart" = "Connect to a Jellyfin server to get started";
-"searchingDots" = "Searching…";
-"noLocalServersFound" = "No local servers found";
-"continue" = "Continue";
-"noTitle" = "No title";
-"retry" = "Retry";
-"recentlyAdded" = "Recently Added";
-"overview" = "Overview";
-"noOverviewAvailable" = "No overview available";
-"castAndCrew" = "Cast & Crew";
-"items" = "Items";
-"series" = "Series";
-"information" = "Information";
-"media" = "Media";
-"favorites" = "Favorites";
-"liveTV" = "Live TV";
-"downloads" = "Downloads";
-"serverDetails" = "Server Details";
-"name" = "Name";
-"url" = "URL";
-"version" = "Version";
-"operatingSystem" = "Operating System";
-"remove" = "Remove";
-"servers" = "Servers";
-"experimental" = "Experimental";
-"playPreviousItem" = "Play Previous Item";
-"playNextItem" = "Play Next Item";
-"autoPlay" = "Auto Play";
-"editJumpLengths" = "Edit Jump Lengths";
-"overlay" = "Overlay";
-"overlayType" = "Overlay Type";
-"user" = "User";
-"server" = "Server";
-"nativePlayer" = "Native Player";
-"videoPlayerType" = "Video Player Type";
-"gestures" = "Gestures";
-"jumpForwardLength" = "Jump Forward Length";
-"jumpBackwardLength" = "Jump Backward Length";
-"jumpGesturesEnabled" = "Jump Gestures Enabled";
-"systemControlGesturesEnabled" = "System Control Gestures Enabled";
-"playerGesturesLockGestureEnabled" = "Player Gestures Lock Gesture Enabled";
-"seekSlideGestureEnabled" = "Seek Slide Gesture Enabled";
-"audioOffset" = "Audio Offset";
-"subtitleOffset" = "Subtitle Offset";
-"resumeOffset" = "Resume Offset";
-"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
-"resume5SecondOffset" = "Resume 5 Second Offset";
-"showPosterLabels" = "Show Poster Labels";
-"showCastAndCrew" = "Show Cast & Crew";
-"subtitleColor" = "Subtitle Color";
-"subtitleSize" = "Subtitle Size";
-"subtitleFont" = "Subtitle Font";
-"signInGetStarted" = "Sign in to get started";
-"signIn" = "Sign In";
-"signInToServer" = "Sign In to %s";
-"audio" = "Audio";
-"subtitles" = "Subtitles";
-"playbackSpeed" = "Playback Speed";
-"programs" = "Programs";
-"channels" = "Channels";
-"tvShows" = "TV Shows";
-"movies" = "Movies";
-"other" = "Other";
-"networkTimedOut" = "Network timed out";
-"cannotConnectToHost" = "Cannot connect to host";
-"unauthorizedUser" = "Unauthorized user";
-"unauthorized" = "Unauthorized";
-"released" = "Released";
-"rated" = "Rated";
-"runtime" = "Runtime";
-"containers" = "Containers";
-"noCodec" = "No Codec";
-"normal" = "Normal";
-"compact" = "Compact";
-"smallest" = "Smallest";
-"smaller" = "Smaller";
-"regular" = "Regular";
-"larger" = "Larger";
-"largest" = "Largest";
-"jumpLengthSeconds" = "%s seconds";
-"unableToConnectServer" = "Unable to connect to server";
-"present" = "Present";
-"oneUser" = "1 user";
-"multipleUsers" = "%d users";
-"notAvailableSlash" = "N/A";
-"next" = "Next";
-"refresh" = "Refresh";
-"recommended" = "Recommended";
+/// About
 "about" = "About";
-"pressDownForMenu" = "Press Down for Menu";
-"confirmClose" = "Confirm Close";
-"cinematicViews" = "Cinematic Views";
-"none" = "None";
-"missing" = "Missing";
-"unaired" = "Unaired";
-"airWithDate" = "Airs %s";
-"missingItems" = "Missing Items";
-"showMissingSeasons" = "Show Missing Seasons";
-"showMissingEpisodes" = "Show Missing Episodes";
-"removeFromResume" = "Remove From Resume";
-"playFromBeginning" = "Play From Beginning";
-"file" = "File";
-"customize" = "Customize";
-"tooManyRedirects" = "Too Many Redirects";
-"chapters" = "Chapters";
-"current" = "Current";
-"currentPosition" = "Current Position";
-"remainingTime" = "Remaining Time";
-"sourceCode" = "Source Code";
-"requestFeature" = "Request a Feature";
-"reportIssue" = "Report an Issue";
-"showFlattenView" = "Flatten Library Items";
-"playAndPause" = "Play / Pause";
-"jumpForward" = "Jump Forward";
-"jumpBackward" = "Jump Backward";
-"close" = "Close";
-"nextItem" = "Next Item";
-"previousItem" = "Previous Item";
-"unableToFindHost" = "Unable to find host";
-"publicUsers" = "Public Users";
-"noPublicUsers" = "No public Users";
-"quickConnect" = "Quick Connect";
-"quickConnectCode" = "Quick Connect code";
-"authorize" = "Authorize";
-"quickConnectInvalidError" = "Invalid Quick Connect code";
-"quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
-"showChaptersInfoInBottomOverlay" = "Show Chapters Info In Bottom Overlay";
-"quickConnectStep1" = "Open the Jellyfin app on your phone or web browser and sign in with your account";
-"quickConnectStep2" = "Open the user menu and go to the Quick Connect page";
-"quickConnectStep3" = "Enter the following code:";
-"quickConnectNotEnabled" = "Note: Quick Connect not enabled";
-"episodeNumber" = "Episode %1$@";
-"compactPoster" = "Compact Poster";
-"compactLogo" = "Compact Logo";
-"cinematic" = "Cinematic";
-"blue" = "Blue";
-"green" = "Green";
-"orange" = "Orange";
-"red" = "Red";
-"yellow" = "Yellow";
-"primary" = "Primary";
-"bugsAndFeatures" = "Bugs and Features";
-"invertedDark" = "Inverted Dark";
-"invertedLight" = "Inverted Light";
-"appIcon" = "App Icon";
-"accentColor" = "Accent Color";
-"accentColorDescription" = "Some views may need an app restart to update.";
-"dismiss" = "Dismiss";
-"played" = "Played";
-"unplayed" = "Unplayed";
-"video" = "Video";
-"audio" = "Audio";
-"subtitle" = "Subtitle";
-"specialFeatures" = "Special Features";
-"color" = "Color";
-"delivery" = "Delivery";
-"collections" = "Collections";
-"people" = "People";
-"usePrimaryImage" = "Use Primary Image";
-"usePrimaryImageDescription" = "Uses the primary image and hides the logo.";
-"hapticFeedback" = "Haptic Feedback";
-"posters" = "Posters";
-"seriesBackdrop" = "Series Backdrop";
-"episodeLandscapePoster" = "Episode Landscape Poster";
-"randomImage" = "Random Image";
-"favorited" = "Favorited";
-"progress" = "Progress";
-"order" = "Order";
-"sort" = "Sort";
-"ratings" = "Ratings";
-"random" = "Random";
-"grid" = "Grid";
-"list" = "List";
-"logs" = "Logs";
-"likedItems" = "Liked Items";
 
-"onNow" = "On Now";
-"sports" = "Sports";
-"kids" = "Kids";
-"news" = "News";
-
-"buttons" = "Buttons";
-"playbackButtons" = "Playback Buttons";
-"barButtons" = "Bar Buttons";
-"menuButtons" = "Menu Buttons";
-"jump" = "Jump";
-"slider" = "Slider";
-"chapterSlider" = "Chapter Slider";
-"sliderColor" = "Slider Color";
-"sliderType" = "Slider Type";
-"timestamp" = "Timestamp";
-"scrubCurrentTime" = "Scrub Current Time";
-"timestampType" = "Timestamp Type";
-"trailingValue" = "Trailing Value";
-"transition" = "Transition";
-"pauseOnBackground" = "Pause on background";
-"playOnActive" = "Play on active";
-
-// Retrieving Media Information - Loading Message
-// Text displayed to indicate that media information is being loaded.
-"retrievingMediaInformation" = "Retrieving media information";
-
-// Right - Direction
-// Label for the right side or direction.
-"right" = "Right";
-
-// Left - Direction
-// Label for the left side or direction.
-"left" = "Left";
-
-// Letter Picker - Option
-// Picker used to select a letter for jumping to a specific section in a list.
-"letterPicker" = "Letter Picker";
-
-// Orientation - Setting
-// Setting to define how an item is oriented (e.g., portrait or landscape).
-"orientation" = "Orientation";
-
-// Test Size - Option
-// Option to set the test size for bitrate testing.
-"testSize" = "Test Size";
-
-// Maximum Bitrate - Option
-// Option to set the maximum bitrate for playback.
-"maximumBitrate" = "Maximum Bitrate";
-
-// Auto - Option
-// Option for automatic bitrate selection.
-"bitrateAuto" = "Auto";
-
-// Maximum - Option
-// Option for the maximum bitrate.
-"bitrateMax" = "Maximum";
-
-// 4K - 120 Mbps - Option
-// Option to set the bitrate to 4K quality at 120 Mbps.
-"bitrateMbps120" = "4K - 120 Mbps";
-
-// 4K - 80 Mbps - Option
-// Option to set the bitrate to 4K quality at 80 Mbps.
-"bitrateMbps80" = "4K - 80 Mbps";
-
-// 1080p - 60 Mbps - Option
-// Option to set the bitrate to 1080p quality at 60 Mbps.
-"bitrateMbps60" = "1080p - 60 Mbps";
-
-// 1080p - 40 Mbps - Option
-// Option to set the bitrate to 1080p quality at 40 Mbps.
-"bitrateMbps40" = "1080p - 40 Mbps";
-
-// 1080p - 20 Mbps - Option
-// Option to set the bitrate to 1080p quality at 20 Mbps.
-"bitrateMbps20" = "1080p - 20 Mbps";
-
-// 1080p - 15 Mbps - Option
-// Option to set the bitrate to 1080p quality at 15 Mbps.
-"bitrateMbps15" = "1080p - 15 Mbps";
-
-// 1080p - 10 Mbps - Option
-// Option to set the bitrate to 1080p quality at 10 Mbps.
-"bitrateMbps10" = "1080p - 10 Mbps";
-
-// 720p - 8 Mbps - Option
-// Option to set the bitrate to 720p quality at 8 Mbps.
-"bitrateMbps8" = "720p - 8 Mbps";
-
-// 720p - 6 Mbps - Option
-// Option to set the bitrate to 720p quality at 6 Mbps.
-"bitrateMbps6" = "720p - 6 Mbps";
-
-// 720p - 4 Mbps - Option
-// Option to set the bitrate to 720p quality at 4 Mbps.
-"bitrateMbps4" = "720p - 4 Mbps";
-
-// 480p - 3 Mbps - Option
-// Option to set the bitrate to 480p quality at 3 Mbps.
-"bitrateMbps3" = "480p - 3 Mbps";
-
-// 480p - 1.5 Mbps - Option
-// Option to set the bitrate to 480p quality at 1.5 Mbps.
-"bitrateKbps1500" = "480p - 1.5 Mbps";
-
-// 480p - 720 Kbps - Option
-// Option to set the bitrate to 480p quality at 720 Kbps.
-"bitrateKbps720" = "480p - 720 Kbps";
-
-// 360p - 420 Kbps - Option
-// Option to set the bitrate to 360p quality at 420 Kbps.
-"bitrateKbps420" = "360p - 420 Kbps";
-
-// Bitrate Test Disclaimer - Description
-// Description for bitrate test duration indicating longer tests provide more accurate bitrates.
-"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
-
-// Servers - Navigation Title
-// Select Server View.
-"servers" = "Servers";
-
-// Add Server - Button
-// Select Server View - Add Server.
-"addServer" = "Add Server";
-
-// All Servers - Button
-// Select Server View - Select All Servers.
-"allServers" = "All Servers";
-
-// Edit Server - Button
-// Select Server View - Edit an Existing Server.
-"editServer" = "Edit Server";
-
-// Delete - Button
-// Server Detail View - Delete.
-"delete" = "Delete";
-
-// Delete Server - Button
-// Server Detail View - Delete Server.
-"deleteServer" = "Delete Server";
-
-// Indicators - Button
-// Customize Server View - Indicators.
-"indicators" = "Indicators";
-
-// Posters - Button
-// Customize Server View - Posters.
-"posters" = "Posters";
-
-// Cinematic Background - Button
-// Customize Server View - Cinematic Background.
-"cinematicBackground" = "Cinematic Background";
-
-// Random Image - Button
-// Customize Server View - Random Image.
-"randomImage" = "Random Image";
-
-// Show Favorites - Button
-// Customize Server View - Show Favorites.
-"showFavorites" = "Show Favorites";
-
-// Show Recently Added - Button
-// Customize Server View - Show Recently Added.
-"showRecentlyAdded" = "Show Recently Added";
-
-// Show Favorited - Indicators View
-// Option to show favorited items.
-"showFavorited" = "Show Favorited";
-
-// Show Progress - Indicators View
-// Option to show progress indicators.
-"showProgress" = "Show Progress";
-
-// Show Unwatched - Indicators View
-// Option to show unwatched items.
-"showUnwatched" = "Show Unwatched";
-
-// Show Watched - Indicators View
-// Option to show watched items.
-"showWatched" = "Show Watched";
-
-// Playback Quality - Maximum Bitrate View
-// Label for the playback quality setting.
-"playbackQuality" = "Playback Quality";
-
-// Video Player - Settings View
-// Label for the video player settings.
-"videoPlayer" = "Video Player";
-
-// Customize - Settings View
-// Label for customization settings.
-"customize" = "Customize";
-
-// Logs - Settings View
-// Label for viewing logs.
-"logs" = "Logs";
-
-// Jellyfin - General
-// Label for Jellyfin branding.
-"jellyfin" = "Jellyfin";
-
-// Offset - Video Player Settings View
-// Label for setting playback offset.
-"offset" = "Offset";
-
-// Resume - Video Player Settings View
-// Label for resuming playback.
-"resume" = "Resume";
-
-// Subtitles Disclaimer - Video Player Settings View
-// Disclaimer about subtitle compatibility.
-"subtitlesDisclaimer" = "Settings only affect some subtitle types";
-
-// Pause on Background - Video Player Settings View
-// Option to pause playback when app goes to the background.
-"pauseOnBackground" = "Pause on background";
-
-// Play on Active - Video Player Settings View
-// Option to resume playback when app becomes active.
-"playOnActive" = "Play on active";
-
-// Playback - Video Player Settings View
-// Header label for playback settings.
-"playback" = "Playback";
-
-// Resume Offset Title - Video Player Settings View
-// Title for the resume offset setting.
-"resumeOffsetTitle" = "Resume Offset";
-
-// Resume Offset Description - Video Player Settings View
-// Description for the resume offset setting.
-"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
-
-// Custom Profile - Section Header
-// Header label for custom device profiles.
-"customProfile" = "Custom Profile";
-
-// Device Profile - Section Header
-// Header label for device profiles.
-"deviceProfile" = "Device Profile";
-
-// Add Custom Device Profiles - Description
-// Description for adding custom profiles to default profiles.
-"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
-
-// Replace Custom Device Profiles - Description
-// Description for replacing default profiles with custom profiles.
-"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
-
-// Playback Quality - Section
-// Label for the playback quality section.
-"playbackQuality" = "Playback Quality";
-
-// Use as Transcoding Profile - Option
-// Option to use a profile for transcoding.
-"useAsTranscodingProfile" = "Use as Transcoding Profile";
-
-// Auto - PlaybackCompatibility Default Category
-// Label for the default playback compatibility setting.
-"auto" = "Auto";
-
-// Most Compatible - PlaybackCompatibility Compatible Category
-// Label for the most compatible playback compatibility setting.
-"compatible" = "Most Compatible";
-
-// Direct Play - PlaybackCompatibility DirectPlay Category
-// Label for the direct play compatibility setting.
-"direct" = "Direct Play";
-
-// Custom - PlaybackCompatibility Custom Category
-// Label for the custom playback compatibility setting.
-"custom" = "Custom";
-
-// Compatibility - PlaybackCompatibility Section Title
-// Label for the compatibility section.
-"compatibility" = "Compatibility";
-
-// Profiles - PlaybackCompatibility Profile Sections
-// Label for playback compatibility profiles.
-"profiles" = "Profiles";
-
-// Behavior - General
-// Label for behavior settings.
-"behavior" = "Behavior";
-
-// Bitrate Test - Bitrate Automatic Section Header
-// Header label for bitrate testing settings.
-"bitrateTest" = "Bitrate Test";
-
-// Default Bitrate - General
-// Label for the default bitrate setting.
-"bitrateDefault" = "Default Bitrate";
-
-// Default Bitrate Description - General
-// Description for the default bitrate setting.
-"bitrateDefaultDescription" = "Limits the internet bandwidth used during playback.";
-
-// Playback May Fail - Warning
-// Warning message for potential playback failure.
-"mayResultInPlaybackFailure" = "This setting may result in media failing to start playback.";
-
-// Custom Device Profile Description - General
-// Description for custom device profiles.
-"customDeviceProfileDescription" = "Dictates back to the Jellyfin Server what this device hardware is capable of playing.";
-
-// Device - Session Device Section Label
-// Label for the device in session details.
-"device" = "Device";
-
-// Last Seen - Session Client Last Seen Section Label
-// Label for the last seen time in session details.
-"lastSeen" = "Last Seen";
-
-// Transcode Reasons - Section Label
-// Label for reasons why transcoding is required.
-"transcodeReasons" = "Transcode Reason(s)";
-
-// Administration - Dashboard Section
-// Label for the administration dashboard.
-"administration" = "Administration";
-
-// Scan All Libraries - Button
-// Button to trigger a scan for all libraries.
-"scanAllLibraries" = "Scan All Libraries";
-
-// Scheduled Tasks - Administration Dashboard
-// Label for scheduled tasks in the administration dashboard.
-"scheduledTasks" = "Scheduled Tasks";
-
-// FPS with String - Transcode FPS
-// Label for frames per second, formatted with a string.
-"fpsWithString" = "%@fps";
-
-// Streams - Session Streaming Clients
-// Label for active streaming clients.
-"streams" = "Streams";
-
-// Online - General
-// Label to indicate that something is online.
-"online" = "Online";
-
-// Shutdown Server - Button
-// Button to shutdown the server.
-"shutdownServer" = "Shutdown Server";
-
-// Shutdown Warning - Confirmation
-// Warning message displayed when shutting down the server.
-"shutdownWarning" = "Are you sure you want to shutdown the server?";
-
-// Restart Server - Button
-// Button to restart the server.
-"restartServer" = "Restart Server";
-
-// Restart Warning - Confirmation
-// Warning message displayed when restarting the server.
-"restartWarning" = "Are you sure you want to restart the server?";
-
-// Active Devices - ActiveSessionsView Header
-// Header label for the active devices view.
-"activeDevices" = "Active Devices";
-
-// Dashboard - UserDashboardView Header
-// Header label for the user dashboard view.
-"dashboard" = "Dashboard";
-
-// Remaining Time - SessionPlaybackMethod
-// Label for displaying remaining playback time.
-"itemOverItem" = "%1$@ / %2$@";
-
-// Canceled - Task Status
-// Label for a canceled task.
-"canceled" = "Cancelled";
-
-// Confirm - Button
-// Button to confirm an action.
-"confirm" = "Confirm";
-
-// Transcode - Play Method
-// Label for the transcode play method.
-"transcode" = "Transcode";
-
-// Remux - Play Method
-// Label for the remux play method.
-"remux" = "Remux";
-
-// Direct Play - Play Method
-// Label for the direct play method.
-"directPlay" = "Direct Play";
-
-// Direct Stream - Play Method
-// Label for the direct stream method.
-"directStream" = "Direct Stream";
-
-// Container Not Supported - TranscodeReason
-// Error message for unsupported container format.
-"containerNotSupported" = "The container format is not supported";
-
-// Video Codec Not Supported - TranscodeReason
-// Error message for unsupported video codec.
-"videoCodecNotSupported" = "The video codec is not supported";
-
-// Audio Codec Not Supported - TranscodeReason
-// Error message for unsupported audio codec.
-"audioCodecNotSupported" = "The audio codec is not supported";
-
-// Subtitle Codec Not Supported - TranscodeReason
-// Error message for unsupported subtitle codec.
-"subtitleCodecNotSupported" = "The subtitle codec is not supported";
-
-// Audio Is External - TranscodeReason
-// Error message when audio track is external and requires transcoding.
-"audioIsExternal" = "The audio track is external and requires transcoding";
-
-// Secondary Audio Not Supported - TranscodeReason
-// Error message for unsupported secondary audio.
-"secondaryAudioNotSupported" = "Secondary audio is not supported";
-
-// Video Profile Not Supported - TranscodeReason
-// Error message for unsupported video profile.
-"videoProfileNotSupported" = "The video profile is not supported";
-
-// Video Level Not Supported - TranscodeReason
-// Error message for unsupported video level.
-"videoLevelNotSupported" = "The video level is not supported";
-
-// Video Resolution Not Supported - TranscodeReason
-// Error message for unsupported video resolution.
-"videoResolutionNotSupported" = "The video resolution is not supported";
-
-// Video Bit Depth Not Supported - TranscodeReason
-// Error message for unsupported video bit depth.
-"videoBitDepthNotSupported" = "The video bit depth is not supported";
-
-// Video Framerate Not Supported - TranscodeReason
-// Error message for unsupported video framerate.
-"videoFramerateNotSupported" = "The video framerate is not supported";
-
-// Reference Frames Not Supported - TranscodeReason
-// Error message for unsupported number of reference frames.
-"refFramesNotSupported" = "The number of reference frames is not supported";
-
-// Anamorphic Video Not Supported - TranscodeReason
-// Error message for unsupported anamorphic video.
-"anamorphicVideoNotSupported" = "Anamorphic video is not supported";
-
-// Interlaced Video Not Supported - TranscodeReason
-// Error message for unsupported interlaced video.
-"interlacedVideoNotSupported" = "Interlaced video is not supported";
-
-// Audio Channels Not Supported - TranscodeReason
-// Error message for unsupported number of audio channels.
-"audioChannelsNotSupported" = "The number of audio channels is not supported";
-
-// Audio Profile Not Supported - TranscodeReason
-// Error message for unsupported audio profile.
-"audioProfileNotSupported" = "The audio profile is not supported";
-
-// Audio Sample Rate Not Supported - TranscodeReason
-// Error message for unsupported audio sample rate.
-"audioSampleRateNotSupported" = "The audio sample rate is not supported";
-
-// Audio Bit Depth Not Supported - TranscodeReason
-// Error message for unsupported audio bit depth.
-"audioBitDepthNotSupported" = "The audio bit depth is not supported";
-
-// Container Bitrate Exceeds Limit - TranscodeReason
-// Error message when container bitrate exceeds the allowed limit.
-"containerBitrateExceedsLimit" = "The container bitrate exceeds the allowed limit";
-
-// Video Bitrate Not Supported - TranscodeReason
-// Error message for unsupported video bitrate.
-"videoBitrateNotSupported" = "The video bitrate is not supported";
-
-// Audio Bitrate Not Supported - TranscodeReason
-// Error message for unsupported audio bitrate.
-"audioBitrateNotSupported" = "The audio bitrate is not supported";
-
-// Unknown Video Stream Info - TranscodeReason
-// Error message for unknown video stream information.
-"unknownVideoStreamInfo" = "The video stream information is unknown";
-
-// Unknown Audio Stream Info - TranscodeReason
-// Error message for unknown audio stream information.
-"unknownAudioStreamInfo" = "The audio stream information is unknown";
-
-// Direct Play Error - TranscodeReason
-// Error message for a direct play failure.
-"directPlayError" = "An error occurred during direct play";
-
-// Video Range Type Not Supported - TranscodeReason
-// Error message for unsupported video range type.
-"videoRangeTypeNotSupported" = "The video range type is not supported";
-
-// No Session - General
-// Message displayed when no active session is available.
-"noSession" = "No session";
-
-// Session - General
-// Title for the session view.
-"session" = "Session";
-
-// Client - General
-// Label for the client used in a session.
-"client" = "Client";
-
-// Method - General
-// Label for the playback method (e.g., Direct Play, Transcoding).
-"method" = "Method";
-
-// Category - General
-// Label for the category of a task.
-"category" = "Category";
-
-// Task - Navigation Title
-// Navigation title for the task view.
-"task" = "Task";
-
-// Last Run - General
-// Label for the last run time of a task.
-"lastRun" = "Last run";
-
-// Dashboard Description - General
-// Description for the administration dashboard section.
-"dashboardDescription" = "Perform administrative tasks for your Jellyfin server.";
-
-// Tasks - Section Title
-// Title for the tasks section.
-"tasks" = "Tasks";
-
-// Server Logs - Section Title
-// Title for the server logs section.
-"serverLogs" = "Server Logs";
-
-// Tasks Description - General
-// Description for the tasks section.
-"tasksDescription" = "Tasks are operations that are scheduled to run periodically or can be triggered manually.";
-
-// Running - Status
-// Label for a task that is currently running.
-"running" = "Running...";
-
-// Run - Button
-// Label for the button to run a task.
-"run" = "Run";
-
-// Stop - Button
-// Label for the button to stop a task.
-"stop" = "Stop";
-
-// Cancelling - Status
-// Label for a task that is in the process of being canceled.
-"cancelling" = "Cancelling...";
-
-// Last Run Time - General
-// Message showing the last run time of a task.
-"lastRunTime" = "Last ran %@";
-
-// Never Run - General
-// Message displayed when a task has never run.
-"neverRun" = "Never run";
-
-// Edit - Button
-// Label for the button to edit a task.
-"edit" = "Edit";
-
-// Task Completed - Status
-// Message displayed when a task has completed successfully.
-"taskCompleted" = "Completed";
-
-// Task Failed - Status
-// Message displayed when a task has failed.
-"taskFailed" = "Failed";
-
-// Task Cancelled - Status
-// Message displayed when a task has been canceled.
-"taskCancelled" = "Cancelled";
-
-// Task Aborted - Status
-// Message displayed when a task has been aborted.
-"taskAborted" = "Aborted";
-
-// Rewatching in Next Up - Settings Description
-// Description for enabling rewatching in the Next Up section.
-"nextUpRewatch" = "Rewatching in Next Up";
-
-// Days in Next Up - Settings Description
-// Description for the day limit in the Next Up section.
-"nextUpDays" = "Days in Next Up";
-
-// Next Up Days Description - General
-// Description for the Next Up days setting.
-"nextUpDaysDescription" = "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.";
-
-// Done - General
-// Label for completing an action.
-"done" = "Done";
-
-// Save - General
-// Label for saving changes.
-"save" = "Save";
-
-// Days - General
-// Label for days as a time interval.
-"days" = "Days";
-
-// Columns - Section Title
-// Title for the column configuration section.
-"columns" = "Columns";
-
-// Date Created - Label
-// Label for displaying the date an API key was created
-"dateCreated" = "Date Created";
-
-// API Keys - Title
-// Section Title for displaying API keys in the list
-"apiKeysTitle" = "API Keys";
-
-// API Keys - Description
-// Explains the usage of API keys in external applications
-"apiKeysDescription" = "External applications require an API key to communicate with your server.";
-
-// Add - Button
-// Adds a new record
-"add" = "Add";
-
-// API Key Copied - Alert
-// Informs the user that the API key was copied to the clipboard
-"apiKeyCopied" = "API Key Copied";
-
-// API Key Copied - Alert Message
-// Informs the user that the key was copied successfully
-"apiKeyCopiedMessage" = "Your API Key was copied to your clipboard!";
-
-// OK - Button
-// Acknowledges an action
-"ok" = "OK";
-
-// Delete API Key - Confirmation Message
-// Warns the user that API Key deletion is permanent
-"deleteAPIKeyMessage" = "Are you sure you want to permanently delete this key?";
-
-// Cancel - Button
-// Cancels the current action
-"cancel" = "Cancel";
-
-// Delete - Button
-// Confirms the deletion of an item
-"delete" = "Delete";
-
-// Create API Key - Alert
-// Prompts the user to enter an app name to create an API key
-"createAPIKey" = "Create API Key";
-
-// Create API Key - Message
-// Asks the user to enter the name of the application for the new API key
-"createAPIKeyMessage" = "Enter the application name for the new API key.";
-
-// Application Name - Text Field
-// Placeholder text for entering the name of the application
-"applicationName" = "Application Name";
-
-// Save - Button
-// Confirms the creation of the new API key
-"save" = "Save";
-
-// API Keys - Screen Title
-// Title for the API keys management screen
-"apiKeys" = "API Keys";
-
-// Devices - Section Header
-// Title for the devices section in the Admin Dashboard
-"devices" = "Devices";
-
-// All Devices Description - Section Description
-// Description for the all devices section in the Admin Dashboard
-"allDevicesDescription" = "View all past and present devices that have connected.";
-
-// Delete Selected Devices - Button
-// Button label for deleting all selected devices
-"deleteSelectedDevices" = "Delete Selected Devices";
-
-// Never - Filler Text
-// Text displayed when something has never or will never occur
-"never" = "Never";
-
-// Delete Selected Devices Warning - Warning Message
-// Warning message displayed when deleting all devices
-"deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.";
-
-// Delete Device Warning - Warning Message
-// Warning message displayed when deleting a single device
-"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
-
-// Delete Device - Action
-// Message for deleting a single device in the all devices section
-"deleteDevice" = "Delete Device";
-
-// Delete Device Self-Deletion - Error Message
-// Error message when attempting to delete the current session's device
-"deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
-
-// Delete Device Failed - Error Title
-// Title for the alert when device deletion fails
-"deleteDeviceFailed" = "Failed to Delete Device";
-
-// Custom Device Name - Title
-// Title for setting a custom device name
-"customDeviceName" = "Custom Device Name";
-
-// Capabilities - Section Header
-// Title for the section showing the device capabilities
-"capabilities" = "Capabilities";
-
-// Supports Content Uploading - Label
-// Indicates whether the device supports uploading content
-"supportsContentUploading" = "Content Uploading";
-
-// Supports Media Control - Label
-// Indicates whether the device supports media control (e.g., play, pause, stop)
-"supportsMediaControl" = "Media Control";
-
-// Supports Persistent Identifier - Label
-// Indicates whether the device supports a persistent identifier
-"supportsPersistentIdentifier" = "Persistent Identifier";
-
-// Supports Sync - Label
-// Indicates whether the device suppoTestrts syncing content (e.g., media sync across devices)
-"supportsSync" = "Sync";
-
-// Yes - Label
-// Indicates that a capability is supported
-"yes" = "Yes";
-
-// No - Label
-// Indicates that a capability is not supported
-"no" = "No";
-
-// Custom Device Name Saved - Label
-// Confirms that the custom device name was saved successfully
-"customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
-
-// Success - Label
-// Indicates that an operation was successful
-"success" = "Success";
-
-// Remove All - Button
-// Deselects all currently selected devices
-"removeAll" = "Remove All";
-
-// Select All - Button
-// Selects all available devices
-"selectAll" = "Select All";
-
-// Users - Section
-// Admin Dashboard Section with all Server Users
-"users" = "Users";
-
-// Active - Label
-// Indication whether an item is active or inactive
-"active" = "Active";
-
-// All Users Description - Section Description
-// Description for the all users section in the Admin Dashboard
-"allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
-
-// Role - Label
-// Represents the role of the user
-"role" = "Role";
-
-// Administrator - Title
-// Label for administrator role
-"administrator" = "Administrator";
-
-// User - Title
-// Label for non-administrator users
-"user" = "User";
-
-// Activity - Label
-// Represents user activity status
-"activity" = "Activity";
-
-// Logs Description - View
-// Access the Jellyfin server logs for troubleshooting and monitoring purposes
-"logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
-
-// Type - Label
-// Indicate a type
-"type" = "Type";
-
-// Day of Week - Section Label
-// Specifies the day of the week for the trigger
-"dayOfWeek" = "Day of Week";
-
-// Time - Section Label
-// Specifies the time for the trigger
-"time" = "Time";
-
-// Daily - Description
-// Recurring trigger that runs daily
-"daily" = "Daily";
-
-// Interval - Description
-// Recurring trigger based on time intervals
-"interval" = "Interval";
-
-// Weekly - Description
-// Recurring trigger that runs weekly
-"weekly" = "Weekly";
-
-// On Application Startup - Description
-// Trigger that runs when the application starts
-"onApplicationStartup" = "On application startup";
-
-// Task Trigger Time Limit - Section Description
-// Sets the maximum runtime (in hours) for this task trigger
-"taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
-
-// Task Trigger Interval - Section Description
-// Sets the duration (in minutes) in between task triggers
-"taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
-
-// Every - Label
-// Used to select interval frequency
-"every" = "Every";
-
-// Time Limit with Unit - Label
-// Specifies time limit along with the unit
-"timeLimitWithUnit" = "Time Limit (%@)";
-
-// Time Limit - Section Label
-// Specifies the time limit for the task
-"timeLimit" = "Time Limit";
-
-// Hours - Input Field Placeholder
-// Placeholder for inputting hours
-"hours" = "Hours";
-
-// Minutes - Input Field Placeholder
-// Placeholder for inputting minutes
-"minutes" = "Minutes";
-
-// Add Trigger - Title
-// Title for adding a new task trigger
-"addTrigger" = "Add trigger";
-
-// Save - Button Label
-// Button to save the current task trigger
-"save" = "Save";
-
-// Changes Not Saved - Alert Title
-// Title for unsaved changes alert
-"changesNotSaved" = "Changes not saved";
-
-// Discard Changes - Button Label
-// Button to discard unsaved changes
-"discardChanges" = "Discard Changes";
-
-// Unsaved Changes Message - Alert
-// Message for unsaved changes alert
-"unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
-
-// Delete Trigger - Confirmation Dialog Title
-// Title for the delete trigger confirmation dialog
-"deleteTrigger" = "Delete Trigger";
-
-// Delete Trigger Confirmation - Message
-// Message for deleting a trigger confirmation dialog
-"deleteTriggerConfirmationMessage" = "Are you sure you want to delete this trigger? This action cannot be undone.";
-
-// Item At Item - Label
-// Used to describe an item at another item
-"itemAtItem" = "%1$@ at %2$@";
-
-// Every Interval - Label
-// Describes an interval trigger with recurring time
-"everyInterval" = "Every %1$@";
-
-// Time Limit Label with Value - Label
-// Describes time limit with a value
-"timeLimitLabelWithValue" = "Time limit: %1$@";
-
-// Add - Button Label
-// Button to add a new item
-"add" = "Add";
-
-// Idle - Task State
-// Describes the task state as idle
-"idle" = "Idle";
-
-// Status - Section Title
-// Title for the status section
-"status" = "Status";
-
-// Error Details - Section Title
-// Title for the error details section
-"errorDetails" = "Error Details";
-
-// Details - Section Title
-// Title for the details section
-"details" = "Details";
-
-// Triggers - Section Header
-// Header for the scheduled task triggers section
-"triggers" = "Triggers";
-
-// Executed - Section Title
-// Title for the task execution date section
-"executed" = "Executed";
-
-// No Runtime Limit - Label
-// Describes a task with no runtime limit
-"noRuntimeLimit" = "No runtime limit";
-
-// API Key Created - Success Message
-// A new Access Token was successfully created for the specified application
-"serverTriggerCreated" = "A new trigger was created for '%1$@'.";
-
-// API Key Deleted - Success Message
-// The Access Token was successfully deleted for the specified application
-"serverTriggerDeleted" = "The selected trigger was deleted from '%1$@'.";
-
-// Save - Button
-// Confirms that something completed successfully or without error
-"success" = "Success";
-
-// Trigger Already Exists - 
-// Message to indicate that a Task Trigger already exists
-"triggerAlreadyExists" = "Trigger already exists";
-
-// Add API Key - Button
-// Creates an API Key if there are no keys available
-"addAPIKey" = "Add API key";
-
-// Hidden - Filter
-// Users with a policy of isHidden == True
-"hidden" = "Hidden";
-
-// Delete Selected Users Warning - Warning Message
-// Warning message displayed when deleting all users
-"deleteSelectionUsersWarning" = "Are you sure you wish to delete all selected users?";
-
-// Delete User Warning - Warning Message
-// Warning message displayed when deleting a single user
-"deleteUserWarning" = "Are you sure you wish to delete this user?";
-
-// Delete User - Action
-// Message for deleting a single device in the all users section
-"deleteUser" = "Delete User";
-
-// Delete User Self-Deletion - Error Message
-// Error message when attempting to delete the current session's user
-"deleteUserSelfDeletion" = "Cannot delete a user from the same user (%1$@).";
-
-// Delete Selected Users - Button
-// Button label for deleting all selected users
-"deleteSelectedUsers" = "Delete Selected Users";
-
-// Delete User Failed - Error Title
-// Title for the alert when users deletion fails
-"deleteUserFailed" = "Failed to Delete User";
-
-// Confirm Password - TextField
-// Placeholder and label for confirming the password
-"confirmPassword" = "Confirm Password";
-
-// A username is required - Footer
-// Validation message shown when the username field is empty
-"usernameRequired" = "A username is required";
-
-// New passwords do not match - Footer
-// Validation message shown when the new password and confirm password fields do not match
-"passwordsDoNotMatch" = "New passwords do not match";
-
-// New User - Title
-// Title for the new user creation view
-"newUser" = "New User";
-
-// Options - Menu
-// Menu title for additional actions
-"options" = "Options";
-
-// Add User - Button
-// Button title to add a new user
-"addUser" = "Add User";
-
-// Edit Users - Button
-// Button title to edit existing users
-"editUsers" = "Edit Users";
-
-// Bits Per Second - Unit
-// Represents a speed in bits per second
-"bitsPerSecond" = "bps";
-
-// Kilobits Per Second - Unit
-// Represents a speed in kilobits per second
-"kilobitsPerSecond" = "kbps";
-
-// Megabits Per Second - Unit
-// Represents a speed in megabits per second
-"megabitsPerSecond" = "Mbps";
-
-// Gigabits Per Second - Unit
-// Represents a speed in gigabits per second
-"gigabitsPerSecond" = "Gbps";
-
-// Terabits Per Second - Unit
-// Represents a speed in terabits per second
-"terabitsPerSecond" = "Tbps";
-
-// Default - Setting
-// Represents the default policy or limit
-"default" = "Default";
-
-// Unlimited - Setting
-// Represents no restriction or unlimited policy
-"unlimited" = "Unlimited";
-
-// Create & Join Groups - Action
-// Allows the user to create and join groups
-"createAndJoinGroups" = "Create & Join Groups";
-
-// Join Groups - Action
-// Allows the user to join existing groups
-"joinGroups" = "Join Groups";
-
-// Permissions - Section
-// Represents access control settings for users
-"permissions" = "Permissions";
-
-// SyncPlay - Feature
-// Represents the synchronized playback feature across multiple devices
-"syncPlay" = "SyncPlay";
-
-// Remote connections - Section & Toggle
-// Represents settings related to remote access
-"remoteConnections" = "Remote connections";
-
-// Maximum remote bitrate - Picker
-// Represents the maximum bitrate allowed for remote connections
-"maximumRemoteBitrate" = "Maximum remote bitrate";
-
-// Custom bitrate - Button
-// Opens an alert to enter a custom bitrate value
-"customBitrate" = "Custom bitrate";
-
-// Enter custom bitrate in Mbps - Description
-// Describes the purpose of the custom bitrate entry
-"enterCustomBitrate" = "Enter custom bitrate in Mbps";
-
-// Feature access - Section
-// Represents settings related to feature access for users
-"featureAccess" = "Feature access";
-
-// Live TV access - Toggle
-// Toggles access to live TV content
-"liveTvAccess" = "Live TV access";
-
-// Live TV recording management - Toggle
-// Toggles management of live TV recordings
-"liveTvRecordingManagement" = "Live TV recording management";
-
-// Management - Section
-// Represents settings related to management permissions
-"management" = "Management";
-
-// Lyrics - Toggle
-// Toggles permission to manage lyrics
-"lyrics" = "Lyrics";
-
-// Media playback - Section & Toggle
-// Represents settings related to media playback permissions
-"mediaPlayback" = "Media playback";
-
-// Audio transcoding - Toggle
-// Toggles permission for audio transcoding
-"audioTranscoding" = "Audio transcoding";
-
-// Video transcoding - Toggle
-// Toggles permission for video transcoding
-"videoTranscoding" = "Video transcoding";
-
-// Video remuxing - Toggle
-// Toggles permission for video remuxing
-"videoRemuxing" = "Video remuxing";
-
-// Force remote media transcoding - Toggle
-// Toggles whether remote media transcoding is forced
-"forceRemoteTranscoding" = "Force remote media transcoding";
-
-// Media downloads - Toggle
-// Toggles permission to download media content
-"mediaDownloads" = "Media downloads";
-
-// Hide user from login screen - Toggle
-// Toggles whether the user is hidden from the login screen
-"hideUserFromLoginScreen" = "Hide user from login screen";
-
-// Remote control - Section
-// Represents settings related to remote control permissions
-"remoteControl" = "Remote control";
-
-// Control other users - Toggle
-// Toggles permission to control other users' sessions
-"controlOtherUsers" = "Control other users";
-
-// Control shared devices - Toggle
-// Toggles permission to control shared devices
-"controlSharedDevices" = "Control shared devices";
-
-// Sessions - Section
-// Represents settings related to session control
-"sessions" = "Sessions";
-
-// Maximum failed login policy - Picker
-// Represents the policy for maximum failed login attempts
-"maximumFailedLoginPolicy" = "Maximum failed login policy";
-
-// Maximum sessions policy - Picker
-// Represents the policy for maximum active sessions
-"maximumSessionsPolicy" = "Maximum sessions policy";
-
-// Custom failed logins - Button
-// Opens an alert to enter a custom failed login limit
-"customFailedLogins" = "Custom failed logins";
-
-// Enter custom failed logins limit - Description
-// Describes the purpose of the custom failed logins entry
-"enterCustomFailedLogins" = "Enter custom failed logins limit";
-
-// Failed logins - Text Field
-// Represents the input field for custom failed logins
-"failedLogins" = "Failed logins";
-
-// Custom sessions - Button
-// Opens an alert to enter a custom maximum session limit
-"customSessions" = "Custom sessions";
-
-// Enter custom max sessions - Description
-// Describes the purpose of the custom max sessions entry
-"enterCustomMaxSessions" = "Enter custom max sessions";
-
-// Maximum sessions - Text Field
-// Represents the input field for custom maximum sessions
-// Used in the custom sessions section
-"maximumSessions" = "Maximum sessions";
-
-// Refresh - Button
-// Button title for the menu to refresh metadata
-"refreshMetadata" = "Refresh Metadata";
-
-// Find Missing - Menu Option
-// Menu option for finding missing metadata
-"findMissing" = "Find Missing";
-
-// Replace Metadata - Menu Option
-// Menu option for replacing existing metadata
-"replaceMetadata" = "Replace Metadata";
-
-// Replace Images - Menu Option
-// Menu option for replacing existing images
-"replaceImages" = "Replace Images";
-
-// Replace All - Menu Option
-// Menu option for replacing both metadata and images
-"replaceAll" = "Replace All";
-
-// Delete Item Confirmation Message - Warning message
-// Warning message to confirm deleting a media item
-"deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
-
-// Allow Media Item Editing - Toggle
-// Toggle option for enabling media item editing
-"allowItemEditing" = "Allow media item editing";
-
-// Allow Collection Management - Toggle
-// Toggle option for enabling collection editing / deletion
-"allowCollectionManagement" = "Allow collection management";
-
-// Allow Media Item Deletion - Toggle
-// Toggle option for enabling media item deletion
-"allowItemDeletion" = "Allow media item deletion";
-
-// Item Deletion Permission Failure - Error Message
-// Alert the user they should not be able to delete something
-"itemDeletionPermissionFailure" = "You do not have permission to delete this item.";
-
-// Metadata - Section Title
-// Title for the ItemEditorView and Metadata related views
-"metadata" = "Metadata";
-
-// Learn More - Button
-// Opens a modal with more information
-"learnMoreEllipsis" = "Learn more...";
-
-// Current Password - Placeholder
-// Placeholder text for the current password input field
-"currentPassword" = "Current Password";
-
-// New Password - Placeholder
-// Placeholder text for the new password input field
-"newPassword" = "New Password";
-
-// Confirm New Password - Placeholder
-// Placeholder text for confirming the new password input field
-"confirmNewPassword" = "Confirm New Password";
-
-// Password - Navigation Title
-// Title for the password reset view.
-"password" = "Password";
-
-// Password Changed - Alert Message
-// Message displayed in the success alert after changing the password.
-"passwordChangedMessage" = "User password has been changed.";
-
-// Passwords Do Not Match - Footer
-// Error message displayed when new passwords do not match.
-"passwordsDoNotMatch" = "New passwords do not match.";
-
-// Password Change Warning - Message
-// Message displayed to alert the user what the password change does and does not do.
-"passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
-
-// Find Missing - Button
-// Search for missing metadata and images.
-"findMissingDescription" = "Find missing metadata and images.";
-
-// Replace Metadata - Button
-// Overwrite metadata without affecting images.
-"replaceMetadataDescription" = "Replace unlocked metadata with new information.";
-
-// Replace Images - Button
-// Overwrite existing images with new ones.
-"replaceImagesDescription" = "Replace all images with new images.";
-
-// Replace All - Button
-// Replace all metadata and images.
-"replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
-
-// Device Profile - Description
-// Explains how device profiles control playback and transcoding behavior.
-"deviceProfileDescription" = "Decide which media plays natively or requires server transcoding for compatibility.";
-
-// Auto - Description
-// Optimizes playback using default settings for most devices.
-"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
-
-// Compatible - Description
-// Converts media to H.264 video and AAC audio for compatibility.
-"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
-
-// Direct - Description
-// Plays content in its original format without transcoding.
-"directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
-
-// Custom - Description
-// Allows customization of device profiles for native playback.
-"customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
-
-// Server Connection Test - Description
-// Tests the connection to the server to assess internet speed.
-"birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
-
-// Bandwidth Usage - Description
-// Indicates the maximum bandwidth used per playback stream.
-"bitrateMaxDescription" = "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.";
-
-// Bits Per Second - Unit
-// Represents a speed in bits per second
-"bitsPerSecond" = "bps";
-
-// Kilobits Per Second - Unit
-// Represents a speed in kilobits per second
-"kilobitsPerSecond" = "kbps";
-
-// Megabits Per Second - Unit
-// Represents a speed in megabits per second
-"megabitsPerSecond" = "Mbps";
-
-// Gigabits Per Second - Unit
-// Represents a speed in gigabits per second
-"gigabitsPerSecond" = "Gbps";
-
-// Terabits Per Second - Unit
-// Represents a speed in terabits per second
-"terabitsPerSecond" = "Tbps";
-
-// Display Order - Section
-// Label for the display order section in metadata settings.
-"displayOrder" = "Display Order";
-
-// Dates - Section
-// Label for the dates section in metadata settings.
-"dates" = "Dates";
-
-// Date Added - Label
-// Label for the date added field.
-"dateAdded" = "Date Added";
-
-// Release Date - Label
-// Label for the release date field.
-"releaseDate" = "Release Date";
-
-// End Date - Label
-// Label for the end date field.
-"endDate" = "End Date";
-
-// Year - Section
-// Label for the year section in metadata settings.
-"year" = "Year";
-
-// Refresh - Button
-// Standard button title to refresh content.
-"refresh" = "Refresh";
-
-// Find Missing Metadata - Button
-// Button title to trigger a search for missing metadata.
-"findMissingMetadata" = "Find Missing Metadata";
-
-// Replace Metadata - Button
-// Button title to replace existing metadata with new data.
-"replaceMetadata" = "Replace Metadata";
-
-// Replace Images - Button
-// Button title to replace existing images with new images.
-"replaceImages" = "Replace Images";
-
-// Replace All - Button
-// Button title to replace all metadata and images.
-"replaceAll" = "Replace All";
-
-// Refresh Metadata - Menu Title
-// Title for the metadata refresh menu.
-"refreshMetadata" = "Refresh Metadata";
-
-// Official Rating - Label
-// Label for the official rating field in media metadata
-"officialRating" = "Official Rating";
-
-// Production Locations - Label
-// Label for production locations in media metadata
-"productionLocations" = "Production Locations";
-
-// Locked Fields - Section Title
-// Section title for locked metadata fields
-"lockedFields" = "Locked Fields";
-
-// Lock All Fields - Toggle
-// Toggle label to lock all metadata fields at once
-"lockAllFields" = "Lock All Fields";
-
-// Metadata preferences - Section title
-// Title for the section displaying metadata localization options
-"metadataPreferences" = "Metadata preferences";
-
-// Language - Picker title
-// Label for the language picker for metadata
-"language" = "Language";
-
-// Country - Picker title
-// Label for the country picker for metadata
-"country" = "Country";
-
-// Format - Section title
-// Title for the video format section in metadata editing
-"format" = "Format";
-
-// Original aspect ratio - Text field label
-// Label for entering the original aspect ratio of the video
-"originalAspectRatio" = "Original aspect ratio";
-
-// 3D Format - Picker title
-// Title for the 3D format picker in video metadata
-"format3D" = "3D Format";
-
-// Parental Rating - Section title
-// Title for the parental rating section in metadata editing
-"parentalRating" = "Parental Rating";
-
-// Official Rating - Picker title
-// Title for the picker to select an official rating
-"officialRating" = "Official Rating";
-
-// Custom Rating - Picker title
-// Title for the picker to select a custom rating
-"customRating" = "Custom Rating";
-
-// None - Option label
-// Label to represent a lack of selection or no value chosen
-"none" = "None";
-
-// Letter - Label
-// Label for the letter category in metadata options
-"letter" = "Letter";
-
-// Years - Label
-// Label for the years category in metadata options
-"years" = "Years";
-
-// Taglines - Section
-// Title for the section displaying or editing taglines
-"taglines" = "Taglines";
-
-// Tagline - Label
-// Label for individual tagline entries
-"tagline" = "Tagline";
-
-// Reviews - Section
-// Title for the reviews section in metadata editing.
-"reviews" = "Reviews";
-
-// Critics - Label
-// Label for critic rating field in metadata editing.
-"critics" = "Critics";
-
-// Community - Label
-// Label for community rating field in metadata editing.
-"community" = "Community";
-
-// Rating - Placeholder
-// Placeholder text for the rating input field.
-"rating" = "Rating";
-
-// Rating - Description
-// Description for any rating field (1 to 10 scale).
-"ratingDescription" = "%@ rating on a scale from 1 to 10.";
-
-// Half Side-by-Side - Format
-// Display title for half side-by-side 3D format.
-"halfSideBySide" = "Half Side-by-Side";
-
-// Full Side-by-Side - Format
-// Display title for full side-by-side 3D format.
-"fullSideBySide" = "Full Side-by-Side";
-
-// Full Top and Bottom - Format
-// Display title for full top and bottom 3D format.
-"fullTopAndBottom" = "Full Top and Bottom";
-
-// Half Top and Bottom - Format
-// Display title for half top and bottom 3D format.
-"halfTopAndBottom" = "Half Top and Bottom";
-
-// MVC - Format
-// Display title for MVC 3D format.
-"mvc" = "MVC";
-
-// Continuing - Series Status
-// Display title for series status when a series is ongoing.
-"continuing" = "Continuing";
-
-// Ended - Series Status
-// Display title for series status when a series has ended.
-"ended" = "Ended";
-
-// Unreleased - Series Status
-// Display title for series status when a series has not yet been released.
-"unreleased" = "Unreleased";
-
-// Aired - Series Display Order
-// Display title for series display order "Aired".
-"aired" = "Aired";
-
-// Original Air Date - Series Display Order
-// Display title for series display order "Original Air Date".
-"originalAirDate" = "Original Air Date";
-
-// Absolute - Series Display Order
-// Display title for series display order "Absolute".
+/// Absolute
 "absolute" = "Absolute";
 
-// DVD - Series Display Order
-// Display title for series display order "DVD".
-"dvd" = "DVD";
+/// Accent Color
+"accentColor" = "Accent Color";
 
-// Digital - Series Display Order
-// Display title for series display order "Digital".
-"digital" = "Digital";
+/// Some views may need an app restart to update.
+"accentColorDescription" = "Some views may need an app restart to update.";
 
-// Story Arc - Series Display Order
-// Display title for series display order "Story Arc".
-"storyArc" = "Story Arc";
-
-// Production - Series Display Order
-// Display title for series display order "Production".
-"production" = "Production";
-
-// TV - Series Display Order
-// Display title for series display order "TV".
-"tv" = "TV";
-
-// Alternate - Series Display Order
-// Display title for series display order "Alternate".
-"alternate" = "Alternate";
-
-// Regional - Series Display Order
-// Display title for series display order "Regional".
-"regional" = "Regional";
-
-// Alternate DVD - Series Display Order
-// Display title for series display order "Alternate DVD".
-"alternateDVD" = "Alternate DVD";
-
-// Date Modified - Box Set Display Order
-// Display title for box set display order "Date Modified".
-"dateModified" = "Date Modified";
-
-// Sort Name - Box Set Display Order
-// Display title for box set display order "Sort Name".
-"sortName" = "Sort Name";
-
-// Premiere Date - Box Set Display Order
-// Display title for box set display order "Premiere Date".
-"premiereDate" = "Premiere Date";
-
-// File Path - Section Title
-// Section title for displaying the file path of the item.
-"filePath" = "File Path";
-
-// Title - Section Title
-// Section title for displaying or editing the main title of the item.
-"title" = "Title";
-
-// Original Title - Section Title
-// Section title for displaying or editing the original title of the item.
-"originalTitle" = "Original Title";
-
-// Sort Title - Section Title
-// Section title for displaying or editing the title used for sorting the item.
-"sortTitle" = "Sort Title";
-
-// Unknown - Placeholder
-// Placeholder text for unknown file paths or values.
-"unknown" = "Unknown";
-
-// Air Time - Label for air time date picker
-// Label for selecting the air time of an episode.
-"airTime" = "Air Time";
-
-// Episode Runtime Description - Description for runtime input
-// Description displayed below runtime input for episodes.
-"episodeRuntimeDescription" = "Episode runtime in minutes.";
-
-// Episode - Label for episode input
-// Title for the episode input field.
-"episode" = "Episode";
-
-// Enter Season Number - Description for season input field
-// Description explaining the purpose of the season input.
-"enterSeasonNumber" = "Enter the season number.";
-
-// Enter Episode Number - Description for episode input field
-// Description explaining the purpose of the episode input.
-"enterEpisodeNumber" = "Enter the episode number.";
-
-// Birthday - Label for birthday input
-// Title for the birthday input field.
-"birthday" = "Birthday";
-
-// Birth Year - Label for birth year input
-// Title for the birth year input field.
-"birthYear" = "Birth year";
-
-// Date of Death - Label for date of death input
-// Title for the date of death input field.
-"dateOfDeath" = "Date of death";
-
-// Maximum Failed Login Policy - Description
-// Explanation of the maximum failed login attempts policy
-"maximumFailedLoginPolicyDescription" = "Sets the maximum failed login attempts before a user is locked out.";
-
-// Maximum Failed Login Policy Re-enable - Description
-// Explanation of the resetting locked users
-"maximumFailedLoginPolicyReenable" = "Locked users must be re-enabled by an Administrator.";
-
-// Locked Users - Title
-// Section title for description on Locked Users
-"lockedUsers" = "Locked users";
-
-// Unlimited - Description
-// Explanation of the unlimited login attempts policy
-"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user.";
-
-// Default - Description
-// Explanation of the default login attempts policy
-"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.";
-
-// Custom - Description
-// Explanation of the custom login attempts policy
-"customFailedLoginDescription" = "Manually set the number of failed login attempts allowed before locking the user.";
-
-// Maximum Connections Policy - Description
-// Explanation of the maximum connections policy
-"maximumConnectionsDescription" = "Limits the total number of connections a user can have to the server.";
-
-// Unlimited Connections - Description
-// Explanation of unlimited connections policy
-"unlimitedConnectionsDescription" = "The user can connect to the server without any limits.";
-
-// Custom Connections - Description
-// Explanation of custom connections policy
-"customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
-
-// Required - Validation
-// Indicates a field is required
-"required" = "Required";
-
-// Reorder - Menu Option
-// Menu option to allow for reorder items in a set or array
-"reorder" = "Reorder";
-
-// Exists on Server - Validation
-// Indicates a specific item exists on your Jellyfin Server
-"existsOnServer" = "This item exists on your Jellyfin Server.";
-
-// Will Be Created on Server - Notification
-// Indicates a specific item will be created as new on your Jellyfin Server
-"willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
-
-// Genres - Description
-// A brief explanation of genres in the context of media items
-"genresDescription" = "Categories that describe the themes or styles of media.";
-
-// Tags - Description
-// A brief explanation of tags in the context of media items
-"tagsDescription" = "Labels used to organize or highlight specific attributes of media.";
-
-// Studios - Description
-// A brief explanation of studios in the context of media items
-"studiosDescription" = "Studio(s) involved in the creation of media.";
-
-// People - Description
-// A brief explanation of tags in the people of media items
-"peopleDescription" = "People who helped create or perform specific media.";
-
-// Delete Item - Confirmation
-// Asks the user to confirm the deletion of a single item
-"deleteItemConfirmation" = "Are you sure you want to delete this item?";
-
-// Delete Selected Items - Confirmation
-// Asks the user to confirm the deletion of selected item
-"deleteSelectedConfirmation" = "Are you sure you want to delete the selected items?";
-
-// Existing items - Section Title
-// Section for Items that already exist on the Jellyfin Server
-"existingItems" = "Existing items";
-
-// Enable All Libraries - Toggle
-// Toggle to enable a setting for all Libraries
-"enableAllLibraries" = "Enable all libraries";
-
-// Enable All Devices - Toggle
-// Toggle to enable a setting for all devices
-"enableAllDevices" = "Enable all devices";
-
-// Media Access - Section Title
-// Section Title for Server User Media Access Editing
-"mediaAccess" = "Media Access";
-
-// Device Access - Section Title
-// Section Title for Server User Device Access Editing
-"deviceAccess" = "Device Access";
-
-// (Live) TV Access - Section Title
-// Section Title for Server User Live TV Access Editing
-"tvAccess" = "TV Access";
-
-// Deletion - Section Description
-// Section Title for Media Deletion
-"deletion" = "Deletion";
-
-// Access - Section Description
-// Section Title for Media Access
+/// Access
 "access" = "Access";
 
-// Actor - Enum
-// Represents an actor
-"actor" = "Actor";
-
-// Composer - Enum
-// Represents a composer
-"composer" = "Composer";
-
-// Director - Enum
-// Represents a director
-"director" = "Director";
-
-// Writer - Enum
-// Represents a writer
-"writer" = "Writer";
-
-// Guest Star - Enum
-// Represents a guest star
-"guestStar" = "Guest Star";
-
-// Producer - Enum
-// Represents a producer
-"producer" = "Producer";
-
-// Conductor - Enum
-// Represents a conductor
-"conductor" = "Conductor";
-
-// Lyricist - Enum
-// Represents a lyricist
-"lyricist" = "Lyricist";
-
-// Arranger - Enum
-// Represents an arranger
-"arranger" = "Arranger";
-
-// Engineer - Enum
-// Represents an engineer
-"engineer" = "Engineer";
-
-// Mixer - Enum
-// Represents a mixer
-"mixer" = "Mixer";
-
-// Remixer - Enum
-// Represents a remixer
-"remixer" = "Remixer";
-
-// Creator - Enum
-// Represents a creator
-"creator" = "Creator";
-
-// Artist - Enum
-// Represents an artist
-"artist" = "Artist";
-
-// Album Artist - Enum
-// Represents an album artist
-"albumArtist" = "Album Artist";
-
-// Author - Enum
-// Represents an author
-"author" = "Author";
-
-// Illustrator - Enum
-// Represents an illustrator
-"illustrator" = "Illustrator";
-
-// Penciller - Enum
-// Represents a penciller
-"penciller" = "Penciller";
-
-// Inker - Enum
-// Represents an inker
-"inker" = "Inker";
-
-// Colorist - Enum
-// Represents a colorist
-"colorist" = "Colorist";
-
-// Letterer - Enum
-// Represents a letterer
-"letterer" = "Letterer";
-
-// Cover Artist - Enum
-// Represents a cover artist
-"coverArtist" = "Cover Artist";
-
-// Editor - Enum
-// Represents an editor
-"editor" = "Editor";
-
-// Translator - Enum
-// Represents a translator
-"translator" = "Translator";
-
-// Start Time - Label
-// Label for selecting or displaying the start time
-"startTime" = "Start Time";
-
-// End Time - Label
-// Label for selecting or displaying the end time
-"endTime" = "End Time";
-
-// Access Schedules - Label
-// Label for configuring or viewing the access schedule
-"accessSchedules" = "Access Schedules";
-
-// Add Access Schedule - Label
-// Label for adding a single Access Schedule
-"addAccessSchedule" = "Add Access Schedule";
-
-// Access Schedule Description - Label
-// Description for viewing or listing multiple schedules
-"accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
-
-// Parental controls - Section Title
-// Parental controls section & view titles
-"parentalControls" = "Parental controls";
-
-// Block unrated items - Section Title
-// Parental ratings block unrated items section
-"blockUnratedItems" = "Block unrated items";
-
-// Block unrated items - Footer
-// Parental ratings block unrated items description
-"blockUnratedItemsDescription" = "Block items from this user with no or unrecognized rating information.";
-
-// Maximum parental rating - Section Title
-// Parental ratings maximum parental rating section
-"maxParentalRating" = "Maximum parental rating";
-
-// Maximum parental rating - Footer
-// Parental ratings maximum parental rating description
-"maxParentalRatingDescription" = "Content with a higher rating will be hidden from this user.";
-
-// Allowed tags - View Title
-// Parental ratings section for allowed tags
-"allowedTags" = "Allowed tags";
-
-// Allowed tags - Footer
-// Parental ratings description for allowed tags
-"allowedTagsDescription" = "Only show media to this user with at least one of the specified tags.";
-
-// Blocked tags - View Title
-// Parental ratings section for blocked tags
-"blockedTags" = "Blocked tags";
-
-// Blocked tags - Footer
-// Parental ratings description for blocked tags
-"blockedTagsDescription" = "Hide media with at least one of the specified tags.";
-
-// Trailers - Section Title
-// Title for content classified as trailers
-"trailers" = "Trailers";
-
-// Music - Section Title
-// Title for content classified as music
-"music" = "Music";
-
-// Books - Section Title
-// Title for content classified as books
-"books" = "Books";
-
-// Live TV Channels - Section Title
-// Title for content classified as live TV channels
-"liveTVChannels" = "Live TV Channels";
-
-// Live TV Programs - Section Title
-// Title for content classified as live TV programs
-"liveTVPrograms" = "Live TV Programs";
-
-// Loading User Failed - Error Message
-// Displayed when loading user data fails
-"loadingUserFailed" = "Loading user failed";
-
-// Pin - Personal Identification Number
-// Abbreviation to describe the login code for users
-"pin" = "Pin";
-
-// Are You Sure Delete Single User - Alert Message
-// Message asking for confirmation when deleting a single user
-"deleteUserSingleConfirmation" = "Are you sure you want to delete %@?";
-
-// Are You Sure Delete Multiple Users - Alert Message
-// Message asking for confirmation when deleting multiple users
-"deleteUserMultipleConfirmation" = "Are you sure you want to delete %d users?";
-
-// Enter Pin - Alert Message
-// Message asking for a PIN to sign in for a specific user
-"enterPinForUser" = "Enter PIN for %@";
-
-// Layout - Label
-// Label for selecting a display layout in the advanced menu
-"layout" = "Layout";
-
-// User Requires Device Authentication - Error Message
-// Message indicating that a specific user requires device authentication
-"userRequiresDeviceAuthentication" = "User %@ requires device authentication";
-
-// Unable to Perform Device Authentication - Error Message
-// Informs the user that device authentication is not possible and suggests enabling Face ID in the Settings app for Swiftfin
-"unableToPerformDeviceAuthFaceID" = "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.";
-
-// Device Authentication Failed - Error Message
-// Indicates that device authentication has failed
-"deviceAuthFailed" = "Device authentication failed";
-
-// Unable to Perform Device Authentication - Error Message
-// Indicates that device authentication cannot be performed
-"unableToPerformDeviceAuth" = "Unable to perform device authentication";
-
-// Rotate - Button
-// Label for an action that rotates an element
-"rotate" = "Rotate";
-
-// Quick Connect Code - Instruction
-// Prompts the user to enter a 6-digit Quick Connect code from another device
-"quickConnectCodeInstruction" = "Enter the 6 digit code from your other device.";
-
-// Security - Section Title
-// Title for sections or settings related to security features
-"security" = "Security";
-
-// Additional Security Access - Description
-// Explains additional security options for users signed in to the current device, without affecting Jellyfin server settings
-"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
-
-// Hint - Label
-// Label for a field or section providing additional guidance or information
-"hint" = "Hint";
-
-// Set - Button
-// Button label for confirming or applying a setting
-"set" = "Set";
-
-// Create PIN - Instruction
-// Prompts the user to create a PIN to sign in to a specific user account on the device
-"createPinForUser" = "Create a pin to sign in to %@ on this device";
-
-// Set PIN - Button
-// Button label for setting a PIN
-"setPin" = "Set Pin";
-
-// Enter PIN - Instruction
-// Prompts the user to enter their PIN
-"enterPin" = "Enter Pin";
-
-// Change PIN - Button
-// Button label for changing an existing PIN
-"changePin" = "Change Pin";
-
-// PIN Hint - Description
-// Explains the option to set a hint when prompting for the PIN
-"setPinHintDescription" = "Set a hint when prompting for the pin.";
-
-// Save User Without Local Authentication - Description
-// Explains the option to save a user without requiring local authentication
-"saveUserWithoutAuthDescription" = "Save the user to this device without any local authentication.";
-
-// Require PIN - Description
-// Explains the option to require a local PIN when signing in
-"requirePinDescription" = "Require a local pin when signing in to the user. This pin is unrecoverable.";
-
-// Require Device Authentication - Description
-// Explains the option to require device authentication when signing in
-"requireDeviceAuthDescription" = "Require device authentication when signing in to the user.";
-
-// Set PIN for New User - Instruction
-// Prompts the user to set a PIN for a new user account
-"setPinForNewUser" = "Set pin for new user.";
-
-// Duplicate User Saved - Error Message
-// Indicates that the specified user is already saved on the device
-"duplicateUserSaved" = "%@ is already saved";
-
-// Duplicate User - Error Title
-// Title for an error indicating a duplicate user
-"duplicateUser" = "Duplicate User";
-
-// Disclaimer - Section Title
-// Title for a section providing important information or warnings
-"disclaimer" = "Disclaimer";
-
-// PIN Required - Description
-// Indicates that the user will require a PIN for authentication
-"userPinRequiredDescription" = "This user will require a pin.";
-
-// Device Authentication Required - Description
-// Indicates that the user will require device authentication
-"userDeviceAuthRequiredDescription" = "This user will require device authentication.";
-
-// Require Device Authentication for User - Description
-// Explains that device authentication is required to sign in to a specific user on this device
-"requireDeviceAuthForUser" = "Require device authentication to sign in to %@ on this device.";
-
-// Require Device Authentication for Quick Connect User - Description
-// Explains that device authentication is required to sign in to the Quick Connect user on this device
-"requireDeviceAuthForQuickConnectUser" = "Require device authentication to sign in to the Quick Connect user on this device.";
-
-// Server Already Connected - Error Message
-// Indicates that the specified server is already connected
-"serverAlreadyConnected" = "%@ is already connected.";
-
-// All Audiences - Group Name
-// Label for content suitable for all audiences
-"allAudiences" = "All Audiences";
-
-// Ages Group - Group Name
-// Label for content suitable for a specific age group
-"agesGroup" = "Age %@";
-
-// End Time must come after Start Time - Access Schedule Error
-// Error produced when trying to create 
+/// The End Time must come after the Start Time.
 "accessScheduleInvalidTime" = "The End Time must come after the Start Time.";
 
-// Everyday - Label
-// DynamicDayOfWeek label for Everyday
-"everyday" = "Everyday";
+/// Access Schedules
+"accessSchedules" = "Access Schedules";
 
-// Weekday - Label
-// DynamicDayOfWeek label for Weekdays
-"weekday" = "Weekday";
+/// Define the allowed hours for usage and restrict access outside those times.
+"accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
 
-// Weekend - Label
-// DynamicDayOfWeek label for the Weekend
-"weekend" = "Weekend";
+/// Accessibility
+"accessibility" = "Accessibility";
 
-// Schedule Already Exists -
-// Message to indicate that an Access Schedule already exists
-"scheduleAlreadyExists" = "Schedule already exists";
+/// Active
+"active" = "Active";
 
-// Delete Selected Schedules Warning - Warning Message
-// Warning message displayed when deleting all schedules
-"deleteSelectionSchedulesWarning" = "Are you sure you wish to delete all selected schedules?";
+/// Activity
+"activity" = "Activity";
 
-// Delete Schedule Warning - Warning Message
-// Warning message displayed when deleting a single schedules
-"deleteScheduleWarning" = "Are you sure you wish to delete this schedule?";
+/// Actor
+"actor" = "Actor";
 
-// Delete Schedule - Action
-// Message for deleting a single Access Schedule
+/// Add
+"add" = "Add";
+
+/// Add API key
+"addAPIKey" = "Add API key";
+
+/// Add Access Schedule
+"addAccessSchedule" = "Add Access Schedule";
+
+/// Add Server
+"addServer" = "Add Server";
+
+/// Add trigger
+"addTrigger" = "Add trigger";
+
+/// Add URL
+"addURL" = "Add URL";
+
+/// Add User
+"addUser" = "Add User";
+
+/// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
+"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
+
+/// Administrator
+"administrator" = "Administrator";
+
+/// Advanced
+"advanced" = "Advanced";
+
+/// Age %@
+"agesGroup" = "Age %@";
+
+/// Air Time
+"airTime" = "Air Time";
+
+/// Airs %s
+"airWithDate" = "Airs %s";
+
+/// Aired
+"aired" = "Aired";
+
+/// Album Artist
+"albumArtist" = "Album Artist";
+
+/// All Audiences
+"allAudiences" = "All Audiences";
+
+/// View all past and present devices that have connected.
+"allDevicesDescription" = "View all past and present devices that have connected.";
+
+/// All Media
+"allMedia" = "All Media";
+
+/// All Servers
+"allServers" = "All Servers";
+
+/// View and manage all registered users on the server, including their permissions and activity status.
+"allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
+
+/// Allow collection management
+"allowCollectionManagement" = "Allow collection management";
+
+/// Allow media item deletion
+"allowItemDeletion" = "Allow media item deletion";
+
+/// Allow media item editing
+"allowItemEditing" = "Allow media item editing";
+
+/// Alternate
+"alternate" = "Alternate";
+
+/// Alternate DVD
+"alternateDVD" = "Alternate DVD";
+
+/// Anamorphic video is not supported
+"anamorphicVideoNotSupported" = "Anamorphic video is not supported";
+
+/// API Key Copied
+"apiKeyCopied" = "API Key Copied";
+
+/// Your API Key was copied to your clipboard!
+"apiKeyCopiedMessage" = "Your API Key was copied to your clipboard!";
+
+/// API Keys
+"apiKeys" = "API Keys";
+
+/// External applications require an API key to communicate with your server.
+"apiKeysDescription" = "External applications require an API key to communicate with your server.";
+
+/// API Keys
+"apiKeysTitle" = "API Keys";
+
+/// App Icon
+"appIcon" = "App Icon";
+
+/// Appearance
+"appearance" = "Appearance";
+
+/// Application Name
+"applicationName" = "Application Name";
+
+/// Arranger
+"arranger" = "Arranger";
+
+/// Artist
+"artist" = "Artist";
+
+/// Aspect Fill
+"aspectFill" = "Aspect Fill";
+
+/// Audio
+"audio" = "Audio";
+
+/// The audio bit depth is not supported
+"audioBitDepthNotSupported" = "The audio bit depth is not supported";
+
+/// The audio bitrate is not supported
+"audioBitrateNotSupported" = "The audio bitrate is not supported";
+
+/// The number of audio channels is not supported
+"audioChannelsNotSupported" = "The number of audio channels is not supported";
+
+/// The audio codec is not supported
+"audioCodecNotSupported" = "The audio codec is not supported";
+
+/// The audio track is external and requires transcoding
+"audioIsExternal" = "The audio track is external and requires transcoding";
+
+/// Audio Offset
+"audioOffset" = "Audio Offset";
+
+/// The audio profile is not supported
+"audioProfileNotSupported" = "The audio profile is not supported";
+
+/// The audio sample rate is not supported
+"audioSampleRateNotSupported" = "The audio sample rate is not supported";
+
+/// Audio transcoding
+"audioTranscoding" = "Audio transcoding";
+
+/// Author
+"author" = "Author";
+
+/// Authorize
+"authorize" = "Authorize";
+
+/// Auto
+"auto" = "Auto";
+
+/// Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.
+"autoDescription" = "Optimizes playback using default settings for most devices. Some formats may require server transcoding for non-compatible media types.";
+
+/// Auto Play
+"autoPlay" = "Auto Play";
+
+/// Back
+"back" = "Back";
+
+/// Bar Buttons
+"barButtons" = "Bar Buttons";
+
+/// Behavior
+"behavior" = "Behavior";
+
+/// Tests your server connection to assess internet speed and adjust bandwidth automatically.
+"birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
+
+/// Birth year
+"birthYear" = "Birth year";
+
+/// Birthday
+"birthday" = "Birthday";
+
+/// Auto
+"bitrateAuto" = "Auto";
+
+/// Default Bitrate
+"bitrateDefault" = "Default Bitrate";
+
+/// Limits the internet bandwidth used during playback.
+"bitrateDefaultDescription" = "Limits the internet bandwidth used during playback.";
+
+/// 480p - 1.5 Mbps
+"bitrateKbps1500" = "480p - 1.5 Mbps";
+
+/// 360p - 420 Kbps
+"bitrateKbps420" = "360p - 420 Kbps";
+
+/// 480p - 720 Kbps
+"bitrateKbps720" = "480p - 720 Kbps";
+
+/// Maximum
+"bitrateMax" = "Maximum";
+
+/// Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.
+"bitrateMaxDescription" = "Maximizes bandwidth usage, up to %@, for each playback stream to ensure the highest quality.";
+
+/// 1080p - 10 Mbps
+"bitrateMbps10" = "1080p - 10 Mbps";
+
+/// 4K - 120 Mbps
+"bitrateMbps120" = "4K - 120 Mbps";
+
+/// 1080p - 15 Mbps
+"bitrateMbps15" = "1080p - 15 Mbps";
+
+/// 1080p - 20 Mbps
+"bitrateMbps20" = "1080p - 20 Mbps";
+
+/// 480p - 3 Mbps
+"bitrateMbps3" = "480p - 3 Mbps";
+
+/// 720p - 4 Mbps
+"bitrateMbps4" = "720p - 4 Mbps";
+
+/// 1080p - 40 Mbps
+"bitrateMbps40" = "1080p - 40 Mbps";
+
+/// 720p - 6 Mbps
+"bitrateMbps6" = "720p - 6 Mbps";
+
+/// 1080p - 60 Mbps
+"bitrateMbps60" = "1080p - 60 Mbps";
+
+/// 720p - 8 Mbps
+"bitrateMbps8" = "720p - 8 Mbps";
+
+/// 4K - 80 Mbps
+"bitrateMbps80" = "4K - 80 Mbps";
+
+/// Bitrate Test
+"bitrateTest" = "Bitrate Test";
+
+/// Longer tests are more accurate but may result in a delayed playback.
+"bitrateTestDisclaimer" = "Longer tests are more accurate but may result in a delayed playback.";
+
+/// bps
+"bitsPerSecond" = "bps";
+
+/// Block unrated items
+"blockUnratedItems" = "Block unrated items";
+
+/// Block items from this user with no or unrecognized rating information.
+"blockUnratedItemsDescription" = "Block items from this user with no or unrecognized rating information.";
+
+/// Blue
+"blue" = "Blue";
+
+/// Books
+"books" = "Books";
+
+/// Bugs and Features
+"bugsAndFeatures" = "Bugs and Features";
+
+/// Buttons
+"buttons" = "Buttons";
+
+/// Cancel
+"cancel" = "Cancel";
+
+/// Cancelling...
+"cancelling" = "Cancelling...";
+
+/// Cannot connect to host
+"cannotConnectToHost" = "Cannot connect to host";
+
+/// Capabilities
+"capabilities" = "Capabilities";
+
+/// Cast & Crew
+"castAndCrew" = "Cast & Crew";
+
+/// Category
+"category" = "Category";
+
+/// Change Pin
+"changePin" = "Change Pin";
+
+/// Channels
+"channels" = "Channels";
+
+/// Chapter Slider
+"chapterSlider" = "Chapter Slider";
+
+/// Chapters
+"chapters" = "Chapters";
+
+/// Cinematic
+"cinematic" = "Cinematic";
+
+/// Cinematic Background
+"cinematicBackground" = "Cinematic Background";
+
+/// Client
+"client" = "Client";
+
+/// Close
+"close" = "Close";
+
+/// Collections
+"collections" = "Collections";
+
+/// Color
+"color" = "Color";
+
+/// Colorist
+"colorist" = "Colorist";
+
+/// Columns
+"columns" = "Columns";
+
+/// Community
+"community" = "Community";
+
+/// Compact
+"compact" = "Compact";
+
+/// Compact Logo
+"compactLogo" = "Compact Logo";
+
+/// Compact Poster
+"compactPoster" = "Compact Poster";
+
+/// Compatibility
+"compatibility" = "Compatibility";
+
+/// Most Compatible
+"compatible" = "Most Compatible";
+
+/// Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.
+"compatibleDescription" = "Converts all media to H.264 video and AAC audio for maximum compatibility. May require server transcoding for non-compatible media types.";
+
+/// Composer
+"composer" = "Composer";
+
+/// Conductor
+"conductor" = "Conductor";
+
+/// Confirm
+"confirm" = "Confirm";
+
+/// Confirm New Password
+"confirmNewPassword" = "Confirm New Password";
+
+/// Confirm Password
+"confirmPassword" = "Confirm Password";
+
+/// Connect
+"connect" = "Connect";
+
+/// Connect to a Jellyfin server to get started
+"connectToJellyfinServerStart" = "Connect to a Jellyfin server to get started";
+
+/// Connect to Server
+"connectToServer" = "Connect to Server";
+
+/// The container bitrate exceeds the allowed limit
+"containerBitrateExceedsLimit" = "The container bitrate exceeds the allowed limit";
+
+/// The container format is not supported
+"containerNotSupported" = "The container format is not supported";
+
+/// Containers
+"containers" = "Containers";
+
+/// Continue
+"continue" = "Continue";
+
+/// Continuing
+"continuing" = "Continuing";
+
+/// Control other users
+"controlOtherUsers" = "Control other users";
+
+/// Control shared devices
+"controlSharedDevices" = "Control shared devices";
+
+/// Country
+"country" = "Country";
+
+/// Cover Artist
+"coverArtist" = "Cover Artist";
+
+/// Create API Key
+"createAPIKey" = "Create API Key";
+
+/// Enter the application name for the new API key.
+"createAPIKeyMessage" = "Enter the application name for the new API key.";
+
+/// Create & Join Groups
+"createAndJoinGroups" = "Create & Join Groups";
+
+/// Create a pin to sign in to %@ on this device
+"createPinForUser" = "Create a pin to sign in to %@ on this device";
+
+/// Creator
+"creator" = "Creator";
+
+/// Critics
+"critics" = "Critics";
+
+/// Current
+"current" = "Current";
+
+/// Current Password
+"currentPassword" = "Current Password";
+
+/// Custom
+"custom" = "Custom";
+
+/// Custom bitrate
+"customBitrate" = "Custom bitrate";
+
+/// Manually set the maximum number of connections a user can have to the server.
+"customConnectionsDescription" = "Manually set the maximum number of connections a user can have to the server.";
+
+/// Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.
+"customDescription" = "Allows advanced customization of device profiles for native playback. Incorrect settings may affect playback.";
+
+/// Custom Device Name
+"customDeviceName" = "Custom Device Name";
+
+/// Your custom device name '%1$@' has been saved.
+"customDeviceNameSaved" = "Your custom device name '%1$@' has been saved.";
+
+/// The custom device profiles will be added to the default Swiftfin device profiles.
+"customDeviceProfileAdd" = "The custom device profiles will be added to the default Swiftfin device profiles.";
+
+/// The custom device profiles will replace the default Swiftfin device profiles.
+"customDeviceProfileReplace" = "The custom device profiles will replace the default Swiftfin device profiles.";
+
+/// Manually set the number of failed login attempts allowed before locking the user.
+"customFailedLoginDescription" = "Manually set the number of failed login attempts allowed before locking the user.";
+
+/// Custom failed logins
+"customFailedLogins" = "Custom failed logins";
+
+/// Custom Profile
+"customProfile" = "Custom Profile";
+
+/// Custom Rating
+"customRating" = "Custom Rating";
+
+/// Custom sessions
+"customSessions" = "Custom sessions";
+
+/// Customize
+"customize" = "Customize";
+
+/// Daily
+"daily" = "Daily";
+
+/// Dark
+"dark" = "Dark";
+
+/// Dashboard
+"dashboard" = "Dashboard";
+
+/// Perform administrative tasks for your Jellyfin server.
+"dashboardDescription" = "Perform administrative tasks for your Jellyfin server.";
+
+/// Date Added
+"dateAdded" = "Date Added";
+
+/// Date Created
+"dateCreated" = "Date Created";
+
+/// Date Modified
+"dateModified" = "Date Modified";
+
+/// Date of death
+"dateOfDeath" = "Date of death";
+
+/// Dates
+"dates" = "Dates";
+
+/// Day of Week
+"dayOfWeek" = "Day of Week";
+
+/// Days
+"days" = "Days";
+
+/// Default
+"default" = "Default";
+
+/// Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.
+"defaultFailedLoginDescription" = "Admins are locked out after 5 failed attempts. Non-admins are locked out after 3 attempts.";
+
+/// Delete
+"delete" = "Delete";
+
+/// Are you sure you want to permanently delete this key?
+"deleteAPIKeyMessage" = "Are you sure you want to permanently delete this key?";
+
+/// Delete Device
+"deleteDevice" = "Delete Device";
+
+/// Failed to Delete Device
+"deleteDeviceFailed" = "Failed to Delete Device";
+
+/// Cannot delete a session from the same device (%1$@).
+"deleteDeviceSelfDeletion" = "Cannot delete a session from the same device (%1$@).";
+
+/// Are you sure you wish to delete this device? This session will be logged out.
+"deleteDeviceWarning" = "Are you sure you wish to delete this device? This session will be logged out.";
+
+/// Are you sure you want to delete this item?
+"deleteItemConfirmation" = "Are you sure you want to delete this item?";
+
+/// Are you sure you want to delete this item? This action cannot be undone.
+"deleteItemConfirmationMessage" = "Are you sure you want to delete this item? This action cannot be undone.";
+
+/// Delete Schedule
 "deleteSchedule" = "Delete Schedule";
 
-// Delete Selected Schedules - Button
-// Button label for deleting all selected Access Schedules
+/// Are you sure you wish to delete this schedule?
+"deleteScheduleWarning" = "Are you sure you wish to delete this schedule?";
+
+/// Are you sure you want to delete the selected items?
+"deleteSelectedConfirmation" = "Are you sure you want to delete the selected items?";
+
+/// Delete Selected Devices
+"deleteSelectedDevices" = "Delete Selected Devices";
+
+/// Delete Selected Schedules
 "deleteSelectedSchedules" = "Delete Selected Schedules";
+
+/// Delete Selected Users
+"deleteSelectedUsers" = "Delete Selected Users";
+
+/// Are you sure you wish to delete all selected devices? All selected sessions will be logged out.
+"deleteSelectionDevicesWarning" = "Are you sure you wish to delete all selected devices? All selected sessions will be logged out.";
+
+/// Are you sure you wish to delete all selected schedules?
+"deleteSelectionSchedulesWarning" = "Are you sure you wish to delete all selected schedules?";
+
+/// Are you sure you wish to delete all selected users?
+"deleteSelectionUsersWarning" = "Are you sure you wish to delete all selected users?";
+
+/// Delete Server
+"deleteServer" = "Delete Server";
+
+/// Delete Trigger
+"deleteTrigger" = "Delete Trigger";
+
+/// Are you sure you want to delete this trigger? This action cannot be undone.
+"deleteTriggerConfirmationMessage" = "Are you sure you want to delete this trigger? This action cannot be undone.";
+
+/// Delete User
+"deleteUser" = "Delete User";
+
+/// Failed to Delete User
+"deleteUserFailed" = "Failed to Delete User";
+
+/// Are you sure you want to delete %d users?
+"deleteUserMultipleConfirmation" = "Are you sure you want to delete %d users?";
+
+/// Cannot delete a user from the same user (%1$@).
+"deleteUserSelfDeletion" = "Cannot delete a user from the same user (%1$@).";
+
+/// Are you sure you want to delete %@?
+"deleteUserSingleConfirmation" = "Are you sure you want to delete %@?";
+
+/// Are you sure you wish to delete this user?
+"deleteUserWarning" = "Are you sure you wish to delete this user?";
+
+/// Deletion
+"deletion" = "Deletion";
+
+/// Delivery
+"delivery" = "Delivery";
+
+/// Details
+"details" = "Details";
+
+/// Device
+"device" = "Device";
+
+/// Device Access
+"deviceAccess" = "Device Access";
+
+/// Device authentication failed
+"deviceAuthFailed" = "Device authentication failed";
+
+/// Device Profile
+"deviceProfile" = "Device Profile";
+
+/// Decide which media plays natively or requires server transcoding for compatibility.
+"deviceProfileDescription" = "Decide which media plays natively or requires server transcoding for compatibility.";
+
+/// Devices
+"devices" = "Devices";
+
+/// Digital
+"digital" = "Digital";
+
+/// Direct Play
+"direct" = "Direct Play";
+
+/// Plays content in its original format. May cause playback issues on unsupported media types.
+"directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
+
+/// Direct Play
+"directPlay" = "Direct Play";
+
+/// An error occurred during direct play
+"directPlayError" = "An error occurred during direct play";
+
+/// Direct Stream
+"directStream" = "Direct Stream";
+
+/// Director
+"director" = "Director";
+
+/// Disabled
+"disabled" = "Disabled";
+
+/// Disclaimer
+"disclaimer" = "Disclaimer";
+
+/// Dismiss
+"dismiss" = "Dismiss";
+
+/// Display Order
+"displayOrder" = "Display Order";
+
+/// Done
+"done" = "Done";
+
+/// Downloads
+"downloads" = "Downloads";
+
+/// Duplicate User
+"duplicateUser" = "Duplicate User";
+
+/// %@ is already saved
+"duplicateUserSaved" = "%@ is already saved";
+
+/// DVD
+"dvd" = "DVD";
+
+/// Edit
+"edit" = "Edit";
+
+/// Edit Server
+"editServer" = "Edit Server";
+
+/// Edit Users
+"editUsers" = "Edit Users";
+
+/// Editor
+"editor" = "Editor";
+
+/// Enable all devices
+"enableAllDevices" = "Enable all devices";
+
+/// Enable all libraries
+"enableAllLibraries" = "Enable all libraries";
+
+/// Enabled
+"enabled" = "Enabled";
+
+/// End Date
+"endDate" = "End Date";
+
+/// End Time
+"endTime" = "End Time";
+
+/// Ended
+"ended" = "Ended";
+
+/// Engineer
+"engineer" = "Engineer";
+
+/// Enter custom bitrate in Mbps
+"enterCustomBitrate" = "Enter custom bitrate in Mbps";
+
+/// Enter custom failed logins limit
+"enterCustomFailedLogins" = "Enter custom failed logins limit";
+
+/// Enter custom max sessions
+"enterCustomMaxSessions" = "Enter custom max sessions";
+
+/// Enter the episode number.
+"enterEpisodeNumber" = "Enter the episode number.";
+
+/// Enter Pin
+"enterPin" = "Enter Pin";
+
+/// Enter PIN for %@
+"enterPinForUser" = "Enter PIN for %@";
+
+/// Enter the season number.
+"enterSeasonNumber" = "Enter the season number.";
+
+/// Episode
+"episode" = "Episode";
+
+/// Episode Landscape Poster
+"episodeLandscapePoster" = "Episode Landscape Poster";
+
+/// Episode %1$@
+"episodeNumber" = "Episode %1$@";
+
+/// Episode runtime in minutes.
+"episodeRuntimeDescription" = "Episode runtime in minutes.";
+
+/// Episodes
+"episodes" = "Episodes";
+
+/// Error
+"error" = "Error";
+
+/// Error Details
+"errorDetails" = "Error Details";
+
+/// Every
+"every" = "Every";
+
+/// Every %1$@
+"everyInterval" = "Every %1$@";
+
+/// Everyday
+"everyday" = "Everyday";
+
+/// Executed
+"executed" = "Executed";
+
+/// Existing items
+"existingItems" = "Existing items";
+
+/// This item exists on your Jellyfin Server.
+"existsOnServer" = "This item exists on your Jellyfin Server.";
+
+/// Experimental
+"experimental" = "Experimental";
+
+/// Failed logins
+"failedLogins" = "Failed logins";
+
+/// Favorited
+"favorited" = "Favorited";
+
+/// Favorites
+"favorites" = "Favorites";
+
+/// Filters
+"filters" = "Filters";
+
+/// Find Missing
+"findMissing" = "Find Missing";
+
+/// Find missing metadata and images.
+"findMissingDescription" = "Find missing metadata and images.";
+
+/// Force remote media transcoding
+"forceRemoteTranscoding" = "Force remote media transcoding";
+
+/// Format
+"format" = "Format";
+
+/// 3D Format
+"format3D" = "3D Format";
+
+/// Full Side-by-Side
+"fullSideBySide" = "Full Side-by-Side";
+
+/// Full Top and Bottom
+"fullTopAndBottom" = "Full Top and Bottom";
+
+/// Genres
+"genres" = "Genres";
+
+/// Categories that describe the themes or styles of media.
+"genresDescription" = "Categories that describe the themes or styles of media.";
+
+/// Gestures
+"gestures" = "Gestures";
+
+/// Gbps
+"gigabitsPerSecond" = "Gbps";
+
+/// Green
+"green" = "Green";
+
+/// Grid
+"grid" = "Grid";
+
+/// Guest Star
+"guestStar" = "Guest Star";
+
+/// Half Side-by-Side
+"halfSideBySide" = "Half Side-by-Side";
+
+/// Half Top and Bottom
+"halfTopAndBottom" = "Half Top and Bottom";
+
+/// Hidden
+"hidden" = "Hidden";
+
+/// Hide user from login screen
+"hideUserFromLoginScreen" = "Hide user from login screen";
+
+/// Hint
+"hint" = "Hint";
+
+/// Home
+"home" = "Home";
+
+/// Hours
+"hours" = "Hours";
+
+/// Idle
+"idle" = "Idle";
+
+/// Illustrator
+"illustrator" = "Illustrator";
+
+/// Indicators
+"indicators" = "Indicators";
+
+/// Inker
+"inker" = "Inker";
+
+/// Interlaced video is not supported
+"interlacedVideoNotSupported" = "Interlaced video is not supported";
+
+/// Interval
+"interval" = "Interval";
+
+/// Inverted Dark
+"invertedDark" = "Inverted Dark";
+
+/// Inverted Light
+"invertedLight" = "Inverted Light";
+
+/// %1$@ at %2$@
+"itemAtItem" = "%1$@ at %2$@";
+
+/// Items
+"items" = "Items";
+
+/// Jellyfin
+"jellyfin" = "Jellyfin";
+
+/// Join Groups
+"joinGroups" = "Join Groups";
+
+/// Jump
+"jump" = "Jump";
+
+/// Jump Backward
+"jumpBackward" = "Jump Backward";
+
+/// Jump Backward Length
+"jumpBackwardLength" = "Jump Backward Length";
+
+/// Jump Forward
+"jumpForward" = "Jump Forward";
+
+/// Jump Forward Length
+"jumpForwardLength" = "Jump Forward Length";
+
+/// Kids
+"kids" = "Kids";
+
+/// kbps
+"kilobitsPerSecond" = "kbps";
+
+/// Language
+"language" = "Language";
+
+/// Larger
+"larger" = "Larger";
+
+/// Largest
+"largest" = "Largest";
+
+/// Last run
+"lastRun" = "Last run";
+
+/// Last ran %@
+"lastRunTime" = "Last ran %@";
+
+/// Last Seen
+"lastSeen" = "Last Seen";
+
+/// Latest %@
+"latestWithString" = "Latest %@";
+
+/// Layout
+"layout" = "Layout";
+
+/// Learn more...
+"learnMoreEllipsis" = "Learn more...";
+
+/// Left
+"left" = "Left";
+
+/// Letter
+"letter" = "Letter";
+
+/// Letter Picker
+"letterPicker" = "Letter Picker";
+
+/// Letterer
+"letterer" = "Letterer";
+
+/// Library
+"library" = "Library";
+
+/// Light
+"light" = "Light";
+
+/// Liked Items
+"likedItems" = "Liked Items";
+
+/// List
+"list" = "List";
+
+/// Live TV
+"liveTV" = "Live TV";
+
+/// Live TV Channels
+"liveTVChannels" = "Live TV Channels";
+
+/// Live TV Programs
+"liveTVPrograms" = "Live TV Programs";
+
+/// Live TV access
+"liveTvAccess" = "Live TV access";
+
+/// Live TV recording management
+"liveTvRecordingManagement" = "Live TV recording management";
+
+/// Loading user failed
+"loadingUserFailed" = "Loading user failed";
+
+/// Local Servers
+"localServers" = "Local Servers";
+
+/// Lock All Fields
+"lockAllFields" = "Lock All Fields";
+
+/// Locked Fields
+"lockedFields" = "Locked Fields";
+
+/// Locked users
+"lockedUsers" = "Locked users";
+
+/// Logs
+"logs" = "Logs";
+
+/// Access the Jellyfin server logs for troubleshooting and monitoring purposes.
+"logsDescription" = "Access the Jellyfin server logs for troubleshooting and monitoring purposes.";
+
+/// Lyricist
+"lyricist" = "Lyricist";
+
+/// Lyrics
+"lyrics" = "Lyrics";
+
+/// Management
+"management" = "Management";
+
+/// Maximum parental rating
+"maxParentalRating" = "Maximum parental rating";
+
+/// Content with a higher rating will be hidden from this user.
+"maxParentalRatingDescription" = "Content with a higher rating will be hidden from this user.";
+
+/// Maximum Bitrate
+"maximumBitrate" = "Maximum Bitrate";
+
+/// Limits the total number of connections a user can have to the server.
+"maximumConnectionsDescription" = "Limits the total number of connections a user can have to the server.";
+
+/// Maximum failed login policy
+"maximumFailedLoginPolicy" = "Maximum failed login policy";
+
+/// Sets the maximum failed login attempts before a user is locked out.
+"maximumFailedLoginPolicyDescription" = "Sets the maximum failed login attempts before a user is locked out.";
+
+/// Locked users must be re-enabled by an Administrator.
+"maximumFailedLoginPolicyReenable" = "Locked users must be re-enabled by an Administrator.";
+
+/// Maximum remote bitrate
+"maximumRemoteBitrate" = "Maximum remote bitrate";
+
+/// Maximum sessions
+"maximumSessions" = "Maximum sessions";
+
+/// Maximum sessions policy
+"maximumSessionsPolicy" = "Maximum sessions policy";
+
+/// Media
+"media" = "Media";
+
+/// Media Access
+"mediaAccess" = "Media Access";
+
+/// Media downloads
+"mediaDownloads" = "Media downloads";
+
+/// Media playback
+"mediaPlayback" = "Media playback";
+
+/// Mbps
+"megabitsPerSecond" = "Mbps";
+
+/// Menu Buttons
+"menuButtons" = "Menu Buttons";
+
+/// Metadata
+"metadata" = "Metadata";
+
+/// Metadata preferences
+"metadataPreferences" = "Metadata preferences";
+
+/// Method
+"method" = "Method";
+
+/// Minutes
+"minutes" = "Minutes";
+
+/// Missing
+"missing" = "Missing";
+
+/// Missing Items
+"missingItems" = "Missing Items";
+
+/// Mixer
+"mixer" = "Mixer";
+
+/// Movies
+"movies" = "Movies";
+
+/// Music
+"music" = "Music";
+
+/// MVC
+"mvc" = "MVC";
+
+/// Name
+"name" = "Name";
+
+/// Native Player
+"nativePlayer" = "Native Player";
+
+/// Network timed out
+"networkTimedOut" = "Network timed out";
+
+/// Never
+"never" = "Never";
+
+/// Never run
+"neverRun" = "Never run";
+
+/// New Password
+"newPassword" = "New Password";
+
+/// New User
+"newUser" = "New User";
+
+/// News
+"news" = "News";
+
+/// Next
+"next" = "Next";
+
+/// Next Item
+"nextItem" = "Next Item";
+
+/// Next Up
+"nextUp" = "Next Up";
+
+/// Days in Next Up
+"nextUpDays" = "Days in Next Up";
+
+/// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
+"nextUpDaysDescription" = "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.";
+
+/// Rewatching in Next Up
+"nextUpRewatch" = "Rewatching in Next Up";
+
+/// No
+"no" = "No";
+
+/// No episodes available
+"noEpisodesAvailable" = "No episodes available";
+
+/// No local servers found
+"noLocalServersFound" = "No local servers found";
+
+/// No overview available
+"noOverviewAvailable" = "No overview available";
+
+/// No public Users
+"noPublicUsers" = "No public Users";
+
+/// No results.
+"noResults" = "No results.";
+
+/// No runtime limit
+"noRuntimeLimit" = "No runtime limit";
+
+/// No session
+"noSession" = "No session";
+
+/// No title
+"noTitle" = "No title";
+
+/// None
+"none" = "None";
+
+/// Normal
+"normal" = "Normal";
+
+/// Type: %@ not implemented yet :(
+"notImplementedYetWithType" = "Type: %@ not implemented yet :(";
+
+/// Official Rating
+"officialRating" = "Official Rating";
+
+/// Offset
+"offset" = "Offset";
+
+/// OK
+"ok" = "OK";
+
+/// On application startup
+"onApplicationStartup" = "On application startup";
+
+/// On Now
+"onNow" = "On Now";
+
+/// Options
+"options" = "Options";
+
+/// Orange
+"orange" = "Orange";
+
+/// Order
+"order" = "Order";
+
+/// Orientation
+"orientation" = "Orientation";
+
+/// Original Air Date
+"originalAirDate" = "Original Air Date";
+
+/// Original aspect ratio
+"originalAspectRatio" = "Original aspect ratio";
+
+/// Original Title
+"originalTitle" = "Original Title";
+
+/// Other
+"other" = "Other";
+
+/// Overview
+"overview" = "Overview";
+
+/// Parental controls
+"parentalControls" = "Parental controls";
+
+/// Parental Rating
+"parentalRating" = "Parental Rating";
+
+/// Password
+"password" = "Password";
+
+/// Changes the Jellyfin server user password. This does not change any Swiftfin settings.
+"passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
+
+/// User password has been changed.
+"passwordChangedMessage" = "User password has been changed.";
+
+/// New passwords do not match.
+"passwordsDoNotMatch" = "New passwords do not match.";
+
+/// Pause on background
+"pauseOnBackground" = "Pause on background";
+
+/// Penciller
+"penciller" = "Penciller";
+
+/// People
+"people" = "People";
+
+/// People who helped create or perform specific media.
+"peopleDescription" = "People who helped create or perform specific media.";
+
+/// Permissions
+"permissions" = "Permissions";
+
+/// Pin
+"pin" = "Pin";
+
+/// Play
+"play" = "Play";
+
+/// Play / Pause
+"playAndPause" = "Play / Pause";
+
+/// Play From Beginning
+"playFromBeginning" = "Play From Beginning";
+
+/// Play Next Item
+"playNextItem" = "Play Next Item";
+
+/// Play on active
+"playOnActive" = "Play on active";
+
+/// Play Previous Item
+"playPreviousItem" = "Play Previous Item";
+
+/// Playback
+"playback" = "Playback";
+
+/// Playback Buttons
+"playbackButtons" = "Playback Buttons";
+
+/// Playback Quality
+"playbackQuality" = "Playback Quality";
+
+/// Playback Speed
+"playbackSpeed" = "Playback Speed";
+
+/// Played
+"played" = "Played";
+
+/// Posters
+"posters" = "Posters";
+
+/// Premiere Date
+"premiereDate" = "Premiere Date";
+
+/// Press Down for Menu
+"pressDownForMenu" = "Press Down for Menu";
+
+/// Previous Item
+"previousItem" = "Previous Item";
+
+/// Primary
+"primary" = "Primary";
+
+/// Producer
+"producer" = "Producer";
+
+/// Production
+"production" = "Production";
+
+/// Production Locations
+"productionLocations" = "Production Locations";
+
+/// Profiles
+"profiles" = "Profiles";
+
+/// Programs
+"programs" = "Programs";
+
+/// Progress
+"progress" = "Progress";
+
+/// Public Users
+"publicUsers" = "Public Users";
+
+/// Quick Connect
+"quickConnect" = "Quick Connect";
+
+/// Quick Connect code
+"quickConnectCode" = "Quick Connect code";
+
+/// Enter the 6 digit code from your other device.
+"quickConnectCodeInstruction" = "Enter the 6 digit code from your other device.";
+
+/// Open the Jellyfin app on your phone or web browser and sign in with your account
+"quickConnectStep1" = "Open the Jellyfin app on your phone or web browser and sign in with your account";
+
+/// Open the user menu and go to the Quick Connect page
+"quickConnectStep2" = "Open the user menu and go to the Quick Connect page";
+
+/// Enter the following code:
+"quickConnectStep3" = "Enter the following code:";
+
+/// Authorizing Quick Connect successful. Please continue on your other device.
+"quickConnectSuccessMessage" = "Authorizing Quick Connect successful. Please continue on your other device.";
+
+/// Random
+"random" = "Random";
+
+/// Random Image
+"randomImage" = "Random Image";
+
+/// Rating
+"rating" = "Rating";
+
+/// %@ rating on a scale from 1 to 10.
+"ratingDescription" = "%@ rating on a scale from 1 to 10.";
+
+/// Ratings
+"ratings" = "Ratings";
+
+/// Recently Added
+"recentlyAdded" = "Recently Added";
+
+/// Recommended
+"recommended" = "Recommended";
+
+/// Red
+"red" = "Red";
+
+/// The number of reference frames is not supported
+"refFramesNotSupported" = "The number of reference frames is not supported";
+
+/// Refresh Metadata
+"refreshMetadata" = "Refresh Metadata";
+
+/// Regional
+"regional" = "Regional";
+
+/// Regular
+"regular" = "Regular";
+
+/// Release Date
+"releaseDate" = "Release Date";
+
+/// Remixer
+"remixer" = "Remixer";
+
+/// Remote connections
+"remoteConnections" = "Remote connections";
+
+/// Remote control
+"remoteControl" = "Remote control";
+
+/// Remove All
+"removeAll" = "Remove All";
+
+/// Remove All Servers
+"removeAllServers" = "Remove All Servers";
+
+/// Remux
+"remux" = "Remux";
+
+/// Reorder
+"reorder" = "Reorder";
+
+/// Replace All
+"replaceAll" = "Replace All";
+
+/// Replace all unlocked metadata and images with new information.
+"replaceAllDescription" = "Replace all unlocked metadata and images with new information.";
+
+/// Replace Images
+"replaceImages" = "Replace Images";
+
+/// Replace all images with new images.
+"replaceImagesDescription" = "Replace all images with new images.";
+
+/// Replace Metadata
+"replaceMetadata" = "Replace Metadata";
+
+/// Replace unlocked metadata with new information.
+"replaceMetadataDescription" = "Replace unlocked metadata with new information.";
+
+/// Require device authentication when signing in to the user.
+"requireDeviceAuthDescription" = "Require device authentication when signing in to the user.";
+
+/// Require device authentication to sign in to the Quick Connect user on this device.
+"requireDeviceAuthForQuickConnectUser" = "Require device authentication to sign in to the Quick Connect user on this device.";
+
+/// Require device authentication to sign in to %@ on this device.
+"requireDeviceAuthForUser" = "Require device authentication to sign in to %@ on this device.";
+
+/// Require a local pin when signing in to the user. This pin is unrecoverable.
+"requirePinDescription" = "Require a local pin when signing in to the user. This pin is unrecoverable.";
+
+/// Required
+"required" = "Required";
+
+/// Reset
+"reset" = "Reset";
+
+/// Reset all settings back to defaults.
+"resetAllSettings" = "Reset all settings back to defaults.";
+
+/// Reset User Settings
+"resetUserSettings" = "Reset User Settings";
+
+/// Restart Server
+"restartServer" = "Restart Server";
+
+/// Are you sure you want to restart the server?
+"restartWarning" = "Are you sure you want to restart the server?";
+
+/// Resume
+"resume" = "Resume";
+
+/// Resume Offset
+"resumeOffset" = "Resume Offset";
+
+/// Resume content seconds before the recorded resume time
+"resumeOffsetDescription" = "Resume content seconds before the recorded resume time";
+
+/// Resume Offset
+"resumeOffsetTitle" = "Resume Offset";
+
+/// Retrieving media information
+"retrievingMediaInformation" = "Retrieving media information";
+
+/// Retry
+"retry" = "Retry";
+
+/// Reviews
+"reviews" = "Reviews";
+
+/// Right
+"right" = "Right";
+
+/// Role
+"role" = "Role";
+
+/// Rotate
+"rotate" = "Rotate";
+
+/// Run
+"run" = "Run";
+
+/// Running...
+"running" = "Running...";
+
+/// Runtime
+"runtime" = "Runtime";
+
+/// Save
+"save" = "Save";
+
+/// Save the user to this device without any local authentication.
+"saveUserWithoutAuthDescription" = "Save the user to this device without any local authentication.";
+
+/// Schedule already exists
+"scheduleAlreadyExists" = "Schedule already exists";
+
+/// Scrub Current Time
+"scrubCurrentTime" = "Scrub Current Time";
+
+/// Search
+"search" = "Search";
+
+/// Season
+"season" = "Season";
+
+/// S%1$@:E%2$@
+"seasonAndEpisode" = "S%1$@:E%2$@";
+
+/// Secondary audio is not supported
+"secondaryAudioNotSupported" = "Secondary audio is not supported";
+
+/// Security
+"security" = "Security";
+
+/// See All
+"seeAll" = "See All";
+
+/// See More
+"seeMore" = "See More";
+
+/// Select All
+"selectAll" = "Select All";
+
+/// Series
+"series" = "Series";
+
+/// Series Backdrop
+"seriesBackdrop" = "Series Backdrop";
+
+/// Server
+"server" = "Server";
+
+/// %@ is already connected.
+"serverAlreadyConnected" = "%@ is already connected.";
+
+/// Server %s already exists. Add new URL?
+"serverAlreadyExistsPrompt" = "Server %s already exists. Add new URL?";
+
+/// Server Logs
+"serverLogs" = "Server Logs";
+
+/// Server URL
+"serverURL" = "Server URL";
+
+/// Servers
+"servers" = "Servers";
+
+/// Session
+"session" = "Session";
+
+/// Sessions
+"sessions" = "Sessions";
+
+/// Set
+"set" = "Set";
+
+/// Set Pin
+"setPin" = "Set Pin";
+
+/// Set pin for new user.
+"setPinForNewUser" = "Set pin for new user.";
+
+/// Set a hint when prompting for the pin.
+"setPinHintDescription" = "Set a hint when prompting for the pin.";
+
+/// Settings
+"settings" = "Settings";
+
+/// Show Favorited
+"showFavorited" = "Show Favorited";
+
+/// Show Favorites
+"showFavorites" = "Show Favorites";
+
+/// Show Missing Episodes
+"showMissingEpisodes" = "Show Missing Episodes";
+
+/// Show Missing Seasons
+"showMissingSeasons" = "Show Missing Seasons";
+
+/// Show Poster Labels
+"showPosterLabels" = "Show Poster Labels";
+
+/// Show Progress
+"showProgress" = "Show Progress";
+
+/// Show Recently Added
+"showRecentlyAdded" = "Show Recently Added";
+
+/// Show Unwatched
+"showUnwatched" = "Show Unwatched";
+
+/// Show Watched
+"showWatched" = "Show Watched";
+
+/// Shutdown Server
+"shutdownServer" = "Shutdown Server";
+
+/// Are you sure you want to shutdown the server?
+"shutdownWarning" = "Are you sure you want to shutdown the server?";
+
+/// Sign In
+"signIn" = "Sign In";
+
+/// Sign In to %s
+"signInToServer" = "Sign In to %s";
+
+/// Slider
+"slider" = "Slider";
+
+/// Slider Color
+"sliderColor" = "Slider Color";
+
+/// Slider Type
+"sliderType" = "Slider Type";
+
+/// Smaller
+"smaller" = "Smaller";
+
+/// Smallest
+"smallest" = "Smallest";
+
+/// Sort
+"sort" = "Sort";
+
+/// Sort Name
+"sortName" = "Sort Name";
+
+/// Sort Title
+"sortTitle" = "Sort Title";
+
+/// Source Code
+"sourceCode" = "Source Code";
+
+/// Special Features
+"specialFeatures" = "Special Features";
+
+/// Sports
+"sports" = "Sports";
+
+/// Start Time
+"startTime" = "Start Time";
+
+/// Status
+"status" = "Status";
+
+/// Stop
+"stop" = "Stop";
+
+/// Story Arc
+"storyArc" = "Story Arc";
+
+/// Streams
+"streams" = "Streams";
+
+/// Studios
+"studios" = "Studios";
+
+/// Studio(s) involved in the creation of media.
+"studiosDescription" = "Studio(s) involved in the creation of media.";
+
+/// Subtitle
+"subtitle" = "Subtitle";
+
+/// The subtitle codec is not supported
+"subtitleCodecNotSupported" = "The subtitle codec is not supported";
+
+/// Subtitle Color
+"subtitleColor" = "Subtitle Color";
+
+/// Subtitle Font
+"subtitleFont" = "Subtitle Font";
+
+/// Subtitle Offset
+"subtitleOffset" = "Subtitle Offset";
+
+/// Subtitle Size
+"subtitleSize" = "Subtitle Size";
+
+/// Subtitles
+"subtitles" = "Subtitles";
+
+/// Settings only affect some subtitle types
+"subtitlesDisclaimer" = "Settings only affect some subtitle types";
+
+/// Success
+"success" = "Success";
+
+/// Content Uploading
+"supportsContentUploading" = "Content Uploading";
+
+/// Media Control
+"supportsMediaControl" = "Media Control";
+
+/// Persistent Identifier
+"supportsPersistentIdentifier" = "Persistent Identifier";
+
+/// Sync
+"supportsSync" = "Sync";
+
+/// Switch User
+"switchUser" = "Switch User";
+
+/// SyncPlay
+"syncPlay" = "SyncPlay";
+
+/// System
+"system" = "System";
+
+/// Tagline
+"tagline" = "Tagline";
+
+/// Taglines
+"taglines" = "Taglines";
+
+/// Tags
+"tags" = "Tags";
+
+/// Labels used to organize or highlight specific attributes of media.
+"tagsDescription" = "Labels used to organize or highlight specific attributes of media.";
+
+/// Task
+"task" = "Task";
+
+/// Aborted
+"taskAborted" = "Aborted";
+
+/// Cancelled
+"taskCancelled" = "Cancelled";
+
+/// Completed
+"taskCompleted" = "Completed";
+
+/// Failed
+"taskFailed" = "Failed";
+
+/// Sets the duration (in minutes) in between task triggers.
+"taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
+
+/// Sets the maximum runtime (in hours) for this task trigger.
+"taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
+
+/// Tasks
+"tasks" = "Tasks";
+
+/// Tasks are operations that are scheduled to run periodically or can be triggered manually.
+"tasksDescription" = "Tasks are operations that are scheduled to run periodically or can be triggered manually.";
+
+/// Tbps
+"terabitsPerSecond" = "Tbps";
+
+/// Test Size
+"testSize" = "Test Size";
+
+/// Time
+"time" = "Time";
+
+/// Time Limit
+"timeLimit" = "Time Limit";
+
+/// Time limit: %1$@
+"timeLimitLabelWithValue" = "Time limit: %1$@";
+
+/// Timestamp
+"timestamp" = "Timestamp";
+
+/// Timestamp Type
+"timestampType" = "Timestamp Type";
+
+/// Title
+"title" = "Title";
+
+/// Trailers
+"trailers" = "Trailers";
+
+/// Trailing Value
+"trailingValue" = "Trailing Value";
+
+/// Transcode
+"transcode" = "Transcode";
+
+/// Transcode Reason(s)
+"transcodeReasons" = "Transcode Reason(s)";
+
+/// Transition
+"transition" = "Transition";
+
+/// Translator
+"translator" = "Translator";
+
+/// Trigger already exists
+"triggerAlreadyExists" = "Trigger already exists";
+
+/// Triggers
+"triggers" = "Triggers";
+
+/// TV
+"tv" = "TV";
+
+/// TV Access
+"tvAccess" = "TV Access";
+
+/// TV Shows
+"tvShows" = "TV Shows";
+
+/// Type
+"type" = "Type";
+
+/// Unable to find host
+"unableToFindHost" = "Unable to find host";
+
+/// Unable to perform device authentication
+"unableToPerformDeviceAuth" = "Unable to perform device authentication";
+
+/// Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.
+"unableToPerformDeviceAuthFaceID" = "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin.";
+
+/// Unaired
+"unaired" = "Unaired";
+
+/// Unauthorized
+"unauthorized" = "Unauthorized";
+
+/// Unauthorized user
+"unauthorizedUser" = "Unauthorized user";
+
+/// Unknown
+"unknown" = "Unknown";
+
+/// The audio stream information is unknown
+"unknownAudioStreamInfo" = "The audio stream information is unknown";
+
+/// Unknown Error
+"unknownError" = "Unknown Error";
+
+/// The video stream information is unknown
+"unknownVideoStreamInfo" = "The video stream information is unknown";
+
+/// Unlimited
+"unlimited" = "Unlimited";
+
+/// The user can connect to the server without any limits.
+"unlimitedConnectionsDescription" = "The user can connect to the server without any limits.";
+
+/// Allows unlimited failed login attempts without locking the user.
+"unlimitedFailedLoginDescription" = "Allows unlimited failed login attempts without locking the user.";
+
+/// Unplayed
+"unplayed" = "Unplayed";
+
+/// Unreleased
+"unreleased" = "Unreleased";
+
+/// You have unsaved changes. Are you sure you want to discard them?
+"unsavedChangesMessage" = "You have unsaved changes. Are you sure you want to discard them?";
+
+/// URL
+"url" = "URL";
+
+/// Use as Transcoding Profile
+"useAsTranscodingProfile" = "Use as Transcoding Profile";
+
+/// Use Primary Image
+"usePrimaryImage" = "Use Primary Image";
+
+/// Uses the primary image and hides the logo.
+"usePrimaryImageDescription" = "Uses the primary image and hides the logo.";
+
+/// User
+"user" = "User";
+
+/// This user will require device authentication.
+"userDeviceAuthRequiredDescription" = "This user will require device authentication.";
+
+/// This user will require a pin.
+"userPinRequiredDescription" = "This user will require a pin.";
+
+/// User %@ requires device authentication
+"userRequiresDeviceAuthentication" = "User %@ requires device authentication";
+
+/// Username
+"username" = "Username";
+
+/// A username is required
+"usernameRequired" = "A username is required";
+
+/// Users
+"users" = "Users";
+
+/// Version
+"version" = "Version";
+
+/// Video
+"video" = "Video";
+
+/// The video bit depth is not supported
+"videoBitDepthNotSupported" = "The video bit depth is not supported";
+
+/// The video bitrate is not supported
+"videoBitrateNotSupported" = "The video bitrate is not supported";
+
+/// The video codec is not supported
+"videoCodecNotSupported" = "The video codec is not supported";
+
+/// The video framerate is not supported
+"videoFramerateNotSupported" = "The video framerate is not supported";
+
+/// The video level is not supported
+"videoLevelNotSupported" = "The video level is not supported";
+
+/// Video Player
+"videoPlayer" = "Video Player";
+
+/// Video Player Type
+"videoPlayerType" = "Video Player Type";
+
+/// The video profile is not supported
+"videoProfileNotSupported" = "The video profile is not supported";
+
+/// The video range type is not supported
+"videoRangeTypeNotSupported" = "The video range type is not supported";
+
+/// Video remuxing
+"videoRemuxing" = "Video remuxing";
+
+/// The video resolution is not supported
+"videoResolutionNotSupported" = "The video resolution is not supported";
+
+/// Video transcoding
+"videoTranscoding" = "Video transcoding";
+
+/// Weekday
+"weekday" = "Weekday";
+
+/// Weekend
+"weekend" = "Weekend";
+
+/// Weekly
+"weekly" = "Weekly";
+
+/// This will be created as a new item on your Jellyfin Server.
+"willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
+
+/// WIP
+"wip" = "WIP";
+
+/// Writer
+"writer" = "Writer";
+
+/// Year
+"year" = "Year";
+
+/// Years
+"years" = "Years";
+
+/// Yellow
+"yellow" = "Yellow";
+
+/// Yes
+"yes" = "Yes";
+
