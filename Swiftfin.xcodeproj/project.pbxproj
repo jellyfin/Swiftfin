@@ -2462,6 +2462,15 @@
 			path = ActiveSessionDetailView;
 			sourceTree = "<group>";
 		};
+		4E75B34D2D16583900D16531 /* Translations */ = {
+			isa = PBXGroup;
+			children = (
+				4EC71FBB2D161FE300D0B3A8 /* AlphabetizeStrings.swift */,
+				4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */,
+			);
+			path = Translations;
+			sourceTree = "<group>";
+		};
 		4E8F74A32CE03D3100CC8969 /* ItemEditorView */ = {
 			isa = PBXGroup;
 			children = (
@@ -2695,8 +2704,7 @@
 		4EC71FBA2D161FD800D0B3A8 /* Scripts */ = {
 			isa = PBXGroup;
 			children = (
-				4EC71FBB2D161FE300D0B3A8 /* AlphabetizeStrings.swift */,
-				4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */,
+				4E75B34D2D16583900D16531 /* Translations */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -5020,7 +5028,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/PurgeUnusedStrings.swift\"\n";
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/PurgeUnusedStrings.swift\"\n";
 		};
 		4E75B34C2D1650C700D16531 /* Purge Unused Strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5039,7 +5047,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/AlphabetizeStrings.swift\"\n";
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
 		};
 		4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5059,7 +5067,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/AlphabetizeStrings.swift\"\n";
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
 		};
 		4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5079,7 +5087,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/AlphabetizeStrings.swift\"\n";
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
 		};
 		6286F09E271C093000C40ED5 /* Run Swiftgen.swift */ = {
 			isa = PBXShellScriptBuildPhase;
