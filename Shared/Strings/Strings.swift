@@ -1346,8 +1346,6 @@ internal enum L10n {
   internal static let weekly = L10n.tr("Localizable", "weekly", fallback: "Weekly")
   /// This will be created as a new item on your Jellyfin Server.
   internal static let willBeCreatedOnServer = L10n.tr("Localizable", "willBeCreatedOnServer", fallback: "This will be created as a new item on your Jellyfin Server.")
-  /// WIP
-  internal static let wip = L10n.tr("Localizable", "wip", fallback: "WIP")
   /// Writer
   internal static let writer = L10n.tr("Localizable", "writer", fallback: "Writer")
   /// Year
