@@ -453,25 +453,6 @@ struct SelectUserView: View {
                 )
                 .edgePadding([.bottom, .horizontal])
             }
-
-            if isEditingUsers {
-                VStack {
-                    PrimaryButton(title: L10n.selectAll).onSelect {
-                        for gridItem in gridItems {
-                            switch gridItem {
-                            case let .user(user, server: server):
-                                selectedUsers.insert(user)
-                            default:
-                                break
-                            }
-                        }
-                    }
-                    .edgePadding([.bottom, .horizontal])
-
-                    deleteUsersButton
-                        .edgePadding([.bottom, .horizontal])
-                }
-            }
         }
         .background {
             if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
@@ -530,27 +511,49 @@ struct SelectUserView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30)
             }
-        }
-        .topBarTrailing {
-            if isEditingUsers {
-                Button {
-                    isEditingUsers = false
-                } label: {
-                    L10n.cancel.text
-                        .font(.headline)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 10)
-                        .background {
-                            if colorScheme == .light {
-                                Color.secondarySystemFill
-                            } else {
-                                Color.tertiarySystemBackground
+
+            ToolbarItem(placement: .topBarLeading) {
+                if isEditingUsers {
+                    Button(L10n.selectAll) {
+                        for gridItem in gridItems {
+                            switch gridItem {
+                            case let .user(user, server: _):
+                                selectedUsers.insert(user)
+                            default:
+                                break
                             }
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .buttonStyle(.toolbarPill)
                 }
-                .buttonStyle(.plain)
-            } else {
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                if isEditingUsers {
+                    Button(isEditingUsers ? L10n.cancel : L10n.edit) {
+                        isEditingUsers.toggle()
+
+                        UIDevice.impact(.light)
+
+                        if !isEditingUsers {
+                            selectedUsers.removeAll()
+                        }
+                    }
+                    .buttonStyle(.toolbarPill)
+                }
+            }
+            ToolbarItem(placement: .bottomBar) {
+                if isEditingUsers {
+                    Button(L10n.delete) {
+                        isPresentingConfirmDeleteUsers = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedUsers.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+            }
+        }
+        .topBarTrailing {
+            if !isEditingUsers {
                 advancedMenu
             }
         }
