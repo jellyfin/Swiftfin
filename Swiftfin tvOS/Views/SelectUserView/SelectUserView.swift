@@ -17,6 +17,13 @@ import SwiftUI
 
 struct SelectUserView: View {
 
+    // MARK: - User Grid Item Enum
+
+    private enum UserGridItem: Hashable {
+        case user(UserState, server: ServerState)
+        case addUser
+    }
+
     // MARK: - Defaults
 
     @Default(.selectUserServerSelection)
@@ -26,13 +33,6 @@ struct SelectUserView: View {
 
     @Environment(\.colorScheme)
     private var colorScheme
-
-    // MARK: - User Grid Item Enum
-
-    private enum UserGridItem: Hashable {
-        case user(UserState, server: ServerState)
-        case addUser
-    }
 
     // MARK: - State & Environment Objects
 

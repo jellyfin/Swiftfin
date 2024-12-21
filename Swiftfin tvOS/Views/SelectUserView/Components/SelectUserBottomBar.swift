@@ -9,7 +9,9 @@
 import SwiftUI
 
 extension SelectUserView {
+
     struct SelectUserBottomBar: View {
+
         @Binding
         private var isEditing: Bool
 
@@ -24,22 +26,15 @@ extension SelectUserView {
 
         private let onDelete: () -> Void
 
-        // MARK: - Environment Variable
-
-        @Environment(\.colorScheme)
-        private var colorScheme
-
         // MARK: - Advanced Menu
 
         @ViewBuilder
         private var advancedMenu: some View {
             Menu(L10n.advanced, systemImage: "gearshape.fill") {
 
-//                if userCount > 1 { // TODO: conditional prevents menu from working?
                 Button(L10n.editUsers, systemImage: "person.crop.circle") {
                     isEditing.toggle()
                 }
-//                }
 
                 // TODO: Do we want to support a grid view and list view like iOS?
 //            if !viewModel.servers.isEmpty {
@@ -82,10 +77,9 @@ extension SelectUserView {
                             .opacity(0.5)
                     }
                 }
+                .frame(width: 400, height: 65)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .frame(height: 65)
-            .frame(maxWidth: 400)
             .disabled(!areUsersSelected)
             .buttonStyle(.card)
         }
@@ -106,29 +100,40 @@ extension SelectUserView {
             self.onDelete = onDelete
         }
 
-        var body: some View {
+        @ViewBuilder
+        private var contentView: some View {
             HStack(alignment: .center) {
                 if isEditing {
-                    Group {
-                        deleteUsersButton
+                    deleteUsersButton
 
-                        Button {
-                            isEditing = false
-                        } label: {
-                            L10n.cancel.text
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(Color.primary)
-                        }
+                    Button {
+                        isEditing = false
+                    } label: {
+                        L10n.cancel.text
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.primary)
                     }
-                    .padding(.bottom, 50)
                 } else {
                     ServerSelectionMenu(
                         selection: $serverSelection,
                         viewModel: viewModel
                     )
 
-                    advancedMenu
+                    if userCount > 1 {
+                        advancedMenu
+                    }
                 }
+            }
+        }
+
+        var body: some View {
+            // `Menu` with custom label has some weird additional
+            // frame/padding that differs from default label style
+            AlternateLayoutView(alignment: .top) {
+                Color.clear
+                    .frame(height: 100)
+            } content: {
+                contentView
             }
         }
     }
