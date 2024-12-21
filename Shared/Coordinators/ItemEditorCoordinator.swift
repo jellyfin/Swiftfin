@@ -28,7 +28,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     @Route(.push)
     var editImages = makeEditImages
-    @Route(.modal)
+    @Route(.push)
     var imagePicker = makeImagePicker
 
     // MARK: - Route to Genres
@@ -80,11 +80,8 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
         EditItemImagesView(viewModel: ItemViewModel(item: item))
     }
 
-    func makeImagePicker(viewModel: RemoteItemImageViewModel)
-    -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
-        NavigationViewCoordinator {
-            ItemImagePickerView(viewModel: viewModel)
-        }
+    func makeImagePicker(viewModel: RemoteItemImageViewModel) -> some View {
+        ItemImagePickerView(viewModel: viewModel)
     }
 
     // MARK: - Item Genres

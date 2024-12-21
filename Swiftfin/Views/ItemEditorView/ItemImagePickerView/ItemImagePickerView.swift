@@ -21,7 +21,7 @@ struct ItemImagePickerView: View {
     private var accentColor
 
     @EnvironmentObject
-    private var router: BasicNavigationViewCoordinator.Router
+    private var router: ItemEditorCoordinator.Router
 
     // MARK: - ViewModel
 
@@ -51,11 +51,8 @@ struct ItemImagePickerView: View {
 
     var body: some View {
         contentView
-            .navigationBarTitle(viewModel.imageType.rawValue)
+            .navigationBarTitle(viewModel.imageType.rawValue.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                router.dismissCoordinator()
-            }
             .onFirstAppear {
                 if viewModel.state == .initial {
                     viewModel.send(.refresh)
@@ -87,7 +84,16 @@ struct ItemImagePickerView: View {
                 isPresented: $isImportingFile,
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
-            ) { handleFileImport($0) }
+            ) {
+                switch $0 {
+                case let .success(urls):
+                    if let url = urls.first {
+                        viewModel.send(.setLocalImage(url: url))
+                    }
+                case let .failure(fileError):
+                    error = fileError
+                }
+            }
             .sheet(item: $selectedImage, onDismiss: {
                 selectedImage = nil
             }) { selectedImage in
@@ -249,23 +255,9 @@ struct ItemImagePickerView: View {
         Button(L10n.delete, role: .destructive) {
             viewModel.send(.deleteImage)
             isPresentingDeletion = false
-            router.dismissCoordinator()
         }
         Button(L10n.cancel, role: .cancel) {
             isPresentingDeletion = false
-        }
-    }
-
-    // MARK: - Handle File Importing
-
-    private func handleFileImport(_ result: Result<[URL], Error>) {
-        switch result {
-        case let .success(urls):
-            if let url = urls.first {
-                viewModel.send(.setLocalImage(url: url))
-            }
-        case let .failure(fileError):
-            error = fileError
         }
     }
 }
