@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		091B5A8A2683142E00D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
 		091B5A8D268315D400D78B61 /* ServerDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091B5A872683142E00D78B61 /* ServerDiscovery.swift */; };
+		4E00338A2D17445100EB2C92 /* LibrarySection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0033892D17444D00EB2C92 /* LibrarySection.swift */; };
+		4E00338C2D17632600EB2C92 /* FilterSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00338B2D17632200EB2C92 /* FilterSection.swift */; };
+		4E00338E2D1763FC00EB2C92 /* PosterSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E00338D2D1763F900EB2C92 /* PosterSection.swift */; };
 		4E01446C2D0292E200193038 /* Trie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E01446B2D0292E000193038 /* Trie.swift */; };
 		4E01446D2D0292E200193038 /* Trie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E01446B2D0292E000193038 /* Trie.swift */; };
 		4E0195E42CE0467B007844F4 /* ItemSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E0195E32CE04678007844F4 /* ItemSection.swift */; };
@@ -1175,6 +1178,9 @@
 
 /* Begin PBXFileReference section */
 		091B5A872683142E00D78B61 /* ServerDiscovery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServerDiscovery.swift; sourceTree = "<group>"; };
+		4E0033892D17444D00EB2C92 /* LibrarySection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibrarySection.swift; sourceTree = "<group>"; };
+		4E00338B2D17632200EB2C92 /* FilterSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterSection.swift; sourceTree = "<group>"; };
+		4E00338D2D1763F900EB2C92 /* PosterSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosterSection.swift; sourceTree = "<group>"; };
 		4E01446B2D0292E000193038 /* Trie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trie.swift; sourceTree = "<group>"; };
 		4E0195E32CE04678007844F4 /* ItemSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSection.swift; sourceTree = "<group>"; };
 		4E026A8A2CE804E7005471B5 /* ResetUserPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetUserPasswordView.swift; sourceTree = "<group>"; };
@@ -2420,8 +2426,11 @@
 		4E699BB72CB33FB0007CBD5D /* Sections */ = {
 			isa = PBXGroup;
 			children = (
-				4E0195E32CE04678007844F4 /* ItemSection.swift */,
+				4E00338B2D17632200EB2C92 /* FilterSection.swift */,
 				4E699BB82CB33FB5007CBD5D /* HomeSection.swift */,
+				4E0195E32CE04678007844F4 /* ItemSection.swift */,
+				4E0033892D17444D00EB2C92 /* LibrarySection.swift */,
+				4E00338D2D1763F900EB2C92 /* PosterSection.swift */,
 			);
 			path = Sections;
 			sourceTree = "<group>";
@@ -5656,6 +5665,7 @@
 				E19E551F2897326C003CE330 /* BottomEdgeGradientModifier.swift in Sources */,
 				4E661A0F2CEFE46300025C99 /* SeriesSection.swift in Sources */,
 				4E661A102CEFE46300025C99 /* TitleSection.swift in Sources */,
+				4E00338A2D17445100EB2C92 /* LibrarySection.swift in Sources */,
 				4E661A112CEFE46300025C99 /* LockMetadataSection.swift in Sources */,
 				4E661A122CEFE46300025C99 /* MediaFormatSection.swift in Sources */,
 				4E661A132CEFE46300025C99 /* EpisodeSection.swift in Sources */,
@@ -5988,6 +5998,7 @@
 				E1D8428F2933F2D900D1041A /* MediaSourceInfo.swift in Sources */,
 				E1BDF2EC2952290200CC0294 /* AspectFillActionButton.swift in Sources */,
 				BD0BA22B2AD6503B00306A8D /* OnlineVideoPlayerManager.swift in Sources */,
+				4E00338C2D17632600EB2C92 /* FilterSection.swift in Sources */,
 				E1BDF2F529524E6400CC0294 /* PlayNextItemActionButton.swift in Sources */,
 				BD3957772C112AD30078CEF8 /* SliderSection.swift in Sources */,
 				E18E01DD288747230022598C /* iPadOSSeriesItemContentView.swift in Sources */,
@@ -6027,6 +6038,7 @@
 				E1CB75792C80ECF100217C76 /* VideoPlayerType+Native.swift in Sources */,
 				E18ACA8F2A15A2CF00BB4F35 /* (null) in Sources */,
 				E1401CA72938140300E8B599 /* PrimaryAppIcon.swift in Sources */,
+				4E00338E2D1763FC00EB2C92 /* PosterSection.swift in Sources */,
 				E1937A3E288F0D3D00CB80AA /* UIScreen.swift in Sources */,
 				E10B1EBE2BD9AD5C00A92EAF /* V1ServerModel.swift in Sources */,
 				4EB1A8CC2C9B1BA200F43898 /* DestructiveServerTask.swift in Sources */,

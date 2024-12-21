@@ -15,20 +15,37 @@ extension CustomizeViewsSettings {
 
         @Default(.Customization.Home.showRecentlyAdded)
         private var showRecentlyAdded
+
         @Default(.Customization.Home.maxNextUp)
         private var maxNextUp
         @Default(.Customization.Home.resumeNextUp)
         private var resumeNextUp
 
         var body: some View {
+
             Section(L10n.home) {
 
-                Toggle(L10n.showRecentlyAdded, isOn: $showRecentlyAdded)
+                // MARK: Show Recently Added Row
 
-                Toggle(L10n.nextUpRewatch, isOn: $resumeNextUp)
+                Toggle(
+                    L10n.showRecentlyAdded.localizedCapitalized,
+                    isOn: $showRecentlyAdded
+                )
+            }
+
+            Section {
+
+                // MARK: Rewatched Items in Next Up
+
+                Toggle(
+                    L10n.nextUpRewatch.localizedCapitalized,
+                    isOn: $resumeNextUp
+                )
+
+                // MARK: Maximum Duration in Next Up
 
                 ChevronAlertButton(
-                    L10n.nextUpDays,
+                    L10n.nextUpDays.localizedCapitalized,
                     subtitle: {
                         if maxNextUp > 0 {
                             return Text(maxNextUp, format: .interval(style: .narrow, fields: [.day]))
@@ -45,6 +62,10 @@ extension CustomizeViewsSettings {
                     )
                     .keyboardType(.numberPad)
                 }
+            } header: {
+                Text(L10n.nextUp)
+            } footer: {
+                Text(L10n.nextUpSettingsDescription)
             }
         }
     }
