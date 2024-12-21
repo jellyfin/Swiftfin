@@ -762,7 +762,6 @@
 		E1763A292BF3046A004DF6AB /* AddUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A282BF3046A004DF6AB /* AddUserButton.swift */; };
 		E1763A2B2BF3046E004DF6AB /* UserGridButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */; };
 		E1763A642BF3C9AA004DF6AB /* ListRowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */; };
-		E1763A662BF3CA83004DF6AB /* FullScreenMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */; };
 		E1763A6A2BF3D177004DF6AB /* PublicUserButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A692BF3D177004DF6AB /* PublicUserButton.swift */; };
 		E1763A712BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
 		E1763A722BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */; };
@@ -1272,6 +1271,7 @@
 		4E6C27072C8BD0AD00FD2185 /* ActiveSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveSessionDetailView.swift; sourceTree = "<group>"; };
 		4E71D6882C80910900A0174D /* EditCustomDeviceProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCustomDeviceProfileView.swift; sourceTree = "<group>"; };
 		4E73E2A52C41CFD3002D2A78 /* PlaybackBitrateTestSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackBitrateTestSize.swift; sourceTree = "<group>"; };
+		4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurgeUnusedStrings.swift; sourceTree = "<group>"; };
 		4E762AAD2C3A1A95004D1579 /* PlaybackBitrate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlaybackBitrate.swift; sourceTree = "<group>"; };
 		4E884C642CEBB2FF004CF6AD /* LearnMoreModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreModal.swift; sourceTree = "<group>"; };
 		4E8B34E92AB91B6E0018F305 /* ItemFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemFilter.swift; sourceTree = "<group>"; };
@@ -1324,6 +1324,7 @@
 		4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerUserDetailsView.swift; sourceTree = "<group>"; };
 		4EC50D602C934B3A00FC3D0E /* ServerTasksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTasksViewModel.swift; sourceTree = "<group>"; };
 		4EC6C16A2C92999800FC904B /* TranscodeSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeSection.swift; sourceTree = "<group>"; };
+		4EC71FBB2D161FE300D0B3A8 /* AlphabetizeStrings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlphabetizeStrings.swift; sourceTree = "<group>"; };
 		4ECDAA9D2C920A8E0030F2F5 /* TranscodeReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranscodeReason.swift; sourceTree = "<group>"; };
 		4ECF5D812D0A3D0200F066B1 /* AddAccessScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddAccessScheduleView.swift; sourceTree = "<group>"; };
 		4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicDayOfWeek.swift; sourceTree = "<group>"; };
@@ -1695,7 +1696,6 @@
 		E1763A282BF3046A004DF6AB /* AddUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddUserButton.swift; sourceTree = "<group>"; };
 		E1763A2A2BF3046E004DF6AB /* UserGridButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserGridButton.swift; sourceTree = "<group>"; };
 		E1763A632BF3C9AA004DF6AB /* ListRowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRowButton.swift; sourceTree = "<group>"; };
-		E1763A652BF3CA83004DF6AB /* FullScreenMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenMenu.swift; sourceTree = "<group>"; };
 		E1763A692BF3D177004DF6AB /* PublicUserButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicUserButton.swift; sourceTree = "<group>"; };
 		E1763A702BF3F67C004DF6AB /* SwiftfinStore+Mappings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfinStore+Mappings.swift"; sourceTree = "<group>"; };
 		E1763A732BF3FA4C004DF6AB /* AppLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLoadingView.swift; sourceTree = "<group>"; };
@@ -2462,6 +2462,15 @@
 			path = ActiveSessionDetailView;
 			sourceTree = "<group>";
 		};
+		4E75B34D2D16583900D16531 /* Translations */ = {
+			isa = PBXGroup;
+			children = (
+				4EC71FBB2D161FE300D0B3A8 /* AlphabetizeStrings.swift */,
+				4E75B34A2D164AC100D16531 /* PurgeUnusedStrings.swift */,
+			);
+			path = Translations;
+			sourceTree = "<group>";
+		};
 		4E8F74A32CE03D3100CC8969 /* ItemEditorView */ = {
 			isa = PBXGroup;
 			children = (
@@ -2690,6 +2699,14 @@
 				4EC2B1A82CC97C0400D866BE /* ServerUserDetailsView.swift */,
 			);
 			path = ServerUserDetailsView;
+			sourceTree = "<group>";
+		};
+		4EC71FBA2D161FD800D0B3A8 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				4E75B34D2D16583900D16531 /* Translations */,
+			);
+			path = Scripts;
 			sourceTree = "<group>";
 		};
 		4ECF5D822D0A3D0200F066B1 /* AddAccessScheduleView */ = {
@@ -3004,6 +3021,7 @@
 				534D4FE126A7D7CC000A7A48 /* Translations */,
 				5377CBF2263B596A003A4E83 /* Products */,
 				53D5E3DB264B47EE00BADDC8 /* Frameworks */,
+				4EC71FBA2D161FD800D0B3A8 /* Scripts */,
 			);
 			sourceTree = "<group>";
 		};
@@ -4753,6 +4771,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535870712669D21700D05A09 /* Build configuration list for PBXNativeTarget "Swiftfin tvOS" */;
 			buildPhases = (
+				4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */,
 				6286F0A3271C0ABA00C40ED5 /* Run Swiftgen.swift */,
 				BD83D7852B55EEB600652C24 /* Run SwiftFormat */,
 				5358705C2669D21600D05A09 /* Sources */,
@@ -4800,6 +4819,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5377CC1B263B596B003A4E83 /* Build configuration list for PBXNativeTarget "Swiftfin iOS" */;
 			buildPhases = (
+				4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */,
 				6286F09E271C093000C40ED5 /* Run Swiftgen.swift */,
 				BD0BA2282AD64BB200306A8D /* Run SwiftFormat */,
 				5377CBED263B596A003A4E83 /* Sources */,
@@ -4989,6 +5009,46 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		4EC71FBC2D16201C00D0B3A8 /* Alphabetize Strings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+			);
+			name = "Alphabetize Strings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/alphabetizeStrings.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
+		};
+		4EC71FBD2D1620AF00D0B3A8 /* Alphabetize Strings */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Translations/en.lproj/Localizable.strings",
+			);
+			name = "Alphabetize Strings";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/alphabetizeStrings.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "xcrun --sdk macosx swift \"${SRCROOT}/Scripts/Translations/AlphabetizeStrings.swift\"\n";
+		};
 		6286F09E271C093000C40ED5 /* Run Swiftgen.swift */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

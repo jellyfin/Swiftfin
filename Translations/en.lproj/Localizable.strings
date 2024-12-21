@@ -13,6 +13,9 @@
 /// Access
 "access" = "Access";
 
+/// Accessibility
+"accessibility" = "Accessibility";
+
 /// The End Time must come after the Start Time.
 "accessScheduleInvalidTime" = "The End Time must come after the Start Time.";
 
@@ -21,9 +24,6 @@
 
 /// Define the allowed hours for usage and restrict access outside those times.
 "accessSchedulesDescription" = "Define the allowed hours for usage and restrict access outside those times.";
-
-/// Accessibility
-"accessibility" = "Accessibility";
 
 /// Active
 "active" = "Active";
@@ -37,11 +37,14 @@
 /// Add
 "add" = "Add";
 
+/// Add Access Schedule
+"addAccessSchedule" = "Add Access Schedule";
+
 /// Add API key
 "addAPIKey" = "Add API key";
 
-/// Add Access Schedule
-"addAccessSchedule" = "Add Access Schedule";
+/// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
+"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
 
 /// Add Server
 "addServer" = "Add Server";
@@ -55,9 +58,6 @@
 /// Add User
 "addUser" = "Add User";
 
-/// Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.
-"additionalSecurityAccessDescription" = "Additional security access for users signed in to this device. This does not change any Jellyfin server user settings.";
-
 /// Administrator
 "administrator" = "Administrator";
 
@@ -67,14 +67,14 @@
 /// Age %@
 "agesGroup" = "Age %@";
 
+/// Aired
+"aired" = "Aired";
+
 /// Air Time
 "airTime" = "Air Time";
 
 /// Airs %s
 "airWithDate" = "Airs %s";
-
-/// Aired
-"aired" = "Aired";
 
 /// Album Artist
 "albumArtist" = "Album Artist";
@@ -88,12 +88,6 @@
 /// All Media
 "allMedia" = "All Media";
 
-/// All Servers
-"allServers" = "All Servers";
-
-/// View and manage all registered users on the server, including their permissions and activity status.
-"allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
-
 /// Allow collection management
 "allowCollectionManagement" = "Allow collection management";
 
@@ -102,6 +96,12 @@
 
 /// Allow media item editing
 "allowItemEditing" = "Allow media item editing";
+
+/// All Servers
+"allServers" = "All Servers";
+
+/// View and manage all registered users on the server, including their permissions and activity status.
+"allUsersDescription" = "View and manage all registered users on the server, including their permissions and activity status.";
 
 /// Alternate
 "alternate" = "Alternate";
@@ -127,11 +127,11 @@
 /// API Keys
 "apiKeysTitle" = "API Keys";
 
-/// App Icon
-"appIcon" = "App Icon";
-
 /// Appearance
 "appearance" = "Appearance";
+
+/// App Icon
+"appIcon" = "App Icon";
 
 /// Application Name
 "applicationName" = "Application Name";
@@ -202,11 +202,11 @@
 /// Tests your server connection to assess internet speed and adjust bandwidth automatically.
 "birateAutoDescription" = "Tests your server connection to assess internet speed and adjust bandwidth automatically.";
 
-/// Birth year
-"birthYear" = "Birth year";
-
 /// Birthday
 "birthday" = "Birthday";
+
+/// Birth year
+"birthYear" = "Birth year";
 
 /// Auto
 "bitrateAuto" = "Auto";
@@ -316,11 +316,11 @@
 /// Channels
 "channels" = "Channels";
 
-/// Chapter Slider
-"chapterSlider" = "Chapter Slider";
-
 /// Chapters
 "chapters" = "Chapters";
+
+/// Chapter Slider
+"chapterSlider" = "Chapter Slider";
 
 /// Cinematic
 "cinematic" = "Cinematic";
@@ -418,14 +418,14 @@
 /// Cover Artist
 "coverArtist" = "Cover Artist";
 
+/// Create & Join Groups
+"createAndJoinGroups" = "Create & Join Groups";
+
 /// Create API Key
 "createAPIKey" = "Create API Key";
 
 /// Enter the application name for the new API key.
 "createAPIKeyMessage" = "Enter the application name for the new API key.";
-
-/// Create & Join Groups
-"createAndJoinGroups" = "Create & Join Groups";
 
 /// Create a pin to sign in to %@ on this device
 "createPinForUser" = "Create a pin to sign in to %@ on this device";
@@ -472,6 +472,9 @@
 /// Custom failed logins
 "customFailedLogins" = "Custom failed logins";
 
+/// Customize
+"customize" = "Customize";
+
 /// Custom Profile
 "customProfile" = "Custom Profile";
 
@@ -480,9 +483,6 @@
 
 /// Custom sessions
 "customSessions" = "Custom sessions";
-
-/// Customize
-"customize" = "Customize";
 
 /// Daily
 "daily" = "Daily";
@@ -637,6 +637,9 @@
 /// Plays content in its original format. May cause playback issues on unsupported media types.
 "directDescription" = "Plays content in its original format. May cause playback issues on unsupported media types.";
 
+/// Director
+"director" = "Director";
+
 /// Direct Play
 "directPlay" = "Direct Play";
 
@@ -645,9 +648,6 @@
 
 /// Direct Stream
 "directStream" = "Direct Stream";
-
-/// Director
-"director" = "Director";
 
 /// Disabled
 "disabled" = "Disabled";
@@ -679,14 +679,14 @@
 /// Edit
 "edit" = "Edit";
 
+/// Editor
+"editor" = "Editor";
+
 /// Edit Server
 "editServer" = "Edit Server";
 
 /// Edit Users
 "editUsers" = "Edit Users";
-
-/// Editor
-"editor" = "Editor";
 
 /// Enable all devices
 "enableAllDevices" = "Enable all devices";
@@ -700,11 +700,11 @@
 /// End Date
 "endDate" = "End Date";
 
-/// End Time
-"endTime" = "End Time";
-
 /// Ended
 "ended" = "Ended";
+
+/// End Time
+"endTime" = "End Time";
 
 /// Engineer
 "engineer" = "Engineer";
@@ -754,11 +754,11 @@
 /// Every
 "every" = "Every";
 
-/// Every %1$@
-"everyInterval" = "Every %1$@";
-
 /// Everyday
 "everyday" = "Everyday";
+
+/// Every %1$@
+"everyInterval" = "Every %1$@";
 
 /// Executed
 "executed" = "Executed";
@@ -937,11 +937,11 @@
 /// Letter
 "letter" = "Letter";
 
-/// Letter Picker
-"letterPicker" = "Letter Picker";
-
 /// Letterer
 "letterer" = "Letterer";
+
+/// Letter Picker
+"letterPicker" = "Letter Picker";
 
 /// Library
 "library" = "Library";
@@ -958,14 +958,14 @@
 /// Live TV
 "liveTV" = "Live TV";
 
+/// Live TV access
+"liveTvAccess" = "Live TV access";
+
 /// Live TV Channels
 "liveTVChannels" = "Live TV Channels";
 
 /// Live TV Programs
 "liveTVPrograms" = "Live TV Programs";
-
-/// Live TV access
-"liveTvAccess" = "Live TV access";
 
 /// Live TV recording management
 "liveTvRecordingManagement" = "Live TV recording management";
@@ -1000,12 +1000,6 @@
 /// Management
 "management" = "Management";
 
-/// Maximum parental rating
-"maxParentalRating" = "Maximum parental rating";
-
-/// Content with a higher rating will be hidden from this user.
-"maxParentalRatingDescription" = "Content with a higher rating will be hidden from this user.";
-
 /// Maximum Bitrate
 "maximumBitrate" = "Maximum Bitrate";
 
@@ -1029,6 +1023,12 @@
 
 /// Maximum sessions policy
 "maximumSessionsPolicy" = "Maximum sessions policy";
+
+/// Maximum parental rating
+"maxParentalRating" = "Maximum parental rating";
+
+/// Content with a higher rating will be hidden from this user.
+"maxParentalRatingDescription" = "Content with a higher rating will be hidden from this user.";
 
 /// Media
 "media" = "Media";
@@ -1096,11 +1096,11 @@
 /// New Password
 "newPassword" = "New Password";
 
-/// New User
-"newUser" = "New User";
-
 /// News
 "news" = "News";
+
+/// New User
+"newUser" = "New User";
 
 /// Next
 "next" = "Next";
@@ -1129,6 +1129,9 @@
 /// No local servers found
 "noLocalServersFound" = "No local servers found";
 
+/// None
+"none" = "None";
+
 /// No overview available
 "noOverviewAvailable" = "No overview available";
 
@@ -1138,23 +1141,20 @@
 /// No results.
 "noResults" = "No results.";
 
+/// Normal
+"normal" = "Normal";
+
 /// No runtime limit
 "noRuntimeLimit" = "No runtime limit";
 
 /// No session
 "noSession" = "No session";
 
-/// No title
-"noTitle" = "No title";
-
-/// None
-"none" = "None";
-
-/// Normal
-"normal" = "Normal";
-
 /// Type: %@ not implemented yet :(
 "notImplementedYetWithType" = "Type: %@ not implemented yet :(";
+
+/// No title
+"noTitle" = "No title";
 
 /// Official Rating
 "officialRating" = "Official Rating";
@@ -1207,11 +1207,11 @@
 /// Password
 "password" = "Password";
 
-/// Changes the Jellyfin server user password. This does not change any Swiftfin settings.
-"passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
-
 /// User password has been changed.
 "passwordChangedMessage" = "User password has been changed.";
+
+/// Changes the Jellyfin server user password. This does not change any Swiftfin settings.
+"passwordChangeWarning" = "Changes the Jellyfin server user password. This does not change any Swiftfin settings.";
 
 /// New passwords do not match.
 "passwordsDoNotMatch" = "New passwords do not match.";
@@ -1240,18 +1240,6 @@
 /// Play / Pause
 "playAndPause" = "Play / Pause";
 
-/// Play From Beginning
-"playFromBeginning" = "Play From Beginning";
-
-/// Play Next Item
-"playNextItem" = "Play Next Item";
-
-/// Play on active
-"playOnActive" = "Play on active";
-
-/// Play Previous Item
-"playPreviousItem" = "Play Previous Item";
-
 /// Playback
 "playback" = "Playback";
 
@@ -1266,6 +1254,18 @@
 
 /// Played
 "played" = "Played";
+
+/// Play From Beginning
+"playFromBeginning" = "Play From Beginning";
+
+/// Play Next Item
+"playNextItem" = "Play Next Item";
+
+/// Play on active
+"playOnActive" = "Play on active";
+
+/// Play Previous Item
+"playPreviousItem" = "Play Previous Item";
 
 /// Posters
 "posters" = "Posters";
@@ -1402,6 +1402,9 @@
 /// Replace unlocked metadata with new information.
 "replaceMetadataDescription" = "Replace unlocked metadata with new information.";
 
+/// Required
+"required" = "Required";
+
 /// Require device authentication when signing in to the user.
 "requireDeviceAuthDescription" = "Require device authentication when signing in to the user.";
 
@@ -1413,9 +1416,6 @@
 
 /// Require a local pin when signing in to the user. This pin is unrecoverable.
 "requirePinDescription" = "Require a local pin when signing in to the user. This pin is unrecoverable.";
-
-/// Required
-"required" = "Required";
 
 /// Reset
 "reset" = "Reset";
@@ -1525,11 +1525,11 @@
 /// Server Logs
 "serverLogs" = "Server Logs";
 
-/// Server URL
-"serverURL" = "Server URL";
-
 /// Servers
 "servers" = "Servers";
+
+/// Server URL
+"serverURL" = "Server URL";
 
 /// Session
 "session" = "Session";
@@ -1660,14 +1660,14 @@
 /// Subtitle Offset
 "subtitleOffset" = "Subtitle Offset";
 
-/// Subtitle Size
-"subtitleSize" = "Subtitle Size";
-
 /// Subtitles
 "subtitles" = "Subtitles";
 
 /// Settings only affect some subtitle types
 "subtitlesDisclaimer" = "Settings only affect some subtitle types";
+
+/// Subtitle Size
+"subtitleSize" = "Subtitle Size";
 
 /// Success
 "success" = "Success";
@@ -1720,17 +1720,17 @@
 /// Failed
 "taskFailed" = "Failed";
 
-/// Sets the duration (in minutes) in between task triggers.
-"taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
-
-/// Sets the maximum runtime (in hours) for this task trigger.
-"taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
-
 /// Tasks
 "tasks" = "Tasks";
 
 /// Tasks are operations that are scheduled to run periodically or can be triggered manually.
 "tasksDescription" = "Tasks are operations that are scheduled to run periodically or can be triggered manually.";
+
+/// Sets the duration (in minutes) in between task triggers.
+"taskTriggerInterval" = "Sets the duration (in minutes) in between task triggers.";
+
+/// Sets the maximum runtime (in hours) for this task trigger.
+"taskTriggerTimeLimit" = "Sets the maximum runtime (in hours) for this task trigger.";
 
 /// Tbps
 "terabitsPerSecond" = "Tbps";
@@ -1858,17 +1858,17 @@
 /// This user will require device authentication.
 "userDeviceAuthRequiredDescription" = "This user will require device authentication.";
 
-/// This user will require a pin.
-"userPinRequiredDescription" = "This user will require a pin.";
-
-/// User %@ requires device authentication
-"userRequiresDeviceAuthentication" = "User %@ requires device authentication";
-
 /// Username
 "username" = "Username";
 
 /// A username is required
 "usernameRequired" = "A username is required";
+
+/// This user will require a pin.
+"userPinRequiredDescription" = "This user will require a pin.";
+
+/// User %@ requires device authentication
+"userRequiresDeviceAuthentication" = "User %@ requires device authentication";
 
 /// Users
 "users" = "Users";
@@ -1927,9 +1927,6 @@
 /// This will be created as a new item on your Jellyfin Server.
 "willBeCreatedOnServer" = "This will be created as a new item on your Jellyfin Server.";
 
-/// WIP
-"wip" = "WIP";
-
 /// Writer
 "writer" = "Writer";
 
@@ -1944,4 +1941,3 @@
 
 /// Yes
 "yes" = "Yes";
-
