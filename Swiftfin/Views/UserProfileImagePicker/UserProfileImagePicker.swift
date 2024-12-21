@@ -10,8 +10,15 @@ import SwiftUI
 
 struct UserProfileImagePicker: View {
 
+    // MARK: - Observed, & Environment Objects
+
     @EnvironmentObject
     private var router: UserProfileImageCoordinator.Router
+
+    @ObservedObject
+    var viewModel: UserProfileImageViewModel
+
+    // MARK: - Body
 
     var body: some View {
         PhotoPicker {
