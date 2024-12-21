@@ -455,8 +455,22 @@ struct SelectUserView: View {
             }
 
             if isEditingUsers {
-                deleteUsersButton
+                VStack {
+                    PrimaryButton(title: L10n.selectAll).onSelect {
+                        for gridItem in gridItems {
+                            switch gridItem {
+                            case let .user(user, server: server):
+                                selectedUsers.insert(user)
+                            default:
+                                break
+                            }
+                        }
+                    }
                     .edgePadding([.bottom, .horizontal])
+
+                    deleteUsersButton
+                        .edgePadding([.bottom, .horizontal])
+                }
             }
         }
         .background {
