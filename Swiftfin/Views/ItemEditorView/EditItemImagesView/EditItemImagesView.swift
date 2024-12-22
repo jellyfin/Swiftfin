@@ -26,31 +26,53 @@ struct EditItemImagesView: View {
     private var router: ItemEditorCoordinator.Router
 
     @ObservedObject
-    var viewModel: ItemViewModel
+    var viewModel: ItemImagesViewModel
 
-    // MARK: - Ordered Items
+    // MARK: - Dialog State
+
+    @State
+    private var isImportingImage = false
+    @State
+    private var isDeletingImage = false
+
+    @State
+    private var selectedImage: LocalImageInfo?
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
+
+    // MARK: - Computed Properties
 
     private var orderedItems: [ImageType] {
-        ImageType.allCases.sorted { (lhs: ImageType, rhs: ImageType) in
-            if lhs == .primary && rhs != .primary {
-                return true
-            } else if lhs != .primary && rhs == .primary {
-                return false
-            } else {
-                return lhs.rawValue.localizedCaseInsensitiveCompare(rhs.rawValue) == .orderedAscending
-            }
+        ImageType.allCases.sorted { lhs, rhs in
+            if lhs == .primary { return true }
+            if rhs == .primary { return false }
+            return lhs.rawValue.localizedCaseInsensitiveCompare(rhs.rawValue) == .orderedAscending
         }
     }
 
     // MARK: - Body
 
-    @ViewBuilder
     var body: some View {
         contentView
             .navigationBarTitle(L10n.replaceImages)
             .navigationBarTitleDisplayMode(.inline)
-            .onFirstAppear {
-                viewModel.send(.fetchAllImages)
+            .onAppear { viewModel.send(.refresh) }
+            .sheet(item: $selectedImage) { item in
+                deletionSheet(
+                    item.image!,
+                    type: item.type!,
+                    index: item.index ?? 0
+                )
+            }
+            .fileImporter(
+                isPresented: $isImportingImage,
+                allowedContentTypes: [.image],
+                allowsMultipleSelection: false
+            ) {
+                handleFileImport(result: $0)
             }
     }
 
@@ -60,161 +82,121 @@ struct EditItemImagesView: View {
         ScrollView {
             ForEach(orderedItems, id: \.self) { imageType in
                 Section {
-                    if let images = viewModel.imagesByType[imageType.rawValue] {
-                        if images.count == 1 {
-                            // Render the single image using the specified logic
-                            singleImageButton(imageType, imageIndex: 0)
-                        } else {
-                            // Render multiple images in a horizontal scroll view
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 16) {
-                                    ForEach(images.indices, id: \.self) { index in
-                                        multipleImageButton(imageType, imageIndex: index)
-                                    }
-                                }
-                                .padding(.horizontal, 16)
-                            }
-                        }
-                    } else {
-                        missingImageView(for: imageType)
-                            .frame(height: 150)
-                    }
-                    Divider()
-                        .padding(.vertical, 16)
+                    imageScrollView(for: imageType)
+                    Divider().padding(.vertical, 16)
                 } header: {
-                    HStack(alignment: .center) {
-                        Text(imageType.rawValue.localizedCapitalized)
-                        Spacer()
-                    }
-                    .font(.headline)
-                    .padding(.horizontal, 16)
+                    sectionHeader(for: imageType)
                 }
             }
         }
     }
 
-    // MARK: - Single Image Button View
+    // MARK: - Helpers
 
-    private func singleImageButton(_ imageType: ImageType, imageIndex: Int) -> some View {
-        Button {
-            router.route(
-                to: \.imagePicker,
-                RemoteItemImageViewModel(
-                    item: viewModel.item,
-                    imageType: imageType,
-                    includeAllLanguages: false
-                )
-            )
-        } label: {
-            ZStack(alignment: .bottomTrailing) {
-                Color.secondarySystemFill
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                ZStack {
-                    RedrawOnNotificationView(.itemMetadataDidChange) {
-                        ImageView(viewModel.item.imageSource(imageType))
-                            .placeholder { source in
-                                if let blurHash = source.blurHash {
-                                    BlurHashView(blurHash: blurHash, size: .Square(length: 8))
-                                        .scaledToFit()
-                                } else {
-                                    Image(systemName: "circle")
-                                }
-                            }
-                            .failure {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "photo")
-                                    Text(L10n.none)
-                                }
-                            }
-                            .foregroundColor(.secondary)
-                            .font(.headline)
-                    }
-
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .shadow(radius: 10)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                                .padding(8)
+    @ViewBuilder
+    private func imageScrollView(for imageType: ImageType) -> some View {
+        if let images = viewModel.localImages[imageType.rawValue] {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16) {
+                    ForEach(images, id: \.self) { image in
+                        imageButton(image) {
+                            selectedImage = LocalImageInfo(
+                                index: 0,
+                                image: image,
+                                type: imageType
+                            )
                         }
                     }
                 }
+                .padding(.horizontal, 16)
             }
-            .scaledToFit()
+        }
+    }
+
+    @ViewBuilder
+    private func sectionHeader(for imageType: ImageType) -> some View {
+        HStack(alignment: .center, spacing: 16) {
+            Text(imageType.rawValue.localizedCapitalized)
+            Spacer()
+            Button(action: { viewModel.send(.setImageType(imageType))
+                router.route(to: \.addImage, viewModel)
+            }) {
+                Image(systemName: "magnifyingglass")
+            }
+            Button(action: { isImportingImage = true }) {
+                Image(systemName: "plus")
+            }
+        }
+        .font(.headline)
+        .padding(.horizontal, 16)
+    }
+
+    private func imageButton(_ image: UIImage, onSelect: @escaping () -> Void) -> some View {
+        Button(action: onSelect) {
+            ZStack {
+                Color.secondarySystemFill
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+            }
             .posterStyle(.landscape)
-            .frame(width: 150, height: 150)
-            .cornerRadius(8)
+            .frame(maxHeight: 150)
             .shadow(radius: 4)
-            .padding(.horizontal, 16)
+            .padding(16)
         }
     }
 
-    // MARK: - Multiple Image Button View
-
-    private func multipleImageButton(_ imageType: ImageType, imageIndex: Int) -> some View {
-        Button {
-            router.route(
-                to: \.imagePicker,
-                RemoteItemImageViewModel(
-                    item: viewModel.item,
-                    imageType: imageType,
-                    includeAllLanguages: false,
-                    imageIndex: imageIndex
-                )
-            )
-        } label: {
-            ZStack(alignment: .bottomTrailing) {
-                if let image = viewModel.imagesByType[imageType.rawValue]?[imageIndex] {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(8)
-                        .shadow(radius: 4)
-                } else {
-                    Color.secondarySystemFill
-                        .frame(width: 150, height: 150)
-                        .cornerRadius(8)
-                        .shadow(radius: 4)
-                }
-
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Image(systemName: "pencil.circle.fill")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .shadow(radius: 10)
-                            .symbolRenderingMode(.palette)
-                            .foregroundStyle(accentColor.overlayColor, accentColor)
-                            .padding(8)
+    private func handleFileImport(result: Result<[URL], Error>) {
+        switch result {
+        case let .success(urls):
+            if let url = urls.first {
+                do {
+                    let data = try Data(contentsOf: url)
+                    if let image = UIImage(data: data) {
+                        viewModel.send(.uploadImage(image: image))
                     }
+                } catch {
+                    print("Error loading image data: \(error.localizedDescription)")
                 }
             }
+        case let .failure(fileError):
+            error = fileError
+            print("File import error: \(fileError.localizedDescription)")
         }
     }
 
-    // MARK: - Missing Image View
+    // MARK: - Delete Image Confirmation
 
-    private func missingImageView(for imageType: ImageType) -> some View {
-        VStack {
-            Image(systemName: "photo")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 100, height: 100)
-                .foregroundColor(.secondary)
-            Text(L10n.none)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+    @ViewBuilder
+    private func deletionSheet(_ image: UIImage, type: ImageType, index: Int) -> some View {
+        NavigationView {
+            VStack {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFit()
+
+                Text("\(Int(image.size.width)) x \(Int(image.size.height))")
+                    .font(.body)
+
+                Text(image.accessibilityIdentifier ?? "-")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal)
+            .navigationTitle(L10n.replaceImages)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarCloseButton {
+                selectedImage = nil
+            }
+            .topBarTrailing {
+                Button(L10n.delete, role: .destructive) {
+                    viewModel.send(.setImageType(type))
+                    viewModel.send(.deleteImage(index: index))
+                    viewModel.send(.setImageType(nil))
+                    selectedImage = nil
+                }
+                .buttonStyle(.toolbarPill(.red))
+            }
         }
-        .frame(maxWidth: .infinity)
-        .padding()
     }
 }

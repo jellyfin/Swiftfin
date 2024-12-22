@@ -17,7 +17,7 @@ import URLQueryEncoder
 
 private let DefaultPageSize = 50
 
-class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
+class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
@@ -27,10 +27,12 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
     enum Action: Equatable {
         case cancel
         case refresh
+        case setImageType(ImageType?)
+        case getImages
         case getNextPage
-        case setImage(url: String)
-        case setLocalImage(url: URL)
-        case deleteImage
+        case setImage(url: String, index: Int = 0)
+        case uploadImage(image: UIImage, index: Int = 0)
+        case deleteImage(index: Int = 0)
     }
 
     enum BackgroundState: Hashable {
@@ -45,28 +47,36 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
         case error(JellyfinAPIError)
     }
 
-    @Published
-    var state: State = .initial
-    @Published
-    var backgroundStates: OrderedSet<BackgroundState> = []
+    // MARK: - Published Variables
 
     @Published
     var item: BaseItemDto
     @Published
-    var imageType: ImageType
-    @Published
-    var imageIndex: Int
-    @Published
     var includeAllLanguages: Bool
     @Published
-    var images: IdentifiedArrayOf<RemoteImageInfo> = []
+    var localImages: [String: [UIImage]] = [:]
+    @Published
+    var remoteImages: IdentifiedArrayOf<RemoteImageInfo> = []
+    @Published
+    var imageType: ImageType?
+
+    // MARK: - Page Management
 
     private let pageSize: Int
     private(set) var currentPage: Int = 0
     private(set) var hasNextPage: Bool = true
 
+    // MARK: - State Management
+
+    @Published
+    var state: State = .initial
+    @Published
+    var backgroundStates: OrderedSet<BackgroundState> = []
+
     private var task: AnyCancellable?
     private let eventSubject = PassthroughSubject<Event, Never>()
+
+    // MARK: - Eventful
 
     var events: AnyPublisher<Event, Never> {
         eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
@@ -76,15 +86,11 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
     init(
         item: BaseItemDto,
-        imageType: ImageType,
         includeAllLanguages: Bool = false,
-        imageIndex: Int = 0,
         pageSize: Int = DefaultPageSize
     ) {
         self.item = item
-        self.imageType = imageType
         self.includeAllLanguages = includeAllLanguages
-        self.imageIndex = imageIndex
         self.pageSize = pageSize
         super.init()
     }
@@ -100,7 +106,16 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case .refresh:
+        case let .setImageType(type):
+            self.imageType = type
+            return state
+
+        case .getImages:
+            guard let imageType = imageType else {
+                logger.error("Image type not set")
+                return .error(JellyfinAPIError("Image type not set"))
+            }
+
             task?.cancel()
 
             task = Task { [weak self] in
@@ -108,13 +123,13 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run {
                         self.state = .initial
-                        self.images.removeAll()
+                        self.localImages.removeAll()
                         self.currentPage = 0
                         self.hasNextPage = true
                         _ = self.backgroundStates.append(.refreshing)
                     }
 
-                    try await self.getNextPage()
+                    try await self.getNextPage(imageType)
 
                     await MainActor.run {
                         self.state = .content
@@ -133,6 +148,11 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
             return state
 
         case .getNextPage:
+            guard let imageType else {
+                logger.error("Image type not set")
+                return .error(JellyfinAPIError("Image type not set"))
+            }
+
             guard hasNextPage else { return .content }
             task?.cancel()
             task = Task { [weak self] in
@@ -142,7 +162,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.backgroundStates.append(.gettingNextPage)
                     }
 
-                    try await self.getNextPage()
+                    try await self.getNextPage(imageType)
 
                     await MainActor.run {
                         self.state = .content
@@ -160,7 +180,12 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .setImage(url):
+        case let .setImage(url, index):
+            guard let imageType else {
+                logger.error("Image type not set")
+                return .error(JellyfinAPIError("Image type not set"))
+            }
+
             task?.cancel()
 
             task = Task { [weak self] in
@@ -170,7 +195,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.state = .updating
                     }
 
-                    try await self.setImage(url, index: self.imageIndex)
+                    try await self.setImage(url, type: imageType)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -187,7 +212,12 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .setLocalImage(url):
+        case let .uploadImage(image, index):
+            guard let imageType else {
+                logger.error("Image type not set")
+                return .error(JellyfinAPIError("Image type not set"))
+            }
+
             task?.cancel()
 
             task = Task { [weak self] in
@@ -197,7 +227,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.state = .updating
                     }
 
-                    try await self.setLocalImage(url, index: self.imageIndex)
+                    try await self.uploadImage(image, type: imageType, index: index)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -214,7 +244,12 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case .deleteImage:
+        case let .deleteImage(index):
+            guard let imageType else {
+                logger.error("Image type not set")
+                return .error(JellyfinAPIError("Image type not set"))
+            }
+
             task?.cancel()
 
             task = Task { [weak self] in
@@ -224,7 +259,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                         _ = self.state = .updating
                     }
 
-                    try await self.deleteImage(index: self.imageIndex)
+                    try await self.deleteImage(imageType, index: index)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -238,19 +273,72 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
                     }
                 }
             }.asAnyCancellable()
+
+            return state
+
+        case .refresh:
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    let localImages = try await self.getAllImages()
+
+                    await MainActor.run {
+                        self.localImages = localImages
+                    }
+                } catch {
+                    await MainActor.run {
+                        // self.send(.error(.init(error.localizedDescription)))
+                    }
+                }
+            }
+            .store(in: &cancellables)
 
             return state
         }
     }
 
+    // MARK: - Get All Images by Type
+
+    private func getAllImages() async throws -> [String: [UIImage]] {
+        guard let itemID = item.id else {
+            logger.error("Item ID not found")
+            return [:]
+        }
+
+        var imagesByType: [String: [UIImage]] = [:]
+
+        for imageType in ImageType.allCases {
+            var images: [UIImage] = []
+
+            var index = 0
+            while true {
+                do {
+                    let parameters = Paths.GetItemImageParameters(imageIndex: index)
+                    let request = Paths.getItemImage(itemID: itemID, imageType: imageType.rawValue, parameters: parameters)
+                    let response = try await userSession.client.send(request)
+
+                    if let image = UIImage(data: response.value) {
+                        images.append(image)
+                    }
+
+                    index += 1
+                } catch {
+                    break
+                }
+            }
+            imagesByType[imageType.rawValue] = images
+        }
+        return imagesByType
+    }
+
     // MARK: - Paging Logic
 
-    private func getNextPage() async throws {
+    private func getNextPage(_ type: ImageType) async throws {
         guard let itemID = item.id, hasNextPage else { return }
 
         let startIndex = currentPage * pageSize
         let parameters = Paths.GetRemoteImagesParameters(
-            type: imageType,
+            type: type,
             startIndex: startIndex,
             limit: pageSize,
             isIncludeAllLanguages: includeAllLanguages
@@ -258,48 +346,31 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
         let response = try await userSession.client.send(request)
-        let fetchedImages = response.value.images ?? []
+        let newImages = response.value.images ?? []
 
-        hasNextPage = fetchedImages.count >= pageSize
+        hasNextPage = newImages.count >= pageSize
 
         await MainActor.run {
-            images.append(contentsOf: fetchedImages)
+            remoteImages.append(contentsOf: newImages)
             currentPage += 1
         }
     }
 
     // MARK: - Set Image From URL
 
-    private func setImage(_ url: String, index: Int) async throws {
+    private func setImage(_ url: String, type: ImageType) async throws {
         guard let itemID = item.id else { return }
 
-        let parameters = Paths.DownloadRemoteImageParameters(type: imageType, imageURL: url)
+        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: url)
         let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
         try await userSession.client.send(imageRequest)
 
         try await refreshItem()
     }
 
-    // MARK: - Set Image From Local Files
-
-    private func setLocalImage(_ url: URL, index: Int) async throws {
-        guard url.startAccessingSecurityScopedResource() else { return }
-        defer { url.stopAccessingSecurityScopedResource() }
-
-        let data = try Data(contentsOf: url)
-        let image = UIImage(data: data)
-
-        guard let image else {
-            logger.error("Unable to access the the selected image")
-            throw JellyfinAPIError("An internal error occurred")
-        }
-
-        try await uploadImage(image, index: index)
-    }
-
     // MARK: - Upload Image
 
-    private func uploadImage(_ image: UIImage, index: Int) async throws {
+    private func uploadImage(_ image: UIImage, type: ImageType, index: Int = 0) async throws {
         guard let itemID = item.id else { return }
 
         var contentType: String
@@ -318,7 +389,7 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
         var request = Paths.setItemImageByIndex(
             itemID: itemID,
-            imageType: imageType.rawValue,
+            imageType: type.rawValue,
             imageIndex: index,
             imageData
         )
@@ -331,25 +402,23 @@ class RemoteItemImageViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Delete Image
 
-    private func deleteImage(index: Int?) async throws {
+    private func deleteImage(_ type: ImageType, index: Int = 0) async throws {
         guard let itemID = item.id else { return }
 
-        var request: Request<Void>
-
-        if let index {
-            request = Paths.deleteItemImageByIndex(
-                itemID: itemID,
-                imageType: imageType.rawValue,
-                imageIndex: index
-            )
-        } else {
-            request = Paths.deleteItemImage(
-                itemID: itemID,
-                imageType: imageType.rawValue
-            )
-        }
+        let request = Paths.deleteItemImageByIndex(
+            itemID: itemID,
+            imageType: type.rawValue,
+            imageIndex: index
+        )
 
         _ = try await userSession.client.send(request)
+
+        await MainActor.run {
+            if var images = localImages[type.rawValue], index < images.count {
+                images.remove(at: index)
+                localImages[type.rawValue] = images
+            }
+        }
 
         try await refreshItem()
     }

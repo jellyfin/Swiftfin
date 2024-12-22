@@ -25,7 +25,6 @@ class ItemViewModel: ViewModel, Stateful {
         case replace(BaseItemDto)
         case toggleIsFavorite
         case toggleIsPlayed
-        case fetchAllImages
     }
 
     // MARK: BackgroundState
@@ -70,9 +69,6 @@ class ItemViewModel: ViewModel, Stateful {
     private(set) var similarItems: [BaseItemDto] = []
     @Published
     private(set) var specialFeatures: [BaseItemDto] = []
-
-    @Published
-    private(set) var imagesByType: [String: [UIImage]] = [:]
 
     @Published
     final var backgroundStates: OrderedSet<BackgroundState> = []
@@ -268,61 +264,10 @@ class ItemViewModel: ViewModel, Stateful {
             .asAnyCancellable()
 
             return state
-        case .fetchAllImages:
-
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let imagesByType = try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.imagesByType = imagesByType
-                    }
-                } catch {
-                    await MainActor.run {
-                        self.send(.error(.init(error.localizedDescription)))
-                    }
-                }
-            }
-            .store(in: &cancellables)
-
-            return state
         }
     }
 
     func onRefresh() async throws {}
-
-    private func getAllImages() async throws -> [String: [UIImage]] {
-        guard let itemID = item.id else {
-            logger.error("Item ID not found")
-            return [:]
-        }
-
-        var imagesByType: [String: [UIImage]] = [:]
-
-        for imageType in ImageType.allCases {
-            var images: [UIImage] = []
-
-            var index = 0
-            while true {
-                do {
-                    let parameters = Paths.GetItemImageParameters(imageIndex: index)
-                    let request = Paths.getItemImage(itemID: itemID, imageType: imageType.rawValue, parameters: parameters)
-                    let response = try await userSession.client.send(request)
-
-                    if let image = UIImage(data: response.value) {
-                        images.append(image)
-                    }
-
-                    index += 1
-                } catch {
-                    break
-                }
-            }
-            imagesByType[imageType.rawValue] = images
-        }
-        return imagesByType
-    }
 
     private func getFullItem() async throws -> BaseItemDto {
 

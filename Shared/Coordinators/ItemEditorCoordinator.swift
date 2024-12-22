@@ -29,7 +29,7 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     @Route(.push)
     var editImages = makeEditImages
     @Route(.push)
-    var imagePicker = makeImagePicker
+    var addImage = makeAddImage
 
     // MARK: - Route to Genres
 
@@ -77,11 +77,11 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     @ViewBuilder
     func makeEditImages(item: BaseItemDto) -> some View {
-        EditItemImagesView(viewModel: ItemViewModel(item: item))
+        EditItemImagesView(viewModel: ItemImagesViewModel(item: item))
     }
 
-    func makeImagePicker(viewModel: RemoteItemImageViewModel) -> some View {
-        ItemImagePickerView(viewModel: viewModel)
+    func makeAddImage(viewModel: ItemImagesViewModel) -> some View {
+        AddItemImageView(viewModel: viewModel)
     }
 
     // MARK: - Item Genres

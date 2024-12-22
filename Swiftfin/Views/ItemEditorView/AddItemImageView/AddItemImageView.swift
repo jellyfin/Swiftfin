@@ -13,27 +13,23 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
-struct ItemImagePickerView: View {
+struct AddItemImageView: View {
 
-    // MARK: - Defaults and Environment
+    // MARK: - Defaults
 
     @Default(.accentColor)
     private var accentColor
 
+    // MARK: - State & Environment Objects
+
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
-    // MARK: - ViewModel
-
-    @ObservedObject
-    var viewModel: RemoteItemImageViewModel
+    @StateObject
+    var viewModel: ItemImagesViewModel
 
     // MARK: - Dialog States
 
-    @State
-    private var isPresentingDeletion: Bool = false
-    @State
-    private var isImportingFile: Bool = false
     @State
     private var error: Error?
 
@@ -49,24 +45,24 @@ struct ItemImagePickerView: View {
 
     // MARK: - Body
 
+    init(viewModel: ItemImagesViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
+
+    // MARK: - Body
+
     var body: some View {
         contentView
-            .navigationBarTitle(viewModel.imageType.rawValue.localizedCapitalized)
+            .navigationBarTitle(viewModel.imageType?.rawValue.localizedCapitalized ?? L10n.unknown)
             .navigationBarTitleDisplayMode(.inline)
-            .onFirstAppear {
-                if viewModel.state == .initial {
-                    viewModel.send(.refresh)
+            .topBarTrailing {
+                if viewModel.backgroundStates.contains(.refreshing) {
+                    ProgramsView()
                 }
             }
-            .navigationBarMenuButton(
-                isLoading: viewModel.backgroundStates.contains(.refreshing)
-            ) {
-                Button(L10n.add, systemImage: "plus") {
-                    isImportingFile = true
-                }
-                Divider()
-                Button(L10n.delete, systemImage: "trash", role: .destructive) {
-                    isPresentingDeletion = true
+            .onFirstAppear {
+                if viewModel.state == .initial {
+                    viewModel.send(.getImages)
                 }
             }
             .onReceive(viewModel.events) { event in
@@ -80,31 +76,10 @@ struct ItemImagePickerView: View {
                 }
             }
             .errorMessage($error)
-            .fileImporter(
-                isPresented: $isImportingFile,
-                allowedContentTypes: [.image],
-                allowsMultipleSelection: false
-            ) {
-                switch $0 {
-                case let .success(urls):
-                    if let url = urls.first {
-                        viewModel.send(.setLocalImage(url: url))
-                    }
-                case let .failure(fileError):
-                    error = fileError
-                }
-            }
             .sheet(item: $selectedImage, onDismiss: {
                 selectedImage = nil
             }) { selectedImage in
                 confirmationSheet(selectedImage)
-            }
-            .confirmationDialog(
-                L10n.delete,
-                isPresented: $isPresentingDeletion,
-                titleVisibility: .visible
-            ) {
-                deletionSheet()
             }
     }
 
@@ -122,7 +97,7 @@ struct ItemImagePickerView: View {
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
-                    viewModel.send(.refresh)
+                    viewModel.send(.getImages)
                 }
         }
     }
@@ -131,14 +106,14 @@ struct ItemImagePickerView: View {
 
     @ViewBuilder
     private var gridView: some View {
-        if viewModel.images.isEmpty {
+        if viewModel.remoteImages.isEmpty {
             Text(L10n.none)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .listRowSeparator(.hidden)
                 .listRowInsets(.zero)
         } else {
             CollectionVGrid(
-                uniqueElements: viewModel.images,
+                uniqueElements: viewModel.remoteImages,
                 layout: layout
             ) { image in
                 imageButton(image)
@@ -245,19 +220,6 @@ struct ItemImagePickerView: View {
                 }
                 .buttonStyle(.toolbarPill)
             }
-        }
-    }
-
-    // MARK: - Delete Image Confirmation
-
-    @ViewBuilder
-    private func deletionSheet() -> some View {
-        Button(L10n.delete, role: .destructive) {
-            viewModel.send(.deleteImage)
-            isPresentingDeletion = false
-        }
-        Button(L10n.cancel, role: .cancel) {
-            isPresentingDeletion = false
         }
     }
 }
