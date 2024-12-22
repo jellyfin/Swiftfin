@@ -20,13 +20,16 @@ struct AddItemImageView: View {
     @Default(.accentColor)
     private var accentColor
 
-    // MARK: - State & Environment Objects
+    // MARK: - State, Observed, & Environment Objects
 
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
     @StateObject
-    var viewModel: ItemImagesViewModel
+    private var viewModel: RemoteImageInfoViewModel
+
+    @ObservedObject
+    private var updateViewModel: ItemImagesViewModel
 
     // MARK: - Dialog States
 
@@ -45,15 +48,16 @@ struct AddItemImageView: View {
 
     // MARK: - Body
 
-    init(viewModel: ItemImagesViewModel) {
+    init(viewModel: RemoteImageInfoViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
+        self.updateViewModel = ItemImagesViewModel(item: viewModel.item)
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationBarTitle(viewModel.imageType?.rawValue.localizedCapitalized ?? L10n.unknown)
+            .navigationBarTitle(viewModel.imageType.rawValue.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
@@ -61,15 +65,15 @@ struct AddItemImageView: View {
                 }
             }
             .onFirstAppear {
-                if viewModel.state == .initial {
-                    viewModel.send(.getImages)
-                }
+                viewModel.send(.refresh)
             }
-            .onReceive(viewModel.events) { event in
+            .onReceive(updateViewModel.events) { event in
                 switch event {
                 case .updated:
                     UIDevice.feedback(.success)
-                    router.dismissCoordinator()
+                    router.pop()
+                case .deleted:
+                    break
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
@@ -92,12 +96,10 @@ struct AddItemImageView: View {
             DelayedProgressView()
         case .content:
             gridView
-        case .updating:
-            updateView
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
-                    viewModel.send(.getImages)
+                    viewModel.send(.refresh)
                 }
         }
     }
@@ -106,14 +108,14 @@ struct AddItemImageView: View {
 
     @ViewBuilder
     private var gridView: some View {
-        if viewModel.remoteImages.isEmpty {
+        if viewModel.images.isEmpty {
             Text(L10n.none)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
                 .listRowSeparator(.hidden)
                 .listRowInsets(.zero)
         } else {
             CollectionVGrid(
-                uniqueElements: viewModel.remoteImages,
+                uniqueElements: viewModel.images,
                 layout: layout
             ) { image in
                 imageButton(image)
@@ -147,7 +149,7 @@ struct AddItemImageView: View {
         } label: {
             posterImage(
                 image,
-                posterStyle: .landscape // image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
+                posterStyle: image?.height ?? 0 > image?.width ?? 0 ? .portrait : .landscape
             )
         }
     }
@@ -214,7 +216,7 @@ struct AddItemImageView: View {
             .topBarTrailing {
                 Button(L10n.save) {
                     if let newURL = image.url {
-                        viewModel.send(.setImage(url: newURL))
+                        updateViewModel.send(.setImage(url: newURL, type: viewModel.imageType))
                     }
                     selectedImage = nil
                 }

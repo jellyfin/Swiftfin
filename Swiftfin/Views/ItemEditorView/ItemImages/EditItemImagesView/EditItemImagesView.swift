@@ -15,6 +15,15 @@ import SwiftUI
 
 struct EditItemImagesView: View {
 
+    // MARK: - Selected Image Object
+
+    private struct SelectedImage: Identifiable {
+        let id = UUID()
+        var image: UIImage
+        var type: ImageType
+        var index: Int
+    }
+
     // MARK: - Defaults
 
     @Default(.accentColor)
@@ -25,7 +34,7 @@ struct EditItemImagesView: View {
     @EnvironmentObject
     private var router: ItemEditorCoordinator.Router
 
-    @ObservedObject
+    @StateObject
     var viewModel: ItemImagesViewModel
 
     // MARK: - Dialog State
@@ -33,10 +42,7 @@ struct EditItemImagesView: View {
     @State
     private var isImportingImage = false
     @State
-    private var isDeletingImage = false
-
-    @State
-    private var selectedImage: LocalImageInfo?
+    private var selectedImage: SelectedImage?
 
     // MARK: - Error State
 
@@ -59,21 +65,44 @@ struct EditItemImagesView: View {
         contentView
             .navigationBarTitle(L10n.replaceImages)
             .navigationBarTitleDisplayMode(.inline)
-            .onAppear { viewModel.send(.refresh) }
-            .sheet(item: $selectedImage) { item in
-                deletionSheet(
-                    item.image!,
-                    type: item.type!,
-                    index: item.index ?? 0
-                )
+            .onFirstAppear {
+                viewModel.send(.refresh)
+            }
+            .sheet(item: $selectedImage) { input in
+                deletionSheet(input.image, type: input.type, index: input.index)
             }
             .fileImporter(
                 isPresented: $isImportingImage,
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) {
-                handleFileImport(result: $0)
+                switch $0 {
+                case let .success(urls):
+                    if let url = urls.first {
+                        do {
+                            let data = try Data(contentsOf: url)
+                            if let image = UIImage(data: data) {
+                                viewModel.send(.uploadImage(image: image, type: .primary))
+                            }
+                        } catch {
+                            self.error = JellyfinAPIError("Failed to load image data")
+                        }
+                    }
+                case let .failure(fileError):
+                    self.error = fileError
+                }
             }
+            .onReceive(viewModel.events) { event in
+                switch event {
+                case .updated:
+                    viewModel.send(.refresh)
+                case .deleted:
+                    break
+                case let .error(eventError):
+                    self.error = eventError
+                }
+            }
+            .errorMessage($error)
     }
 
     // MARK: - Content View
@@ -95,15 +124,16 @@ struct EditItemImagesView: View {
 
     @ViewBuilder
     private func imageScrollView(for imageType: ImageType) -> some View {
-        if let images = viewModel.localImages[imageType.rawValue] {
+        if let images = viewModel.images[imageType.rawValue] {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16) {
-                    ForEach(images, id: \.self) { image in
+                    ForEach(images.indices, id: \.self) { index in
+                        let image = images[index]
                         imageButton(image) {
-                            selectedImage = LocalImageInfo(
-                                index: 0,
+                            selectedImage = .init(
                                 image: image,
-                                type: imageType
+                                type: imageType,
+                                index: index
                             )
                         }
                     }
@@ -118,8 +148,14 @@ struct EditItemImagesView: View {
         HStack(alignment: .center, spacing: 16) {
             Text(imageType.rawValue.localizedCapitalized)
             Spacer()
-            Button(action: { viewModel.send(.setImageType(imageType))
-                router.route(to: \.addImage, viewModel)
+            Button(action: {
+                router.route(
+                    to: \.addImage,
+                    RemoteImageInfoViewModel(
+                        item: viewModel.item,
+                        imageType: imageType
+                    )
+                )
             }) {
                 Image(systemName: "magnifyingglass")
             }
@@ -128,8 +164,10 @@ struct EditItemImagesView: View {
             }
         }
         .font(.headline)
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 30)
     }
+
+    // MARK: - Image Button
 
     private func imageButton(_ image: UIImage, onSelect: @escaping () -> Void) -> some View {
         Button(action: onSelect) {
@@ -146,25 +184,6 @@ struct EditItemImagesView: View {
         }
     }
 
-    private func handleFileImport(result: Result<[URL], Error>) {
-        switch result {
-        case let .success(urls):
-            if let url = urls.first {
-                do {
-                    let data = try Data(contentsOf: url)
-                    if let image = UIImage(data: data) {
-                        viewModel.send(.uploadImage(image: image))
-                    }
-                } catch {
-                    print("Error loading image data: \(error.localizedDescription)")
-                }
-            }
-        case let .failure(fileError):
-            error = fileError
-            print("File import error: \(fileError.localizedDescription)")
-        }
-    }
-
     // MARK: - Delete Image Confirmation
 
     @ViewBuilder
@@ -176,11 +195,7 @@ struct EditItemImagesView: View {
                     .scaledToFit()
 
                 Text("\(Int(image.size.width)) x \(Int(image.size.height))")
-                    .font(.body)
-
-                Text(image.accessibilityIdentifier ?? "-")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .font(.headline)
             }
             .padding(.horizontal)
             .navigationTitle(L10n.replaceImages)
@@ -190,9 +205,7 @@ struct EditItemImagesView: View {
             }
             .topBarTrailing {
                 Button(L10n.delete, role: .destructive) {
-                    viewModel.send(.setImageType(type))
-                    viewModel.send(.deleteImage(index: index))
-                    viewModel.send(.setImageType(nil))
+                    viewModel.send(.deleteImage(type: type, index: index))
                     selectedImage = nil
                 }
                 .buttonStyle(.toolbarPill(.red))

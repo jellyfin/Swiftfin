@@ -8,35 +8,27 @@
 
 import Combine
 import Foundation
-import Get
 import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
 import UIKit
-import URLQueryEncoder
-
-private let DefaultPageSize = 50
 
 class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     enum Event: Equatable {
         case updated
+        case deleted
         case error(JellyfinAPIError)
     }
 
     enum Action: Equatable {
-        case cancel
         case refresh
-        case setImageType(ImageType?)
-        case getImages
-        case getNextPage
-        case setImage(url: String, index: Int = 0)
-        case uploadImage(image: UIImage, index: Int = 0)
-        case deleteImage(index: Int = 0)
+        case setImage(url: String, type: ImageType)
+        case uploadImage(image: UIImage, type: ImageType, index: Int = 0)
+        case deleteImage(type: ImageType, index: Int = 0)
     }
 
     enum BackgroundState: Hashable {
-        case gettingNextPage
         case refreshing
     }
 
@@ -44,27 +36,20 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         case initial
         case content
         case updating
+        case deleting
         case error(JellyfinAPIError)
     }
+
+    // MARK: - Image Variables
+
+    private let includeAllLanguages: Bool
 
     // MARK: - Published Variables
 
     @Published
     var item: BaseItemDto
     @Published
-    var includeAllLanguages: Bool
-    @Published
-    var localImages: [String: [UIImage]] = [:]
-    @Published
-    var remoteImages: IdentifiedArrayOf<RemoteImageInfo> = []
-    @Published
-    var imageType: ImageType?
-
-    // MARK: - Page Management
-
-    private let pageSize: Int
-    private(set) var currentPage: Int = 0
-    private(set) var hasNextPage: Bool = true
+    var images: [String: [UIImage]] = [:]
 
     // MARK: - State Management
 
@@ -86,12 +71,10 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     init(
         item: BaseItemDto,
-        includeAllLanguages: Bool = false,
-        pageSize: Int = DefaultPageSize
+        includeAllLanguages: Bool = false
     ) {
         self.item = item
         self.includeAllLanguages = includeAllLanguages
-        self.pageSize = pageSize
         super.init()
     }
 
@@ -100,22 +83,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     func respond(to action: Action) -> State {
         switch action {
 
-        case .cancel:
-            task?.cancel()
-            self.state = .initial
-
-            return state
-
-        case let .setImageType(type):
-            self.imageType = type
-            return state
-
-        case .getImages:
-            guard let imageType = imageType else {
-                logger.error("Image type not set")
-                return .error(JellyfinAPIError("Image type not set"))
-            }
-
+        case .refresh:
             task?.cancel()
 
             task = Task { [weak self] in
@@ -123,13 +91,11 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run {
                         self.state = .initial
-                        self.localImages.removeAll()
-                        self.currentPage = 0
-                        self.hasNextPage = true
+                        self.images.removeAll()
                         _ = self.backgroundStates.append(.refreshing)
                     }
 
-                    try await self.getNextPage(imageType)
+                    try await self.getAllImages()
 
                     await MainActor.run {
                         self.state = .content
@@ -147,45 +113,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case .getNextPage:
-            guard let imageType else {
-                logger.error("Image type not set")
-                return .error(JellyfinAPIError("Image type not set"))
-            }
-
-            guard hasNextPage else { return .content }
-            task?.cancel()
-            task = Task { [weak self] in
-                guard let self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.backgroundStates.append(.gettingNextPage)
-                    }
-
-                    try await self.getNextPage(imageType)
-
-                    await MainActor.run {
-                        self.state = .content
-                        _ = self.backgroundStates.remove(.gettingNextPage)
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.state = .error(apiError)
-                        self.eventSubject.send(.error(apiError))
-                        _ = self.backgroundStates.remove(.gettingNextPage)
-                    }
-                }
-            }.asAnyCancellable()
-
-            return state
-
-        case let .setImage(url, index):
-            guard let imageType else {
-                logger.error("Image type not set")
-                return .error(JellyfinAPIError("Image type not set"))
-            }
-
+        case let .setImage(url, imageType):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -212,12 +140,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .uploadImage(image, index):
-            guard let imageType else {
-                logger.error("Image type not set")
-                return .error(JellyfinAPIError("Image type not set"))
-            }
-
+        case let .uploadImage(image, imageType, index):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -244,54 +167,30 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .deleteImage(index):
-            guard let imageType else {
-                logger.error("Image type not set")
-                return .error(JellyfinAPIError("Image type not set"))
-            }
-
+        case let .deleteImage(imageType, index):
             task?.cancel()
 
             task = Task { [weak self] in
                 guard let self = self else { return }
                 do {
                     await MainActor.run {
-                        _ = self.state = .updating
+                        _ = self.state = .deleting
                     }
 
                     try await self.deleteImage(imageType, index: index)
 
                     await MainActor.run {
-                        self.eventSubject.send(.updated)
-                        _ = self.state = .updating
+                        self.eventSubject.send(.deleted)
+                        _ = self.state = .deleting
                     }
                 } catch {
                     let apiError = JellyfinAPIError(error.localizedDescription)
                     await MainActor.run {
                         self.eventSubject.send(.error(apiError))
-                        _ = self.state = .updating
+                        _ = self.state = .deleting
                     }
                 }
             }.asAnyCancellable()
-
-            return state
-
-        case .refresh:
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let localImages = try await self.getAllImages()
-
-                    await MainActor.run {
-                        self.localImages = localImages
-                    }
-                } catch {
-                    await MainActor.run {
-                        // self.send(.error(.init(error.localizedDescription)))
-                    }
-                }
-            }
-            .store(in: &cancellables)
 
             return state
         }
@@ -299,60 +198,44 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Get All Images by Type
 
-    private func getAllImages() async throws -> [String: [UIImage]] {
-        guard let itemID = item.id else {
-            logger.error("Item ID not found")
-            return [:]
-        }
+    private func getAllImages() async throws {
+        guard let itemID = item.id else { return }
 
-        var imagesByType: [String: [UIImage]] = [:]
+        let results = try await withThrowingTaskGroup(of: (String, [UIImage]).self) { group -> [String: [UIImage]] in
+            for imageType in ImageType.allCases {
+                group.addTask {
+                    var images: [UIImage] = []
+                    var index = 0
 
-        for imageType in ImageType.allCases {
-            var images: [UIImage] = []
+                    while true {
+                        do {
+                            let parameters = Paths.GetItemImageParameters(imageIndex: index)
+                            let request = Paths.getItemImage(itemID: itemID, imageType: imageType.rawValue, parameters: parameters)
+                            let response = try await self.userSession.client.send(request)
 
-            var index = 0
-            while true {
-                do {
-                    let parameters = Paths.GetItemImageParameters(imageIndex: index)
-                    let request = Paths.getItemImage(itemID: itemID, imageType: imageType.rawValue, parameters: parameters)
-                    let response = try await userSession.client.send(request)
+                            if let image = UIImage(data: response.value) {
+                                images.append(image)
+                            }
 
-                    if let image = UIImage(data: response.value) {
-                        images.append(image)
+                            index += 1
+                        } catch {
+                            break
+                        }
                     }
 
-                    index += 1
-                } catch {
-                    break
+                    return (imageType.rawValue, images)
                 }
             }
-            imagesByType[imageType.rawValue] = images
+
+            var collectedResults: [String: [UIImage]] = [:]
+            for try await (key, images) in group {
+                collectedResults[key] = images
+            }
+            return collectedResults
         }
-        return imagesByType
-    }
-
-    // MARK: - Paging Logic
-
-    private func getNextPage(_ type: ImageType) async throws {
-        guard let itemID = item.id, hasNextPage else { return }
-
-        let startIndex = currentPage * pageSize
-        let parameters = Paths.GetRemoteImagesParameters(
-            type: type,
-            startIndex: startIndex,
-            limit: pageSize,
-            isIncludeAllLanguages: includeAllLanguages
-        )
-
-        let request = Paths.getRemoteImages(itemID: itemID, parameters: parameters)
-        let response = try await userSession.client.send(request)
-        let newImages = response.value.images ?? []
-
-        hasNextPage = newImages.count >= pageSize
 
         await MainActor.run {
-            remoteImages.append(contentsOf: newImages)
-            currentPage += 1
+            self.images = results
         }
     }
 
@@ -370,20 +253,21 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Upload Image
 
+    // TODO: Make actually work. 500 error. Bad format.
     private func uploadImage(_ image: UIImage, type: ImageType, index: Int = 0) async throws {
         guard let itemID = item.id else { return }
 
-        var contentType: String
+        let contentType: String
         let imageData: Data
 
-        if let pngData = image.pngData()?.base64EncodedData() {
+        if let pngData = image.pngData() {
             contentType = "image/png"
             imageData = pngData
-        } else if let jpgData = image.jpegData(compressionQuality: 1)?.base64EncodedData() {
+        } else if let jpgData = image.jpegData(compressionQuality: 1) {
             contentType = "image/jpeg"
             imageData = jpgData
         } else {
-            logger.error("Unable to upload the the selected image")
+            logger.error("Unable to upload the selected image")
             throw JellyfinAPIError("An internal error occurred")
         }
 
@@ -391,7 +275,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             itemID: itemID,
             imageType: type.rawValue,
             imageIndex: index,
-            imageData
+            imageData.base64EncodedData()
         )
         request.headers = ["Content-Type": contentType]
 
@@ -414,13 +298,12 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(request)
 
         await MainActor.run {
-            if var images = localImages[type.rawValue], index < images.count {
-                images.remove(at: index)
-                localImages[type.rawValue] = images
+            if var typeImages = images[type.rawValue], index < typeImages.count {
+                typeImages.remove(at: index)
+                images[type.rawValue] = typeImages
             }
+            Notifications[.itemMetadataDidChange].post(item)
         }
-
-        try await refreshItem()
     }
 
     // MARK: - Refresh Item
