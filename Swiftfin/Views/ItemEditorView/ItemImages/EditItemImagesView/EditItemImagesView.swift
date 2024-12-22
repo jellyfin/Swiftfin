@@ -63,7 +63,7 @@ struct EditItemImagesView: View {
 
     var body: some View {
         contentView
-            .navigationBarTitle(L10n.replaceImages)
+            .navigationBarTitle(L10n.images)
             .navigationBarTitleDisplayMode(.inline)
             .onFirstAppear {
                 viewModel.send(.refresh)
@@ -175,9 +175,9 @@ struct EditItemImagesView: View {
                 Color.secondarySystemFill
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
             }
-            .posterStyle(.landscape)
+            .posterStyle(image.size.height > image.size.width ? .portrait : .landscape)
             .frame(maxHeight: 150)
             .shadow(radius: 4)
             .padding(16)
@@ -198,7 +198,7 @@ struct EditItemImagesView: View {
                     .font(.headline)
             }
             .padding(.horizontal)
-            .navigationTitle(L10n.replaceImages)
+            .navigationTitle(L10n.deleteImage)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 selectedImage = nil

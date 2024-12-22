@@ -76,6 +76,19 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         self.item = item
         self.includeAllLanguages = includeAllLanguages
         super.init()
+
+        Notifications[.itemMetadataDidChange]
+            .publisher
+            .sink { [weak self] item in
+                guard let self else { return }
+                self.item = item
+                Task {
+                    await MainActor.run {
+                        self.send(.refresh)
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Respond to Actions
@@ -91,7 +104,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 do {
                     await MainActor.run {
                         self.state = .initial
-                        self.images.removeAll()
                         _ = self.backgroundStates.append(.refreshing)
                     }
 
@@ -198,11 +210,19 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     // MARK: - Get All Images by Type
 
-    private func getAllImages() async throws {
+    private func getAllImages(for imageType: ImageType? = nil) async throws {
         guard let itemID = item.id else { return }
 
+        let imageTypesToProcess = imageType.map { [$0] } ?? ImageType.allCases
+
+        await MainActor.run {
+            for type in imageTypesToProcess {
+                self.images[type.rawValue] = []
+            }
+        }
+
         let results = try await withThrowingTaskGroup(of: (String, [UIImage]).self) { group -> [String: [UIImage]] in
-            for imageType in ImageType.allCases {
+            for type in imageTypesToProcess {
                 group.addTask {
                     var images: [UIImage] = []
                     var index = 0
@@ -210,7 +230,11 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     while true {
                         do {
                             let parameters = Paths.GetItemImageParameters(imageIndex: index)
-                            let request = Paths.getItemImage(itemID: itemID, imageType: imageType.rawValue, parameters: parameters)
+                            let request = Paths.getItemImage(
+                                itemID: itemID,
+                                imageType: type.rawValue,
+                                parameters: parameters
+                            )
                             let response = try await self.userSession.client.send(request)
 
                             if let image = UIImage(data: response.value) {
@@ -223,7 +247,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         }
                     }
 
-                    return (imageType.rawValue, images)
+                    return (type.rawValue, images)
                 }
             }
 
@@ -235,7 +259,9 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         }
 
         await MainActor.run {
-            self.images = results
+            for (key, images) in results {
+                self.images[key] = images
+            }
         }
     }
 
@@ -297,12 +323,13 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         _ = try await userSession.client.send(request)
 
+        try await refreshItem()
+
         await MainActor.run {
             if var typeImages = images[type.rawValue], index < typeImages.count {
                 typeImages.remove(at: index)
                 images[type.rawValue] = typeImages
             }
-            Notifications[.itemMetadataDidChange].post(item)
         }
     }
 
@@ -322,9 +349,8 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
-            self.item = response.value
             _ = backgroundStates.remove(.refreshing)
-            Notifications[.itemMetadataDidChange].post(item)
+            Notifications[.itemMetadataDidChange].post(response.value)
         }
     }
 }
