@@ -102,7 +102,7 @@ struct SettingsView: View {
             Section {
                 ColorPicker(L10n.accentColor, selection: $accentColor, supportsOpacity: false)
             } footer: {
-                Text(L10n.accentColorDescription)
+                Text(L10n.viewsMayRequireRestart)
             }
 
             ChevronButton(L10n.logs)
