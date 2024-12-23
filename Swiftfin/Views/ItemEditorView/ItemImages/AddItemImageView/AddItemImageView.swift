@@ -86,7 +86,7 @@ struct AddItemImageView: View {
         case .content:
             gridView
         case .updating:
-            ProgressView()
+            updateView
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
@@ -110,7 +110,6 @@ struct AddItemImageView: View {
                 layout: layout
             ) { image in
                 imageButton(image)
-                    .padding(.vertical, 4)
             }
             .onReachedBottomEdge(offset: .offset(300)) {
                 viewModel.send(.getNextPage)
