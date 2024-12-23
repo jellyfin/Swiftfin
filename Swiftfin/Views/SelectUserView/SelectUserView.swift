@@ -20,6 +20,9 @@ import SwiftUI
 // TODO: user ordering
 //       - name
 //       - last signed in date
+// TODO: between the server selection menu and delete toolbar,
+//       figure out a way to make the grid/list and splash screen
+//       not jump when size is changed
 
 struct SelectUserView: View {
 
@@ -84,6 +87,17 @@ struct SelectUserView: View {
 
     @State
     private var error: Error? = nil
+
+    private var users: [UserState] {
+        gridItems.compactMap { item in
+            switch item {
+            case let .user(user, _):
+                return user
+            default:
+                return nil
+            }
+        }
+    }
 
     // MARK: - Select Server
 
@@ -514,20 +528,21 @@ struct SelectUserView: View {
 
             ToolbarItem(placement: .topBarLeading) {
                 if isEditingUsers {
-                    Button(L10n.selectAll) {
-                        for gridItem in gridItems {
-                            switch gridItem {
-                            case let .user(user, server: _):
-                                selectedUsers.insert(user)
-                            default:
-                                break
-                            }
+                    if selectedUsers.count == users.count {
+                        Button(L10n.removeAll) {
+                            selectedUsers.removeAll()
                         }
+                        .buttonStyle(.toolbarPill)
+                    } else {
+                        Button(L10n.selectAll) {
+                            selectedUsers.insert(contentsOf: users)
+                        }
+                        .buttonStyle(.toolbarPill)
                     }
-                    .buttonStyle(.toolbarPill)
                 }
             }
-            ToolbarItem(placement: .topBarTrailing) {
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 if isEditingUsers {
                     Button(isEditingUsers ? L10n.cancel : L10n.edit) {
                         isEditingUsers.toggle()
@@ -539,8 +554,11 @@ struct SelectUserView: View {
                         }
                     }
                     .buttonStyle(.toolbarPill)
+                } else {
+                    advancedMenu
                 }
             }
+
             ToolbarItem(placement: .bottomBar) {
                 if isEditingUsers {
                     Button(L10n.delete) {
@@ -550,11 +568,6 @@ struct SelectUserView: View {
                     .disabled(selectedUsers.isEmpty)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-            }
-        }
-        .topBarTrailing {
-            if !isEditingUsers {
-                advancedMenu
             }
         }
         .onAppear {
