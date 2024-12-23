@@ -7,11 +7,17 @@
 //
 
 import Defaults
+import Factory
 import JellyfinAPI
 import Nuke
 import SwiftUI
 
 struct UserProfileImage: View {
+
+    // MARK: - Inject Logger
+
+    @Injected(\.logService)
+    private var logger
 
     // MARK: - User Variables
 
@@ -58,6 +64,22 @@ struct UserProfileImage: View {
                 .aspectRatio(1, contentMode: .fill)
                 .clipShape(Circle())
                 .shadow(radius: 5)
+        }
+        .onNotification(.didChangeUserProfile) { notificationUser in
+            if notificationUser == userId {
+                let imageURL = source.url
+
+                guard let imageURL else {
+                    logger.info("No user profile image URL found")
+                    return
+                }
+
+                let request = ImageRequest(url: imageURL)
+
+                pipeline.cache[request] = nil
+                pipeline.configuration.dataCache?.removeData(for: imageURL.absoluteString)
+                logger.info("Image removed from cache: \(imageURL.absoluteString)")
+            }
         }
     }
 }
