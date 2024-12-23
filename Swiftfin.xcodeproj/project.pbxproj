@@ -2475,7 +2475,7 @@
 				4E5508722D13AFE3002A5345 /* UserProfileImage.swift */,
 			);
 			path = UserProfileImage;
-      			sourceTree = "<group>";
+			sourceTree = "<group>";
 		};
 		4E75B34D2D16583900D16531 /* Translations */ = {
 			isa = PBXGroup;
