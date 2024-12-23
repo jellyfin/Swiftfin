@@ -847,6 +847,9 @@
 /// Hours
 "hours" = "Hours";
 
+/// Identify
+"identify" = "Identify";
+
 /// Idle
 "idle" = "Idle";
 
@@ -1842,6 +1845,9 @@
 
 /// URL
 "url" = "URL";
+
+/// Use as item
+"useAsItem" = "Use as item";
 
 /// Use as Transcoding Profile
 "useAsTranscodingProfile" = "Use as Transcoding Profile";

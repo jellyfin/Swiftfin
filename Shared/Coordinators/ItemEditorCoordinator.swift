@@ -21,6 +21,8 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
 
     // MARK: - Route to Metadata
 
+    @Route(.push)
+    var editIdentity = makeEditIdentity
     @Route(.modal)
     var editMetadata = makeEditMetadata
 
@@ -59,6 +61,11 @@ final class ItemEditorCoordinator: ObservableObject, NavigationCoordinatable {
     }
 
     // MARK: - Item Metadata
+
+    @ViewBuilder
+    func makeEditIdentity(item: BaseItemDto) -> some View {
+        ItemIdentifyView(item: item)
+    }
 
     func makeEditMetadata(item: BaseItemDto) -> NavigationViewCoordinator<BasicNavigationViewCoordinator> {
         NavigationViewCoordinator {
