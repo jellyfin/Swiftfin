@@ -31,9 +31,9 @@ struct EditItemImagesView: View {
     // MARK: - Dialog State
 
     @State
-    private var isImportingImage = false
-    @State
     private var selectedImage: ImageInfo?
+    @State
+    private var uploadType: ImageType?
 
     // MARK: - Error State
 
@@ -63,7 +63,7 @@ struct EditItemImagesView: View {
                 deletionSheet(imageInfo)
             }
             .fileImporter(
-                isPresented: $isImportingImage,
+                isPresented: .constant(uploadType != nil),
                 allowedContentTypes: [.image],
                 allowsMultipleSelection: false
             ) {
@@ -71,12 +71,10 @@ struct EditItemImagesView: View {
                 case let .success(urls):
                     if let url = urls.first {
                         do {
-                            let data = try Data(contentsOf: url)
-                            if let image = UIImage(data: data) {
-                                viewModel.send(.uploadImage(image: image, type: .primary))
+                            if let uploadType {
+                                viewModel.send(.uploadImage(url: url, type: uploadType))
                             }
-                        } catch {
-                            self.error = JellyfinAPIError("Failed to load image data")
+                            uploadType = nil
                         }
                     }
                 case let .failure(fileError):
@@ -149,7 +147,7 @@ struct EditItemImagesView: View {
             }) {
                 Image(systemName: "magnifyingglass")
             }
-            Button(action: { isImportingImage = true }) {
+            Button(action: { uploadType = imageType }) {
                 Image(systemName: "plus")
             }
         }

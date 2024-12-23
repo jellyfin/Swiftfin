@@ -24,7 +24,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     enum Action: Equatable {
         case refresh
         case backgroundRefresh
-        case uploadImage(image: UIImage, type: ImageType, index: Int = 0)
+        case uploadImage(url: URL, type: ImageType)
         case deleteImage(ImageInfo)
     }
 
@@ -152,7 +152,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .uploadImage(image, imageType, index):
+        case let .uploadImage(url, imageType):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -162,7 +162,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         _ = self.state = .updating
                     }
 
-                    try await self.uploadImage(image, type: imageType, index: index)
+                    try await self.uploadImage(url, type: imageType)
 
                     await MainActor.run {
                         self.eventSubject.send(.updated)
@@ -267,16 +267,22 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 }
             }
         }
-
-        try await orderImages()
     }
 
     // MARK: - Upload Image
 
     // TODO: Make actually work. 500 error. Bad format.
-    private func uploadImage(_ image: UIImage, type: ImageType, index: Int = 0) async throws {
+    private func uploadImage(_ url: URL, type: ImageType) async throws {
         guard let itemID = item.id else { return }
 
+        // Start accessing security-scoped resource
+        guard url.startAccessingSecurityScopedResource() else {
+            throw JellyfinAPIError("Unable to access file at \(url)")
+        }
+        defer { url.stopAccessingSecurityScopedResource() }
+
+        let data = try Data(contentsOf: url)
+        let image = UIImage(data: data)!
         let contentType: String
         let imageData: Data
 
@@ -287,22 +293,20 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
             contentType = "image/jpeg"
             imageData = jpgData
         } else {
-            logger.error("Unable to upload the selected image")
+            logger.error("Unable to convert given profile image to png/jpg")
             throw JellyfinAPIError("An internal error occurred")
         }
 
-        var request = Paths.setItemImageByIndex(
+        var request = Paths.setItemImage(
             itemID: itemID,
             imageType: type.rawValue,
-            imageIndex: index,
-            imageData.base64EncodedData()
+            imageData
         )
         request.headers = ["Content-Type": contentType]
 
         _ = try await userSession.client.send(request)
 
         try await refreshItem()
-        try await orderImages()
     }
 
     // MARK: - Delete Image
@@ -323,17 +327,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         try await refreshItem()
 
         await MainActor.run {
-            self.images = images.filter { $0.key != imageInfo }
-        }
-
-        try await orderImages()
-    }
-
-    // MARK: - Order Images
-
-    private func orderImages() async throws {
-        await MainActor.run {
-            self.images = self.images.sorted(by: { lhs, rhs in
+            self.images = images.filter { $0.key != imageInfo }.sorted(by: { lhs, rhs in
                 guard let lhsType = lhs.key.imageType, let rhsType = rhs.key.imageType else {
                     return false
                 }
