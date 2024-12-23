@@ -19,10 +19,16 @@ private let DefaultPageSize = 50
 
 class RemoteImageInfoViewModel: ViewModel, Stateful {
 
+    enum Event: Equatable {
+        case updated
+        case error(JellyfinAPIError)
+    }
+
     enum Action: Equatable {
         case cancel
         case refresh
         case getNextPage
+        case setImage(url: String, type: ImageType)
     }
 
     enum BackgroundState: Hashable {
@@ -33,6 +39,7 @@ class RemoteImageInfoViewModel: ViewModel, Stateful {
     enum State: Hashable {
         case initial
         case content
+        case updating
         case error(JellyfinAPIError)
     }
 
@@ -61,6 +68,13 @@ class RemoteImageInfoViewModel: ViewModel, Stateful {
     var backgroundStates: OrderedSet<BackgroundState> = []
 
     private var task: AnyCancellable?
+    private let eventSubject = PassthroughSubject<Event, Never>()
+
+    // MARK: - Eventful
+
+    var events: AnyPublisher<Event, Never> {
+        eventSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
 
     // MARK: - Initializer
 
@@ -147,6 +161,33 @@ class RemoteImageInfoViewModel: ViewModel, Stateful {
             }.asAnyCancellable()
 
             return state
+
+        case let .setImage(url, imageType):
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self = self else { return }
+                do {
+                    await MainActor.run {
+                        _ = self.state = .updating
+                    }
+
+                    try await self.setImage(url, type: imageType)
+
+                    await MainActor.run {
+                        self.eventSubject.send(.updated)
+                        _ = self.state = .updating
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.eventSubject.send(.error(apiError))
+                        _ = self.state = .updating
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
         }
     }
 
@@ -172,6 +213,41 @@ class RemoteImageInfoViewModel: ViewModel, Stateful {
         await MainActor.run {
             self.images.append(contentsOf: newImages)
             currentPage += 1
+        }
+    }
+
+    // MARK: - Set Image From URL
+
+    private func setImage(_ url: String, type: ImageType) async throws {
+        guard let itemID = item.id else { return }
+
+        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: url)
+        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
+        try await userSession.client.send(imageRequest)
+
+        try await refreshItem()
+    }
+
+    // MARK: - Refresh Item
+
+    private func refreshItem() async throws {
+        guard let itemID = item.id else { return }
+
+        await MainActor.run {
+            _ = backgroundStates.append(.refreshing)
+        }
+
+        let request = Paths.getItem(
+            userID: userSession.user.id,
+            itemID: itemID
+        )
+
+        let response = try await userSession.client.send(request)
+
+        await MainActor.run {
+            self.item = response.value
+            _ = backgroundStates.remove(.refreshing)
+            Notifications[.itemMetadataDidChange].post(item)
         }
     }
 }

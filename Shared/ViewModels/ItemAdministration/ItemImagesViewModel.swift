@@ -11,7 +11,7 @@ import Foundation
 import IdentifiedCollections
 import JellyfinAPI
 import OrderedCollections
-import UIKit
+import SwiftUI
 
 class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
@@ -23,9 +23,9 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
     enum Action: Equatable {
         case refresh
-        case setImage(url: String, type: ImageType)
+        case backgroundRefresh
         case uploadImage(image: UIImage, type: ImageType, index: Int = 0)
-        case deleteImage(type: ImageType, index: Int = 0)
+        case deleteImage(ImageInfo)
     }
 
     enum BackgroundState: Hashable {
@@ -49,7 +49,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     @Published
     var item: BaseItemDto
     @Published
-    var images: [String: [UIImage]] = [:]
+    var images: [ImageInfo: UIImage] = [:]
 
     // MARK: - State Management
 
@@ -84,7 +84,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                 self.item = item
                 Task {
                     await MainActor.run {
-                        self.send(.refresh)
+                        self.send(.backgroundRefresh)
                     }
                 }
             }
@@ -96,6 +96,32 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     func respond(to action: Action) -> State {
         switch action {
 
+        case .backgroundRefresh:
+            task?.cancel()
+
+            task = Task { [weak self] in
+                guard let self else { return }
+                do {
+                    await MainActor.run {
+                        _ = self.backgroundStates.append(.refreshing)
+                    }
+
+                    try await self.getAllImages()
+
+                    await MainActor.run {
+                        _ = self.backgroundStates.remove(.refreshing)
+                    }
+                } catch {
+                    let apiError = JellyfinAPIError(error.localizedDescription)
+                    await MainActor.run {
+                        self.eventSubject.send(.error(apiError))
+                        _ = self.backgroundStates.remove(.refreshing)
+                    }
+                }
+            }.asAnyCancellable()
+
+            return state
+
         case .refresh:
             task?.cancel()
 
@@ -105,6 +131,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                     await MainActor.run {
                         self.state = .initial
                         _ = self.backgroundStates.append(.refreshing)
+                        self.images.removeAll()
                     }
 
                     try await self.getAllImages()
@@ -119,33 +146,6 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         self.state = .error(apiError)
                         self.eventSubject.send(.error(apiError))
                         _ = self.backgroundStates.remove(.refreshing)
-                    }
-                }
-            }.asAnyCancellable()
-
-            return state
-
-        case let .setImage(url, imageType):
-            task?.cancel()
-
-            task = Task { [weak self] in
-                guard let self = self else { return }
-                do {
-                    await MainActor.run {
-                        _ = self.state = .updating
-                    }
-
-                    try await self.setImage(url, type: imageType)
-
-                    await MainActor.run {
-                        self.eventSubject.send(.updated)
-                        _ = self.state = .updating
-                    }
-                } catch {
-                    let apiError = JellyfinAPIError(error.localizedDescription)
-                    await MainActor.run {
-                        self.eventSubject.send(.error(apiError))
-                        _ = self.state = .updating
                     }
                 }
             }.asAnyCancellable()
@@ -179,7 +179,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
             return state
 
-        case let .deleteImage(imageType, index):
+        case let .deleteImage(imageInfo):
             task?.cancel()
 
             task = Task { [weak self] in
@@ -189,7 +189,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
                         _ = self.state = .deleting
                     }
 
-                    try await self.deleteImage(imageType, index: index)
+                    try await self.deleteImage(imageInfo)
 
                     await MainActor.run {
                         self.eventSubject.send(.deleted)
@@ -208,73 +208,67 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         }
     }
 
-    // MARK: - Get All Images by Type
+    // MARK: - Get All Item Images
 
-    private func getAllImages(for imageType: ImageType? = nil) async throws {
+    private func getAllImages() async throws {
         guard let itemID = item.id else { return }
 
-        let imageTypesToProcess = imageType.map { [$0] } ?? ImageType.allCases
+        // Get all of the ImageInfos for the Item
+        let imageRequest = Paths.getItemImageInfos(itemID: itemID)
+        let imageResponse = try await self.userSession.client.send(imageRequest)
+        let imageInfos = imageResponse.value
 
+        // Get Current vs New ImageInfos for comparison
+        let currentImageInfos = Set(self.images.keys)
+        let newImageInfos = Set(imageInfos)
+
+        // Exit if all ImageInfos are the same
+        guard currentImageInfos != newImageInfos else { return }
+
+        // Remove missing ImageInfos from published Images
         await MainActor.run {
-            for type in imageTypesToProcess {
-                self.images[type.rawValue] = []
-            }
+            self.images = self.images.filter { newImageInfos.contains($0.key) }
         }
 
-        let results = try await withThrowingTaskGroup(of: (String, [UIImage]).self) { group -> [String: [UIImage]] in
-            for type in imageTypesToProcess {
+        // Identify missing ImageInfos in the published Images
+        let missingImageInfos = imageInfos.filter { !self.images.keys.contains($0) }
+
+        // Get all UIImages for all missing ImageInfos
+        try await withThrowingTaskGroup(of: (ImageInfo, UIImage).self) { group in
+            for imageInfo in missingImageInfos {
                 group.addTask {
-                    var images: [UIImage] = []
-                    var index = 0
+                    do {
+                        let parameters = Paths.GetItemImageParameters(
+                            tag: imageInfo.imageTag ?? "",
+                            imageIndex: imageInfo.imageIndex
+                        )
+                        let request = Paths.getItemImage(
+                            itemID: itemID,
+                            imageType: imageInfo.imageType?.rawValue ?? "",
+                            parameters: parameters
+                        )
+                        let response = try await self.userSession.client.send(request)
 
-                    while true {
-                        do {
-                            let parameters = Paths.GetItemImageParameters(imageIndex: index)
-                            let request = Paths.getItemImage(
-                                itemID: itemID,
-                                imageType: type.rawValue,
-                                parameters: parameters
-                            )
-                            let response = try await self.userSession.client.send(request)
-
-                            if let image = UIImage(data: response.value) {
-                                images.append(image)
-                            }
-
-                            index += 1
-                        } catch {
-                            break
+                        // Convert the Response Data into a UIImage
+                        if let image = UIImage(data: response.value) {
+                            return (imageInfo, image)
                         }
+                    } catch {
+                        throw JellyfinAPIError("Failed to fetch image for \(imageInfo): \(error)")
                     }
-
-                    return (type.rawValue, images)
+                    throw JellyfinAPIError("Failed to fetch image for \(imageInfo)")
                 }
             }
 
-            var collectedResults: [String: [UIImage]] = [:]
-            for try await (key, images) in group {
-                collectedResults[key] = images
-            }
-            return collectedResults
-        }
-
-        await MainActor.run {
-            for (key, images) in results {
-                self.images[key] = images
+            // Publish ImageInfos
+            for try await (imageInfo, image) in group {
+                await MainActor.run {
+                    self.images[imageInfo] = image
+                }
             }
         }
-    }
 
-    // MARK: - Set Image From URL
-
-    private func setImage(_ url: String, type: ImageType) async throws {
-        guard let itemID = item.id else { return }
-
-        let parameters = Paths.DownloadRemoteImageParameters(type: type, imageURL: url)
-        let imageRequest = Paths.downloadRemoteImage(itemID: itemID, parameters: parameters)
-        try await userSession.client.send(imageRequest)
-
-        try await refreshItem()
+        try await orderImages()
     }
 
     // MARK: - Upload Image
@@ -308,17 +302,20 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         _ = try await userSession.client.send(request)
 
         try await refreshItem()
+        try await orderImages()
     }
 
     // MARK: - Delete Image
 
-    private func deleteImage(_ type: ImageType, index: Int = 0) async throws {
-        guard let itemID = item.id else { return }
+    private func deleteImage(_ imageInfo: ImageInfo) async throws {
+        guard let itemID = item.id,
+              let imageType = imageInfo.imageType?.rawValue,
+              let imageIndex = imageInfo.imageIndex else { return }
 
         let request = Paths.deleteItemImageByIndex(
             itemID: itemID,
-            imageType: type.rawValue,
-            imageIndex: index
+            imageType: imageType,
+            imageIndex: imageIndex
         )
 
         _ = try await userSession.client.send(request)
@@ -326,9 +323,27 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
         try await refreshItem()
 
         await MainActor.run {
-            if var typeImages = images[type.rawValue], index < typeImages.count {
-                typeImages.remove(at: index)
-                images[type.rawValue] = typeImages
+            self.images = images.filter { $0.key != imageInfo }
+        }
+
+        try await orderImages()
+    }
+
+    // MARK: - Order Images
+
+    private func orderImages() async throws {
+        await MainActor.run {
+            self.images = self.images.sorted(by: { lhs, rhs in
+                guard let lhsType = lhs.key.imageType, let rhsType = rhs.key.imageType else {
+                    return false
+                }
+                if lhsType != rhsType {
+                    return lhsType.rawValue < rhsType.rawValue
+                }
+                return (lhs.key.imageIndex ?? 0) < (rhs.key.imageIndex ?? 0)
+            })
+            .reduce(into: [ImageInfo: UIImage]()) { result, pair in
+                result[pair.key] = pair.value
             }
         }
     }
@@ -336,7 +351,7 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
     // MARK: - Refresh Item
 
     private func refreshItem() async throws {
-        guard let itemId = item.id else { return }
+        guard let itemID = item.id else { return }
 
         await MainActor.run {
             _ = backgroundStates.append(.refreshing)
@@ -344,13 +359,15 @@ class ItemImagesViewModel: ViewModel, Stateful, Eventful {
 
         let request = Paths.getItem(
             userID: userSession.user.id,
-            itemID: itemId
+            itemID: itemID
         )
+
         let response = try await userSession.client.send(request)
 
         await MainActor.run {
+            self.item = response.value
             _ = backgroundStates.remove(.refreshing)
-            Notifications[.itemMetadataDidChange].post(response.value)
+            Notifications[.itemMetadataDidChange].post(item)
         }
     }
 }

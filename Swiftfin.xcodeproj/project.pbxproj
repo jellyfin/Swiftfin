@@ -22,6 +22,8 @@
 		4E10C81D2CC046610012CC9F /* UserSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E10C81C2CC0465F0012CC9F /* UserSection.swift */; };
 		4E11805F2CBF52380077A588 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5377CBF8263B596B003A4E83 /* Assets.xcassets */; };
 		4E12F9172CBE9619006C217E /* DeviceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E12F9152CBE9615006C217E /* DeviceType.swift */; };
+		4E13FAD82D18D5AF007785F6 /* ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13FAD72D18D5AD007785F6 /* ImageInfo.swift */; };
+		4E13FAD92D18D5AF007785F6 /* ImageInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E13FAD72D18D5AD007785F6 /* ImageInfo.swift */; };
 		4E14DC032CD43DD2001B621B /* AdminDashboardCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E14DC022CD43DCB001B621B /* AdminDashboardCoordinator.swift */; };
 		4E16FD512C0183DB00110147 /* LetterPickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD502C0183DB00110147 /* LetterPickerButton.swift */; };
 		4E16FD532C01840C00110147 /* LetterPickerBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E16FD522C01840C00110147 /* LetterPickerBar.swift */; };
@@ -1192,6 +1194,7 @@
 		4E10C8182CC045690012CC9F /* CustomDeviceNameSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomDeviceNameSection.swift; sourceTree = "<group>"; };
 		4E10C81C2CC0465F0012CC9F /* UserSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSection.swift; sourceTree = "<group>"; };
 		4E12F9152CBE9615006C217E /* DeviceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceType.swift; sourceTree = "<group>"; };
+		4E13FAD72D18D5AD007785F6 /* ImageInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageInfo.swift; sourceTree = "<group>"; };
 		4E14DC022CD43DCB001B621B /* AdminDashboardCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminDashboardCoordinator.swift; sourceTree = "<group>"; };
 		4E16FD502C0183DB00110147 /* LetterPickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerButton.swift; sourceTree = "<group>"; };
 		4E16FD522C01840C00110147 /* LetterPickerBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LetterPickerBar.swift; sourceTree = "<group>"; };
@@ -4409,6 +4412,7 @@
 				E1CB75712C80E71800217C76 /* DirectPlayProfile.swift */,
 				4ECF5D892D0A57EF00F066B1 /* DynamicDayOfWeek.swift */,
 				E1722DB029491C3900CC0239 /* ImageBlurHashes.swift */,
+				4E13FAD72D18D5AD007785F6 /* ImageInfo.swift */,
 				E1D842902933F87500D1041A /* ItemFields.swift */,
 				E148128728C154BF003B8787 /* ItemFilter+ItemTrait.swift */,
 				E11B1B6B2718CD68006DA3E8 /* JellyfinAPIError.swift */,
@@ -5227,6 +5231,7 @@
 				E1D4BF8B2719D3D000A11E64 /* AppSettingsCoordinator.swift in Sources */,
 				E10231452BCF8A51009D71FC /* ChannelProgram.swift in Sources */,
 				E146A9D92BE6E9830034DA1E /* StoredValue.swift in Sources */,
+				4E13FAD82D18D5AF007785F6 /* ImageInfo.swift in Sources */,
 				E13DD3FA2717E961009D4DAF /* SelectUserViewModel.swift in Sources */,
 				C40CD926271F8D1E000FB198 /* ItemTypeLibraryViewModel.swift in Sources */,
 				E13D98EE2D0664C1005FE96D /* NotificationSet.swift in Sources */,
@@ -5946,6 +5951,7 @@
 				C46DD8E22A8DC7FB0046A504 /* LiveMainOverlay.swift in Sources */,
 				4E17498E2CC00A3100DD07D1 /* DeviceInfo.swift in Sources */,
 				4EC1C86D2C80903A00E2879E /* CustomProfileButton.swift in Sources */,
+				4E13FAD92D18D5AF007785F6 /* ImageInfo.swift in Sources */,
 				4EED87512CBF84AD002354D2 /* DevicesViewModel.swift in Sources */,
 				E1FE69A728C29B720021BC93 /* ProgressBar.swift in Sources */,
 				E13332912953B91000EE76AB /* DownloadTaskCoordinator.swift in Sources */,

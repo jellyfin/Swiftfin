@@ -26,10 +26,7 @@ struct AddItemImageView: View {
     private var router: ItemEditorCoordinator.Router
 
     @StateObject
-    private var viewModel: RemoteImageInfoViewModel
-
-    @ObservedObject
-    private var updateViewModel: ItemImagesViewModel
+    var viewModel: RemoteImageInfoViewModel
 
     // MARK: - Dialog States
 
@@ -48,32 +45,24 @@ struct AddItemImageView: View {
 
     // MARK: - Body
 
-    init(viewModel: RemoteImageInfoViewModel) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-        self.updateViewModel = ItemImagesViewModel(item: viewModel.item)
-    }
-
-    // MARK: - Body
-
     var body: some View {
         contentView
             .navigationBarTitle(viewModel.imageType.rawValue.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(viewModel.state == .updating)
             .topBarTrailing {
                 if viewModel.backgroundStates.contains(.refreshing) {
-                    ProgramsView()
+                    ProgressView()
                 }
             }
             .onFirstAppear {
                 viewModel.send(.refresh)
             }
-            .onReceive(updateViewModel.events) { event in
+            .onReceive(viewModel.events) { event in
                 switch event {
                 case .updated:
                     UIDevice.feedback(.success)
                     router.pop()
-                case .deleted:
-                    break
                 case let .error(eventError):
                     UIDevice.feedback(.error)
                     error = eventError
@@ -96,6 +85,8 @@ struct AddItemImageView: View {
             DelayedProgressView()
         case .content:
             gridView
+        case .updating:
+            ProgressView()
         case let .error(error):
             ErrorView(error: error)
                 .onRetry {
@@ -182,7 +173,6 @@ struct AddItemImageView: View {
                 .foregroundColor(.secondary)
                 .font(.headline)
         }
-        .scaledToFit()
         .posterStyle(posterStyle)
     }
 
@@ -216,7 +206,7 @@ struct AddItemImageView: View {
             .topBarTrailing {
                 Button(L10n.save) {
                     if let newURL = image.url {
-                        updateViewModel.send(.setImage(url: newURL, type: viewModel.imageType))
+                        viewModel.send(.setImage(url: newURL, type: viewModel.imageType))
                     }
                     selectedImage = nil
                 }

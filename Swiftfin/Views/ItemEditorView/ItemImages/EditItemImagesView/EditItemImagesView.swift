@@ -15,15 +15,6 @@ import SwiftUI
 
 struct EditItemImagesView: View {
 
-    // MARK: - Selected Image Object
-
-    private struct SelectedImage: Identifiable {
-        let id = UUID()
-        var image: UIImage
-        var type: ImageType
-        var index: Int
-    }
-
     // MARK: - Defaults
 
     @Default(.accentColor)
@@ -42,14 +33,14 @@ struct EditItemImagesView: View {
     @State
     private var isImportingImage = false
     @State
-    private var selectedImage: SelectedImage?
+    private var selectedImage: ImageInfo?
 
     // MARK: - Error State
 
     @State
     private var error: Error?
 
-    // MARK: - Computed Properties
+    // MARK: - Ordered ImageTypes
 
     private var orderedItems: [ImageType] {
         ImageType.allCases.sorted { lhs, rhs in
@@ -68,8 +59,8 @@ struct EditItemImagesView: View {
             .onFirstAppear {
                 viewModel.send(.refresh)
             }
-            .sheet(item: $selectedImage) { input in
-                deletionSheet(input.image, type: input.type, index: input.index)
+            .sheet(item: $selectedImage) { imageInfo in
+                deletionSheet(imageInfo)
             }
             .fileImporter(
                 isPresented: $isImportingImage,
@@ -120,28 +111,27 @@ struct EditItemImagesView: View {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Image Scrolle View
 
     @ViewBuilder
     private func imageScrollView(for imageType: ImageType) -> some View {
-        if let images = viewModel.images[imageType.rawValue] {
+        let filteredImages = viewModel.images.filter { $0.key.imageType == imageType }
+        let imageArray = Array(filteredImages)
+
+        if !imageArray.isEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 16) {
-                    ForEach(images.indices, id: \.self) { index in
-                        let image = images[index]
-                        imageButton(image) {
-                            selectedImage = .init(
-                                image: image,
-                                type: imageType,
-                                index: index
-                            )
+                HStack {
+                    ForEach(imageArray, id: \.key) { imageData in
+                        imageButton(imageData.value) {
+                            selectedImage = imageData.key
                         }
                     }
                 }
-                .padding(.horizontal, 16)
             }
         }
     }
+
+    // MARK: - Section Header
 
     @ViewBuilder
     private func sectionHeader(for imageType: ImageType) -> some View {
@@ -184,32 +174,36 @@ struct EditItemImagesView: View {
         }
     }
 
-    // MARK: - Delete Image Confirmation
+    // MARK: - Delete Image Confirmation Sheet
 
     @ViewBuilder
-    private func deletionSheet(_ image: UIImage, type: ImageType, index: Int) -> some View {
-        NavigationView {
-            VStack {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFit()
+    private func deletionSheet(_ imageInfo: ImageInfo) -> some View {
+        if let image = viewModel.images[imageInfo] {
+            NavigationView {
+                VStack {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
 
-                Text("\(Int(image.size.width)) x \(Int(image.size.height))")
-                    .font(.headline)
-            }
-            .padding(.horizontal)
-            .navigationTitle(L10n.deleteImage)
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarCloseButton {
-                selectedImage = nil
-            }
-            .topBarTrailing {
-                Button(L10n.delete, role: .destructive) {
-                    viewModel.send(.deleteImage(type: type, index: index))
+                    Text("\(Int(image.size.width)) x \(Int(image.size.height))")
+                        .font(.headline)
+                }
+                .padding(.horizontal)
+                .navigationTitle(L10n.deleteImage)
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationBarCloseButton {
                     selectedImage = nil
                 }
-                .buttonStyle(.toolbarPill(.red))
+                .topBarTrailing {
+                    Button(L10n.delete, role: .destructive) {
+                        viewModel.send(.deleteImage(imageInfo))
+                        selectedImage = nil
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                }
             }
+        } else {
+            ErrorView(error: JellyfinAPIError(L10n.unknownError))
         }
     }
 }
