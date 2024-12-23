@@ -76,10 +76,10 @@ internal enum L10n {
   internal static let allMedia = L10n.tr("Localizable", "allMedia", fallback: "All Media")
   /// Allow collection management
   internal static let allowCollectionManagement = L10n.tr("Localizable", "allowCollectionManagement", fallback: "Allow collection management")
-  /// Allow media item deletion
-  internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow media item deletion")
-  /// Allow media item editing
-  internal static let allowItemEditing = L10n.tr("Localizable", "allowItemEditing", fallback: "Allow media item editing")
+  /// Allow item deletion
+  internal static let allowItemDeletion = L10n.tr("Localizable", "allowItemDeletion", fallback: "Allow item deletion")
+  /// Allow item editing
+  internal static let allowItemEditing = L10n.tr("Localizable", "allowItemEditing", fallback: "Allow item editing")
   /// All Servers
   internal static let allServers = L10n.tr("Localizable", "allServers", fallback: "All Servers")
   /// View and manage all registered users on the server, including their permissions and activity status.
@@ -522,8 +522,6 @@ internal enum L10n {
   internal static let enterSeasonNumber = L10n.tr("Localizable", "enterSeasonNumber", fallback: "Enter the season number.")
   /// Episode
   internal static let episode = L10n.tr("Localizable", "episode", fallback: "Episode")
-  /// Episode Landscape Poster
-  internal static let episodeLandscapePoster = L10n.tr("Localizable", "episodeLandscapePoster", fallback: "Episode Landscape Poster")
   /// Episode %1$@
   internal static func episodeNumber(_ p1: Any) -> String {
     return L10n.tr("Localizable", "episodeNumber", String(describing: p1), fallback: "Episode %1$@")
@@ -738,6 +736,8 @@ internal enum L10n {
   internal static let mediaDownloads = L10n.tr("Localizable", "mediaDownloads", fallback: "Media downloads")
   /// Media playback
   internal static let mediaPlayback = L10n.tr("Localizable", "mediaPlayback", fallback: "Media playback")
+  /// Configure how libraries are presented.
+  internal static let mediaSettingsDescription = L10n.tr("Localizable", "mediaSettingsDescription", fallback: "Configure how libraries are presented.")
   /// Mbps
   internal static let megabitsPerSecond = L10n.tr("Localizable", "megabitsPerSecond", fallback: "Mbps")
   /// Menu Buttons
@@ -754,6 +754,8 @@ internal enum L10n {
   internal static let missing = L10n.tr("Localizable", "missing", fallback: "Missing")
   /// Missing Items
   internal static let missingItems = L10n.tr("Localizable", "missingItems", fallback: "Missing Items")
+  /// Missing items will be displayed if available.
+  internal static let missingItemsDisplayed = L10n.tr("Localizable", "missingItemsDisplayed", fallback: "Missing items will be displayed if available.")
   /// Mixer
   internal static let mixer = L10n.tr("Localizable", "mixer", fallback: "Mixer")
   /// Movies
@@ -784,12 +786,14 @@ internal enum L10n {
   internal static let nextItem = L10n.tr("Localizable", "nextItem", fallback: "Next Item")
   /// Next Up
   internal static let nextUp = L10n.tr("Localizable", "nextUp", fallback: "Next Up")
-  /// Days in Next Up
-  internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Days in Next Up")
+  /// Maximum days
+  internal static let nextUpDays = L10n.tr("Localizable", "nextUpDays", fallback: "Maximum days")
   /// Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.
   internal static let nextUpDaysDescription = L10n.tr("Localizable", "nextUpDaysDescription", fallback: "Set the maximum amount of days a show should stay in the 'Next Up' list without watching it.")
-  /// Rewatching in Next Up
-  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Rewatching in Next Up")
+  /// Include rewatched items
+  internal static let nextUpRewatch = L10n.tr("Localizable", "nextUpRewatch", fallback: "Include rewatched items")
+  /// Configure which items are visible in 'Next Up'.
+  internal static let nextUpSettingsDescription = L10n.tr("Localizable", "nextUpSettingsDescription", fallback: "Configure which items are visible in 'Next Up'.")
   /// No
   internal static let no = L10n.tr("Localizable", "no", fallback: "No")
   /// No episodes available
@@ -956,6 +960,12 @@ internal enum L10n {
   internal static let regular = L10n.tr("Localizable", "regular", fallback: "Regular")
   /// Release Date
   internal static let releaseDate = L10n.tr("Localizable", "releaseDate", fallback: "Release Date")
+  /// Remember layout
+  internal static let rememberLayout = L10n.tr("Localizable", "rememberLayout", fallback: "Remember layout")
+  /// Remember the last preferences for each library separately.
+  internal static let rememberPreferencesPerLibrary = L10n.tr("Localizable", "rememberPreferencesPerLibrary", fallback: "Remember the last preferences for each library separately.")
+  /// Remember sorting
+  internal static let rememberSorting = L10n.tr("Localizable", "rememberSorting", fallback: "Remember sorting")
   /// Remixer
   internal static let remixer = L10n.tr("Localizable", "remixer", fallback: "Remixer")
   /// Remote connections
@@ -1058,8 +1068,10 @@ internal enum L10n {
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
-  /// Series Backdrop
-  internal static let seriesBackdrop = L10n.tr("Localizable", "seriesBackdrop", fallback: "Series Backdrop")
+  /// Use series posters
+  internal static let seriesBackdrop = L10n.tr("Localizable", "seriesBackdrop", fallback: "Use series posters")
+  /// Uses series images for episodes when available.
+  internal static let seriesBackdropDescription = L10n.tr("Localizable", "seriesBackdropDescription", fallback: "Uses series images for episodes when available.")
   /// Server
   internal static let server = L10n.tr("Localizable", "server", fallback: "Server")
   /// %@ is already connected.
