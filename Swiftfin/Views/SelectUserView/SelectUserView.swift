@@ -394,33 +394,6 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Delete Users Button
-
-    @ViewBuilder
-    private var deleteUsersButton: some View {
-        Button {
-            isPresentingConfirmDeleteUsers = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
-
-                if selectedUsers.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedUsers.isEmpty)
-        .buttonStyle(.plain)
-    }
-
     // MARK: - User View
 
     @ViewBuilder
