@@ -90,12 +90,9 @@ extension SelectUserView {
                 }
                 .font(.body.weight(.semibold))
                 .foregroundStyle(Color.primary)
-                .frame(height: 50)
-                .frame(maxWidth: 400)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(width: 400, height: 50)
             }
             .menuOrder(.fixed)
-            .padding()
         }
     }
 }

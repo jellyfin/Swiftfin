@@ -109,7 +109,7 @@ extension Backport where Content: View {
 extension ButtonBorderShape {
 
     static let circleBackport: ButtonBorderShape = {
-        if #available(iOS 17, tvOS 16.4, *) {
+        if #available(iOS 17, *) {
             return ButtonBorderShape.circle
         } else {
             return ButtonBorderShape.roundedRectangle
