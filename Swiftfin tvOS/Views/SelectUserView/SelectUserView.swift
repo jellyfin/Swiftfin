@@ -17,29 +17,34 @@ import SwiftUI
 
 struct SelectUserView: View {
 
+    // MARK: - Defaults
+
+    @Default(.selectUserServerSelection)
+    private var serverSelection
+
+    // MARK: - User Grid Item Enum
+
     private enum UserGridItem: Hashable {
         case user(UserState, server: ServerState)
         case addUser
     }
 
-    @Default(.selectUserServerSelection)
-    private var serverSelection
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
 
+    @StateObject
+    private var viewModel = SelectUserViewModel()
+
+    // MARK: - Select User Variables
+
     @State
     private var contentSize: CGSize = .zero
-    @State
-    private var error: Error? = nil
     @State
     private var gridItems: OrderedSet<UserGridItem> = []
     @State
     private var gridItemSize: CGSize = .zero
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingServers: Bool = false
     @State
     private var padGridItemColumnCount: Int = 1
     @State
@@ -47,8 +52,17 @@ struct SelectUserView: View {
     @State
     private var splashScreenImageSource: ImageSource? = nil
 
-    @StateObject
-    private var viewModel = SelectUserViewModel()
+    // MARK: - Dialog States
+
+    @State
+    private var isPresentingServers: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    // MARK: - Selected Server
 
     private var selectedServer: ServerState? {
         if case let SelectUserServerSelection.server(id: id) = serverSelection,
@@ -59,6 +73,8 @@ struct SelectUserView: View {
 
         return nil
     }
+
+    // MARK: - Make Grid Items
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
         switch serverSelection {
@@ -89,6 +105,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Make Splash Screen Image Source
+
     // For all server selection, .all is random
     private func makeSplashScreenImageSource(
         serverSelection: SelectUserServerSelection,
@@ -112,7 +130,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: grid
+    // MARK: - Grid Item Offset
 
     private func gridItemOffset(index: Int) -> CGFloat {
         let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
@@ -122,6 +140,8 @@ struct SelectUserView: View {
         let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
         return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
     }
+
+    // MARK: - Grid Content View
 
     @ViewBuilder
     private var gridContentView: some View {
@@ -143,6 +163,8 @@ struct SelectUserView: View {
             padGridItemColumnCount = columns
         }
     }
+
+    // MARK: - Grid Content View
 
     @ViewBuilder
     private func gridItemView(for item: UserGridItem) -> some View {
@@ -174,7 +196,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: userView
+    // MARK: - User View
 
     @ViewBuilder
     private var userView: some View {
@@ -221,7 +243,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: emptyView
+    // MARK: - Empty View
 
     @ViewBuilder
     private var emptyView: some View {
@@ -256,6 +278,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Body
+
     var body: some View {
         ZStack {
             if viewModel.servers.isEmpty {
@@ -265,6 +289,7 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea()
+        .navigationBarBranding()
         .onAppear {
             viewModel.send(.getServers)
 
@@ -303,40 +328,34 @@ struct SelectUserView: View {
             switch event {
             case let .error(eventError):
                 self.error = eventError
-                self.isPresentingError = true
             case let .signedIn(user):
                 Defaults[.lastSignedInUserID] = .signedIn(userID: user.id)
                 Container.shared.currentUserSession.reset()
                 Notifications[.didSignIn].post()
             }
         }
-        .onNotification(.didConnectToServer) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didConnectToServer) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didChangeCurrentServerURL) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didDeleteServer) { notification in
+        .onNotification(.didDeleteServer) { server in
             viewModel.send(.getServers)
 
-            if let server = notification.object as? ServerState {
-                if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                    if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                        serverSelection = .server(id: first.id)
-                    } else {
-                        serverSelection = .all
-                    }
+            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                    serverSelection = .server(id: first.id)
+                } else {
+                    serverSelection = .all
                 }
-
-                // change splash screen selection if necessary
-//                selectUserAllServersSplashscreen = serverSelection
             }
+
+            // change splash screen selection if necessary
+//            selectUserAllServersSplashscreen = serverSelection
         }
+        .errorMessage($error)
     }
 }

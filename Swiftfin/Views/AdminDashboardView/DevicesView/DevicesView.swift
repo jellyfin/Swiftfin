@@ -42,7 +42,7 @@ struct DevicesView: View {
             case let .error(error):
                 ErrorView(error: error)
                     .onRetry {
-                        viewModel.send(.getDevices)
+                        viewModel.send(.refresh)
                     }
             case .initial:
                 DelayedProgressView()
@@ -75,7 +75,7 @@ struct DevicesView: View {
             }
         }
         .onFirstAppear {
-            viewModel.send(.getDevices)
+            viewModel.send(.refresh)
         }
         .confirmationDialog(
             L10n.deleteSelectedDevices,
@@ -145,8 +145,7 @@ struct DevicesView: View {
                     }
                     .environment(\.isEditing, isEditing)
                     .environment(\.isSelected, selectedDevices.contains(device.id ?? ""))
-                    .listRowSeparator(.hidden)
-                    .listRowInsets(.zero)
+                    .listRowInsets(.edgeInsets)
                 }
             }
         }
@@ -157,7 +156,7 @@ struct DevicesView: View {
 
     @ViewBuilder
     private var navigationBarEditView: some View {
-        if viewModel.backgroundStates.contains(.gettingDevices) {
+        if viewModel.backgroundStates.contains(.refreshing) {
             ProgressView()
         } else {
             Button(isEditing ? L10n.cancel : L10n.edit) {
@@ -195,7 +194,7 @@ struct DevicesView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            viewModel.send(.deleteDevices(ids: Array(selectedDevices)))
+            viewModel.send(.delete(ids: Array(selectedDevices)))
             isEditing = false
             selectedDevices.removeAll()
         }
@@ -212,7 +211,7 @@ struct DevicesView: View {
                 if deviceToDelete == viewModel.userSession.client.configuration.deviceID {
                     isPresentingSelfDeleteError = true
                 } else {
-                    viewModel.send(.deleteDevices(ids: [deviceToDelete]))
+                    viewModel.send(.delete(ids: [deviceToDelete]))
                     selectedDevices.removeAll()
                 }
             }

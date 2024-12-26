@@ -25,23 +25,23 @@ enum VideoPlayerActionButton: String, CaseIterable, Defaults.Serializable, Displ
     var displayTitle: String {
         switch self {
 //        case .advanced:
-//            return "Advanced"
+//            return L10n.advanced
         case .aspectFill:
-            return "Aspect Fill"
+            return L10n.aspectFill
         case .audio:
-            return "Audio"
+            return L10n.audio
         case .autoPlay:
-            return "Auto Play"
+            return L10n.autoPlay
         case .chapters:
-            return "Chapters"
+            return L10n.chapters
         case .playbackSpeed:
-            return "Playback Speed"
+            return L10n.playbackSpeed
         case .playNextItem:
-            return "Play Next Item"
+            return L10n.playNextItem
         case .playPreviousItem:
-            return "Play Previous Item"
+            return L10n.playPreviousItem
         case .subtitles:
-            return "Subtitles"
+            return L10n.subtitles
         }
     }
 

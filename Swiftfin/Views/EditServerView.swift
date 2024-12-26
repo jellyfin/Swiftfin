@@ -55,7 +55,7 @@ struct EditServerView: View {
             }
 
             if isEditing {
-                ListRowButton("Delete") {
+                ListRowButton(L10n.delete) {
                     isPresentingConfirmDeletion = true
                 }
                 .foregroundStyle(.red, .red.opacity(0.2))
@@ -66,8 +66,8 @@ struct EditServerView: View {
         .onChange(of: currentServerURL) { newValue in
             viewModel.setCurrentURL(to: newValue)
         }
-        .alert("Delete Server", isPresented: $isPresentingConfirmDeletion) {
-            Button("Delete", role: .destructive) {
+        .alert(L10n.deleteServer, isPresented: $isPresentingConfirmDeletion) {
+            Button(L10n.delete, role: .destructive) {
                 viewModel.delete()
                 router.popLast()
             }

@@ -9,7 +9,7 @@
 import Foundation
 
 /// A type that is displayed as a poster
-protocol Poster: Displayable, Hashable, Identifiable, SystemImageable {
+protocol Poster: Displayable, Hashable, LibraryIdentifiable, SystemImageable {
 
     /// Optional subtitle when used as a poster
     var subtitle: String? { get }

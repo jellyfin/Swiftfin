@@ -56,8 +56,12 @@ extension AnyStoredData {
 
         let domain = domain ?? "none"
 
+        let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
+        let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
+        let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
+
         let clause = From<AnyStoredData>()
-            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+            .where(ownerFilter && keyFilter && domainFilter)
 
         let values = try SwiftfinStore.dataStack
             .fetchAll(
@@ -78,8 +82,12 @@ extension AnyStoredData {
 
         let domain = domain ?? "none"
 
+        let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
+        let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
+        let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
+
         let clause = From<AnyStoredData>()
-            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+            .where(ownerFilter && keyFilter && domainFilter)
 
         try SwiftfinStore.dataStack.perform { transaction in
             let existing = try transaction.fetchAll(clause)
@@ -124,8 +132,12 @@ extension AnyStoredData {
     static func fetchClause(key: String, ownerID: String, domain: String? = nil) throws -> FetchChainBuilder<AnyStoredData> {
         let domain = domain ?? "none"
 
+        let ownerFilter: Where<AnyStoredData> = Where(\.$ownerID == ownerID)
+        let keyFilter: Where<AnyStoredData> = Where(\.$key == key)
+        let domainFilter: Where<AnyStoredData> = Where(\.$domain == domain)
+
         return From<AnyStoredData>()
-            .where(\.$ownerID == ownerID && \.$key == key && \.$domain == domain)
+            .where(ownerFilter && keyFilter && domainFilter)
     }
 
     /// Delete all data with the given `ownerID`

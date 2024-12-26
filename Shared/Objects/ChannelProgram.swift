@@ -42,6 +42,10 @@ struct ChannelProgram: Hashable, Identifiable {
 
 extension ChannelProgram: Poster {
 
+    var unwrappedIDHashOrZero: Int {
+        channel.id?.hashValue ?? 0
+    }
+
     var displayTitle: String {
         channel.displayTitle
     }

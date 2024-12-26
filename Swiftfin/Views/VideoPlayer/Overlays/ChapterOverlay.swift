@@ -9,6 +9,7 @@
 import CollectionHStack
 import Defaults
 import JellyfinAPI
+import OrderedCollections
 import SwiftUI
 import VLCUI
 
@@ -42,7 +43,7 @@ extension VideoPlayer.Overlay {
         private var size: CGSize = .zero
 
         @StateObject
-        private var collectionHStackProxy: CollectionHStackProxy<ChapterInfo.FullInfo> = .init()
+        private var collectionHStackProxy: CollectionHStackProxy = .init()
 
         var body: some View {
             VStack(spacing: 0) {
@@ -61,7 +62,7 @@ extension VideoPlayer.Overlay {
 
                     Button {
                         if let currentChapter = viewModel.chapter(from: currentProgressHandler.seconds) {
-                            collectionHStackProxy.scrollTo(element: currentChapter, animated: true)
+                            collectionHStackProxy.scrollTo(element: currentChapter)
                         }
                     } label: {
                         Text(L10n.current)
@@ -73,7 +74,7 @@ extension VideoPlayer.Overlay {
                 .edgePadding(.horizontal)
 
                 CollectionHStack(
-                    viewModel.chapters,
+                    uniqueElements: viewModel.chapters,
                     minWidth: 200
                 ) { chapter in
                     ChapterButton(chapter: chapter)

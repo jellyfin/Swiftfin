@@ -63,13 +63,13 @@ extension SelectUserView {
                 .clipShape(.circle)
                 .aspectRatio(1, contentMode: .fill)
 
-                Text("Add User")
+                Text(L10n.addUser)
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(isEnabled ? .primary : .secondary)
 
                 if serverSelection == .all {
-                    Text("Hidden")
+                    Text(L10n.hidden)
                         .font(.footnote)
                         .hidden()
                 }

@@ -48,7 +48,7 @@ extension SelectUserView {
         private var rowContent: some View {
             HStack {
 
-                Text("Add User")
+                Text(L10n.addUser)
                     .font(.title3)
                     .fontWeight(.semibold)
                     .foregroundStyle(isEnabled ? .primary : .secondary)

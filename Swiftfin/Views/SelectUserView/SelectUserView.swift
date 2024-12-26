@@ -20,13 +20,13 @@ import SwiftUI
 // TODO: user ordering
 //       - name
 //       - last signed in date
+// TODO: between the server selection menu and delete toolbar,
+//       figure out a way to make the grid/list and splash screen
+//       not jump when size is changed
 
 struct SelectUserView: View {
 
-    private enum UserGridItem: Hashable {
-        case user(UserState, server: ServerState)
-        case addUser
-    }
+    // MARK: - Defaults
 
     @Default(.selectUserUseSplashscreen)
     private var selectUserUseSplashscreen
@@ -37,28 +37,36 @@ struct SelectUserView: View {
     @Default(.selectUserDisplayType)
     private var userListDisplayType
 
+    // MARK: - Environment Variable
+
     @Environment(\.colorScheme)
     private var colorScheme
+
+    // MARK: - Focus Fields
+
+    private enum UserGridItem: Hashable {
+        case user(UserState, server: ServerState)
+        case addUser
+    }
+
+    // MARK: - State & Environment Objects
 
     @EnvironmentObject
     private var router: SelectUserCoordinator.Router
 
+    @StateObject
+    private var viewModel = SelectUserViewModel()
+
+    // MARK: - Select Users Variables
+
     @State
     private var contentSize: CGSize = .zero
-    @State
-    private var error: Error? = nil
     @State
     private var gridItems: OrderedSet<UserGridItem> = []
     @State
     private var gridItemSize: CGSize = .zero
     @State
     private var isEditingUsers: Bool = false
-    @State
-    private var isPresentingConfirmDeleteUsers = false
-    @State
-    private var isPresentingError: Bool = false
-    @State
-    private var isPresentingLocalPin: Bool = false
     @State
     private var padGridItemColumnCount: Int = 1
     @State
@@ -68,8 +76,30 @@ struct SelectUserView: View {
     @State
     private var splashScreenImageSources: [ImageSource] = []
 
-    @StateObject
-    private var viewModel = SelectUserViewModel()
+    // MARK: - Dialog States
+
+    @State
+    private var isPresentingConfirmDeleteUsers = false
+    @State
+    private var isPresentingLocalPin: Bool = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error? = nil
+
+    private var users: [UserState] {
+        gridItems.compactMap { item in
+            switch item {
+            case let .user(user, _):
+                return user
+            default:
+                return nil
+            }
+        }
+    }
+
+    // MARK: - Select Server
 
     private var selectedServer: ServerState? {
         if case let SelectUserServerSelection.server(id: id) = serverSelection,
@@ -80,6 +110,8 @@ struct SelectUserView: View {
 
         return nil
     }
+
+    // MARK: - Make Grid Items
 
     private func makeGridItems(for serverSelection: SelectUserServerSelection) -> OrderedSet<UserGridItem> {
         switch serverSelection {
@@ -110,6 +142,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Make Splash Screen Image Source
+
     // For all server selection, .all is random
     private func makeSplashScreenImageSources(
         serverSelection: SelectUserServerSelection,
@@ -135,13 +169,15 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - Select User(s)
+
     private func select(user: UserState, needsPin: Bool = true) {
         Task { @MainActor in
             selectedUsers.insert(user)
 
             switch user.accessPolicy {
             case .requireDeviceAuthentication:
-                try await performDeviceAuthentication(reason: "User \(user.username) requires device authentication")
+                try await performDeviceAuthentication(reason: L10n.userRequiresDeviceAuthentication(user.username))
             case .requirePin:
                 if needsPin {
                     isPresentingLocalPin = true
@@ -153,6 +189,8 @@ struct SelectUserView: View {
             viewModel.send(.signIn(user, pin: pin))
         }
     }
+
+    // MARK: - Perform Device Authentication
 
     // error logging/presentation is handled within here, just
     // use try+thrown error in local Task for early return
@@ -166,13 +204,10 @@ struct SelectUserView: View {
             await MainActor.run {
                 self
                     .error =
-                    JellyfinAPIError(
-                        "Unable to perform device authentication. You may need to enable Face ID in the Settings app for Swiftfin."
-                    )
-                self.isPresentingError = true
+                    JellyfinAPIError(L10n.unableToPerformDeviceAuthFaceID)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
 
         do {
@@ -181,15 +216,14 @@ struct SelectUserView: View {
             viewModel.logger.critical("\(error.localizedDescription)")
 
             await MainActor.run {
-                self.error = JellyfinAPIError("Unable to perform device authentication")
-                self.isPresentingError = true
+                self.error = JellyfinAPIError(L10n.unableToPerformDeviceAuth)
             }
 
-            throw JellyfinAPIError("Device auth failed")
+            throw JellyfinAPIError(L10n.deviceAuthFailed)
         }
     }
 
-    // MARK: advancedMenu
+    // MARK: - Advanced Menu
 
     @ViewBuilder
     private var advancedMenu: some View {
@@ -197,7 +231,7 @@ struct SelectUserView: View {
 
             Section {
                 if gridItems.count > 1 {
-                    Button("Edit Users", systemImage: "person.crop.circle") {
+                    Button(L10n.editUsers, systemImage: "person.crop.circle") {
                         isEditingUsers.toggle()
                     }
                 }
@@ -210,7 +244,7 @@ struct SelectUserView: View {
                             .tag($0)
                     }
                 } label: {
-                    Text("Layout")
+                    Text(L10n.layout)
                     Text(userListDisplayType.displayTitle)
                     Image(systemName: userListDisplayType.systemImage)
                 }
@@ -225,7 +259,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: grid
+    // MARK: - iPad Grid Item Offset
 
     private func padGridItemOffset(index: Int) -> CGFloat {
         let lastRowIndices = (gridItems.count - gridItems.count % padGridItemColumnCount ..< gridItems.count)
@@ -235,6 +269,8 @@ struct SelectUserView: View {
         let lastRowMissing = padGridItemColumnCount - gridItems.count % padGridItemColumnCount
         return CGFloat(lastRowMissing) * (gridItemSize.width + EdgeInsets.edgePadding) / 2
     }
+
+    // MARK: - iPad Grid Content View
 
     @ViewBuilder
     private var padGridContentView: some View {
@@ -258,6 +294,8 @@ struct SelectUserView: View {
         }
     }
 
+    // MARK: - iPhone Grid Content View
+
     @ViewBuilder
     private var phoneGridContentView: some View {
         let columns = [GridItem(.flexible(), spacing: EdgeInsets.edgePadding), GridItem(.flexible())]
@@ -274,6 +312,8 @@ struct SelectUserView: View {
         .edgePadding()
         .scrollIfLargerThanContainer(padding: 100)
     }
+
+    // MARK: - Grid Item View
 
     @ViewBuilder
     private func gridItemView(for item: UserGridItem) -> some View {
@@ -307,7 +347,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: list
+    // MARK: - List Content View
 
     @ViewBuilder
     private var listContentView: some View {
@@ -319,6 +359,8 @@ struct SelectUserView: View {
             }
         }
     }
+
+    // MARK: - List Item View
 
     @ViewBuilder
     private func listItemView(for item: UserGridItem) -> some View {
@@ -352,32 +394,7 @@ struct SelectUserView: View {
         }
     }
 
-    @ViewBuilder
-    private var deleteUsersButton: some View {
-        Button {
-            isPresentingConfirmDeleteUsers = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text("Delete")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
-
-                if selectedUsers.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedUsers.isEmpty)
-        .buttonStyle(.plain)
-    }
-
-    // MARK: userView
+    // MARK: - User View
 
     @ViewBuilder
     private var userView: some View {
@@ -423,11 +440,6 @@ struct SelectUserView: View {
                 )
                 .edgePadding([.bottom, .horizontal])
             }
-
-            if isEditingUsers {
-                deleteUsersButton
-                    .edgePadding([.bottom, .horizontal])
-            }
         }
         .background {
             if selectUserUseSplashscreen, splashScreenImageSources.isNotEmpty {
@@ -449,7 +461,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: emptyView
+    // MARK: - Empty View
 
     @ViewBuilder
     private var emptyView: some View {
@@ -466,7 +478,7 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: body
+    // MARK: - Body
 
     var body: some View {
         WrappedView {
@@ -477,7 +489,7 @@ struct SelectUserView: View {
             }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
-        .navigationTitle("Users")
+        .navigationTitle(L10n.users)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
@@ -486,28 +498,49 @@ struct SelectUserView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30)
             }
-        }
-        .topBarTrailing {
-            if isEditingUsers {
-                Button {
-                    isEditingUsers = false
-                } label: {
-                    L10n.cancel.text
-                        .font(.headline)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 10)
-                        .background {
-                            if colorScheme == .light {
-                                Color.secondarySystemFill
-                            } else {
-                                Color.tertiarySystemBackground
-                            }
+
+            ToolbarItem(placement: .topBarLeading) {
+                if isEditingUsers {
+                    if selectedUsers.count == users.count {
+                        Button(L10n.removeAll) {
+                            selectedUsers.removeAll()
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .buttonStyle(.toolbarPill)
+                    } else {
+                        Button(L10n.selectAll) {
+                            selectedUsers.insert(contentsOf: users)
+                        }
+                        .buttonStyle(.toolbarPill)
+                    }
                 }
-                .buttonStyle(.plain)
-            } else {
-                advancedMenu
+            }
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if isEditingUsers {
+                    Button(isEditingUsers ? L10n.cancel : L10n.edit) {
+                        isEditingUsers.toggle()
+
+                        UIDevice.impact(.light)
+
+                        if !isEditingUsers {
+                            selectedUsers.removeAll()
+                        }
+                    }
+                    .buttonStyle(.toolbarPill)
+                } else {
+                    advancedMenu
+                }
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                if isEditingUsers {
+                    Button(L10n.delete) {
+                        isPresentingConfirmDeleteUsers = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedUsers.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
             }
         }
         .onAppear {
@@ -555,9 +588,7 @@ struct SelectUserView: View {
             switch event {
             case let .error(eventError):
                 UIDevice.feedback(.error)
-
                 self.error = eventError
-                self.isPresentingError = true
             case let .signedIn(user):
                 UIDevice.feedback(.success)
 
@@ -566,66 +597,51 @@ struct SelectUserView: View {
                 Notifications[.didSignIn].post()
             }
         }
-        .onNotification(.didConnectToServer) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didConnectToServer) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didChangeCurrentServerURL) { notification in
-            if let server = notification.object as? ServerState {
-                viewModel.send(.getServers)
-                serverSelection = .server(id: server.id)
-            }
+        .onNotification(.didChangeCurrentServerURL) { server in
+            viewModel.send(.getServers)
+            serverSelection = .server(id: server.id)
         }
-        .onNotification(.didDeleteServer) { notification in
+        .onNotification(.didDeleteServer) { server in
             viewModel.send(.getServers)
 
-            if let server = notification.object as? ServerState {
-                if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
-                    if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
-                        serverSelection = .server(id: first.id)
-                    } else {
-                        serverSelection = .all
-                    }
+            if case let SelectUserServerSelection.server(id: id) = serverSelection, server.id == id {
+                if viewModel.servers.keys.count == 1, let first = viewModel.servers.keys.first {
+                    serverSelection = .server(id: first.id)
+                } else {
+                    serverSelection = .all
                 }
-
-                // change splash screen selection if necessary
-                selectUserAllServersSplashscreen = serverSelection
             }
+
+            // change splash screen selection if necessary
+            selectUserAllServersSplashscreen = serverSelection
         }
         .alert(
-            Text("Delete User"),
+            Text(L10n.deleteUser),
             isPresented: $isPresentingConfirmDeleteUsers,
             presenting: selectedUsers
         ) { selectedUsers in
-            Button("Delete", role: .destructive) {
+            Button(L10n.delete, role: .destructive) {
                 viewModel.send(.deleteUsers(Array(selectedUsers)))
             }
         } message: { selectedUsers in
             if selectedUsers.count == 1, let first = selectedUsers.first {
-                Text("Are you sure you want to delete \(first.username)?")
+                Text(L10n.deleteUserSingleConfirmation(first.username))
             } else {
-                Text("Are you sure you want to delete \(selectedUsers.count) users?")
+                Text(L10n.deleteUserMultipleConfirmation(selectedUsers.count))
             }
         }
-        .alert(
-            L10n.error.text,
-            isPresented: $isPresentingError,
-            presenting: error
-        ) { _ in
-            Button(L10n.dismiss, role: .destructive)
-        } message: { error in
-            Text(error.localizedDescription)
-        }
-        .alert("Sign in", isPresented: $isPresentingLocalPin) {
+        .alert(L10n.signIn, isPresented: $isPresentingLocalPin) {
 
-            TextField("Pin", text: $pin)
+            TextField(L10n.pin, text: $pin)
                 .keyboardType(.numberPad)
 
             // bug in SwiftUI: having .disabled will dismiss
             // alert but not call the closure (for length)
-            Button("Sign In") {
+            Button(L10n.signIn) {
                 guard let user = selectedUsers.first else {
                     assertionFailure("User not selected")
                     return
@@ -634,15 +650,16 @@ struct SelectUserView: View {
                 select(user: user, needsPin: false)
             }
 
-            Button("Cancel", role: .cancel) {}
+            Button(L10n.cancel, role: .cancel) {}
         } message: {
             if let user = selectedUsers.first, user.pinHint.isNotEmpty {
                 Text(user.pinHint)
             } else {
                 let username = selectedUsers.first?.username ?? .emptyDash
 
-                Text("Enter pin for \(username)")
+                Text(L10n.enterPinForUser(username))
             }
         }
+        .errorMessage($error)
     }
 }
