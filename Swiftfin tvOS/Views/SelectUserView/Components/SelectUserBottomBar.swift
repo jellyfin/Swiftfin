@@ -25,6 +25,7 @@ extension SelectUserView {
         private let userCount: Int
 
         private let onDelete: () -> Void
+        private let toggleAllUsersSelected: () -> Void
 
         // MARK: - Advanced Menu
 
@@ -90,7 +91,8 @@ extension SelectUserView {
             areUsersSelected: Bool,
             viewModel: SelectUserViewModel,
             userCount: Int,
-            onDelete: @escaping () -> Void
+            onDelete: @escaping () -> Void,
+            toggleAllUsersSelected: @escaping () -> Void
         ) {
             self._isEditing = isEditing
             self._serverSelection = serverSelection
@@ -98,6 +100,7 @@ extension SelectUserView {
             self.areUsersSelected = areUsersSelected
             self.userCount = userCount
             self.onDelete = onDelete
+            self.toggleAllUsersSelected = toggleAllUsersSelected
         }
 
         @ViewBuilder
@@ -105,6 +108,14 @@ extension SelectUserView {
             HStack(alignment: .center) {
                 if isEditing {
                     deleteUsersButton
+
+                    Button {
+                        toggleAllUsersSelected()
+                    } label: {
+                        Text(areUsersSelected ? L10n.removeAll : L10n.selectAll)
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(Color.primary)
+                    }
 
                     Button {
                         isEditing = false

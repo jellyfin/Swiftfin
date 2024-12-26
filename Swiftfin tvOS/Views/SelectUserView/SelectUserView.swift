@@ -61,6 +61,17 @@ struct SelectUserView: View {
     @State
     private var splashScreenImageSource: ImageSource? = nil
 
+    private var users: [UserState] {
+        gridItems.compactMap { item in
+            switch item {
+            case let .user(user, _):
+                return user
+            default:
+                return nil
+            }
+        }
+    }
+
     // MARK: - Dialog States
 
     @State
@@ -237,7 +248,13 @@ struct SelectUserView: View {
                 onDelete: {
                     isPresentingConfirmDeleteUsers = true
                 }
-            )
+            ) {
+                if selectedUsers.count == users.count {
+                    selectedUsers.removeAll()
+                } else {
+                    selectedUsers.insert(contentsOf: users)
+                }
+            }
         }
         .animation(.linear(duration: 0.1), value: scrollViewOffset)
         .background {
