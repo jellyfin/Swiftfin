@@ -49,15 +49,12 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
-    // MARK: -
+    // MARK: - Computed Policy Tags
 
     private var policyTags: Set<[String: Bool]> {
         let blockedTags = viewModel.user.policy?.blockedTags?.map { [$0: false] } ?? []
-
-        // Uncomment the next line when allowedTags is supported
         // let allowedTags = viewModel.user.policy?.allowedTags?.map { [$0: true] } ?? []
 
-        // Combine allowed and blocked tags into a single set
         // return Set(allowedTags + blockedTags)
         return Set(blockedTags)
     }
@@ -121,7 +118,7 @@ struct EditServerUserAccessTagsView: View {
             )
         ) {
             Button(L10n.add, systemImage: "plus") {
-                // route(router, viewModel)
+                router.route(to: \.userAddAccessTag, viewModel)
             }
 
             if viewModel.user.policy?.blockedTags?.isNotEmpty == true {
@@ -181,37 +178,31 @@ struct EditServerUserAccessTagsView: View {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
 
-            if /* viewModel.user.policy?.allowedTags == [] && */ viewModel.user.policy?.blockedTags == [] {
+            if policyTags.isEmpty {
                 Button(L10n.add) {
-                    router.route(to: \.userAddAccessSchedule, viewModel)
+                    router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-                if // let allowedTags = tempPolicy.allowedTags,
-                    let blockedTags = tempPolicy.blockedTags,
-                    /*! allowedTags.isEmpty || */ !blockedTags.isEmpty
-                {
-
-                    let tags = /* allowedTags.map { ($0, true) } + */ blockedTags.map { ($0, false) }
-
-                    ForEach(tags, id: \.0) { tag, access in
+                ForEach(policyTags.sorted(by: { $0.keys.first ?? "" < $1.keys.first ?? "" }), id: \.self) { tagEntry in
+                    if let tag = tagEntry.keys.first, let access = tagEntry.values.first {
                         EditAccessTagRow(
                             item: tag,
                             access: access
                         ) {
                             if isEditing {
-                                if selectedTags.contains([tag: access]) {
-                                    selectedTags.remove([tag: access])
+                                if selectedTags.contains(tagEntry) {
+                                    selectedTags.remove(tagEntry)
                                 } else {
-                                    selectedTags.insert([tag: access])
+                                    selectedTags.insert(tagEntry)
                                 }
                             }
                         } onDelete: {
                             selectedTags.removeAll()
-                            selectedTags.insert([tag: access])
+                            selectedTags.insert(tagEntry)
                             isPresentingDeleteConfirmation = true
                         }
                         .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedTags.contains([tag: access]))
+                        .environment(\.isSelected, selectedTags.contains(tagEntry))
                     }
                 }
             }
@@ -247,7 +238,6 @@ struct EditServerUserAccessTagsView: View {
                     }
                 }
             }
-            // Update the policy and reset state
             viewModel.send(.updatePolicy(tempPolicy))
             selectedTags.removeAll()
             isEditing = false

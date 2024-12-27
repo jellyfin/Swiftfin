@@ -223,6 +223,7 @@
 		4EF659E32CDD270D00E0BE5D /* ActionMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */; };
 		4EFAC12C2D1E255900E40880 /* EditServerUserAccessTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC12B2D1E255600E40880 /* EditServerUserAccessTagsView.swift */; };
 		4EFAC1302D1E2EB900E40880 /* EditAccessTagRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC12E2D1E2EB900E40880 /* EditAccessTagRow.swift */; };
+		4EFAC1332D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */; };
 		4EFD172E2CE4182200A4BAC5 /* LearnMoreButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */; };
 		4EFE0C7D2D0156A900D4834D /* PersonKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE0C7C2D0156A500D4834D /* PersonKind.swift */; };
 		4EFE0C7E2D0156A900D4834D /* PersonKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE0C7C2D0156A500D4834D /* PersonKind.swift */; };
@@ -1346,6 +1347,7 @@
 		4EF659E22CDD270B00E0BE5D /* ActionMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenu.swift; sourceTree = "<group>"; };
 		4EFAC12B2D1E255600E40880 /* EditServerUserAccessTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditServerUserAccessTagsView.swift; sourceTree = "<group>"; };
 		4EFAC12E2D1E2EB900E40880 /* EditAccessTagRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAccessTagRow.swift; sourceTree = "<group>"; };
+		4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddServerUserAccessTagsView.swift; sourceTree = "<group>"; };
 		4EFD172D2CE4181F00A4BAC5 /* LearnMoreButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnMoreButton.swift; sourceTree = "<group>"; };
 		4EFE0C7C2D0156A500D4834D /* PersonKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonKind.swift; sourceTree = "<group>"; };
 		4EFE0C7F2D02054300D4834D /* ItemArrayElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemArrayElements.swift; sourceTree = "<group>"; };
@@ -2838,6 +2840,7 @@
 		4EFAC1312D1E373B00E40880 /* AddServerUserAccessTagsView */ = {
 			isa = PBXGroup;
 			children = (
+				4EFAC1322D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift */,
 			);
 			path = AddServerUserAccessTagsView;
 			sourceTree = "<group>";
@@ -5736,6 +5739,7 @@
 				4E2AC4C82C6C493C00DD600D /* SubtitleFormat.swift in Sources */,
 				E19D41B02BF2B7540082B8B2 /* URLSessionConfiguration.swift in Sources */,
 				4E661A2E2CEFE77700025C99 /* MetadataField.swift in Sources */,
+				4EFAC1332D1E8C6B00E40880 /* AddServerUserAccessTagsView.swift in Sources */,
 				E172D3AD2BAC9DF8007B4647 /* SeasonItemViewModel.swift in Sources */,
 				4E762AAE2C3A1A95004D1579 /* PlaybackBitrate.swift in Sources */,
 				536D3D78267BD5C30004248C /* ViewModel.swift in Sources */,
