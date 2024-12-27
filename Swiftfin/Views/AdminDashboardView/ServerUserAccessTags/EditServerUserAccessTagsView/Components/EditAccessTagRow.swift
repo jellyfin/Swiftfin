@@ -55,21 +55,15 @@ extension EditServerUserAccessTagsView {
                         leading: item,
                         trailing: access ? "Allowed" : "Blocked"
                     )
-                    .foregroundStyle(
+                    .foregroundColor(
                         isEditing ? (isSelected ? .primary : .secondary) : .primary
                     )
                     .font(.headline)
                 }
 
-                if isEditing {
-                    Spacer()
-
-                    Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                        .resizable()
-                        .aspectRatio(1, contentMode: .fit)
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(isSelected ? Color.accentColor : .secondary)
-                }
+                ListRowCheckbox()
+                    .environment(\.isEditing, isEditing)
+                    .environment(\.isSelected, isSelected)
             }
         }
     }

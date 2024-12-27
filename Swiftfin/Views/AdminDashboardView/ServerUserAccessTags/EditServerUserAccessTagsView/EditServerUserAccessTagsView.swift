@@ -40,7 +40,7 @@ struct EditServerUserAccessTagsView: View {
     // MARK: - Editing States
 
     @State
-    private var selectedTags: Set<String> = []
+    private var selectedTags: Set<[String: Bool]> = []
     @State
     private var isEditing: Bool = false
 
@@ -49,7 +49,20 @@ struct EditServerUserAccessTagsView: View {
     @State
     private var error: Error?
 
-    // MARK: - Initializer
+    // MARK: -
+
+    private var policyTags: Set<[String: Bool]> {
+        let blockedTags = viewModel.user.policy?.blockedTags?.map { [$0: false] } ?? []
+
+        // Uncomment the next line when allowedTags is supported
+        // let allowedTags = viewModel.user.policy?.allowedTags?.map { [$0: true] } ?? []
+
+        // Combine allowed and blocked tags into a single set
+        // return Set(allowedTags + blockedTags)
+        return Set(blockedTags)
+    }
+
+    // MARK: - Initializera
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -186,19 +199,19 @@ struct EditServerUserAccessTagsView: View {
                             access: access
                         ) {
                             if isEditing {
-                                if selectedTags.contains(tag) {
-                                    selectedTags.remove(tag)
+                                if selectedTags.contains([tag: access]) {
+                                    selectedTags.remove([tag: access])
                                 } else {
-                                    selectedTags.insert(tag)
+                                    selectedTags.insert([tag: access])
                                 }
                             }
                         } onDelete: {
                             selectedTags.removeAll()
-                            selectedTags.insert(tag)
+                            selectedTags.insert([tag: access])
                             isPresentingDeleteConfirmation = true
                         }
                         .environment(\.isEditing, isEditing)
-                        .environment(\.isSelected, selectedTags.contains(tag))
+                        .environment(\.isSelected, selectedTags.contains([tag: access]))
                     }
                 }
             }
@@ -209,9 +222,9 @@ struct EditServerUserAccessTagsView: View {
 
     @ViewBuilder
     private var navigationBarSelectView: some View {
-        let isAllSelected = selectedTags.count == (tempPolicy.blockedTags?.count)
+        let isAllSelected = selectedTags.count == policyTags.count
         Button(isAllSelected ? L10n.removeAll : L10n.selectAll) {
-            selectedTags = isAllSelected ? [] : Set(tempPolicy.blockedTags ?? [])
+            selectedTags = isAllSelected ? [] : policyTags
         }
         .buttonStyle(.toolbarPill)
         .disabled(!isEditing)
@@ -225,8 +238,16 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
-            tempPolicy.blockedTags?.removeAll(where: { selectedTags.contains($0) })
-
+            for tagEntry in selectedTags {
+                if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
+                    if isAllowed {
+                        // tempPolicy.allowedTags?.removeAll { $0 == tag }
+                    } else {
+                        tempPolicy.blockedTags?.removeAll { $0 == tag }
+                    }
+                }
+            }
+            // Update the policy and reset state
             viewModel.send(.updatePolicy(tempPolicy))
             selectedTags.removeAll()
             isEditing = false
@@ -240,12 +261,17 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
-            if let tagToRemove = selectedTags.first, selectedTags.count == 1 {
-                tempPolicy.blockedTags?.removeAll { $0 == tagToRemove }
-
-                viewModel.send(.updatePolicy(tempPolicy))
-                selectedTags.removeAll()
-                isEditing = false
+            if let tagEntry = selectedTags.first, selectedTags.count == 1 {
+                if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
+                    if isAllowed {
+                        // tempPolicy.allowedTags?.removeAll { $0 == tag }
+                    } else {
+                        tempPolicy.blockedTags?.removeAll { $0 == tag }
+                    }
+                    viewModel.send(.updatePolicy(tempPolicy))
+                    selectedTags.removeAll()
+                    isEditing = false
+                }
             }
         }
     }
