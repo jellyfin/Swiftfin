@@ -76,7 +76,7 @@ struct ServerUserDetailsView: View {
                     .onSelect {
                         router.route(to: \.userEditAccessSchedules, viewModel)
                     }
-                ChevronButton("Access Tags")
+                ChevronButton(L10n.accessTags)
                     .onSelect {
                         router.route(to: \.userEditAccessTags, viewModel)
                     }

@@ -17,9 +17,9 @@ extension EditServerUserAccessTagsView {
         // MARK: - Enviroment Variables
 
         @Environment(\.isEditing)
-        var isEditing
+        private var isEditing
         @Environment(\.isSelected)
-        var isSelected
+        private var isSelected
 
         // MARK: - Metadata Variables
 
@@ -53,10 +53,10 @@ extension EditServerUserAccessTagsView {
                 VStack(alignment: .leading) {
                     TextPairView(
                         leading: item,
-                        trailing: access ? "Allowed" : "Blocked"
+                        trailing: access ? L10n.allowed : L10n.blocked
                     )
-                    .foregroundColor(
-                        isEditing ? (isSelected ? .primary : .secondary) : .primary
+                    .foregroundStyle(
+                        isEditing ? (isSelected ? .primary : .secondary) : .primary, .secondary
                     )
                     .font(.headline)
                 }

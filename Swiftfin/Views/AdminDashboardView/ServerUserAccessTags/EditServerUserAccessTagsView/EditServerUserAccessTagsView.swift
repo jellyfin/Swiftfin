@@ -25,11 +25,6 @@ struct EditServerUserAccessTagsView: View {
     @StateObject
     private var viewModel: ServerUserAdminViewModel
 
-    // MARK: - Policy Variable
-
-    @State
-    private var tempPolicy: UserPolicy
-
     // MARK: - Dialog States
 
     @State
@@ -63,7 +58,6 @@ struct EditServerUserAccessTagsView: View {
 
     init(viewModel: ServerUserAdminViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
-        self.tempPolicy = viewModel.user.policy ?? UserPolicy()
     }
 
     // MARK: - Body
@@ -77,7 +71,7 @@ struct EditServerUserAccessTagsView: View {
                 errorView(with: error)
             }
         }
-        .navigationBarTitle("Access Tags")
+        .navigationBarTitle(L10n.accessTags)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(isEditing)
         .toolbar {
@@ -172,8 +166,8 @@ struct EditServerUserAccessTagsView: View {
     private var contentView: some View {
         List {
             ListTitleSection(
-                "Access Tags", // L10n.accessSchedules.localizedCapitalized,
-                description: L10n.accessSchedulesDescription
+                L10n.accessTags,
+                description: L10n.accessTagsDescription
             ) {
                 UIApplication.shared.open(.jellyfinDocsManagingUsers)
             }
@@ -183,7 +177,13 @@ struct EditServerUserAccessTagsView: View {
                     router.route(to: \.userAddAccessTag, viewModel)
                 }
             } else {
-                ForEach(policyTags.sorted(by: { $0.keys.first ?? "" < $1.keys.first ?? "" }), id: \.self) { tagEntry in
+                ForEach(policyTags.sorted(by: {
+                    if $0.values.first == $1.values.first {
+                        return $0.keys.first ?? "" < $1.keys.first ?? ""
+                    } else {
+                        return $0.values.first == true
+                    }
+                }), id: \.self) { tagEntry in
                     if let tag = tagEntry.keys.first, let access = tagEntry.values.first {
                         EditAccessTagRow(
                             item: tag,
@@ -229,6 +229,7 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.confirm, role: .destructive) {
+            var tempPolicy = viewModel.user.policy ?? UserPolicy()
             for tagEntry in selectedTags {
                 if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
                     if isAllowed {
@@ -251,6 +252,7 @@ struct EditServerUserAccessTagsView: View {
         Button(L10n.cancel, role: .cancel) {}
 
         Button(L10n.delete, role: .destructive) {
+            var tempPolicy = viewModel.user.policy ?? UserPolicy()
             if let tagEntry = selectedTags.first, selectedTags.count == 1 {
                 if let tag = tagEntry.keys.first, let isAllowed = tagEntry.values.first {
                     if isAllowed {

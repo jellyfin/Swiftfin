@@ -19,6 +19,9 @@ struct AddServerUserAccessTagsView: View {
     @ObservedObject
     private var viewModel: ServerUserAdminViewModel
 
+    @ObservedObject
+    private var tagViewModel: TagEditorViewModel
+
     // MARK: - Access Tag Variables
 
     @State
@@ -28,23 +31,41 @@ struct AddServerUserAccessTagsView: View {
     @State
     private var access: Bool = false
 
+    // MARK: - Trie Data Loaded
+
+    @State
+    private var loaded: Bool = false
+
     // MARK: - Error State
 
     @State
     private var error: Error?
+
+    // MARK: - Name is Valid
+
+    private var isValid: Bool {
+        tempTag.isNotEmpty
+    }
+
+    // MARK: - Name Already Exists
+
+    private var itemAlreadyExists: Bool {
+        tagViewModel.trie.contains(key: tempTag.localizedLowercase)
+    }
 
     // MARK: - Initializer
 
     init(viewModel: ServerUserAdminViewModel) {
         self.viewModel = viewModel
         self.tempPolicy = viewModel.user.policy!
+        self.tagViewModel = TagEditorViewModel(item: .init())
     }
 
     // MARK: - Body
 
     var body: some View {
         contentView
-            .navigationTitle("Add Access Tag")
+            .navigationTitle(L10n.addAccessTag.localizedCapitalized)
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarCloseButton {
                 router.dismissCoordinator()
@@ -60,10 +81,27 @@ struct AddServerUserAccessTagsView: View {
                     .buttonStyle(.toolbarPill(.red))
                 } else {
                     Button(L10n.save) {
-                        saveTag()
+                        if access {
+                            // TODO: Enable on 10.10
+                            /* tempPolicy.allowedTags = tempPolicy.allowedTags
+                             .appendedOrInit(tempTag) */
+                        } else {
+                            tempPolicy.blockedTags = tempPolicy.blockedTags
+                                .appendedOrInit(tempTag)
+                        }
+
+                        viewModel.send(.updatePolicy(tempPolicy))
                     }
                     .buttonStyle(.toolbarPill)
-                    .disabled(tempTag.isEmpty)
+                    .disabled(!isValid)
+                }
+            }
+            .onFirstAppear {
+                tagViewModel.send(.load)
+            }
+            .onChange(of: tempTag) { _ in
+                if !tagViewModel.backgroundStates.contains(.loading) {
+                    tagViewModel.send(.search(tempTag))
                 }
             }
             .onReceive(viewModel.events) { event in
@@ -76,6 +114,18 @@ struct AddServerUserAccessTagsView: View {
                     router.dismissCoordinator()
                 }
             }
+            .onReceive(tagViewModel.events) { event in
+                switch event {
+                case .updated:
+                    break
+                case .loaded:
+                    loaded = true
+                    tagViewModel.send(.search(tempTag))
+                case let .error(eventError):
+                    UIDevice.feedback(.error)
+                    error = eventError
+                }
+            }
             .errorMessage($error)
     }
 
@@ -83,26 +133,17 @@ struct AddServerUserAccessTagsView: View {
 
     private var contentView: some View {
         Form {
-            Section(L10n.access) {
-                Toggle(L10n.access, isOn: $access)
-                    .disabled(true)
+            TagInput(
+                access: $access,
+                tag: $tempTag,
+                itemAlreadyExists: itemAlreadyExists
+            )
 
-                TextField(L10n.tags, text: $tempTag)
-            }
+            SearchResultsSection(
+                tag: $tempTag,
+                population: tagViewModel.matches,
+                isSearching: tagViewModel.backgroundStates.contains(.searching)
+            )
         }
-    }
-
-    // MARK: - Save Schedule
-
-    private func saveTag() {
-        if access {
-            /* tempPolicy.blockedTags = tempPolicy.allowedTags
-             .appendedOrInit(tempTag) */
-        } else {
-            tempPolicy.blockedTags = tempPolicy.blockedTags
-                .appendedOrInit(tempTag)
-        }
-
-        viewModel.send(.updatePolicy(tempPolicy))
     }
 }
