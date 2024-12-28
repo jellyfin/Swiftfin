@@ -56,8 +56,7 @@ struct QuickConnectView: View {
             case let .polling(code):
                 pollingView(code: code)
             case let .error(error):
-                Text(error.localizedDescription)
-//                ErrorView(error: error)
+                ErrorView(error: error)
             }
         }
         .edgePadding()

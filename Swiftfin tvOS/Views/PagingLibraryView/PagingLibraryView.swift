@@ -185,18 +185,19 @@ struct PagingLibraryView<Element: Poster & Identifiable>: View {
             }
 
             WrappedView {
-                Group {
-                    switch viewModel.state {
-                    case let .error(error):
-                        Text(error.localizedDescription)
-                    case .initial, .refreshing:
-                        ProgressView()
-                    case .content:
-                        if viewModel.elements.isEmpty {
-                            L10n.noResults.text
-                        } else {
-                            contentView
+                switch viewModel.state {
+                case let .error(error):
+                    ErrorView(error: error)
+                        .onRetry {
+                            viewModel.send(.refresh)
                         }
+                case .initial, .refreshing:
+                    ProgressView()
+                case .content:
+                    if viewModel.elements.isEmpty {
+                        L10n.noResults.text
+                    } else {
+                        contentView
                     }
                 }
             }
