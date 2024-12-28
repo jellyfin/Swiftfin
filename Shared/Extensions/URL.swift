@@ -80,4 +80,8 @@ extension URL {
             return -1
         }
     }
+
+    var components: URLComponents? {
+        URLComponents(url: self, resolvingAgainstBaseURL: false)
+    }
 }
