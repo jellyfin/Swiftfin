@@ -22,19 +22,34 @@ extension DataCache {
 extension DataCache.Swiftfin {
 
     static let `default`: DataCache? = {
-        let dataCache = try? DataCache(name: "org.jellyfin.swiftfin") { name in
-            URL(string: name)?.pathAndQuery() ?? name
+
+        let dataCache = try? DataCache(name: "org.jellyfin.swiftfin/Images") { name in
+
+            guard var components = name.url?.components else { return nil }
+
+            var maxWidthValue: String? = nil
+
+            if let maxWidth = components.queryItems?.first(where: { $0.name == "maxWidth" }) {
+                maxWidthValue = maxWidth.value
+                components.queryItems = components.queryItems?.filter { $0.name != "maxWidth" }
+            }
+
+            guard let newURL = components.url, let urlSHA = newURL.absoluteString.sha1 else { return nil }
+
+            if let maxWidthValue {
+                return urlSHA + "-\(maxWidthValue)"
+            } else {
+                return urlSHA
+            }
         }
 
-        dataCache?.sizeLimit = 1024 * 1024 * 500 // 500 MB
+        dataCache?.sizeLimit = 1024 * 1024 * 1000 // 500 MB
 
         return dataCache
     }()
 
-    /// The `DataCache` used for images that should have longer lifetimes, usable without a
-    /// connection, and not affected by other caching size limits.
-    ///
-    /// Current 150 MB is more than necessary.
+    /// The `DataCache` used for server and user images that should be usable
+    /// without a consistent connection.
     static let branding: DataCache? = {
         guard let root = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
             return nil
@@ -44,25 +59,30 @@ extension DataCache.Swiftfin {
 
         let dataCache = try? DataCache(path: path) { name in
 
-            // this adds some latency, but fine since
-            // this DataCache is special
-            if name.range(of: "Splashscreen") != nil {
+            guard let url = name.url else { return name }
 
-                // TODO: potential issue where url ends with `/`, if
-                //       not found, retry with `/` appended
-                let prefix = name.trimmingSuffix("/Branding/Splashscreen?")
+            // Since multi-url servers is supported,
+            // key splashscreens with the server ID.
+            //
+            // Additional latency from Core Data round
+            // trip is acceptable.
+            if url.path.contains("Splashscreen") {
 
-                // can assume that we are only requesting a server with
-                // the key same as the current url
-                guard let prefixURL = URL(string: prefix) else { return name }
+                // Account for hosting at a path
+                guard let prefixURL = url.absoluteString.trimmingSuffix("/Branding/Splashscreen?").url else { return nil }
+
+                // We can assume that the request
+                // is from the current server
+                let urlFilter: Where<ServerModel> = Where(\.$currentURL == prefixURL)
                 guard let server = try? SwiftfinStore.dataStack.fetchOne(
                     From<ServerModel>()
-                        .where(\.$currentURL == prefixURL)
-                ) else { return name }
+                        .where(urlFilter)
+                ) else { return nil }
 
-                return "\(server.id)-splashscreen"
+                return "\(server.id)-splashscreen".sha1
             } else {
-                return URL(string: name)?.pathAndQuery() ?? name
+                // TODO: size differences...
+                return url.pathAndQuery()?.sha1
             }
         }
 

@@ -58,7 +58,7 @@ extension BaseItemDto {
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             itemID: seriesID ?? "",
-            force: true
+            requireTag: false
         )
     }
 
@@ -70,7 +70,7 @@ extension BaseItemDto {
             maxWidth: maxWidth,
             maxHeight: maxHeight,
             itemID: seriesID ?? "",
-            force: true
+            requireTag: false
         )
 
         return ImageSource(
@@ -86,16 +86,14 @@ extension BaseItemDto {
         maxWidth: CGFloat?,
         maxHeight: CGFloat?,
         itemID: String,
-        force: Bool = false
+        requireTag: Bool = true
     ) -> URL? {
         let scaleWidth = maxWidth == nil ? nil : UIScreen.main.scale(maxWidth!)
         let scaleHeight = maxHeight == nil ? nil : UIScreen.main.scale(maxHeight!)
 
         let tag = getImageTag(for: type)
 
-        if tag == nil && !force {
-            return nil
-        }
+        guard tag != nil || !requireTag else { return nil }
 
         // TODO: client passing for widget/shared group views?
         guard let client = Container.shared.currentUserSession()?.client else { return nil }
