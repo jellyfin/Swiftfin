@@ -17,4 +17,10 @@ extension Set {
             insert(value)
         }
     }
+
+    mutating func insert(contentsOf elements: [Element]) {
+        for element in elements {
+            insert(element)
+        }
+    }
 }

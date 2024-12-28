@@ -20,6 +20,9 @@ import SwiftUI
 // TODO: user ordering
 //       - name
 //       - last signed in date
+// TODO: between the server selection menu and delete toolbar,
+//       figure out a way to make the grid/list and splash screen
+//       not jump when size is changed
 
 struct SelectUserView: View {
 
@@ -84,6 +87,17 @@ struct SelectUserView: View {
 
     @State
     private var error: Error? = nil
+
+    private var users: [UserState] {
+        gridItems.compactMap { item in
+            switch item {
+            case let .user(user, _):
+                return user
+            default:
+                return nil
+            }
+        }
+    }
 
     // MARK: - Select Server
 
@@ -380,33 +394,6 @@ struct SelectUserView: View {
         }
     }
 
-    // MARK: - Delete Users Button
-
-    @ViewBuilder
-    private var deleteUsersButton: some View {
-        Button {
-            isPresentingConfirmDeleteUsers = true
-        } label: {
-            ZStack {
-                Color.red
-
-                Text(L10n.delete)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(selectedUsers.isNotEmpty ? .primary : .secondary)
-
-                if selectedUsers.isEmpty {
-                    Color.black
-                        .opacity(0.5)
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .frame(height: 50)
-            .frame(maxWidth: 400)
-        }
-        .disabled(selectedUsers.isEmpty)
-        .buttonStyle(.plain)
-    }
-
     // MARK: - User View
 
     @ViewBuilder
@@ -452,11 +439,6 @@ struct SelectUserView: View {
                     viewModel: viewModel
                 )
                 .edgePadding([.bottom, .horizontal])
-            }
-
-            if isEditingUsers {
-                deleteUsersButton
-                    .edgePadding([.bottom, .horizontal])
             }
         }
         .background {
@@ -516,28 +498,49 @@ struct SelectUserView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 30)
             }
-        }
-        .topBarTrailing {
-            if isEditingUsers {
-                Button {
-                    isEditingUsers = false
-                } label: {
-                    L10n.cancel.text
-                        .font(.headline)
-                        .padding(.vertical, 5)
-                        .padding(.horizontal, 10)
-                        .background {
-                            if colorScheme == .light {
-                                Color.secondarySystemFill
-                            } else {
-                                Color.tertiarySystemBackground
-                            }
+
+            ToolbarItem(placement: .topBarLeading) {
+                if isEditingUsers {
+                    if selectedUsers.count == users.count {
+                        Button(L10n.removeAll) {
+                            selectedUsers.removeAll()
                         }
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .buttonStyle(.toolbarPill)
+                    } else {
+                        Button(L10n.selectAll) {
+                            selectedUsers.insert(contentsOf: users)
+                        }
+                        .buttonStyle(.toolbarPill)
+                    }
                 }
-                .buttonStyle(.plain)
-            } else {
-                advancedMenu
+            }
+
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                if isEditingUsers {
+                    Button(isEditingUsers ? L10n.cancel : L10n.edit) {
+                        isEditingUsers.toggle()
+
+                        UIDevice.impact(.light)
+
+                        if !isEditingUsers {
+                            selectedUsers.removeAll()
+                        }
+                    }
+                    .buttonStyle(.toolbarPill)
+                } else {
+                    advancedMenu
+                }
+            }
+
+            ToolbarItem(placement: .bottomBar) {
+                if isEditingUsers {
+                    Button(L10n.delete) {
+                        isPresentingConfirmDeleteUsers = true
+                    }
+                    .buttonStyle(.toolbarPill(.red))
+                    .disabled(selectedUsers.isEmpty)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
             }
         }
         .onAppear {
