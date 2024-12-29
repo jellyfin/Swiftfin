@@ -24,7 +24,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
     enum Action: Equatable {
         case cancel
-        case loadDetails
+        case refresh
         case loadLibraries(isHidden: Bool? = false)
         case updatePolicy(UserPolicy)
         case updateConfiguration(UserConfiguration)
@@ -68,10 +68,22 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
             .eraseToAnyPublisher()
     }
 
-    // MARK: - Initialize
+    // MARK: - Initializer
 
     init(user: UserDto) {
         self.user = user
+        super.init()
+
+        Notifications[.didChangeUserProfile]
+            .publisher
+            .sink { userID in
+                guard userID == self.user.id else { return }
+
+                Task {
+                    await self.send(.refresh)
+                }
+            }
+            .store(in: &cancellables)
     }
 
     // MARK: - Respond
@@ -81,7 +93,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
         case .cancel:
             return .initial
 
-        case .loadDetails:
+        case .refresh:
             userTaskCancellable?.cancel()
 
             userTaskCancellable = Task {
@@ -280,6 +292,7 @@ final class ServerUserAdminViewModel: ViewModel, Eventful, Stateful, Identifiabl
 
         await MainActor.run {
             self.user.name = username
+            Notifications[.didChangeUserProfile].post(userID)
         }
     }
 }

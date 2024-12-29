@@ -11,41 +11,82 @@ import JellyfinAPI
 import SwiftUI
 
 struct ServerUserDetailsView: View {
-    @EnvironmentObject
-    private var router: AdminDashboardCoordinator.Router
+
+    // MARK: - Current Date
 
     @CurrentDate
     private var currentDate: Date
 
+    // MARK: - State, Observed, & Environment Objects
+
+    @EnvironmentObject
+    private var router: AdminDashboardCoordinator.Router
+
     @StateObject
     private var viewModel: ServerUserAdminViewModel
+
+    @StateObject
+    private var profileViewModel: UserProfileImageViewModel
+
+    // MARK: - Dialog State
+
+    @State
+    private var username: String
+    @State
+    private var isPresentingUsername = false
+
+    // MARK: - Error State
+
+    @State
+    private var error: Error?
 
     // MARK: - Initializer
 
     init(user: UserDto) {
-        _viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        self._viewModel = StateObject(wrappedValue: ServerUserAdminViewModel(user: user))
+        self._profileViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: user))
+        self.username = user.name ?? ""
     }
 
     // MARK: - Body
 
     var body: some View {
         List {
-            // TODO: Replace with Update Profile Picture & Username
-            AdminDashboardView.UserSection(
+            UserProfileHeroImage(
                 user: viewModel.user,
-                lastActivityDate: viewModel.user.lastActivityDate
-            )
+                source: viewModel.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 150
+                )
+            ) {
+                router.route(to: \.userPhotoPicker, profileViewModel)
+            } onDelete: {
+                profileViewModel.send(.delete)
+            }
 
             Section {
+                ChevronAlertButton(
+                    L10n.username,
+                    subtitle: viewModel.user.name
+                ) {
+                    TextField(L10n.username, text: $username)
+                    HStack {
+                        Button(L10n.cancel) {
+                            username = viewModel.user.name ?? ""
+                            isPresentingUsername = false
+                        }
+                        Button(L10n.save) {
+                            viewModel.send(.updateUsername(username))
+                            isPresentingUsername = false
+                        }
+                    }
+                }
                 if let userId = viewModel.user.id {
                     ChevronButton(L10n.password)
                         .onSelect {
                             router.route(to: \.resetUserPassword, userId)
                         }
                 }
-            }
-
-            Section(L10n.advanced) {
                 ChevronButton(L10n.permissions)
                     .onSelect {
                         router.route(to: \.userPermissions, viewModel)
@@ -77,7 +118,7 @@ struct ServerUserDetailsView: View {
                       .onSelect {
                           router.route(to: \.userAllowedTags, viewModel)
                       }
-                  // TODO: Block items - blockedTags
+                 // TODO: Block items - blockedTags
                  ChevronButton("Block items")
                       .onSelect {
                           router.route(to: \.userBlockedTags, viewModel)
@@ -90,7 +131,17 @@ struct ServerUserDetailsView: View {
         }
         .navigationTitle(L10n.user)
         .onAppear {
-            viewModel.send(.loadDetails)
+            viewModel.send(.refresh)
         }
+        .onReceive(viewModel.events) { event in
+            switch event {
+            case let .error(eventError):
+                error = eventError
+                username = viewModel.user.name ?? ""
+            case .updated:
+                break
+            }
+        }
+        .errorMessage($error)
     }
 }

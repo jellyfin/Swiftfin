@@ -906,6 +906,8 @@ internal enum L10n {
   internal static let production = L10n.tr("Localizable", "production", fallback: "Production")
   /// Production Locations
   internal static let productionLocations = L10n.tr("Localizable", "productionLocations", fallback: "Production Locations")
+  /// Profile Image
+  internal static let profileImage = L10n.tr("Localizable", "profileImage", fallback: "Profile Image")
   /// Profiles
   internal static let profiles = L10n.tr("Localizable", "profiles", fallback: "Profiles")
   /// Programs
@@ -998,6 +1000,12 @@ internal enum L10n {
   internal static let reset = L10n.tr("Localizable", "reset", fallback: "Reset")
   /// Reset all settings back to defaults.
   internal static let resetAllSettings = L10n.tr("Localizable", "resetAllSettings", fallback: "Reset all settings back to defaults.")
+  /// Reset Settings
+  internal static let resetSettings = L10n.tr("Localizable", "resetSettings", fallback: "Reset Settings")
+  /// Reset Swiftfin user settings
+  internal static let resetSettingsDescription = L10n.tr("Localizable", "resetSettingsDescription", fallback: "Reset Swiftfin user settings")
+  /// Are you sure you want to reset all user settings?
+  internal static let resetSettingsMessage = L10n.tr("Localizable", "resetSettingsMessage", fallback: "Are you sure you want to reset all user settings?")
   /// Reset User Settings
   internal static let resetUserSettings = L10n.tr("Localizable", "resetUserSettings", fallback: "Reset User Settings")
   /// Restart Server
@@ -1056,6 +1064,8 @@ internal enum L10n {
   internal static let seeMore = L10n.tr("Localizable", "seeMore", fallback: "See More")
   /// Select All
   internal static let selectAll = L10n.tr("Localizable", "selectAll", fallback: "Select All")
+  /// Select Image
+  internal static let selectImage = L10n.tr("Localizable", "selectImage", fallback: "Select Image")
   /// Series
   internal static let series = L10n.tr("Localizable", "series", fallback: "Series")
   /// Series Backdrop
@@ -1338,6 +1348,8 @@ internal enum L10n {
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Video transcoding
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
+  /// Some views may need an app restart to update.
+  internal static let viewsMayRequireRestart = L10n.tr("Localizable", "viewsMayRequireRestart", fallback: "Some views may need an app restart to update.")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend

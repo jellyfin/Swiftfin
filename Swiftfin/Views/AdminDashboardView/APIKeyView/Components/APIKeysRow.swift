@@ -15,11 +15,11 @@ extension APIKeysView {
 
     struct APIKeysRow: View {
 
-        // MARK: - Actions
+        // MARK: - API Key Variables
 
         let apiKey: AuthenticationInfo
 
-        // MARK: - Actions
+        // MARK: - API Key Actions
 
         let onSelect: () -> Void
         let onDelete: () -> Void

@@ -20,20 +20,6 @@ extension SettingsView {
         private let user: UserDto
         private let action: (() -> Void)?
 
-        @ViewBuilder
-        private var imageView: some View {
-            RedrawOnNotificationView(.didChangeUserProfileImage) {
-                ImageView(user.profileImageSource(client: userSession.client, maxWidth: 120))
-                    .pipeline(.Swiftfin.branding)
-                    .placeholder { _ in
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-            }
-        }
-
         var body: some View {
             Button {
                 guard let action else { return }
@@ -44,10 +30,14 @@ extension SettingsView {
                     // `.aspectRatio(contentMode: .fill)` on `imageView` alone
                     // causes a crash on some iOS versions
                     ZStack {
-                        imageView
+                        UserProfileImage(
+                            userID: user.id,
+                            source: user.profileImageSource(
+                                client: userSession.client,
+                                maxWidth: 120
+                            )
+                        )
                     }
-                    .aspectRatio(1, contentMode: .fill)
-                    .clipShape(.circle)
                     .frame(width: 50, height: 50)
 
                     Text(user.name ?? L10n.unknown)
