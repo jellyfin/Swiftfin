@@ -46,13 +46,13 @@ extension ImagePipeline.Swiftfin {
 
     /// The default `ImagePipeline` to use for images that are typically posters
     /// or server user images that should be presentable with an active connection.
-    static let posters: ImagePipeline = ImagePipeline {
+    static let posters: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) {
         $0.dataCache = DataCache.Swiftfin.posters
     }
 
     /// The `ImagePipeline` used for images that should have longer lifetimes and usable
     /// without a connection, likes local user profile images and server splashscreens.
-    static let local: ImagePipeline = ImagePipeline {
+    static let local: ImagePipeline = ImagePipeline(delegate: SwiftfinImagePipelineDelegate()) {
         $0.dataCache = DataCache.Swiftfin.local
     }
 }
@@ -61,8 +61,6 @@ final class SwiftfinImagePipelineDelegate: ImagePipelineDelegate {
 
     func cacheKey(for request: ImageRequest, pipeline: ImagePipeline) -> String? {
         guard let url = request.url else { return nil }
-        let k = ImagePipeline.cacheKey(for: url)
-        print(url, k)
-        return k
+        return ImagePipeline.cacheKey(for: url)
     }
 }
