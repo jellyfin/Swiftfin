@@ -1930,6 +1930,9 @@
 /// Video transcoding
 "videoTranscoding" = "Video transcoding";
 
+/// Some views may need an app restart to update.
+"viewsMayRequireRestart" = "Some views may need an app restart to update.";
+
 /// Weekday
 "weekday" = "Weekday";
 

@@ -1348,6 +1348,8 @@ internal enum L10n {
   internal static let videoResolutionNotSupported = L10n.tr("Localizable", "videoResolutionNotSupported", fallback: "The video resolution is not supported")
   /// Video transcoding
   internal static let videoTranscoding = L10n.tr("Localizable", "videoTranscoding", fallback: "Video transcoding")
+  /// Some views may need an app restart to update.
+  internal static let viewsMayRequireRestart = L10n.tr("Localizable", "viewsMayRequireRestart", fallback: "Some views may need an app restart to update.")
   /// Weekday
   internal static let weekday = L10n.tr("Localizable", "weekday", fallback: "Weekday")
   /// Weekend
