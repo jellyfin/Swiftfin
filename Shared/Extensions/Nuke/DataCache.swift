@@ -28,7 +28,7 @@ extension DataCache.Swiftfin {
             return ImagePipeline.cacheKey(for: url)
         }
 
-        dataCache?.sizeLimit = 1024 * 1024 * 1000 // 500 MB
+        dataCache?.sizeLimit = 1024 * 1024 * 1000 // 1000 MB
 
         return dataCache
     }()
