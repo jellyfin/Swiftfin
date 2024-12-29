@@ -10,6 +10,9 @@ import Defaults
 import JellyfinAPI
 import SwiftUI
 
+private let landscapeMaxWidth: CGFloat = 110
+private let portraitMaxWidth: CGFloat = 60
+
 extension PagingLibraryView {
 
     struct LibraryRow: View {
@@ -21,9 +24,9 @@ extension PagingLibraryView {
         private func imageView(from element: Element) -> ImageView {
             switch posterType {
             case .landscape:
-                ImageView(element.landscapeImageSources(maxWidth: 110))
+                ImageView(element.landscapeImageSources(maxWidth: landscapeMaxWidth))
             case .portrait:
-                ImageView(element.portraitImageSources(maxWidth: 60))
+                ImageView(element.portraitImageSources(maxWidth: portraitMaxWidth))
             }
         }
 
@@ -96,7 +99,7 @@ extension PagingLibraryView {
                     }
             }
             .posterStyle(posterType)
-            .frame(width: posterType == .landscape ? 110 : 60)
+            .frame(width: posterType == .landscape ? landscapeMaxWidth : portraitMaxWidth)
             .posterShadow()
             .padding(.vertical, 8)
         }

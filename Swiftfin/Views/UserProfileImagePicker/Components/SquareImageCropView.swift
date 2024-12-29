@@ -19,15 +19,16 @@ extension UserProfileImagePicker {
         @Default(.accentColor)
         private var accentColor
 
-        // MARK: - State & Environment Objects
+        // MARK: - State, Observed, & Environment Objects
 
         @EnvironmentObject
         private var router: UserProfileImageCoordinator.Router
 
         @StateObject
         private var proxy: _SquareImageCropView.Proxy = .init()
-        @StateObject
-        private var viewModel = UserProfileImageViewModel()
+
+        @ObservedObject
+        var viewModel: UserProfileImageViewModel
 
         // MARK: - Image Variable
 
@@ -98,6 +99,8 @@ extension UserProfileImagePicker {
                 switch event {
                 case let .error(eventError):
                     error = eventError
+                case .deleted:
+                    break
                 case .uploaded:
                     router.dismissCoordinator()
                 }

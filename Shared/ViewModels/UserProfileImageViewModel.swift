@@ -14,23 +14,21 @@ import UIKit
 
 class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
+    // MARK: - Action
+
     enum Action: Equatable {
         case cancel
+        case delete
         case upload(UIImage)
     }
 
+    // MARK: - Event
+
     enum Event: Hashable {
         case error(JellyfinAPIError)
+        case deleted
         case uploaded
     }
-
-    enum State: Hashable {
-        case initial
-        case uploading
-    }
-
-    @Published
-    var state: State = .initial
 
     var events: AnyPublisher<Event, Never> {
         eventSubject
@@ -38,27 +36,55 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             .eraseToAnyPublisher()
     }
 
+    // MARK: - State
+
+    enum State: Hashable {
+        case initial
+        case deleting
+        case uploading
+    }
+
+    @Published
+    var state: State = .initial
+
+    // MARK: - Published Values
+
+    let user: UserDto
+
+    // MARK: - Task Variables
+
     private var eventSubject: PassthroughSubject<Event, Never> = .init()
     private var uploadCancellable: AnyCancellable?
+
+    // MARK: - Initializer
+
+    init(user: UserDto) {
+        self.user = user
+    }
+
+    // MARK: - Respond to Action
 
     func respond(to action: Action) -> State {
         switch action {
         case .cancel:
             uploadCancellable?.cancel()
-
             return .initial
-        case let .upload(image):
 
+        case let .upload(image):
             uploadCancellable = Task {
                 do {
-                    try await upload(image: image)
+                    await MainActor.run {
+                        self.state = .uploading
+                    }
+
+                    try await upload(image)
 
                     await MainActor.run {
                         self.eventSubject.send(.uploaded)
                         self.state = .initial
                     }
                 } catch is CancellationError {
-                    // cancel doesn't matter
+                    // Cancel doesn't matter
                 } catch {
                     await MainActor.run {
                         self.eventSubject.send(.error(.init(error.localizedDescription)))
@@ -68,11 +94,41 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
             }
             .asAnyCancellable()
 
-            return .uploading
+            return state
+
+        case .delete:
+            uploadCancellable = Task {
+                do {
+                    await MainActor.run {
+                        self.state = .deleting
+                    }
+
+                    try await delete()
+
+                    await MainActor.run {
+                        self.eventSubject.send(.deleted)
+                        self.state = .initial
+                    }
+                } catch is CancellationError {
+                    // Cancel doesn't matter
+                } catch {
+                    await MainActor.run {
+                        self.eventSubject.send(.error(.init(error.localizedDescription)))
+                        self.state = .initial
+                    }
+                }
+            }
+            .asAnyCancellable()
+
+            return state
         }
     }
 
-    private func upload(image: UIImage) async throws {
+    // MARK: - Upload Image
+
+    private func upload(_ image: UIImage) async throws {
+
+        guard let userID = user.id else { return }
 
         let contentType: String
         let imageData: Data
@@ -89,7 +145,7 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
         }
 
         var request = Paths.postUserImage(
-            userID: userSession.user.id,
+            userID: userID,
             imageType: "Primary",
             imageData
         )
@@ -97,13 +153,46 @@ class UserProfileImageViewModel: ViewModel, Eventful, Stateful {
 
         let _ = try await userSession.client.send(request)
 
-        let currentUserRequest = Paths.getCurrentUser
-        let response = try await userSession.client.send(currentUserRequest)
+        sweepProfileImageCache()
 
         await MainActor.run {
-            userSession.user.data = response.value
+            Notifications[.didChangeUserProfile].post(userID)
+        }
+    }
 
-            Notifications[.didChangeUserProfileImage].post()
+    // MARK: - Delete Image
+
+    private func delete() async throws {
+
+        guard let userID = user.id else { return }
+
+        let request = Paths.deleteUserImage(
+            userID: userID,
+            imageType: "Primary"
+        )
+        let _ = try await userSession.client.send(request)
+
+        sweepProfileImageCache()
+
+        await MainActor.run {
+            Notifications[.didChangeUserProfile].post(userID)
+        }
+    }
+
+    private func sweepProfileImageCache() {
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 60).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
+        }
+
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 120).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
+        }
+
+        if let userImageURL = user.profileImageSource(client: userSession.client, maxWidth: 150).url {
+            ImagePipeline.Swiftfin.local.removeItem(for: userImageURL)
+            ImagePipeline.Swiftfin.posters.removeItem(for: userImageURL)
         }
     }
 }

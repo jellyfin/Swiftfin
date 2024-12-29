@@ -75,24 +75,20 @@ extension ServerUsersView {
         @ViewBuilder
         private var userImage: some View {
             ZStack {
-                ImageView(user.profileImageSource(client: userSession!.client))
-                    .pipeline(.Swiftfin.branding)
-                    .placeholder { _ in
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-                    .failure {
-                        SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-                    }
-                    .grayscale(userActive ? 0.0 : 1.0)
+                UserProfileImage(
+                    userID: user.id,
+                    source: user.profileImageSource(
+                        client: userSession!.client,
+                        maxWidth: 60
+                    )
+                )
+                .grayscale(userActive ? 0.0 : 1.0)
 
                 if isEditing {
                     Color.black
                         .opacity(isSelected ? 0 : 0.5)
                 }
             }
-            .clipShape(.circle)
-            .aspectRatio(1, contentMode: .fill)
-            .posterShadow()
             .frame(width: 60, height: 60)
         }
 

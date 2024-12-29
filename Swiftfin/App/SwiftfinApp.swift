@@ -54,7 +54,7 @@ struct SwiftfinApp: App {
             return mimeType.contains("svg") ? ImageDecoders.Empty() : nil
         }
 
-        ImagePipeline.shared = .Swiftfin.default
+        ImagePipeline.shared = .Swiftfin.posters
 
         // UIKit
 

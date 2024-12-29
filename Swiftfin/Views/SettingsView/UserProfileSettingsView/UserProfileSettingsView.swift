@@ -8,79 +8,39 @@
 
 import Defaults
 import Factory
+import JellyfinAPI
 import SwiftUI
 
 struct UserProfileSettingsView: View {
-
-    @Default(.accentColor)
-    private var accentColor
 
     @EnvironmentObject
     private var router: SettingsCoordinator.Router
 
     @ObservedObject
-    var viewModel: SettingsViewModel
+    private var viewModel: SettingsViewModel
+    @StateObject
+    private var profileImageViewModel: UserProfileImageViewModel
 
     @State
     private var isPresentingConfirmReset: Bool = false
-    @State
-    private var isPresentingProfileImageOptions: Bool = false
 
-    @ViewBuilder
-    private var imageView: some View {
-        RedrawOnNotificationView(.didChangeUserProfileImage) {
-            ImageView(
-                viewModel.userSession.user.profileImageSource(
-                    client: viewModel.userSession.client,
-                    maxWidth: 120
-                )
-            )
-            .pipeline(.Swiftfin.branding)
-            .image { image in
-                image.posterBorder(ratio: 1 / 2, of: \.width)
-            }
-            .placeholder { _ in
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-            .failure {
-                SystemImageContentView(systemName: "person.fill", ratio: 0.5)
-            }
-        }
+    init(viewModel: SettingsViewModel) {
+        self.viewModel = viewModel
+        self._profileImageViewModel = StateObject(wrappedValue: UserProfileImageViewModel(user: viewModel.userSession.user.data))
     }
 
     var body: some View {
         List {
-            Section {
-                VStack(alignment: .center) {
-                    Button {
-                        isPresentingProfileImageOptions = true
-                    } label: {
-                        ZStack(alignment: .bottomTrailing) {
-                            // `.aspectRatio(contentMode: .fill)` on `imageView` alone
-                            // causes a crash on some iOS versions
-                            ZStack {
-                                imageView
-                            }
-                            .aspectRatio(1, contentMode: .fill)
-                            .clipShape(.circle)
-                            .frame(width: 150, height: 150)
-                            .shadow(radius: 5)
-
-                            Image(systemName: "pencil.circle.fill")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .shadow(radius: 10)
-                                .symbolRenderingMode(.palette)
-                                .foregroundStyle(accentColor.overlayColor, accentColor)
-                        }
-                    }
-
-                    Text(viewModel.userSession.user.username)
-                        .fontWeight(.semibold)
-                        .font(.title2)
-                }
-                .frame(maxWidth: .infinity)
-                .listRowBackground(Color.clear)
+            UserProfileHeroImage(
+                user: profileImageViewModel.user,
+                source: viewModel.userSession.user.profileImageSource(
+                    client: viewModel.userSession.client,
+                    maxWidth: 150
+                )
+            ) {
+                router.route(to: \.photoPicker, profileImageViewModel)
+            } onDelete: {
+                profileImageViewModel.send(.delete)
             }
 
             Section {
@@ -105,15 +65,19 @@ struct UserProfileSettingsView: View {
             Section {
                 // TODO: move under future "Storage" tab
                 //       when downloads implemented
-                Button("Reset Settings") {
+                Button(L10n.resetSettings) {
                     isPresentingConfirmReset = true
                 }
                 .foregroundStyle(.red)
             } footer: {
-                Text("Reset Swiftfin user settings")
+                Text(L10n.resetSettingsDescription)
             }
         }
-        .alert("Reset Settings", isPresented: $isPresentingConfirmReset) {
+        .confirmationDialog(
+            L10n.resetSettings,
+            isPresented: $isPresentingConfirmReset,
+            titleVisibility: .visible
+        ) {
             Button(L10n.reset, role: .destructive) {
                 do {
                     try viewModel.userSession.user.deleteSettings()
@@ -122,21 +86,7 @@ struct UserProfileSettingsView: View {
                 }
             }
         } message: {
-            Text("Are you sure you want to reset all user settings?")
-        }
-        .confirmationDialog(
-            "Profile Image",
-            isPresented: $isPresentingProfileImageOptions,
-            titleVisibility: .visible
-        ) {
-
-            Button("Select Image") {
-                router.route(to: \.photoPicker, viewModel)
-            }
-
-            Button(L10n.delete, role: .destructive) {
-                viewModel.deleteCurrentUserProfileImage()
-            }
+            Text(L10n.resetSettingsMessage)
         }
     }
 }
